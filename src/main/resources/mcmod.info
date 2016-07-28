@@ -1,0 +1,16 @@
+[
+{
+  "modid": "modularrouters",
+  "name": "Modular Routers",
+  "description": "Item routers with pluggable modules to define behaviour",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["desht"],
+  "credits": "Everyone who's made their mods open-source: thank you!",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

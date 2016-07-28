@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "modularrouters:blocks/itemRouterFront",
+    "down": "modularrouters:blocks/itemRouterOther",
+    "up": "modularrouters:blocks/itemRouterOther",
+    "east": "modularrouters:blocks/itemRouterOther",
+    "west": "modularrouters:blocks/itemRouterOther",
+    "north": "modularrouters:blocks/itemRouterFrontActive",
+    "south": "modularrouters:blocks/itemRouterOther"
+  }
+}

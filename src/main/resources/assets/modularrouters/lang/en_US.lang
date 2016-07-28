@@ -1,0 +1,84 @@
+# Items
+item.blankModule.name=Blank Module
+item.receiverModule.name=Receiver Module
+item.pullerModule.name=Puller Module
+item.senderModule1.name=Sender Module Mk1
+item.senderModule2.name=Sender Module Mk2
+item.senderModule3.name=Sender Module Mk3
+item.sorterModule.name=Sorter Module
+item.vacuumModule.name=Vacuum Module
+item.dropperModule.name=Dropper Module
+item.placerModule.name=Placer Module
+item.breakerModule.name=Breaker Module
+item.blankUpgrade.name=Blank Upgrade
+item.speedUpgrade.name=Speed Upgrade
+item.stackUpgrade.name=Stack Upgrade
+item.rangeUpgrade.name=Range Upgrade
+
+# Blocks
+tile.itemRouter.name=Item Router
+
+# Tab Group
+itemGroup.modularrouters=Modular Routers
+
+# Labels
+guiText.tooltip.BLACKLIST.1=Whitelist
+guiText.tooltip.IGNORE_META.1=Match Metadata
+guiText.tooltip.IGNORE_NBT.1=Match NBT
+guiText.tooltip.IGNORE_OREDICT.1=Use Oredict
+guiText.tooltip.TERMINATE.1=Continue Execution on Match//The item router will continue//executing further modules, even if//this module processes an item.
+guiText.tooltip.BLACKLIST.2=Blacklist
+guiText.tooltip.IGNORE_META.2=Ignore Metadata
+guiText.tooltip.IGNORE_NBT.2=Ignore NBT
+guiText.tooltip.IGNORE_OREDICT.2=Don't use Oredict
+guiText.tooltip.TERMINATE.2=Terminate Execution on Match//If this module processes an item,//the item router won't process//any further modules on this tick.
+guiText.label.NONE=None
+guiText.label.DOWN=Down
+guiText.label.UP=Up
+guiText.label.LEFT=Left
+guiText.label.RIGHT=Right
+guiText.label.FRONT=Front
+guiText.label.BACK=Back
+guiText.label.direction=Direction
+guiText.label.modules=Modules
+guiText.label.upgrades=Upgrades
+guiText.label.buffer=Buffer
+guiText.tooltip.redstone.IGNORE=Redstone Mode: Ignore
+guiText.tooltip.redstone.LOW=Redstone Mode: Low
+guiText.tooltip.redstone.HIGH=Redstone Mode: High
+
+# Config GUI
+gui.config.mainTitle=Modular Routers Configuration
+gui.config.ctgy.router=Routers
+gui.config.ctgy.router.tooltip=Config settings for Item Routers
+gui.config.ctgy.module=Modules
+gui.config.ctgy.module.tooltip=Config settings for Item Router Modules
+gui.config.baseTickRate=Base tick rate (with no Speed Upgrades)
+gui.config.ticksPerUpgrade=Tick rate reduction per upgrade
+gui.config.hardMinTicks=Hard minimum tick rate
+gui.config.senderParticles=Show particle effects when a Sender Module sends an item
+gui.config.placerParticles=Show particle effects when a Placer Module places a block
+gui.config.breakerParticles=Show particle effects when a Breaker Module breaks a block
+gui.config.vacuumParticles=Show particle effects when a Vacuum Modules absorbs an item
+gui.config.sender1BaseRange=Base Range for Sender Module Mk1 (no Range Upgrades)
+gui.config.sender2BaseRange=Base Range for Sender Module Mk2 (no Range Upgrades)
+gui.config.vacuumBaseRange=Base Range for Vacuum Module (no Range Upgrades)
+
+# Text which goes in item tooltips
+itemText.misc.holdShift=Hold §e§oShift§r§7 for more info
+itemText.misc.filterItems=item(s) in filter
+itemText.misc.moduleCount=Modules Installed: %d
+itemText.misc.noItems=No Items
+itemText.misc.IGNORE_META=Meta
+itemText.misc.IGNORE_NBT=NBT
+itemText.misc.IGNORE_OREDICT=Oredict
+itemText.misc.TERMINATE=Termination
+itemText.misc.flags=Flags
+itemText.misc.stackUpgrade=Max. items processed per operation: %d//Max useful upgrades: %d
+itemText.misc.speedUpgrade=Router will tick every %.02f sec//Max. useful upgrades: %d
+itemText.misc.rangeUpgradeTooltip=Extends range of modules:
+itemText.misc.target=§eTarget: §b[DIM:%d pos:%d,%d,%d SIDE:%s]
+itemText.misc.outOfRange=  §c*** Target Out of Range ***
+
+# Player chat messages
+chatText.misc.targetSet=Target set: %s
