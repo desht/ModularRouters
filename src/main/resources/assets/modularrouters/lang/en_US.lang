@@ -26,12 +26,12 @@ guiText.tooltip.BLACKLIST.1=Whitelist
 guiText.tooltip.IGNORE_META.1=Match Metadata
 guiText.tooltip.IGNORE_NBT.1=Match NBT
 guiText.tooltip.IGNORE_OREDICT.1=Use Oredict
-guiText.tooltip.TERMINATE.1=Continue Execution on Match//The item router will continue//executing further modules, even if//this module processes an item.
+guiText.tooltip.TERMINATE.1=Continue Execution on Match//The item router will continue executing subsequent modules, even if this module processes an item.
 guiText.tooltip.BLACKLIST.2=Blacklist
 guiText.tooltip.IGNORE_META.2=Ignore Metadata
 guiText.tooltip.IGNORE_NBT.2=Ignore NBT
 guiText.tooltip.IGNORE_OREDICT.2=Don't use Oredict
-guiText.tooltip.TERMINATE.2=Terminate Execution on Match//If this module processes an item,//the item router won't process//any further modules on this tick.
+guiText.tooltip.TERMINATE.2=Terminate Execution on Match//If this module processes an item, the item router won't execute any subsequent modules on this tick.
 guiText.label.NONE=None
 guiText.label.DOWN=Down
 guiText.label.UP=Up
@@ -68,7 +68,7 @@ gui.config.vacuumBaseRange=Base Range for Vacuum Module (no Range Upgrades)
 gui.config.vacuumMaxRange=Hard Maximum Range for Vacuum Module (with Range Upgrades)
 
 # Text which goes in item tooltips
-itemText.misc.holdShift=Hold §e§oShift§r§7 for more info
+itemText.misc.holdShift=Hold §e§oShift§r§7 for settings, §e§oCtrl§r§7 for info
 itemText.misc.filterItems=item(s) in filter
 itemText.misc.moduleCount=Modules Installed: %d
 itemText.misc.noItems=No Items
@@ -77,12 +77,22 @@ itemText.misc.IGNORE_NBT=NBT
 itemText.misc.IGNORE_OREDICT=Oredict
 itemText.misc.TERMINATE=Termination
 itemText.misc.flags=Flags
-itemText.misc.stackUpgrade=Max. items processed per operation: %d//Max useful upgrades: %d
+itemText.misc.stackUpgrade=Max. items processed per operation: %d//Max. useful upgrades: %d
 itemText.misc.speedUpgrade=Router will tick every %.02f sec//Max. useful upgrades: %d
 itemText.misc.rangeUpgradeTooltip=Extends range of modules:
-itemText.misc.target=§eTarget: §b[DIM:%d pos:%d,%d,%d SIDE:%s]
-itemText.misc.sneakClickTarget=§oSneak + Right-Click a block to set target
+itemText.misc.target=§eTarget: §bDIM: %d | POS: %d,%d,%d | SIDE: %s
 itemText.misc.outOfRange=  §c*** Target Out of Range ***
+itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
+
+# Usage tooltip information
+itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
+itemText.usage.item.dropperModule=Drops items from the router's buffer in the module's configured direction.
+itemText.usage.item.placerModule=Places an item from the router's buffer as a block in the module's configured direction, if possible.
+itemText.usage.item.pullerModule=Extracts items from an adjacent inventory in the module's configured direction, into the router's buffer.
+itemText.usage.item.senderModule1=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).//Clear line of sight required.
+itemText.usage.item.senderModule2=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).//Clear line of sight NOT required.//§oSneak + Right-Click a block to set target
+itemText.usage.item.senderModule3=Sends items from the router's buffer to any inventory in any dimension.//§oSneak + Right-Click a block to set target
+itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (%d with Range Upgrades).  Only collects items in the configured direction (direction of NONE = omnidirectional).
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s

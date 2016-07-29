@@ -55,22 +55,22 @@ public class Filter {
     }
 
     public boolean pass(ItemStack stack) {
-        System.out.println("pass ? " + dumpItemStack(stack) + " , blacklist=" + blacklist + ", ignoreOredict=" + ignoreOredict);
+//        System.out.println("pass ? " + dumpItemStack(stack) + " , blacklist=" + blacklist + ", ignoreOredict=" + ignoreOredict);
         for (int i = 0; i < items.size(); i++) {
             ItemStack filterItem = items.get(i);
             boolean matched = compareOne(i, stack);
-            System.out.println("compare: " + dumpItemStack(stack) + " vs " + filterItem + " = " + matched);
+//            System.out.println("compare: " + dumpItemStack(stack) + " vs " + filterItem + " = " + matched);
             if (matched) {
                 return !blacklist;
             }
         }
-        // no matches: pass if this is a blacklist, fail if whitelist
+        // no matches: pass if this is a blacklist, fail if a whitelist
         return blacklist;
     }
 
-    private static String dumpItemStack(ItemStack stack) {
-        return stack.getItem() != null ? stack.toString() : "(null item)";
-    }
+//    private static String dumpItemStack(ItemStack stack) {
+//        return stack.getItem() != null ? stack.toString() : "(null item)";
+//    }
 
     private boolean compareOne(int i, ItemStack stack) {
         ItemStack filterStack = items.get(i);

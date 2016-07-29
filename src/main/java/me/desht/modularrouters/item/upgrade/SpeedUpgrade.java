@@ -20,7 +20,7 @@ public class SpeedUpgrade extends Upgrade {
             TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).tileEntityItemRouter;
             if (router != null) {
                 int maxUseful = (int) Math.ceil((Config.baseTickRate - Config.hardMinTickRate) / (double) Config.ticksPerUpgrade);
-                MiscUtil.processTooltip(list, "itemText.misc.speedUpgrade", (router.getTickRate() / 20.0f), maxUseful);
+                MiscUtil.appendMultiline(list, "itemText.misc.speedUpgrade", (router.getTickRate() / 20.0f), maxUseful);
             }
         }
     }

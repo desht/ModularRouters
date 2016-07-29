@@ -10,8 +10,8 @@ public class ModuleToggleButton extends TexturedToggleButton {
 
     public ModuleToggleButton(int buttonId, int x, int y) {
         super(buttonId, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-        MiscUtil.processTooltip(tooltip1, "guiText.tooltip." + AbstractModule.FilterSettings.values()[buttonId] + ".1");
-        MiscUtil.processTooltip(tooltip2, "guiText.tooltip." + AbstractModule.FilterSettings.values()[buttonId] + ".2");
+        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + AbstractModule.FilterSettings.values()[buttonId] + ".1");
+        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + AbstractModule.FilterSettings.values()[buttonId] + ".2");
     }
 
     @Override

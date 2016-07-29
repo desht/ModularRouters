@@ -18,7 +18,7 @@ public class StackUpgrade extends Upgrade {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
             TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).tileEntityItemRouter;
             if (router != null) {
-                MiscUtil.processTooltip(list, "itemText.misc.stackUpgrade", router.getItemsPerTick(), 6);
+                MiscUtil.appendMultiline(list, "itemText.misc.stackUpgrade", router.getItemsPerTick(), 6);
             }
         }
     }

@@ -5,6 +5,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.execution.ModuleExecutor;
 import me.desht.modularrouters.logic.execution.Sender2Executor;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -46,8 +47,12 @@ public class ItemSenderModule2 extends TargetedSender {
                 }
             }
         }
-        list.add(I18n.translateToLocal("itemText.misc.sneakClickTarget"));
         super.addInformation(itemstack, player, list, par4);
+    }
+
+    @Override
+    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        MiscUtil.appendMultiline(list, "itemText.usage." + getUnlocalizedName(itemstack), Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE);
     }
 
     protected boolean isRangeLimited() {

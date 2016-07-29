@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class MiscUtil {
-    public static void processTooltip(List<String> result, String key, Object... args) {
+    public static void appendMultiline(List<String> result, String key, Object... args) {
         String raw = I18n.translateToLocalFormatted(key, args);
         int n = 0;
         for (String s : raw.split("//")) {

@@ -6,6 +6,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.logic.execution.ModuleExecutor;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -166,7 +167,7 @@ public abstract class AbstractModule extends ItemBase {
             RelativeDirection dir = getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.label." + dir.name()));
             NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (isBlacklist(itemstack) ? "2": "1")) + ":");
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (isBlacklist(itemstack) ? "2" : "1")) + ":");
             if (items.tagCount() > 0) {
                 for (int i = 0; i < items.tagCount(); i++) {
                     ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
@@ -182,6 +183,8 @@ public abstract class AbstractModule extends ItemBase {
                     compose("IGNORE_OREDICT", ignoreOreDict(itemstack)),
                     compose("TERMINATE", !terminates(itemstack))
             ));
+        } else if (GuiScreen.isCtrlKeyDown()) {
+            addUsageInformation(itemstack, player, list, par4);
         } else {
             list.add(I18n.format("itemText.misc.holdShift"));
         }
@@ -190,6 +193,10 @@ public abstract class AbstractModule extends ItemBase {
     private String compose(String key, boolean flag) {
         String text = I18n.format("itemText.misc." + key);
         return TextFormatting.AQUA + (flag ? TextFormatting.STRIKETHROUGH.toString() : "") + text + TextFormatting.RESET;
+    }
+
+    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        MiscUtil.appendMultiline(list, "itemText.usage." + getUnlocalizedName(itemstack));
     }
 
     public Class<? extends CompiledModuleSettings> getCompiler() {
