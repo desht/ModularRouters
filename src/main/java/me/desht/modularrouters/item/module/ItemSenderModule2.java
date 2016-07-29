@@ -55,7 +55,7 @@ public class ItemSenderModule2 extends TargetedSender {
 
     public static int maxDistanceSq(TileEntityItemRouter router) {
         // TODO precalculate to avoid repeated multiplications
-        int r = Config.sender2BaseRange + (Math.min(router.getRangeUpgrades(), Config.sender2BaseRange));
+        int r = Math.min(Config.sender2BaseRange + router.getRangeUpgrades(), Config.sender2MaxRange);
         return r * r;
     }
 }
