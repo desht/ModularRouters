@@ -35,14 +35,16 @@ public class Sender1Executor extends ModuleExecutor {
         ItemStack bufferStack = buffer.getStackInSlot(0);
         if (bufferStack != null && settings.getFilter().pass(bufferStack)) {
             SenderTarget target = findTargetInventory(router, settings);
-            int sent = InventoryUtils.transferItems(buffer, target.handler, 0, router.getItemsPerTick());
-            if (sent > 0) {
-                if (Config.senderParticles) {
-                    playParticles(router, settings, target.pos);
+            if (target != null) {
+                int sent = InventoryUtils.transferItems(buffer, target.handler, 0, router.getItemsPerTick());
+                if (sent > 0) {
+                    if (Config.senderParticles) {
+                        playParticles(router, settings, target.pos);
+                    }
+                    return true;
+                } else {
+                    return false;
                 }
-                return true;
-            } else {
-                return false;
             }
         }
 
