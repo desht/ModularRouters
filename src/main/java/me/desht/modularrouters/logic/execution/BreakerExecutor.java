@@ -20,10 +20,10 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BreakerExecutor extends ModuleExecutor {
     @Override
@@ -94,12 +94,7 @@ public class BreakerExecutor extends ModuleExecutor {
         List<ItemStack> drops = block.getDrops(world, pos, state, fortuneLevel);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortuneLevel, 1.0F, false, player);
 
-        List<ItemStack> result = new ArrayList<>();
-        for (ItemStack s : drops) {
-            if (world.rand.nextFloat() <= dropChance) {
-                result.add(s);
-            }
-        }
+        List<ItemStack> result = drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
 
         return result;
     }

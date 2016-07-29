@@ -1,7 +1,5 @@
 package me.desht.modularrouters.gui.widgets;
 
-import net.minecraft.util.ResourceLocation;
-
 import java.util.ArrayList;
 import java.util.List;
 

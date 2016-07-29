@@ -8,14 +8,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RangeUpgrade extends Upgrade {
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         list.add(I18n.format("itemText.misc.rangeUpgradeTooltip"));
-        for (String m : Arrays.asList("senderModule1", "senderModule2", "vacuumModule")) {
-            list.add("\u2022 " + I18n.format("item." + m + ".name"));
-        }
+        list.addAll(Arrays.asList("senderModule1", "senderModule2", "vacuumModule").stream().map(m -> "\u2022 " + I18n.format("item." + m + ".name")).collect(Collectors.toList()));
     }
 }

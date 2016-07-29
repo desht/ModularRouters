@@ -42,10 +42,9 @@ public class ModuleContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        ItemStack stack = null;
+        ItemStack stack;
         Slot slot = inventorySlots.get(index);
 
-        System.out.println("transfer: " + slot.slotNumber + ", stack: " + slot.getStack());
         if (slot != null && slot.getHasStack()) {
             ItemStack stackInSlot = slot.getStack();
             stack = stackInSlot.copy();
@@ -66,7 +65,6 @@ public class ModuleContainer extends Container {
                     }
                 }
                 if (freeSlot < ModuleInventory.N_FILTER_SLOTS) {
-                    System.out.println("transfer into slot " + freeSlot);
                     Slot s = inventorySlots.get(freeSlot);
                     s.putStack(stack);
                     slot.putStack(stackInSlot);

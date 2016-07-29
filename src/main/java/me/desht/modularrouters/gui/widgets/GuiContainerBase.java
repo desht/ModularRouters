@@ -12,11 +12,9 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void drawScreen(int x, int y, float partialTicks) {
         super.drawScreen(x, y, partialTicks);
-        for (GuiButton button : this.buttonList) {
-            if (button.isMouseOver() && button instanceof TexturedButton) {
-                drawHoveringText(((TexturedButton) button).getTooltip(), x, y, fontRendererObj);
-            }
-        }
+        this.buttonList.stream().filter(button -> button.isMouseOver() && button instanceof TexturedButton).forEach(button -> {
+            drawHoveringText(((TexturedButton) button).getTooltip(), x, y, fontRendererObj);
+        });
     }
 
 }

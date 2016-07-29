@@ -3,7 +3,6 @@ package me.desht.modularrouters.gui;
 import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
 import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.util.ResourceLocation;
 
 public class ModuleToggleButton extends TexturedToggleButton {
     private static final int BUTTON_WIDTH = 16;

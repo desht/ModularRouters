@@ -33,7 +33,7 @@ public class ModuleInventory implements IInventory {
         NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < items.tagCount(); ++i)  {
-			NBTTagCompound item = (NBTTagCompound) items.getCompoundTagAt(i);
+			NBTTagCompound item = items.getCompoundTagAt(i);
 			int slot = item.getInteger("Slot");
 			if (slot >= 0 && slot < getSizeInventory()) {
 				filters[slot] = ItemStack.loadItemStackFromNBT(item);
@@ -72,7 +72,7 @@ public class ModuleInventory implements IInventory {
         ItemStack stack = getStackInSlot(index);
         if (stack != null) {
             if (stack.stackSize > count) {
-                stack = stack.splitStack(count);
+                stack.splitStack(count);
                 markDirty();
             } else {
                 setInventorySlotContents(index, null);

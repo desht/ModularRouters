@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -89,7 +87,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        EnumFacing facing = (EnumFacing)state.getValue(FACING);
+        EnumFacing facing = state.getValue(FACING);
         return facing.getHorizontalIndex();
     }
 

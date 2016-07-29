@@ -2,7 +2,6 @@ package me.desht.modularrouters;
 
 import me.desht.modularrouters.integration.WailaIntegration;
 import me.desht.modularrouters.proxy.CommonProxy;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Mod;

@@ -19,7 +19,6 @@
         "model": "modularrouters:itemRouterActive"
       },
       "false": {
-        // nothing
       }
     }
   }

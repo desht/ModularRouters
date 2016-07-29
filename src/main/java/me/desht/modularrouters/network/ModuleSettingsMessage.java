@@ -30,7 +30,7 @@ public class ModuleSettingsMessage implements IMessage {
 
     @Override
     public void toBytes(ByteBuf byteBuf) {
-        byteBuf.writeByte((byte) flags);
+        byteBuf.writeByte(flags);
     }
 
     public static class Handler implements IMessageHandler<ModuleSettingsMessage, IMessage> {

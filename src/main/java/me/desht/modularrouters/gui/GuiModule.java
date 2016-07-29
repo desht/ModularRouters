@@ -24,8 +24,6 @@ public class GuiModule extends GuiContainerBase {
     private ModuleToggleButton[] buttons = new ModuleToggleButton[FilterSettings.values().length];
     private RelativeDirection facing;
 
-    private GuiButton directionButton;
-
     public GuiModule(ModuleContainer containerItem) {
         super(containerItem);
         inventory = containerItem.inventory;
@@ -45,7 +43,7 @@ public class GuiModule extends GuiContainerBase {
         addButton(FilterSettings.TERMINATE, this.guiLeft + 64, this.guiTop + 52);
 
         String label = I18n.format("guiText.label." + facing.name());
-        this.buttonList.add(directionButton = new GuiButton(DIRECTION_BUTTON_ID, this.guiLeft + 114, this.guiTop + 40, 50, 20, label));
+        this.buttonList.add(new GuiButton(DIRECTION_BUTTON_ID, this.guiLeft + 114, this.guiTop + 40, 50, 20, label));
     }
 
     private void addButton(FilterSettings setting, int x, int y) {
