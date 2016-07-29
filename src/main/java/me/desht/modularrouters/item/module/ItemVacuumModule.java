@@ -16,6 +16,6 @@ public class ItemVacuumModule extends AbstractModule {
     }
 
     public static int getVacuumRange(TileEntityItemRouter router) {
-        return Math.min(Config.vacuumBaseRange + router.getRangeUpgrades(), Config.MAX_VACUUM_RANGE);
+        return Math.min(Config.vacuumBaseRange + router.getRangeUpgrades(), Config.vacuumMaxRange);
     }
 }

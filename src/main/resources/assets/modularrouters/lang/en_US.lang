@@ -53,16 +53,19 @@ gui.config.ctgy.router=Routers
 gui.config.ctgy.router.tooltip=Config settings for Item Routers
 gui.config.ctgy.module=Modules
 gui.config.ctgy.module.tooltip=Config settings for Item Router Modules
-gui.config.baseTickRate=Base tick rate (with no Speed Upgrades)
-gui.config.ticksPerUpgrade=Tick rate reduction per upgrade
-gui.config.hardMinTicks=Hard minimum tick rate
+gui.config.baseTickRate=Base router tick rate (with no Speed Upgrades)
+gui.config.ticksPerUpgrade=Tick rate reduction (speedup) per Speed Upgrade
+gui.config.hardMinTicks=Hard minimum (fastest) router tick rate
 gui.config.senderParticles=Show particle effects when a Sender Module sends an item
 gui.config.placerParticles=Show particle effects when a Placer Module places a block
 gui.config.breakerParticles=Show particle effects when a Breaker Module breaks a block
-gui.config.vacuumParticles=Show particle effects when a Vacuum Modules absorbs an item
+gui.config.vacuumParticles=Show particle effects when a Vacuum Module absorbs an item
 gui.config.sender1BaseRange=Base Range for Sender Module Mk1 (no Range Upgrades)
+gui.config.sender1MaxRange=Hard Maximum Range for Sender Module Mk1 (with Range Upgrades)
 gui.config.sender2BaseRange=Base Range for Sender Module Mk2 (no Range Upgrades)
+gui.config.sender2MaxRange=Hard Maximum Range for Sender Module Mk2 (with Range Upgrades)
 gui.config.vacuumBaseRange=Base Range for Vacuum Module (no Range Upgrades)
+gui.config.vacuumMaxRange=Hard Maximum Range for Vacuum Module (with Range Upgrades)
 
 # Text which goes in item tooltips
 itemText.misc.holdShift=Hold §e§oShift§r§7 for more info

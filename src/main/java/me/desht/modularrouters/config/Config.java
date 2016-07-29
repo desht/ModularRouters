@@ -14,29 +14,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
-    public static final int DEFAULT_BASE_TICK_RATE = 20;
-    private static final int DEFAULT_TICKS_PER_UPGRADE = 2;
-    private static final boolean DEFAULT_SENDER_PARTICLES = true;
-    private static final int DEFAULT_SENDER1_BASE_RANGE = 10;
-    public static final int MAX_SENDER1_RANGE = DEFAULT_SENDER1_BASE_RANGE * 2;
-    private static final int DEFAULT_SENDER2_BASE_RANGE = 25;
-    public static final int MAX_SENDER2_RANGE = DEFAULT_SENDER2_BASE_RANGE * 2;
-    private static final boolean DEFAULT_VACUUM_PARTICLES = true;
-    private static final int DEFAULT_VACUUM_BASE_RANGE = 6;
-    public static final int MAX_VACUUM_RANGE = DEFAULT_VACUUM_BASE_RANGE * 2;
-    private static final boolean DEFAULT_PLACER_PARTICLES = true;
-    private static final boolean DEFAULT_BREAKER_PARTICLES = true;
+    public static class Defaults {
+        public static final int BASE_TICK_RATE = 20;
+        public static final int TICKS_PER_UPGRADE = 2;
+        public static final int SENDER1_BASE_RANGE = 8;
+        public static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
+        public static final int SENDER2_BASE_RANGE = 16;
+        public static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
+        public static final int VACUUM_BASE_RANGE = 6;
+        public static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
+        public static final boolean SENDER_PARTICLES = true;
+        public static final boolean VACUUM_PARTICLES = true;
+        public static final boolean PLACER_PARTICLES = true;
+        public static final boolean BREAKER_PARTICLES = true;
+    }
 
     public static int baseTickRate;
     public static int ticksPerUpgrade;
     public static int hardMinTickRate;
-    public static boolean vacuumParticles;
-    public static boolean senderParticles;
     public static int sender1BaseRange;
+    public static int sender1MaxRange;
     public static int sender2BaseRange;
+    public static int sender2MaxRange;
     public static int vacuumBaseRange;
+    public static int vacuumMaxRange;
+    public static boolean senderParticles;
     public static boolean breakerParticles;
     public static boolean placerParticles;
+    public static boolean vacuumParticles;
 
     public static final String CATEGORY_NAME_ROUTER = "category_router";
     public static final String CATEGORY_NAME_MODULE = "category_module";
@@ -77,35 +82,47 @@ public class Config {
             config.load();
         }
 
-        Property propBaseTickRate = config.get(CATEGORY_NAME_ROUTER, "baseTickRate", DEFAULT_BASE_TICK_RATE,
+        Property propBaseTickRate = config.get(CATEGORY_NAME_ROUTER, "baseTickRate", Defaults.BASE_TICK_RATE,
                 "Base router tick rate", 1, Integer.MAX_VALUE);
         propBaseTickRate.setLanguageKey("gui.config.baseTickRate");
-        Property propTicksPerUpgrade = config.get(CATEGORY_NAME_ROUTER, "ticksPerUpgrade", DEFAULT_TICKS_PER_UPGRADE,
+        Property propTicksPerUpgrade = config.get(CATEGORY_NAME_ROUTER, "ticksPerUpgrade", Defaults.TICKS_PER_UPGRADE,
                 "Tick rate reduction per upgrade installed", 2, 10);
         propTicksPerUpgrade.setLanguageKey("gui.config.ticksPerUpgrade");
         Property propHardMinTicks = config.get(CATEGORY_NAME_ROUTER, "hardMinTicks", 2,
                 "Hard minimum tick rate", 1, Integer.MAX_VALUE);
         propHardMinTicks.setLanguageKey("gui.config.hardMinTicks");
 
-        Property propSenderParticles = config.get(CATEGORY_NAME_MODULE, "senderParticles", DEFAULT_SENDER_PARTICLES,
-                "Show particles when Sender Modules send items");
-        propSenderParticles.setLanguageKey("gui.config.senderParticles");
-        Property propSender1BaseRange = config.get(CATEGORY_NAME_MODULE, "sender1BaseRange", DEFAULT_SENDER1_BASE_RANGE,
-                "Sender Module Mk1 Base Range", 1, MAX_SENDER1_RANGE);
+        Property propSender1BaseRange = config.get(CATEGORY_NAME_MODULE, "sender1BaseRange", Defaults.SENDER1_BASE_RANGE,
+                "Sender Module Mk1 Base Range", 1, Integer.MAX_VALUE);
         propSender1BaseRange.setLanguageKey("gui.config.sender1BaseRange");
-        Property propSender2BaseRange = config.get(CATEGORY_NAME_MODULE, "sender2BaseRange", DEFAULT_SENDER2_BASE_RANGE,
-                "Sender Module Mk2 Base Range", 1, MAX_SENDER2_RANGE);
+        Property propSender1MaxRange = config.get(CATEGORY_NAME_MODULE, "sender1MaxRange", Defaults.SENDER1_MAX_RANGE,
+                "Sender Module Mk1 Max Range", 1, Integer.MAX_VALUE);
+        propSender1MaxRange.setLanguageKey("gui.config.sender1MaxRange");
+
+        Property propSender2BaseRange = config.get(CATEGORY_NAME_MODULE, "sender2BaseRange", Defaults.SENDER2_BASE_RANGE,
+                "Sender Module Mk2 Base Range", 1, Integer.MAX_VALUE);
         propSender2BaseRange.setLanguageKey("gui.config.sender2BaseRange");
-        Property propVacuumParticles = config.get(CATEGORY_NAME_MODULE, "vacuumParticles", DEFAULT_VACUUM_PARTICLES,
+        Property propSender2MaxRange = config.get(CATEGORY_NAME_MODULE, "sender2MaxRange", Defaults.SENDER2_MAX_RANGE,
+                "Sender Module Mk2 Max Range", 1, Integer.MAX_VALUE);
+        propSender2MaxRange.setLanguageKey("gui.config.sender2MaxRange");
+
+        Property propVacuumBaseRange = config.get(CATEGORY_NAME_MODULE, "vacuumBaseRange", Defaults.VACUUM_BASE_RANGE,
+                "Vacuum Module Base Range", 1, Integer.MAX_VALUE);
+        propVacuumBaseRange.setLanguageKey("gui.config.vacuumBaseRange");
+        Property propVacuumMaxRange = config.get(CATEGORY_NAME_MODULE, "vacuumMaxRange", Defaults.VACUUM_MAX_RANGE,
+                "Vacuum Module Max Range", 1, Integer.MAX_VALUE);
+        propVacuumMaxRange.setLanguageKey("gui.config.vacuumMaxRange");
+
+        Property propVacuumParticles = config.get(CATEGORY_NAME_MODULE, "vacuumParticles", Defaults.VACUUM_PARTICLES,
                 "Show particles when Vacuum Module absorbs items");
         propVacuumParticles.setLanguageKey("gui.config.vacuumParticles");
-        Property propVacuumBaseRange = config.get(CATEGORY_NAME_MODULE, "vacuumBaseRange", DEFAULT_VACUUM_BASE_RANGE,
-                "Vacuum Module Base Range", DEFAULT_VACUUM_BASE_RANGE, DEFAULT_VACUUM_BASE_RANGE * 2);
-        propVacuumBaseRange.setLanguageKey("gui.config.vacuumBaseRange");
-        Property propPlacerParticles = config.get(CATEGORY_NAME_MODULE, "placerParticles", DEFAULT_PLACER_PARTICLES,
+        Property propSenderParticles = config.get(CATEGORY_NAME_MODULE, "senderParticles", Defaults.SENDER_PARTICLES,
+                "Show particles when Sender Modules send items");
+        propSenderParticles.setLanguageKey("gui.config.senderParticles");
+        Property propPlacerParticles = config.get(CATEGORY_NAME_MODULE, "placerParticles", Defaults.PLACER_PARTICLES,
                 "Show particles when Placer Module places a block");
         propPlacerParticles.setLanguageKey("gui.config.placerParticles");
-        Property propBreakerParticles = config.get(CATEGORY_NAME_MODULE, "breakerParticles", DEFAULT_BREAKER_PARTICLES,
+        Property propBreakerParticles = config.get(CATEGORY_NAME_MODULE, "breakerParticles", Defaults.BREAKER_PARTICLES,
                 "Show particles when Breaker Module breaks a block");
         propBreakerParticles.setLanguageKey("gui.config.breakerParticles");
 
@@ -115,8 +132,11 @@ public class Config {
         propOrderGeneral.add(propHardMinTicks.getName());
         List<String> propOrderModule = new ArrayList<>();
         propOrderModule.add(propSender1BaseRange.getName());
+        propOrderModule.add(propSender1MaxRange.getName());
         propOrderModule.add(propSender2BaseRange.getName());
+        propOrderModule.add(propSender2MaxRange.getName());
         propOrderModule.add(propVacuumBaseRange.getName());
+        propOrderModule.add(propVacuumMaxRange.getName());
         propOrderModule.add(propSenderParticles.getName());
         propOrderModule.add(propVacuumParticles.getName());
         propOrderModule.add(propPlacerParticles.getName());
@@ -125,14 +145,17 @@ public class Config {
         config.setCategoryPropertyOrder(CATEGORY_NAME_MODULE, propOrderModule);
 
         if (readFieldsFromConfig) {
-            baseTickRate = Math.max(1, propBaseTickRate.getInt(DEFAULT_BASE_TICK_RATE));
-            ticksPerUpgrade = propTicksPerUpgrade.getInt(DEFAULT_TICKS_PER_UPGRADE);
+            baseTickRate = Math.max(1, propBaseTickRate.getInt(Defaults.BASE_TICK_RATE));
+            ticksPerUpgrade = propTicksPerUpgrade.getInt(Defaults.TICKS_PER_UPGRADE);
             hardMinTickRate = propHardMinTicks.getInt();
-            senderParticles = propSenderParticles.getBoolean();
             sender1BaseRange = propSender1BaseRange.getInt();
+            sender1MaxRange = propSender1MaxRange.getInt();
             sender2BaseRange = propSender2BaseRange.getInt();
-            vacuumParticles = propVacuumParticles.getBoolean();
+            sender2MaxRange = propSender2MaxRange.getInt();
             vacuumBaseRange = propVacuumBaseRange.getInt();
+            vacuumMaxRange = propVacuumMaxRange.getInt();
+            senderParticles = propSenderParticles.getBoolean();
+            vacuumParticles = propVacuumParticles.getBoolean();
             placerParticles = propPlacerParticles.getBoolean();
             breakerParticles = propBreakerParticles.getBoolean();
         }
@@ -140,11 +163,14 @@ public class Config {
         propBaseTickRate.set(baseTickRate);
         propTicksPerUpgrade.set(ticksPerUpgrade);
         propHardMinTicks.set(hardMinTickRate);
-        propSenderParticles.set(senderParticles);
         propSender1BaseRange.set(sender1BaseRange);
+        propSender1MaxRange.set(sender1MaxRange);
         propSender2BaseRange.set(sender2BaseRange);
-        propVacuumParticles.set(vacuumParticles);
+        propSender2MaxRange.set(sender2MaxRange);
         propVacuumBaseRange.set(vacuumBaseRange);
+        propVacuumMaxRange.set(vacuumMaxRange);
+        propSenderParticles.set(senderParticles);
+        propVacuumParticles.set(vacuumParticles);
         propPlacerParticles.set(placerParticles);
         propBreakerParticles.set(breakerParticles);
 
