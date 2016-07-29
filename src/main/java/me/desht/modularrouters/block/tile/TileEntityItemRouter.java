@@ -290,7 +290,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     public boolean installModule(EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (!(stack.getItem() instanceof AbstractModule)) {
+        if (stack == null || !(stack.getItem() instanceof AbstractModule)) {
             return false;
         }
 
