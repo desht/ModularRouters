@@ -180,7 +180,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     public void setRedstoneBehaviour(RouterRedstoneBehaviour redstoneBehaviour) {
         this.redstoneBehaviour = redstoneBehaviour;
-        System.out.println("RRB = " + redstoneBehaviour);
     }
 
     private void executeModules() {
@@ -246,10 +245,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
         tickRate = calculateTickRate(getUpgradeCount(ItemUpgrade.UpgradeType.SPEED));
         itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
-
-        markDirty();
-
-        System.out.println("router recompiled! " + compiledModuleSettings.size() + " modules, tick rate=" + tickRate + ", stacksize=" + itemsPerTick);
     }
 
     private int getUpgradeCount(ItemUpgrade.UpgradeType type) {
