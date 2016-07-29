@@ -46,6 +46,7 @@ public class ItemSenderModule2 extends TargetedSender {
                 }
             }
         }
+        list.add(I18n.translateToLocal("itemText.misc.sneakClickTarget"));
         super.addInformation(itemstack, player, list, par4);
     }
 

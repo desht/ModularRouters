@@ -81,6 +81,7 @@ itemText.misc.stackUpgrade=Max. items processed per operation: %d//Max useful up
 itemText.misc.speedUpgrade=Router will tick every %.02f sec//Max. useful upgrades: %d
 itemText.misc.rangeUpgradeTooltip=Extends range of modules:
 itemText.misc.target=§eTarget: §b[DIM:%d pos:%d,%d,%d SIDE:%s]
+itemText.misc.sneakClickTarget=§oSneak + Right-Click a block to set target
 itemText.misc.outOfRange=  §c*** Target Out of Range ***
 
 # Player chat messages
