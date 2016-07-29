@@ -34,6 +34,7 @@ public class RouterDataProvider implements IWailaDataProvider {
             MiscUtil.processTooltip(currenttip, "itemText.misc.moduleCount", itemRouter.getModuleCount());
             currenttip.add(itemRouter.getSpeedUpgrades() + " x " + I18n.translateToLocal("item.speedUpgrade.name"));
             currenttip.add(itemRouter.getStackUpgrades() + " x " + I18n.translateToLocal("item.stackUpgrade.name"));
+            currenttip.add(itemRouter.getRangeUpgrades() + " x " + I18n.translateToLocal("item.rangeUpgrade.name"));
         }
         return currenttip;
     }
