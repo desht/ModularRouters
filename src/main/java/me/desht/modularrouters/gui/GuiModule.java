@@ -1,8 +1,8 @@
 package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.container.FilterHandler;
 import me.desht.modularrouters.container.ModuleContainer;
-import me.desht.modularrouters.container.ModuleInventory;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.item.module.AbstractModule.FilterSettings;
@@ -11,6 +11,7 @@ import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -20,14 +21,16 @@ public class GuiModule extends GuiContainerBase {
     public static final int GUI_HEIGHT = 165;
     public static final int GUI_WIDTH = 176;
 
-    private final ModuleInventory inventory;
+//    private final FilterHandler filterHandler;
+    private final ItemStack moduleItemStack;
     private ModuleToggleButton[] buttons = new ModuleToggleButton[FilterSettings.values().length];
     private RelativeDirection facing;
 
     public GuiModule(ModuleContainer containerItem) {
         super(containerItem);
-        inventory = containerItem.inventory;
-        facing = AbstractModule.getDirectionFromNBT(inventory.moduleItem);
+//        filterHandler = containerItem.filterHandler;
+        moduleItemStack = containerItem.filterHandler.getModuleItemStack();
+        facing = AbstractModule.getDirectionFromNBT(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
     }
@@ -49,7 +52,7 @@ public class GuiModule extends GuiContainerBase {
     private void addButton(FilterSettings setting, int x, int y) {
         int id = setting.ordinal();
         buttons[id] = new ModuleToggleButton(id, x, y);
-        buttons[id].setToggled(AbstractModule.checkFlag(inventory.moduleItem, setting));
+        buttons[id].setToggled(AbstractModule.checkFlag(moduleItemStack, setting));
         this.buttonList.add(buttons[id]);
     }
 
@@ -79,10 +82,11 @@ public class GuiModule extends GuiContainerBase {
 
     @Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = this.inventory.hasCustomName() ? this.inventory.getName() : I18n.format(this.inventory.getName());
+//		String title = this.filterHandler.hasCustomName() ? this.filterHandler.getName() : I18n.format(this.filterHandler.getName());
+        String title = moduleItemStack.getDisplayName();
 		this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
         this.fontRendererObj.drawString(I18n.format("guiText.label.direction"), 114, 30, 0x404040);
-		this.fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0x404040);
+		this.fontRendererObj.drawString(I18n.format("container.filterHandler"), 8, this.ySize - 96 + 4, 0x404040);
 	}
 
     @Override
