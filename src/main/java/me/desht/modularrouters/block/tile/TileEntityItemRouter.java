@@ -1,7 +1,7 @@
 package me.desht.modularrouters.block.tile;
 
-import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
@@ -201,7 +201,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             active = didWork;
             IBlockState state = getWorld().getBlockState(getPos());
             getWorld().setBlockState(getPos(), state.withProperty(BlockItemRouter.ACTIVE, active));
-//            getWorld().updateComparatorOutputLevel(getPos(), getBlockType());
             markDirty();
         }
 

@@ -18,17 +18,15 @@ import org.lwjgl.opengl.GL11;
 public class GuiModule extends GuiContainerBase {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/module.png");
     private static final int DIRECTION_BUTTON_ID = FilterSettings.values().length + 1;
-    public static final int GUI_HEIGHT = 165;
-    public static final int GUI_WIDTH = 176;
+    private static final int GUI_HEIGHT = 165;
+    private static final int GUI_WIDTH = 176;
 
-//    private final FilterHandler filterHandler;
     private final ItemStack moduleItemStack;
     private ModuleToggleButton[] buttons = new ModuleToggleButton[FilterSettings.values().length];
     private RelativeDirection facing;
 
     public GuiModule(ModuleContainer containerItem) {
         super(containerItem);
-//        filterHandler = containerItem.filterHandler;
         moduleItemStack = containerItem.filterHandler.getModuleItemStack();
         facing = AbstractModule.getDirectionFromNBT(moduleItemStack);
         this.xSize = GUI_WIDTH;
@@ -82,7 +80,6 @@ public class GuiModule extends GuiContainerBase {
 
     @Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-//		String title = this.filterHandler.hasCustomName() ? this.filterHandler.getName() : I18n.format(this.filterHandler.getName());
         String title = moduleItemStack.getDisplayName();
 		this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
         this.fontRendererObj.drawString(I18n.format("guiText.label.direction"), 114, 30, 0x404040);

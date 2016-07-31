@@ -7,21 +7,21 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class FilterHandler implements IItemHandlerModifiable {
-    private final ItemStack filterStack;
-
+    private final ItemStack moduleStack;
     private final ItemStack[] filters;
-    public FilterHandler(ItemStack filterStack, int size) {
-        this.filterStack = filterStack;
+
+    public FilterHandler(ItemStack moduleStack, int size) {
+        this.moduleStack = moduleStack;
         this.filters = new ItemStack[size];
 
-        if (!filterStack.hasTagCompound()) {
-            filterStack.setTagCompound(new NBTTagCompound());
+        if (!moduleStack.hasTagCompound()) {
+            moduleStack.setTagCompound(new NBTTagCompound());
         }
-        readfromNBT(filterStack.getTagCompound());
+        readfromNBT(moduleStack.getTagCompound());
     }
 
     public ItemStack getModuleItemStack() {
-        return filterStack;
+        return moduleStack;
     }
 
     public void save() {
@@ -30,7 +30,7 @@ public class FilterHandler implements IItemHandlerModifiable {
                 filters[i] = null;
             }
         }
-        writeToNBT(filterStack.getTagCompound());
+        writeToNBT(moduleStack.getTagCompound());
     }
 
     private void readfromNBT(NBTTagCompound compound) {
