@@ -1,7 +1,7 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.AbstractModule;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -21,7 +21,7 @@ public class ModuleSlot extends SlotItemHandler {
     }
 
     @Override
-	public boolean isItemValid(ItemStack itemstack) {
+    public boolean isItemValid(ItemStack itemstack) {
         return itemstack.getItem() instanceof AbstractModule;
-	}
+    }
 }

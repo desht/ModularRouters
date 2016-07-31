@@ -36,7 +36,7 @@ public class FilterHandler implements IItemHandlerModifiable {
     private void readfromNBT(NBTTagCompound compound) {
         NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
 
-        for (int i = 0; i < items.tagCount(); ++i)  {
+        for (int i = 0; i < items.tagCount(); ++i) {
             NBTTagCompound item = items.getCompoundTagAt(i);
             int slot = item.getInteger("Slot");
             if (slot >= 0 && slot < filters.length) {

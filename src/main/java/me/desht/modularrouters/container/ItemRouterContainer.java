@@ -1,7 +1,7 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -39,17 +39,17 @@ public class ItemRouterContainer extends Container {
 
         // player's hotbar
         for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
-		}
+            addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+        }
         // player's main inventory
         for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 9; x++) {
-				int slotNumber = 9 + y * 9 + x;
-				int xpos = PLAYER_INVENTORY_XPOS + x * SLOT_X_SPACING;
-				int ypos = PLAYER_INVENTORY_YPOS + y * SLOT_Y_SPACING;
-				addSlotToContainer(new Slot(invPlayer, slotNumber,  xpos, ypos));
-			}
-		}
+            for (int x = 0; x < 9; x++) {
+                int slotNumber = 9 + y * 9 + x;
+                int xpos = PLAYER_INVENTORY_XPOS + x * SLOT_X_SPACING;
+                int ypos = PLAYER_INVENTORY_YPOS + y * SLOT_Y_SPACING;
+                addSlotToContainer(new Slot(invPlayer, slotNumber, xpos, ypos));
+            }
+        }
 
         // item router buffer
         addSlotToContainer(new SlotItemHandler(itemRouterTE.getBuffer(), BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS) {
@@ -75,18 +75,17 @@ public class ItemRouterContainer extends Container {
     }
 
     @Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int sourceSlotIndex)
-	{
-		Slot sourceSlot = inventorySlots.get(sourceSlotIndex);
-		if (sourceSlot == null || !sourceSlot.getHasStack()) {
+    public ItemStack transferStackInSlot(EntityPlayer player, int sourceSlotIndex) {
+        Slot sourceSlot = inventorySlots.get(sourceSlotIndex);
+        if (sourceSlot == null || !sourceSlot.getHasStack()) {
             return null;
         }
-		ItemStack sourceStack = sourceSlot.getStack();
-		ItemStack copyOfSourceStack = sourceStack.copy();
+        ItemStack sourceStack = sourceSlot.getStack();
+        ItemStack copyOfSourceStack = sourceStack.copy();
 
-		// Check if the slot clicked is one of the vanilla container slots
-		if (sourceSlotIndex >= 0 && sourceSlotIndex < TE_FIRST_SLOT) {
-			// This is a vanilla container slot so merge the stack into the right part of the tile inventory
+        // Check if the slot clicked is one of the vanilla container slots
+        if (sourceSlotIndex >= 0 && sourceSlotIndex < TE_FIRST_SLOT) {
+            // This is a vanilla container slot so merge the stack into the right part of the tile inventory
             if (sourceStack.getItem() instanceof AbstractModule) {
                 // shift-clicked a module: see if there's a free module slot
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
@@ -101,26 +100,26 @@ public class ItemRouterContainer extends Container {
                     return null;
                 }
             }
-		} else if (sourceSlotIndex >= TE_FIRST_SLOT && sourceSlotIndex < TE_FIRST_SLOT + TE_LAST_SLOT) {
-			// This is a TE slot so merge the stack into the players inventory
-			if (!mergeItemStack(sourceStack, 0, TE_FIRST_SLOT - 1, false)) {
-				return null;
-			}
-		} else {
-			System.err.print("Invalid slotIndex:" + sourceSlotIndex);
-			return null;
-		}
+        } else if (sourceSlotIndex >= TE_FIRST_SLOT && sourceSlotIndex < TE_FIRST_SLOT + TE_LAST_SLOT) {
+            // This is a TE slot so merge the stack into the players inventory
+            if (!mergeItemStack(sourceStack, 0, TE_FIRST_SLOT - 1, false)) {
+                return null;
+            }
+        } else {
+            System.err.print("Invalid slotIndex:" + sourceSlotIndex);
+            return null;
+        }
 
-		// If stack size == 0 (the entire stack was moved) set slot contents to null
-		if (sourceStack.stackSize == 0) {
-			sourceSlot.putStack(null);
-		} else {
-			sourceSlot.onSlotChanged();
-		}
+        // If stack size == 0 (the entire stack was moved) set slot contents to null
+        if (sourceStack.stackSize == 0) {
+            sourceSlot.putStack(null);
+        } else {
+            sourceSlot.onSlotChanged();
+        }
 
-		sourceSlot.onPickupFromSlot(player, sourceStack);
-		return copyOfSourceStack;
-	}
+        sourceSlot.onPickupFromSlot(player, sourceStack);
+        return copyOfSourceStack;
+    }
 
 //	@Override
 //	public void onContainerClosed(EntityPlayer playerIn)

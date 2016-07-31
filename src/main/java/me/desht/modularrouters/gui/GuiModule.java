@@ -1,7 +1,6 @@
 package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.container.FilterHandler;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.item.module.AbstractModule;
@@ -79,20 +78,20 @@ public class GuiModule extends GuiContainerBase {
     }
 
     @Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String title = moduleItemStack.getDisplayName();
-		this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
+        this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
         this.fontRendererObj.drawString(I18n.format("guiText.label.direction"), 114, 30, 0x404040);
-		this.fontRendererObj.drawString(I18n.format("container.filterHandler"), 8, this.ySize - 96 + 4, 0x404040);
-	}
+        this.fontRendererObj.drawString(I18n.format("container.filterHandler"), 8, this.ySize - 96 + 4, 0x404040);
+    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.getTextureManager().bindTexture(textureLocation);
-		int x = (width - xSize) / 2;
-		int y = (height - ySize) / 2;
-		drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+        mc.getTextureManager().bindTexture(textureLocation);
+        int x = (width - xSize) / 2;
+        int y = (height - ySize) / 2;
+        drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
     }
 
 }

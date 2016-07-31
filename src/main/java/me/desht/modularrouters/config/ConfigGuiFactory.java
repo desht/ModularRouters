@@ -38,16 +38,16 @@ public class ConfigGuiFactory implements IModGuiFactory {
 
     public static class MRConfigGui extends GuiConfig {
         public MRConfigGui(GuiScreen parentScreen) {
-			super(parentScreen, getConfigElements(), ModularRouters.modId,
-            false, false, I18n.format("gui.config.mainTitle"));
-		}
+            super(parentScreen, getConfigElements(), ModularRouters.modId,
+                    false, false, I18n.format("gui.config.mainTitle"));
+        }
 
         private static List<IConfigElement> getConfigElements() {
-			List<IConfigElement> list = new ArrayList<>();
-			list.add(new DummyConfigElement.DummyCategoryElement("mainCfg", "gui.config.ctgy.router", CategoryEntryRouter.class));
+            List<IConfigElement> list = new ArrayList<>();
+            list.add(new DummyConfigElement.DummyCategoryElement("mainCfg", "gui.config.ctgy.router", CategoryEntryRouter.class));
             list.add(new DummyConfigElement.DummyCategoryElement("mainCfg", "gui.config.ctgy.module", CategoryEntryModule.class));
-			return list;
-		}
+            return list;
+        }
 
         public static class CategoryEntryRouter extends GuiConfigEntries.CategoryEntry {
             public CategoryEntryRouter(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
@@ -55,7 +55,7 @@ public class ConfigGuiFactory implements IModGuiFactory {
             }
 
             @Override
-			protected GuiScreen buildChildScreen() {
+            protected GuiScreen buildChildScreen() {
                 Configuration configuration = Config.getConfig();
                 ConfigElement catRouter = new ConfigElement(configuration.getCategory(Config.CATEGORY_NAME_ROUTER));
                 List<IConfigElement> propertiesOnThisScreen = catRouter.getChildElements();

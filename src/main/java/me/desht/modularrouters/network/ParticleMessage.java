@@ -20,7 +20,8 @@ public class ParticleMessage implements IMessage {
     private double zSpeed;
     private int[] data;
 
-    public ParticleMessage() {}
+    public ParticleMessage() {
+    }
 
     public ParticleMessage(EnumParticleTypes type, World world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... data) {
         this.type = type;

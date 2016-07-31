@@ -8,6 +8,7 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class UpgradeSlot extends SlotItemHandler {
     private final TileEntityItemRouter router;
+
     public UpgradeSlot(TileEntityItemRouter router, IItemHandler inventory, int slot, int xpos, int ypos) {
         super(inventory, slot, xpos, ypos);
         this.router = router;
@@ -20,8 +21,7 @@ public class UpgradeSlot extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(ItemStack itemstack)
-	{
-		return itemstack.getItem() instanceof ItemUpgrade;
-	}
+    public boolean isItemValid(ItemStack itemstack) {
+        return itemstack.getItem() instanceof ItemUpgrade;
+    }
 }

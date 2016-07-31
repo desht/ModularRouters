@@ -6,7 +6,6 @@ import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.integration.TOPInfoProvider;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.InventoryUtils;
@@ -122,8 +121,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     }
 
     @Override
-    public boolean hasComparatorInputOverride(IBlockState state)
-    {
+    public boolean hasComparatorInputOverride(IBlockState state) {
         return true;
     }
 
@@ -191,15 +189,15 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote && !player.isSneaking()) {
+        if (!world.isRemote && !player.isSneaking()) {
             player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
             return true;
         } else {
             return false;
         }
-	}
+    }
 
-    private static char[] ARROWS = new char[] { ' ', '▼', '▲', '◀', '▶', '▣', '▤'};
+    private static char[] ARROWS = new char[]{' ', '▼', '▲', '◀', '▶', '▣', '▤'};
 
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {

@@ -1,8 +1,8 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;

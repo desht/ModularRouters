@@ -30,7 +30,7 @@ public class ModuleContainer extends Container {
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
-        for (int i = 0; i < 3; i++)	{
+        for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
                 this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * SLOT_X_SPACING, 84 + i * SLOT_Y_SPACING));
             }

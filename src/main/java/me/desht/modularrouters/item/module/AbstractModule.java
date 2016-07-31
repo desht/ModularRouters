@@ -64,13 +64,20 @@ public abstract class AbstractModule extends ItemBase {
 
         public EnumFacing toEnumFacing(EnumFacing current) {
             switch (this) {
-                case UP: return EnumFacing.UP;
-                case DOWN: return EnumFacing.DOWN;
-                case FRONT: return current;
-                case LEFT: return current.rotateY();
-                case BACK: return current.getOpposite();
-                case RIGHT: return current.rotateYCCW();
-                default: return current;
+                case UP:
+                    return EnumFacing.UP;
+                case DOWN:
+                    return EnumFacing.DOWN;
+                case FRONT:
+                    return current;
+                case LEFT:
+                    return current.rotateY();
+                case BACK:
+                    return current.getOpposite();
+                case RIGHT:
+                    return current.rotateYCCW();
+                default:
+                    return current;
             }
         }
     }
@@ -84,8 +91,8 @@ public abstract class AbstractModule extends ItemBase {
 
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
-		return 1; // return any value greater than zero
-	}
+        return 1; // return any value greater than zero
+    }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {

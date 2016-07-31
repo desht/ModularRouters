@@ -2,7 +2,7 @@ package me.desht.modularrouters.gui.widgets;
 
 import net.minecraft.util.ResourceLocation;
 
-public abstract class TexturedCyclerButton <T extends Enum<T>> extends TexturedButton {
+public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedButton {
     private T state;
     private final int len;
 

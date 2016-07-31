@@ -1,11 +1,11 @@
 package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.proxy.CommonProxy;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -60,9 +60,9 @@ public class GuiItemRouter extends GuiContainerBase {
     }
 
     @Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String title = tileEntityItemRouter.getDisplayName().getUnformattedText();
-		fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
+        fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("guiText.label.upgrades"), 98, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("guiText.label.modules"), 8, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
@@ -71,8 +71,8 @@ public class GuiItemRouter extends GuiContainerBase {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i1) {
-		Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 }

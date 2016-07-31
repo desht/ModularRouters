@@ -1,17 +1,16 @@
 package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.EnchantBreakerModuleRecipe;
-import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.integration.IntegrationHandler;
-import me.desht.modularrouters.integration.WailaIntegration;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.ParticleMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

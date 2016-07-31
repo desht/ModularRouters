@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 public class EnchantBreakerModuleRecipe implements IRecipe {
-    public static final Enchantment[] validEnchantments = new Enchantment[] {
+    public static final Enchantment[] validEnchantments = new Enchantment[]{
             Enchantments.SILK_TOUCH,
             Enchantments.FORTUNE
     };

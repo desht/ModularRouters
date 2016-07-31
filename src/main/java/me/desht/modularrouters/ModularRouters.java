@@ -1,6 +1,5 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.integration.WailaIntegration;
 import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -13,7 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ModularRouters.modId, version = ModularRouters.version, name = ModularRouters.name,
-        guiFactory = ModularRouters.GUIFACTORY, dependencies="after:Waila")
+        guiFactory = ModularRouters.GUIFACTORY, dependencies = "after:Waila")
 public class ModularRouters {
     public static final String modId = "modularrouters";
     public static final String name = "Modular Routers";

@@ -33,6 +33,7 @@ public abstract class TexturedButton extends GuiButton {
     }
 
     protected abstract int getTextureX();
+
     protected abstract int getTextureY();
 
     public List<String> getTooltip() {

@@ -93,17 +93,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         return nbtTagCompound;
     }
 
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound nbtTagCompound = getUpdateTag();
-		int metadata = getBlockMetadata();
-		return new SPacketUpdateTileEntity(this.pos, metadata, nbtTagCompound);
-	}
+        int metadata = getBlockMetadata();
+        return new SPacketUpdateTileEntity(this.pos, metadata, nbtTagCompound);
+    }
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
-	}
+    }
 
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
@@ -262,9 +262,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         return compiledModuleSettings.size();
     }
 
-    public int getSpeedUpgrades() { return getUpgradeCount(ItemUpgrade.UpgradeType.SPEED); }
+    public int getSpeedUpgrades() {
+        return getUpgradeCount(ItemUpgrade.UpgradeType.SPEED);
+    }
 
-    public int getStackUpgrades() { return getUpgradeCount(ItemUpgrade.UpgradeType.STACK); }
+    public int getStackUpgrades() {
+        return getUpgradeCount(ItemUpgrade.UpgradeType.STACK);
+    }
 
     public int getRangeUpgrades() {
         return getUpgradeCount(ItemUpgrade.UpgradeType.RANGE);
@@ -315,6 +319,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     /**
      * Check if the router processed anything on its last tick
+     *
      * @return true if the router processed something
      */
     public boolean isActive() {

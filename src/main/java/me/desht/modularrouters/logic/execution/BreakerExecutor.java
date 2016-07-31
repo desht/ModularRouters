@@ -1,11 +1,11 @@
 package me.desht.modularrouters.logic.execution;
 
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.logic.CompiledBreakerModuleSettings;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -21,7 +21,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

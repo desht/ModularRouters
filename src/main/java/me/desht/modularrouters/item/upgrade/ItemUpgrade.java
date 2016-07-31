@@ -16,6 +16,7 @@ public class ItemUpgrade extends ItemBase {
         SPEED,
         RANGE
     }
+
     public static final int SUBTYPES = UpgradeType.values().length;
     private static final Upgrade[] upgrades = new Upgrade[SUBTYPES];
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Filter {
     private boolean blacklist = false;
-    private boolean ignoreMeta = false ;
+    private boolean ignoreMeta = false;
     private boolean ignoreNBT = false;
     private boolean ignoreOredict = false;
     private final List<ItemStack> items = new ArrayList<>();
@@ -32,12 +32,12 @@ public class Filter {
             ignoreOredict = AbstractModule.ignoreOreDict(moduleStack);
             // it's safe to assume that the module actually has NBT data at this point...
             NBTTagList tagList = moduleStack.getTagCompound().getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < tagList.tagCount(); ++i)  {
+            for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
                 ItemStack filterStack = ItemStack.loadItemStackFromNBT(tagCompound);
                 items.add(filterStack);
                 oreIdCache.add(OreDictionary.getOreIDs(filterStack));
-			}
+            }
         } else {
             initDefault();
         }

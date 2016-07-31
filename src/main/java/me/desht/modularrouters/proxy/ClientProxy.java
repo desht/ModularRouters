@@ -1,7 +1,7 @@
 package me.desht.modularrouters.proxy;
 
-import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.config.Config;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;

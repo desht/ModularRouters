@@ -1,11 +1,11 @@
 package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
