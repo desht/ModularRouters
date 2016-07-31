@@ -92,7 +92,7 @@ itemText.usage.item.pullerModule=Extracts items from an adjacent inventory in th
 itemText.usage.item.senderModule1=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).//Clear line of sight required.
 itemText.usage.item.senderModule2=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).//Clear line of sight NOT required.//§oSneak + Right-Click a block to set target
 itemText.usage.item.senderModule3=Sends items from the router's buffer to any inventory in any dimension.//§oSneak + Right-Click a block to set target
-itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (%d with Range Upgrades).  Only collects items in the configured direction (direction of NONE = omnidirectional).
+itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (up to %d with Range Upgrades).  Only collects items in the configured direction (direction of NONE = omnidirectional).
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s

@@ -246,7 +246,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
     }
 
-    private int getUpgradeCount(ItemUpgrade.UpgradeType type) {
+    public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
         return upgradeCount[type.ordinal()];
     }
 

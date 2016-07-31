@@ -4,6 +4,8 @@ import me.desht.modularrouters.EnchantBreakerModuleRecipe;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
+import me.desht.modularrouters.integration.IntegrationHandler;
+import me.desht.modularrouters.integration.WailaIntegration;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
@@ -37,6 +39,9 @@ public class CommonProxy {
         network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, 2, Side.CLIENT);
 
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
+
+        IntegrationHandler.registerWaila();
+        IntegrationHandler.registerTOP();
     }
 
     public void init() {

@@ -1,7 +1,14 @@
 package me.desht.modularrouters.block;
 
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.integration.TOPInfoProvider;
+import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -22,17 +29,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockItemRouter extends BlockBase implements ITileEntityProvider {
+public class BlockItemRouter extends BlockBase implements ITileEntityProvider, TOPInfoProvider {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
 
@@ -189,4 +198,28 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider {
             return false;
         }
 	}
+
+    private static char[] ARROWS = new char[] { ' ', '▼', '▲', '◀', '▶', '▣', '▤'};
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof TileEntityItemRouter) {
+            TileEntityItemRouter router = (TileEntityItemRouter) te;
+            IItemHandler modules = router.getModules();
+            IProbeInfo sub = probeInfo.horizontal();
+            for (int i = 0; i < modules.getSlots(); i++) {
+                ItemStack stack = modules.getStackInSlot(i);
+                if (stack != null) {
+                    AbstractModule.RelativeDirection dir = AbstractModule.getDirectionFromNBT(stack);
+                    sub.item(stack).text(TextFormatting.GREEN + Character.toString(ARROWS[dir.ordinal()]));
+                }
+            }
+            sub = probeInfo.horizontal();
+            for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+                sub.item(ItemUpgrade.makeItemStack(type)).text(TextFormatting.GREEN + "x " + router.getUpgradeCount(type));
+            }
+            probeInfo.text(TextFormatting.RED + net.minecraft.util.text.translation.I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
+        }
+    }
 }

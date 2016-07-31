@@ -7,7 +7,6 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
@@ -33,14 +32,18 @@ repositories {
         name "ProfMobius"
         url "http://mobiusstrip.eu/maven/"
     }
+    maven { // TOP
+        name = "tterrag maven"
+        url = "http://maven.tterrag.com/"
+    }
 }
 
 dependencies {
     deobfCompile group: "mcp.mobius.waila", name: "Waila", version: waila_version
+    deobfCompile group: "mcjty.theoneprobe", name: "TheOneProbe", version: top_version // "mcjty.theoneprobe:TheOneProbe:1.10-1.0.13-26"
 }
 
-processResources
-{
+processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
@@ -48,11 +51,11 @@ processResources
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'

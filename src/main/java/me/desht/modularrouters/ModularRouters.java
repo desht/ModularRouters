@@ -43,7 +43,6 @@ public class ModularRouters {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        WailaIntegration.setup();
         proxy.init();
     }
 
