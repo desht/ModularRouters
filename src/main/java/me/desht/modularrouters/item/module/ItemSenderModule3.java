@@ -12,9 +12,18 @@ public class ItemSenderModule3 extends ItemSenderModule2 {
     }
 
     @Override
-    public boolean isValidTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos) {
+    public TargetValidation validateTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos) {
+        if (router == null) {
+            return TargetValidation.ROUTER_MISSING;
+        }
         WorldServer w = DimensionManager.getWorld(dimPos.dimId);
-        return w != null && w.getChunkProvider().chunkExists(dimPos.pos.getX() >> 4, dimPos.pos.getZ() >> 4);
+        if (w == null || !w.getChunkProvider().chunkExists(dimPos.pos.getX() >> 4, dimPos.pos.getZ() >> 4)) {
+            return TargetValidation.NOT_LOADED;
+        }
+        if (w.getTileEntity(dimPos.pos) == null) {
+            return TargetValidation.NOT_INVENTORY;
+        }
+        return TargetValidation.OK;
     }
 
     @Override

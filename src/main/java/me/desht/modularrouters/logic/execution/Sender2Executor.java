@@ -15,15 +15,12 @@ public class Sender2Executor extends Sender1Executor {
         TargetedSender.DimensionPos target = settings.getTarget();
         ItemSenderModule2 module = (ItemSenderModule2) settings.getModule();
 
-        if (!module.isValidTarget(router, target)) {
+        if (!module.validateTarget(router, target).isOK()) {
             return null;
         }
 
         WorldServer w = DimensionManager.getWorld(target.dimId);
         IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
-        if (handler != null) {
-            return new SenderTarget(target.pos, handler);
-        }
-        return null;
+        return handler == null ? null : new SenderTarget(target.pos, handler);
     }
 }

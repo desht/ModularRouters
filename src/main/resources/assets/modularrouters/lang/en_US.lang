@@ -81,8 +81,11 @@ itemText.misc.stackUpgrade=Max. items processed per operation: %d//Max. useful u
 itemText.misc.speedUpgrade=Router will tick every %.02f sec//Max. useful upgrades: %d
 itemText.misc.rangeUpgradeTooltip=Extends range of modules:
 itemText.misc.target=§eTarget: §bDIM: %d | POS: %d,%d,%d | SIDE: %s
-itemText.misc.outOfRange=  §c*** Target Out of Range ***
 itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
+itemText.targetValidation.OUT_OF_RANGE=  §c*** Target Out of Range ***
+itemText.targetValidation.NOT_LOADED=  §c*** Target Not Loaded ***
+itemText.targetValidation.NOT_INVENTORY=  §c*** Target Has no Inventory ***
+itemText.targetValidation.ROUTER_MISSING=  §c*** Source Router Missing??? ***
 
 # Usage tooltip information
 itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.

@@ -181,8 +181,8 @@ public abstract class AbstractModule extends ItemBase {
             } else {
                 list.add("  " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
             }
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ":");
-            list.add("  " + Joiner.on(" | ").join(
+            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
+                    Joiner.on(" | ").join(
                     compose("IGNORE_META", ignoreMeta(itemstack)),
                     compose("IGNORE_NBT", ignoreNBT(itemstack)),
                     compose("IGNORE_OREDICT", ignoreOreDict(itemstack)),

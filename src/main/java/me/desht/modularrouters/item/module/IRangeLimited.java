@@ -3,5 +3,5 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 
 interface IRangeLimited {
-    boolean isValidTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos);
+    ItemSenderModule2.TargetValidation validateTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos);
 }
