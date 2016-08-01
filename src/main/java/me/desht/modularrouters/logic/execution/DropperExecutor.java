@@ -16,7 +16,7 @@ public class DropperExecutor extends ModuleExecutor {
             ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
             BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
             EntityItem item = new EntityItem(router.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, toDrop);
-            item.setVelocity(0, 0, 0);
+            item.motionX = item.motionY = item.motionZ = 0.0;
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.getBuffer().extractItem(0, toDrop.stackSize, false);
                 return true;

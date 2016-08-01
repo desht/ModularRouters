@@ -84,7 +84,6 @@ public abstract class AbstractModule extends ItemBase {
 
     public AbstractModule(String name) {
         super(name);
-//        setMaxStackSize(1);
     }
 
     public abstract ModuleExecutor getExecutor();
@@ -130,7 +129,6 @@ public abstract class AbstractModule extends ItemBase {
                 }
             }
             compound.setByte("Flags", flags);
-            System.out.printf("default value: %02x\n", flags);
         }
     }
 
