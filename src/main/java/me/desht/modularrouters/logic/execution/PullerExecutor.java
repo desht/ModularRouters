@@ -1,11 +1,10 @@
 package me.desht.modularrouters.logic.execution;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -18,9 +17,8 @@ public class PullerExecutor extends ModuleExecutor {
                 && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
             EnumFacing facingOpposite = router.getAbsoluteFacing(settings.getDirection()).getOpposite();
             BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
-            TileEntity te = router.getWorld().getTileEntity(pos);
-            if (te != null && te.hasCapability(ModularRouters.ITEM_HANDLER_CAPABILITY, facingOpposite)) {
-                IItemHandler handler = te.getCapability(ModularRouters.ITEM_HANDLER_CAPABILITY, facingOpposite);
+            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), pos, facingOpposite);
+            if (handler != null) {
                 for (int i = 0; i < handler.getSlots(); i++) {
                     ItemStack toExtract = handler.extractItem(i, router.getItemsPerTick(), true);
                     if (toExtract != null && settings.getFilter().pass(toExtract)) {
