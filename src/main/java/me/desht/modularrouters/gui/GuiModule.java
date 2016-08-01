@@ -82,7 +82,7 @@ public class GuiModule extends GuiContainerBase {
         String title = moduleItemStack.getDisplayName();
         this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
         this.fontRendererObj.drawString(I18n.format("guiText.label.direction"), 114, 30, 0x404040);
-        this.fontRendererObj.drawString(I18n.format("container.filterHandler"), 8, this.ySize - 96 + 4, 0x404040);
+        this.fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0x404040);
     }
 
     @Override
