@@ -1,7 +1,10 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "modularrouters:itemRouter"
+    "model": "modularrouters:itemRouter",
+    "textures": {
+      "front": "modularrouters:blocks/itemRouterFront"
+    }
   },
   "variants": {
     "normal": [{}],
@@ -16,7 +19,9 @@
     },
     "active": {
       "true": {
-        "model": "modularrouters:itemRouterActive"
+        "textures": {
+          "front": "modularrouters:blocks/itemRouterFrontActive"
+        }
       },
       "false": {
       }

@@ -6,7 +6,7 @@
     "up": "modularrouters:blocks/itemRouterOther",
     "east": "modularrouters:blocks/itemRouterOther",
     "west": "modularrouters:blocks/itemRouterOther",
-    "north": "modularrouters:blocks/itemRouterFront",
+    "north": "#front",
     "south": "modularrouters:blocks/itemRouterOther"
   }
 }
