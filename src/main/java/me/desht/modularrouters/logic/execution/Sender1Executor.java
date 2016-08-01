@@ -6,6 +6,7 @@ import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.item.module.ItemSenderModule1;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -57,7 +58,6 @@ public class Sender1Executor extends ModuleExecutor {
     }
 
     protected void playParticles(TileEntityItemRouter router, CompiledModuleSettings settings, BlockPos targetPos) {
-//        BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
         Vec3d vec1 = new Vec3d(router.getPos());
         Vec3d vec2 = new Vec3d(targetPos);
         Vec3d vec3 = vec2.subtract(vec1).scale(particlePos).add(vec1).addVector(0.5, 0.5, 0.5);
@@ -80,11 +80,22 @@ public class Sender1Executor extends ModuleExecutor {
             IItemHandler handler = InventoryUtils.getInventory(world, pos, facingOpposite);
             if (handler != null) {
                 return new SenderTarget(pos, handler);
-            } else if (world.getBlockState(pos).getBlock().isBlockSolid(world, pos, facingOpposite)) {
+            } else if (!isPassable(world, pos, facingOpposite)) {
                 return null;
             }
             pos = pos.offset(facing);
         }
         return null;
+    }
+
+    private boolean isPassable(World w, BlockPos pos, EnumFacing face) {
+        IBlockState state = w.getBlockState(pos);
+        if (!state.getBlock().isBlockSolid(w, pos, face)) {
+            return true;
+        }
+        if (!state.isOpaqueCube()) {
+            return true;
+        }
+        return false;
     }
 }
