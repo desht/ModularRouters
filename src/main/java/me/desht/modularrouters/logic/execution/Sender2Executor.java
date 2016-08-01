@@ -13,17 +13,16 @@ public class Sender2Executor extends Sender1Executor {
     @Override
     protected SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModuleSettings settings) {
         TargetedSender.DimensionPos target = settings.getTarget();
-        // must be in same dimension and within range
-        if (target.dimId != router.getWorld().provider.getDimension()
-                || target.pos.distanceSq(router.getPos()) > ItemSenderModule2.maxDistanceSq(router)) {
+        ItemSenderModule2 module = (ItemSenderModule2) settings.getModule();
+
+        if (!module.isValidTarget(router, target)) {
             return null;
         }
+
         WorldServer w = DimensionManager.getWorld(target.dimId);
-        if (w != null) {
-            IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
-            if (handler != null) {
-                return new SenderTarget(target.pos, handler);
-            }
+        IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
+        if (handler != null) {
+            return new SenderTarget(target.pos, handler);
         }
         return null;
     }

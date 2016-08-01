@@ -14,6 +14,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class GuiItemRouter extends GuiContainerBase {
     public static final int LABEL_XPOS = 5;

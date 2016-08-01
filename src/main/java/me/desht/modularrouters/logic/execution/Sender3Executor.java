@@ -12,19 +12,6 @@ import net.minecraftforge.items.IItemHandler;
 
 public class Sender3Executor extends Sender2Executor {
     @Override
-    protected SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModuleSettings settings) {
-        TargetedSender.DimensionPos target = settings.getTarget();
-        WorldServer w = DimensionManager.getWorld(target.dimId);
-        if (w != null) {
-            IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
-            if (handler != null) {
-                return new SenderTarget(target.pos, handler);
-            }
-        }
-        return null;
-    }
-
-    @Override
     protected void playParticles(TileEntityItemRouter router, CompiledModuleSettings settings, BlockPos targetPos) {
         double x = router.getPos().getX() - 0.1 + Math.random() * 1.2;
         double y = router.getPos().getY() + 0.2 + Math.random() * 0.8;

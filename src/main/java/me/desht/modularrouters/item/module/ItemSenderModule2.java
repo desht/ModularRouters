@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ItemSenderModule2 extends TargetedSender {
+public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
     public ItemSenderModule2() {
         super("senderModule2");
     }
@@ -40,9 +40,9 @@ public class ItemSenderModule2 extends TargetedSender {
             if (w != null) {
                 list.add(I18n.translateToLocalFormatted("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
             }
-            if (isRangeLimited() && Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
+            if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
                 TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).tileEntityItemRouter;
-                if (router != null && dpos.pos.distanceSq(router.getPos()) > maxDistanceSq(router)) {
+                if (!isValidTarget(router, dpos)) {
                     list.add(I18n.translateToLocal("itemText.misc.outOfRange"));
                 }
             }
@@ -51,15 +51,23 @@ public class ItemSenderModule2 extends TargetedSender {
     }
 
     @Override
+    public boolean isValidTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos) {
+        if (router == null || router.getWorld().provider.getDimension() != dimPos.dimId) {
+            return false;
+        }
+        if (router.getPos().distanceSq(dimPos.pos.getX(), dimPos.pos.getY(), dimPos.pos.getZ()) > maxDistanceSq(router)) {
+            return false;
+        }
+        WorldServer w = DimensionManager.getWorld(dimPos.dimId);
+        return w != null && w.getChunkProvider().chunkExists(dimPos.pos.getX() >> 4, dimPos.pos.getZ() >> 4);
+    }
+
+    @Override
     protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         MiscUtil.appendMultiline(list, "itemText.usage." + getUnlocalizedName(itemstack), Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE);
     }
 
-    protected boolean isRangeLimited() {
-        return true;
-    }
-
-    public static int maxDistanceSq(TileEntityItemRouter router) {
+    private int maxDistanceSq(TileEntityItemRouter router) {
         // TODO precalculate to avoid repeated multiplications
         int r = Math.min(Config.sender2BaseRange + router.getRangeUpgrades(), Config.sender2MaxRange);
         return r * r;
