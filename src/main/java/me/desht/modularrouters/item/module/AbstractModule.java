@@ -197,7 +197,7 @@ public abstract class AbstractModule extends ItemBase {
 
     private String compose(String key, boolean flag) {
         String text = I18n.format("itemText.misc." + key);
-        return TextFormatting.AQUA + (flag ? TextFormatting.STRIKETHROUGH.toString() : "") + text + TextFormatting.RESET;
+        return TextFormatting.AQUA + (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : "") + text + TextFormatting.RESET;
     }
 
     protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
