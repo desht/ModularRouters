@@ -6,9 +6,11 @@ import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.execution.ModuleExecutor;
 import me.desht.modularrouters.logic.execution.Sender2Executor;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -39,6 +41,7 @@ public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
             WorldServer w = DimensionManager.getWorld(dpos.dimId);
             if (w != null) {
                 list.add(I18n.translateToLocalFormatted("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
+                list.add("  (" + w.getBlockState(dpos.pos).getBlock().getLocalizedName() + ")");
             }
             if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
                 TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).tileEntityItemRouter;
