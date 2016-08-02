@@ -1,8 +1,7 @@
-package me.desht.modularrouters.logic.execution;
+package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -11,11 +10,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class PlacerExecutor extends ModuleExecutor {
+public class PlacerModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStack buffer = router.getBufferItemStack();
-        if (buffer != null && settings.getDirection() != AbstractModule.RelativeDirection.NONE
+        if (buffer != null && settings.getDirection() != Module.RelativeDirection.NONE
                 && isPlaceable(buffer) && settings.getFilter().pass(buffer)) {
             BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
             World world = router.getWorld();
@@ -36,8 +35,8 @@ public class PlacerExecutor extends ModuleExecutor {
         return false;
     }
 
-    boolean isPlaceable(ItemStack stack) {
+    private boolean isPlaceable(ItemStack stack) {
         return stack.getItem() instanceof ItemBlock;
     }
-}
 
+}

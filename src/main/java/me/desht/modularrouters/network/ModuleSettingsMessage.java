@@ -2,7 +2,7 @@ package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,7 +41,7 @@ public class ModuleSettingsMessage implements IMessage {
                 // get the new setting into the module item that the player should still be holding
                 EntityPlayer player = ctx.getServerHandler().playerEntity;
                 ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-                if (stack != null && stack.getItem() instanceof AbstractModule) {
+                if (stack != null && stack.getItem() instanceof ItemModule) {
                     NBTTagCompound compound = stack.getTagCompound();
                     compound.setByte("Flags", msg.flags);
                 } else {

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
-import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.MiscUtil;
 
 public class ModuleToggleButton extends TexturedToggleButton {
@@ -10,8 +10,8 @@ public class ModuleToggleButton extends TexturedToggleButton {
 
     public ModuleToggleButton(int buttonId, int x, int y) {
         super(buttonId, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + AbstractModule.FilterSettings.values()[buttonId] + ".1");
-        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + AbstractModule.FilterSettings.values()[buttonId] + ".2");
+        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + Module.FilterSettings.values()[buttonId] + ".1");
+        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + Module.FilterSettings.values()[buttonId] + ".2");
     }
 
     @Override

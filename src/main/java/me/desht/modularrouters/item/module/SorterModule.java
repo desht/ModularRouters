@@ -1,7 +1,6 @@
-package me.desht.modularrouters.logic.execution;
+package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
@@ -11,7 +10,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class SorterExecutor extends ModuleExecutor {
+public class SorterModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
@@ -33,7 +32,7 @@ public class SorterExecutor extends ModuleExecutor {
     }
 
     private IItemHandler findTargetInventory(TileEntityItemRouter router, CompiledModuleSettings settings) {
-        if (settings.getDirection() == AbstractModule.RelativeDirection.NONE) {
+        if (settings.getDirection() == Module.RelativeDirection.NONE) {
             return null;
         }
         BlockPos pos = router.getRelativeBlockPos(settings.getDirection());

@@ -1,15 +1,17 @@
-package me.desht.modularrouters.logic.execution;
+package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.logic.CompiledBreakerModuleSettings;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.FakePlayer;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -22,13 +24,28 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class BreakerExecutor extends ModuleExecutor {
+public class BreakerModule extends Module {
+    @Override
+    public void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addUsageInformation(itemstack, player, list, par4);
+        Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
+        if (ench.isEmpty()) {
+            MiscUtil.appendMultiline(list, "itemText.misc.enchantBreakerHint");
+        }
+    }
+
+    @Override
+    public CompiledModuleSettings compile(ItemStack stack) {
+        return new CompiledBreakerModuleSettings(stack);
+    }
+
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStack bufferStack = router.getBufferItemStack();
-        if (settings.getDirection() != AbstractModule.RelativeDirection.NONE
+        if (settings.getDirection() != Module.RelativeDirection.NONE
                 && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
             World world = router.getWorld();
             BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
@@ -50,19 +67,6 @@ public class BreakerExecutor extends ModuleExecutor {
                             if (excess != null) {
                                 dropItems(world, pos, excess);
                             }
-//                            if (bufferStack == null) {
-//                                router.setBufferItemStack(drop);
-//                                bufferStack = router.getBufferItemStack();
-//                            } else if (ItemHandlerHelper.canItemStacksStack(drop, bufferStack)) {
-//                                int available = bufferStack.getMaxStackSize() - bufferStack.stackSize;
-//                                bufferStack.stackSize += drop.splitStack(available).stackSize;
-//                                if (drop.stackSize > 0) {
-//                                    dropItems(world, pos, drop);
-//                                }
-//                            } else {
-//                                // drop can't go in the router
-//                                dropItems(world, pos, drop);
-//                            }
                         }
                         if (Config.breakerParticles) {
                             world.playEvent(2001, pos, Block.getStateId(state));

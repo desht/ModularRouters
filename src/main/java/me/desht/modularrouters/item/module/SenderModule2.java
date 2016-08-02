@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
-import me.desht.modularrouters.logic.execution.ModuleExecutor;
-import me.desht.modularrouters.logic.execution.Sender2Executor;
+import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -17,10 +17,11 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 
-public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
+public class SenderModule2 extends TargetedSender {
     public enum TargetValidation {
         OK,
         ROUTER_MISSING,
@@ -33,27 +34,28 @@ public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
         }
     }
 
-    public ItemSenderModule2() {
-        super("senderModule2");
-    }
-
-    ItemSenderModule2(String name) {
-        super(name);
-    }
-
     @Override
-    public ModuleExecutor getExecutor() {
-        return new Sender2Executor();
+    protected SenderModule1.SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModuleSettings settings) {
+        TargetedSender.DimensionPos target = settings.getTarget();
+        SenderModule2 module = (SenderModule2) settings.getModule();
+
+        if (!module.validateTarget(router, target).isOK()) {
+            return null;
+        }
+
+        WorldServer w = DimensionManager.getWorld(target.dimId);
+        IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
+        return handler == null ? null : new SenderModule1.SenderTarget(target.pos, handler);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         DimensionPos dpos = getTarget(itemstack);
         if (dpos != null) {
+            list.add(I18n.translateToLocalFormatted("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
             WorldServer w = DimensionManager.getWorld(dpos.dimId);
             if (w != null) {
-                list.add(I18n.translateToLocalFormatted("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
                 list.add("        (" + getBlockName(w, dpos.pos, w.getBlockState(dpos.pos)) + ")");
             }
             if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
@@ -64,7 +66,11 @@ public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
                 }
             }
         }
-        super.addInformation(itemstack, player, list, par4);
+    }
+
+    @Override
+    protected Object[] getExtraUsageParams() {
+        return new Object[] { Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE };
     }
 
     private String getBlockName(World w, BlockPos pos, IBlockState state) {
@@ -80,8 +86,7 @@ public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
         }
     }
 
-    @Override
-    public TargetValidation validateTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos) {
+    protected TargetValidation validateTarget(TileEntityItemRouter router, TargetedSender.DimensionPos dimPos) {
         if (router == null) {
             return TargetValidation.ROUTER_MISSING;
         }
@@ -99,11 +104,6 @@ public class ItemSenderModule2 extends TargetedSender implements IRangeLimited {
             return TargetValidation.NOT_INVENTORY;
         }
         return TargetValidation.OK;
-    }
-
-    @Override
-    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        MiscUtil.appendMultiline(list, "itemText.usage." + getUnlocalizedName(itemstack), Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE);
     }
 
     private int maxDistanceSq(TileEntityItemRouter router) {

@@ -1,6 +1,7 @@
 package me.desht.modularrouters;
 
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -34,7 +35,7 @@ public class EnchantBreakerModuleRecipe implements IRecipe {
             if (stack != null) {
                 if (stack.getItem() == Items.ENCHANTED_BOOK && getValidEnchantment(stack) != null) {
                     nBooks++;
-                } else if (stack.getItem() == ModItems.breakerModule) {
+                } else if (stack.isItemEqual(ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER))) {
                     nModules++;
                 } else {
                     return false;
@@ -53,7 +54,7 @@ public class EnchantBreakerModuleRecipe implements IRecipe {
             if (stack != null) {
                 if (stack.getItem() == Items.ENCHANTED_BOOK) {
                     ench = getValidEnchantment(stack);
-                } else if (stack.getItem() == ModItems.breakerModule && EnchantmentHelper.getEnchantments(stack).isEmpty()) {
+                } else if (stack.isItemEqual(ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER)) && EnchantmentHelper.getEnchantments(stack).isEmpty()) {
                     breakerModule = stack.copy();
                 }
             }

@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic;
 
-import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,11 +26,11 @@ public class Filter {
     }
 
     public Filter(ItemStack moduleStack) {
-        if (moduleStack.getItem() instanceof AbstractModule) {
-            blacklist = AbstractModule.isBlacklist(moduleStack);
-            ignoreMeta = AbstractModule.ignoreMeta(moduleStack);
-            ignoreNBT = AbstractModule.ignoreNBT(moduleStack);
-            ignoreOredict = AbstractModule.ignoreOreDict(moduleStack);
+        if (moduleStack.getItem() instanceof ItemModule) {
+            blacklist = Module.isBlacklist(moduleStack);
+            ignoreMeta = Module.ignoreMeta(moduleStack);
+            ignoreNBT = Module.ignoreNBT(moduleStack);
+            ignoreOredict = Module.ignoreOreDict(moduleStack);
             // it's safe to assume that the module actually has NBT data at this point...
             NBTTagList tagList = moduleStack.getTagCompound().getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {

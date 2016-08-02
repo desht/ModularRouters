@@ -6,7 +6,7 @@ import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.integration.TOPInfoProvider;
-import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.ITileEntityProvider;
@@ -209,7 +209,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
             for (int i = 0; i < modules.getSlots(); i++) {
                 ItemStack stack = modules.getStackInSlot(i);
                 if (stack != null) {
-                    AbstractModule.RelativeDirection dir = AbstractModule.getDirectionFromNBT(stack);
+                    Module.RelativeDirection dir = Module.getDirectionFromNBT(stack);
                     sub.item(stack).text(TextFormatting.GREEN + Character.toString(ARROWS[dir.ordinal()]));
                 }
             }

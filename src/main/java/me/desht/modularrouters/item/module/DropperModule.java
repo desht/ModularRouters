@@ -1,17 +1,16 @@
-package me.desht.modularrouters.logic.execution;
+package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.AbstractModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
-public class DropperExecutor extends ModuleExecutor {
+public class DropperModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStack stack = router.getBufferItemStack();
-        if (stack != null && settings.getDirection() != AbstractModule.RelativeDirection.NONE && settings.getFilter().pass(stack)) {
+        if (stack != null && settings.getDirection() != Module.RelativeDirection.NONE && settings.getFilter().pass(stack)) {
             int nItems = router.getItemsPerTick();
             ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
             BlockPos pos = router.getRelativeBlockPos(settings.getDirection());

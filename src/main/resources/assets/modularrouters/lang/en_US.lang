@@ -2,9 +2,9 @@
 item.blankModule.name=Blank Module
 item.receiverModule.name=Receiver Module
 item.pullerModule.name=Puller Module
-item.senderModule1.name=Sender Module Mk1
-item.senderModule2.name=Sender Module Mk2
-item.senderModule3.name=Sender Module Mk3
+item.sender1Module.name=Sender Module Mk1
+item.sender2Module.name=Sender Module Mk2
+item.sender3Module.name=Sender Module Mk3
 item.sorterModule.name=Sorter Module
 item.vacuumModule.name=Vacuum Module
 item.dropperModule.name=Dropper Module
@@ -92,10 +92,11 @@ itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the m
 itemText.usage.item.dropperModule=Drops items from the router's buffer in the module's configured direction.
 itemText.usage.item.placerModule=Places an item from the router's buffer as a block in the module's configured direction, if possible.
 itemText.usage.item.pullerModule=Extracts items from an adjacent inventory in the module's configured direction, into the router's buffer.
-itemText.usage.item.senderModule1=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).//Clear line of sight required.
-itemText.usage.item.senderModule2=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).//Clear line of sight NOT required.//§oSneak + Right-Click a block to set target
-itemText.usage.item.senderModule3=Sends items from the router's buffer to any inventory in any dimension.//§oSneak + Right-Click a block to set target
-itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (up to %d with Range Upgrades).  Only collects items in the configured direction (direction of NONE = omnidirectional).
+itemText.usage.item.sender1Module=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).//Clear line of sight required; opaque blocks will prevent sending.
+itemText.usage.item.sender2Module=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).//Clear line of sight NOT required.//§oSneak + Right-Click a block to set target
+itemText.usage.item.sender3Module=Sends items from the router's buffer to any inventory in any dimension.//§oSneak + Right-Click a block to set target
+itemText.usage.item.sorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already matching items in that inventory
+itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (up to %d with Range Upgrades).  Only collects items in the configured direction, or any direction if the direction is NONE.
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s

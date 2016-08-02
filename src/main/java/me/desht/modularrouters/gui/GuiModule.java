@@ -3,9 +3,9 @@ package me.desht.modularrouters.gui;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
-import me.desht.modularrouters.item.module.AbstractModule;
-import me.desht.modularrouters.item.module.AbstractModule.FilterSettings;
-import me.desht.modularrouters.item.module.AbstractModule.RelativeDirection;
+import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.module.Module.FilterSettings;
+import me.desht.modularrouters.item.module.Module.RelativeDirection;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
@@ -27,7 +27,7 @@ public class GuiModule extends GuiContainerBase {
     public GuiModule(ModuleContainer containerItem) {
         super(containerItem);
         moduleItemStack = containerItem.filterHandler.getModuleItemStack();
-        facing = AbstractModule.getDirectionFromNBT(moduleItemStack);
+        facing = Module.getDirectionFromNBT(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
     }
@@ -49,7 +49,7 @@ public class GuiModule extends GuiContainerBase {
     private void addButton(FilterSettings setting, int x, int y) {
         int id = setting.ordinal();
         buttons[id] = new ModuleToggleButton(id, x, y);
-        buttons[id].setToggled(AbstractModule.checkFlag(moduleItemStack, setting));
+        buttons[id].setToggled(Module.checkFlag(moduleItemStack, setting));
         this.buttonList.add(buttons[id]);
     }
 

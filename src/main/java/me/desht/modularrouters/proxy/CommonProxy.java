@@ -7,6 +7,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.ParticleMessage;
@@ -61,25 +62,23 @@ public class CommonProxy {
                 " r ", "ppp", "nnn",
                 'r', Items.REDSTONE, 'p', Items.PAPER, 'n', Items.GOLD_NUGGET);
 
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.breakerModule),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER),
                 ModItems.blankModule, Items.IRON_PICKAXE);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.dropperModule),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER),
                 ModItems.blankModule, Blocks.DROPPER);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.placerModule),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLACER),
                 ModItems.blankModule, Blocks.DISPENSER, Blocks.DIRT);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.sorterModule),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SORTER),
                 ModItems.blankModule, Items.COMPARATOR, Items.SPIDER_EYE);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.pullerModule),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
                 ModItems.blankModule, Blocks.STICKY_PISTON);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.receiverModule),
-                ModItems.blankModule, Blocks.TRAPDOOR);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.senderModule1),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1),
                 ModItems.blankModule, Items.BOW, Items.ARROW);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.senderModule2),
-                ModItems.senderModule1, Items.ENDER_EYE);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.senderModule3),
-                ModItems.senderModule2, Blocks.END_STONE, Blocks.ENDER_CHEST);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.vacuumModule),
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER2),
+                ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1), Items.ENDER_EYE);
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER3),
+                ItemModule.makeItemStack(ItemModule.ModuleType.SENDER2), Blocks.END_STONE, Blocks.ENDER_CHEST);
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.VACUUM),
                 ModItems.blankModule, Blocks.HOPPER, Items.ENDER_EYE);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 4),
@@ -90,12 +89,8 @@ public class CommonProxy {
         GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.STACK),
                 ModItems.blankUpgrade, Blocks.BRICK_BLOCK, Blocks.STONEBRICK);
         GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGE),
-                ModItems.blankUpgrade, Items.ENDER_PEARL, Items.PRISMARINE_SHARD);
+                ModItems.blankUpgrade, Items.PRISMARINE_SHARD);
 
-//        for (Enchantment ench : EnchantBreakerModuleRecipe.validEnchantments) {
-//            ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-//            book.addEnchantment(ench, 1);
-//        }
         GameRegistry.addRecipe(new EnchantBreakerModuleRecipe());
     }
 }

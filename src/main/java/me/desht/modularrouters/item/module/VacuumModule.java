@@ -1,9 +1,7 @@
-package me.desht.modularrouters.logic.execution;
+package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.item.module.AbstractModule;
-import me.desht.modularrouters.item.module.ItemVacuumModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -16,14 +14,14 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
-public class VacuumExecutor extends ModuleExecutor {
+public class VacuumModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
 
-        int range = ItemVacuumModule.getVacuumRange(router);
-        int offset = settings.getDirection() == AbstractModule.RelativeDirection.NONE ? 0 : range;
+        int range = getVacuumRange(router);
+        int offset = settings.getDirection() == Module.RelativeDirection.NONE ? 0 : range + 1;
         BlockPos centrePos = router.getPos().offset(router.getAbsoluteFacing(settings.getDirection()), offset);
         List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
@@ -53,5 +51,15 @@ public class VacuumExecutor extends ModuleExecutor {
             }
         }
         return toPickUp < router.getItemsPerTick();
+    }
+
+
+    @Override
+    protected Object[] getExtraUsageParams() {
+        return new Object[] { Config.Defaults.VACUUM_BASE_RANGE, Config.Defaults.VACUUM_MAX_RANGE };
+    }
+
+    public static int getVacuumRange(TileEntityItemRouter router) {
+        return Math.min(Config.vacuumBaseRange + router.getRangeUpgrades(), Config.vacuumMaxRange);
     }
 }

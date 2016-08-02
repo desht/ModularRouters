@@ -2,7 +2,8 @@ package me.desht.modularrouters.block.tile;
 
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -48,7 +49,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     private final ItemStackHandler modulesHandler = new ItemStackHandler(N_MODULE_SLOTS) {
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return stack.getItem() instanceof AbstractModule ? super.insertItem(slot, stack, simulate) : stack;
+            return stack.getItem() instanceof ItemModule ? super.insertItem(slot, stack, simulate) : stack;
         }
     };
     private final ItemStackHandler upgradesHandler = new ItemStackHandler(N_UPGRADE_SLOTS) {
@@ -227,8 +228,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         compiledModuleSettings.clear();
         for (int i = 0; i < N_MODULE_SLOTS; i++) {
             ItemStack stack = modulesHandler.getStackInSlot(i);
-            if (stack != null) {
-                compiledModuleSettings.add(CompiledModuleSettings.compile(stack));
+            if (stack != null && stack.getItem() instanceof ItemModule) {
+                compiledModuleSettings.add(ItemModule.getModule(stack).compile(stack));
             }
         }
 
@@ -282,18 +283,18 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         return itemsPerTick;
     }
 
-    public EnumFacing getAbsoluteFacing(AbstractModule.RelativeDirection direction) {
+    public EnumFacing getAbsoluteFacing(Module.RelativeDirection direction) {
         IBlockState state = getWorld().getBlockState(getPos());
         return direction.toEnumFacing(state.getValue(BlockItemRouter.FACING));
     }
 
-    public BlockPos getRelativeBlockPos(AbstractModule.RelativeDirection direction) {
+    public BlockPos getRelativeBlockPos(Module.RelativeDirection direction) {
         return getPos().offset(getAbsoluteFacing(direction));
     }
 
     public boolean installModule(EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (stack == null || !(stack.getItem() instanceof AbstractModule)) {
+        if (stack == null || !(stack.getItem() instanceof ItemModule)) {
             return false;
         }
 

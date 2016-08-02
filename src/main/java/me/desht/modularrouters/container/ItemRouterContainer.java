@@ -1,7 +1,7 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.AbstractModule;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -86,7 +86,7 @@ public class ItemRouterContainer extends Container {
         // Check if the slot clicked is one of the vanilla container slots
         if (sourceSlotIndex >= 0 && sourceSlotIndex < TE_FIRST_SLOT) {
             // This is a vanilla container slot so merge the stack into the right part of the tile inventory
-            if (sourceStack.getItem() instanceof AbstractModule) {
+            if (sourceStack.getItem() instanceof ItemModule) {
                 // shift-clicked a module: see if there's a free module slot
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
                     return null;

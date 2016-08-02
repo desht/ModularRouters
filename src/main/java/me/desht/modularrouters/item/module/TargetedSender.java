@@ -16,11 +16,7 @@ import net.minecraft.world.World;
 /**
  * Represents a sender module with a specific target block.  Used by Mk2 & Mk3 senders.
  */
-public abstract class TargetedSender extends AbstractModule {
-    TargetedSender(String name) {
-        super(name);
-    }
-
+public abstract class TargetedSender extends SenderModule1 {
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
