@@ -49,25 +49,4 @@ public class CompiledModuleSettings {
         return termination;
     }
 
-//    public static CompiledModuleSettings compile(ItemStack stack) {
-//        if (stack.getItem() instanceof ItemModule) {
-//            Class<? extends CompiledModuleSettings> c = ((AbstractModule) stack.getItem()).getCompiler();
-//            Constructor<? extends CompiledModuleSettings> ctor;
-//            try {
-//                ctor = c.getConstructor(ItemStack.class);
-//                return ctor.newInstance(stack);
-//            } catch (NoSuchMethodException e) {
-//                e.printStackTrace();
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            } catch (InstantiationException e) {
-//                e.printStackTrace();
-//            } catch (InvocationTargetException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        } else {
-//            throw new IllegalArgumentException(stack.getDisplayName() + " is not an item router module!");
-//        }
-//    }
 }

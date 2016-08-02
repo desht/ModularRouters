@@ -37,7 +37,7 @@ public class ModularRouters {
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         proxy.preInit();
-        System.out.println(name + " is loading!");
+        logger.info(name + " is loading!");
     }
 
     @Mod.EventHandler
