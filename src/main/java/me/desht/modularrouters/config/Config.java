@@ -77,7 +77,7 @@ public class Config {
     }
 
     private static void syncConfig(boolean loadConfigFromFile, boolean readFieldsFromConfig) {
-        System.out.println("syncConfig(" + loadConfigFromFile + "," + readFieldsFromConfig + ")");
+//        System.out.println("syncConfig(" + loadConfigFromFile + "," + readFieldsFromConfig + ")");
         if (loadConfigFromFile) {
             config.load();
         }

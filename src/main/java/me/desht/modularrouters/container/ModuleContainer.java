@@ -82,7 +82,7 @@ public class ModuleContainer extends Container {
 
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        System.out.println("slotClick: slot=" + slot + " dragtype=" + dragType + " clicktype=" + clickTypeIn);
+//        System.out.println("slotClick: slot=" + slot + " dragtype=" + dragType + " clicktype=" + clickTypeIn);
 
         if (dragType > 1 && slot < N_FILTER_SLOTS && slot >= 0) {
             // no dragging items over the filter

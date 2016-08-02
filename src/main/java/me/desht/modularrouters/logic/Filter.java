@@ -56,11 +56,9 @@ public class Filter {
     }
 
     public boolean pass(ItemStack stack) {
-//        System.out.println("pass ? " + dumpItemStack(stack) + " , blacklist=" + blacklist + ", ignoreOredict=" + ignoreOredict);
         for (int i = 0; i < items.size(); i++) {
             ItemStack filterItem = items.get(i);
             boolean matched = compareOne(i, stack);
-//            System.out.println("compare: " + dumpItemStack(stack) + " vs " + filterItem + " = " + matched);
             if (matched) {
                 return !blacklist;
             }
@@ -68,10 +66,6 @@ public class Filter {
         // no matches: pass if this is a blacklist, fail if a whitelist
         return blacklist;
     }
-
-//    private static String dumpItemStack(ItemStack stack) {
-//        return stack.getItem() != null ? stack.toString() : "(null item)";
-//    }
 
     private boolean compareOne(int i, ItemStack stack) {
         ItemStack filterStack = items.get(i);
@@ -104,8 +98,6 @@ public class Filter {
     private boolean isOreDictMatch(int index, ItemStack stack) {
         int[] ids1 = OreDictionary.getOreIDs(stack);
         int[] ids2 = oreIdCache.get(index);
-        System.out.println("oredict: item ids=" + Arrays.toString(ids1));
-        System.out.println("oredict: cached ids=" + Arrays.toString(ids2));
         if (ids1 == null || ids1.length == 0 || ids2 == null || ids2.length == 0) {
             return false;
         }

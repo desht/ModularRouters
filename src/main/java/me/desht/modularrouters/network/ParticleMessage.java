@@ -73,7 +73,7 @@ public class ParticleMessage implements IMessage {
         public IMessage onMessage(ParticleMessage msg, MessageContext ctx) {
             WorldServer w = DimensionManager.getWorld(msg.dimension);
             if (w != null) {
-                System.out.println(String.format("particles! %s %f,%f,%f %f,%f,%f", msg.type, msg.x, msg.y, msg.z, msg.xSpeed, msg.ySpeed, msg.zSpeed));
+//                System.out.println(String.format("particles! %s %f,%f,%f %f,%f,%f", msg.type, msg.x, msg.y, msg.z, msg.xSpeed, msg.ySpeed, msg.zSpeed));
                 w.spawnParticle(msg.type, msg.x, msg.y, msg.z, msg.xSpeed, msg.ySpeed, msg.zSpeed, msg.data);
             }
             return null;
