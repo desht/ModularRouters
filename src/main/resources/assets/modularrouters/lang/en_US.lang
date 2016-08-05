@@ -43,6 +43,7 @@ guiText.label.direction=Direction
 guiText.label.modules=Modules
 guiText.label.upgrades=Upgrades
 guiText.label.buffer=Buffer
+guiText.label.installed= (installed)
 guiText.tooltip.redstone.IGNORE=Redstone Mode: Ignore
 guiText.tooltip.redstone.LOW=Redstone Mode: Low
 guiText.tooltip.redstone.HIGH=Redstone Mode: High
@@ -66,6 +67,7 @@ gui.config.sender2BaseRange=Base Range for Sender Module Mk2 (no Range Upgrades)
 gui.config.sender2MaxRange=Hard Maximum Range for Sender Module Mk2 (with Range Upgrades)
 gui.config.vacuumBaseRange=Base Range for Vacuum Module (no Range Upgrades)
 gui.config.vacuumMaxRange=Hard Maximum Range for Vacuum Module (with Range Upgrades)
+gui.config.configKey=Key to press (in the Item Router GUI) to configure installed Modules
 
 # Text which goes in item tooltips
 itemText.misc.holdShift=Hold §e§oShift§r§7 for settings, §e§oCtrl§r§7 for info
@@ -82,6 +84,7 @@ itemText.misc.speedUpgrade=Router will tick every %.02f sec//Max. useful upgrade
 itemText.misc.rangeUpgradeTooltip=Extends range of modules:
 itemText.misc.target=§eTarget: §bDIM: %d | POS: %d,%d,%d | SIDE: %s
 itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
+itemText.misc.configureHint=Press §b'%s'§7 to configure this module in-place
 itemText.targetValidation.OUT_OF_RANGE=  §c*** Target Out of Range ***
 itemText.targetValidation.NOT_LOADED=  §c*** Target Not Loaded ***
 itemText.targetValidation.NOT_INVENTORY=  §c*** Target Has no Inventory ***

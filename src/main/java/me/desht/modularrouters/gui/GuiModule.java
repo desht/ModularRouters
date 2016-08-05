@@ -7,11 +7,13 @@ import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.FilterSettings;
 import me.desht.modularrouters.item.module.Module.RelativeDirection;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
+import me.desht.modularrouters.network.ReopenRouterMessage;
 import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 public class GuiModule extends GuiContainerBase {
@@ -21,12 +23,20 @@ public class GuiModule extends GuiContainerBase {
     private static final int GUI_WIDTH = 176;
 
     private final ItemStack moduleItemStack;
+    private final BlockPos routerPos;
+    private final int slotIndex;
     private ModuleToggleButton[] buttons = new ModuleToggleButton[FilterSettings.values().length];
     private RelativeDirection facing;
 
     public GuiModule(ModuleContainer containerItem) {
+        this(containerItem, null, -1);
+    }
+
+    public GuiModule(ModuleContainer containerItem, BlockPos routerPos, int slotIndex) {
         super(containerItem);
         moduleItemStack = containerItem.filterHandler.getModuleItemStack();
+        this.routerPos = routerPos;
+        this.slotIndex = slotIndex;
         facing = Module.getDirectionFromNBT(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
@@ -74,12 +84,15 @@ public class GuiModule extends GuiContainerBase {
             }
         }
         flags |= facing.ordinal() << 4;
-        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags));
+        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex));
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String title = moduleItemStack.getDisplayName();
+        if (routerPos != null) {
+            title = title + I18n.format("guiText.label.installed");
+        }
         this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
         this.fontRendererObj.drawString(I18n.format("guiText.label.direction"), 114, 30, 0x404040);
         this.fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0x404040);
@@ -94,4 +107,12 @@ public class GuiModule extends GuiContainerBase {
         drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
     }
 
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        if (routerPos != null) {
+            // re-open router GUI; we were editing an installed module
+            CommonProxy.network.sendToServer(new ReopenRouterMessage(routerPos));
+        }
+    }
 }

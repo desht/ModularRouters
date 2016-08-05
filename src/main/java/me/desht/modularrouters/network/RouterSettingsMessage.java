@@ -12,6 +12,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+/**
+ * Used when a player updates settings on an item router via its GUI.
+ */
 public class RouterSettingsMessage implements IMessage {
     private TileEntityItemRouter router;
     private RouterRedstoneBehaviour rrb;
@@ -36,12 +39,6 @@ public class RouterSettingsMessage implements IMessage {
                 rrb = RouterRedstoneBehaviour.values()[byteBuf.readByte()];
             }
         }
-//        if (w != null) {
-//            TileEntity te = w.getTileEntity(pos);
-//            if (te instanceof TileEntityItemRouter) {
-//                ((TileEntityItemRouter) te).setRedstoneBehaviour(RouterRedstoneBehaviour.values()[byteBuf.readByte()]);
-//            }
-//        }
     }
 
     @Override

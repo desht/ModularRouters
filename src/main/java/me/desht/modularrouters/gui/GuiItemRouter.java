@@ -2,8 +2,11 @@ package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.network.ModuleConfigMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
@@ -11,6 +14,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -29,13 +33,15 @@ public class GuiItemRouter extends GuiContainerBase {
     public static final int BUTTON_WIDTH = 16;
     private static final int REDSTONE_BUTTON_ID = 1;
 
-    public final TileEntityItemRouter tileEntityItemRouter;
+    public final TileEntityItemRouter router;
+    private final InventoryPlayer inventoryPlayer;
 
-    public GuiItemRouter(InventoryPlayer inventoryPlayer, TileEntityItemRouter tileEntityItemRouter) {
-        super(new ItemRouterContainer(inventoryPlayer, tileEntityItemRouter));
+    public GuiItemRouter(InventoryPlayer inventoryPlayer, TileEntityItemRouter router) {
+        super(new ItemRouterContainer(inventoryPlayer, router));
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
-        this.tileEntityItemRouter = tileEntityItemRouter;
+        this.router = router;
+        this.inventoryPlayer = inventoryPlayer;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class GuiItemRouter extends GuiContainerBase {
         super.initGui();
         this.buttonList.clear();
         this.buttonList.add(new RouterRedstoneButton(REDSTONE_BUTTON_ID,
-                this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, textureLocation, tileEntityItemRouter.getRedstoneBehaviour()));
+                this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, textureLocation, router.getRedstoneBehaviour()));
     }
 
     @Override
@@ -52,8 +58,8 @@ public class GuiItemRouter extends GuiContainerBase {
             case REDSTONE_BUTTON_ID:
                 RouterRedstoneButton rrb = (RouterRedstoneButton) button;
                 rrb.cycle(!isShiftKeyDown());
-                CommonProxy.network.sendToServer(new RouterSettingsMessage(tileEntityItemRouter, rrb.getState()));
-                tileEntityItemRouter.setRedstoneBehaviour(rrb.getState());
+                CommonProxy.network.sendToServer(new RouterSettingsMessage(router, rrb.getState()));
+                router.setRedstoneBehaviour(rrb.getState());
                 break;
             default:
                 break;
@@ -62,7 +68,7 @@ public class GuiItemRouter extends GuiContainerBase {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = tileEntityItemRouter.getDisplayName().getUnformattedText();
+        String title = router.getDisplayName().getUnformattedText();
         fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("guiText.label.upgrades"), 98, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
@@ -75,5 +81,18 @@ public class GuiItemRouter extends GuiContainerBase {
         Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (typedChar == Config.configKey) {
+            Slot slot = getSlotUnderMouse();
+            if (slot != null && slot.getHasStack() && slot.getStack().getItem() instanceof ItemModule) {
+                CommonProxy.network.sendToServer(new ModuleConfigMessage(router.getPos(), slot.getSlotIndex()));
+                router.playerConfiguringModule(inventoryPlayer.player, slot.getSlotIndex());
+                return;
+            }
+        }
+        super.keyTyped(typedChar, keyCode);
     }
 }

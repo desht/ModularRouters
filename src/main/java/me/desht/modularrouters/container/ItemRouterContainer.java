@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -60,11 +61,11 @@ public class ItemRouterContainer extends Container {
         });
         // item router modules
         for (int slot = 0; slot < 9; slot++) {
-            addSlotToContainer(new ModuleSlot(itemRouterTE, itemRouterTE.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
+            addSlotToContainer(new ValidatingSlot.Module(itemRouterTE, itemRouterTE.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
         }
         // item router upgrades
         for (int slot = 0; slot < 4; slot++) {
-            addSlotToContainer(new UpgradeSlot(itemRouterTE, itemRouterTE.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
+            addSlotToContainer(new ValidatingSlot.Upgrade(itemRouterTE, itemRouterTE.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
     }
 

@@ -9,9 +9,7 @@ import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import me.desht.modularrouters.network.ModuleSettingsMessage;
-import me.desht.modularrouters.network.ParticleMessage;
-import me.desht.modularrouters.network.RouterSettingsMessage;
+import me.desht.modularrouters.network.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -33,20 +31,22 @@ public class CommonProxy {
         ModItems.init();
         ModBlocks.init();
 
+        int d = 0;
         network = NetworkRegistry.INSTANCE.newSimpleChannel(ModularRouters.modId);
-        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, 0, Side.SERVER);
-        network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, 1, Side.SERVER);
-        network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, 2, Side.CLIENT);
+        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, d++, Side.CLIENT);
+        network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
+        network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
 
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
-
-        IntegrationHandler.registerWaila();
-        IntegrationHandler.registerTOP();
     }
 
     public void init() {
         NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiProxy());
         setupRecipes();
+        IntegrationHandler.registerWaila();
+        IntegrationHandler.registerTOP();
     }
 
     public void postInit() {

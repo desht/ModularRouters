@@ -2,10 +2,8 @@ package me.desht.modularrouters.item.module;
 
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -14,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -96,7 +93,7 @@ public class ItemModule extends ItemBase {
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         Module.validateNBT(stack);
         if (!world.isRemote) {
-            player.openGui(ModularRouters.instance, ModularRouters.GUI_MODULE, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(ModularRouters.instance, ModularRouters.GUI_MODULE_HELD, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

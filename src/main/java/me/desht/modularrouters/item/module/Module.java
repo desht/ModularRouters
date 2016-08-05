@@ -2,9 +2,14 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.container.ValidatingSlot;
+import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,6 +17,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -113,6 +119,12 @@ public abstract class Module {
 
     @SideOnly(Side.CLIENT)
     public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
+            Slot slot = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
+            if (slot instanceof ValidatingSlot.Module) {
+                list.add(I18n.translateToLocalFormatted("itemText.misc.configureHint", String.valueOf(Config.configKey)));
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)

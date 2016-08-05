@@ -5,7 +5,6 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +50,7 @@ public class SenderModule2 extends TargetedSender {
     @Override
     @SideOnly(Side.CLIENT)
     public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addBasicInformation(itemstack, player, list, par4);
         DimensionPos dpos = getTarget(itemstack);
         if (dpos != null) {
             list.add(I18n.translateToLocalFormatted("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
@@ -59,7 +59,7 @@ public class SenderModule2 extends TargetedSender {
                 list.add("        (" + getBlockName(w, dpos.pos, w.getBlockState(dpos.pos)) + ")");
             }
             if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
-                TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).tileEntityItemRouter;
+                TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
                 TargetValidation val = validateTarget(router, dpos);
                 if (!val.isOK()) {
                     list.add(I18n.translateToLocal("itemText.targetValidation." + val));

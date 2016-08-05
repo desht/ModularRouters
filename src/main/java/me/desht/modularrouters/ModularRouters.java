@@ -18,12 +18,13 @@ public class ModularRouters {
     public static final String name = "Modular Routers";
     public static final String version = "1.0.0";
     public static final String GUIFACTORY = "me.desht.modularrouters.config.ConfigGuiFactory";
-
     public static Logger logger;
 
     private static int modGuiIndex = 0; // track GUI IDs
-    public static final int GUI_MODULE = modGuiIndex++;
+
+    public static final int GUI_MODULE_HELD = modGuiIndex++;
     public static final int GUI_ROUTER = modGuiIndex++;
+    public static final int GUI_MODULE_INSTALLED = modGuiIndex++;
 
     @CapabilityInject(IItemHandler.class)
     public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;

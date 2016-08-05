@@ -12,8 +12,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Config {
+
     public static class Defaults {
         public static final int BASE_TICK_RATE = 20;
         public static final int TICKS_PER_UPGRADE = 2;
@@ -27,8 +29,10 @@ public class Config {
         public static final boolean VACUUM_PARTICLES = true;
         public static final boolean PLACER_PARTICLES = true;
         public static final boolean BREAKER_PARTICLES = true;
+        public static final char CONFIG_KEY = 'c';
     }
 
+    public static char configKey;
     public static int baseTickRate;
     public static int ticksPerUpgrade;
     public static int hardMinTickRate;
@@ -50,6 +54,8 @@ public class Config {
     public static Configuration getConfig() {
         return config;
     }
+
+    private static Pattern oneCharPattern = Pattern.compile("^.$");
 
     public static void preInit() {
         File configFile = new File(Loader.instance().getConfigDir(), "modularrouters.cfg");
@@ -77,11 +83,13 @@ public class Config {
     }
 
     private static void syncConfig(boolean loadConfigFromFile, boolean readFieldsFromConfig) {
-//        System.out.println("syncConfig(" + loadConfigFromFile + "," + readFieldsFromConfig + ")");
         if (loadConfigFromFile) {
             config.load();
         }
 
+        Property propConfigKey = config.get(CATEGORY_NAME_ROUTER, "configKey", String.valueOf(Defaults.CONFIG_KEY),
+                "Keypress to configure installed modules in-place", oneCharPattern);
+        propConfigKey.setLanguageKey("gui.config.configKey");
         Property propBaseTickRate = config.get(CATEGORY_NAME_ROUTER, "baseTickRate", Defaults.BASE_TICK_RATE,
                 "Base router tick rate", 1, Integer.MAX_VALUE);
         propBaseTickRate.setLanguageKey("gui.config.baseTickRate");
@@ -130,6 +138,7 @@ public class Config {
         propOrderGeneral.add(propBaseTickRate.getName());
         propOrderGeneral.add(propTicksPerUpgrade.getName());
         propOrderGeneral.add(propHardMinTicks.getName());
+        propOrderGeneral.add(propConfigKey.getName());
         List<String> propOrderModule = new ArrayList<>();
         propOrderModule.add(propSender1BaseRange.getName());
         propOrderModule.add(propSender1MaxRange.getName());
@@ -148,6 +157,8 @@ public class Config {
             baseTickRate = Math.max(1, propBaseTickRate.getInt(Defaults.BASE_TICK_RATE));
             ticksPerUpgrade = propTicksPerUpgrade.getInt(Defaults.TICKS_PER_UPGRADE);
             hardMinTickRate = propHardMinTicks.getInt();
+            String s = propConfigKey.getString();
+            configKey = s.length() > 0 ? propConfigKey.getString().charAt(0) : Defaults.CONFIG_KEY;
             sender1BaseRange = propSender1BaseRange.getInt();
             sender1MaxRange = propSender1MaxRange.getInt();
             sender2BaseRange = propSender2BaseRange.getInt();
@@ -163,6 +174,7 @@ public class Config {
         propBaseTickRate.set(baseTickRate);
         propTicksPerUpgrade.set(ticksPerUpgrade);
         propHardMinTicks.set(hardMinTickRate);
+        propConfigKey.set(String.valueOf(configKey));
         propSender1BaseRange.set(sender1BaseRange);
         propSender1MaxRange.set(sender1MaxRange);
         propSender2BaseRange.set(sender2BaseRange);

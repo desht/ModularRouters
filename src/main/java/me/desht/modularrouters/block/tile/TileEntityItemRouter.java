@@ -1,5 +1,6 @@
 package me.desht.modularrouters.block.tile;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -29,8 +30,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TileEntityItemRouter extends TileEntity implements ITickable {
     private static final int N_MODULE_SLOTS = 9;
@@ -51,11 +51,23 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             return stack.getItem() instanceof ItemModule ? super.insertItem(slot, stack, simulate) : stack;
         }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            TileEntityItemRouter.this.recompileNeeded();
+            super.onContentsChanged(slot);
+        }
     };
     private final ItemStackHandler upgradesHandler = new ItemStackHandler(N_UPGRADE_SLOTS) {
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             return stack.getItem() instanceof ItemUpgrade ? super.insertItem(slot, stack, simulate) : stack;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            TileEntityItemRouter.this.recompileNeeded();
+            super.onContentsChanged(slot);
         }
     };
     private final CombinedInvWrapper joined = new CombinedInvWrapper(bufferHandler, modulesHandler, upgradesHandler);
@@ -66,6 +78,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
     private final int[] upgradeCount = new int[ItemUpgrade.UpgradeType.values().length];
+
+    // when player wants to configure an already-installed module, this tracks the slot
+    // number received from the client-side GUI
+    private final Map<UUID, Integer> playerToSlot = new HashMap<>();
 
     public TileEntityItemRouter() {
     }
@@ -161,6 +177,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         counter++;
 
         if (recompileNeeded) {
+            ModularRouters.logger.debug("recompiling item router @ " + getPos());
             compile();
             recompileNeeded = false;
         }
@@ -327,4 +344,23 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         return active;
     }
 
+    public void playerConfiguringModule(EntityPlayer player, int slotIndex) {
+        if (slotIndex >= 0) {
+            playerToSlot.put(player.getUniqueID(), slotIndex);
+        } else {
+            playerToSlot.remove(player.getUniqueID());
+        }
+    }
+
+    public void clearConfigSlot(EntityPlayer player) {
+        playerToSlot.remove(player.getUniqueID());
+    }
+
+    public int getConfigSlot(EntityPlayer player) {
+        if (playerToSlot.containsKey(player.getUniqueID())) {
+            return playerToSlot.get(player.getUniqueID());
+        } else {
+            return -1;
+        }
+    }
 }

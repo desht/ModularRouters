@@ -1,5 +1,7 @@
 package me.desht.modularrouters.container;
 
+import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -21,12 +23,16 @@ public class ModuleContainer extends Container {
     private final int currentSlot;
 
     public ModuleContainer(EntityPlayer player, ItemStack moduleStack) {
+        this(player, moduleStack, null);
+    }
+
+    public ModuleContainer(EntityPlayer player, ItemStack moduleStack, TileEntityItemRouter router) {
         this.filterHandler = new FilterHandler(moduleStack, N_FILTER_SLOTS);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < N_FILTER_SLOTS; i++) {
-            addSlotToContainer(new FilterSlot(filterHandler, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
+            addSlotToContainer(new FilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
@@ -82,7 +88,7 @@ public class ModuleContainer extends Container {
 
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-//        System.out.println("slotClick: slot=" + slot + " dragtype=" + dragType + " clicktype=" + clickTypeIn);
+        ModularRouters.logger.debug("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
 
         if (dragType > 1 && slot < N_FILTER_SLOTS && slot >= 0) {
             // no dragging items over the filter
