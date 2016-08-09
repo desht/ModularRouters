@@ -38,7 +38,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     private int counter = 0;
 
-    private RouterRedstoneBehaviour redstoneBehaviour = RouterRedstoneBehaviour.IGNORE;
+    private RouterRedstoneBehaviour redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
 
     private final ItemStackHandler bufferHandler = new ItemStackHandler(1) {
         @Override
@@ -82,6 +82,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     // when player wants to configure an already-installed module, this tracks the slot
     // number received from the client-side GUI
     private final Map<UUID, Integer> playerToSlot = new HashMap<>();
+    private int lastPower;
+    private int activeTimer = 0;
 
     public TileEntityItemRouter() {
     }
@@ -155,9 +157,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             redstoneBehaviour = RouterRedstoneBehaviour.valueOf(nbt.getString("Redstone"));
         } catch (IllegalArgumentException e) {
             // shouldn't ever happen...
-            redstoneBehaviour = RouterRedstoneBehaviour.IGNORE;
+            redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
         }
         active = nbt.getBoolean("Active");
+        activeTimer = nbt.getInteger("ActiveTimer");
     }
 
     @Nonnull
@@ -169,6 +172,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         nbt.setTag("Upgrades", upgradesHandler.serializeNBT());
         nbt.setString("Redstone", redstoneBehaviour.name());
         nbt.setBoolean("Active", active);
+        nbt.setInteger("ActiveTimer", activeTimer);
         return nbt;
     }
 
@@ -182,9 +186,31 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             recompileNeeded = false;
         }
 
-        if (counter >= getTickRate()) {
-            executeModules();
-            counter = 0;
+        if (getWorld().isRemote) {
+            return;
+        }
+
+        if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
+            int power = getWorld().isBlockIndirectlyGettingPowered(getPos());
+            if (power > lastPower && counter >= getTickRate()) {
+                executeModules(true);
+                counter = 0;
+                if (active) {
+                    activeTimer = getTickRate();
+                }
+            }
+            // need to turn the state inactive after a short time...
+            if (activeTimer > 0) {
+                if (--activeTimer == 0) {
+                    setActiveState(false);
+                }
+            }
+            lastPower = power;
+        } else {
+            if (counter >= getTickRate()) {
+                executeModules(false);
+                counter = 0;
+            }
         }
     }
 
@@ -198,14 +224,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     public void setRedstoneBehaviour(RouterRedstoneBehaviour redstoneBehaviour) {
         this.redstoneBehaviour = redstoneBehaviour;
+        if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
+            lastPower = getWorld().isBlockIndirectlyGettingPowered(getPos());
+        }
     }
 
-    private void executeModules() {
+    private void executeModules(boolean force) {
         boolean didWork = false;
-        if (getWorld().isRemote) {
-            return;
-        }
-        if (redstoneModeAllowsRun()) {
+//        if (getWorld().isRemote) {
+//            return;
+//        }
+        if (force || redstoneModeAllowsRun()) {
             for (CompiledModuleSettings mod : compiledModuleSettings) {
                 if (mod != null && mod.execute(this)) {
                     didWork = true;
@@ -216,22 +245,29 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             }
         }
         if (didWork != active) {
-            active = didWork;
-            IBlockState state = getWorld().getBlockState(getPos());
-            getWorld().setBlockState(getPos(), state.withProperty(BlockItemRouter.ACTIVE, active));
-            markDirty();
+//            active = didWork;
+            setActiveState(didWork);
         }
+    }
 
+    private void setActiveState(boolean newActive) {
+        System.out.println("mark as active: " + newActive);
+        active = newActive;
+        IBlockState state = getWorld().getBlockState(getPos());
+        getWorld().setBlockState(getPos(), state.withProperty(BlockItemRouter.ACTIVE, newActive));
+        markDirty();
     }
 
     private boolean redstoneModeAllowsRun() {
         switch (redstoneBehaviour) {
-            case IGNORE:
+            case ALWAYS:
                 return true;
             case LOW:
                 return !getWorld().isBlockPowered(getPos());
             case HIGH:
                 return getWorld().isBlockPowered(getPos());
+            case NEVER:
+                return false;
             default:
                 return false;
         }

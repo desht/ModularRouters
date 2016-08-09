@@ -45,9 +45,11 @@ guiText.label.modules=Modules
 guiText.label.upgrades=Upgrades
 guiText.label.buffer=Buffer
 guiText.label.installed= (installed)
-guiText.tooltip.redstone.IGNORE=Redstone Mode: Ignore
-guiText.tooltip.redstone.LOW=Redstone Mode: Low
-guiText.tooltip.redstone.HIGH=Redstone Mode: High
+guiText.tooltip.redstone.ALWAYS=Redstone Mode: §eAlways Run
+guiText.tooltip.redstone.LOW=Redstone Mode: §eLow
+guiText.tooltip.redstone.HIGH=Redstone Mode: §eHigh
+guiText.tooltip.redstone.NEVER=Redstone Mode: §eNever Run
+guiText.tooltip.redstone.PULSE=Redstone Mode: §eRun Once On Pulse
 
 # Config GUI
 gui.config.mainTitle=Modular Routers Configuration
