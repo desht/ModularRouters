@@ -21,11 +21,7 @@ public class ValidatingSlot extends SlotItemHandler {
     @Override
     public void onSlotChanged() {
         super.onSlotChanged();
-        // onSlotChanged() gets called whenever a client-side GUI is opened, leading to unnecessary
-        // router recompilation - we only need to recompile when a slot changes server-side
-        if (!router.getWorld().isRemote) {
-            router.recompileNeeded();
-        }
+        router.recompileNeeded();
     }
 
     @Override

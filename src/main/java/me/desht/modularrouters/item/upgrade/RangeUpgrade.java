@@ -15,6 +15,6 @@ public class RangeUpgrade extends Upgrade {
     @Override
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         list.add(I18n.format("itemText.misc.rangeUpgradeTooltip"));
-        list.addAll(Arrays.asList("senderModule1", "senderModule2", "vacuumModule").stream().map(m -> "\u2022 " + I18n.format("item." + m + ".name")).collect(Collectors.toList()));
+        list.addAll(Arrays.asList("sender1Module", "sender2Module", "vacuumModule").stream().map(m -> "\u2022 " + I18n.format("item." + m + ".name")).collect(Collectors.toList()));
     }
 }

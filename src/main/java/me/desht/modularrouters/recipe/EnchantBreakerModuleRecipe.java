@@ -1,6 +1,5 @@
-package me.desht.modularrouters;
+package me.desht.modularrouters.recipe;
 
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
@@ -17,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 public class EnchantBreakerModuleRecipe implements IRecipe {
-    public static final Enchantment[] validEnchantments = new Enchantment[]{
+    private static final Enchantment[] validEnchantments = new Enchantment[] {
             Enchantments.SILK_TOUCH,
             Enchantments.FORTUNE
     };
