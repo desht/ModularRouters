@@ -193,7 +193,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
             int power = getWorld().isBlockIndirectlyGettingPowered(getPos());
             if (power > lastPower && counter >= getTickRate()) {
-                executeModules(true);
+                executeModules();
                 counter = 0;
                 if (active) {
                     activeTimer = getTickRate();
@@ -208,7 +208,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             lastPower = power;
         } else {
             if (counter >= getTickRate()) {
-                executeModules(false);
+                executeModules();
                 counter = 0;
             }
         }
@@ -229,12 +229,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         }
     }
 
-    private void executeModules(boolean force) {
+    private void executeModules() {
         boolean didWork = false;
-//        if (getWorld().isRemote) {
-//            return;
-//        }
-        if (force || redstoneModeAllowsRun()) {
+
+        if (redstoneModeAllowsRun()) {
             for (CompiledModuleSettings mod : compiledModuleSettings) {
                 if (mod != null && mod.execute(this)) {
                     didWork = true;
@@ -245,13 +243,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             }
         }
         if (didWork != active) {
-//            active = didWork;
             setActiveState(didWork);
         }
     }
 
     private void setActiveState(boolean newActive) {
-        System.out.println("mark as active: " + newActive);
         active = newActive;
         IBlockState state = getWorld().getBlockState(getPos());
         getWorld().setBlockState(getPos(), state.withProperty(BlockItemRouter.ACTIVE, newActive));
@@ -266,6 +262,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
                 return !getWorld().isBlockPowered(getPos());
             case HIGH:
                 return getWorld().isBlockPowered(getPos());
+            case PULSE:
+                return true;  // special case; see update() method
             case NEVER:
                 return false;
             default:
