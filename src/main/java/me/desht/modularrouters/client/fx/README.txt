@@ -1,0 +1,1 @@
+With thanks to Vazkii, Azanor & Chickenbones for the code in this package!

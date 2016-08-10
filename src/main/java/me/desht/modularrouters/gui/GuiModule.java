@@ -12,6 +12,7 @@ import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
@@ -27,16 +28,18 @@ public class GuiModule extends GuiContainerBase {
     private final int slotIndex;
     private ModuleToggleButton[] buttons = new ModuleToggleButton[FilterSettings.values().length];
     private RelativeDirection facing;
+    private final EnumHand hand;
 
-    public GuiModule(ModuleContainer containerItem) {
-        this(containerItem, null, -1);
+    public GuiModule(ModuleContainer containerItem, EnumHand hand) {
+        this(containerItem, null, -1, hand);
     }
 
-    public GuiModule(ModuleContainer containerItem, BlockPos routerPos, int slotIndex) {
+    public GuiModule(ModuleContainer containerItem, BlockPos routerPos, int slotIndex, EnumHand hand) {
         super(containerItem);
         moduleItemStack = containerItem.filterHandler.getModuleItemStack();
         this.routerPos = routerPos;
         this.slotIndex = slotIndex;
+        this.hand = hand;
         facing = Module.getDirectionFromNBT(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
@@ -84,7 +87,7 @@ public class GuiModule extends GuiContainerBase {
             }
         }
         flags |= facing.ordinal() << 4;
-        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex));
+        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex, hand));
     }
 
     @Override

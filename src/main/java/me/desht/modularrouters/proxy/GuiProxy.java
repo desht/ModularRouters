@@ -17,8 +17,10 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        if (ID == ModularRouters.GUI_MODULE_HELD) {
+        if (ID == ModularRouters.GUI_MODULE_HELD_MAIN) {
             return new ModuleContainer(player, player.getHeldItem(EnumHand.MAIN_HAND));
+        } else if (ID == ModularRouters.GUI_MODULE_HELD_OFF) {
+            return new ModuleContainer(player, player.getHeldItem(EnumHand.OFF_HAND));
         } else if (ID == ModularRouters.GUI_MODULE_INSTALLED) {
             // player wants to configure a module already installed in an item router
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -41,8 +43,10 @@ public class GuiProxy implements IGuiHandler {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        if (ID == ModularRouters.GUI_MODULE_HELD) {
-            return new GuiModule(new ModuleContainer(player, player.getHeldItem(EnumHand.MAIN_HAND)));
+        if (ID == ModularRouters.GUI_MODULE_HELD_MAIN) {
+            return new GuiModule(new ModuleContainer(player, player.getHeldItem(EnumHand.MAIN_HAND)), EnumHand.MAIN_HAND);
+        } else if (ID == ModularRouters.GUI_MODULE_HELD_OFF) {
+            return new GuiModule(new ModuleContainer(player, player.getHeldItem(EnumHand.OFF_HAND)), EnumHand.OFF_HAND);
         } else if (ID == ModularRouters.GUI_MODULE_INSTALLED) {
             // player wants to configure a module already installed in an item router
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -52,7 +56,7 @@ public class GuiProxy implements IGuiHandler {
                 if (slotIndex >= 0) {
                     router.clearConfigSlot(player);
                     ItemStack installedModuleStack = ((TileEntityItemRouter) te).getModules().getStackInSlot(slotIndex);
-                    return new GuiModule(new ModuleContainer(player, installedModuleStack), router.getPos(), slotIndex);
+                    return new GuiModule(new ModuleContainer(player, installedModuleStack), router.getPos(), slotIndex, null);
                 }
             }
         } else if (ID == ModularRouters.GUI_ROUTER) {

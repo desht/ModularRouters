@@ -9,6 +9,7 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.recipe.ModRecipes;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -48,4 +49,13 @@ public class CommonProxy {
 
     }
 
+    public void setSparkleFXNoClip(boolean noclip) {}
+
+    public void setSparkleFXCorrupt(boolean noclip) {}
+
+    public void sparkleFX(World world, double x, double y, double z, float r, float g, float b, float size, int m) {
+        sparkleFX(world, x, y, z, r, g, b, size, m, false);
+    }
+
+    public void sparkleFX(World world, double x, double y, double z, float r, float g, float b, float size, int m, boolean fake) {}
 }

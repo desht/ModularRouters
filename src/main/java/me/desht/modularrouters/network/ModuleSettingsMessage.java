@@ -24,14 +24,16 @@ public class ModuleSettingsMessage implements IMessage {
     private byte flags;
     private BlockPos routerPos;
     private int slotIndex;
+    private EnumHand hand;
 
     public ModuleSettingsMessage() {
     }
 
-    public ModuleSettingsMessage(byte flags, BlockPos routerPos, int slotIndex) {
+    public ModuleSettingsMessage(byte flags, BlockPos routerPos, int slotIndex, EnumHand hand) {
         this.flags = flags;
         this.routerPos = routerPos;
         this.slotIndex = slotIndex;
+        this.hand = hand;
     }
 
     @Override
@@ -41,7 +43,9 @@ public class ModuleSettingsMessage implements IMessage {
         if (routerData == 1) {
             routerPos = new BlockPos(byteBuf.readInt(), byteBuf.readInt(), byteBuf.readInt());
             slotIndex = byteBuf.readInt();
+            hand = EnumHand.MAIN_HAND;
         } else {
+            hand = EnumHand.values()[byteBuf.readInt()];
             routerPos = null;
             slotIndex = -1;
         }
@@ -58,6 +62,7 @@ public class ModuleSettingsMessage implements IMessage {
             byteBuf.writeInt(slotIndex);
         } else {
             byteBuf.writeByte(0);
+            byteBuf.writeInt(hand.ordinal());
         }
     }
 
@@ -71,7 +76,7 @@ public class ModuleSettingsMessage implements IMessage {
                 EntityPlayer player = ctx.getServerHandler().playerEntity;
                 TileEntityItemRouter router = getRouter(player.getEntityWorld(), msg);
                 ItemStack stack = router == null ?
-                        player.getHeldItem(EnumHand.MAIN_HAND) :
+                        player.getHeldItem(msg.hand) :
                         router.getModules().getStackInSlot(msg.slotIndex);
                 if (stack != null && stack.getItem() instanceof ItemModule) {
                     NBTTagCompound compound = stack.getTagCompound();

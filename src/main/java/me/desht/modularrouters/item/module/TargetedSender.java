@@ -1,7 +1,11 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.fx.ParticleBeam;
+import me.desht.modularrouters.client.fx.Vector3;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -62,6 +66,25 @@ public abstract class TargetedSender extends SenderModule1 {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+        World world = entityLiving.getEntityWorld();
+        if (!world.isRemote) {
+            return true;
+        }
+        if (entityLiving.isSneaking()) {
+            return false;
+        }
+        DimensionPos target = getTarget(stack);
+        if (target == null || target.dimId != world.provider.getDimension()) {
+            return false;
+        }
+        Vector3 orig = Vector3.fromEntityCenter(entityLiving);
+        Vector3 end = Vector3.fromBlockPos(target.pos).add(0.5);
+        ParticleBeam.doParticleBeam(entityLiving.getEntityWorld(), orig, end);
+        return true;
     }
 
     public static class DimensionPos {

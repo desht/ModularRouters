@@ -8,6 +8,7 @@ import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -34,8 +35,8 @@ public abstract class Module {
         TERMINATE(false, 0x80);
 
         private final boolean defaultValue;
-        private byte mask;
 
+        private byte mask;
         FilterSettings(boolean defaultValue, int mask) {
             this.defaultValue = defaultValue;
             this.mask = (byte) mask;
@@ -48,8 +49,8 @@ public abstract class Module {
         public byte getMask() {
             return mask;
         }
-    }
 
+    }
     // Direction relative to the facing of the router this module is installed in
     public enum RelativeDirection {
         NONE,
@@ -78,8 +79,8 @@ public abstract class Module {
                     return current;
             }
         }
-    }
 
+    }
     public CompiledModuleSettings compile(ItemStack stack) {
         return new CompiledModuleSettings(stack);
     }
@@ -162,6 +163,10 @@ public abstract class Module {
             }
         }
         return EnumActionResult.PASS;
+    }
+
+    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+        return false;
     }
 
 }

@@ -7,11 +7,13 @@ import me.desht.modularrouters.item.ModItems;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -19,9 +21,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -62,6 +68,27 @@ public class ItemModule extends ItemBase {
     public ItemModule() {
         super("module");
         setHasSubtypes(true);
+        MinecraftForge.EVENT_BUS.register(ItemModule.class);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getSide() == Side.CLIENT) {
+            ItemStack stack = event.getItemStack();
+            if (stack == null || !(stack.getItem() instanceof ItemModule)) {
+                return;
+            }
+            if (!(ItemModule.getModule(stack) instanceof TargetedSender)) {
+                return;
+            }
+            TileEntity te = event.getWorld().getTileEntity(event.getPos());
+            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                return;
+            }
+            // We're right-clicking an ordinary block; canceling this prevents the onArmSwing() method
+            // being called, and allows the GUI to opened normally.
+            event.setCanceled(true);
+        }
     }
 
     @Override
@@ -95,10 +122,16 @@ public class ItemModule extends ItemBase {
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         Module.validateNBT(stack);
         if (!world.isRemote) {
-            player.openGui(ModularRouters.instance, ModularRouters.GUI_MODULE_HELD, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
+            player.openGui(ModularRouters.instance, guiId, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+    }
+
+    @Override
+    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+        return getModule(stack).onEntitySwing(entityLiving, stack);
     }
 
     @Override

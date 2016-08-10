@@ -19,10 +19,10 @@ public class ModularRouters {
     public static final String version = "1.0.0";
     public static final String GUIFACTORY = "me.desht.modularrouters.config.ConfigGuiFactory";
     public static Logger logger;
-
     private static int modGuiIndex = 0; // track GUI IDs
 
-    public static final int GUI_MODULE_HELD = modGuiIndex++;
+    public static final int GUI_MODULE_HELD_MAIN = modGuiIndex++;
+    public static final int GUI_MODULE_HELD_OFF = modGuiIndex++;
     public static final int GUI_ROUTER = modGuiIndex++;
     public static final int GUI_MODULE_INSTALLED = modGuiIndex++;
 
