@@ -30,7 +30,7 @@ public class ItemRouterContainer extends Container {
     private static final int MODULE_YPOS = 72;
     private static final int UPGRADE_XPOS = 98;
     private static final int UPGRADE_YPOS = 40;
-    private static final int TE_FIRST_SLOT = 36;
+    public static final int TE_FIRST_SLOT = 36;
     private static final int TE_LAST_SLOT = TE_FIRST_SLOT + UPGRADE_SLOT_END;
 
     private final TileEntityItemRouter itemRouterTE;

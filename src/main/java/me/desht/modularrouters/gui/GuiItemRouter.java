@@ -83,11 +83,15 @@ public class GuiItemRouter extends GuiContainerBase {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
+    private static final int MODULE_START = ItemRouterContainer.TE_FIRST_SLOT + ItemRouterContainer.MODULE_SLOT_START;
+    private static final int MODULE_END = ItemRouterContainer.TE_FIRST_SLOT + ItemRouterContainer.MODULE_SLOT_END;
+
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (typedChar == Config.configKey) {
             Slot slot = getSlotUnderMouse();
-            if (slot != null && slot.getHasStack() && slot.getStack().getItem() instanceof ItemModule) {
+            if (slot != null && slot.slotNumber >= MODULE_START && slot.slotNumber < MODULE_END
+                    && slot.getHasStack() && slot.getStack().getItem() instanceof ItemModule) {
                 CommonProxy.network.sendToServer(new ModuleConfigMessage(router.getPos(), slot.getSlotIndex()));
                 router.playerConfiguringModule(inventoryPlayer.player, slot.getSlotIndex());
                 return;
