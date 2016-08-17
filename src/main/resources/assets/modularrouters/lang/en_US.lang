@@ -11,6 +11,7 @@ item.dropperModule.name=Dropper Module
 item.placerModule.name=Placer Module
 item.breakerModule.name=Breaker Module
 item.voidModule.name=Void Module
+item.redstoneModule.name=Redstone Module
 item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade

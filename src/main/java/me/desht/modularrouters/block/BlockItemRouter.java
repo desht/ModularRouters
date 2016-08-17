@@ -9,6 +9,7 @@ import me.desht.modularrouters.integration.TOPInfoProvider;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -220,4 +221,31 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
             probeInfo.text(TextFormatting.RED + net.minecraft.util.text.translation.I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
         }
     }
+
+    @Override
+    public boolean canProvidePower(IBlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        TileEntity te = blockAccess.getTileEntity(pos);
+        if (te instanceof TileEntityItemRouter) {
+            int power = ((TileEntityItemRouter) te).getRedstoneLevel(side);
+            return power;
+        } else {
+            return 0;
+        }
+    }
+
+//    @Override
+//    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+//        System.out.println("item router neighbor change");
+//        super.neighborChanged(state, worldIn, pos, blockIn);
+//    }
+
+//    @Override
+//    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+//        return false;
+//    }
 }

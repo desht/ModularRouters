@@ -77,11 +77,13 @@ public class ModuleSettingsMessage implements IMessage {
                 TileEntityItemRouter router = getRouter(player.getEntityWorld(), msg);
                 ItemStack stack = router == null ?
                         player.getHeldItem(msg.hand) :
-                        router.getModules().getStackInSlot(msg.slotIndex);
+//                        router.getModules().getStackInSlot(msg.slotIndex);
+                        router.getModules().extractItem(msg.slotIndex, 1, false);
                 if (stack != null && stack.getItem() instanceof ItemModule) {
                     NBTTagCompound compound = stack.getTagCompound();
                     compound.setByte("Flags", msg.flags);
                     if (router != null) {
+                        router.getModules().insertItem(msg.slotIndex, stack, false);
                         router.recompileNeeded();
                     }
                 } else {

@@ -2,6 +2,7 @@ package me.desht.modularrouters.block.tile;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
@@ -35,6 +36,9 @@ import java.util.*;
 public class TileEntityItemRouter extends TileEntity implements ITickable {
     private static final int N_MODULE_SLOTS = 9;
     private static final int N_UPGRADE_SLOTS = 4;
+
+    private final int[] redstoneLevels = new int[EnumFacing.values().length];
+    private final int[] newRedstoneLevels = new int[EnumFacing.values().length];
 
     private int counter = 0;
 
@@ -178,8 +182,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        counter++;
-
         if (recompileNeeded) {
             ModularRouters.logger.debug("recompiling item router @ " + getPos());
             compile();
@@ -189,6 +191,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         if (getWorld().isRemote) {
             return;
         }
+
+        counter++;
 
         if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
             int power = getWorld().isBlockIndirectlyGettingPowered(getPos());
@@ -233,6 +237,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         boolean didWork = false;
 
         if (redstoneModeAllowsRun()) {
+            Arrays.fill(newRedstoneLevels, 0);
+
             for (CompiledModuleSettings mod : compiledModuleSettings) {
                 if (mod != null && mod.execute(this)) {
                     didWork = true;
@@ -240,6 +246,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
                         break;
                     }
                 }
+            }
+
+            if (!Arrays.equals(redstoneLevels, newRedstoneLevels)) {
+                System.arraycopy(newRedstoneLevels, 0, redstoneLevels, 0, redstoneLevels.length);
+                worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
             }
         }
         if (didWork != active) {
@@ -396,5 +407,18 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         } else {
             return -1;
         }
+    }
+
+    public void emitRedstone(Module.RelativeDirection direction, int power) {
+        if (direction == Module.RelativeDirection.NONE) {
+            Arrays.fill(newRedstoneLevels, power);
+        } else {
+            EnumFacing facing = getAbsoluteFacing(direction).getOpposite();
+            newRedstoneLevels[facing.ordinal()] = power;
+        }
+    }
+
+    public int getRedstoneLevel(EnumFacing facing) {
+        return redstoneLevels[facing.ordinal()];
     }
 }
