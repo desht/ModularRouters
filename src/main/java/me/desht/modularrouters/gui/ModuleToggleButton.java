@@ -5,18 +5,16 @@ import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.MiscUtil;
 
 public class ModuleToggleButton extends TexturedToggleButton {
-    private static final int BUTTON_WIDTH = 16;
-    private static final int BUTTON_HEIGHT = 16;
 
-    public ModuleToggleButton(int buttonId, int x, int y) {
-        super(buttonId, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + Module.FilterSettings.values()[buttonId] + ".1");
-        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + Module.FilterSettings.values()[buttonId] + ".2");
+    public ModuleToggleButton(Module.FilterSettings setting, int x, int y) {
+        super(setting.ordinal(), x, y, GuiModule.BUTTON_WIDTH, GuiModule.BUTTON_HEIGHT);
+        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + Module.FilterSettings.values()[id] + ".1");
+        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + Module.FilterSettings.values()[id] + ".2");
     }
 
     @Override
     protected int getTextureX() {
-        return this.id * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
+        return this.id * GuiModule.BUTTON_WIDTH * 2 + (isToggled() ? GuiModule.BUTTON_WIDTH : 0);
     }
 
     @Override
