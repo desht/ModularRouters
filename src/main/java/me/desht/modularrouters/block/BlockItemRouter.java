@@ -231,18 +231,27 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         TileEntity te = blockAccess.getTileEntity(pos);
         if (te instanceof TileEntityItemRouter) {
-            int power = ((TileEntityItemRouter) te).getRedstoneLevel(side);
-            return power;
+            return ((TileEntityItemRouter) te).getRedstoneLevel(side, false);
         } else {
             return 0;
         }
     }
 
-//    @Override
-//    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-//        System.out.println("item router neighbor change");
-//        super.neighborChanged(state, worldIn, pos, blockIn);
-//    }
+    @Override
+    public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        TileEntity te = blockAccess.getTileEntity(pos);
+        if (te instanceof TileEntityItemRouter) {
+            return ((TileEntityItemRouter) te).getRedstoneLevel(side, true);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        // ensure levers etc. can be attached to the block even though it can emit redstone
+        return true;
+    }
 
 //    @Override
 //    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {

@@ -88,7 +88,7 @@ public class ItemModule extends ItemBase {
                 return;
             }
             // We're right-clicking an ordinary block; canceling this prevents the onArmSwing() method
-            // being called, and allows the GUI to opened normally.
+            // being called, and allows the GUI to be opened normally.
             event.setCanceled(true);
         }
     }
@@ -148,8 +148,7 @@ public class ItemModule extends ItemBase {
         modules[itemstack.getItemDamage()].addBasicInformation(itemstack, player, list, par4);
 
         if (GuiScreen.isShiftKeyDown()) {
-            Module.validateNBT(itemstack);
-            NBTTagCompound compound = itemstack.getTagCompound();
+            NBTTagCompound compound =  Module.validateNBT(itemstack);
             Module.RelativeDirection dir = Module.getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.label." + dir.name()));
             NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
@@ -169,6 +168,7 @@ public class ItemModule extends ItemBase {
                             compose("IGNORE_OREDICT", Module.ignoreOreDict(itemstack)),
                             compose("TERMINATE", !Module.terminates(itemstack))
                     ));
+            modules[itemstack.getItemDamage()].addExtraInformation(itemstack, player, list, par4);
         } else if (GuiScreen.isCtrlKeyDown()) {
             modules[itemstack.getItemDamage()].addUsageInformation(itemstack, player, list, par4);
         } else {

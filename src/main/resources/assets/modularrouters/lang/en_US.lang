@@ -89,6 +89,9 @@ itemText.misc.rangeUpgradeTooltip=Extends range of modules:
 itemText.misc.target=§eTarget: §bDIM: %d | POS: %d,%d,%d | SIDE: %s
 itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
 itemText.misc.configureHint=Press §b'%s'§7 to configure this module in-place
+itemText.misc.redstoneLevel=§eSignal Level: §b%d (%s)
+itemText.misc.strongSignalfalse=Weak
+itemText.misc.strongSignaltrue=Strong
 itemText.targetValidation.OUT_OF_RANGE=  §c*** Target Out of Range ***
 itemText.targetValidation.NOT_LOADED=  §c*** Target Not Loaded ***
 itemText.targetValidation.NOT_INVENTORY=  §c*** Target Has no Inventory ***
@@ -105,6 +108,7 @@ itemText.usage.item.sender3Module=Sends items from the router's buffer to any in
 itemText.usage.item.sorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already matching items in that inventory
 itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (up to %d with Range Upgrades).  Only collects items in the configured direction, or any direction if the direction is NONE.
 itemText.usage.item.voidModule=§c*** CAUTION ***//Permanently destroys items in the buffer!
+itemText.usage.item.detectorModule=Emits a redstone signal from the router in the module's configured direction IF the item in the router's buffer passes the module's filter.
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s

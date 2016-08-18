@@ -4,7 +4,6 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.fx.ParticleBeam;
 import me.desht.modularrouters.client.fx.Vector3;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,6 +20,8 @@ import net.minecraft.world.World;
  * Represents a sender module with a specific target block.  Used by Mk2 & Mk3 senders.
  */
 public abstract class TargetedSender extends SenderModule1 {
+    public static final String NBT_TARGET = "Target";
+
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
@@ -40,23 +41,22 @@ public abstract class TargetedSender extends SenderModule1 {
         }
     }
 
-    static void setTarget(ItemStack stack, World world, BlockPos pos, EnumFacing face) {
-        validateNBT(stack);
-        NBTTagCompound compound = stack.getTagCompound();
+    private static void setTarget(ItemStack stack, World world, BlockPos pos, EnumFacing face) {
+        NBTTagCompound compound = validateNBT(stack);
         NBTTagCompound target = new NBTTagCompound();
         target.setInteger("Dimension", world.provider.getDimension());
         target.setInteger("X", pos.getX());
         target.setInteger("Y", pos.getY());
         target.setInteger("Z", pos.getZ());
         target.setInteger("Face", face.ordinal());
-        compound.setTag("Target", target);
+        compound.setTag(NBT_TARGET, target);
         stack.setTagCompound(compound);
     }
 
     public static DimensionPos getTarget(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null && compound.hasKey("Target")) {
-            NBTTagCompound target = compound.getCompoundTag("Target");
+        if (compound != null && compound.hasKey(NBT_TARGET)) {
+            NBTTagCompound target = compound.getCompoundTag(NBT_TARGET);
             int dimId = target.getInteger("Dimension");
             int x = target.getInteger("X");
             int y = target.getInteger("Y");

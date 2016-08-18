@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
@@ -79,8 +80,8 @@ public abstract class Module {
                     return current;
             }
         }
-
     }
+
     public CompiledModuleSettings compile(ItemStack stack) {
         return new CompiledModuleSettings(stack);
     }
@@ -108,16 +109,18 @@ public abstract class Module {
     }
 
     public static boolean checkFlag(ItemStack stack, Module.FilterSettings flag) {
-        validateNBT(stack);
-        return (stack.getTagCompound().getByte("Flags") & flag.getMask()) != 0x0;
+        NBTTagCompound compound = validateNBT(stack);
+        return (compound.getByte("Flags") & flag.getMask()) != 0x0;
     }
 
     public static RelativeDirection getDirectionFromNBT(ItemStack stack) {
-        validateNBT(stack);
-        byte flags = stack.getTagCompound().getByte("Flags");
-        return RelativeDirection.values()[(flags & 0x70) >> 4];
+        NBTTagCompound compound = validateNBT(stack);
+        return RelativeDirection.values()[(compound.getByte("Flags") & 0x70) >> 4];
     }
 
+    /**
+     * Basic information for the module, which is always shown.
+     */
     @SideOnly(Side.CLIENT)
     public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
@@ -128,16 +131,28 @@ public abstract class Module {
         }
     }
 
+    /**
+     * Usage information for the module, shown when Ctrl is held.
+     */
     @SideOnly(Side.CLIENT)
     protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack), getExtraUsageParams());
+    }
+
+    /**
+     * Extra information for the module, shown when Shift is held.
+     */
+    @SideOnly(Side.CLIENT)
+    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
+        // nothing by default
     }
 
     protected Object[] getExtraUsageParams() {
         return new Object[0];
     }
 
-    protected static void validateNBT(ItemStack stack) {
+    @Nonnull
+    public static NBTTagCompound validateNBT(ItemStack stack) {
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
@@ -151,6 +166,7 @@ public abstract class Module {
             }
             compound.setByte("Flags", flags);
         }
+        return compound;
     }
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,

@@ -5,12 +5,13 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.block.BlockLever;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -49,11 +50,11 @@ public class SenderModule2 extends TargetedSender {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addBasicInformation(itemstack, player, list, par4);
+    public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addExtraInformation(itemstack, player, list, par4);
         DimensionPos dpos = getTarget(itemstack);
         if (dpos != null) {
-            list.add(I18n.translateToLocalFormatted("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
+            list.add(I18n.format("itemText.misc.target", dpos.dimId, dpos.pos.getX(), dpos.pos.getY(), dpos.pos.getZ(), dpos.face.getName()));
             WorldServer w = DimensionManager.getWorld(dpos.dimId);
             if (w != null) {
                 list.add("        (" + getBlockName(w, dpos.pos, w.getBlockState(dpos.pos)) + ")");
@@ -62,7 +63,7 @@ public class SenderModule2 extends TargetedSender {
                 TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
                 TargetValidation val = validateTarget(router, dpos);
                 if (!val.isOK()) {
-                    list.add(I18n.translateToLocal("itemText.targetValidation." + val));
+                    list.add(I18n.format("itemText.targetValidation." + val));
                 }
             }
         }

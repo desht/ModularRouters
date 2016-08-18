@@ -2,8 +2,8 @@ package me.desht.modularrouters.block.tile;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -37,8 +37,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     private static final int N_MODULE_SLOTS = 9;
     private static final int N_UPGRADE_SLOTS = 4;
 
-    private final int[] redstoneLevels = new int[EnumFacing.values().length];
-    private final int[] newRedstoneLevels = new int[EnumFacing.values().length];
+    private final int SIDES = EnumFacing.values().length;
+    private final int[] redstoneWeak = new int[SIDES];
+    private final int[] redstoneStrong = new int[SIDES];
+    private final int[] newRedstoneWeak = new int[SIDES];
+    private final int[] newRedstoneStrong = new int[SIDES];
 
     private int counter = 0;
 
@@ -86,8 +89,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     // when player wants to configure an already-installed module, this tracks the slot
     // number received from the client-side GUI
     private final Map<UUID, Integer> playerToSlot = new HashMap<>();
+
     private int lastPower;
-    private int activeTimer = 0;
+    private int activeTimer = 0;  // used in PULSE mode to time out the active state
+    private boolean canEmit; // used if 1 or more detector modules are installed;
 
     public TileEntityItemRouter() {
     }
@@ -237,7 +242,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         boolean didWork = false;
 
         if (redstoneModeAllowsRun()) {
-            Arrays.fill(newRedstoneLevels, 0);
+            if (canEmit) {
+                Arrays.fill(newRedstoneWeak, 0);
+                Arrays.fill(newRedstoneStrong, 0);
+            }
 
             for (CompiledModuleSettings mod : compiledModuleSettings) {
                 if (mod != null && mod.execute(this)) {
@@ -248,13 +256,27 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
                 }
             }
 
-            if (!Arrays.equals(redstoneLevels, newRedstoneLevels)) {
-                System.arraycopy(newRedstoneLevels, 0, redstoneLevels, 0, redstoneLevels.length);
-                worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+            if (canEmit) {
+                handleRedstoneEmission();
             }
         }
         if (didWork != active) {
             setActiveState(didWork);
+        }
+    }
+
+    private void handleRedstoneEmission() {
+        boolean notify = false;
+        if (!Arrays.equals(redstoneWeak, newRedstoneWeak)) {
+            System.arraycopy(newRedstoneWeak, 0, redstoneWeak, 0, redstoneWeak.length);
+            notify = true;
+        }
+        if (!Arrays.equals(redstoneStrong, newRedstoneStrong)) {
+            System.arraycopy(newRedstoneStrong, 0, redstoneStrong, 0, redstoneStrong.length);
+            notify = true;
+        }
+        if (notify) {
+            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
         }
     }
 
@@ -287,11 +309,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
      */
     private void compile() {
         // modules
+        canEmit = false;
         compiledModuleSettings.clear();
         for (int i = 0; i < N_MODULE_SLOTS; i++) {
             ItemStack stack = modulesHandler.getStackInSlot(i);
             if (stack != null && stack.getItem() instanceof ItemModule) {
-                compiledModuleSettings.add(ItemModule.getModule(stack).compile(stack));
+                Module m = ItemModule.getModule(stack);
+                if (m == null) {
+                    continue; // shouldn't happen but let's be paranoid
+                }
+                if (m instanceof DetectorModule) {
+                    canEmit = true;
+                }
+                compiledModuleSettings.add(m.compile(stack));
             }
         }
 
@@ -409,16 +439,22 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         }
     }
 
-    public void emitRedstone(Module.RelativeDirection direction, int power) {
+    public void emitRedstone(Module.RelativeDirection direction, int power, boolean strong) {
+        int[] a = strong ? newRedstoneStrong : newRedstoneWeak;
         if (direction == Module.RelativeDirection.NONE) {
-            Arrays.fill(newRedstoneLevels, power);
+            Arrays.fill(a, power);
         } else {
             EnumFacing facing = getAbsoluteFacing(direction).getOpposite();
-            newRedstoneLevels[facing.ordinal()] = power;
+            a[facing.ordinal()] = power;
         }
     }
 
-    public int getRedstoneLevel(EnumFacing facing) {
-        return redstoneLevels[facing.ordinal()];
+    public int getRedstoneLevel(EnumFacing facing, boolean strong) {
+        int strongLevel = redstoneStrong[facing.ordinal()];
+        if (strong) {
+            return strongLevel;
+        } else {
+            return strongLevel > 0 ? 0 : redstoneWeak[facing.ordinal()];
+        }
     }
 }
