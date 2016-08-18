@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.item.ItemStack;
 
-public class RedstoneModule extends Module {
+public class DetectorModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStack stack = router.getBufferItemStack();

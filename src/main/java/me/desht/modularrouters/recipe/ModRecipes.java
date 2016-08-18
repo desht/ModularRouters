@@ -26,7 +26,7 @@ public class ModRecipes {
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLACER),
                 ModItems.blankModule, Blocks.DISPENSER, Blocks.DIRT);
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SORTER),
-                ModItems.blankModule, Items.COMPARATOR, Items.SPIDER_EYE);
+                ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR), ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1));
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
                 ModItems.blankModule, Blocks.STICKY_PISTON);
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1),
@@ -39,6 +39,8 @@ public class ModRecipes {
                 ModItems.blankModule, Blocks.HOPPER, Items.ENDER_EYE);
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.VOID),
                 ModItems.blankModule, Items.LAVA_BUCKET);
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR),
+                ModItems.blankModule, Items.COMPARATOR);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 4),
                 "ppn", "pdn", " pn",
