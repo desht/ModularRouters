@@ -432,7 +432,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             EnumFacing facing = getAbsoluteFacing(direction).getOpposite();
             newRedstoneLevels[facing.ordinal()] = power;
             newSignalType[facing.ordinal()] = signalType;
-            System.out.println("emit redstone: " + facing + " : " + power + " : " + signalType);
         }
     }
 
