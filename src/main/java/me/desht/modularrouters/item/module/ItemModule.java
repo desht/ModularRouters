@@ -150,7 +150,7 @@ public class ItemModule extends ItemBase {
         if (GuiScreen.isShiftKeyDown()) {
             NBTTagCompound compound =  Module.validateNBT(itemstack);
             Module.RelativeDirection dir = Module.getDirectionFromNBT(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.label." + dir.name()));
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
             NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (Module.isBlacklist(itemstack) ? "2" : "1")) + ":");
             if (items.tagCount() > 0) {
