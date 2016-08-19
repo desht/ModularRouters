@@ -1,6 +1,8 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.gui.GuiModule;
+import me.desht.modularrouters.gui.GuiModuleDetector;
 import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.client.resources.I18n;
@@ -12,6 +14,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public class DetectorModule extends Module {
+    public enum SignalType {
+        NONE, WEAK, STRONG;
+
+        public static SignalType getType(boolean strong) {
+            return strong ? STRONG : WEAK;
+        }
+    }
+
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
         ItemStack stack = router.getBufferItemStack();
@@ -21,7 +31,7 @@ public class DetectorModule extends Module {
         }
 
         CompiledDetectorModuleSettings dSettings = (CompiledDetectorModuleSettings) settings;
-        router.emitRedstone(settings.getDirection(), dSettings.getSignalLevel(), dSettings.isStrongSignal());
+        router.emitRedstone(settings.getDirection(), dSettings.getSignalLevel(), SignalType.getType(dSettings.isStrongSignal()));
 
         return true;
     }
@@ -40,4 +50,8 @@ public class DetectorModule extends Module {
                 ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal" + ds.isStrongSignal())));
     }
 
+    @Override
+    public Class<? extends GuiModule> getGuiHandler() {
+        return GuiModuleDetector.class;
+    }
 }

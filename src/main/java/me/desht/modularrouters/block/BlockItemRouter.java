@@ -257,4 +257,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 //    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 //        return false;
 //    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return true;
+    }
 }

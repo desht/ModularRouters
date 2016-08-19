@@ -3,7 +3,6 @@ package me.desht.modularrouters.gui;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
-import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.FilterSettings;
 import me.desht.modularrouters.item.module.Module.RelativeDirection;
@@ -13,6 +12,7 @@ import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -26,7 +26,7 @@ public class GuiModule extends GuiContainerBase {
     static final int BUTTON_WIDTH = 16;
     static final int BUTTON_HEIGHT = 16;
 
-    private final ItemStack moduleItemStack;
+    protected final ItemStack moduleItemStack;
     private final BlockPos routerPos;
     private final int slotIndex;
     private RelativeDirection facing;
@@ -36,7 +36,7 @@ public class GuiModule extends GuiContainerBase {
         this(containerItem, null, -1, hand);
     }
 
-    public GuiModule(ModuleContainer containerItem, BlockPos routerPos, int slotIndex, EnumHand hand) {
+    public GuiModule(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem);
         moduleItemStack = containerItem.filterHandler.getModuleItemStack();
         this.routerPos = routerPos;
@@ -81,7 +81,6 @@ public class GuiModule extends GuiContainerBase {
 
     @Override
     protected void actionPerformed(GuiButton button) {
-//        System.out.println("button click: " + button.id + " - " + button.getClass().getSimpleName());
         if (button instanceof ModuleToggleButton) {
             ((ModuleToggleButton) button).toggle();
         } else if (button instanceof DirectionButton) {
@@ -94,6 +93,10 @@ public class GuiModule extends GuiContainerBase {
             }
         }
 
+        sendModuleSettingsToServer();
+    }
+
+    protected void sendModuleSettingsToServer() {
         byte flags = (byte) (facing.ordinal() << 4);
         for (FilterSettings setting : FilterSettings.values()) {
             if (getToggleButton(setting).isToggled()) {
@@ -101,7 +104,11 @@ public class GuiModule extends GuiContainerBase {
             }
         }
 
-        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex, hand));
+        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex, hand, getExtMessageData()));
+    }
+
+    protected NBTTagCompound getExtMessageData() {
+        return null;
     }
 
     private ModuleToggleButton getToggleButton(FilterSettings settings) {
@@ -143,4 +150,5 @@ public class GuiModule extends GuiContainerBase {
             CommonProxy.network.sendToServer(new ReopenRouterMessage(routerPos));
         }
     }
+
 }

@@ -23,7 +23,7 @@ tile.itemRouter.name=Item Router
 # Tab Group
 itemGroup.modularrouters=Modular Routers
 
-# Labels
+# GUI Labels & tooltips
 guiText.tooltip.BLACKLIST.1=Whitelist
 guiText.tooltip.IGNORE_META.1=Match Metadata
 guiText.tooltip.IGNORE_NBT.1=Match NBT
@@ -34,13 +34,13 @@ guiText.tooltip.IGNORE_META.2=Ignore Metadata
 guiText.tooltip.IGNORE_NBT.2=Ignore NBT
 guiText.tooltip.IGNORE_OREDICT.2=Don't use Oredict
 guiText.tooltip.TERMINATE.2=Terminate Execution on Match//If this module processes an item, the item router won't execute any subsequent modules on this tick.
-guiText.label.NONE=None
-guiText.label.DOWN=Down
-guiText.label.UP=Up
-guiText.label.LEFT=Left
-guiText.label.RIGHT=Right
-guiText.label.FRONT=Front
-guiText.label.BACK=Back
+guiText.tooltip.NONE=None
+guiText.tooltip.DOWN=Down
+guiText.tooltip.UP=Up
+guiText.tooltip.LEFT=Left
+guiText.tooltip.RIGHT=Right
+guiText.tooltip.FRONT=Front
+guiText.tooltip.BACK=Back
 guiText.label.direction=Direction
 guiText.label.modules=Modules
 guiText.label.upgrades=Upgrades
@@ -73,7 +73,7 @@ gui.config.vacuumBaseRange=Base Range for Vacuum Module (no Range Upgrades)
 gui.config.vacuumMaxRange=Hard Maximum Range for Vacuum Module (with Range Upgrades)
 gui.config.configKey=Key to press (in the Item Router GUI) to configure installed Modules
 
-# Text which goes in item tooltips
+# Item tooltips
 itemText.misc.holdShift=Hold §e§oShift§r§7 for settings, §e§oCtrl§r§7 for info
 itemText.misc.filterItems=item(s) in filter
 itemText.misc.moduleCount=Modules Installed: %d
@@ -97,7 +97,7 @@ itemText.targetValidation.NOT_LOADED=  §c*** Target Not Loaded ***
 itemText.targetValidation.NOT_INVENTORY=  §c*** Target Has no Inventory ***
 itemText.targetValidation.ROUTER_MISSING=  §c*** Source Router Missing??? ***
 
-# Usage tooltip information
+# Usage tooltips
 itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
 itemText.usage.item.dropperModule=Drops items from the router's buffer in the module's configured direction.
 itemText.usage.item.placerModule=Places an item from the router's buffer as a block in the module's configured direction, if possible.

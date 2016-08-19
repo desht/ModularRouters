@@ -12,8 +12,8 @@ public class DirectionButton extends RadioButton {
     public DirectionButton(Module.RelativeDirection dir, int x, int y) {
         super(dir.ordinal() + GuiModule.DIRECTION_BASE_ID, DIRECTION_GROUP, x, y, GuiModule.BUTTON_WIDTH, GuiModule.BUTTON_HEIGHT);
         this.direction = dir;
-        tooltip1.add(TextFormatting.GRAY + I18n.format("guiText.label." + dir));
-        tooltip2.add(TextFormatting.YELLOW + I18n.format("guiText.label." + dir));
+        tooltip1.add(TextFormatting.GRAY + I18n.format("guiText.tooltip." + dir));
+        tooltip2.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip." + dir));
     }
 
     @Override

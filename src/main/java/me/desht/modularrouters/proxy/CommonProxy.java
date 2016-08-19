@@ -4,6 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.gui.GuiProxy;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.network.*;

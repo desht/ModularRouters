@@ -4,6 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.DetectorModule;
+import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -36,12 +37,6 @@ import java.util.*;
 public class TileEntityItemRouter extends TileEntity implements ITickable {
     private static final int N_MODULE_SLOTS = 9;
     private static final int N_UPGRADE_SLOTS = 4;
-
-    private final int SIDES = EnumFacing.values().length;
-    private final int[] redstoneWeak = new int[SIDES];
-    private final int[] redstoneStrong = new int[SIDES];
-    private final int[] newRedstoneWeak = new int[SIDES];
-    private final int[] newRedstoneStrong = new int[SIDES];
 
     private int counter = 0;
 
@@ -86,15 +81,23 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     private int itemsPerTick = 1;
     private final int[] upgradeCount = new int[ItemUpgrade.UpgradeType.values().length];
 
-    // when player wants to configure an already-installed module, this tracks the slot
-    // number received from the client-side GUI
+    // for tracking redstone emission levels for the detector module
+    private final int SIDES = EnumFacing.values().length;
+    private final int[] redstoneLevels = new int[SIDES];
+    private final int[] newRedstoneLevels = new int[SIDES];
+    private final SignalType[] signalType = new SignalType[SIDES];
+    private final SignalType[] newSignalType = new SignalType[SIDES];
+    private boolean canEmit, prevCanEmit; // used if 1 or more detector modules are installed
+
+    // when a player wants to configure an already-installed module, this tracks the slot
+    // number received from the client-side GUI for that player
     private final Map<UUID, Integer> playerToSlot = new HashMap<>();
 
     private int lastPower;
     private int activeTimer = 0;  // used in PULSE mode to time out the active state
-    private boolean canEmit; // used if 1 or more detector modules are installed;
 
     public TileEntityItemRouter() {
+        super();
     }
 
     @Override
@@ -223,6 +226,32 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         }
     }
 
+    private void executeModules() {
+        boolean didWork = false;
+
+        if (redstoneModeAllowsRun()) {
+            if (prevCanEmit || canEmit) {
+                Arrays.fill(newRedstoneLevels, 0);
+                Arrays.fill(newSignalType, SignalType.NONE);
+            }
+            for (CompiledModuleSettings mod : compiledModuleSettings) {
+                if (mod != null && mod.execute(this)) {
+                    didWork = true;
+                    if (mod.termination()) {
+                        break;
+                    }
+                }
+            }
+            if (prevCanEmit || canEmit) {
+                handleRedstoneEmission();
+            }
+        }
+        if (didWork != active) {
+            setActiveState(didWork);
+        }
+        prevCanEmit = canEmit;
+    }
+
     public int getTickRate() {
         return tickRate;
     }
@@ -235,48 +264,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         this.redstoneBehaviour = redstoneBehaviour;
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
             lastPower = getWorld().isBlockIndirectlyGettingPowered(getPos());
-        }
-    }
-
-    private void executeModules() {
-        boolean didWork = false;
-
-        if (redstoneModeAllowsRun()) {
-            if (canEmit) {
-                Arrays.fill(newRedstoneWeak, 0);
-                Arrays.fill(newRedstoneStrong, 0);
-            }
-
-            for (CompiledModuleSettings mod : compiledModuleSettings) {
-                if (mod != null && mod.execute(this)) {
-                    didWork = true;
-                    if (mod.termination()) {
-                        break;
-                    }
-                }
-            }
-
-            if (canEmit) {
-                handleRedstoneEmission();
-            }
-        }
-        if (didWork != active) {
-            setActiveState(didWork);
-        }
-    }
-
-    private void handleRedstoneEmission() {
-        boolean notify = false;
-        if (!Arrays.equals(redstoneWeak, newRedstoneWeak)) {
-            System.arraycopy(newRedstoneWeak, 0, redstoneWeak, 0, redstoneWeak.length);
-            notify = true;
-        }
-        if (!Arrays.equals(redstoneStrong, newRedstoneStrong)) {
-            System.arraycopy(newRedstoneStrong, 0, redstoneStrong, 0, redstoneStrong.length);
-            notify = true;
-        }
-        if (notify) {
-            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
         }
     }
 
@@ -325,9 +312,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
             }
         }
 
-        for (int i = 0; i < upgradeCount.length; i++) {
-            upgradeCount[i] = 0;
-        }
+        Arrays.fill(upgradeCount, 0);
         for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
             ItemStack stack = upgradesHandler.getStackInSlot(i);
             if (stack != null && stack.getItemDamage() < upgradeCount.length) {
@@ -376,7 +361,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     }
 
     public EnumFacing getAbsoluteFacing(Module.RelativeDirection direction) {
-        IBlockState state = getWorld().getBlockState(getPos());
+        IBlockState state = worldObj.getBlockState(pos);
         return direction.toEnumFacing(state.getValue(BlockItemRouter.FACING));
     }
 
@@ -439,22 +424,71 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         }
     }
 
-    public void emitRedstone(Module.RelativeDirection direction, int power, boolean strong) {
-        int[] a = strong ? newRedstoneStrong : newRedstoneWeak;
+    public void emitRedstone(Module.RelativeDirection direction, int power, SignalType signalType) {
         if (direction == Module.RelativeDirection.NONE) {
-            Arrays.fill(a, power);
+            Arrays.fill(newRedstoneLevels, power);
+            Arrays.fill(newSignalType, signalType);
         } else {
             EnumFacing facing = getAbsoluteFacing(direction).getOpposite();
-            a[facing.ordinal()] = power;
+            newRedstoneLevels[facing.ordinal()] = power;
+            newSignalType[facing.ordinal()] = signalType;
+            System.out.println("emit redstone: " + facing + " : " + power + " : " + signalType);
         }
     }
 
     public int getRedstoneLevel(EnumFacing facing, boolean strong) {
-        int strongLevel = redstoneStrong[facing.ordinal()];
+        if (!canEmit) {
+            return 0;
+        }
+        int i = facing.ordinal();
         if (strong) {
-            return strongLevel;
+            return signalType[i] == SignalType.STRONG ? redstoneLevels[i] : 0;
         } else {
-            return strongLevel > 0 ? 0 : redstoneWeak[facing.ordinal()];
+            return signalType[i] != SignalType.NONE ? redstoneLevels[i] : 0;
+        }
+    }
+
+    private void handleRedstoneEmission() {
+        boolean notifyOwnNeighbours = false;
+        EnumSet<EnumFacing> toNotify = EnumSet.noneOf(EnumFacing.class);
+
+        if (!canEmit) {
+            // block has stopped being able to emit a signal (all detector modules removed)
+            // notify neighbours, and neighbours of neighbours where a strong signal was being emitted
+            notifyOwnNeighbours = true;
+            for (EnumFacing f : EnumFacing.values()) {
+                if (signalType[f.ordinal()] == SignalType.STRONG) {
+                    toNotify.add(f.getOpposite());
+                }
+            }
+            Arrays.fill(redstoneLevels, 0);
+            Arrays.fill(signalType, SignalType.NONE);
+        } else {
+            for (EnumFacing facing : EnumFacing.values()) {
+                int i = facing.ordinal();
+                // if the signal type (strong/weak) has changed, notify neighbours of block in that direction
+                // if the signal strength has changed, notify immediate neighbours
+                //   - and if signal type is strong, also notify neighbours of neighbour
+                if (newSignalType[i] != signalType[i]) {
+                    toNotify.add(facing.getOpposite());
+                    signalType[i] = newSignalType[i];
+                }
+                if (newRedstoneLevels[i] != redstoneLevels[i]) {
+                    notifyOwnNeighbours = true;
+                    if (newSignalType[i] == SignalType.STRONG) {
+                        toNotify.add(facing.getOpposite());
+                    }
+                    redstoneLevels[i] = newRedstoneLevels[i];
+                }
+            }
+        }
+
+        for (EnumFacing f : toNotify) {
+            BlockPos pos2 = pos.offset(f);
+            worldObj.notifyNeighborsOfStateChange(pos2, worldObj.getBlockState(pos2).getBlock());
+        }
+        if (notifyOwnNeighbours) {
+            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
         }
     }
 }

@@ -5,6 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
+import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
@@ -27,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
-
     public enum FilterSettings {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -183,6 +183,10 @@ public abstract class Module {
 
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
         return false;
+    }
+
+    public Class<? extends GuiModule> getGuiHandler() {
+        return GuiModule.class;
     }
 
 }

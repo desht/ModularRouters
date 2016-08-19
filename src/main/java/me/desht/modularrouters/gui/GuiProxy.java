@@ -1,4 +1,4 @@
-package me.desht.modularrouters.proxy;
+package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -6,6 +6,7 @@ import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
+import me.desht.modularrouters.gui.ModuleGuiFactory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -44,9 +45,9 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == ModularRouters.GUI_MODULE_HELD_MAIN) {
-            return new GuiModule(new ModuleContainer(player, player.getHeldItem(EnumHand.MAIN_HAND)), EnumHand.MAIN_HAND);
+            return ModuleGuiFactory.createGui(player, EnumHand.MAIN_HAND);
         } else if (ID == ModularRouters.GUI_MODULE_HELD_OFF) {
-            return new GuiModule(new ModuleContainer(player, player.getHeldItem(EnumHand.OFF_HAND)), EnumHand.OFF_HAND);
+            return ModuleGuiFactory.createGui(player, EnumHand.OFF_HAND);
         } else if (ID == ModularRouters.GUI_MODULE_INSTALLED) {
             // player wants to configure a module already installed in an item router
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -56,7 +57,7 @@ public class GuiProxy implements IGuiHandler {
                 if (slotIndex >= 0) {
                     router.clearConfigSlot(player);
                     ItemStack installedModuleStack = ((TileEntityItemRouter) te).getModules().getStackInSlot(slotIndex);
-                    return new GuiModule(new ModuleContainer(player, installedModuleStack), router.getPos(), slotIndex, null);
+                    return ModuleGuiFactory.createGui(player, installedModuleStack, router.getPos(), slotIndex);
                 }
             }
         } else if (ID == ModularRouters.GUI_ROUTER) {

@@ -6,6 +6,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -13,6 +14,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -25,15 +27,17 @@ public class ModuleSettingsMessage implements IMessage {
     private BlockPos routerPos;
     private int slotIndex;
     private EnumHand hand;
+    private NBTTagCompound extData;
 
     public ModuleSettingsMessage() {
     }
 
-    public ModuleSettingsMessage(byte flags, BlockPos routerPos, int slotIndex, EnumHand hand) {
+    public ModuleSettingsMessage(byte flags, BlockPos routerPos, int slotIndex, EnumHand hand, NBTTagCompound extData) {
         this.flags = flags;
         this.routerPos = routerPos;
         this.slotIndex = slotIndex;
         this.hand = hand;
+        this.extData = extData;
     }
 
     @Override
@@ -49,6 +53,7 @@ public class ModuleSettingsMessage implements IMessage {
             routerPos = null;
             slotIndex = -1;
         }
+        extData = ByteBufUtils.readTag(byteBuf);
     }
 
     @Override
@@ -64,6 +69,7 @@ public class ModuleSettingsMessage implements IMessage {
             byteBuf.writeByte(0);
             byteBuf.writeInt(hand.ordinal());
         }
+        ByteBufUtils.writeTag(byteBuf, extData);
     }
 
     public static class Handler implements IMessageHandler<ModuleSettingsMessage, IMessage> {
@@ -77,11 +83,17 @@ public class ModuleSettingsMessage implements IMessage {
                 TileEntityItemRouter router = getRouter(player.getEntityWorld(), msg);
                 ItemStack stack = router == null ?
                         player.getHeldItem(msg.hand) :
-//                        router.getModules().getStackInSlot(msg.slotIndex);
                         router.getModules().extractItem(msg.slotIndex, 1, false);
                 if (stack != null && stack.getItem() instanceof ItemModule) {
                     NBTTagCompound compound = stack.getTagCompound();
                     compound.setByte("Flags", msg.flags);
+                    if (msg.extData != null) {
+                        // extended data set by certain modules; copy directly into the item's NBT
+                        // e.g. the redstone settings for the detector module
+                        for (String key : msg.extData.getKeySet()) {
+                            compound.setTag(key, msg.extData.getTag(key));
+                        }
+                    }
                     if (router != null) {
                         router.getModules().insertItem(msg.slotIndex, stack, false);
                         router.recompileNeeded();

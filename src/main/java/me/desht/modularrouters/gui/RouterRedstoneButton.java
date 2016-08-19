@@ -20,7 +20,7 @@ public class RouterRedstoneButton extends TexturedCyclerButton<RouterRedstoneBeh
 
     @Override
     protected int getTextureY() {
-        return 16; // GuiItemRouter.GUI_HEIGHT + GuiItemRouter.BUTTON_HEIGHT * getState().ordinal();
+        return 16;
     }
 
     @Override
