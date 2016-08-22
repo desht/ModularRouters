@@ -145,7 +145,11 @@ public class ItemModule extends ItemBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        modules[itemstack.getItemDamage()].addBasicInformation(itemstack, player, list, par4);
+        Module m = getModule(itemstack);
+        if (m == null) {
+            return;
+        }
+        m.addBasicInformation(itemstack, player, list, par4);
 
         if (GuiScreen.isShiftKeyDown()) {
             NBTTagCompound compound =  Module.validateNBT(itemstack);
@@ -168,9 +172,9 @@ public class ItemModule extends ItemBase {
                             compose("IGNORE_OREDICT", Module.ignoreOreDict(itemstack)),
                             compose("TERMINATE", !Module.terminates(itemstack))
                     ));
-            modules[itemstack.getItemDamage()].addExtraInformation(itemstack, player, list, par4);
+            m.addExtraInformation(itemstack, player, list, par4);
         } else if (GuiScreen.isCtrlKeyDown()) {
-            modules[itemstack.getItemDamage()].addUsageInformation(itemstack, player, list, par4);
+            m.addUsageInformation(itemstack, player, list, par4);
         } else {
             list.add(I18n.format("itemText.misc.holdShift"));
         }
@@ -178,7 +182,7 @@ public class ItemModule extends ItemBase {
 
     private String compose(String key, boolean flag) {
         String text = I18n.format("itemText.misc." + key);
-        return TextFormatting.AQUA + (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : "") + text + TextFormatting.RESET;
+        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
     public static ItemStack makeItemStack(ModuleType type) {

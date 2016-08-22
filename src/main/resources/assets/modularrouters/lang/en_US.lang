@@ -16,6 +16,7 @@ item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade
 item.rangeUpgrade.name=Range Upgrade
+item.securityUpgrade.name=Security Upgrade
 
 # Blocks
 tile.itemRouter.name=Item Router
@@ -75,8 +76,10 @@ gui.config.configKey=Key to press (in the Item Router GUI) to configure installe
 
 # Item tooltips
 itemText.misc.holdShift=Hold §e§oShift§r§7 for settings, §e§oCtrl§r§7 for info
+itemText.misc.holdShiftUpgrade=Hold §e§oShift§r§7 for more info
 itemText.misc.filterItems=item(s) in filter
 itemText.misc.moduleCount=Modules Installed: %d
+itemText.misc.routerConfigured=This router has been configured
 itemText.misc.noItems=No Items
 itemText.misc.IGNORE_META=Meta
 itemText.misc.IGNORE_NBT=NBT
@@ -92,6 +95,9 @@ itemText.misc.configureHint=Press §b'%s'§7 to configure this module in-place
 itemText.misc.redstoneLevel=§eSignal Level: §b%d (%s)
 itemText.misc.strongSignalfalse=Weak
 itemText.misc.strongSignaltrue=Strong
+itemText.security.tooltip=Protects router; only listed players can access the router.//Right-click a player to add them to this upgrade; shift-right click a player to remove them.
+itemText.security.count=%d / %d other player(s):
+itemText.security.owner=Upgrade Owner: %s
 itemText.targetValidation.OUT_OF_RANGE=  §c*** Target Out of Range ***
 itemText.targetValidation.NOT_LOADED=  §c*** Target Not Loaded ***
 itemText.targetValidation.NOT_INVENTORY=  §c*** Target Has no Inventory ***
@@ -112,3 +118,10 @@ itemText.usage.item.detectorModule=Emits a redstone signal from the router in th
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s
+chatText.security.accessDenied=§cAccess Denied
+chatText.security.ADDED=Added player §e%s
+chatText.security.REMOVED=Removed player §e%s
+chatText.security.ERROR=Couldn't add player §e%s§r [internal error]
+chatText.security.FULL=Security upgrade list full!
+chatText.security.ALREADY_ADDED=Player §e%s§r is already on this upgrade
+chatText.security.NOT_PRESENT=Player §e%s§r is not on this uprade

@@ -7,10 +7,14 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiProxy;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
 import me.desht.modularrouters.network.*;
+import me.desht.modularrouters.recipe.ItemCraftedListener;
 import me.desht.modularrouters.recipe.ModRecipes;
 import net.minecraft.item.Item;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -35,6 +39,7 @@ public class CommonProxy {
         network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, d++, Side.CLIENT);
         network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
         network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
+        network.registerMessage(RouterActiveMessage.Handler.class, RouterActiveMessage.class, d++, Side.CLIENT);
 
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
     }
@@ -42,6 +47,8 @@ public class CommonProxy {
     public void init() {
         NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiProxy());
         ModRecipes.init();
+        MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
+        MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
         IntegrationHandler.registerWaila();
         IntegrationHandler.registerTOP();
     }
@@ -59,4 +66,12 @@ public class CommonProxy {
     }
 
     public void sparkleFX(World world, double x, double y, double z, float r, float g, float b, float size, int m, boolean fake) {}
+
+    public World theClientWorld() {
+        return null;
+    }
+
+    public IThreadListener threadListener() {
+        return null;
+    }
 }

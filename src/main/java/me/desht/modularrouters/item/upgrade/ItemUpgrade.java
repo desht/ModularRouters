@@ -2,6 +2,8 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -14,7 +16,8 @@ public class ItemUpgrade extends ItemBase {
     public enum UpgradeType {
         STACK,
         SPEED,
-        RANGE
+        RANGE,
+        SECURITY
     }
 
     public static final int SUBTYPES = UpgradeType.values().length;
@@ -24,6 +27,7 @@ public class ItemUpgrade extends ItemBase {
         registerUpgrade(UpgradeType.STACK, new StackUpgrade());
         registerUpgrade(UpgradeType.SPEED, new SpeedUpgrade());
         registerUpgrade(UpgradeType.RANGE, new RangeUpgrade());
+        registerUpgrade(UpgradeType.SECURITY, new SecurityUpgrade());
     }
 
     public ItemUpgrade() {
@@ -40,7 +44,15 @@ public class ItemUpgrade extends ItemBase {
 
     @Override
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        upgrades[itemstack.getItemDamage()].addInformation(itemstack, player, list, par4);
+        Upgrade u = getUpgrade(itemstack);
+        if (u != null) {
+            u.addInformation(itemstack, player, list, par4);
+            if (GuiScreen.isShiftKeyDown()) {
+                u.addExtraInformation(itemstack, player, list, par4);
+            } else if (u.hasExtraInformation()) {
+                list.add(I18n.format("itemText.misc.holdShiftUpgrade"));
+            }
+        }
     }
 
     @Nonnull
@@ -64,5 +76,13 @@ public class ItemUpgrade extends ItemBase {
 
     public static ItemStack makeItemStack(UpgradeType type, int amount) {
         return new ItemStack(ModItems.upgrade, amount, type.ordinal());
+    }
+
+    public static Upgrade getUpgrade(ItemStack stack) {
+        return stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
+    }
+
+    public static boolean isType(ItemStack stack, UpgradeType type) {
+        return stack != null && stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() == type.ordinal();
     }
 }

@@ -61,8 +61,8 @@ public class GuiProxy implements IGuiHandler {
                 }
             }
         } else if (ID == ModularRouters.GUI_ROUTER) {
-            TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-            return tileEntity instanceof TileEntityItemRouter ? new GuiItemRouter(player.inventory, (TileEntityItemRouter) tileEntity) : null;
+            TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+            return te instanceof TileEntityItemRouter ? new GuiItemRouter(player.inventory, (TileEntityItemRouter) te) : null;
         }
         return null;
     }

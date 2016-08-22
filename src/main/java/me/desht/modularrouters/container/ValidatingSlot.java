@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ValidatingSlot extends SlotItemHandler {
+public abstract class ValidatingSlot extends SlotItemHandler {
     private final Class<? extends ItemBase> clazz;
     private final TileEntityItemRouter router;
 
@@ -21,8 +21,10 @@ public class ValidatingSlot extends SlotItemHandler {
     @Override
     public void onSlotChanged() {
         super.onSlotChanged();
-        router.recompileNeeded();
+        router.recompileNeeded(compileWhat());
     }
+
+    abstract int compileWhat();
 
     @Override
     public boolean isItemValid(ItemStack itemstack) {
@@ -33,11 +35,21 @@ public class ValidatingSlot extends SlotItemHandler {
         Module(TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(ItemModule.class, router, itemHandler, index, xPosition, yPosition);
         }
+
+        @Override
+        int compileWhat() {
+            return TileEntityItemRouter.COMPILE_MODULES;
+        }
     }
 
     public static class Upgrade extends ValidatingSlot {
         Upgrade(TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(ItemUpgrade.class, router, itemHandler, index, xPosition, yPosition);
+        }
+
+        @Override
+        int compileWhat() {
+            return TileEntityItemRouter.COMPILE_UPGRADES;
         }
     }
 }

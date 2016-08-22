@@ -52,7 +52,9 @@ public class ModRecipes {
                 ModItems.blankUpgrade, Blocks.BRICK_BLOCK, Blocks.STONEBRICK);
         GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGE),
                 ModItems.blankUpgrade, Items.PRISMARINE_SHARD);
-
+        GameRegistry.addRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SECURITY),
+                " q ", "nbn", " r ",
+                'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
         GameRegistry.addRecipe(new EnchantBreakerModuleRecipe());
     }
 }

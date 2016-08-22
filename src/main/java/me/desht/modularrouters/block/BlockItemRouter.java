@@ -8,6 +8,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.integration.TOPInfoProvider;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -29,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -85,6 +87,11 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         if (compound != null) {
             ((ItemStackHandler) te.getModules()).deserializeNBT(compound.getCompoundTag("Modules"));
             ((ItemStackHandler) te.getUpgrades()).deserializeNBT(compound.getCompoundTag("Upgrades"));
+            try {
+                te.setRedstoneBehaviour(RouterRedstoneBehaviour.valueOf(compound.getString("RedstoneBehaviour")));
+            } catch (IllegalArgumentException e) {
+                te.setRedstoneBehaviour(RouterRedstoneBehaviour.ALWAYS);
+            }
         }
     }
 
@@ -99,7 +106,6 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         EnumFacing facing = state.getValue(FACING);
         return facing.getHorizontalIndex();
     }
-
 
     @Override
     protected BlockStateContainer createBlockState() {
@@ -164,9 +170,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
                 NBTTagCompound compound = stack.getTagCompound();
                 compound.setTag("Modules", ((ItemStackHandler) router.getModules()).serializeNBT());
                 compound.setTag("Upgrades", ((ItemStackHandler) router.getUpgrades()).serializeNBT());
-                compound.setInteger("ModuleCount", router.getModuleCount());
-                compound.setInteger("StackUpgradeCount", router.getStackUpgrades());
-                compound.setInteger("SpeedUpgradeCount", router.getSpeedUpgrades());
+                compound.setString("RedstoneBehaviour", router.getRedstoneBehaviour().toString());
             }
             l.add(stack);
         }
@@ -177,25 +181,25 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         NBTTagCompound compound = itemstack.getTagCompound();
-        if (compound != null) {
-            if (GuiScreen.isShiftKeyDown()) {
-                list.add(I18n.format("itemText.misc.moduleCount", compound.getInteger("ModuleCount")));
-                list.add(compound.getInteger("StackUpgradeCount") + " x " + I18n.format("item.stackUpgrade.name"));
-                list.add(compound.getInteger("SpeedUpgradeCount") + " x " + I18n.format("item.speedUpgrade.name"));
-            } else {
-                list.add(I18n.format("itemText.misc.holdShift"));
-            }
+        if (compound != null && compound.hasKey("Modules")) {
+            list.add(I18n.format("itemText.misc.routerConfigured"));
         }
     }
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote && !player.isSneaking()) {
-            player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
-            return true;
-        } else {
-            return false;
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityItemRouter) {
+                // TODO allow op override
+                if (((TileEntityItemRouter) te).isPermitted(player)) {
+                    player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
+                } else {
+                    player.addChatMessage(new TextComponentTranslation("chatText.security.accessDenied"));
+                }
+            }
         }
+        return true;
     }
 
     private static char[] ARROWS = new char[]{' ', '▼', '▲', '◀', '▶', '▣', '▤'};

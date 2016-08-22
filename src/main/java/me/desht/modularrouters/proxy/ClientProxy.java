@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.item.Item;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -71,5 +72,15 @@ public class ClientProxy extends CommonProxy {
             chance = 0.2F;
 
         return chance == 1F || Math.random() < chance;
+    }
+
+    @Override
+    public World theClientWorld() {
+        return Minecraft.getMinecraft().theWorld;
+    }
+
+    @Override
+    public IThreadListener threadListener() {
+        return Minecraft.getMinecraft();
     }
 }

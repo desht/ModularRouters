@@ -1,5 +1,6 @@
 package me.desht.modularrouters.block.tile;
 
+import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
@@ -8,8 +9,12 @@ import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.network.RouterActiveMessage;
+import me.desht.modularrouters.proxy.CommonProxy;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,6 +30,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -37,6 +43,9 @@ import java.util.*;
 public class TileEntityItemRouter extends TileEntity implements ITickable {
     private static final int N_MODULE_SLOTS = 9;
     private static final int N_UPGRADE_SLOTS = 4;
+
+    public static final int COMPILE_MODULES = 0x01;
+    public static final int COMPILE_UPGRADES = 0x02;
 
     private int counter = 0;
 
@@ -56,7 +65,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
         @Override
         protected void onContentsChanged(int slot) {
-            TileEntityItemRouter.this.recompileNeeded();
+            TileEntityItemRouter.this.recompileNeeded(COMPILE_MODULES);
             super.onContentsChanged(slot);
         }
     };
@@ -68,14 +77,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
         @Override
         protected void onContentsChanged(int slot) {
-            TileEntityItemRouter.this.recompileNeeded();
+            TileEntityItemRouter.this.recompileNeeded(COMPILE_UPGRADES);
             super.onContentsChanged(slot);
         }
     };
     private final CombinedInvWrapper joined = new CombinedInvWrapper(bufferHandler, modulesHandler, upgradesHandler);
 
     private final List<CompiledModuleSettings> compiledModuleSettings = new ArrayList<>();
-    private boolean recompileNeeded = true;
+    private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private boolean active;
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
@@ -95,6 +104,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     private int lastPower;
     private int activeTimer = 0;  // used in PULSE mode to time out the active state
+
+    private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
 
     public TileEntityItemRouter() {
         super();
@@ -190,10 +201,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (recompileNeeded) {
-            ModularRouters.logger.debug("recompiling item router @ " + getPos());
+        if (recompileNeeded != 0) {
             compile();
-            recompileNeeded = false;
         }
 
         if (getWorld().isRemote) {
@@ -267,11 +276,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         }
     }
 
-    private void setActiveState(boolean newActive) {
-        active = newActive;
-        IBlockState state = getWorld().getBlockState(getPos());
-        getWorld().setBlockState(getPos(), state.withProperty(BlockItemRouter.ACTIVE, newActive));
-        markDirty();
+    public void setActiveState(boolean newActive) {
+        if (active != newActive) {
+            active = newActive;
+            if (!worldObj.isRemote) {
+                int dim = worldObj.provider.getDimension();
+                NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(dim, pos.getX(), pos.getY(), pos.getZ(), 64);
+                CommonProxy.network.sendToAllAround(new RouterActiveMessage(pos, active), point);
+            } else {
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
+            }
+        }
     }
 
     private boolean redstoneModeAllowsRun() {
@@ -296,32 +311,45 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
      */
     private void compile() {
         // modules
-        canEmit = false;
-        compiledModuleSettings.clear();
-        for (int i = 0; i < N_MODULE_SLOTS; i++) {
-            ItemStack stack = modulesHandler.getStackInSlot(i);
-            if (stack != null && stack.getItem() instanceof ItemModule) {
-                Module m = ItemModule.getModule(stack);
-                if (m == null) {
-                    continue; // shouldn't happen but let's be paranoid
+        if ((recompileNeeded & COMPILE_MODULES) != 0) {
+            ModularRouters.logger.debug("recompiling modules for item router @ " + getPos());
+            canEmit = false;
+            compiledModuleSettings.clear();
+            for (int i = 0; i < N_MODULE_SLOTS; i++) {
+                ItemStack stack = modulesHandler.getStackInSlot(i);
+                if (stack != null && stack.getItem() instanceof ItemModule) {
+                    Module m = ItemModule.getModule(stack);
+                    if (m == null) {
+                        continue; // shouldn't happen but let's be paranoid
+                    }
+                    if (m instanceof DetectorModule) {
+                        canEmit = true;
+                    }
+                    compiledModuleSettings.add(m.compile(stack));
                 }
-                if (m instanceof DetectorModule) {
-                    canEmit = true;
-                }
-                compiledModuleSettings.add(m.compile(stack));
             }
         }
 
-        Arrays.fill(upgradeCount, 0);
-        for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
-            ItemStack stack = upgradesHandler.getStackInSlot(i);
-            if (stack != null && stack.getItemDamage() < upgradeCount.length) {
-                upgradeCount[stack.getItemDamage()] += stack.stackSize;
+        if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
+            ModularRouters.logger.debug("recompiling upgrades for item router @ " + getPos());
+            Arrays.fill(upgradeCount, 0);
+            permitted.clear();
+            for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
+                ItemStack stack = upgradesHandler.getStackInSlot(i);
+                if (stack != null && stack.getItemDamage() < upgradeCount.length) {
+                    upgradeCount[stack.getItemDamage()] += stack.stackSize;
+                    Upgrade u = ItemUpgrade.getUpgrade(stack);
+                    if (u != null) {
+                        u.onCompiled(stack, this);
+                    }
+                }
             }
+
+            tickRate = calculateTickRate(getUpgradeCount(ItemUpgrade.UpgradeType.SPEED));
+            itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
         }
 
-        tickRate = calculateTickRate(getUpgradeCount(ItemUpgrade.UpgradeType.SPEED));
-        itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
+        recompileNeeded = 0;
     }
 
     public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
@@ -352,8 +380,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         return getUpgradeCount(ItemUpgrade.UpgradeType.RANGE);
     }
 
-    public void recompileNeeded() {
-        recompileNeeded = true;
+    public void recompileNeeded(int what) {
+        recompileNeeded |= what;
     }
 
     public int getItemsPerTick() {
@@ -380,7 +408,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
                 modulesHandler.setStackInSlot(i, stack);
                 player.setHeldItem(hand, null);
                 // sound effect?
-                recompileNeeded = true;
+                recompileNeeded(COMPILE_MODULES);
                 return true;
             }
         }
@@ -489,5 +517,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         if (notifyOwnNeighbours) {
             worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
         }
+    }
+
+    public void addPermittedIds(Set<UUID> permittedIds) {
+        this.permitted.addAll(permittedIds);
+    }
+
+    public boolean isPermitted(EntityPlayer player) {
+        return permitted.isEmpty() || permitted.contains(player.getUniqueID());
     }
 }

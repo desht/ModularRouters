@@ -6,7 +6,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -96,7 +95,7 @@ public class ModuleSettingsMessage implements IMessage {
                     }
                     if (router != null) {
                         router.getModules().insertItem(msg.slotIndex, stack, false);
-                        router.recompileNeeded();
+                        router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
                     }
                 } else {
                     ModularRouters.logger.warn("player not holding expected item router module!  ignoring attempt to change settings");

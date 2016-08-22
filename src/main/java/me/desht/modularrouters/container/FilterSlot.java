@@ -18,7 +18,7 @@ public class FilterSlot extends SlotItemHandler {
         super.onSlotChanged();
         filterHandler.save();
         if (router != null) {
-            router.recompileNeeded();
+            router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
         }
     }
 }

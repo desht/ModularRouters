@@ -21,9 +21,9 @@ import java.awt.*;
 import java.io.IOException;
 
 public class GuiItemRouter extends GuiContainerBase {
+    public static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/router.png");
     public static final int LABEL_XPOS = 5;
     public static final int LABEL_YPOS = 5;
-    public static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/router.png");
     public static final int MODULE_LABEL_YPOS = 60;
     public static final int BUFFER_LABEL_YPOS = 28;
     public static final int UPGRADES_LABEL_YPOS = 28;
