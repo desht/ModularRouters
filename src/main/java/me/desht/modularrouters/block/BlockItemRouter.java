@@ -108,6 +108,16 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     }
 
     @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        IBlockState state = world.getBlockState(pos);
+        if (axis.getAxis() != EnumFacing.Axis.Y) {
+            world.setBlockState(pos, state.withProperty(FACING, axis));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING, ACTIVE);
     }
