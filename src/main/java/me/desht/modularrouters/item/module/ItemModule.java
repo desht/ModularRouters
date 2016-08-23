@@ -44,7 +44,8 @@ public class ItemModule extends ItemBase {
         SORTER,
         VACUUM,
         VOID,
-        DETECTOR
+        DETECTOR,
+        MODSORTER
     }
     public static final int SUBTYPES = ModuleType.values().length;
     private static final Module[] modules = new Module[SUBTYPES];
@@ -61,6 +62,7 @@ public class ItemModule extends ItemBase {
         registerSubItem(ModuleType.VACUUM, new VacuumModule());
         registerSubItem(ModuleType.VOID, new VoidModule());
         registerSubItem(ModuleType.DETECTOR, new DetectorModule());
+        registerSubItem(ModuleType.MODSORTER, new ModSorterModule());
     }
 
     private static void registerSubItem(ModuleType type, Module handler) {

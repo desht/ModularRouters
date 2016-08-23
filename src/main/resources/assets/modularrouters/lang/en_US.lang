@@ -12,6 +12,7 @@ item.placerModule.name=Placer Module
 item.breakerModule.name=Breaker Module
 item.voidModule.name=Void Module
 item.detectorModule.name=Detector Module
+item.modsorterModule.name=Mod Sorter Module
 item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade
@@ -115,6 +116,7 @@ itemText.usage.item.sorterModule=Places items from the router's buffer into an a
 itemText.usage.item.vacuumModule=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (up to %d with Range Upgrades).  Only collects items in the configured direction, or any direction if the direction is NONE.
 itemText.usage.item.voidModule=§c*** CAUTION ***//Permanently destroys items in the buffer!
 itemText.usage.item.detectorModule=Emits a redstone signal from the router in the module's configured direction IF the item in the router's buffer passes the module's filter.
+itemText.usage.item.modsorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already items from the same mod in that inventory.
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s
