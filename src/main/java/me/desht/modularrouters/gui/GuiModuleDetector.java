@@ -1,6 +1,8 @@
 package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.container.ModuleContainer;
+import me.desht.modularrouters.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.gui.widgets.TextFieldWidget;
 import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.GuiResponder {
     private static final Pattern INT_MATCHER = Pattern.compile("^[0-9]+$");
-    private static final int SIGNAL_LEVEL_TEXTFIELD_ID = 100;
+    private static final int SIGNAL_LEVEL_TEXTFIELD_ID = 0;
     private static final int STRENGTH_BUTTON_ID = 101;
 
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
@@ -48,9 +50,12 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     public void initGui() {
         super.initGui();
 
-        textBox = new SignalLevelField(SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 144, guiTop + 17, 20, 12);
+        textBox = new SignalLevelField(this, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 144, guiTop + 17, 20, 12);
         textBox.setText(Integer.toString(signalStrength));
         textBox.setGuiResponder(this);
+        addTextField(textBox);
+
+        focus(0);
 
         String label = I18n.format("itemText.misc.strongSignal" + isStrong);
         buttonList.add(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 130, guiTop + 33, 40, 20, label));
@@ -71,7 +76,6 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     public void drawScreen(int x, int y, float partialTicks) {
         super.drawScreen(x, y, partialTicks);
         RenderHelper.renderItemStack(Minecraft.getMinecraft(), redstoneStack, guiLeft + 128, guiTop + 15, "");
-        textBox.drawTextBox();
     }
 
     @Override
@@ -83,52 +87,19 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
                 sendModuleSettingsToServer();
             }
         }
-        if (textBox.isFocused()) {
-            textBox.updateCursorCounter();
-        }
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
-        int wheel = Mouse.getEventDWheel();
-        if (textBox.isFocused() && wheel != 0) {
-            textBox.adjustField(wheel < 0 ? -1 : 1);
-        } else {
-            super.handleMouseInput();
-        }
-    }
+    public void setEntryValue(int id, boolean value) { }
 
     @Override
-    protected void mouseClicked(int x, int y, int btn) throws IOException {
-        super.mouseClicked(x, y, btn);
-        textBox.mouseClicked(x, y, btn);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        if (textBox.isFocused()) {
-            textBox.textboxKeyTyped(typedChar, keyCode);
-        } else if (keyCode == Keyboard.KEY_TAB) {
-            textBox.setFocused(true);
-        }
-    }
-
-    @Override
-    public void setEntryValue(int id, boolean value) {
-
-    }
-
-    @Override
-    public void setEntryValue(int id, float value) {
-
-    }
+    public void setEntryValue(int id, float value) { }
 
     @Override
     public void setEntryValue(int id, String value) {
         if (id == SIGNAL_LEVEL_TEXTFIELD_ID) {
             signalStrength = value.isEmpty() ? 0 : Integer.parseInt(value);
-            sendTimeout = 5;  // delay sending by 5 ticks to minimize sending partial updates
+            sendTimeout = 5;  // delay sending by a few ticks to minimize sending partial updates
         }
     }
 
@@ -148,9 +119,9 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
         return compound;
     }
 
-    private class SignalLevelField extends GuiTextField {
-        SignalLevelField(int id, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
-            super(id, fontrendererObj, x, y, par5Width, par6Height);
+    private class SignalLevelField extends TextFieldWidget {
+        SignalLevelField(GuiContainerBase parent, int id, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
+            super(parent, id, fontrendererObj, x, y, par5Width, par6Height);
             setMaxStringLength(2);
             setValidator(input -> {
                 if (input == null || input.isEmpty()) {
@@ -162,7 +133,6 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
                 int n = Integer.parseInt(input);
                 return n >= 0 && n <= 15;
             });
-            setFocused(true);
         }
 
         @Override
@@ -179,6 +149,11 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
                 default:
                     return super.textboxKeyTyped(typedChar, keyCode);
             }
+        }
+
+        @Override
+        public void onMouseWheel(int direction) {
+            adjustField(direction);
         }
 
         public boolean adjustField(int adj) {

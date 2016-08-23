@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TexturedButton extends GuiButton {
+public abstract class TexturedButton extends GuiButton implements ITooltipButton {
     protected final ResourceLocation resourceLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/widgets.png");
     protected final List<String> tooltip1;
 
