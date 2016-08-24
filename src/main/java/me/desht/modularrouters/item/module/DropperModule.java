@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ public class DropperModule extends Module {
             ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
             BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
             EntityItem item = new EntityItem(router.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, toDrop);
-            item.motionX = item.motionY = item.motionZ = 0.0;
+            setupItemVelocity(router, item, settings);
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.getBuffer().extractItem(0, toDrop.stackSize, false);
                 return true;
@@ -25,5 +26,9 @@ public class DropperModule extends Module {
         } else {
             return false;
         }
+    }
+
+    protected void setupItemVelocity(TileEntityItemRouter router, EntityItem item, CompiledModuleSettings settings) {
+        item.motionX = item.motionY = item.motionZ = 0.0;
     }
 }

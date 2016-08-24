@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -19,7 +18,7 @@ public abstract class GuiContainerBase extends GuiContainer {
 
     public GuiContainerBase(Container c) {
         super(c);
-        MinecraftForge.EVENT_BUS.register(this);
+//        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
@@ -34,6 +33,9 @@ public abstract class GuiContainerBase extends GuiContainer {
     public void drawScreen(int x, int y, float partialTicks) {
         super.drawScreen(x, y, partialTicks);
         textFields.forEach(TextFieldWidget::drawTextBox);
+        this.buttonList.stream().filter(button -> button.isMouseOver() && button instanceof ITooltipButton).forEach(button -> {
+            drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRendererObj);
+        });
     }
 
     @Override
@@ -64,15 +66,15 @@ public abstract class GuiContainerBase extends GuiContainer {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (focusedField >= 0) {
-            textFields.get(focusedField).textboxKeyTyped(typedChar, keyCode);
-            if (keyCode == Keyboard.KEY_E) return;  // avoid closing window while text field focused
-        } else if (keyCode == Keyboard.KEY_TAB) {
+        if (keyCode == Keyboard.KEY_TAB) {
             if (GuiScreen.isShiftKeyDown()) {
                 focusPrev();
             } else {
                 focusNext();
             }
+        } else if (focusedField >= 0) {
+            textFields.get(focusedField).textboxKeyTyped(typedChar, keyCode);
+            if (keyCode == Keyboard.KEY_E) return;  // avoid closing window while text field focused
         }
         super.keyTyped(typedChar, keyCode);
     }
@@ -91,7 +93,7 @@ public abstract class GuiContainerBase extends GuiContainer {
 
     public void focusNext() {
         int field = focusedField + 1;
-        if (field > textFields.size()) field = 0;
+        if (field >= textFields.size()) field = 0;
         focus(field);
     }
 
@@ -102,6 +104,14 @@ public abstract class GuiContainerBase extends GuiContainer {
     }
 
     protected void onTextFieldFocusChange(int id, boolean newFocus) {
-        focusedField = newFocus ? id : -1;
+        if (id == textFields.size() - 1) {
+            focusedField = -1;
+            for (TextFieldWidget t : textFields) {
+                if (t.isFocused()) {
+                    focusedField = t.getId();
+                    break;
+                }
+            }
+        }
     }
 }

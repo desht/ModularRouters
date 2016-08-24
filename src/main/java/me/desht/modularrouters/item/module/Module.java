@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
-    public enum FilterSettings {
+    public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
         IGNORE_NBT(true, 0x4),
@@ -38,7 +38,7 @@ public abstract class Module {
         private final boolean defaultValue;
 
         private byte mask;
-        FilterSettings(boolean defaultValue, int mask) {
+        ModuleFlags(boolean defaultValue, int mask) {
             this.defaultValue = defaultValue;
             this.mask = (byte) mask;
         }
@@ -89,26 +89,26 @@ public abstract class Module {
     public abstract boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings);
 
     public static boolean isBlacklist(ItemStack stack) {
-        return checkFlag(stack, Module.FilterSettings.BLACKLIST);
+        return checkFlag(stack, ModuleFlags.BLACKLIST);
     }
 
     public static boolean ignoreMeta(ItemStack stack) {
-        return checkFlag(stack, Module.FilterSettings.IGNORE_META);
+        return checkFlag(stack, ModuleFlags.IGNORE_META);
     }
 
     public static boolean ignoreNBT(ItemStack stack) {
-        return checkFlag(stack, Module.FilterSettings.IGNORE_NBT);
+        return checkFlag(stack, ModuleFlags.IGNORE_NBT);
     }
 
     public static boolean ignoreOreDict(ItemStack stack) {
-        return checkFlag(stack, Module.FilterSettings.IGNORE_OREDICT);
+        return checkFlag(stack, ModuleFlags.IGNORE_OREDICT);
     }
 
     public static boolean terminates(ItemStack stack) {
-        return checkFlag(stack, Module.FilterSettings.TERMINATE);
+        return checkFlag(stack, ModuleFlags.TERMINATE);
     }
 
-    public static boolean checkFlag(ItemStack stack, Module.FilterSettings flag) {
+    public static boolean checkFlag(ItemStack stack, ModuleFlags flag) {
         NBTTagCompound compound = validateNBT(stack);
         return (compound.getByte("Flags") & flag.getMask()) != 0x0;
     }
@@ -159,7 +159,7 @@ public abstract class Module {
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Flags")) {
             byte flags = 0x0;
-            for (Module.FilterSettings b : Module.FilterSettings.values()) {
+            for (ModuleFlags b : ModuleFlags.values()) {
                 if (b.getDefaultValue()) {
                     flags |= b.getMask();
                 }

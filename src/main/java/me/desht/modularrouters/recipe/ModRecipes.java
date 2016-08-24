@@ -41,6 +41,10 @@ public class ModRecipes {
                 ModItems.blankModule, Items.LAVA_BUCKET);
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR),
                 ModItems.blankModule, Items.COMPARATOR);
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.MODSORTER),
+                ItemModule.makeItemStack(ItemModule.ModuleType.SORTER), Items.GOLD_INGOT);
+        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLINGER),
+                ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER), Items.GUNPOWDER);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 4),
                 "ppn", "pdn", " pn",

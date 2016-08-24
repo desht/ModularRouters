@@ -121,11 +121,4 @@ public class ItemRouterContainer extends Container {
         sourceSlot.onPickupFromSlot(player, sourceStack);
         return copyOfSourceStack;
     }
-
-//	@Override
-//	public void onContainerClosed(EntityPlayer playerIn)
-//	{
-//		super.onContainerClosed(playerIn);
-//		this.itemRouterTE.closeInventory(playerIn);
-//	}
 }

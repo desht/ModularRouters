@@ -1,6 +1,6 @@
 {
-	"parent": "item/generated",
+  "parent": "item/generated",
 	"textures": {
-		"layer0": "modularrouters:items/breakerModule"
-	}
+      "layer0": "modularrouters:items/breakerModule"
+    }
 }

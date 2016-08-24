@@ -20,6 +20,7 @@ public class ModuleContainer extends Container {
     private static final int HOTBAR_END = HOTBAR_START + 8;
 
     private static final int PLAYER_INV_Y = 100;
+    private static final int PLAYER_INV_X = 16;
     private static final int PLAYER_HOTBAR_Y = PLAYER_INV_Y + 58;
 
     public final FilterHandler filterHandler;
@@ -41,13 +42,13 @@ public class ModuleContainer extends Container {
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
+                this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
             }
         }
 
         // player's hotbar - uses default locations for standard action bar texture file
         for (int i = 0; i < 9; i++) {
-            this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
+            this.addSlotToContainer(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
         }
     }
 

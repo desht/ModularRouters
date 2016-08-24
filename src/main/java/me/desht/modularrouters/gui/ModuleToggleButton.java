@@ -6,10 +6,10 @@ import me.desht.modularrouters.util.MiscUtil;
 
 public class ModuleToggleButton extends TexturedToggleButton {
 
-    public ModuleToggleButton(Module.FilterSettings setting, int x, int y) {
+    public ModuleToggleButton(Module.ModuleFlags setting, int x, int y) {
         super(setting.ordinal(), x, y, GuiModule.BUTTON_WIDTH, GuiModule.BUTTON_HEIGHT);
-        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + Module.FilterSettings.values()[id] + ".1");
-        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + Module.FilterSettings.values()[id] + ".2");
+        MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + Module.ModuleFlags.values()[id] + ".1");
+        MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + Module.ModuleFlags.values()[id] + ".2");
     }
 
     @Override

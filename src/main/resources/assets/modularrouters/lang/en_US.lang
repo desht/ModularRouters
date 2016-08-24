@@ -13,6 +13,7 @@ item.breakerModule.name=Breaker Module
 item.voidModule.name=Void Module
 item.detectorModule.name=Detector Module
 item.modsorterModule.name=Mod Sorter Module
+item.flingerModule.name=Flinger Module
 item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade
@@ -53,6 +54,11 @@ guiText.tooltip.redstone.LOW=Redstone Mode: §eLow
 guiText.tooltip.redstone.HIGH=Redstone Mode: §eHigh
 guiText.tooltip.redstone.NEVER=Redstone Mode: §eNever Run
 guiText.tooltip.redstone.PULSE=Redstone Mode: §eRun Once On Pulse
+guiText.tooltip.flinger.speed=§bSpeed (0.0 → 20.0)
+guiText.tooltip.flinger.pitch=§bPitch (-90.0 → 90.0)
+guiText.tooltip.flinger.yaw=§bYaw (-60.0 → 60.0)
+guiText.tooltip.flinger.common=Type a value, use §eCursor Up/Down§r, or mouse wheel to adjust.//§fHold §eShift§r for fine adjustment//§fHold §eCtrl§r for coarse adjustment
+guiText.tooltip.detectorHint=Type a redstone signal level, use §eCursor Up/Down§r, or mouse wheel to adjust.//§fUse toggle button to emit a weak or strong signal.
 
 # Config GUI
 gui.config.mainTitle=Modular Routers Configuration
@@ -96,6 +102,7 @@ itemText.misc.configureHint=Press §b'%s'§7 to configure this module in-place
 itemText.misc.redstoneLevel=§eSignal Level: §b%d (%s)
 itemText.misc.strongSignalfalse=Weak
 itemText.misc.strongSignaltrue=Strong
+itemText.misc.flingerDetails=§eSpeed: §b%f§f | §ePitch: §b%f§f | §eYaw: §b%f
 itemText.security.tooltip=Protects router; only listed players can access the router.//Right-click a player to add them to this upgrade; shift-right click a player to remove them.
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=Upgrade Owner: %s
@@ -117,6 +124,7 @@ itemText.usage.item.vacuumModule=Absorbs items in the world into the router's bu
 itemText.usage.item.voidModule=§c*** CAUTION ***//Permanently destroys items in the buffer!
 itemText.usage.item.detectorModule=Emits a redstone signal from the router in the module's configured direction IF the item in the router's buffer passes the module's filter.
 itemText.usage.item.modsorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already items from the same mod in that inventory.
+itemText.usage.item.flingerModule=Throws item from the router's buffer potentially over a long distance.  Adjust speed, pitch & yaw from the module's GUI.
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s
