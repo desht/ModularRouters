@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -87,8 +88,7 @@ public class ItemModule extends ItemBase {
             if (!(ItemModule.getModule(stack) instanceof TargetedSender)) {
                 return;
             }
-            TileEntity te = event.getWorld().getTileEntity(event.getPos());
-            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+            if (InventoryUtils.getInventory(event.getWorld(), event.getPos(), event.getFace()) != null) {
                 return;
             }
             // We're right-clicking an ordinary block; canceling this prevents the onArmSwing() method

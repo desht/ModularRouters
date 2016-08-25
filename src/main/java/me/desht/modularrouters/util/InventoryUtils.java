@@ -79,7 +79,7 @@ public class InventoryUtils {
 
         return ret;
     }
-
+TileEntityChest c;
     public static int transferItems(IItemHandler from, IItemHandler to, int slot, int count) {
         if (from == null || to == null || count == 0) {
             return 0;

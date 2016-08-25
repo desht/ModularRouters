@@ -3,6 +3,7 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.fx.ParticleBeam;
 import me.desht.modularrouters.client.fx.Vector3;
+import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,8 +29,7 @@ public abstract class TargetedSender extends SenderModule1 {
         if (world.isRemote) {
             return EnumActionResult.SUCCESS;
         } else if (player.isSneaking()) {
-            TileEntity te = world.getTileEntity(pos);
-            if (te != null && te.hasCapability(ModularRouters.ITEM_HANDLER_CAPABILITY, null)) {
+            if (InventoryUtils.getInventory(world, pos, face) != null) {
                 setTarget(stack, world, pos, face);
                 player.addChatMessage(new TextComponentTranslation("chatText.misc.targetSet", MiscUtil.locToString(world, pos)));
                 return EnumActionResult.SUCCESS;
