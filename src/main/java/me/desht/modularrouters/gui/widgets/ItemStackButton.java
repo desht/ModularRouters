@@ -1,8 +1,7 @@
 package me.desht.modularrouters.gui.widgets;
 
-import me.desht.modularrouters.gui.RenderHelper;
+import me.desht.modularrouters.client.RenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 

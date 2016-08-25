@@ -1,15 +1,17 @@
-package me.desht.modularrouters.block;
+package me.desht.modularrouters.integration.waila;
 
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
@@ -32,12 +34,17 @@ public class RouterDataProvider implements IWailaDataProvider {
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         TileEntity te = accessor.getTileEntity();
         if (te instanceof TileEntityItemRouter) {
-            TileEntityItemRouter itemRouter = (TileEntityItemRouter) te;
-            MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", itemRouter.getModuleCount());
-            currenttip.add(itemRouter.getSpeedUpgrades() + " x " + I18n.translateToLocal("item.speedUpgrade.name"));
-            currenttip.add(itemRouter.getStackUpgrades() + " x " + I18n.translateToLocal("item.stackUpgrade.name"));
-            currenttip.add(itemRouter.getRangeUpgrades() + " x " + I18n.translateToLocal("item.rangeUpgrade.name"));
+            TileEntityItemRouter router = (TileEntityItemRouter) te;
+            MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", router.getModuleCount());
+            for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+                if (router.getUpgradeCount(type) > 0) {
+                    String name = I18n.translateToLocal("item." + type.toString().toLowerCase() + "Upgrade.name");
+                    currenttip.add(I18n.translateToLocalFormatted("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
+                }
+            }
+            currenttip.add(TextFormatting.RED + I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
         }
+
         return currenttip;
     }
 

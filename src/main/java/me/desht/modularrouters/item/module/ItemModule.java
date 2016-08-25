@@ -119,6 +119,10 @@ public class ItemModule extends ItemBase {
         return stack.getItemDamage() < modules.length ? modules[stack.getItemDamage()] : null;
     }
 
+    public static Module getModule(ModuleType type) {
+        return modules[type.ordinal()];
+    }
+
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 1; // return any value greater than zero

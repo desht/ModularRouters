@@ -1,4 +1,4 @@
-package me.desht.modularrouters.integration;
+package me.desht.modularrouters.integration.top;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

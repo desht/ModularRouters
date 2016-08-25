@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui;
+package me.desht.modularrouters.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

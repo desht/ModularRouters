@@ -5,19 +5,18 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.integration.TOPInfoProvider;
+import me.desht.modularrouters.integration.top.ElementModule;
+import me.desht.modularrouters.integration.top.TOPInfoProvider;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
@@ -227,8 +226,6 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         return true;
     }
 
-    private static char[] ARROWS = new char[]{' ', '▼', '▲', '◀', '▶', '▣', '▤'};
-
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         TileEntity te = world.getTileEntity(data.getPos());
@@ -239,13 +236,14 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
             for (int i = 0; i < modules.getSlots(); i++) {
                 ItemStack stack = modules.getStackInSlot(i);
                 if (stack != null) {
-                    Module.RelativeDirection dir = Module.getDirectionFromNBT(stack);
-                    sub.item(stack).text(TextFormatting.GREEN + Character.toString(ARROWS[dir.ordinal()]));
+                    sub.element(new ElementModule(stack));
                 }
             }
             sub = probeInfo.horizontal();
             for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-                sub.item(ItemUpgrade.makeItemStack(type)).text(TextFormatting.GREEN + "x " + router.getUpgradeCount(type));
+                if (router.getUpgradeCount(type) > 0) {
+                    sub.item(ItemUpgrade.makeItemStack(type, router.getUpgradeCount(type)));
+                }
             }
             probeInfo.text(TextFormatting.RED + net.minecraft.util.text.translation.I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
         }
