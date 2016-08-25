@@ -9,6 +9,10 @@ public class ParticleBeam {
 	private static final int MAX_ITERS = 500;
 
     public static void doParticleBeam(World world, Vector3 orig, Vector3 end) {
+        doParticleBeam(world, orig, end, null);
+    }
+
+    public static void doParticleBeam(World world, Vector3 orig, Vector3 end, Color flatColor) {
 		if (!world.isRemote)
 			return;
 
@@ -20,16 +24,20 @@ public class ParticleBeam {
 
 		Vector3 currentPos = orig;
 		for(int i = 0; i < iters; i++) {
-			float hue = i * huePer + hueSum;
-			Color color = Color.getHSBColor(hue, 1F, 1F);
-			float r = color.getRed() / 255F;
-			float g = color.getGreen() / 255F;
-			float b = color.getBlue() / 255F;
-
-			ModularRouters.proxy.setSparkleFXNoClip(true);
+            Color color;
+            if (flatColor != null) {
+                color = flatColor;
+            } else {
+                float hue = i * huePer + hueSum;
+                color = Color.getHSBColor(hue, 1F, 1F);
+            }
+            float r = color.getRed() / 255F;
+            float g = color.getGreen() / 255F;
+            float b = color.getBlue() / 255F;
+            ModularRouters.proxy.setSparkleFXNoClip(true);
             ModularRouters.proxy.sparkleFX(world, currentPos.x, currentPos.y, currentPos.z, r, g, b, 0.5F, 4);
             ModularRouters.proxy.setSparkleFXNoClip(false);
-			currentPos = currentPos.add(movement);
-		}
+            currentPos = currentPos.add(movement);
+        }
 	}
 }

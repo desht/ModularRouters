@@ -1,20 +1,29 @@
 package me.desht.modularrouters.item.module;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.network.ParticleBeamMessage;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import java.awt.*;
 
 public class SenderModule3 extends SenderModule2 {
     @Override
-    protected void playParticles(TileEntityItemRouter router, CompiledModuleSettings settings, BlockPos targetPos) {
-        double x = router.getPos().getX() - 0.1 + Math.random() * 1.2;
-        double y = router.getPos().getY() + 0.2 + Math.random() * 0.8;
-        double z = router.getPos().getZ() - 0.1 + Math.random() * 1.2;
-
-        ((WorldServer) router.getWorld()).spawnParticle(EnumParticleTypes.PORTAL, false, x, y, z, 0, 1.0D, 0.0D, 0.0D, 1.0D);
+    protected void playParticles(TileEntityItemRouter router, CompiledModuleSettings settings, BlockPos targetPos, float val) {
+        double x = router.getPos().getX() + 0.5;
+        double y = router.getPos().getY() + 0.5;
+        double z = router.getPos().getZ() + 0.5;
+        EnumFacing facing = router.getAbsoluteFacing(RelativeDirection.FRONT);
+        double x2 = x + facing.getFrontOffsetX() * 1.5;
+        double z2 = z + facing.getFrontOffsetZ() * 1.5;
+        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), x, y, z, 32);
+        ModularRouters.network.sendToAllAround(new ParticleBeamMessage(x, y, z, x2, y, z2, Color.getHSBColor(0.83333f, 1.0f, 0.8f)), point);
     }
 
     @Override

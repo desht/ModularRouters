@@ -82,7 +82,7 @@ public class ModularRouters {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(ModularRouters.modId);
         network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
         network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, d++, Side.CLIENT);
+        network.registerMessage(ParticleBeamMessage.Handler.class, ParticleBeamMessage.class, d++, Side.CLIENT);
         network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
         network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
         network.registerMessage(RouterBlockstateMessage.Handler.class, RouterBlockstateMessage.class, d++, Side.CLIENT);

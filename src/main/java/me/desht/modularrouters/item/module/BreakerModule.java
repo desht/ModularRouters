@@ -54,7 +54,7 @@ public class BreakerModule extends Module {
             Item item = Item.getItemFromBlock(block);
             if (world instanceof WorldServer
                     && !block.isAir(state, world, pos) && !(block instanceof BlockLiquid)
-                    /* && item != null */ && settings.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
+                    && settings.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
                 float hardness = state.getBlockHardness(world, pos);
                 if (hardness >= 0.0f) {
                     EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();

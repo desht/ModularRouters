@@ -9,7 +9,7 @@ public class RenderListener {
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("botania-particles");
+        profiler.startSection("modularrouters-particles");
         ParticleRenderDispatcher.dispatch();
         profiler.endSection();
     }
