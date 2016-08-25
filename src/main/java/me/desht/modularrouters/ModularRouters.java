@@ -1,6 +1,16 @@
 package me.desht.modularrouters;
 
+import me.desht.modularrouters.block.ModBlocks;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.gui.GuiProxy;
+import me.desht.modularrouters.integration.IntegrationHandler;
+import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
+import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
+import me.desht.modularrouters.recipe.ModRecipes;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Mod;
@@ -8,6 +18,10 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +33,9 @@ public class ModularRouters {
     public static final String version = "1.0.0";
     public static final String GUIFACTORY = "me.desht.modularrouters.config.ConfigGuiFactory";
     public static Logger logger;
-    private static int modGuiIndex = 0; // track GUI IDs
+    public static SimpleNetworkWrapper network;
 
+    private static int modGuiIndex = 0; // track GUI IDs
     public static final int GUI_MODULE_HELD_MAIN = modGuiIndex++;
     public static final int GUI_MODULE_HELD_OFF = modGuiIndex++;
     public static final int GUI_ROUTER = modGuiIndex++;
@@ -31,6 +46,7 @@ public class ModularRouters {
 
     @SidedProxy(serverSide = "me.desht.modularrouters.proxy.CommonProxy", clientSide = "me.desht.modularrouters.proxy.ClientProxy")
     public static CommonProxy proxy;
+
     @Mod.Instance(modId)
     public static ModularRouters instance;
 
@@ -38,16 +54,37 @@ public class ModularRouters {
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         proxy.preInit();
+        Config.preInit();
+        ModItems.init();
+        ModBlocks.init();
+        setupNetwork();
+        GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
         logger.info(name + " is loading!");
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init();
+        ModRecipes.init();
+        NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiProxy());
+        MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
+        IntegrationHandler.registerWaila();
+        IntegrationHandler.registerTOP();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+    }
+
+    private void setupNetwork() {
+        int d = 0;
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(ModularRouters.modId);
+        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, d++, Side.CLIENT);
+        network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
+        network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
+        network.registerMessage(RouterBlockstateMessage.Handler.class, RouterBlockstateMessage.class, d++, Side.CLIENT);
     }
 }

@@ -125,7 +125,7 @@ public class GuiModule extends GuiContainerBase {
             }
         }
 
-        CommonProxy.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex, hand, getExtMessageData()));
+        ModularRouters.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex, hand, getExtMessageData()));
     }
 
     protected NBTTagCompound getExtMessageData() {
@@ -166,7 +166,7 @@ public class GuiModule extends GuiContainerBase {
         }
         if (routerPos != null) {
             // re-open router GUI; we were editing an installed module
-            CommonProxy.network.sendToServer(new ReopenRouterMessage(routerPos));
+            ModularRouters.network.sendToServer(new ReopenRouterMessage(routerPos));
         }
     }
 

@@ -30,6 +30,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -293,7 +294,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     private void sendBlockstateToClients() {
         NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(
                 worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64);
-        CommonProxy.network.sendToAllAround(new RouterBlockstateMessage(pos, this), point);
+        ModularRouters.network.sendToAllAround(new RouterBlockstateMessage(pos, this), point);
     }
 
     private boolean redstoneModeAllowsRun() {

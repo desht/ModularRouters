@@ -58,7 +58,7 @@ public class GuiItemRouter extends GuiContainerBase {
             case REDSTONE_BUTTON_ID:
                 RouterRedstoneButton rrb = (RouterRedstoneButton) button;
                 rrb.cycle(!isShiftKeyDown());
-                CommonProxy.network.sendToServer(new RouterSettingsMessage(router, rrb.getState()));
+                ModularRouters.network.sendToServer(new RouterSettingsMessage(router, rrb.getState()));
                 router.setRedstoneBehaviour(rrb.getState());
                 break;
             default:
@@ -92,7 +92,7 @@ public class GuiItemRouter extends GuiContainerBase {
             Slot slot = getSlotUnderMouse();
             if (slot != null && slot.slotNumber >= MODULE_START && slot.slotNumber < MODULE_END
                     && slot.getHasStack() && slot.getStack().getItem() instanceof ItemModule) {
-                CommonProxy.network.sendToServer(new ModuleConfigMessage(router.getPos(), slot.getSlotIndex()));
+                ModularRouters.network.sendToServer(new ModuleConfigMessage(router.getPos(), slot.getSlotIndex()));
                 router.playerConfiguringModule(inventoryPlayer.player, slot.getSlotIndex());
                 return;
             }

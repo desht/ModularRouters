@@ -21,40 +21,17 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
-    public static SimpleNetworkWrapper network;
 
     public void registerItemRenderer(Item item, int meta, String id) {
-        // STUB
     }
 
     public void preInit() {
-        Config.preInit();
-        ModItems.init();
-        ModBlocks.init();
-
-        int d = 0;
-        network = NetworkRegistry.INSTANCE.newSimpleChannel(ModularRouters.modId);
-        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(ParticleMessage.Handler.class, ParticleMessage.class, d++, Side.CLIENT);
-        network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
-        network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
-        network.registerMessage(RouterBlockstateMessage.Handler.class, RouterBlockstateMessage.class, d++, Side.CLIENT);
-
-        GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
     }
 
     public void init() {
-        NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiProxy());
-        ModRecipes.init();
-        MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
-        MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
-        IntegrationHandler.registerWaila();
-        IntegrationHandler.registerTOP();
     }
 
     public void postInit() {
-
     }
 
     public void setSparkleFXNoClip(boolean noclip) {}

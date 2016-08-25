@@ -7,6 +7,7 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModRecipes {
@@ -60,5 +61,7 @@ public class ModRecipes {
                 " q ", "nbn", " r ",
                 'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
         GameRegistry.addRecipe(new EnchantBreakerModuleRecipe());
+
+        MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
     }
 }
