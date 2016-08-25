@@ -10,12 +10,14 @@ public class ModItems {
     public static ItemModule module;
     public static ItemBase blankUpgrade;
     public static ItemUpgrade upgrade;
+    public static ItemBase overrideCard;
 
     public static void init() {
         blankModule = register(new ItemBase("blankModule"));
         module = register(new ItemModule(), ItemModule.SUBTYPES);
         blankUpgrade = register(new ItemBase("blankUpgrade"));
         upgrade = register(new ItemUpgrade(), ItemUpgrade.SUBTYPES);
+        overrideCard = register(new ItemBase("overrideCard"));
     }
 
     private static <T extends Item> T register(T item) {

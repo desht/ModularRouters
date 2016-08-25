@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -534,7 +535,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     }
 
     public boolean isPermitted(EntityPlayer player) {
-        return permitted.isEmpty() || permitted.contains(player.getUniqueID());
+        if (permitted.isEmpty() || permitted.contains(player.getUniqueID())) {
+            return true;
+        }
+        for (EnumHand hand : EnumHand.values()) {
+            if (player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() == ModItems.overrideCard) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isSideOpen(Module.RelativeDirection side) {

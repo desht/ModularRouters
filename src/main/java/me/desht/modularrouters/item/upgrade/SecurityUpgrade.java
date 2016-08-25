@@ -147,18 +147,12 @@ public class SecurityUpgrade extends Upgrade {
             boolean isError() {
                 return this != ADDED && this != REMOVED;
             }
-        };
-
-        // work around weirdness with event getting fired twice
-        private static Map<UUID,Long> lastInteract = Maps.newHashMap();
+        }
 
         @SubscribeEvent
         public static void onInteracted(PlayerInteractEvent.EntityInteract event) {
             if (event.getTarget() instanceof EntityPlayer) {
-                if (checkForDoubleEvent(event.getEntityPlayer())) {
-                    return;
-                }
-                ItemStack stack = event.getEntityPlayer().getHeldItem(EnumHand.MAIN_HAND);
+                ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
                 if (ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.SECURITY)) {
                     SecurityUpgrade su = (SecurityUpgrade) ItemUpgrade.getUpgrade(stack);
                     EntityPlayer targetPlayer = (EntityPlayer) event.getTarget();
@@ -172,14 +166,6 @@ public class SecurityUpgrade extends Upgrade {
                     }
                 }
             }
-        }
-
-        private static boolean checkForDoubleEvent(EntityPlayer player) {
-            UUID id0 = player.getUniqueID();
-            long then = lastInteract.containsKey(id0) ? lastInteract.get(id0) : 0L;
-            long now = System.currentTimeMillis();
-            lastInteract.put(id0, now);
-            return now - then < 150;
         }
     }
 

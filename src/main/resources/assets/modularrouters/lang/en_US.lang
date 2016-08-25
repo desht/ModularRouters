@@ -19,6 +19,7 @@ item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade
 item.rangeUpgrade.name=Range Upgrade
 item.securityUpgrade.name=Security Upgrade
+item.overrideCard.name=Security Override Card
 
 # Blocks
 tile.itemRouter.name=Item Router
@@ -129,9 +130,9 @@ itemText.usage.item.flingerModule=Throws item from the router's buffer potential
 # Player chat messages
 chatText.misc.targetSet=Target set: %s
 chatText.security.accessDenied=§cAccess Denied
-chatText.security.ADDED=Added player §e%s
-chatText.security.REMOVED=Removed player §e%s
-chatText.security.ERROR=Couldn't add player §e%s§r [internal error]
+chatText.security.ADDED=Added player [%s]
+chatText.security.REMOVED=Removed player [%s]
+chatText.security.ERROR=Couldn't add player [%s] (internal error)
 chatText.security.FULL=Security upgrade list full!
-chatText.security.ALREADY_ADDED=Player §e%s§r is already on this upgrade
-chatText.security.NOT_PRESENT=Player §e%s§r is not on this uprade
+chatText.security.ALREADY_ADDED=Player [%s] is already on this upgrade
+chatText.security.NOT_PRESENT=Player [%s] is not on this uprade
