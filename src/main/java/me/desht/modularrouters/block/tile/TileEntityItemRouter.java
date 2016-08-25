@@ -12,9 +12,8 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.network.RouterActiveMessage;
+import me.desht.modularrouters.network.RouterBlockstateMessage;
 import me.desht.modularrouters.proxy.CommonProxy;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -106,6 +105,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
     private int activeTimer = 0;  // used in PULSE mode to time out the active state
 
     private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
+
+    // bitmask of which of the 6 sides are currently open
+    private byte sidesOpen;
 
     public TileEntityItemRouter() {
         super();
@@ -280,13 +282,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         if (active != newActive) {
             active = newActive;
             if (!worldObj.isRemote) {
-                int dim = worldObj.provider.getDimension();
-                NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(dim, pos.getX(), pos.getY(), pos.getZ(), 64);
-                CommonProxy.network.sendToAllAround(new RouterActiveMessage(pos, active), point);
+                sendBlockstateToClients();
             } else {
                 worldObj.markBlockRangeForRenderUpdate(pos, pos);
             }
         }
+    }
+
+    private void sendBlockstateToClients() {
+        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(
+                worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64);
+        CommonProxy.network.sendToAllAround(new RouterBlockstateMessage(pos, this), point);
     }
 
     private boolean redstoneModeAllowsRun() {
@@ -313,6 +319,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
         // modules
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
             ModularRouters.logger.debug("recompiling modules for item router @ " + getPos());
+            byte newSidesOpen = 0;
             canEmit = false;
             compiledModuleSettings.clear();
             for (int i = 0; i < N_MODULE_SLOTS; i++) {
@@ -325,9 +332,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
                     if (m instanceof DetectorModule) {
                         canEmit = true;
                     }
-                    compiledModuleSettings.add(m.compile(stack));
+                    CompiledModuleSettings cms = m.compile(stack);
+                    compiledModuleSettings.add(cms);
+                    newSidesOpen |= cms.getDirection().getMask();
                 }
             }
+            setSidesOpen(newSidesOpen);
         }
 
         if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
@@ -525,5 +535,24 @@ public class TileEntityItemRouter extends TileEntity implements ITickable {
 
     public boolean isPermitted(EntityPlayer player) {
         return permitted.isEmpty() || permitted.contains(player.getUniqueID());
+    }
+
+    public boolean isSideOpen(Module.RelativeDirection side) {
+        return (sidesOpen & side.getMask()) != 0;
+    }
+
+    public void setSidesOpen(byte sidesOpen) {
+        if (this.sidesOpen != sidesOpen) {
+            this.sidesOpen = sidesOpen;
+            if (!worldObj.isRemote) {
+                sendBlockstateToClients();
+            } else {
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
+            }
+        }
+    }
+
+    public byte getSidesOpen() {
+        return sidesOpen;
     }
 }

@@ -2,10 +2,9 @@ package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import net.minecraft.block.state.IBlockState;
+import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.module.Module.RelativeDirection;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -13,21 +12,27 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class RouterActiveMessage implements IMessage {
+/**
+ * Used to send router blockstate information from server to client.
+ */
+public class RouterBlockstateMessage implements IMessage {
     private BlockPos pos;
     private boolean active;
+    private byte openSides;
 
-    public RouterActiveMessage() {}
+    public RouterBlockstateMessage() {}
 
-    public RouterActiveMessage(BlockPos pos, boolean active) {
+    public RouterBlockstateMessage(BlockPos pos, TileEntityItemRouter router) {
         this.pos = pos;
-        this.active = active;
+        this.active = router.isActive();
+        this.openSides = router.getSidesOpen();
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         active = buf.readBoolean();
+        openSides = buf.readByte();
     }
 
     @Override
@@ -36,17 +41,20 @@ public class RouterActiveMessage implements IMessage {
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
         buf.writeBoolean(active);
+        buf.writeByte(openSides);
     }
 
-    public static class Handler implements IMessageHandler<RouterActiveMessage, IMessage> {
+    public static class Handler implements IMessageHandler<RouterBlockstateMessage, IMessage> {
         @Override
-        public IMessage onMessage(RouterActiveMessage msg, MessageContext ctx) {
+        public IMessage onMessage(RouterBlockstateMessage msg, MessageContext ctx) {
             World w = ModularRouters.proxy.theClientWorld();
             if (w != null) {
                 ModularRouters.proxy.threadListener().addScheduledTask(() -> {
                     TileEntity te = w.getTileEntity(msg.pos);
                     if (te instanceof TileEntityItemRouter) {
-                        ((TileEntityItemRouter) te).setActiveState(msg.active);
+                        TileEntityItemRouter router = (TileEntityItemRouter) te;
+                        router.setActiveState(msg.active);
+                        router.setSidesOpen(msg.openSides);
                     }
                 });
             }

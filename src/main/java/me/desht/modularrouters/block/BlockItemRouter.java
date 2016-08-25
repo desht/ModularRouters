@@ -26,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -46,6 +47,12 @@ import java.util.List;
 public class BlockItemRouter extends BlockBase implements ITileEntityProvider, TOPInfoProvider {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
+    public static final PropertyBool OPEN_F = PropertyBool.create("open_f");
+    public static final PropertyBool OPEN_B = PropertyBool.create("open_b");
+    public static final PropertyBool OPEN_U = PropertyBool.create("open_u");
+    public static final PropertyBool OPEN_D = PropertyBool.create("open_d");
+    public static final PropertyBool OPEN_L = PropertyBool.create("open_l");
+    public static final PropertyBool OPEN_R = PropertyBool.create("open_r");
 
     public BlockItemRouter() {
         super(Material.IRON, "itemRouter");
@@ -62,10 +69,18 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityItemRouter) {
-            return state.withProperty(ACTIVE, ((TileEntityItemRouter) te).isActive());
-        } else {
-            return state;
+            TileEntityItemRouter router = (TileEntityItemRouter) te;
+            state = state.withProperty(ACTIVE, router.isActive());
+            for (Module.RelativeDirection side : Module.RelativeDirection.realSides()) {
+                state = state.withProperty(side.getProperty(), router.isSideOpen(side));
+            }
         }
+        return state;
+    }
+
+    @Override
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
@@ -119,7 +134,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, ACTIVE);
+        return new BlockStateContainer(this, FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R);
     }
 
     @Override

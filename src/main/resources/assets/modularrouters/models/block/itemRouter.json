@@ -1,12 +1,29 @@
 {
-  "parent": "block/cube",
-  "textures": {
-    "particle": "modularrouters:blocks/itemRouterFront",
-    "down": "modularrouters:blocks/itemRouterOther",
-    "up": "modularrouters:blocks/itemRouterOther",
-    "east": "modularrouters:blocks/itemRouterOther",
-    "west": "modularrouters:blocks/itemRouterOther",
-    "north": "#front",
-    "south": "modularrouters:blocks/itemRouterBack"
-  }
+  "parent": "block/block",
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "down" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "up" },
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#front", "cullface": "north" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#back", "cullface": "south" },
+        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "west" },
+        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "east" }
+      }
+    },
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay_d", "cullface": "down" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay_u", "cullface": "up" },
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay_f", "cullface": "north" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay_b", "cullface": "south" },
+        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay_r", "cullface": "west" },
+        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay_l", "cullface": "east" }
+      }
+    }
+  ]
 }

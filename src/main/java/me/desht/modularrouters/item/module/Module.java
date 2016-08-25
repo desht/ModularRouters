@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ValidatingSlot;
@@ -8,6 +9,7 @@ import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,13 +56,26 @@ public abstract class Module {
     }
     // Direction relative to the facing of the router this module is installed in
     public enum RelativeDirection {
-        NONE,
-        DOWN,
-        UP,
-        LEFT,
-        RIGHT,
-        FRONT,
-        BACK;
+        NONE(0x00, null),
+        DOWN(0x01, BlockItemRouter.OPEN_D),
+        UP(0x02, BlockItemRouter.OPEN_U),
+        LEFT(0x04, BlockItemRouter.OPEN_L),
+        RIGHT(0x08, BlockItemRouter.OPEN_R),
+        FRONT(0x10, BlockItemRouter.OPEN_F),
+        BACK(0x20, BlockItemRouter.OPEN_B);
+
+        private static RelativeDirection[] realSides = new RelativeDirection[] { FRONT, BACK, UP, DOWN, LEFT, RIGHT };
+        private final int mask;
+        private final PropertyBool property;
+
+        RelativeDirection(int mask, PropertyBool property) {
+            this.mask = mask;
+            this.property = property;
+        }
+
+        public static RelativeDirection[] realSides() {
+            return realSides;
+        }
 
         public EnumFacing toEnumFacing(EnumFacing current) {
             switch (this) {
@@ -79,6 +94,14 @@ public abstract class Module {
                 default:
                     return current;
             }
+        }
+
+        public int getMask() {
+            return mask;
+        }
+
+        public PropertyBool getProperty() {
+            return property;
         }
     }
 
