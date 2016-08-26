@@ -47,7 +47,9 @@ public class FlingerModule extends DropperModule {
         double z = -(Math.sin(yawRad) * Math.cos(pitchRad));  // north is negative Z
 
         float speed = fs.getSpeed();
-        item.setVelocity(x * speed, y * speed, z * speed);
+        item.motionX = x * speed;
+        item.motionY = y * speed;
+        item.motionZ = z* speed;
     }
 
     @Override
