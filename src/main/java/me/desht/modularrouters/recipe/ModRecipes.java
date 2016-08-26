@@ -56,7 +56,7 @@ public class ModRecipes {
         GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.STACK),
                 ModItems.blankUpgrade, Blocks.BRICK_BLOCK, Blocks.STONEBRICK);
         GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGE),
-                ModItems.blankUpgrade, Items.PRISMARINE_SHARD);
+                ModItems.blankUpgrade, Blocks.QUARTZ_BLOCK);
         GameRegistry.addRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SECURITY),
                 " q ", "nbn", " r ",
                 'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
