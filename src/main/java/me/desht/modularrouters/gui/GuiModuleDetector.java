@@ -47,7 +47,7 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     public GuiModuleDetector(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
-        CompiledDetectorModuleSettings settings = new CompiledDetectorModuleSettings(moduleItemStack);
+        CompiledDetectorModuleSettings settings = new CompiledDetectorModuleSettings(null, moduleItemStack);
         signalStrength = settings.getSignalLevel();
         isStrong = settings.isStrongSignal();
     }

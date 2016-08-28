@@ -345,7 +345,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                     if (m instanceof DetectorModule) {
                         canEmit = true;
                     }
-                    CompiledModuleSettings cms = m.compile(stack);
+                    CompiledModuleSettings cms = m.compile(this, stack);
                     compiledModuleSettings.add(cms);
                     newSidesOpen |= cms.getDirection().getMask();
                 }

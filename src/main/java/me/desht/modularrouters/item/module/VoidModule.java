@@ -16,4 +16,9 @@ public class VoidModule extends Module {
         }
         return false;
     }
+
+    @Override
+    public boolean isDirectional() {
+        return false;
+    }
 }

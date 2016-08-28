@@ -8,6 +8,7 @@ import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.RouterTarget;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.client.Minecraft;
@@ -30,6 +31,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
+
+
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -40,11 +43,11 @@ public abstract class Module {
         private final boolean defaultValue;
 
         private byte mask;
+
         ModuleFlags(boolean defaultValue, int mask) {
             this.defaultValue = defaultValue;
             this.mask = (byte) mask;
         }
-
         public boolean getDefaultValue() {
             return defaultValue;
         }
@@ -54,6 +57,7 @@ public abstract class Module {
         }
 
     }
+
     // Direction relative to the facing of the router this module is installed in
     public enum RelativeDirection {
         NONE(0x00, null),
@@ -63,11 +67,10 @@ public abstract class Module {
         RIGHT(0x08, BlockItemRouter.OPEN_R),
         FRONT(0x10, BlockItemRouter.OPEN_F),
         BACK(0x20, BlockItemRouter.OPEN_B);
-
         private static RelativeDirection[] realSides = new RelativeDirection[] { FRONT, BACK, UP, DOWN, LEFT, RIGHT };
+
         private final int mask;
         private final PropertyBool property;
-
         RelativeDirection(int mask, PropertyBool property) {
             this.mask = mask;
             this.property = property;
@@ -105,40 +108,48 @@ public abstract class Module {
         }
     }
 
-    public CompiledModuleSettings compile(ItemStack stack) {
-        return new CompiledModuleSettings(stack);
+    public CompiledModuleSettings compile(TileEntityItemRouter router, ItemStack stack) {
+        return new CompiledModuleSettings(router, stack);
     }
 
     public abstract boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings);
 
-    public static boolean isBlacklist(ItemStack stack) {
+    public boolean isBlacklist(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.BLACKLIST);
     }
 
-    public static boolean ignoreMeta(ItemStack stack) {
+    public boolean ignoreMeta(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.IGNORE_META);
     }
 
-    public static boolean ignoreNBT(ItemStack stack) {
+    public boolean ignoreNBT(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.IGNORE_NBT);
     }
 
-    public static boolean ignoreOreDict(ItemStack stack) {
+    public boolean ignoreOreDict(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.IGNORE_OREDICT);
     }
 
-    public static boolean terminates(ItemStack stack) {
+    public boolean terminates(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.TERMINATE);
     }
 
-    public static boolean checkFlag(ItemStack stack, ModuleFlags flag) {
+    public boolean checkFlag(ItemStack stack, ModuleFlags flag) {
         NBTTagCompound compound = validateNBT(stack);
         return (compound.getByte("Flags") & flag.getMask()) != 0x0;
     }
 
-    public static RelativeDirection getDirectionFromNBT(ItemStack stack) {
+    public RelativeDirection getDirectionFromNBT(ItemStack stack) {
         NBTTagCompound compound = validateNBT(stack);
         return RelativeDirection.values()[(compound.getByte("Flags") & 0x70) >> 4];
+    }
+
+    public RouterTarget getTarget(TileEntityItemRouter router, ItemStack stack) {
+        if (router == null) {
+            return null;
+        }
+        EnumFacing facing = router.getAbsoluteFacing(getDirectionFromNBT(stack));
+        return new RouterTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing), facing.getOpposite());
     }
 
     /**
@@ -212,4 +223,7 @@ public abstract class Module {
         return GuiModule.class;
     }
 
+    public boolean isDirectional() {
+        return true;
+    }
 }

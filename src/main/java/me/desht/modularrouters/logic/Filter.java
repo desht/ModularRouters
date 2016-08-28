@@ -27,10 +27,11 @@ public class Filter {
 
     public Filter(ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule) {
-            blacklist = Module.isBlacklist(moduleStack);
-            ignoreMeta = Module.ignoreMeta(moduleStack);
-            ignoreNBT = Module.ignoreNBT(moduleStack);
-            ignoreOredict = Module.ignoreOreDict(moduleStack);
+            Module module = ItemModule.getModule(moduleStack);
+            blacklist = module.isBlacklist(moduleStack);
+            ignoreMeta = module.ignoreMeta(moduleStack);
+            ignoreNBT = module.ignoreNBT(moduleStack);
+            ignoreOredict = module.ignoreOreDict(moduleStack);
             // it's safe to assume that the module actually has NBT data at this point...
             NBTTagList tagList = moduleStack.getTagCompound().getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {

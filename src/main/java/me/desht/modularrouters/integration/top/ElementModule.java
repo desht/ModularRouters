@@ -19,7 +19,7 @@ public class ElementModule implements IElement {
 
     public ElementModule(ItemStack stack) {
         this.type = ItemModule.ModuleType.values()[stack.getItemDamage()];
-        this.dir = Module.getDirectionFromNBT(stack);
+        this.dir = ItemModule.getModule(type).getDirectionFromNBT(stack);
     }
 
     public ElementModule(ByteBuf buf) {

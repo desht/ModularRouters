@@ -25,7 +25,7 @@ public class PlacerModule extends Module {
             return false;
         }
 
-        BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
+        BlockPos pos = settings.getTarget().pos;
         World world = router.getWorld();
         IBlockState currentState = world.getBlockState(pos);
         if (!currentState.getBlock().isAir(currentState, world, pos) || !currentState.getBlock().isReplaceable(world, pos)) {

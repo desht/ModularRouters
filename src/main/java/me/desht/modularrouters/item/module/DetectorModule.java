@@ -37,15 +37,15 @@ public class DetectorModule extends Module {
     }
 
     @Override
-    public CompiledModuleSettings compile(ItemStack stack) {
-        return new CompiledDetectorModuleSettings(stack);
+    public CompiledModuleSettings compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
+        return new CompiledDetectorModuleSettings(tileEntityItemRouter, stack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(itemstack, player, list, par4);
-        CompiledDetectorModuleSettings ds = new CompiledDetectorModuleSettings(itemstack);
+        CompiledDetectorModuleSettings ds = new CompiledDetectorModuleSettings(null, itemstack);
         list.add(I18n.format("itemText.misc.redstoneLevel",
                 ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal" + ds.isStrongSignal())));
     }

@@ -3,8 +3,10 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.RouterTarget;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -21,8 +23,7 @@ public class VacuumModule extends Module {
         ItemStack bufferStack = buffer.getStackInSlot(0);
 
         int range = getVacuumRange(router);
-        int offset = settings.getDirection() == Module.RelativeDirection.NONE ? 0 : range + 1;
-        BlockPos centrePos = router.getPos().offset(router.getAbsoluteFacing(settings.getDirection()), offset);
+        BlockPos centrePos = settings.getTarget().pos;
         List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
@@ -53,6 +54,16 @@ public class VacuumModule extends Module {
         return toPickUp < router.getItemsPerTick();
     }
 
+    @Override
+    public RouterTarget getTarget(TileEntityItemRouter router, ItemStack stack) {
+        if (router == null) {
+            return null;
+        }
+        RelativeDirection dir = getDirectionFromNBT(stack);
+        int offset = dir == Module.RelativeDirection.NONE ? 0 : getVacuumRange(router) + 1;
+        EnumFacing facing = router.getAbsoluteFacing(dir);
+        return new RouterTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
+    }
 
     @Override
     protected Object[] getExtraUsageParams() {

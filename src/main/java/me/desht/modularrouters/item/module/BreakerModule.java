@@ -38,8 +38,8 @@ public class BreakerModule extends Module {
     }
 
     @Override
-    public CompiledModuleSettings compile(ItemStack stack) {
-        return new CompiledBreakerModuleSettings(stack);
+    public CompiledModuleSettings compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
+        return new CompiledBreakerModuleSettings(tileEntityItemRouter, stack);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BreakerModule extends Module {
         if (settings.getDirection() != Module.RelativeDirection.NONE
                 && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
             World world = router.getWorld();
-            BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
+            BlockPos pos = settings.getTarget().pos;
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             Item item = Item.getItemFromBlock(block);

@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic;
 
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,8 +12,8 @@ public class CompiledFlingerModuleSettings extends CompiledModuleSettings {
 
     private final float speed, pitch, yaw;
 
-    public CompiledFlingerModuleSettings(ItemStack stack) {
-        super(stack);
+    public CompiledFlingerModuleSettings(TileEntityItemRouter router, ItemStack stack) {
+        super(router, stack);
 
         NBTTagCompound compound = Module.validateNBT(stack);
         for (String key : new String[] { NBT_SPEED, NBT_PITCH, NBT_YAW }) {

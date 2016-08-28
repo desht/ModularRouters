@@ -67,18 +67,18 @@ public class SenderModule1 extends Module {
         if (settings.getDirection() == Module.RelativeDirection.NONE) {
             return null;
         }
-        BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
-        EnumFacing facing = router.getAbsoluteFacing(settings.getDirection());
-        EnumFacing facingOpposite = facing.getOpposite();
+        BlockPos pos = settings.getTarget().pos;
+        EnumFacing face = settings.getTarget().face;
+        EnumFacing faceOpposite = face.getOpposite();
         for (int i = 1; i < SenderModule1.maxDistance(router); i++) {
             World world = router.getWorld();
-            IItemHandler handler = InventoryUtils.getInventory(world, pos, facingOpposite);
+            IItemHandler handler = InventoryUtils.getInventory(world, pos, face);
             if (handler != null) {
                 return new SenderTarget(pos, handler);
-            } else if (!isPassable(world, pos, facingOpposite)) {
+            } else if (!isPassable(world, pos, face)) {
                 return null;
             }
-            pos = pos.offset(facing);
+            pos = pos.offset(faceOpposite);
         }
         return null;
     }

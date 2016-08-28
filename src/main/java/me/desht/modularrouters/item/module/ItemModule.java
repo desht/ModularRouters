@@ -14,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -28,7 +27,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -81,11 +79,8 @@ public class ItemModule extends ItemBase {
     @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
         if (event.getSide() == Side.CLIENT) {
-            ItemStack stack = event.getItemStack();
-            if (stack == null || !(stack.getItem() instanceof ItemModule)) {
-                return;
-            }
-            if (!(ItemModule.getModule(stack) instanceof TargetedSender)) {
+            Module mod = getModule(event.getItemStack());
+            if (!(mod instanceof TargetedSender)) {
                 return;
             }
             if (InventoryUtils.getInventory(event.getWorld(), event.getPos(), event.getFace()) != null) {
@@ -96,6 +91,18 @@ public class ItemModule extends ItemBase {
             event.setCanceled(true);
         }
     }
+
+//    @SubscribeEvent
+//    public static void onPlayerInteract(PlayerInteractEvent event) {
+//        if (event.getSide() == Side.SERVER
+//                && (event instanceof PlayerInteractEvent.LeftClickBlock || event instanceof PlayerInteractEvent.LeftClickEmpty)) {
+//            Module mod = ItemModule.getModule(event.getItemStack());
+//            if (mod instanceof TargetedSender) {
+//                ((TargetedSender) mod).showTargetInfo(event.getEntityPlayer(), event.getItemStack());
+//                event.setCanceled(true);
+//            }
+//        }
+//    }
 
     @Override
     public void getSubItems(@Nonnull Item item, CreativeTabs tab, List<ItemStack> stacks) {
@@ -116,6 +123,9 @@ public class ItemModule extends ItemBase {
     }
 
     public static Module getModule(ItemStack stack) {
+        if (stack == null || !(stack.getItem() instanceof ItemModule)) {
+            return null;
+        }
         return stack.getItemDamage() < modules.length ? modules[stack.getItemDamage()] : null;
     }
 
@@ -153,18 +163,18 @@ public class ItemModule extends ItemBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        Module m = getModule(itemstack);
-        if (m == null) {
+        Module module = getModule(itemstack);
+        if (module == null) {
             return;
         }
-        m.addBasicInformation(itemstack, player, list, par4);
+        module.addBasicInformation(itemstack, player, list, par4);
 
         if (GuiScreen.isShiftKeyDown()) {
             NBTTagCompound compound =  Module.validateNBT(itemstack);
-            Module.RelativeDirection dir = Module.getDirectionFromNBT(itemstack);
+            Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
             NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (Module.isBlacklist(itemstack) ? "2" : "1")) + ":");
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (module.isBlacklist(itemstack) ? "2" : "1")) + ":");
             if (items.tagCount() > 0) {
                 for (int i = 0; i < items.tagCount(); i++) {
                     ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
@@ -175,14 +185,14 @@ public class ItemModule extends ItemBase {
             }
             list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
                     Joiner.on(" | ").join(
-                            compose("IGNORE_META", Module.ignoreMeta(itemstack)),
-                            compose("IGNORE_NBT", Module.ignoreNBT(itemstack)),
-                            compose("IGNORE_OREDICT", Module.ignoreOreDict(itemstack)),
-                            compose("TERMINATE", !Module.terminates(itemstack))
+                            compose("IGNORE_META", module.ignoreMeta(itemstack)),
+                            compose("IGNORE_NBT", module.ignoreNBT(itemstack)),
+                            compose("IGNORE_OREDICT", module.ignoreOreDict(itemstack)),
+                            compose("TERMINATE", !module.terminates(itemstack))
                     ));
-            m.addExtraInformation(itemstack, player, list, par4);
+            module.addExtraInformation(itemstack, player, list, par4);
         } else if (GuiScreen.isCtrlKeyDown()) {
-            m.addUsageInformation(itemstack, player, list, par4);
+            module.addUsageInformation(itemstack, player, list, par4);
         } else {
             list.add(I18n.format("itemText.misc.holdShift"));
         }

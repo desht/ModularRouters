@@ -14,8 +14,8 @@ public class PullerModule extends Module {
         ItemStack bufferStack = router.getBufferItemStack();
         if (settings.getDirection() != Module.RelativeDirection.NONE
                 && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
-            EnumFacing facingOpposite = router.getAbsoluteFacing(settings.getDirection()).getOpposite();
-            BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
+            EnumFacing facingOpposite = settings.getTarget().face;
+            BlockPos pos = settings.getTarget().pos;
             IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), pos, facingOpposite);
             if (handler != null) {
                 for (int i = 0; i < handler.getSlots(); i++) {

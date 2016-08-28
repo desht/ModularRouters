@@ -56,13 +56,13 @@ public class FlingerModule extends DropperModule {
     @SideOnly(Side.CLIENT)
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(itemstack, player, list, par4);
-        CompiledFlingerModuleSettings fs = new CompiledFlingerModuleSettings(itemstack);
+        CompiledFlingerModuleSettings fs = new CompiledFlingerModuleSettings(null, itemstack);
         list.add(I18n.format("itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
     }
 
     @Override
-    public CompiledModuleSettings compile(ItemStack stack) {
-        return new CompiledFlingerModuleSettings(stack);
+    public CompiledModuleSettings compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
+        return new CompiledFlingerModuleSettings(tileEntityItemRouter, stack);
     }
 
     @Override

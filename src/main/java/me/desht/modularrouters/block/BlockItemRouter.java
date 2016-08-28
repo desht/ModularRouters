@@ -126,6 +126,10 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         IBlockState state = world.getBlockState(pos);
         if (axis.getAxis() != EnumFacing.Axis.Y) {
             world.setBlockState(pos, state.withProperty(FACING, axis));
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityItemRouter) {
+                ((TileEntityItemRouter) te).recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            }
             return true;
         }
         return false;

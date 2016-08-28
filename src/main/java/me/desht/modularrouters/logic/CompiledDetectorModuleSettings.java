@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic;
 
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,8 +12,8 @@ public class CompiledDetectorModuleSettings extends CompiledModuleSettings {
     private final int signalLevel;
     private final boolean strongSignal;
 
-    public CompiledDetectorModuleSettings(ItemStack stack) {
-        super(stack);
+    public CompiledDetectorModuleSettings(TileEntityItemRouter router, ItemStack stack) {
+        super(router, stack);
 
         setupNBT(stack);
         NBTTagCompound compound = stack.getTagCompound();

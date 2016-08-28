@@ -98,7 +98,7 @@ itemText.misc.flags=Flags
 itemText.misc.stackUpgrade=Max. items processed per operation: %d//Max. useful upgrades: %d
 itemText.misc.speedUpgrade=Router will tick every %.02f sec//Max. useful upgrades: %d
 itemText.misc.rangeUpgradeTooltip=Extends range of modules:
-itemText.misc.target=§eTarget: §bDIM: %d | POS: %d,%d,%d | SIDE: %s
+itemText.misc.target=§eTarget: §bDIM %d | [%d %d %d] | %s
 itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
 itemText.misc.configureHint=Press §b'%s'§7 to configure this module in-place
 itemText.misc.redstoneLevel=§eSignal Level: §b%d (%s)
@@ -108,10 +108,10 @@ itemText.misc.flingerDetails=§eSpeed: §b%f§f | §ePitch: §b%f§f | §eYaw: �
 itemText.security.tooltip=Protects router; only listed players can access the router.//Right-click a player to add them to this upgrade; shift-right click a player to remove them.
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=Upgrade Owner: %s
-itemText.targetValidation.OUT_OF_RANGE=  §c*** Target Out of Range ***
-itemText.targetValidation.NOT_LOADED=  §c*** Target Not Loaded ***
-itemText.targetValidation.NOT_INVENTORY=  §c*** Target Has no Inventory ***
-itemText.targetValidation.ROUTER_MISSING=  §c*** Source Router Missing??? ***
+itemText.targetValidation.OK=§a✔ Target OK
+itemText.targetValidation.OUT_OF_RANGE=§c✘ Out of Range
+itemText.targetValidation.NOT_LOADED=§c✘ Not Loaded
+itemText.targetValidation.NOT_INVENTORY=§c✘ No Inventory
 
 # Usage tooltips
 itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.

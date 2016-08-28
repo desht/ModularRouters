@@ -3,6 +3,7 @@ package me.desht.modularrouters.gui;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.item.module.Module.RelativeDirection;
@@ -27,6 +28,7 @@ public class GuiModule extends GuiContainerBase {
     static final int BUTTON_HEIGHT = 16;
 
     protected final ItemStack moduleItemStack;
+    private final Module module;
     private final BlockPos routerPos;
     private final int slotIndex;
     private RelativeDirection facing;
@@ -40,10 +42,11 @@ public class GuiModule extends GuiContainerBase {
     public GuiModule(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem);
         moduleItemStack = containerItem.filterHandler.getModuleItemStack();
+        module = ItemModule.getModule(moduleItemStack);
         this.routerPos = routerPos;
         this.slotIndex = slotIndex;
         this.hand = hand;
-        facing = Module.getDirectionFromNBT(moduleItemStack);
+        facing = module.getDirectionFromNBT(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
     }
@@ -59,18 +62,20 @@ public class GuiModule extends GuiContainerBase {
         addToggleButton(ModuleFlags.IGNORE_OREDICT, 58, 74);
         addToggleButton(ModuleFlags.TERMINATE, 75, 74);
 
-        addDirectionButton(RelativeDirection.NONE, 70, 18);
-        addDirectionButton(RelativeDirection.UP, 87, 18);
-        addDirectionButton(RelativeDirection.LEFT, 70, 35);
-        addDirectionButton(RelativeDirection.FRONT, 87, 35);
-        addDirectionButton(RelativeDirection.RIGHT, 104, 35);
-        addDirectionButton(RelativeDirection.DOWN, 87, 52);
-        addDirectionButton(RelativeDirection.BACK, 104, 52);
+        if (module.isDirectional()) {
+            addDirectionButton(RelativeDirection.NONE, 70, 18);
+            addDirectionButton(RelativeDirection.UP, 87, 18);
+            addDirectionButton(RelativeDirection.LEFT, 70, 35);
+            addDirectionButton(RelativeDirection.FRONT, 87, 35);
+            addDirectionButton(RelativeDirection.RIGHT, 104, 35);
+            addDirectionButton(RelativeDirection.DOWN, 87, 52);
+            addDirectionButton(RelativeDirection.BACK, 104, 52);
+        }
     }
 
     private void addToggleButton(ModuleFlags setting, int x, int y) {
         ModuleToggleButton tb = new ModuleToggleButton(setting, this.guiLeft + x, this.guiTop + y);
-        tb.setToggled(Module.checkFlag(moduleItemStack, setting));
+        tb.setToggled(module.checkFlag(moduleItemStack, setting));
         this.buttonList.add(tb);
     }
 

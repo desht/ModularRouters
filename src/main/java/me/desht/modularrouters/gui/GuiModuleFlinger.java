@@ -36,7 +36,7 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     public GuiModuleFlinger(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
-        CompiledFlingerModuleSettings fs = new CompiledFlingerModuleSettings(moduleItemStack);
+        CompiledFlingerModuleSettings fs = new CompiledFlingerModuleSettings(null, moduleItemStack);
         speed = fs.getSpeed();
         pitch = fs.getPitch();
         yaw = fs.getYaw();

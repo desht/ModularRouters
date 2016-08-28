@@ -14,7 +14,7 @@ public class DropperModule extends Module {
         if (stack != null && settings.getDirection() != Module.RelativeDirection.NONE && settings.getFilter().pass(stack)) {
             int nItems = router.getItemsPerTick();
             ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
-            BlockPos pos = router.getRelativeBlockPos(settings.getDirection());
+            BlockPos pos = settings.getTarget().pos;
             EntityItem item = new EntityItem(router.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, toDrop);
             setupItemVelocity(router, item, settings);
             if (router.getWorld().spawnEntityInWorld(item)) {
