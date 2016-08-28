@@ -8,7 +8,6 @@ import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.ModuleConfigMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;
-import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;

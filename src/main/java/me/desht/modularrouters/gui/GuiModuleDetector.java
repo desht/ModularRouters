@@ -7,12 +7,10 @@ import me.desht.modularrouters.gui.widgets.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.TextFieldWidget;
 import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiPageButtonList;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -20,10 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 

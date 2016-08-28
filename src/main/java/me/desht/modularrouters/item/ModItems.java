@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item;
 
-import me.desht.modularrouters.item.module.*;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;

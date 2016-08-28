@@ -9,7 +9,6 @@ import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.item.module.Module.RelativeDirection;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.ReopenRouterMessage;
-import me.desht.modularrouters.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;

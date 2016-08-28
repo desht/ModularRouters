@@ -6,7 +6,6 @@ import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.config.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;

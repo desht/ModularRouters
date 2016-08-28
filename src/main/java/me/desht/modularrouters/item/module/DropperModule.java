@@ -1,7 +1,6 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
