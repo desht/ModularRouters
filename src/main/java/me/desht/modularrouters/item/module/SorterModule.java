@@ -35,9 +35,6 @@ public class SorterModule extends Module {
         if (settings.getDirection() == Module.RelativeDirection.NONE) {
             return null;
         }
-        BlockPos pos = settings.getTarget().pos; //router.getRelativeBlockPos(settings.getDirection());
-//        EnumFacing facing = router.getAbsoluteFacing(settings.getDirection());
-        EnumFacing face = settings.getTarget().face; //facing.getOpposite();
-        return InventoryUtils.getInventory(router.getWorld(), pos, face);
+        return InventoryUtils.getInventory(router.getWorld(), settings.getTarget().pos, settings.getTarget().face);
     }
 }
