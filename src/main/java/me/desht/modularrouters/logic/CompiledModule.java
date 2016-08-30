@@ -5,14 +5,14 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.ItemStack;
 
-public class CompiledModuleSettings {
+public class CompiledModule {
     private final Filter filter;
     private final Module module;
     private final Module.RelativeDirection direction;
     private final RouterTarget target;
     private final boolean termination;
 
-    public CompiledModuleSettings(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledModule(TileEntityItemRouter router, ItemStack stack) {
         if (!(stack.getItem() instanceof ItemModule)) {
             throw new IllegalArgumentException("expected module router module, got " + stack);
         }

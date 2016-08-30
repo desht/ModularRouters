@@ -5,7 +5,7 @@ import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.TextFieldWidget;
 import me.desht.modularrouters.gui.widgets.TexturedButton;
-import me.desht.modularrouters.logic.CompiledFlingerModuleSettings;
+import me.desht.modularrouters.logic.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
@@ -36,7 +36,7 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     public GuiModuleFlinger(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
-        CompiledFlingerModuleSettings fs = new CompiledFlingerModuleSettings(null, moduleItemStack);
+        CompiledFlingerModule fs = new CompiledFlingerModule(null, moduleItemStack);
         speed = fs.getSpeed();
         pitch = fs.getPitch();
         yaw = fs.getYaw();
@@ -95,9 +95,9 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     @Override
     protected NBTTagCompound getExtMessageData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setFloat(CompiledFlingerModuleSettings.NBT_SPEED, speed);
-        compound.setFloat(CompiledFlingerModuleSettings.NBT_PITCH, pitch);
-        compound.setFloat(CompiledFlingerModuleSettings.NBT_YAW, yaw);
+        compound.setFloat(CompiledFlingerModule.NBT_SPEED, speed);
+        compound.setFloat(CompiledFlingerModule.NBT_PITCH, pitch);
+        compound.setFloat(CompiledFlingerModule.NBT_YAW, yaw);
         return compound;
     }
 

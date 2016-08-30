@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.state.IBlockState;
@@ -30,16 +30,16 @@ public class SenderModule1 extends Module {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
-        if (bufferStack != null && settings.getFilter().pass(bufferStack)) {
-            SenderTarget target = findTargetInventory(router, settings);
+        if (bufferStack != null && compiled.getFilter().pass(bufferStack)) {
+            SenderTarget target = findTargetInventory(router, compiled);
             if (target != null) {
                 int sent = InventoryUtils.transferItems(buffer, target.handler, 0, router.getItemsPerTick());
                 if (sent > 0) {
                     if (Config.senderParticles) {
-                        playParticles(router, settings, target.pos, (float)sent / (float)bufferStack.getMaxStackSize());
+                        playParticles(router, compiled, target.pos, (float)sent / (float)bufferStack.getMaxStackSize());
                     }
                     return true;
                 } else {
@@ -55,7 +55,7 @@ public class SenderModule1 extends Module {
         return new Object[] { Config.Defaults.SENDER1_BASE_RANGE, Config.Defaults.SENDER1_MAX_RANGE };
     }
 
-    protected void playParticles(TileEntityItemRouter router, CompiledModuleSettings settings, BlockPos targetPos, float val) {
+    protected void playParticles(TileEntityItemRouter router, CompiledModule settings, BlockPos targetPos, float val) {
         Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
         Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
         Color color = Color.getHSBColor(val, 1.0f, 1.0f);
@@ -63,7 +63,7 @@ public class SenderModule1 extends Module {
         ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, color), point);
     }
 
-    protected SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    protected SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModule settings) {
         if (settings.getDirection() == Module.RelativeDirection.NONE) {
             return null;
         }

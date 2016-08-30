@@ -5,14 +5,14 @@ import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class CompiledDetectorModuleSettings extends CompiledModuleSettings {
+public class CompiledDetectorModule extends CompiledModule {
     public static final String NBT_SIGNAL_LEVEL = "SignalLevel";
     public static final String NBT_STRONG_SIGNAL = "StrongSignal";
 
     private final int signalLevel;
     private final boolean strongSignal;
 
-    public CompiledDetectorModuleSettings(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledDetectorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
         setupNBT(stack);

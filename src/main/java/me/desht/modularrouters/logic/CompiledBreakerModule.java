@@ -5,11 +5,11 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 
-public class CompiledBreakerModuleSettings extends CompiledModuleSettings {
+public class CompiledBreakerModule extends CompiledModule {
     private final boolean silkTouch;
     private final int fortune;
 
-    public CompiledBreakerModuleSettings(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledBreakerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;

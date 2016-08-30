@@ -11,7 +11,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.Upgrade;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.network.RouterBlockstateMessage;
 import net.minecraft.block.state.IBlockState;
@@ -83,7 +83,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     };
     private final CombinedInvWrapper joined = new CombinedInvWrapper(bufferHandler, modulesHandler, upgradesHandler);
 
-    private final List<CompiledModuleSettings> compiledModuleSettings = new ArrayList<>();
+    private final List<CompiledModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private boolean active;
     private int tickRate = Config.baseTickRate;
@@ -256,7 +256,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 Arrays.fill(newRedstoneLevels, 0);
                 Arrays.fill(newSignalType, SignalType.NONE);
             }
-            for (CompiledModuleSettings mod : compiledModuleSettings) {
+            for (CompiledModule mod : compiledModules) {
                 if (mod != null && mod.execute(this)) {
                     didWork = true;
                     if (mod.termination()) {
@@ -332,7 +332,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             ModularRouters.logger.debug("recompiling modules for item router @ " + getPos());
             byte newSidesOpen = 0;
             canEmit = false;
-            compiledModuleSettings.clear();
+            compiledModules.clear();
             for (int i = 0; i < N_MODULE_SLOTS; i++) {
                 ItemStack stack = modulesHandler.getStackInSlot(i);
                 if (stack != null && stack.getItem() instanceof ItemModule) {
@@ -343,8 +343,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                     if (m instanceof DetectorModule) {
                         canEmit = true;
                     }
-                    CompiledModuleSettings cms = m.compile(this, stack);
-                    compiledModuleSettings.add(cms);
+                    CompiledModule cms = m.compile(this, stack);
+                    compiledModules.add(cms);
                     newSidesOpen |= cms.getDirection().getMask();
                 }
             }
@@ -386,7 +386,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public int getModuleCount() {
-        return compiledModuleSettings.size();
+        return compiledModules.size();
     }
 
     public int getSpeedUpgrades() {

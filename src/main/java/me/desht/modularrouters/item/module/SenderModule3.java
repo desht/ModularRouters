@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class SenderModule3 extends SenderModule2 {
     @Override
-    protected void playParticles(TileEntityItemRouter router, CompiledModuleSettings settings, BlockPos targetPos, float val) {
+    protected void playParticles(TileEntityItemRouter router, CompiledModule settings, BlockPos targetPos, float val) {
         double x = router.getPos().getX() + 0.5;
         double y = router.getPos().getY() + 0.5;
         double z = router.getPos().getZ() + 0.5;

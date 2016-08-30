@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterTarget;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -18,12 +18,12 @@ import java.util.List;
 
 public class VacuumModule extends Module {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
 
         int range = getVacuumRange(router);
-        BlockPos centrePos = settings.getTarget().pos;
+        BlockPos centrePos = compiled.getTarget().pos;
         List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
@@ -33,7 +33,7 @@ public class VacuumModule extends Module {
                 continue;
             }
             ItemStack stack = item.getEntityItem();
-            if ((bufferStack == null || ItemHandlerHelper.canItemStacksStack(stack, bufferStack)) && settings.getFilter().pass(stack)) {
+            if ((bufferStack == null || ItemHandlerHelper.canItemStacksStack(stack, bufferStack)) && compiled.getFilter().pass(stack)) {
                 ItemStack vacuumed = stack.splitStack(router.getItemsPerTick());
                 ItemStack excess = router.getBuffer().insertItem(0, vacuumed, false);
                 int remaining = excess == null ? 0 : excess.stackSize;

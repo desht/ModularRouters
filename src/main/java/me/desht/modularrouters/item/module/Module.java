@@ -7,7 +7,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterTarget;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
@@ -31,8 +31,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
-
-
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -108,11 +106,11 @@ public abstract class Module {
         }
     }
 
-    public CompiledModuleSettings compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledModuleSettings(router, stack);
+    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
+        return new CompiledModule(router, stack);
     }
 
-    public abstract boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings);
+    public abstract boolean execute(TileEntityItemRouter router, CompiledModule compiled);
 
     public boolean isBlacklist(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.BLACKLIST);

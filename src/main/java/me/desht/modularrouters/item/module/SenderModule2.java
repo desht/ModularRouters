@@ -4,7 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +25,7 @@ import java.util.List;
 public class SenderModule2 extends TargetedSender {
 
     @Override
-    protected SenderModule1.SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    protected SenderModule1.SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModule settings) {
         RouterTarget target = settings.getTarget();
         SenderModule2 module = (SenderModule2) settings.getModule();
 

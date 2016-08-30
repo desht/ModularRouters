@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -9,19 +9,19 @@ import net.minecraft.util.math.BlockPos;
 
 public class DropperModule extends Module {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStack stack = router.getBufferItemStack();
-        if (stack != null && settings.getDirection() != Module.RelativeDirection.NONE && settings.getFilter().pass(stack)) {
+        if (stack != null && compiled.getDirection() != Module.RelativeDirection.NONE && compiled.getFilter().pass(stack)) {
             int nItems = router.getItemsPerTick();
             ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
-            BlockPos pos = settings.getTarget().pos;
-            EnumFacing face = settings.getTarget().face;
+            BlockPos pos = compiled.getTarget().pos;
+            EnumFacing face = compiled.getTarget().face;
             EntityItem item = new EntityItem(router.getWorld(),
                     pos.getX() + 0.5 + 0.2 * face.getFrontOffsetX(),
                     pos.getY() + 0.5 + 0.2 * face.getFrontOffsetY(),
                     pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
                     toDrop);
-            setupItemVelocity(router, item, settings);
+            setupItemVelocity(router, item, compiled);
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.getBuffer().extractItem(0, toDrop.stackSize, false);
                 return true;
@@ -33,7 +33,7 @@ public class DropperModule extends Module {
         }
     }
 
-    protected void setupItemVelocity(TileEntityItemRouter router, EntityItem item, CompiledModuleSettings settings) {
+    protected void setupItemVelocity(TileEntityItemRouter router, EntityItem item, CompiledModule settings) {
         item.motionX = item.motionY = item.motionZ = 0.0;
     }
 }

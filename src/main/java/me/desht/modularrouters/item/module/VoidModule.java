@@ -1,14 +1,14 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import net.minecraft.item.ItemStack;
 
 public class VoidModule extends Module {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStack stack = router.getBufferItemStack();
-        if (stack != null && settings.getFilter().pass(stack)) {
+        if (stack != null && compiled.getFilter().pass(stack)) {
             // bye bye items
             int toVoid = router.getItemsPerTick();
             ItemStack gone = router.getBuffer().extractItem(0, toVoid, false);

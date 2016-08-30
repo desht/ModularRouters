@@ -5,14 +5,14 @@ import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class CompiledFlingerModuleSettings extends CompiledModuleSettings {
+public class CompiledFlingerModule extends CompiledModule {
     public static final String NBT_SPEED = "Speed";
     public static final String NBT_PITCH = "Pitch";
     public static final String NBT_YAW = "Yaw";
 
     private final float speed, pitch, yaw;
 
-    public CompiledFlingerModuleSettings(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledFlingerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
         NBTTagCompound compound = Module.validateNBT(stack);

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -9,12 +9,12 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class ModSorterModule extends SorterModule {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
 
-        if (bufferStack != null && settings.getFilter().pass(bufferStack)) {
-            IItemHandler handler = findTargetInventory(router, settings);
+        if (bufferStack != null && compiled.getFilter().pass(bufferStack)) {
+            IItemHandler handler = findTargetInventory(router, compiled);
             if (handler == null) {
                 return false;
             }

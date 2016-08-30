@@ -5,7 +5,7 @@ import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.TextFieldWidget;
-import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
+import me.desht.modularrouters.logic.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
@@ -42,7 +42,7 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     public GuiModuleDetector(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
-        CompiledDetectorModuleSettings settings = new CompiledDetectorModuleSettings(null, moduleItemStack);
+        CompiledDetectorModule settings = new CompiledDetectorModule(null, moduleItemStack);
         signalStrength = settings.getSignalLevel();
         isStrong = settings.isStrongSignal();
     }
@@ -92,8 +92,8 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     @Override
     protected NBTTagCompound getExtMessageData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setByte(CompiledDetectorModuleSettings.NBT_SIGNAL_LEVEL, (byte) signalStrength);
-        compound.setBoolean(CompiledDetectorModuleSettings.NBT_STRONG_SIGNAL, isStrong);
+        compound.setByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) signalStrength);
+        compound.setBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
         return compound;
     }
 

@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -19,13 +19,13 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class PlacerModule extends Module {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStack buffer = router.getBufferItemStack();
-        if (buffer == null || settings.getDirection() == RelativeDirection.NONE || !settings.getFilter().pass(buffer)) {
+        if (buffer == null || compiled.getDirection() == RelativeDirection.NONE || !compiled.getFilter().pass(buffer)) {
             return false;
         }
 
-        BlockPos pos = settings.getTarget().pos;
+        BlockPos pos = compiled.getTarget().pos;
         World world = router.getWorld();
         IBlockState currentState = world.getBlockState(pos);
         if (!currentState.getBlock().isAir(currentState, world, pos) || !currentState.getBlock().isReplaceable(world, pos)) {

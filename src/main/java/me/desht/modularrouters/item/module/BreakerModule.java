@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.logic.CompiledBreakerModuleSettings;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledBreakerModule;
+import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.FakePlayer;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
@@ -38,30 +38,30 @@ public class BreakerModule extends Module {
     }
 
     @Override
-    public CompiledModuleSettings compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
-        return new CompiledBreakerModuleSettings(tileEntityItemRouter, stack);
+    public CompiledModule compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
+        return new CompiledBreakerModule(tileEntityItemRouter, stack);
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStack bufferStack = router.getBufferItemStack();
-        if (settings.getDirection() != Module.RelativeDirection.NONE
+        if (compiled.getDirection() != Module.RelativeDirection.NONE
                 && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
             World world = router.getWorld();
-            BlockPos pos = settings.getTarget().pos;
+            BlockPos pos = compiled.getTarget().pos;
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             Item item = Item.getItemFromBlock(block);
             if (world instanceof WorldServer
                     && !block.isAir(state, world, pos) && !(block instanceof BlockLiquid)
-                    && settings.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
+                    && compiled.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
                 float hardness = state.getBlockHardness(world, pos);
                 if (hardness >= 0.0f) {
                     EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
                     BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
-                        List<ItemStack> drops = getDrops(world, pos, fakePlayer, getFortuneLevel(settings), canSilkTouch(settings));
+                        List<ItemStack> drops = getDrops(world, pos, fakePlayer, getFortuneLevel(compiled), canSilkTouch(compiled));
                         for (ItemStack drop : drops) {
                             ItemStack excess = router.getBuffer().insertItem(0, drop, false);
                             if (excess != null) {
@@ -102,12 +102,12 @@ public class BreakerModule extends Module {
         return result;
     }
 
-    private int getFortuneLevel(CompiledModuleSettings settings) {
-        return settings instanceof CompiledBreakerModuleSettings ?
-                ((CompiledBreakerModuleSettings) settings).getFortune() : 0;
+    private int getFortuneLevel(CompiledModule settings) {
+        return settings instanceof CompiledBreakerModule ?
+                ((CompiledBreakerModule) settings).getFortune() : 0;
     }
 
-    private boolean canSilkTouch(CompiledModuleSettings settings) {
-        return settings instanceof CompiledBreakerModuleSettings && ((CompiledBreakerModuleSettings) settings).isSilkTouch();
+    private boolean canSilkTouch(CompiledModule settings) {
+        return settings instanceof CompiledBreakerModule && ((CompiledBreakerModule) settings).isSilkTouch();
     }
 }

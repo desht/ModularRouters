@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.gui.GuiModuleDetector;
-import me.desht.modularrouters.logic.CompiledDetectorModuleSettings;
-import me.desht.modularrouters.logic.CompiledModuleSettings;
+import me.desht.modularrouters.logic.CompiledDetectorModule;
+import me.desht.modularrouters.logic.CompiledModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,29 +23,29 @@ public class DetectorModule extends Module {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModuleSettings settings) {
+    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
         ItemStack stack = router.getBufferItemStack();
 
-        if (stack == null || !settings.getFilter().pass(stack)) {
+        if (stack == null || !compiled.getFilter().pass(stack)) {
             return false;
         }
 
-        CompiledDetectorModuleSettings dSettings = (CompiledDetectorModuleSettings) settings;
-        router.emitRedstone(settings.getDirection(), dSettings.getSignalLevel(), SignalType.getType(dSettings.isStrongSignal()));
+        CompiledDetectorModule dSettings = (CompiledDetectorModule) compiled;
+        router.emitRedstone(compiled.getDirection(), dSettings.getSignalLevel(), SignalType.getType(dSettings.isStrongSignal()));
 
         return true;
     }
 
     @Override
-    public CompiledModuleSettings compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
-        return new CompiledDetectorModuleSettings(tileEntityItemRouter, stack);
+    public CompiledModule compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
+        return new CompiledDetectorModule(tileEntityItemRouter, stack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(itemstack, player, list, par4);
-        CompiledDetectorModuleSettings ds = new CompiledDetectorModuleSettings(null, itemstack);
+        CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
         list.add(I18n.format("itemText.misc.redstoneLevel",
                 ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal" + ds.isStrongSignal())));
     }
