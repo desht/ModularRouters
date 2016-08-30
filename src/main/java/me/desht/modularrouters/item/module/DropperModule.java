@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.CompiledModuleSettings;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 public class DropperModule extends Module {
@@ -14,7 +15,12 @@ public class DropperModule extends Module {
             int nItems = router.getItemsPerTick();
             ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
             BlockPos pos = settings.getTarget().pos;
-            EntityItem item = new EntityItem(router.getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, toDrop);
+            EnumFacing face = settings.getTarget().face;
+            EntityItem item = new EntityItem(router.getWorld(),
+                    pos.getX() + 0.5 + 0.2 * face.getFrontOffsetX(),
+                    pos.getY() + 0.5 + 0.2 * face.getFrontOffsetY(),
+                    pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
+                    toDrop);
             setupItemVelocity(router, item, settings);
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.getBuffer().extractItem(0, toDrop.stackSize, false);
