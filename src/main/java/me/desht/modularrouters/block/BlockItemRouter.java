@@ -11,6 +11,7 @@ import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -199,6 +200,10 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
                 compound.setTag("Modules", ((ItemStackHandler) router.getModules()).serializeNBT());
                 compound.setTag("Upgrades", ((ItemStackHandler) router.getUpgrades()).serializeNBT());
                 compound.setString("RedstoneBehaviour", router.getRedstoneBehaviour().toString());
+                compound.setInteger("ModuleCount", router.getModuleCount());
+                for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+                    compound.setInteger("UpgradeCount." + type, router.getUpgradeCount(type));
+                }
             }
             l.add(stack);
         }
@@ -209,8 +214,16 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         NBTTagCompound compound = itemstack.getTagCompound();
-        if (compound != null && compound.hasKey("Modules")) {
+        if (compound != null && compound.hasKey("ModuleCount")) {
             list.add(I18n.format("itemText.misc.routerConfigured"));
+            MiscUtil.appendMultiline(list, "itemText.misc.moduleCount", compound.getInteger("ModuleCount"));
+            for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+                int c = compound.getInteger("UpgradeCount." + type);
+                if (c > 0) {
+                    String name = I18n.format("item." + type.toString().toLowerCase() + "Upgrade.name");
+                    list.add(I18n.format("itemText.misc.upgradeCount", name, c));
+                }
+            }
         }
     }
 
