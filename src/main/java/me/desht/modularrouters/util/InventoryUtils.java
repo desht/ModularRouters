@@ -1,5 +1,8 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.logic.CompiledModule;
+import me.desht.modularrouters.logic.Filter;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -92,5 +95,23 @@ public class InventoryUtils {
         int inserted = toSend.stackSize - (excess == null ? 0 : excess.stackSize);
         from.extractItem(slot, inserted, false);
         return inserted;
+    }
+
+    public static int extractItems(IItemHandler handler, CompiledModule compiled, TileEntityItemRouter router) {
+        ItemStack bufferStack = router.getBufferItemStack();
+        Filter filter = compiled.getFilter();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            int pos = compiled.getLastMatchPos(i, handler.getSlots());
+            ItemStack toExtract = handler.extractItem(pos, router.getItemsPerTick(), true);
+            if (toExtract != null && filter.pass(toExtract)
+                    && (bufferStack == null || ItemHandlerHelper.canItemStacksStack(bufferStack, toExtract))) {
+                ItemStack excess = router.getBuffer().insertItem(0, toExtract, false);
+                int taken = toExtract.stackSize - (excess == null ? 0 : excess.stackSize);
+                handler.extractItem(pos, taken, false);
+                compiled.setLastMatchPos(pos);
+                return taken;
+            }
+        }
+        return 0;
     }
 }

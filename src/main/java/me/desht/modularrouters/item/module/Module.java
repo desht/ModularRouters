@@ -138,6 +138,9 @@ public abstract class Module {
     }
 
     public RelativeDirection getDirectionFromNBT(ItemStack stack) {
+        if (!isDirectional()) {
+            return RelativeDirection.NONE;
+        }
         NBTTagCompound compound = validateNBT(stack);
         return RelativeDirection.values()[(compound.getByte("Flags") & 0x70) >> 4];
     }

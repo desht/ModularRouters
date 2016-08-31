@@ -9,6 +9,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class ModRecipes {
     public static void init() {
@@ -46,6 +47,13 @@ public class ModRecipes {
                 ItemModule.makeItemStack(ItemModule.ModuleType.SORTER), Items.GOLD_INGOT);
         GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLINGER),
                 ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER), Items.GUNPOWDER);
+        GameRegistry.addRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLAYER),
+                " h ", "szp", " c ",
+                'h', Items.DIAMOND_HELMET,
+                's', ItemModule.makeItemStack(ItemModule.ModuleType.SENDER3),
+                'z', new ItemStack(Items.SKULL, 1, OreDictionary.WILDCARD_VALUE),
+                'p', ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
+                'c', Items.DIAMOND_CHESTPLATE);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 4),
                 "ppn", "pdn", " pn",

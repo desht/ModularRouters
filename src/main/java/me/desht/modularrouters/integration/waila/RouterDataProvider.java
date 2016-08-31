@@ -35,14 +35,18 @@ public class RouterDataProvider implements IWailaDataProvider {
         TileEntity te = accessor.getTileEntity();
         if (te instanceof TileEntityItemRouter) {
             TileEntityItemRouter router = (TileEntityItemRouter) te;
-            MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", router.getModuleCount());
-            for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-                if (router.getUpgradeCount(type) > 0) {
-                    String name = I18n.translateToLocal("item." + type.toString().toLowerCase() + "Upgrade.name");
-                    currenttip.add(I18n.translateToLocalFormatted("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
+            if (router.isPermitted(accessor.getPlayer())) {
+                MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", router.getModuleCount());
+                for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+                    if (router.getUpgradeCount(type) > 0) {
+                        String name = I18n.translateToLocal("item." + type.toString().toLowerCase() + "Upgrade.name");
+                        currenttip.add(I18n.translateToLocalFormatted("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
+                    }
                 }
+                currenttip.add(TextFormatting.RED + I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
+            } else {
+                currenttip.add(I18n.translateToLocal("chatText.security.accessDenied"));
             }
-            currenttip.add(TextFormatting.RED + I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
         }
 
         return currenttip;

@@ -1,10 +1,12 @@
 package me.desht.modularrouters.gui;
 
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
@@ -28,7 +30,9 @@ public class ModuleGuiFactory {
         Class<? extends GuiModule> clazz = module.getGuiHandler();
         try {
             Constructor<? extends GuiModule> ctor = clazz.getConstructor(ModuleContainer.class, BlockPos.class, Integer.class, EnumHand.class);
-            return ctor.newInstance(new ModuleContainer(player, moduleStack), routerPos, slotIndex, hand);
+            TileEntity te = routerPos == null ? null : player.getEntityWorld().getTileEntity(routerPos);
+            TileEntityItemRouter router = te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
+            return ctor.newInstance(new ModuleContainer(player, moduleStack, router), routerPos, slotIndex, hand);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return null;

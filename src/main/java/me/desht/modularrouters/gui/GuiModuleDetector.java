@@ -68,7 +68,7 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     protected void actionPerformed(GuiButton button) {
         if (button.id == STRENGTH_BUTTON_ID) {
             isStrong = !isStrong;
-            button.displayString = I18n.format("itemText.misc.strongSignal" + isStrong);
+            button.displayString = I18n.format("itemText.misc.strongSignal." + isStrong);
             sendModuleSettingsToServer();
         } else {
             super.actionPerformed(button);

@@ -5,7 +5,6 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
@@ -41,8 +40,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class TileEntityItemRouter extends TileEntity implements ITickable, IInventory {
-    private static final int N_MODULE_SLOTS = 9;
-    private static final int N_UPGRADE_SLOTS = 4;
+    public static final int N_MODULE_SLOTS = 9;
+    public static final int N_UPGRADE_SLOTS = 4;
 
     public static final int COMPILE_MODULES = 0x01;
     public static final int COMPILE_UPGRADES = 0x02;
@@ -57,35 +56,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             getWorld().updateComparatorOutputLevel(getPos(), getBlockType());
         }
     };
-    private final ItemStackHandler modulesHandler = new ItemStackHandler(N_MODULE_SLOTS) {
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return stack.getItem() instanceof ItemModule ? super.insertItem(slot, stack, simulate) : stack;
-        }
+    private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
+    private final ItemStackHandler upgradesHandler = new RouterItemHandler.UpgradeHandler(this);
 
-        @Override
-        protected void onContentsChanged(int slot) {
-            TileEntityItemRouter.this.recompileNeeded(COMPILE_MODULES);
-            super.onContentsChanged(slot);
-        }
-    };
-    private final ItemStackHandler upgradesHandler = new ItemStackHandler(N_UPGRADE_SLOTS) {
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return stack.getItem() instanceof ItemUpgrade ? super.insertItem(slot, stack, simulate) : stack;
-        }
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            TileEntityItemRouter.this.recompileNeeded(COMPILE_UPGRADES);
-            super.onContentsChanged(slot);
-        }
-    };
     private final CombinedInvWrapper joined = new CombinedInvWrapper(bufferHandler, modulesHandler, upgradesHandler);
 
     private final List<CompiledModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
-    private boolean active;
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
     private final int[] upgradeCount = new int[ItemUpgrade.UpgradeType.values().length];
@@ -98,11 +75,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private final SignalType[] newSignalType = new SignalType[SIDES];
     private boolean canEmit, prevCanEmit; // used if 1 or more detector modules are installed
 
-    // when a player wants to configure an already-installed module, this tracks the slot
+    // when a player wants to configure an installed module, this tracks the slot
     // number received from the client-side GUI for that player
     private final Map<UUID, Integer> playerToSlot = new HashMap<>();
 
-    private int lastPower;
+    private int lastPower;  // tracks previous redstone power level for pulse mode
+
+    private boolean active;  // tracks active state of router
     private int activeTimer = 0;  // used in PULSE mode to time out the active state
 
     private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
@@ -331,20 +310,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
             ModularRouters.logger.debug("recompiling modules for item router @ " + getPos());
             byte newSidesOpen = 0;
-            canEmit = false;
+            for (CompiledModule cm : compiledModules) {
+                cm.cleanup(this);
+            }
             compiledModules.clear();
             for (int i = 0; i < N_MODULE_SLOTS; i++) {
                 ItemStack stack = modulesHandler.getStackInSlot(i);
-                if (stack != null && stack.getItem() instanceof ItemModule) {
-                    Module m = ItemModule.getModule(stack);
-                    if (m == null) {
-                        continue; // shouldn't happen but let's be paranoid
-                    }
-                    if (m instanceof DetectorModule) {
-                        canEmit = true;
-                    }
+                Module m = ItemModule.getModule(stack);
+                if (m != null) {
                     CompiledModule cms = m.compile(this, stack);
                     compiledModules.add(cms);
+                    cms.onCompiled(this);
                     newSidesOpen |= cms.getDirection().getMask();
                 }
             }
@@ -357,12 +333,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             permitted.clear();
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
-                if (stack != null && stack.getItemDamage() < upgradeCount.length) {
+                Upgrade upgrade = ItemUpgrade.getUpgrade(stack);
+                if (upgrade != null) {
                     upgradeCount[stack.getItemDamage()] += stack.stackSize;
-                    Upgrade u = ItemUpgrade.getUpgrade(stack);
-                    if (u != null) {
-                        u.onCompiled(stack, this);
-                    }
+                    upgrade.onCompiled(stack, this);
                 }
             }
 
@@ -371,6 +345,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
 
         recompileNeeded = 0;
+    }
+
+    public void setAllowRedstoneEmission(boolean allow) {
+        canEmit = allow;
     }
 
     public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
@@ -438,10 +416,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public ItemStack getBufferItemStack() {
         return bufferHandler.getStackInSlot(0);
-    }
-
-    public void setBufferItemStack(ItemStack stack) {
-        bufferHandler.setStackInSlot(0, stack);
     }
 
     /**

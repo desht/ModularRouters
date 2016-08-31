@@ -10,21 +10,11 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public abstract class ValidatingSlot extends SlotItemHandler {
     private final Class<? extends ItemBase> clazz;
-    private final TileEntityItemRouter router;
 
-    private ValidatingSlot(Class<? extends ItemBase> clazz, TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+    private ValidatingSlot(Class<? extends ItemBase> clazz, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.clazz = clazz;
-        this.router = router;
     }
-
-    @Override
-    public void onSlotChanged() {
-        super.onSlotChanged();
-        router.recompileNeeded(compileWhat());
-    }
-
-    abstract int compileWhat();
 
     @Override
     public boolean isItemValid(ItemStack itemstack) {
@@ -32,24 +22,14 @@ public abstract class ValidatingSlot extends SlotItemHandler {
     }
 
     public static class Module extends ValidatingSlot {
-        Module(TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(ItemModule.class, router, itemHandler, index, xPosition, yPosition);
-        }
-
-        @Override
-        int compileWhat() {
-            return TileEntityItemRouter.COMPILE_MODULES;
+        Module(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(ItemModule.class, itemHandler, index, xPosition, yPosition);
         }
     }
 
     public static class Upgrade extends ValidatingSlot {
-        Upgrade(TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(ItemUpgrade.class, router, itemHandler, index, xPosition, yPosition);
-        }
-
-        @Override
-        int compileWhat() {
-            return TileEntityItemRouter.COMPILE_UPGRADES;
+        Upgrade(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(ItemUpgrade.class, itemHandler, index, xPosition, yPosition);
         }
     }
 }

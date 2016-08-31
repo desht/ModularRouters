@@ -248,21 +248,25 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof TileEntityItemRouter) {
             TileEntityItemRouter router = (TileEntityItemRouter) te;
-            IItemHandler modules = router.getModules();
-            IProbeInfo sub = probeInfo.horizontal();
-            for (int i = 0; i < modules.getSlots(); i++) {
-                ItemStack stack = modules.getStackInSlot(i);
-                if (stack != null) {
-                    sub.element(new ElementModule(stack));
+            if (router.isPermitted(player)) {
+                IItemHandler modules = router.getModules();
+                IProbeInfo sub = probeInfo.horizontal();
+                for (int i = 0; i < modules.getSlots(); i++) {
+                    ItemStack stack = modules.getStackInSlot(i);
+                    if (stack != null) {
+                        sub.element(new ElementModule(stack));
+                    }
                 }
-            }
-            sub = probeInfo.horizontal();
-            for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-                if (router.getUpgradeCount(type) > 0) {
-                    sub.item(ItemUpgrade.makeItemStack(type, router.getUpgradeCount(type)));
+                sub = probeInfo.horizontal();
+                for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+                    if (router.getUpgradeCount(type) > 0) {
+                        sub.item(ItemUpgrade.makeItemStack(type, router.getUpgradeCount(type)));
+                    }
                 }
+                probeInfo.text(TextFormatting.RED + net.minecraft.util.text.translation.I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
+            } else {
+                probeInfo.text(I18n.format("chatText.security.accessDenied"));
             }
-            probeInfo.text(TextFormatting.RED + net.minecraft.util.text.translation.I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
         }
     }
 

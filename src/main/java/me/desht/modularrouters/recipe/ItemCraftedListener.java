@@ -1,5 +1,6 @@
 package me.desht.modularrouters.recipe;
 
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,13 +11,9 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 public class ItemCraftedListener {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
-        if (ItemUpgrade.isType(event.crafting, ItemUpgrade.UpgradeType.SECURITY)) {
-            NBTTagCompound compound = new NBTTagCompound();
-            NBTTagList owner = new NBTTagList();
-            owner.appendTag(new NBTTagString(event.player.getDisplayNameString()));
-            owner.appendTag(new NBTTagString(event.player.getUniqueID().toString()));
-            compound.setTag("Owner", owner);
-            event.crafting.setTagCompound(compound);
+        // security upgrade and player modules need to be tagged with the player when crafted
+        if (ItemUpgrade.isType(event.crafting, ItemUpgrade.UpgradeType.SECURITY) || ItemModule.isType(event.crafting, ItemModule.ModuleType.PLAYER)) {
+            ItemModule.setOwner(event.crafting, event.player);
         }
     }
 }

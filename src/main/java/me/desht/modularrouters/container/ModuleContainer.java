@@ -25,6 +25,7 @@ public class ModuleContainer extends Container {
 
     public final FilterHandler filterHandler;
     private final int currentSlot;
+    private final TileEntityItemRouter router;
 
     public ModuleContainer(EntityPlayer player, ItemStack moduleStack) {
         this(player, moduleStack, null);
@@ -33,6 +34,7 @@ public class ModuleContainer extends Container {
     public ModuleContainer(EntityPlayer player, ItemStack moduleStack, TileEntityItemRouter router) {
         this.filterHandler = new FilterHandler(moduleStack, N_FILTER_SLOTS);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
+        this.router = router;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < N_FILTER_SLOTS; i++) {
@@ -98,7 +100,7 @@ public class ModuleContainer extends Container {
             // no dragging items over the filter
             return null;
         }
-        if (slot == currentSlot) {
+        if (router == null && slot == currentSlot) {
             // no messing with the module that triggered this container's creation
             return null;
         }

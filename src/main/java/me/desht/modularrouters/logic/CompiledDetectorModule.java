@@ -38,4 +38,14 @@ public class CompiledDetectorModule extends CompiledModule {
     public boolean isStrongSignal() {
         return strongSignal;
     }
+
+    @Override
+    public void onCompiled(TileEntityItemRouter router) {
+        router.setAllowRedstoneEmission(true);
+    }
+
+    @Override
+    public void cleanup(TileEntityItemRouter router) {
+        router.setAllowRedstoneEmission(false);
+    }
 }

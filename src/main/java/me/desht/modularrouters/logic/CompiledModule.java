@@ -12,6 +12,8 @@ public class CompiledModule {
     private final RouterTarget target;
     private final boolean termination;
 
+    private int lastMatchPos = 0;
+
     public CompiledModule(TileEntityItemRouter router, ItemStack stack) {
         if (!(stack.getItem() instanceof ItemModule)) {
             throw new IllegalArgumentException("expected module router module, got " + stack);
@@ -48,4 +50,38 @@ public class CompiledModule {
         return termination;
     }
 
+    public void onCompiled(TileEntityItemRouter router) {
+        // does nothing by default
+    }
+
+    public void cleanup(TileEntityItemRouter router) {
+        // does nothing by default
+    }
+
+    public int getLastMatchPos() {
+        return lastMatchPos;
+    }
+
+    /**
+     * Get the last position where we found a match.  Caching this can help reduce the amount of inventory searching
+     * needed.
+     *
+     * @param offset offset from the last saved position
+     * @param size size of the inventory being searched
+     * @return the last position including offset, and wrapper to start of inventory if necessary
+     */
+    public int getLastMatchPos(int offset, int size) {
+        int pos = lastMatchPos + offset;
+        if (pos >= size) pos -= size;
+        return pos;
+    }
+
+    /**
+     * Store the last position where we found a match.
+     *
+     * @param lastMatchPos last matched position
+     */
+    public void setLastMatchPos(int lastMatchPos) {
+        this.lastMatchPos = lastMatchPos;
+    }
 }

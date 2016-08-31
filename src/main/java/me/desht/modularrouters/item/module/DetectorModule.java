@@ -47,7 +47,7 @@ public class DetectorModule extends Module {
         super.addExtraInformation(itemstack, player, list, par4);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
         list.add(I18n.format("itemText.misc.redstoneLevel",
-                ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal" + ds.isStrongSignal())));
+                ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal." + ds.isStrongSignal())));
     }
 
     @Override

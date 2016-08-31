@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -45,7 +46,8 @@ public class ItemModule extends ItemBase {
         VOID,
         DETECTOR,
         MODSORTER,
-        FLINGER
+        FLINGER,
+        PLAYER
     }
     public static final int SUBTYPES = ModuleType.values().length;
     private static final Module[] modules = new Module[SUBTYPES];
@@ -64,6 +66,7 @@ public class ItemModule extends ItemBase {
         registerSubItem(ModuleType.DETECTOR, new DetectorModule());
         registerSubItem(ModuleType.MODSORTER, new ModSorterModule());
         registerSubItem(ModuleType.FLINGER, new FlingerModule());
+        registerSubItem(ModuleType.PLAYER, new PlayerModule());
     }
 
     private static void registerSubItem(ModuleType type, Module handler) {
@@ -209,5 +212,21 @@ public class ItemModule extends ItemBase {
 
     public static ItemStack makeItemStack(ModuleType type, int amount) {
         return new ItemStack(ModItems.module, amount, type.ordinal());
+    }
+
+    public static boolean isType(ItemStack stack, ModuleType type) {
+        return stack != null && stack.getItem() instanceof ItemModule && stack.getItemDamage() == type.ordinal();
+    }
+
+    public static void setOwner(ItemStack stack, EntityPlayer player) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            compound = new NBTTagCompound();
+        }
+        NBTTagList owner = new NBTTagList();
+        owner.appendTag(new NBTTagString(player.getDisplayNameString()));
+        owner.appendTag(new NBTTagString(player.getUniqueID().toString()));
+        compound.setTag("Owner", owner);
+        stack.setTagCompound(compound);
     }
 }

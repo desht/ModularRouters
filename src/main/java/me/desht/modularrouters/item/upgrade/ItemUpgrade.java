@@ -79,7 +79,7 @@ public class ItemUpgrade extends ItemBase {
     }
 
     public static Upgrade getUpgrade(ItemStack stack) {
-        return stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
+        return stack != null && stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
     }
 
     public static boolean isType(ItemStack stack, UpgradeType type) {

@@ -14,19 +14,10 @@ public class PullerModule extends Module {
         ItemStack bufferStack = router.getBufferItemStack();
         if (compiled.getDirection() != Module.RelativeDirection.NONE
                 && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
-            EnumFacing facingOpposite = compiled.getTarget().face;
-            BlockPos pos = compiled.getTarget().pos;
-            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), pos, facingOpposite);
+            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), compiled.getTarget().pos, compiled.getTarget().face);
             if (handler != null) {
-                for (int i = 0; i < handler.getSlots(); i++) {
-                    ItemStack toExtract = handler.extractItem(i, router.getItemsPerTick(), true);
-                    if (toExtract != null && compiled.getFilter().pass(toExtract)) {
-                        ItemStack excess = router.getBuffer().insertItem(0, toExtract, false);
-                        int taken = toExtract.stackSize - (excess == null ? 0 : excess.stackSize);
-                        handler.extractItem(i, taken, false);
-                        return taken > 0;
-                    }
-                }
+                int taken = InventoryUtils.extractItems(handler, compiled, router);
+                return taken > 0;
             }
         }
         return false;
