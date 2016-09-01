@@ -3,7 +3,7 @@ package me.desht.modularrouters.gui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TexturedToggleButton extends TexturedButton {
+public abstract class TexturedToggleButton extends TexturedButton implements ToggleButton {
     protected final List<String> tooltip2 = new ArrayList<>();
     private boolean toggled;
 

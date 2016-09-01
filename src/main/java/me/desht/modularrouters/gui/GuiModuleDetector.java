@@ -29,11 +29,8 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     private static final int TOOLTIP_BUTTON_ID = 102;
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
 
-    private SignalLevelField textBox;
     private int signalStrength;
     private boolean isStrong;
-
-    private int sendTimeout = 0;
 
     public GuiModuleDetector(ModuleContainer containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -51,14 +48,14 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     public void initGui() {
         super.initGui();
 
-        textBox = new SignalLevelField(this, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 17, 20, 12);
+        SignalLevelField textBox = new SignalLevelField(this, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 17, 20, 12);
         textBox.setText(Integer.toString(signalStrength));
         textBox.setGuiResponder(this);
         addTextField(textBox);
 
         focus(0);
 
-        String label = I18n.format("itemText.misc.strongSignal" + isStrong);
+        String label = I18n.format("itemText.misc.strongSignal." + isStrong);
         buttonList.add(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label));
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));

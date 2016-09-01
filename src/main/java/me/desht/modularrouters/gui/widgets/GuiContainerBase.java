@@ -18,15 +18,6 @@ public abstract class GuiContainerBase extends GuiContainer {
 
     public GuiContainerBase(Container c) {
         super(c);
-//        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public void handleTooltip(GuiScreenEvent.DrawScreenEvent.Post event) {
-        // drawing tooltip here ensures it's on top of everything that's drawn, including by subclasses
-        this.buttonList.stream().filter(button -> button.isMouseOver() && button instanceof ITooltipButton).forEach(button -> {
-            drawHoveringText(((ITooltipButton) button).getTooltip(), event.getMouseX(), event.getMouseY(), fontRendererObj);
-        });
     }
 
     @Override
@@ -49,9 +40,22 @@ public abstract class GuiContainerBase extends GuiContainer {
     @Override
     public void handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
-        if (focusedField >= 0 && wheel != 0) {
+        if (wheel == 0) {
+            super.handleMouseInput();
+        } else if (focusedField >= 0) {
             textFields.get(focusedField).onMouseWheel(wheel < 0 ? -1 : 1);
         } else {
+            // check if mouse is over an unfocused field, if so focus on it
+            int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+            int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+            for (int i = 0; i < textFields.size(); i++) {
+                TextFieldWidget field = textFields.get(i);
+                if (mouseX >= field.xPosition && mouseX < field.xPosition + field.width && mouseY >= field.yPosition && mouseY < field.yPosition + field.height) {
+                    focus(i);
+                    field.onMouseWheel(wheel < 0 ? -1 : 1);
+                    return;
+                }
+            }
             super.handleMouseInput();
         }
     }
@@ -72,7 +76,7 @@ public abstract class GuiContainerBase extends GuiContainer {
             } else {
                 focusNext();
             }
-        } else if (focusedField >= 0) {
+        } else if (isFocused()) {
             textFields.get(focusedField).textboxKeyTyped(typedChar, keyCode);
             if (keyCode == Keyboard.KEY_E) return;  // avoid closing window while text field focused
         }
@@ -85,9 +89,13 @@ public abstract class GuiContainerBase extends GuiContainer {
 
     public void focus(int field) {
         if (field != focusedField) {
-            textFields.get(field).setFocused(false);
+            if (focusedField != -1) {
+                textFields.get(focusedField).setFocused(false);
+            }
             focusedField = field;
-            textFields.get(focusedField).setFocused(true);
+            if (focusedField != -1) {
+                textFields.get(focusedField).setFocused(true);
+            }
         }
     }
 
@@ -101,6 +109,10 @@ public abstract class GuiContainerBase extends GuiContainer {
         int field = focusedField - 1;
         if (field < 0) field = textFields.size() - 1;
         focus(field);
+    }
+
+    protected boolean isFocused() {
+        return focusedField >= 0;
     }
 
     protected void onTextFieldFocusChange(int id, boolean newFocus) {

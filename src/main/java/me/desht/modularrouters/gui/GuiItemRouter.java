@@ -26,7 +26,7 @@ public class GuiItemRouter extends GuiContainerBase {
     public static final int MODULE_LABEL_YPOS = 60;
     public static final int BUFFER_LABEL_YPOS = 28;
     public static final int UPGRADES_LABEL_YPOS = 28;
-    public static final int GUI_HEIGHT = 185;
+    public static final int GUI_HEIGHT = 186;
     public static final int GUI_WIDTH = 176;
     public static final int BUTTON_HEIGHT = 16;
     public static final int BUTTON_WIDTH = 16;

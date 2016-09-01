@@ -27,9 +27,15 @@ public abstract class TexturedButton extends GuiButton implements ITooltipButton
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        this.drawTexturedModalRect(this.xPosition, this.yPosition, i * 16, 0, this.width, this.height);
+        if (drawStandardBackground()) {
+            this.drawTexturedModalRect(this.xPosition, this.yPosition, i * 16, 0, this.width, this.height);
+        }
         this.drawTexturedModalRect(this.xPosition, this.yPosition, getTextureX(), getTextureY(), this.width, this.height);
         this.mouseDragged(mc, mouseX, mouseY);
+    }
+
+    protected boolean drawStandardBackground() {
+        return true;
     }
 
     protected abstract int getTextureX();

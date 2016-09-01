@@ -15,6 +15,7 @@ public class TextFieldWidget extends GuiTextField {
     public void setFocused(boolean isFocusedIn) {
         super.setFocused(isFocusedIn);
         parent.onTextFieldFocusChange(getId(), isFocusedIn);
+        setTextColor(isFocusedIn ? 0xffffff : 0xc0c0c0);
     }
 
     public void onMouseWheel(int direction) {}
