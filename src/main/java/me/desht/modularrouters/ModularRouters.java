@@ -31,9 +31,10 @@ public class ModularRouters {
     public static final String modId = "modularrouters";
     public static final String name = "Modular Routers";
     public static final String version = "1.0.0";
-    public static final String GUIFACTORY = "me.desht.modularrouters.config.ConfigGuiFactory";
     public static Logger logger;
     public static SimpleNetworkWrapper network;
+
+    static final String GUIFACTORY = "me.desht.modularrouters.config.ConfigGuiFactory";
 
     private static int modGuiIndex = 0; // track GUI IDs
     public static final int GUI_MODULE_HELD_MAIN = modGuiIndex++;
@@ -85,6 +86,5 @@ public class ModularRouters {
         network.registerMessage(ParticleBeamMessage.Handler.class, ParticleBeamMessage.class, d++, Side.CLIENT);
         network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
         network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
-        network.registerMessage(RouterBlockstateMessage.Handler.class, RouterBlockstateMessage.class, d++, Side.CLIENT);
     }
 }

@@ -12,7 +12,6 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.network.RouterBlockstateMessage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -29,7 +28,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -129,14 +127,18 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound nbtTagCompound = getUpdateTag();
-        int metadata = getBlockMetadata();
-        return new SPacketUpdateTileEntity(this.pos, metadata, nbtTagCompound);
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setBoolean("Active", active);
+        compound.setByte("Sides", sidesOpen);
+        return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), compound);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+        boolean newActive = pkt.getNbtCompound().getBoolean("Active");
+        byte newSidesOpen = pkt.getNbtCompound().getByte("Sides");
+        setActive(newActive);
+        setSidesOpen(newSidesOpen);
     }
 
     @Override
@@ -215,7 +217,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             // need to turn the state inactive after a short time...
             if (activeTimer > 0) {
                 if (--activeTimer == 0) {
-                    setActiveState(false);
+                    setActive(false);
                 }
             }
             lastPower = power;
@@ -228,7 +230,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     private void executeModules() {
-        boolean didWork = false;
+        boolean newActive = false;
 
         if (redstoneModeAllowsRun()) {
             if (prevCanEmit || canEmit) {
@@ -237,7 +239,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             }
             for (CompiledModule mod : compiledModules) {
                 if (mod != null && mod.execute(this)) {
-                    didWork = true;
+                    newActive = true;
                     if (mod.termination()) {
                         break;
                     }
@@ -247,8 +249,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 handleRedstoneEmission();
             }
         }
-        if (didWork != active) {
-            setActiveState(didWork);
+        if (newActive != active) {
+            setActive(newActive);
         }
         prevCanEmit = canEmit;
     }
@@ -268,7 +270,16 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
     }
 
-    public void setActiveState(boolean newActive) {
+    /**
+     * Check if the router processed anything on its last tick
+     *
+     * @return true if the router processed something
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
             if (!worldObj.isRemote) {
@@ -279,10 +290,23 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
     }
 
+    public boolean isSideOpen(Module.RelativeDirection side) {
+        return (sidesOpen & side.getMask()) != 0;
+    }
+
+    private void setSidesOpen(byte sidesOpen) {
+        if (this.sidesOpen != sidesOpen) {
+            this.sidesOpen = sidesOpen;
+            if (!worldObj.isRemote) {
+                sendBlockstateToClients();
+            } else {
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
+            }
+        }
+    }
+
     private void sendBlockstateToClients() {
-        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(
-                worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64);
-        ModularRouters.network.sendToAllAround(new RouterBlockstateMessage(pos, this), point);
+        worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
     }
 
     private boolean redstoneModeAllowsRun() {
@@ -392,39 +416,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return direction.toEnumFacing(state.getValue(BlockItemRouter.FACING));
     }
 
-    public BlockPos getRelativeBlockPos(Module.RelativeDirection direction) {
-        return getPos().offset(getAbsoluteFacing(direction));
-    }
-
-    public boolean installModule(EntityPlayer player, EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (stack == null || !(stack.getItem() instanceof ItemModule)) {
-            return false;
-        }
-
-        for (int i = 0; i < modulesHandler.getSlots(); i++) {
-            if (modulesHandler.getStackInSlot(i) == null) {
-                modulesHandler.setStackInSlot(i, stack);
-                player.setHeldItem(hand, null);
-                // sound effect?
-                recompileNeeded(COMPILE_MODULES);
-                return true;
-            }
-        }
-        return false;
-    }
-
     public ItemStack getBufferItemStack() {
         return bufferHandler.getStackInSlot(0);
-    }
-
-    /**
-     * Check if the router processed anything on its last tick
-     *
-     * @return true if the router processed something
-     */
-    public boolean isActive() {
-        return active;
     }
 
     public void playerConfiguringModule(EntityPlayer player, int slotIndex) {
@@ -528,25 +521,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             }
         }
         return false;
-    }
-
-    public boolean isSideOpen(Module.RelativeDirection side) {
-        return (sidesOpen & side.getMask()) != 0;
-    }
-
-    public void setSidesOpen(byte sidesOpen) {
-        if (this.sidesOpen != sidesOpen) {
-            this.sidesOpen = sidesOpen;
-            if (!worldObj.isRemote) {
-                sendBlockstateToClients();
-            } else {
-                worldObj.markBlockRangeForRenderUpdate(pos, pos);
-            }
-        }
-    }
-
-    public byte getSidesOpen() {
-        return sidesOpen;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
