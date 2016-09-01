@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -150,6 +151,17 @@ public class SecurityUpgrade extends Upgrade {
         }
 
         @SubscribeEvent
+        public static void onInteracted(PlayerInteractEvent.RightClickBlock event) {
+            EntityPlayer player = event.getEntityPlayer();
+            ItemStack stack = player.getHeldItem(event.getHand());
+            if (!player.getEntityWorld().isRemote && ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.SECURITY) && player.isSneaking()) {
+                ItemModule.setOwner(stack, player);
+                player.addChatMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayNameString()));
+                event.setCanceled(true);
+            }
+        }
+
+        @SubscribeEvent
         public static void onInteracted(PlayerInteractEvent.EntityInteract event) {
             if (event.getTarget() instanceof EntityPlayer) {
                 ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
@@ -164,6 +176,7 @@ public class SecurityUpgrade extends Upgrade {
                     } else {
                         event.getEntityPlayer().addChatMessage(new TextComponentTranslation("chatText.security." + res.toString(), name));
                     }
+                    event.setCanceled(true);
                 }
             }
         }
