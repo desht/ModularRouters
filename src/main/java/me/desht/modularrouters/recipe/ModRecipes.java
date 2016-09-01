@@ -55,7 +55,7 @@ public class ModRecipes {
                 'p', ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
                 'c', Items.DIAMOND_CHESTPLATE);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 4),
+        GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 6),
                 "ppn", "pdn", " pn",
                 'p', Items.PAPER, 'd', Items.DIAMOND, 'n', Items.GOLD_NUGGET);
 
