@@ -5,10 +5,10 @@
   "description": "Item routers with pluggable modules to define behaviour",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://minecraft.curseforge.com/projects/modular-routers",
   "updateUrl": "",
   "authorList": ["desht"],
-  "credits": "Everyone who's made their mods open-source: thank you!",
+  "credits": "Modders like Vazkii, McJty & Crazypants who are kind enough to make their mods open source!",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

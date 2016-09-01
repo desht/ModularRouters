@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
 // For those who want the bleeding edge
 buildscript {
@@ -18,12 +20,17 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-version = mc_version + "-" + mod_version
+ext.configFile = file('build.properties')
+ext.config = parseConfig(configFile)
+
+version = config.mc_version + "-" + config.mod_version
 
 minecraft {
-    version = mc_version + "-" + forge_version
-    mappings = mcp_mappings
+    version = config.mc_version + "-" + config.forge_version
+    mappings = config.mcp_mappings
     runDir = "run"
+    replace '@VERSION@', project.version
+	replaceIn 'ModularRouters.java'
 }
 
 repositories {
@@ -39,8 +46,8 @@ repositories {
 }
 
 dependencies {
-    deobfCompile group: "mcp.mobius.waila", name: "Waila", version: waila_version
-    deobfCompile group: "mcjty.theoneprobe", name: "TheOneProbe", version: top_version // "mcjty.theoneprobe:TheOneProbe:1.10-1.0.13-26"
+    deobfCompile group: "mcp.mobius.waila", name: "Waila", version: config.waila_version
+    deobfCompile group: "mcjty.theoneprobe", name: "TheOneProbe", version: config.top_version
 }
 
 processResources {
@@ -63,3 +70,11 @@ processResources {
 }
 
 idea { module { inheritOutputDirs = true } }
+
+def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
