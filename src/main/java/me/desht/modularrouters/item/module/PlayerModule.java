@@ -19,7 +19,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
 
 import java.util.List;
 
@@ -87,13 +89,12 @@ public class PlayerModule extends Module {
 
     private IItemHandler getHandler(EntityPlayer player, CompiledPlayerModule cpm) {
         switch (cpm.getSection()) {
-            case MAIN: return new ItemStackHandler(player.inventory.mainInventory);
-            case ARMOR: return new ItemStackHandler(player.inventory.armorInventory);
-            case OFFHAND: return new ItemStackHandler(player.inventory.offHandInventory);
+            case MAIN: return new PlayerMainInvWrapper(player.inventory);
+            case ARMOR: return new PlayerArmorInvWrapper(player.inventory);
+            case OFFHAND: return new PlayerOffhandInvWrapper(player.inventory);
             default: return null;
         }
     }
-
 
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
