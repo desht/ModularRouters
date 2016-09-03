@@ -26,7 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ModularRouters.modId, version = ModularRouters.version, name = ModularRouters.name,
-        guiFactory = ModularRouters.GUIFACTORY, dependencies = "after:Waila")
+        guiFactory = ModularRouters.GUIFACTORY, dependencies = "after:Waila;after:guideapi;after:theoneprobe")
 public class ModularRouters {
     public static final String modId = "modularrouters";
     public static final String name = "Modular Routers";
@@ -60,6 +60,7 @@ public class ModularRouters {
         ModBlocks.init();
         setupNetwork();
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
+        IntegrationHandler.registerGuideBook();
         logger.info(name + " is loading!");
     }
 

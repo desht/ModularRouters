@@ -4,9 +4,11 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class SorterModule extends Module {
     @Override
@@ -29,6 +31,12 @@ public class SorterModule extends Module {
             }
         }
         return false;
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SORTER),
+                ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR), ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1));
     }
 
     protected IItemHandler findTargetInventory(TileEntityItemRouter router, CompiledModule settings) {

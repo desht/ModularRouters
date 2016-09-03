@@ -1,6 +1,8 @@
 package me.desht.modularrouters.recipe;
 
+import amerifrance.guideapi.api.GuideAPI;
 import me.desht.modularrouters.block.ModBlocks;
+import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -8,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -20,55 +23,22 @@ public class ModRecipes {
         GameRegistry.addRecipe(new ItemStack(ModItems.blankModule, 6),
                 " r ", "ppp", "nnn",
                 'r', Items.REDSTONE, 'p', Items.PAPER, 'n', Items.GOLD_NUGGET);
-
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER),
-                ModItems.blankModule, Items.IRON_PICKAXE);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER),
-                ModItems.blankModule, Blocks.DROPPER);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLACER),
-                ModItems.blankModule, Blocks.DISPENSER, Blocks.DIRT);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SORTER),
-                ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR), ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1));
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
-                ModItems.blankModule, Blocks.STICKY_PISTON);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1),
-                ModItems.blankModule, Items.BOW, Items.ARROW);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER2),
-                ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1), Items.ENDER_EYE);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER3),
-                ItemModule.makeItemStack(ItemModule.ModuleType.SENDER2), Blocks.END_STONE, Blocks.ENDER_CHEST);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.VACUUM),
-                ModItems.blankModule, Blocks.HOPPER, Items.ENDER_EYE);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.VOID),
-                ModItems.blankModule, Items.LAVA_BUCKET);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR),
-                ModItems.blankModule, Items.COMPARATOR);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.MODSORTER),
-                ItemModule.makeItemStack(ItemModule.ModuleType.SORTER), Items.GOLD_INGOT);
-        GameRegistry.addShapelessRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLINGER),
-                ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER), Items.GUNPOWDER);
-        GameRegistry.addRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLAYER),
-                " h ", "szp", " c ",
-                'h', Items.DIAMOND_HELMET,
-                's', ItemModule.makeItemStack(ItemModule.ModuleType.SENDER3),
-                'z', new ItemStack(Items.SKULL, 1, OreDictionary.WILDCARD_VALUE),
-                'p', ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
-                'c', Items.DIAMOND_CHESTPLATE);
+        for (ItemModule.ModuleType type : ItemModule.ModuleType.values()) {
+            GameRegistry.addRecipe(ItemModule.getModule(type).getRecipe());
+        }
 
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 6),
                 "ppn", "pdn", " pn",
                 'p', Items.PAPER, 'd', Items.DIAMOND, 'n', Items.GOLD_NUGGET);
+        for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+            GameRegistry.addRecipe(ItemUpgrade.getUpgrade(type).getRecipe());
+        }
 
-        GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SPEED),
-                ModItems.blankUpgrade, Items.BLAZE_POWDER, Items.SUGAR, Items.GUNPOWDER, Items.REDSTONE);
-        GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.STACK),
-                ModItems.blankUpgrade, Blocks.BRICK_BLOCK, Blocks.STONEBRICK);
-        GameRegistry.addShapelessRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGE),
-                ModItems.blankUpgrade, Blocks.QUARTZ_BLOCK);
-        GameRegistry.addRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SECURITY),
-                " q ", "nbn", " r ",
-                'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
         GameRegistry.addRecipe(new EnchantBreakerModuleRecipe());
+
+        if (Loader.isModLoaded("guideapi")) {
+            GameRegistry.addShapelessRecipe(GuideAPI.getStackFromBook(Guidebook.guideBook), Items.BOOK, ModItems.blankModule);
+        }
 
         MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
     }

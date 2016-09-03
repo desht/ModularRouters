@@ -9,8 +9,10 @@ import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -22,6 +24,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
@@ -121,6 +125,17 @@ public class PlayerModule extends Module {
     @Override
     public boolean isDirectional() {
         return false;
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapedOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLAYER),
+                " h ", "szp", " c ",
+                'h', Items.DIAMOND_HELMET,
+                's', ItemModule.makeItemStack(ItemModule.ModuleType.SENDER3),
+                'z', new ItemStack(Items.SKULL, 1, OreDictionary.WILDCARD_VALUE),
+                'p', ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
+                'c', Items.DIAMOND_CHESTPLATE);
     }
 
     @Override

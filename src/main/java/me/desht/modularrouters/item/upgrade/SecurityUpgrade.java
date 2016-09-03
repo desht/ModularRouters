@@ -2,12 +2,15 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -15,6 +18,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,11 +28,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SecurityUpgrade extends Upgrade {
-    @Override
-    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        MiscUtil.appendMultiline(list, "itemText.security.tooltip");
-    }
-
     @Override
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         list.add(I18n.format("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
@@ -47,6 +47,13 @@ public class SecurityUpgrade extends Upgrade {
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         Set<UUID> ids = getPlayerIDs(stack);
         router.addPermittedIds(ids);
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapedOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SECURITY),
+                " q ", "nbn", " r ",
+                'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
     }
 
     public Set<UUID> getPlayerIDs(ItemStack stack) {

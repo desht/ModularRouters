@@ -11,7 +11,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -19,6 +21,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -65,7 +68,13 @@ public class SenderModule2 extends TargetedSender {
     }
 
     @Override
-    protected Object[] getExtraUsageParams() {
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER2),
+                ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1), Items.ENDER_EYE);
+    }
+
+    @Override
+    public Object[] getExtraUsageParams() {
         return new Object[] { Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE };
     }
 

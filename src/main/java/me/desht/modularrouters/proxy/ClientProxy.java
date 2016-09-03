@@ -1,9 +1,13 @@
 package me.desht.modularrouters.proxy;
 
+import amerifrance.guideapi.api.GuideAPI;
+import amerifrance.guideapi.api.impl.Book;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.gui.GuiItemRouter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -81,5 +85,19 @@ public class ClientProxy extends CommonProxy {
     @Override
     public IThreadListener threadListener() {
         return Minecraft.getMinecraft();
+    }
+
+    @Override
+    public void addGuidebookModel(Book guideBook) {
+        GuideAPI.setModel(guideBook);
+    }
+
+    @Override
+    public TileEntityItemRouter getOpenItemRouter() {
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
+            return ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
+        } else {
+            return null;
+        }
     }
 }

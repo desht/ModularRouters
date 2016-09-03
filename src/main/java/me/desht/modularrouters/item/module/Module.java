@@ -16,13 +16,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -161,7 +161,7 @@ public abstract class Module {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
             Slot slot = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
-                list.add(I18n.translateToLocalFormatted("itemText.misc.configureHint", String.valueOf(Config.configKey)));
+                list.add(MiscUtil.translate("itemText.misc.configureHint", String.valueOf(Config.configKey)));
             }
         }
     }
@@ -182,7 +182,7 @@ public abstract class Module {
         // nothing by default
     }
 
-    protected Object[] getExtraUsageParams() {
+    public Object[] getExtraUsageParams() {
         return new Object[0];
     }
 
@@ -227,4 +227,6 @@ public abstract class Module {
     public boolean isDirectional() {
         return true;
     }
+
+    public abstract IRecipe getRecipe();
 }

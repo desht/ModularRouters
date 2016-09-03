@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
@@ -9,6 +10,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -16,6 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class PlacerModule extends Module {
     @Override
@@ -53,6 +56,12 @@ public class PlacerModule extends Module {
         }
 
         return false;
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLACER),
+                ModItems.blankModule, Blocks.DISPENSER, Blocks.DIRT);
     }
 
     public static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };

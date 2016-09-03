@@ -3,13 +3,17 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.gui.GuiModuleDetector;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.CompiledDetectorModule;
 import me.desht.modularrouters.logic.CompiledModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -53,5 +57,11 @@ public class DetectorModule extends Module {
     @Override
     public Class<? extends GuiModule> getGuiHandler() {
         return GuiModuleDetector.class;
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR),
+                ModItems.blankModule, Items.COMPARATOR);
     }
 }

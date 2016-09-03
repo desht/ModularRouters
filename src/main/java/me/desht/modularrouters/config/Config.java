@@ -30,6 +30,7 @@ public class Config {
         public static final boolean PLACER_PARTICLES = true;
         public static final boolean BREAKER_PARTICLES = true;
         public static final char CONFIG_KEY = 'c';
+        public static final boolean START_WITH_GUIDE = false;
     }
 
     public static char configKey;
@@ -46,6 +47,7 @@ public class Config {
     public static boolean breakerParticles;
     public static boolean placerParticles;
     public static boolean vacuumParticles;
+    public static boolean startWithGuide;
 
     public static final String CATEGORY_NAME_ROUTER = "category_router";
     public static final String CATEGORY_NAME_MODULE = "category_module";
@@ -99,6 +101,9 @@ public class Config {
         Property propHardMinTicks = config.get(CATEGORY_NAME_ROUTER, "hardMinTicks", 2,
                 "Hard minimum tick rate", 1, Integer.MAX_VALUE);
         propHardMinTicks.setLanguageKey("gui.config.hardMinTicks");
+        Property propStartWithGuide = config.get(CATEGORY_NAME_ROUTER, "startWithGuide", Defaults.START_WITH_GUIDE,
+                "New players spawn with a guide book");
+        propStartWithGuide.setLanguageKey("gui.config.startWithGuide");
 
         Property propSender1BaseRange = config.get(CATEGORY_NAME_MODULE, "sender1BaseRange", Defaults.SENDER1_BASE_RANGE,
                 "Sender Module Mk1 Base Range", 1, Integer.MAX_VALUE);
@@ -139,6 +144,7 @@ public class Config {
         propOrderGeneral.add(propTicksPerUpgrade.getName());
         propOrderGeneral.add(propHardMinTicks.getName());
         propOrderGeneral.add(propConfigKey.getName());
+        propOrderGeneral.add(propStartWithGuide.getName());
         List<String> propOrderModule = new ArrayList<>();
         propOrderModule.add(propSender1BaseRange.getName());
         propOrderModule.add(propSender1MaxRange.getName());
@@ -159,6 +165,7 @@ public class Config {
             hardMinTickRate = propHardMinTicks.getInt();
             String s = propConfigKey.getString();
             configKey = s.length() > 0 ? propConfigKey.getString().charAt(0) : Defaults.CONFIG_KEY;
+            startWithGuide = propStartWithGuide.getBoolean();
             sender1BaseRange = propSender1BaseRange.getInt();
             sender1MaxRange = propSender1MaxRange.getInt();
             sender2BaseRange = propSender2BaseRange.getInt();
@@ -175,6 +182,7 @@ public class Config {
         propTicksPerUpgrade.set(ticksPerUpgrade);
         propHardMinTicks.set(hardMinTickRate);
         propConfigKey.set(String.valueOf(configKey));
+        propStartWithGuide.set(startWithGuide);
         propSender1BaseRange.set(sender1BaseRange);
         propSender1MaxRange.set(sender1MaxRange);
         propSender2BaseRange.set(sender2BaseRange);

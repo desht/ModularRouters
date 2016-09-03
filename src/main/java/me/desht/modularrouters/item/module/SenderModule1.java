@@ -3,11 +3,14 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -15,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.awt.*;
 
@@ -51,8 +55,14 @@ public class SenderModule1 extends Module {
     }
 
     @Override
-    protected Object[] getExtraUsageParams() {
+    public Object[] getExtraUsageParams() {
         return new Object[] { Config.Defaults.SENDER1_BASE_RANGE, Config.Defaults.SENDER1_MAX_RANGE };
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1),
+                ModItems.blankModule, Items.BOW, Items.ARROW);
     }
 
     protected void playParticles(TileEntityItemRouter router, CompiledModule settings, BlockPos targetPos, float val) {

@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ItemModule extends ItemBase {
+
     public enum ModuleType {
         BREAKER,
         DROPPER,
@@ -47,7 +48,11 @@ public class ItemModule extends ItemBase {
         DETECTOR,
         MODSORTER,
         FLINGER,
-        PLAYER
+        PLAYER;
+
+        public static ModuleType getType(ItemStack stack) {
+            return stack.getItem() instanceof ItemModule ? values()[stack.getItemDamage()] : null;
+        }
     }
     public static final int SUBTYPES = ModuleType.values().length;
     private static final Module[] modules = new Module[SUBTYPES];
@@ -173,37 +178,43 @@ public class ItemModule extends ItemBase {
         module.addBasicInformation(itemstack, player, list, par4);
 
         if (GuiScreen.isShiftKeyDown()) {
-            NBTTagCompound compound =  Module.validateNBT(itemstack);
-            Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
-            NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (module.isBlacklist(itemstack) ? "2" : "1")) + ":");
-            if (items.tagCount() > 0) {
-                for (int i = 0; i < items.tagCount(); i++) {
-                    ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
-                    list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
-                }
-            } else {
-                list.add("  " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
-            }
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
-                    Joiner.on(" | ").join(
-                            compose("IGNORE_META", module.ignoreMeta(itemstack)),
-                            compose("IGNORE_NBT", module.ignoreNBT(itemstack)),
-                            compose("IGNORE_OREDICT", module.ignoreOreDict(itemstack)),
-                            compose("TERMINATE", !module.terminates(itemstack))
-                    ));
+            addSettingsInformation(itemstack, list, module);
             module.addExtraInformation(itemstack, player, list, par4);
         } else if (GuiScreen.isCtrlKeyDown()) {
             module.addUsageInformation(itemstack, player, list, par4);
         } else {
-            list.add(I18n.format("itemText.misc.holdShift"));
+            list.add(I18n.format("itemText.misc.holdShiftCtrl"));
         }
+    }
+
+    private void addSettingsInformation(ItemStack itemstack, List<String> list, Module module) {
+        NBTTagCompound compound =  Module.validateNBT(itemstack);
+        Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
+        if (module.isDirectional()) {
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
+        }
+        NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
+        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (module.isBlacklist(itemstack) ? "2" : "1")) + ":");
+        if (items.tagCount() > 0) {
+            for (int i = 0; i < items.tagCount(); i++) {
+                ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
+                list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
+            }
+        } else {
+            list.add("  " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
+        }
+        list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
+                Joiner.on(" | ").join(
+                        compose("IGNORE_META", module.ignoreMeta(itemstack)),
+                        compose("IGNORE_NBT", module.ignoreNBT(itemstack)),
+                        compose("IGNORE_OREDICT", module.ignoreOreDict(itemstack)),
+                        compose("TERMINATE", !module.terminates(itemstack))
+                ));
     }
 
     private String compose(String key, boolean flag) {
         String text = I18n.format("itemText.misc." + key);
-        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
+        return (flag ? TextFormatting.DARK_GRAY + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
     public static ItemStack makeItemStack(ModuleType type) {

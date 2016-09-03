@@ -43,11 +43,16 @@ repositories {
         name = "tterrag maven"
         url = "http://maven.tterrag.com/"
     }
+    maven {
+        name = "guideapi"
+        url = 'http://tehnut.info/maven/'
+    }
 }
 
 dependencies {
     deobfCompile group: "mcp.mobius.waila", name: "Waila", version: config.waila_version
     deobfCompile group: "mcjty.theoneprobe", name: "TheOneProbe", version: config.top_version
+    deobfCompile "info.amerifrance.guideapi:Guide-API:1.10.2-2.0.2-45"
 }
 
 processResources {

@@ -2,10 +2,14 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterTarget;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -13,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -66,8 +71,14 @@ public class VacuumModule extends Module {
     }
 
     @Override
-    protected Object[] getExtraUsageParams() {
+    public Object[] getExtraUsageParams() {
         return new Object[] { Config.Defaults.VACUUM_BASE_RANGE, Config.Defaults.VACUUM_MAX_RANGE };
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.VACUUM),
+                ModItems.blankModule, Blocks.HOPPER, Items.ENDER_EYE);
     }
 
     public static int getVacuumRange(TileEntityItemRouter router) {

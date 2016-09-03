@@ -3,6 +3,7 @@ package me.desht.modularrouters.item.module;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.CompiledBreakerModule;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.FakePlayer;
@@ -14,14 +15,17 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,12 @@ public class BreakerModule extends Module {
         if (ench.isEmpty()) {
             MiscUtil.appendMultiline(list, "itemText.misc.enchantBreakerHint");
         }
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER),
+                ModItems.blankModule, Items.IRON_PICKAXE);
     }
 
     @Override

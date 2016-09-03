@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.module.Module;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -13,11 +14,16 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ItemUpgrade extends ItemBase {
+
     public enum UpgradeType {
         STACK,
         SPEED,
         RANGE,
-        SECURITY
+        SECURITY;
+
+        public static UpgradeType getType(ItemStack stack) {
+            return stack.getItem() instanceof ItemUpgrade ? values()[stack.getItemDamage()] : null;
+        }
     }
 
     public static final int SUBTYPES = UpgradeType.values().length;
@@ -44,13 +50,15 @@ public class ItemUpgrade extends ItemBase {
 
     @Override
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        Upgrade u = getUpgrade(itemstack);
-        if (u != null) {
-            u.addInformation(itemstack, player, list, par4);
-            if (GuiScreen.isShiftKeyDown()) {
-                u.addExtraInformation(itemstack, player, list, par4);
-            } else if (u.hasExtraInformation()) {
-                list.add(I18n.format("itemText.misc.holdShiftUpgrade"));
+        Upgrade upgrade = getUpgrade(itemstack);
+        if (upgrade != null) {
+            upgrade.addBasicInformation(itemstack, player, list, par4);
+            if (GuiScreen.isShiftKeyDown() && upgrade.hasExtraInformation()) {
+                upgrade.addExtraInformation(itemstack, player, list, par4);
+            } else if (GuiScreen.isCtrlKeyDown()) {
+                upgrade.addUsageInformation(itemstack, player, list, par4);
+            } else {
+                list.add(I18n.format(upgrade.hasExtraInformation() ? "itemText.misc.holdShiftCtrl" : "itemText.misc.holdCtrl"));
             }
         }
     }
@@ -80,6 +88,10 @@ public class ItemUpgrade extends ItemBase {
 
     public static Upgrade getUpgrade(ItemStack stack) {
         return stack != null && stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
+    }
+
+    public static Upgrade getUpgrade(UpgradeType type) {
+        return upgrades[type.ordinal()];
     }
 
     public static boolean isType(ItemStack stack, UpgradeType type) {

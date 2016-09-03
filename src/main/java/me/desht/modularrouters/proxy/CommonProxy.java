@@ -1,5 +1,7 @@
 package me.desht.modularrouters.proxy;
 
+import amerifrance.guideapi.api.impl.Book;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
@@ -33,6 +35,13 @@ public class CommonProxy {
     }
 
     public IThreadListener threadListener() {
+        return null;
+    }
+
+    public void addGuidebookModel(Book guideBook) {
+    }
+
+    public TileEntityItemRouter getOpenItemRouter() {
         return null;
     }
 }

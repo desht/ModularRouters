@@ -3,9 +3,12 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class ModSorterModule extends SorterModule {
     @Override
@@ -31,6 +34,12 @@ public class ModSorterModule extends SorterModule {
             }
         }
         return false;
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.MODSORTER),
+                ItemModule.makeItemStack(ItemModule.ModuleType.SORTER), Items.GOLD_INGOT);
     }
 
     private String getMod(ItemStack stack) {

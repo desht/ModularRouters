@@ -8,10 +8,13 @@ import me.desht.modularrouters.logic.CompiledModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -47,6 +50,12 @@ public class FlingerModule extends DropperModule {
         item.motionX = x * speed;
         item.motionY = y * speed;
         item.motionZ = z* speed;
+    }
+
+    @Override
+    public IRecipe getRecipe() {
+        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLINGER),
+                ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER), Items.GUNPOWDER);
     }
 
     @Override

@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
@@ -39,13 +38,13 @@ public class RouterDataProvider implements IWailaDataProvider {
                 MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", router.getModuleCount());
                 for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
                     if (router.getUpgradeCount(type) > 0) {
-                        String name = I18n.translateToLocal("item." + type.toString().toLowerCase() + "Upgrade.name");
-                        currenttip.add(I18n.translateToLocalFormatted("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
+                        String name = MiscUtil.translate("item." + type.toString().toLowerCase() + "Upgrade.name");
+                        currenttip.add(MiscUtil.translate("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
                     }
                 }
-                currenttip.add(TextFormatting.RED + I18n.translateToLocal("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
+                currenttip.add(TextFormatting.RED + MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
             } else {
-                currenttip.add(I18n.translateToLocal("chatText.security.accessDenied"));
+                currenttip.add(MiscUtil.translate("chatText.security.accessDenied"));
             }
         }
 
