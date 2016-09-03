@@ -98,20 +98,22 @@ public class InventoryUtils {
     }
 
     public static int extractItems(IItemHandler handler, CompiledModule compiled, TileEntityItemRouter router) {
-        ItemStack bufferStack = router.getBufferItemStack();
         Filter filter = compiled.getFilter();
+        int toTake = router.getItemsPerTick();
         for (int i = 0; i < handler.getSlots(); i++) {
             int pos = compiled.getLastMatchPos(i, handler.getSlots());
-            ItemStack toExtract = handler.extractItem(pos, router.getItemsPerTick(), true);
-            if (toExtract != null && filter.pass(toExtract)
-                    && (bufferStack == null || ItemHandlerHelper.canItemStacksStack(bufferStack, toExtract))) {
-                ItemStack excess = router.getBuffer().insertItem(0, toExtract, false);
-                int taken = toExtract.stackSize - (excess == null ? 0 : excess.stackSize);
-                handler.extractItem(pos, taken, false);
-                compiled.setLastMatchPos(pos);
-                return taken;
+            ItemStack toExtract = handler.extractItem(pos, toTake, true);
+            if (toExtract != null && filter.pass(toExtract)) {
+                ItemStack notInserted = router.getBuffer().insertItem(0, toExtract, false);
+                int inserted = toExtract.stackSize - (notInserted == null ? 0 : notInserted.stackSize);
+                handler.extractItem(pos, inserted, false);
+                toTake -= inserted;
+                if (toTake <= 0 || router.isBufferFull()) {
+                    compiled.setLastMatchPos(pos);
+                    return inserted;
+                }
             }
         }
-        return 0;
+        return router.getItemsPerTick() - toTake;
     }
 }

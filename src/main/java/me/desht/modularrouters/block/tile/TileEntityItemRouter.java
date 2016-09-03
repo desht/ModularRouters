@@ -86,6 +86,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     // bitmask of which of the 6 sides are currently open
     private byte sidesOpen;
+    private boolean bufferFull;
 
     public TileEntityItemRouter() {
         super();
@@ -523,6 +524,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return false;
     }
 
+    public boolean isBufferFull() {
+        ItemStack stack = bufferHandler.getStackInSlot(0);
+        return stack != null && stack.stackSize >= stack.getMaxStackSize();
+    }
+
+    public boolean isBufferEmpty() {
+        return bufferHandler.getStackInSlot(0) == null;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Much as I hate to implement IInventory, it's necessary for backwards compatibility...
     // At least it's just a bunch of one-liners
@@ -596,4 +606,5 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void clear() {
         bufferHandler.setStackInSlot(0, null);
     }
+
 }
