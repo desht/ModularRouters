@@ -8,7 +8,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Mouse;
 
 public class GuiModulePlayer extends GuiModule {
     private static final int OP_BUTTON_ID = 100;

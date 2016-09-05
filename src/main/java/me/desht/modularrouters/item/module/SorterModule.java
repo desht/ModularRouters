@@ -6,7 +6,6 @@ import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 

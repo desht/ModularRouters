@@ -3,7 +3,6 @@ package me.desht.modularrouters.item.upgrade;
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;

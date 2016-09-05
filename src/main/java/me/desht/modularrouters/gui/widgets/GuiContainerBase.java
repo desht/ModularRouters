@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 

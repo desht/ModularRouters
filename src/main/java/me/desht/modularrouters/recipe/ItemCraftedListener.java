@@ -2,9 +2,6 @@ package me.desht.modularrouters.recipe;
 
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 

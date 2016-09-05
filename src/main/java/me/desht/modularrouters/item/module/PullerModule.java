@@ -7,8 +7,6 @@ import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 

@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.item.module.Module;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;

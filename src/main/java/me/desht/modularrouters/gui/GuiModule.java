@@ -4,7 +4,6 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.TexturedButton;
-import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
 import me.desht.modularrouters.gui.widgets.ToggleButton;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;

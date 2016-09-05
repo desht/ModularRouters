@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -19,7 +18,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.Collections;
 import java.util.List;

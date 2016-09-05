@@ -2,7 +2,6 @@ package me.desht.modularrouters.util;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import java.util.List;
