@@ -23,7 +23,7 @@ public class SorterModule extends Module {
             }
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = compiled.getLastMatchPos(i, handler.getSlots());
-                if (ItemHandlerHelper.canItemStacksStack(handler.getStackInSlot(pos), bufferStack)) {
+                if (bufferStack.isItemEqualIgnoreDurability(handler.getStackInSlot(pos))) {
                     compiled.setLastMatchPos(pos);
                     int sent = InventoryUtils.transferItems(buffer, handler, 0, router.getItemsPerTick());
                     return sent > 0;
