@@ -14,7 +14,9 @@ public class IntegrationHandler {
     }
 
     public static void registerWaila() {
-        WailaIntegration.setup();
+        if (Loader.isModLoaded("Waila")) {
+            WailaIntegration.setup();
+        }
     }
 
     public static void registerGuideBook() {
