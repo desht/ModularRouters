@@ -21,6 +21,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
@@ -52,7 +54,7 @@ public class PlayerModule extends Module {
             case INSERT:
                 if (bufferStack != null && compiled.getFilter().pass(bufferStack)) {
                     if (cpm.getSection() == CompiledPlayerModule.Section.ARMOR) {
-                        return insertArmor(router, player, itemHandler, bufferStack);
+                        return insertArmor(router, itemHandler, bufferStack);
                     } else {
                         int sent = InventoryUtils.transferItems(router.getBuffer(), itemHandler, 0, router.getItemsPerTick());
                         return sent > 0;
@@ -64,23 +66,21 @@ public class PlayerModule extends Module {
         return false;
     }
 
-    private boolean insertArmor(TileEntityItemRouter router, EntityPlayer player, IItemHandler itemHandler, ItemStack armorStack) {
-        int slot = getSlotForArmorItem(player, armorStack);
-        if (slot < 0) {
-            return false;  // not an armor item
-        }
-        if (itemHandler.getStackInSlot(slot) != null) {
-            return false;  // already armor in this slot
-        }
-        ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
-        if (extracted == null) {
+    private boolean insertArmor(TileEntityItemRouter router, IItemHandler itemHandler, ItemStack armorStack) {
+        int slot = getSlotForArmorItem(armorStack);
+        if (slot >= 0 && itemHandler.getStackInSlot(slot) == null) {
+            ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
+            if (extracted == null) {
+                return false;
+            }
+            ItemStack res = itemHandler.insertItem(slot, extracted, false);
+            return res == null;
+        } else {
             return false;
         }
-        ItemStack res = itemHandler.insertItem(slot, extracted, false);
-        return res == null;
     }
 
-    private int getSlotForArmorItem(EntityPlayer player, ItemStack stack) {
+    private int getSlotForArmorItem(ItemStack stack) {
         EntityEquipmentSlot slot = EntityLiving.getSlotForItemStack(stack);
         switch (slot) {
             case HEAD: return 3;
@@ -96,6 +96,7 @@ public class PlayerModule extends Module {
             case MAIN: return new PlayerMainInvWrapper(player.inventory);
             case ARMOR: return new PlayerArmorInvWrapper(player.inventory);
             case OFFHAND: return new PlayerOffhandInvWrapper(player.inventory);
+            case ENDER: return new InvWrapper(player.getInventoryEnderChest());
             default: return null;
         }
     }

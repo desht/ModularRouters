@@ -241,11 +241,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
         if (ecoMode) {
             if (active) {
-                if (ecoCounter == 0) System.out.println("router leaving low-power mode!");
                 ecoCounter = Config.ecoTimeout;
             } else if (ecoCounter > 0) {
                 ecoCounter--;
-                if (ecoCounter == 0) System.out.println("router entering low-power mode!");
             }
         }
     }
@@ -328,7 +326,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public void setEcoMode(boolean newEco) {
         if (newEco != ecoMode) {
-            System.out.println("eco mode: " + ecoMode + " -> " + newEco);
             ecoMode = newEco;
             ecoCounter = Config.ecoTimeout;
             if (!worldObj.isRemote) {

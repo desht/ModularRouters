@@ -27,7 +27,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     public enum Section {
-        MAIN, ARMOR, OFFHAND;
+        MAIN, ARMOR, OFFHAND, ENDER;
         public Section cycle(int dir) {
             int n = ordinal() + dir;
             if (n >= values().length) {
