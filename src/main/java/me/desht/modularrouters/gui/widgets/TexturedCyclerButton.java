@@ -6,7 +6,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
     private T state;
     private final int len;
 
-    public TexturedCyclerButton(int buttonId, int x, int y, int width, int height, ResourceLocation location, T initialVal) {
+    public TexturedCyclerButton(int buttonId, int x, int y, int width, int height, T initialVal) {
         super(buttonId, x, y, width, height);
         state = initialVal;
         len = initialVal.getClass().getEnumConstants().length;

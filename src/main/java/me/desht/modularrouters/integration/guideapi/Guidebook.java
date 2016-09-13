@@ -59,6 +59,9 @@ public class Guidebook {
         );
         entries.put(new ResourceLocation(ModularRouters.modId, "router"),
                 new EntryItemStack(pages, translate("tile.itemRouter.name"), new ItemStack(ModBlocks.itemRouter)));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerEcoMode", ModuleType.values().length, String.valueOf(Config.configKey)), 250));
+        entries.put(new ResourceLocation(ModularRouters.modId, "routerEcoMode"),
+                new EntryItemStack(pages, translate("guidebook.words.ecoMode"), new ItemStack(Blocks.SAPLING)));
         categories.add(new CategoryItemStack(entries, translate("guidebook.categories.routers"), new ItemStack(ModBlocks.itemRouter)));
 
         // Modules category

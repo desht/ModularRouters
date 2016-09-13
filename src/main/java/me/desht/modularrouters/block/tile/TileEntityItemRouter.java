@@ -88,6 +88,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private byte sidesOpen;
     private boolean bufferFull;
 
+    // track eco-mode
+    private boolean ecoMode = false;
+    private int ecoCounter = Config.ecoTimeout;
+
     public TileEntityItemRouter() {
         super();
     }
@@ -131,6 +135,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         NBTTagCompound compound = new NBTTagCompound();
         compound.setBoolean("Active", active);
         compound.setByte("Sides", sidesOpen);
+        compound.setBoolean("Eco", ecoMode);
         return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), compound);
     }
 
@@ -138,8 +143,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         boolean newActive = pkt.getNbtCompound().getBoolean("Active");
         byte newSidesOpen = pkt.getNbtCompound().getByte("Sides");
+        boolean newEco = pkt.getNbtCompound().getBoolean("Eco");
         setActive(newActive);
         setSidesOpen(newSidesOpen);
+        setEcoMode(newEco);
     }
 
     @Override
@@ -179,6 +186,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
         active = nbt.getBoolean("Active");
         activeTimer = nbt.getInteger("ActiveTimer");
+        ecoMode = nbt.getBoolean("EcoMode");
     }
 
     @Nonnull
@@ -191,6 +199,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         nbt.setString("Redstone", redstoneBehaviour.name());
         nbt.setBoolean("Active", active);
         nbt.setInteger("ActiveTimer", activeTimer);
+        nbt.setBoolean("EcoMode", ecoMode);
         return nbt;
     }
 
@@ -208,11 +217,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
         if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
             int power = getWorld().isBlockIndirectlyGettingPowered(getPos());
-            if (power > lastPower && counter >= getTickRate()) {
+            // we need to use the real tick rate here, not the possibly eco-mode tick rate that getTickRate() returns
+            if (power > lastPower && counter >= tickRate) {
                 executeModules();
                 counter = 0;
                 if (active) {
-                    activeTimer = getTickRate();
+                    activeTimer = tickRate;
                 }
             }
             // need to turn the state inactive after a short time...
@@ -226,6 +236,16 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             if (counter >= getTickRate()) {
                 executeModules();
                 counter = 0;
+            }
+        }
+
+        if (ecoMode) {
+            if (active) {
+                if (ecoCounter == 0) System.out.println("router leaving low-power mode!");
+                ecoCounter = Config.ecoTimeout;
+            } else if (ecoCounter > 0) {
+                ecoCounter--;
+                if (ecoCounter == 0) System.out.println("router entering low-power mode!");
             }
         }
     }
@@ -257,7 +277,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public int getTickRate() {
-        return tickRate;
+        return ecoMode && ecoCounter == 0 ? Config.lowPowerTickRate : tickRate;
     }
 
     public RouterRedstoneBehaviour getRedstoneBehaviour() {
@@ -298,6 +318,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void setSidesOpen(byte sidesOpen) {
         if (this.sidesOpen != sidesOpen) {
             this.sidesOpen = sidesOpen;
+            if (!worldObj.isRemote) {
+                sendBlockstateToClients();
+            } else {
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
+            }
+        }
+    }
+
+    public void setEcoMode(boolean newEco) {
+        if (newEco != ecoMode) {
+            System.out.println("eco mode: " + ecoMode + " -> " + newEco);
+            ecoMode = newEco;
+            ecoCounter = Config.ecoTimeout;
             if (!worldObj.isRemote) {
                 sendBlockstateToClients();
             } else {
@@ -607,4 +640,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         bufferHandler.setStackInSlot(0, null);
     }
 
+    public boolean getEcoMode() {
+        return ecoMode;
+    }
 }

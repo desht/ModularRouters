@@ -16,15 +16,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  * Used when a player updates settings on an item router via its GUI.
  */
 public class RouterSettingsMessage implements IMessage {
+    private boolean eco;
     private TileEntityItemRouter router;
     private RouterRedstoneBehaviour rrb;
 
     public RouterSettingsMessage() {
     }
 
-    public RouterSettingsMessage(TileEntityItemRouter router, RouterRedstoneBehaviour rrb) {
+    public RouterSettingsMessage(TileEntityItemRouter router) {
         this.router = router;
-        this.rrb = rrb;
+        this.rrb = router.getRedstoneBehaviour();
+        this.eco = router.getEcoMode();
     }
 
     @Override
@@ -37,6 +39,7 @@ public class RouterSettingsMessage implements IMessage {
             if (te instanceof TileEntityItemRouter) {
                 router = (TileEntityItemRouter) te;
                 rrb = RouterRedstoneBehaviour.values()[byteBuf.readByte()];
+                eco = byteBuf.readBoolean();
             }
         }
     }
@@ -48,6 +51,7 @@ public class RouterSettingsMessage implements IMessage {
         byteBuf.writeInt(router.getPos().getZ());
         byteBuf.writeInt(router.getWorld().provider.getDimension());
         byteBuf.writeByte(rrb.ordinal());
+        byteBuf.writeBoolean(eco);
     }
 
     public static class Handler implements IMessageHandler<RouterSettingsMessage, IMessage> {
@@ -57,6 +61,7 @@ public class RouterSettingsMessage implements IMessage {
             mainThread.addScheduledTask(() -> {
                 if (msg.router != null) {
                     msg.router.setRedstoneBehaviour(msg.rrb);
+                    msg.router.setEcoMode(msg.eco);
                 }
             });
             return null;

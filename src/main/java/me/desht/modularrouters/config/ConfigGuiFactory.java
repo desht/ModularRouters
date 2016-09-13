@@ -36,7 +36,7 @@ public class ConfigGuiFactory implements IModGuiFactory {
         return null;
     }
 
-    public static class MRConfigGui extends GuiConfig {
+    private static class MRConfigGui extends GuiConfig {
         public MRConfigGui(GuiScreen parentScreen) {
             super(parentScreen, getConfigElements(), ModularRouters.modId,
                     false, false, I18n.format("gui.config.mainTitle"));
@@ -46,46 +46,48 @@ public class ConfigGuiFactory implements IModGuiFactory {
             List<IConfigElement> list = new ArrayList<>();
             list.add(new DummyConfigElement.DummyCategoryElement("mainCfg", "gui.config.ctgy.router", CategoryEntryRouter.class));
             list.add(new DummyConfigElement.DummyCategoryElement("mainCfg", "gui.config.ctgy.module", CategoryEntryModule.class));
+            list.add(new DummyConfigElement.DummyCategoryElement("mainCfg", "gui.config.ctgy.misc", CategoryEntryMisc.class));
             return list;
         }
 
-        public static class CategoryEntryRouter extends GuiConfigEntries.CategoryEntry {
-            public CategoryEntryRouter(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+        static abstract class CategoryEntryBase extends GuiConfigEntries.CategoryEntry {
+            private final String category;
+
+            CategoryEntryBase(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement, String category) {
                 super(owningScreen, owningEntryList, configElement);
+                this.category = category;
             }
 
             @Override
             protected GuiScreen buildChildScreen() {
                 Configuration configuration = Config.getConfig();
-                ConfigElement catRouter = new ConfigElement(configuration.getCategory(Config.CATEGORY_NAME_ROUTER));
+                ConfigElement catRouter = new ConfigElement(configuration.getCategory(category));
                 List<IConfigElement> propertiesOnThisScreen = catRouter.getChildElements();
                 String windowTitle = configuration.toString();
                 return new GuiConfig(this.owningScreen, propertiesOnThisScreen,
                         this.owningScreen.modID,
-                        Config.CATEGORY_NAME_ROUTER,
+                        category,
                         this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
                         this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
                         windowTitle);
             }
         }
 
-        public static class CategoryEntryModule extends GuiConfigEntries.CategoryEntry {
-            public CategoryEntryModule(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
-                super(owningScreen, owningEntryList, configElement);
+        static class CategoryEntryRouter extends CategoryEntryBase {
+            public CategoryEntryRouter(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+                super(owningScreen, owningEntryList, configElement, Config.CATEGORY_NAME_ROUTER);
             }
+        }
 
-            @Override
-            protected GuiScreen buildChildScreen() {
-                Configuration configuration = Config.getConfig();
-                ConfigElement catModule = new ConfigElement(configuration.getCategory(Config.CATEGORY_NAME_MODULE));
-                List<IConfigElement> propertiesOnThisScreen = catModule.getChildElements();
-                String windowTitle = configuration.toString();
-                return new GuiConfig(this.owningScreen, propertiesOnThisScreen,
-                        this.owningScreen.modID,
-                        Config.CATEGORY_NAME_MODULE,
-                        this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                        windowTitle);
+        static class CategoryEntryModule extends CategoryEntryBase {
+            public CategoryEntryModule(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+                super(owningScreen, owningEntryList, configElement, Config.CATEGORY_NAME_MODULE);
+            }
+        }
+
+        static class CategoryEntryMisc extends CategoryEntryBase {
+            public CategoryEntryMisc(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+                super(owningScreen, owningEntryList, configElement, Config.CATEGORY_NAME_MISC);
             }
         }
     }

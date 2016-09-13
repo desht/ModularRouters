@@ -10,9 +10,10 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Config {
 
@@ -31,12 +32,16 @@ public class Config {
         public static final boolean BREAKER_PARTICLES = true;
         public static final char CONFIG_KEY = 'c';
         public static final boolean START_WITH_GUIDE = false;
+        public static final int ECO_TIMEOUT = 300;
+        public static final int LOW_POWER_INTERVAL = 100;
     }
 
     public static char configKey;
     public static int baseTickRate;
     public static int ticksPerUpgrade;
     public static int hardMinTickRate;
+    public static int ecoTimeout;
+    public static int lowPowerTickRate;
     public static int sender1BaseRange;
     public static int sender1MaxRange;
     public static int sender2BaseRange;
@@ -51,6 +56,7 @@ public class Config {
 
     public static final String CATEGORY_NAME_ROUTER = "category_router";
     public static final String CATEGORY_NAME_MODULE = "category_module";
+    public static final String CATEGORY_NAME_MISC = "category_misc";
     private static Configuration config;
 
     public static Configuration getConfig() {
@@ -101,9 +107,12 @@ public class Config {
         Property propHardMinTicks = config.get(CATEGORY_NAME_ROUTER, "hardMinTicks", 2,
                 "Hard minimum tick rate", 1, Integer.MAX_VALUE);
         propHardMinTicks.setLanguageKey("gui.config.hardMinTicks");
-        Property propStartWithGuide = config.get(CATEGORY_NAME_ROUTER, "startWithGuide", Defaults.START_WITH_GUIDE,
-                "New players spawn with a guide book");
-        propStartWithGuide.setLanguageKey("gui.config.startWithGuide");
+        Property propEcoTimeout = config.get(CATEGORY_NAME_ROUTER, "ecoTimeout", Defaults.ECO_TIMEOUT,
+                "Idle time (ticks) before an eco-mode router goes into low power mode", 20, Integer.MAX_VALUE);
+        propEcoTimeout.setLanguageKey("gui.config.ecoTimeout");
+        Property propLowPowerTickRate = config.get(CATEGORY_NAME_ROUTER, "lowPowerTickRate", Defaults.LOW_POWER_INTERVAL,
+                "Activation interval (ticks) for a low-power eco-mode router", 20, Integer.MAX_VALUE);
+        propLowPowerTickRate.setLanguageKey("gui.config.lowPowerTickRate");
 
         Property propSender1BaseRange = config.get(CATEGORY_NAME_MODULE, "sender1BaseRange", Defaults.SENDER1_BASE_RANGE,
                 "Sender Module Mk1 Base Range", 1, Integer.MAX_VALUE);
@@ -139,25 +148,35 @@ public class Config {
                 "Show particles when Breaker Module breaks a block");
         propBreakerParticles.setLanguageKey("gui.config.breakerParticles");
 
-        List<String> propOrderGeneral = new ArrayList<>();
-        propOrderGeneral.add(propBaseTickRate.getName());
-        propOrderGeneral.add(propTicksPerUpgrade.getName());
-        propOrderGeneral.add(propHardMinTicks.getName());
-        propOrderGeneral.add(propConfigKey.getName());
-        propOrderGeneral.add(propStartWithGuide.getName());
-        List<String> propOrderModule = new ArrayList<>();
-        propOrderModule.add(propSender1BaseRange.getName());
-        propOrderModule.add(propSender1MaxRange.getName());
-        propOrderModule.add(propSender2BaseRange.getName());
-        propOrderModule.add(propSender2MaxRange.getName());
-        propOrderModule.add(propVacuumBaseRange.getName());
-        propOrderModule.add(propVacuumMaxRange.getName());
-        propOrderModule.add(propSenderParticles.getName());
-        propOrderModule.add(propVacuumParticles.getName());
-        propOrderModule.add(propPlacerParticles.getName());
-        propOrderModule.add(propBreakerParticles.getName());
-        config.setCategoryPropertyOrder(CATEGORY_NAME_ROUTER, propOrderGeneral);
-        config.setCategoryPropertyOrder(CATEGORY_NAME_MODULE, propOrderModule);
+        Property propStartWithGuide = config.get(CATEGORY_NAME_MISC, "startWithGuide", Defaults.START_WITH_GUIDE,
+                "New players spawn with a guide book");
+        propStartWithGuide.setLanguageKey("gui.config.startWithGuide");
+
+        config.setCategoryPropertyOrder(CATEGORY_NAME_ROUTER, Arrays.asList(
+                propBaseTickRate,
+                propTicksPerUpgrade,
+                propHardMinTicks,
+                propConfigKey,
+                propEcoTimeout,
+                propLowPowerTickRate
+        ).stream().map(Property::getName).collect(Collectors.toList()));
+
+        config.setCategoryPropertyOrder(CATEGORY_NAME_MODULE, Arrays.asList(
+                propSender1BaseRange,
+                propSender1MaxRange,
+                propSender2BaseRange,
+                propSender2MaxRange,
+                propVacuumBaseRange,
+                propVacuumMaxRange,
+                propSenderParticles,
+                propVacuumParticles,
+                propPlacerParticles,
+                propBreakerParticles
+        ).stream().map(Property::getName).collect(Collectors.toList()));
+
+        config.setCategoryPropertyOrder(CATEGORY_NAME_MISC, Collections.singletonList(
+                propStartWithGuide
+        ).stream().map(Property::getName).collect(Collectors.toList()));
 
         if (readFieldsFromConfig) {
             baseTickRate = Math.max(1, propBaseTickRate.getInt(Defaults.BASE_TICK_RATE));
@@ -165,7 +184,8 @@ public class Config {
             hardMinTickRate = propHardMinTicks.getInt();
             String s = propConfigKey.getString();
             configKey = s.length() > 0 ? propConfigKey.getString().charAt(0) : Defaults.CONFIG_KEY;
-            startWithGuide = propStartWithGuide.getBoolean();
+            ecoTimeout = propEcoTimeout.getInt();
+            lowPowerTickRate = propLowPowerTickRate.getInt();
             sender1BaseRange = propSender1BaseRange.getInt();
             sender1MaxRange = propSender1MaxRange.getInt();
             sender2BaseRange = propSender2BaseRange.getInt();
@@ -176,13 +196,15 @@ public class Config {
             vacuumParticles = propVacuumParticles.getBoolean();
             placerParticles = propPlacerParticles.getBoolean();
             breakerParticles = propBreakerParticles.getBoolean();
+            startWithGuide = propStartWithGuide.getBoolean();
         }
 
         propBaseTickRate.set(baseTickRate);
         propTicksPerUpgrade.set(ticksPerUpgrade);
         propHardMinTicks.set(hardMinTickRate);
         propConfigKey.set(String.valueOf(configKey));
-        propStartWithGuide.set(startWithGuide);
+        propEcoTimeout.set(ecoTimeout);
+        propLowPowerTickRate.set(lowPowerTickRate);
         propSender1BaseRange.set(sender1BaseRange);
         propSender1MaxRange.set(sender1MaxRange);
         propSender2BaseRange.set(sender2BaseRange);
@@ -193,6 +215,7 @@ public class Config {
         propVacuumParticles.set(vacuumParticles);
         propPlacerParticles.set(placerParticles);
         propBreakerParticles.set(breakerParticles);
+        propStartWithGuide.set(startWithGuide);
 
         if (config.hasChanged()) {
             config.save();

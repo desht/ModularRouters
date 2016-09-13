@@ -27,6 +27,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,6 +63,9 @@ public class BreakerModule extends Module {
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             Item item = Item.getItemFromBlock(block);
+            if (item == null) {
+                return false;
+            }
             if (world instanceof WorldServer
                     && !block.isAir(state, world, pos) && !(block instanceof BlockLiquid)
                     && compiled.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
@@ -100,16 +104,18 @@ public class BreakerModule extends Module {
         Block block = state.getBlock();
 
         if (silkTouch) {
-            ItemStack drop = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1, state.getBlock().getMetaFromState(state));
-            return Lists.newArrayList(drop);
+            Item item = Item.getItemFromBlock(block);
+            if (item == null) {
+                return Collections.emptyList();
+            } else {
+                return Lists.newArrayList(new ItemStack(item, 1, block.getMetaFromState(state)));
+            }
         }
 
         List<ItemStack> drops = block.getDrops(world, pos, state, fortuneLevel);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortuneLevel, 1.0F, false, player);
 
-        List<ItemStack> result = drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
-
-        return result;
+        return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
 
     private int getFortuneLevel(CompiledModule settings) {

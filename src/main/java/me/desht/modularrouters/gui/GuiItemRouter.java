@@ -5,7 +5,10 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.gui.widgets.TexturedCyclerButton;
+import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.network.ModuleConfigMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import net.minecraft.client.Minecraft;
@@ -18,9 +21,11 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class GuiItemRouter extends GuiContainerBase {
-    public static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/router.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/router.png");
     public static final int LABEL_XPOS = 5;
     public static final int LABEL_YPOS = 5;
     public static final int MODULE_LABEL_YPOS = 60;
@@ -31,6 +36,7 @@ public class GuiItemRouter extends GuiContainerBase {
     public static final int BUTTON_HEIGHT = 16;
     public static final int BUTTON_WIDTH = 16;
     private static final int REDSTONE_BUTTON_ID = 1;
+    private static final int ECO_BUTTON_ID = 2;
 
     public final TileEntityItemRouter router;
     private final InventoryPlayer inventoryPlayer;
@@ -46,9 +52,11 @@ public class GuiItemRouter extends GuiContainerBase {
     @Override
     public void initGui() {
         super.initGui();
-        this.buttonList.clear();
-        this.buttonList.add(new RouterRedstoneButton(REDSTONE_BUTTON_ID,
-                this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, textureLocation, router.getRedstoneBehaviour()));
+        buttonList.clear();
+        buttonList.add(new RouterRedstoneButton(REDSTONE_BUTTON_ID,
+                this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour()));
+        buttonList.add(new RouterEcoButton(ECO_BUTTON_ID,
+                this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
     }
 
     @Override
@@ -57,9 +65,14 @@ public class GuiItemRouter extends GuiContainerBase {
             case REDSTONE_BUTTON_ID:
                 RouterRedstoneButton rrb = (RouterRedstoneButton) button;
                 rrb.cycle(!isShiftKeyDown());
-                ModularRouters.network.sendToServer(new RouterSettingsMessage(router, rrb.getState()));
                 router.setRedstoneBehaviour(rrb.getState());
+                ModularRouters.network.sendToServer(new RouterSettingsMessage(router));
                 break;
+            case ECO_BUTTON_ID:
+                RouterEcoButton reb = (RouterEcoButton) button;
+                reb.toggle();
+                router.setEcoMode(reb.isToggled());
+                ModularRouters.network.sendToServer(new RouterSettingsMessage(router));
             default:
                 break;
         }
@@ -97,5 +110,49 @@ public class GuiItemRouter extends GuiContainerBase {
             }
         }
         super.keyTyped(typedChar, keyCode);
+    }
+
+    private static class RouterRedstoneButton extends TexturedCyclerButton<RouterRedstoneBehaviour> {
+        RouterRedstoneButton(int buttonId, int x, int y, int width, int height, RouterRedstoneBehaviour initialVal) {
+            super(buttonId, x, y, width, height, initialVal);
+        }
+
+        @Override
+        protected int getTextureX() {
+            return 16 * getState().ordinal();
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 16;
+        }
+
+        @Override
+        public java.util.List<String> getTooltip() {
+            return Collections.singletonList(I18n.format("guiText.tooltip.redstone." + getState().name()));
+        }
+    }
+
+    private static class RouterEcoButton extends TexturedToggleButton {
+        RouterEcoButton(int buttonId, int x, int y, int width, int height, boolean initialVal) {
+            super(buttonId, x, y, width, height);
+            setToggled(initialVal);
+        }
+
+        @Override
+        protected int getTextureX() {
+            return isToggled() ? 96 : 80;
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 16;
+        }
+
+        @Override
+        public List<String> getTooltip() {
+            String s = I18n.format("guiText.tooltip.eco." + isToggled(), Config.ecoTimeout / 20.f, Config.lowPowerTickRate / 20.f);
+            return Arrays.asList(s.split("\\\\n"));
+        }
     }
 }
