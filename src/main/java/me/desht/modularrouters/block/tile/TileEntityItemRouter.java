@@ -86,7 +86,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     // bitmask of which of the 6 sides are currently open
     private byte sidesOpen;
-    private boolean bufferFull;
 
     // track eco-mode
     private boolean ecoMode = false;

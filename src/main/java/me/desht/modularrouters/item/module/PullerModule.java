@@ -13,9 +13,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 public class PullerModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
-        ItemStack bufferStack = router.getBufferItemStack();
-        if (compiled.getDirection() != Module.RelativeDirection.NONE
-                && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
+        if (compiled.getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull()) {
             IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), compiled.getTarget().pos, compiled.getTarget().face);
             if (handler != null) {
                 int taken = InventoryUtils.extractItems(handler, compiled, router);

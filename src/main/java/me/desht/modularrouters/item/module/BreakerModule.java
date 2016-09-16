@@ -55,39 +55,38 @@ public class BreakerModule extends Module {
 
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
-        ItemStack bufferStack = router.getBufferItemStack();
-        if (compiled.getDirection() != Module.RelativeDirection.NONE
-                && (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize())) {
+        if (compiled.getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull()) {
             World world = router.getWorld();
+            if (!(world instanceof  WorldServer)) {
+                return false;
+            }
             BlockPos pos = compiled.getTarget().pos;
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
+            if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof BlockLiquid) {
+                return false;
+            }
             Item item = Item.getItemFromBlock(block);
             if (item == null) {
                 return false;
             }
-            if (world instanceof WorldServer
-                    && !block.isAir(state, world, pos) && !(block instanceof BlockLiquid)
-                    && compiled.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
-                float hardness = state.getBlockHardness(world, pos);
-                if (hardness >= 0.0f) {
-                    EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
-                    MinecraftForge.EVENT_BUS.post(breakEvent);
-                    if (!breakEvent.isCanceled()) {
-                        List<ItemStack> drops = getDrops(world, pos, fakePlayer, getFortuneLevel(compiled), canSilkTouch(compiled));
-                        for (ItemStack drop : drops) {
-                            ItemStack excess = router.getBuffer().insertItem(0, drop, false);
-                            if (excess != null) {
-                                dropItems(world, pos, excess);
-                            }
+            if (compiled.getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
+                EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
+                BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
+                MinecraftForge.EVENT_BUS.post(breakEvent);
+                if (!breakEvent.isCanceled()) {
+                    List<ItemStack> drops = getDrops(world, pos, fakePlayer, getFortuneLevel(compiled), canSilkTouch(compiled));
+                    for (ItemStack drop : drops) {
+                        ItemStack excess = router.getBuffer().insertItem(0, drop, false);
+                        if (excess != null) {
+                            dropItems(world, pos, excess);
                         }
-                        if (Config.breakerParticles) {
-                            world.playEvent(2001, pos, Block.getStateId(state));
-                        }
-                        world.setBlockToAir(pos);
-                        return true;
                     }
+                    if (Config.breakerParticles) {
+                        world.playEvent(2001, pos, Block.getStateId(state));
+                    }
+                    world.setBlockToAir(pos);
+                    return true;
                 }
             }
         }

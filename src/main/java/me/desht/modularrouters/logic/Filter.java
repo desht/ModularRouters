@@ -57,9 +57,7 @@ public class Filter {
 
     public boolean pass(ItemStack stack) {
         for (int i = 0; i < items.size(); i++) {
-            ItemStack filterItem = items.get(i);
-            boolean matched = compareOne(i, stack);
-            if (matched) {
+            if (compareOne(i, stack)) {
                 return !blacklist;
             }
         }

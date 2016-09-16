@@ -24,8 +24,11 @@ import java.util.List;
 public class VacuumModule extends Module {
     @Override
     public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
-        ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
-        ItemStack bufferStack = buffer.getStackInSlot(0);
+        if (router.isBufferFull()) {
+            return false;
+        }
+
+        ItemStack bufferStack = router.getBuffer().getStackInSlot(0);
 
         int range = getVacuumRange(router);
         BlockPos centrePos = compiled.getTarget().pos;
