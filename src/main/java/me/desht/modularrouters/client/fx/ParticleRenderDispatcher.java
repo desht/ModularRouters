@@ -8,14 +8,9 @@ import org.lwjgl.opengl.GL11;
 
 public class ParticleRenderDispatcher {
 
-    public static int wispFxCount = 0;
-    public static int depthIgnoringWispFxCount = 0;
     public static int sparkleFxCount = 0;
     public static int fakeSparkleFxCount = 0;
-    public static int lightningCount = 0;
 
-    // Called from LightningHandler.onRenderWorldLast since that was
-    // already registered. /shrug
     public static void dispatch() {
         Tessellator tessellator = Tessellator.getInstance();
 
@@ -30,10 +25,9 @@ public class ParticleRenderDispatcher {
 
         profiler.startSection("sparkle");
         FXSparkle.dispatchQueuedRenders(tessellator);
-//        profiler.endStartSection("wisp");
-//        FXWisp.dispatchQueuedRenders(tessellator);
         profiler.endSection();
 
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
