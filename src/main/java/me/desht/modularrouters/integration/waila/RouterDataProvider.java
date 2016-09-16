@@ -42,7 +42,7 @@ public class RouterDataProvider implements IWailaDataProvider {
                         currenttip.add(MiscUtil.translate("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
                     }
                 }
-                currenttip.add(TextFormatting.RED + MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
+                currenttip.add(MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
             } else {
                 currenttip.add(MiscUtil.translate("chatText.security.accessDenied"));
             }
