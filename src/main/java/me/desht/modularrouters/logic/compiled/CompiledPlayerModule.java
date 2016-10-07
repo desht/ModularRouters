@@ -1,6 +1,8 @@
-package me.desht.modularrouters.logic;
+package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,6 +12,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -70,6 +77,39 @@ public class CompiledPlayerModule extends CompiledModule {
         }
     }
 
+    @Override
+    public boolean execute(TileEntityItemRouter router) {
+        EntityPlayer player = getPlayer();
+        if (player == null) {
+            return false;
+        }
+        IItemHandler itemHandler = getHandler(player);
+        if (itemHandler == null) {
+            return false;
+        }
+        ItemStack bufferStack = router.getBufferItemStack();
+        switch (operation) {
+            case EXTRACT:
+                if (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize()) {
+                    int taken = transferItems(itemHandler, router);
+                    return taken > 0;
+                }
+                break;
+            case INSERT:
+                if (bufferStack != null && getFilter().pass(bufferStack)) {
+                    if (getSection() == CompiledPlayerModule.Section.ARMOR) {
+                        return insertArmor(router, itemHandler, bufferStack);
+                    } else {
+                        int sent = InventoryUtils.transferItems(router.getBuffer(), itemHandler, 0, router.getItemsPerTick());
+                        return sent > 0;
+                    }
+                }
+                break;
+            default: return false;
+        }
+        return false;
+    }
+
     public EntityPlayer getPlayer() {
         return playerRef.get();
     }
@@ -114,5 +154,39 @@ public class CompiledPlayerModule extends CompiledModule {
 
     public Section getSection() {
         return section;
+    }
+
+    private boolean insertArmor(TileEntityItemRouter router, IItemHandler itemHandler, ItemStack armorStack) {
+        int slot = getSlotForArmorItem(armorStack);
+        if (slot >= 0 && itemHandler.getStackInSlot(slot) == null) {
+            ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
+            if (extracted == null) {
+                return false;
+            }
+            ItemStack res = itemHandler.insertItem(slot, extracted, false);
+            return res == null;
+        } else {
+            return false;
+        }
+    }
+
+    private int getSlotForArmorItem(ItemStack stack) {
+        switch (EntityLiving.getSlotForItemStack(stack)) {
+            case HEAD: return 3;
+            case CHEST: return 2;
+            case LEGS: return 1;
+            case FEET: return 0;
+            default: return -1;
+        }
+    }
+
+    private IItemHandler getHandler(EntityPlayer player) {
+        switch (section) {
+            case MAIN: return new PlayerMainInvWrapper(player.inventory);
+            case ARMOR: return new PlayerArmorInvWrapper(player.inventory);
+            case OFFHAND: return new PlayerOffhandInvWrapper(player.inventory);
+            case ENDER: return new InvWrapper(player.getInventoryEnderChest());
+            default: return null;
+        }
     }
 }

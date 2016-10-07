@@ -4,10 +4,14 @@ import com.google.common.collect.Maps;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.fx.Vector3;
+import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.RouterTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,14 +24,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * Represents a sender module with a specific target block.  Used by Mk2 & Mk3 senders.
+ * Represents a module with a specific target block (blockpos stored in itemstack NBT).
+ * Used by Mk2 & Mk3 senders.
  */
-public abstract class TargetedSender extends SenderModule1 {
-    public static final String NBT_TARGET = "Target";
+public abstract class TargetedModule extends Module {
+    private static final String NBT_TARGET = "Target";
 
     private static final Map<UUID,Long> lastSwing = Maps.newHashMap();
 
@@ -49,6 +55,46 @@ public abstract class TargetedSender extends SenderModule1 {
         }
     }
 
+    @Override
+    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addExtraInformation(stack, player, list, par4);
+
+        RouterTarget target = getTarget(stack);
+        if (target != null) {
+            list.add(I18n.format("itemText.misc.target", target.dimId, target.pos.getX(), target.pos.getY(), target.pos.getZ(), target.face.getName()));
+            if (target.dimId == player.getEntityWorld().provider.getDimension()) {
+                String name = getBlockName(ModularRouters.proxy.theClientWorld(), target.pos);
+                if (name != null) {
+                    list.add("        (" + name + ")");
+                }
+            }
+            if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
+                TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
+                TargetValidation val = validateTarget(router, target, false);
+                if (val != TargetValidation.OK) {
+                    list.add(I18n.format("itemText.targetValidation." + val));
+                }
+            }
+        }
+    }
+
+    private String getBlockName(World w, BlockPos pos) {
+        if (w == null) {
+            return null;
+        }
+        IBlockState state = w.getBlockState(pos);
+        if (state.getBlock().isAir(state, w, pos)) {
+            return null;
+        } else {
+            ItemStack stack = state.getBlock().getItem(w, pos, state);
+            if (stack != null) {
+                return stack.getDisplayName();
+            } else {
+                return state.getBlock().getLocalizedName();
+            }
+        }
+    }
+
     private static void setTarget(ItemStack stack, World world, BlockPos pos, EnumFacing face) {
         NBTTagCompound compound = validateNBT(stack);
         NBTTagCompound target = new NBTTagCompound();
@@ -61,8 +107,7 @@ public abstract class TargetedSender extends SenderModule1 {
         stack.setTagCompound(compound);
     }
 
-    @Override
-    public RouterTarget getTarget(TileEntityItemRouter router, ItemStack stack) {
+    public static RouterTarget getTarget(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_TARGET)) {
             NBTTagCompound target = compound.getCompoundTag(NBT_TARGET);
@@ -99,7 +144,7 @@ public abstract class TargetedSender extends SenderModule1 {
         lastSwing.put(player.getUniqueID(), now);
 
         RouterTarget src = new RouterTarget(world.provider.getDimension(), player.getPosition(), null);
-        RouterTarget target = getTarget(null, stack);
+        RouterTarget target = getTarget(stack);
         if (target == null) {
             return false;
         }
@@ -115,16 +160,16 @@ public abstract class TargetedSender extends SenderModule1 {
         return true;
     }
 
-    protected abstract TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget src, RouterTarget dst, boolean validateBlocks);
+    public abstract TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget src, RouterTarget dst, boolean validateBlocks);
 
-    public enum TargetValidation {
+    private TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget dst, boolean validateBlocks) {
+        return validateTarget(router, new RouterTarget(router.getWorld().provider.getDimension(), router.getPos(), null), dst, validateBlocks);
+    }
+
+    enum TargetValidation {
         OK,
         OUT_OF_RANGE,
         NOT_LOADED,
         NOT_INVENTORY;
-
-        public boolean isOK() {
-            return this == OK;
-        }
     }
 }

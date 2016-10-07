@@ -89,7 +89,7 @@ public class ItemModule extends ItemBase {
     public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
         if (event.getSide() == Side.CLIENT) {
             Module mod = getModule(event.getItemStack());
-            if (!(mod instanceof TargetedSender)) {
+            if (!(mod instanceof TargetedModule)) {
                 return;
             }
             if (InventoryUtils.getInventory(event.getWorld(), event.getPos(), event.getFace()) != null) {
@@ -100,18 +100,6 @@ public class ItemModule extends ItemBase {
             event.setCanceled(true);
         }
     }
-
-//    @SubscribeEvent
-//    public static void onPlayerInteract(PlayerInteractEvent event) {
-//        if (event.getSide() == Side.SERVER
-//                && (event instanceof PlayerInteractEvent.LeftClickBlock || event instanceof PlayerInteractEvent.LeftClickEmpty)) {
-//            Module mod = ItemModule.getModule(event.getItemStack());
-//            if (mod instanceof TargetedSender) {
-//                ((TargetedSender) mod).showTargetInfo(event.getEntityPlayer(), event.getItemStack());
-//                event.setCanceled(true);
-//            }
-//        }
-//    }
 
     @Override
     public void getSubItems(@Nonnull Item item, CreativeTabs tab, List<ItemStack> stacks) {

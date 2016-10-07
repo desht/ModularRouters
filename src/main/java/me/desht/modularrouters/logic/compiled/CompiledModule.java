@@ -1,11 +1,16 @@
-package me.desht.modularrouters.logic;
+package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.logic.Filter;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.logic.RouterTarget;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.items.IItemHandler;
 
-public class CompiledModule {
+public abstract class CompiledModule {
     private final Filter filter;
     private final Module module;
     private final Module.RelativeDirection direction;
@@ -24,9 +29,11 @@ public class CompiledModule {
         module = ItemModule.getModule(stack);
         direction = module.getDirectionFromNBT(stack);
         termination = module.terminates(stack);
-        target = module.getTarget(router, stack);
+        target = setupTarget(router, stack);
         behaviour = module.getRedstoneBehaviour(stack);
     }
+
+    public abstract boolean execute(TileEntityItemRouter router);
 
     public Module getModule() {
         return module;
@@ -38,10 +45,6 @@ public class CompiledModule {
 
     public Module.RelativeDirection getDirection() {
         return direction;
-    }
-
-    public boolean execute(TileEntityItemRouter router) {
-        return module.execute(router, this);
     }
 
     public RouterTarget getTarget() {
@@ -76,7 +79,7 @@ public class CompiledModule {
      *
      * @param offset offset from the last saved position
      * @param size size of the inventory being searched
-     * @return the last position including offset, and wrapper to start of inventory if necessary
+     * @return the last position including offset, and wrapped to start of inventory if necessary
      */
     public int getLastMatchPos(int offset, int size) {
         int pos = lastMatchPos + offset;
@@ -91,5 +94,40 @@ public class CompiledModule {
      */
     public void setLastMatchPos(int lastMatchPos) {
         this.lastMatchPos = lastMatchPos;
+    }
+
+    protected RouterTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
+        if (router == null) {
+            return null;
+        }
+        EnumFacing facing = router.getAbsoluteFacing(direction);
+        return new RouterTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing), facing.getOpposite());
+    }
+
+    /**
+     * Try to transfer some items from the given ItemHandler to the given router.  The number of
+     * items attempted depends on the router's stack upgrades.
+     *
+     * @param handler the item handler
+     * @param router the router
+     * @return number of items actually transferred
+     */
+    protected int transferItems(IItemHandler handler, TileEntityItemRouter router) {
+        int toTake = router.getItemsPerTick();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            int pos = getLastMatchPos(i, handler.getSlots());
+            ItemStack toExtract = handler.extractItem(pos, toTake, true);
+            if (toExtract != null && getFilter().pass(toExtract)) {
+                ItemStack notInserted = router.getBuffer().insertItem(0, toExtract, false);
+                int inserted = toExtract.stackSize - (notInserted == null ? 0 : notInserted.stackSize);
+                handler.extractItem(pos, inserted, false);
+                toTake -= inserted;
+                if (toTake <= 0 || router.isBufferFull()) {
+                    setLastMatchPos(pos);
+                    return inserted;
+                }
+            }
+        }
+        return router.getItemsPerTick() - toTake;
     }
 }

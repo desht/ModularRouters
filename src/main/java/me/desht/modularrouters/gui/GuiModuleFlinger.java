@@ -5,7 +5,7 @@ import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.TextFieldWidget;
 import me.desht.modularrouters.gui.widgets.TexturedButton;
-import me.desht.modularrouters.logic.CompiledFlingerModule;
+import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;

@@ -7,9 +7,8 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
-import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.client.Minecraft;
@@ -112,11 +111,7 @@ public abstract class Module {
         }
     }
 
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledModule(router, stack);
-    }
-
-    public abstract boolean execute(TileEntityItemRouter router, CompiledModule compiled);
+    public abstract CompiledModule compile(TileEntityItemRouter router, ItemStack stack);
 
     public boolean isBlacklist(ItemStack stack) {
         return checkFlag(stack, ModuleFlags.BLACKLIST);
@@ -169,13 +164,9 @@ public abstract class Module {
         }
     }
 
-    public RouterTarget getTarget(TileEntityItemRouter router, ItemStack stack) {
-        if (router == null) {
-            return null;
-        }
-        EnumFacing facing = router.getAbsoluteFacing(getDirectionFromNBT(stack));
-        return new RouterTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing), facing.getOpposite());
-    }
+//    public RouterTarget getTarget(ItemStack stack) {
+//        return null;
+//    }
 
     /**
      * Basic information for the module, which is always shown.

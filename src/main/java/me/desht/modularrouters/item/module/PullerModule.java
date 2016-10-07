@@ -2,24 +2,17 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.logic.CompiledModule;
-import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.logic.compiled.CompiledPullerModule;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class PullerModule extends Module {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
-        if (compiled.getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull()) {
-            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), compiled.getTarget().pos, compiled.getTarget().face);
-            if (handler != null) {
-                int taken = InventoryUtils.extractItems(handler, compiled, router);
-                return taken > 0;
-            }
-        }
-        return false;
+    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
+        return new CompiledPullerModule(router, stack);
     }
 
     @Override

@@ -4,9 +4,9 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
-import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.logic.RouterTarget;
-import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -20,51 +20,14 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
-public class SenderModule2 extends TargetedSender {
-
+public class SenderModule2 extends TargetedModule {
     @Override
-    protected SenderModule1.SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModule settings) {
-        RouterTarget target = settings.getTarget();
-        SenderModule2 module = (SenderModule2) settings.getModule();
-
-        if (!module.validateTarget(router, target, true).isOK()) {
-            return null;
-        }
-
-        WorldServer w = DimensionManager.getWorld(target.dimId);
-        if (!w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
-            return null;
-        }
-        IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
-        return handler == null ? null : new SenderModule1.SenderTarget(target.pos, handler);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(itemstack, player, list, par4);
-        RouterTarget target = getTarget(null, itemstack);
-        if (target != null) {
-            list.add(I18n.format("itemText.misc.target", target.dimId, target.pos.getX(), target.pos.getY(), target.pos.getZ(), target.face.getName()));
-            if (target.dimId == player.getEntityWorld().provider.getDimension()) {
-                String name = getBlockName(ModularRouters.proxy.theClientWorld(), target.pos);
-                if (name != null) {
-                    list.add("        (" + name + ")");
-                }
-            }
-            if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
-                TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
-                TargetValidation val = validateTarget(router, target, false);
-                if (val != TargetValidation.OK) {
-                    list.add(I18n.format("itemText.targetValidation." + val));
-                }
-            }
-        }
+    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
+        return new CompiledSenderModule2(router, stack);
     }
 
     @Override
@@ -75,28 +38,7 @@ public class SenderModule2 extends TargetedSender {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[] { Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE };
-    }
-
-    private String getBlockName(World w, BlockPos pos) {
-        if (w == null) {
-            return null;
-        }
-        IBlockState state = w.getBlockState(pos);
-        if (state.getBlock().isAir(state, w, pos)) {
-            return null;
-        } else {
-            ItemStack stack = state.getBlock().getItem(w, pos, state);
-            if (stack != null) {
-                return stack.getDisplayName();
-            } else {
-                return state.getBlock().getLocalizedName();
-            }
-        }
-    }
-
-    protected boolean isRangeLimited() {
-        return true;
+        return new Object[]{Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE};
     }
 
     @Override
@@ -105,7 +47,7 @@ public class SenderModule2 extends TargetedSender {
     }
 
     @Override
-    protected TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget src, RouterTarget dst, boolean validateBlocks) {
+    public TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget src, RouterTarget dst, boolean validateBlocks) {
         if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(router))) {
             return TargetValidation.OUT_OF_RANGE;
         }
@@ -125,11 +67,11 @@ public class SenderModule2 extends TargetedSender {
         return TargetValidation.OK;
     }
 
-    protected TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget dst, boolean validateBlocks) {
-        return validateTarget(router, new RouterTarget(router.getWorld().provider.getDimension(), router.getPos(), null), dst, validateBlocks);
+    protected boolean isRangeLimited() {
+        return true;
     }
 
-    private int maxDistanceSq(TileEntityItemRouter router) {
+    public static int maxDistanceSq(TileEntityItemRouter router) {
         // TODO precalculate to avoid repeated multiplications
         int r = Math.min(Config.sender2BaseRange + (router == null ? 0 : router.getRangeUpgrades()), Config.sender2MaxRange);
         return r * r;

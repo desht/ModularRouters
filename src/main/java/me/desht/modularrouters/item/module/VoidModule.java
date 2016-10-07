@@ -2,7 +2,8 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.logic.CompiledModule;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.logic.compiled.CompiledVoidModule;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -10,15 +11,8 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class VoidModule extends Module {
     @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
-        ItemStack stack = router.getBufferItemStack();
-        if (stack != null && compiled.getFilter().pass(stack)) {
-            // bye bye items
-            int toVoid = router.getItemsPerTick();
-            ItemStack gone = router.getBuffer().extractItem(0, toVoid, false);
-            return gone != null && gone.stackSize > 0;
-        }
-        return false;
+    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
+        return new CompiledVoidModule(router, stack);
     }
 
     @Override

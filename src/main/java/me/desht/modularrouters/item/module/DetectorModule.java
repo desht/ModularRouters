@@ -4,8 +4,8 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.gui.GuiModuleDetector;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.logic.CompiledDetectorModule;
-import me.desht.modularrouters.logic.CompiledModule;
+import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -26,19 +26,6 @@ public class DetectorModule extends Module {
         }
     }
 
-    @Override
-    public boolean execute(TileEntityItemRouter router, CompiledModule compiled) {
-        ItemStack stack = router.getBufferItemStack();
-
-        if (stack == null || !compiled.getFilter().pass(stack)) {
-            return false;
-        }
-
-        CompiledDetectorModule dSettings = (CompiledDetectorModule) compiled;
-        router.emitRedstone(compiled.getDirection(), dSettings.getSignalLevel(), SignalType.getType(dSettings.isStrongSignal()));
-
-        return true;
-    }
 
     @Override
     public CompiledModule compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {

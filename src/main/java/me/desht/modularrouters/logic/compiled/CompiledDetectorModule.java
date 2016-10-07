@@ -1,6 +1,7 @@
-package me.desht.modularrouters.logic;
+package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.Module;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,6 +20,20 @@ public class CompiledDetectorModule extends CompiledModule {
         NBTTagCompound compound = stack.getTagCompound();
         signalLevel = compound == null ? 0 : compound.getByte(NBT_SIGNAL_LEVEL);
         strongSignal = compound != null && compound.getBoolean(NBT_STRONG_SIGNAL);
+    }
+
+
+    @Override
+    public boolean execute(TileEntityItemRouter router) {
+        ItemStack stack = router.getBufferItemStack();
+
+        if (stack == null || !getFilter().pass(stack)) {
+            return false;
+        }
+
+        router.emitRedstone(getDirection(), getSignalLevel(), DetectorModule.SignalType.getType(isStrongSignal()));
+
+        return true;
     }
 
     private void setupNBT(ItemStack stack) {

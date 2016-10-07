@@ -1,7 +1,7 @@
 package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.container.ModuleContainer;
-import me.desht.modularrouters.logic.CompiledPlayerModule;
+import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
