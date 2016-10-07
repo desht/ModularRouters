@@ -8,21 +8,19 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
-public class EnchantBreakerModuleRecipe implements IRecipe {
+public class EnchantBreakerModuleRecipe extends ShapelessOreRecipe {
     private static final Enchantment[] validEnchantments = new Enchantment[] {
             Enchantments.SILK_TOUCH,
             Enchantments.FORTUNE
     };
 
-    static {
-        RecipeSorter.register("ModularRouters:enchantBreakerRecipe", EnchantBreakerModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+    public EnchantBreakerModuleRecipe(ItemStack result, Object... recipe) {
+        super(result, recipe);
     }
 
     @Override
@@ -64,29 +62,6 @@ public class EnchantBreakerModuleRecipe implements IRecipe {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public int getRecipeSize() {
-        return 2;
-    }
-
-    @Nullable
-    @Override
-    public ItemStack getRecipeOutput() {
-        return null;
-    }
-
-    @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
-
-        for (int i = 0; i < aitemstack.length; ++i) {
-            ItemStack itemstack = inv.getStackInSlot(i);
-            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
-        }
-
-        return aitemstack;
     }
 
     private EnchantmentData getValidEnchantment(ItemStack stack) {

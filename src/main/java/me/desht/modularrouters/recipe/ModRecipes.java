@@ -1,10 +1,12 @@
 package me.desht.modularrouters.recipe;
 
 import amerifrance.guideapi.api.GuideAPI;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -12,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.RecipeSorter;
 
 public class ModRecipes {
     public static void init() {
@@ -22,7 +25,7 @@ public class ModRecipes {
         GameRegistry.addRecipe(new ItemStack(ModItems.blankModule, 6),
                 " r ", "ppp", "nnn",
                 'r', Items.REDSTONE, 'p', Items.PAPER, 'n', Items.GOLD_NUGGET);
-        for (ItemModule.ModuleType type : ItemModule.ModuleType.values()) {
+        for (ModuleType type : ModuleType.values()) {
             GameRegistry.addRecipe(ItemModule.getModule(type).getRecipe());
         }
 
@@ -33,7 +36,17 @@ public class ModRecipes {
             GameRegistry.addRecipe(ItemUpgrade.getUpgrade(type).getRecipe());
         }
 
-        GameRegistry.addRecipe(new EnchantBreakerModuleRecipe());
+        RecipeSorter.register(ModularRouters.modId + ":enchantBreaker", EnchantBreakerModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        GameRegistry.addRecipe(new EnchantBreakerModuleRecipe(ItemModule.makeItemStack(ModuleType.BREAKER), ItemModule.makeItemStack(ModuleType.BREAKER), Items.ENCHANTED_BOOK));
+
+        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneUpgradeRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        for (ModuleType type : ModuleType.values()) {
+            GameRegistry.addRecipe(new RedstoneUpgradeRecipe(ItemModule.makeItemStack(type),
+                    " R ", "TMT",
+                    'R', Items.REDSTONE,
+                    'T', Blocks.REDSTONE_TORCH,
+                    'M', ItemModule.makeItemStack(type)));
+        }
 
         if (Loader.isModLoaded("guideapi")) {
             GameRegistry.addShapelessRecipe(GuideAPI.getStackFromBook(Guidebook.guideBook), Items.BOOK, ModItems.blankModule);

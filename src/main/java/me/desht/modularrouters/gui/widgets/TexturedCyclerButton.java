@@ -1,7 +1,5 @@
 package me.desht.modularrouters.gui.widgets;
 
-import net.minecraft.util.ResourceLocation;
-
 public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedButton {
     private T state;
     private final int len;
@@ -15,6 +13,8 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
     public T getState() {
         return state;
     }
+
+    public void setState(T newState) { state = newState; }
 
     public void cycle(boolean forward) {
         int b = state.ordinal();

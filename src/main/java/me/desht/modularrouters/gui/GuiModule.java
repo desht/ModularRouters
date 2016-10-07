@@ -9,6 +9,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.item.module.Module.RelativeDirection;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.ReopenRouterMessage;
 import net.minecraft.client.gui.GuiButton;
@@ -26,19 +27,24 @@ import java.io.IOException;
 public class GuiModule extends GuiContainerBase {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/module.png");
     static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
-    static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
+    private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
+    private static final int REDSTONE_BUTTON_ID = BACK_BUTTON_ID + 1;
+
     private static final int GUI_HEIGHT = 182;
     private static final int GUI_WIDTH = 192;
     static final int BUTTON_WIDTH = 16;
     static final int BUTTON_HEIGHT = 16;
 
-    protected final ItemStack moduleItemStack;
+    final ItemStack moduleItemStack;
     private final Module module;
     private final BlockPos routerPos;
     private final int slotIndex;
     private final EnumHand hand;
     private RelativeDirection facing;
     private int sendDelay;
+    private RedstoneBehaviourButton rbb;
+    private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
+    private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
 
     public GuiModule(ModuleContainer containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -66,6 +72,12 @@ public class GuiModule extends GuiContainerBase {
         addToggleButton(ModuleFlags.IGNORE_NBT, 41, 74);
         addToggleButton(ModuleFlags.IGNORE_OREDICT, 58, 74);
         addToggleButton(ModuleFlags.TERMINATE, 75, 74);
+
+        if (module.isRedstoneBehaviourEnabled(moduleItemStack)) {
+            rbb = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
+                    this.guiLeft + 92, this.guiTop + 74, BUTTON_WIDTH, BUTTON_HEIGHT, module.getRedstoneBehaviour(moduleItemStack));
+            buttonList.add(rbb);
+        }
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -98,15 +110,15 @@ public class GuiModule extends GuiContainerBase {
     }
 
     private void addToggleButton(ModuleFlags setting, int x, int y) {
-        ModuleToggleButton tb = new ModuleToggleButton(setting, this.guiLeft + x, this.guiTop + y);
-        tb.setToggled(module.checkFlag(moduleItemStack, setting));
-        buttonList.add(tb);
+        toggleButtons[setting.ordinal()] = new ModuleToggleButton(setting, this.guiLeft + x, this.guiTop + y);
+        toggleButtons[setting.ordinal()].setToggled(module.checkFlag(moduleItemStack, setting));
+        buttonList.add(toggleButtons[setting.ordinal()]);
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
-        DirectionButton db = new DirectionButton(dir, this.guiLeft + x, this.guiTop + y);
-        db.setToggled(dir == facing);
-        buttonList.add(db);
+        directionButtons[dir.ordinal()] = new DirectionButton(dir, this.guiLeft + x, this.guiTop + y);
+        directionButtons[dir.ordinal()].setToggled(dir == facing);
+        buttonList.add(directionButtons[dir.ordinal()]);
     }
 
     @Override
@@ -127,6 +139,9 @@ public class GuiModule extends GuiContainerBase {
             if (routerPos != null) {
                 ModularRouters.network.sendToServer(new ReopenRouterMessage(routerPos));
             }
+        } else if (button.id == REDSTONE_BUTTON_ID) {
+            rbb.cycle(!isShiftKeyDown());
+            sendModuleSettingsToServer();
         }
     }
 
@@ -156,8 +171,8 @@ public class GuiModule extends GuiContainerBase {
                 flags |= setting.getMask();
             }
         }
-
-        ModularRouters.network.sendToServer(new ModuleSettingsMessage(flags, routerPos, slotIndex, hand, getExtMessageData()));
+        RouterRedstoneBehaviour behaviour = rbb == null ? RouterRedstoneBehaviour.ALWAYS : rbb.getState();
+        ModularRouters.network.sendToServer(new ModuleSettingsMessage(flags, behaviour, routerPos, slotIndex, hand, getExtMessageData()));
     }
 
     /**
@@ -173,12 +188,12 @@ public class GuiModule extends GuiContainerBase {
     private ModuleToggleButton getToggleButton(ModuleFlags flags) {
         // risk of class cast exception here, but should never happen unless something's gone horribly wrong
         //  - best to throw exception ASAP in that case
-        return (ModuleToggleButton) buttonList.get(flags.ordinal());
+        return toggleButtons[flags.ordinal()];
     }
 
     private DirectionButton getDirectionButton(RelativeDirection direction) {
         // see above re: class cast exception
-        return (DirectionButton) buttonList.get(direction.ordinal() + DIRECTION_BASE_ID);
+        return directionButtons[direction.ordinal()];
     }
 
     @Override

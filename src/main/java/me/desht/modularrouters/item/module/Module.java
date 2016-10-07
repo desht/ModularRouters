@@ -8,6 +8,7 @@ import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.GuiModule;
 import me.desht.modularrouters.logic.CompiledModule;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.RouterTarget;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
@@ -31,6 +32,11 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
+
+    public static final String NBT_FLAGS = "Flags";
+    public static final String NBT_REDSTONE_ENABLED = "RedstoneEnabled";
+    public static final String NBT_REDSTONE_MODE = "RedstoneMode";
+
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -134,7 +140,7 @@ public abstract class Module {
 
     public boolean checkFlag(ItemStack stack, ModuleFlags flag) {
         NBTTagCompound compound = validateNBT(stack);
-        return (compound.getByte("Flags") & flag.getMask()) != 0x0;
+        return (compound.getByte(NBT_FLAGS) & flag.getMask()) != 0x0;
     }
 
     public RelativeDirection getDirectionFromNBT(ItemStack stack) {
@@ -142,7 +148,25 @@ public abstract class Module {
             return RelativeDirection.NONE;
         }
         NBTTagCompound compound = validateNBT(stack);
-        return RelativeDirection.values()[(compound.getByte("Flags") & 0x70) >> 4];
+        return RelativeDirection.values()[(compound.getByte(NBT_FLAGS) & 0x70) >> 4];
+    }
+
+    public boolean isRedstoneBehaviourEnabled(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        return compound.getBoolean(NBT_REDSTONE_ENABLED);
+    }
+
+    public RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        if (compound.getBoolean(NBT_REDSTONE_ENABLED) && compound.hasKey(NBT_REDSTONE_MODE)) {
+            try {
+                return RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
+            } catch (IllegalArgumentException e) {
+                return RouterRedstoneBehaviour.ALWAYS;
+            }
+        } else {
+            return RouterRedstoneBehaviour.ALWAYS;
+        }
     }
 
     public RouterTarget getTarget(TileEntityItemRouter router, ItemStack stack) {
@@ -192,14 +216,14 @@ public abstract class Module {
             stack.setTagCompound(new NBTTagCompound());
         }
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("Flags")) {
+        if (!compound.hasKey(NBT_FLAGS)) {
             byte flags = 0x0;
             for (ModuleFlags b : ModuleFlags.values()) {
                 if (b.getDefaultValue()) {
                     flags |= b.getMask();
                 }
             }
-            compound.setByte("Flags", flags);
+            compound.setByte(NBT_FLAGS, flags);
         }
         return compound;
     }

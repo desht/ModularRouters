@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -188,9 +189,9 @@ public class ItemModule extends ItemBase {
     }
 
     private void addSettingsInformation(ItemStack itemstack, List<String> list, Module module) {
-        NBTTagCompound compound =  Module.validateNBT(itemstack);
-        Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
+        NBTTagCompound compound = Module.validateNBT(itemstack);
         if (module.isDirectional()) {
+            Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
         }
         NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
@@ -210,6 +211,11 @@ public class ItemModule extends ItemBase {
                         compose("IGNORE_OREDICT", module.ignoreOreDict(itemstack)),
                         compose("TERMINATE", !module.terminates(itemstack))
                 ));
+        if (module.isRedstoneBehaviourEnabled(itemstack)) {
+            RouterRedstoneBehaviour rrb = module.getRedstoneBehaviour(itemstack);
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.redstone.label")
+                    + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
+        }
     }
 
     private String compose(String key, boolean flag) {

@@ -10,6 +10,7 @@ public class CompiledModule {
     private final Module module;
     private final Module.RelativeDirection direction;
     private final RouterTarget target;
+    private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
 
     private int lastMatchPos = 0;
@@ -24,6 +25,7 @@ public class CompiledModule {
         direction = module.getDirectionFromNBT(stack);
         termination = module.terminates(stack);
         target = module.getTarget(router, stack);
+        behaviour = module.getRedstoneBehaviour(stack);
     }
 
     public Module getModule() {
@@ -50,8 +52,14 @@ public class CompiledModule {
         return termination;
     }
 
+    public RouterRedstoneBehaviour getRedstoneBehaviour() {
+        return behaviour;
+    }
+
     public void onCompiled(TileEntityItemRouter router) {
-        // does nothing by default
+        if (behaviour == RouterRedstoneBehaviour.PULSE) {
+            router.setHasPulsedModules(true);
+        }
     }
 
     public void cleanup(TileEntityItemRouter router) {

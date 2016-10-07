@@ -5,7 +5,6 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.CompiledModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.ShapelessOreRecipe;

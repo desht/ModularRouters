@@ -45,13 +45,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public static final int COMPILE_UPGRADES = 0x02;
 
     private int counter = 0;
+    private int pulseCounter = 0;
 
     private RouterRedstoneBehaviour redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
 
     private final ItemStackHandler bufferHandler = new ItemStackHandler(1) {
         @Override
         public void onContentsChanged(int slot) {
-            getWorld().updateComparatorOutputLevel(getPos(), getBlockType());
+            getWorld().updateComparatorOutputLevel(pos, getBlockType());
         }
     };
     private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
@@ -90,6 +91,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     // track eco-mode
     private boolean ecoMode = false;
     private int ecoCounter = Config.ecoTimeout;
+
+    private boolean hasPulsedModules = false;
 
     public TileEntityItemRouter() {
         super();
@@ -213,27 +216,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
 
         counter++;
+        pulseCounter++;
 
         if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
-            int power = getWorld().isBlockIndirectlyGettingPowered(getPos());
-            // we need to use the real tick rate here, not the possibly eco-mode tick rate that getTickRate() returns
-            if (power > lastPower && counter >= tickRate) {
-                executeModules();
-                counter = 0;
-                if (active) {
-                    activeTimer = tickRate;
-                }
-            }
-            // need to turn the state inactive after a short time...
+            // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
+            // however, we do need to turn the state inactive after a short time if we were set active by a pulse
             if (activeTimer > 0) {
                 if (--activeTimer == 0) {
                     setActive(false);
                 }
             }
-            lastPower = power;
         } else {
             if (counter >= getTickRate()) {
-                executeModules();
+                executeModules(false);
                 counter = 0;
             }
         }
@@ -247,18 +242,20 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
     }
 
-    private void executeModules() {
+    private void executeModules(boolean pulsed) {
         boolean newActive = false;
 
-        if (redstoneModeAllowsRun()) {
+        boolean powered = pulsed ? true : worldObj.isBlockPowered(pos);
+
+        if (redstoneBehaviour.shouldRun(powered, pulsed)) {
             if (prevCanEmit || canEmit) {
                 Arrays.fill(newRedstoneLevels, 0);
                 Arrays.fill(newSignalType, SignalType.NONE);
             }
-            for (CompiledModule mod : compiledModules) {
-                if (mod != null && mod.execute(this)) {
+            for (CompiledModule cm : compiledModules) {
+                if (cm != null && cm.getRedstoneBehaviour().shouldRun(powered, pulsed) && cm.execute(this)) {
                     newActive = true;
-                    if (mod.termination()) {
+                    if (cm.termination()) {
                         break;
                     }
                 }
@@ -267,9 +264,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 handleRedstoneEmission();
             }
         }
-        if (newActive != active) {
-            setActive(newActive);
-        }
+        setActive(newActive);
         prevCanEmit = canEmit;
     }
 
@@ -284,7 +279,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void setRedstoneBehaviour(RouterRedstoneBehaviour redstoneBehaviour) {
         this.redstoneBehaviour = redstoneBehaviour;
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
-            lastPower = getWorld().isBlockIndirectlyGettingPowered(getPos());
+            lastPower = getWorld().isBlockIndirectlyGettingPowered(pos);
         }
     }
 
@@ -339,30 +334,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
     }
 
-    private boolean redstoneModeAllowsRun() {
-        switch (redstoneBehaviour) {
-            case ALWAYS:
-                return true;
-            case LOW:
-                return !getWorld().isBlockPowered(getPos());
-            case HIGH:
-                return getWorld().isBlockPowered(getPos());
-            case PULSE:
-                return true;  // special case; see update() method
-            case NEVER:
-                return false;
-            default:
-                return false;
-        }
-    }
-
     /**
      * Compile installed modules & upgrades etc. into internal data for faster execution
      */
     private void compile() {
         // modules
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
-            ModularRouters.logger.debug("recompiling modules for item router @ " + getPos());
+            setHasPulsedModules(false);
+            ModularRouters.logger.debug("recompiling modules for item router @ " + pos);
             byte newSidesOpen = 0;
             for (CompiledModule cm : compiledModules) {
                 cm.cleanup(this);
@@ -382,7 +361,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
 
         if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
-            ModularRouters.logger.debug("recompiling upgrades for item router @ " + getPos());
+            ModularRouters.logger.debug("recompiling upgrades for item router @ " + pos);
             Arrays.fill(upgradeCount, 0);
             permitted.clear();
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
@@ -467,6 +446,21 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             return playerToSlot.get(player.getUniqueID());
         } else {
             return -1;
+        }
+    }
+
+    public void checkForRedstonePulse() {
+        if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
+                || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
+            int power = getWorld().isBlockIndirectlyGettingPowered(pos);
+            if (power > lastPower && pulseCounter >= tickRate) {
+                executeModules(true);
+                pulseCounter = 0;
+                if (active) {
+                    activeTimer = tickRate;
+                }
+            }
+            lastPower = power;
         }
     }
 
@@ -562,6 +556,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return bufferHandler.getStackInSlot(0) == null;
     }
 
+    public boolean getEcoMode() {
+        return ecoMode;
+    }
+
+    public void setHasPulsedModules(boolean hasPulsedModules) {
+        this.hasPulsedModules = hasPulsedModules;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Much as I hate to implement IInventory, it's necessary for backwards compatibility...
     // At least it's just a bunch of one-liners
@@ -636,7 +638,4 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         bufferHandler.setStackInSlot(0, null);
     }
 
-    public boolean getEcoMode() {
-        return ecoMode;
-    }
 }

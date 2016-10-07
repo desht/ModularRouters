@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +25,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class ModuleSettingsMessage implements IMessage {
     private byte flags;
+    private RouterRedstoneBehaviour rbb;
     private BlockPos routerPos;
     private int slotIndex;
     private EnumHand hand;
@@ -31,8 +34,9 @@ public class ModuleSettingsMessage implements IMessage {
     public ModuleSettingsMessage() {
     }
 
-    public ModuleSettingsMessage(byte flags, BlockPos routerPos, int slotIndex, EnumHand hand, NBTTagCompound extData) {
+    public ModuleSettingsMessage(byte flags, RouterRedstoneBehaviour rbb, BlockPos routerPos, int slotIndex, EnumHand hand, NBTTagCompound extData) {
         this.flags = flags;
+        this.rbb = rbb;
         this.routerPos = routerPos;
         this.slotIndex = slotIndex;
         this.hand = hand;
@@ -42,11 +46,12 @@ public class ModuleSettingsMessage implements IMessage {
     @Override
     public void fromBytes(ByteBuf byteBuf) {
         flags = byteBuf.readByte();
-        byte routerData = byteBuf.readByte();
-        if (routerData == 1) {
+        rbb = RouterRedstoneBehaviour.values()[byteBuf.readByte()];
+        boolean routerData = byteBuf.readBoolean();
+        if (routerData) {
+            hand = EnumHand.MAIN_HAND;
             routerPos = new BlockPos(byteBuf.readInt(), byteBuf.readInt(), byteBuf.readInt());
             slotIndex = byteBuf.readInt();
-            hand = EnumHand.MAIN_HAND;
         } else {
             hand = EnumHand.values()[byteBuf.readInt()];
             routerPos = null;
@@ -58,14 +63,15 @@ public class ModuleSettingsMessage implements IMessage {
     @Override
     public void toBytes(ByteBuf byteBuf) {
         byteBuf.writeByte(flags);
+        byteBuf.writeByte(rbb.ordinal());
         if (routerPos != null) {
-            byteBuf.writeByte(1);
+            byteBuf.writeBoolean(true);
             byteBuf.writeInt(routerPos.getX());
             byteBuf.writeInt(routerPos.getY());
             byteBuf.writeInt(routerPos.getZ());
             byteBuf.writeInt(slotIndex);
         } else {
-            byteBuf.writeByte(0);
+            byteBuf.writeBoolean(false);
             byteBuf.writeInt(hand.ordinal());
         }
         ByteBufUtils.writeTag(byteBuf, extData);
@@ -85,7 +91,8 @@ public class ModuleSettingsMessage implements IMessage {
                         router.getModules().extractItem(msg.slotIndex, 1, false);
                 if (stack != null && stack.getItem() instanceof ItemModule) {
                     NBTTagCompound compound = stack.getTagCompound();
-                    compound.setByte("Flags", msg.flags);
+                    compound.setByte(Module.NBT_FLAGS, msg.flags);
+                    compound.setString(Module.NBT_REDSTONE_MODE, msg.rbb.toString());
                     if (msg.extData != null) {
                         // extended data set by certain modules; copy directly into the item's NBT
                         // e.g. the redstone settings for the detector module

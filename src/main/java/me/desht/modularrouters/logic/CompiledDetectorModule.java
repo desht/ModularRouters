@@ -41,11 +41,13 @@ public class CompiledDetectorModule extends CompiledModule {
 
     @Override
     public void onCompiled(TileEntityItemRouter router) {
+        super.onCompiled(router);
         router.setAllowRedstoneEmission(true);
     }
 
     @Override
     public void cleanup(TileEntityItemRouter router) {
+        super.cleanup(router);
         router.setAllowRedstoneEmission(false);
     }
 }

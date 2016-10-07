@@ -12,6 +12,7 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -32,6 +33,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -264,7 +266,8 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
                         sub.item(ItemUpgrade.makeItemStack(type, router.getUpgradeCount(type)));
                     }
                 }
-                probeInfo.text(MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
+                probeInfo.text(TextFormatting.WHITE + MiscUtil.translate("guiText.tooltip.redstone.label")
+                        + ": " + TextFormatting.AQUA + MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
             } else {
                 probeInfo.text(MiscUtil.translate("chatText.security.accessDenied"));
             }
@@ -306,4 +309,13 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return true;
     }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof TileEntityItemRouter) {
+            ((TileEntityItemRouter) te).checkForRedstonePulse();
+        }
+    }
+
 }

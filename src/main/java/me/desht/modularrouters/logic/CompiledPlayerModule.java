@@ -90,6 +90,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @Override
     public void onCompiled(TileEntityItemRouter router) {
+        super.onCompiled(router);
         if (!router.getWorld().isRemote) {
             MinecraftForge.EVENT_BUS.register(this);
         }
@@ -97,6 +98,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @Override
     public void cleanup(TileEntityItemRouter router) {
+        super.cleanup(router);
         if (!router.getWorld().isRemote) {
             MinecraftForge.EVENT_BUS.unregister(this);
         }
