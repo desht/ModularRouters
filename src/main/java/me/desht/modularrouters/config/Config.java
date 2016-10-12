@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class Config {
 
     public static class Defaults {
+
         public static final int BASE_TICK_RATE = 20;
         public static final int TICKS_PER_UPGRADE = 2;
         public static final int SENDER1_BASE_RANGE = 8;
@@ -30,6 +31,7 @@ public class Config {
         public static final boolean VACUUM_PARTICLES = true;
         public static final boolean PLACER_PARTICLES = true;
         public static final boolean BREAKER_PARTICLES = true;
+        public static final boolean EXTRUDER_SOUND = true;
         public static final char CONFIG_KEY = 'c';
         public static final boolean START_WITH_GUIDE = false;
         public static final int ECO_TIMEOUT = 300;
@@ -50,6 +52,7 @@ public class Config {
     public static int vacuumMaxRange;
     public static boolean senderParticles;
     public static boolean breakerParticles;
+    public static boolean extruderSound;
     public static boolean placerParticles;
     public static boolean vacuumParticles;
     public static boolean startWithGuide;
@@ -147,6 +150,9 @@ public class Config {
         Property propBreakerParticles = config.get(CATEGORY_NAME_MODULE, "breakerParticles", Defaults.BREAKER_PARTICLES,
                 "Show particles when Breaker Module breaks a block");
         propBreakerParticles.setLanguageKey("gui.config.breakerParticles");
+        Property propExtruderSound = config.get(CATEGORY_NAME_MODULE, "extruderSound", Defaults.EXTRUDER_SOUND,
+                "Play sounds when Extruder Module extends or contracts");
+        propExtruderSound.setLanguageKey("gui.config.extruderSound");
 
         Property propStartWithGuide = config.get(CATEGORY_NAME_MISC, "startWithGuide", Defaults.START_WITH_GUIDE,
                 "New players spawn with a guide book");
@@ -171,7 +177,8 @@ public class Config {
                 propSenderParticles,
                 propVacuumParticles,
                 propPlacerParticles,
-                propBreakerParticles
+                propBreakerParticles,
+                propExtruderSound
         ).stream().map(Property::getName).collect(Collectors.toList()));
 
         config.setCategoryPropertyOrder(CATEGORY_NAME_MISC, Collections.singletonList(
@@ -196,6 +203,7 @@ public class Config {
             vacuumParticles = propVacuumParticles.getBoolean();
             placerParticles = propPlacerParticles.getBoolean();
             breakerParticles = propBreakerParticles.getBoolean();
+            extruderSound = propExtruderSound.getBoolean();
             startWithGuide = propStartWithGuide.getBoolean();
         }
 
@@ -215,6 +223,7 @@ public class Config {
         propVacuumParticles.set(vacuumParticles);
         propPlacerParticles.set(placerParticles);
         propBreakerParticles.set(breakerParticles);
+        propExtruderSound.set(extruderSound);
         propStartWithGuide.set(startWithGuide);
 
         if (config.hasChanged()) {

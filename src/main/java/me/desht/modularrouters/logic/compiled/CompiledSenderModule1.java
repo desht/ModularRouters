@@ -59,7 +59,6 @@ public class CompiledSenderModule1 extends CompiledModule {
         }
         BlockPos pos = getTarget().pos;
         EnumFacing face = getTarget().face;
-        EnumFacing faceOpposite = face.getOpposite();
         for (int i = 1; i < SenderModule1.maxDistance(router); i++) {
             World world = router.getWorld();
             IItemHandler handler = InventoryUtils.getInventory(world, pos, face);
@@ -68,20 +67,14 @@ public class CompiledSenderModule1 extends CompiledModule {
             } else if (!isPassable(world, pos, face)) {
                 return null;
             }
-            pos = pos.offset(faceOpposite);
+            pos = pos.offset(getFacing());
         }
         return null;
     }
 
     private boolean isPassable(World w, BlockPos pos, EnumFacing face) {
         IBlockState state = w.getBlockState(pos);
-        if (!state.getBlock().isBlockSolid(w, pos, face)) {
-            return true;
-        }
-        if (!state.isOpaqueCube()) {
-            return true;
-        }
-        return false;
+        return !state.getBlock().isBlockSolid(w, pos, face) || !state.isOpaqueCube();
     }
 
     public static class PositionedItemHandler {

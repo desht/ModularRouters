@@ -43,20 +43,20 @@ public class CompiledFlingerModule extends CompiledDropperModule {
 
     @Override
     protected void setupItemVelocity(TileEntityItemRouter router, EntityItem item) {
-        EnumFacing facing = router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
+        EnumFacing routerFacing = router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
         float basePitch = 0.0f;
         float baseYaw;
         switch (getDirection()) {
             case UP:
                 basePitch = 90.0f;
-                baseYaw = yawFromFacing(facing);
+                baseYaw = yawFromFacing(routerFacing);
                 break;
             case DOWN:
                 basePitch = -90.0f;
-                baseYaw = yawFromFacing(facing);
+                baseYaw = yawFromFacing(routerFacing);
                 break;
             default:
-                baseYaw = yawFromFacing(router.getAbsoluteFacing(getDirection()));
+                baseYaw = yawFromFacing(getFacing());
                 break;
         }
 

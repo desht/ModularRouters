@@ -97,4 +97,8 @@ public class InventoryUtils {
         return inserted;
     }
 
+    public static boolean dropItems(World world, BlockPos pos, ItemStack stack) {
+        EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+        return world.spawnEntityInWorld(item);
+    }
 }

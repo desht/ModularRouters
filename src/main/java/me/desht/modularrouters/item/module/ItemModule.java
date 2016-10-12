@@ -35,6 +35,7 @@ import java.util.List;
 
 public class ItemModule extends ItemBase {
 
+    // add new types at the end!
     public enum ModuleType {
         BREAKER,
         DROPPER,
@@ -49,7 +50,8 @@ public class ItemModule extends ItemBase {
         DETECTOR,
         MODSORTER,
         FLINGER,
-        PLAYER;
+        PLAYER,
+        EXTRUDER;
 
         public static ModuleType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemModule ? values()[stack.getItemDamage()] : null;
@@ -73,6 +75,7 @@ public class ItemModule extends ItemBase {
         registerSubItem(ModuleType.MODSORTER, new ModSorterModule());
         registerSubItem(ModuleType.FLINGER, new FlingerModule());
         registerSubItem(ModuleType.PLAYER, new PlayerModule());
+        registerSubItem(ModuleType.EXTRUDER, new ExtruderModule());
     }
 
     private static void registerSubItem(ModuleType type, Module handler) {

@@ -52,7 +52,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private final ItemStackHandler bufferHandler = new ItemStackHandler(1) {
         @Override
         public void onContentsChanged(int slot) {
-            getWorld().updateComparatorOutputLevel(pos, getBlockType());
+            worldObj.updateComparatorOutputLevel(pos, getBlockType());
         }
     };
     private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
@@ -78,21 +78,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     // number received from the client-side GUI for that player
     private final Map<UUID, Integer> playerToSlot = new HashMap<>();
 
+    private int redstonePower = -1;  // current redstone power (updated via onNeighborChange())
     private int lastPower;  // tracks previous redstone power level for pulse mode
-
     private boolean active;  // tracks active state of router
     private int activeTimer = 0;  // used in PULSE mode to time out the active state
-
     private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
-
-    // bitmask of which of the 6 sides are currently open
-    private byte sidesOpen;
-
-    // track eco-mode
-    private boolean ecoMode = false;
+    private byte sidesOpen;   // bitmask of which of the 6 sides are currently open
+    private boolean ecoMode = false;  // track eco-mode
     private int ecoCounter = Config.ecoTimeout;
-
     private boolean hasPulsedModules = false;
+
+    private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
 
     public TileEntityItemRouter() {
         super();
@@ -189,6 +185,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         active = nbt.getBoolean("Active");
         activeTimer = nbt.getInteger("ActiveTimer");
         ecoMode = nbt.getBoolean("EcoMode");
+
+        NBTTagCompound ext = nbt.getCompoundTag("Extra");
+        NBTTagCompound ext1 = getExtData();
+        if (ext != null) {
+            for (String key : ext.getKeySet()) {
+                ext1.setTag(key, ext.getTag(key));
+            }
+        }
     }
 
     @Nonnull
@@ -202,6 +206,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         nbt.setBoolean("Active", active);
         nbt.setInteger("ActiveTimer", activeTimer);
         nbt.setBoolean("EcoMode", ecoMode);
+
+        NBTTagCompound ext = new NBTTagCompound();
+        NBTTagCompound ext1 = getExtData();
+        for (String key : ext1.getKeySet()) {
+            ext.setTag(key, ext1.getTag(key));
+        }
+        nbt.setTag("Extra", ext);
+
         return nbt;
     }
 
@@ -211,7 +223,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             compile();
         }
 
-        if (getWorld().isRemote) {
+        if (worldObj.isRemote) {
             return;
         }
 
@@ -245,7 +257,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void executeModules(boolean pulsed) {
         boolean newActive = false;
 
-        boolean powered = pulsed ? true : worldObj.isBlockPowered(pos);
+        boolean powered = pulsed ? true : getRedstonePower() > 0;
 
         if (redstoneBehaviour.shouldRun(powered, pulsed)) {
             if (prevCanEmit || canEmit) {
@@ -279,7 +291,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void setRedstoneBehaviour(RouterRedstoneBehaviour redstoneBehaviour) {
         this.redstoneBehaviour = redstoneBehaviour;
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
-            lastPower = getWorld().isBlockIndirectlyGettingPowered(pos);
+            lastPower = getRedstonePower();
         }
     }
 
@@ -382,6 +394,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public void setAllowRedstoneEmission(boolean allow) {
         canEmit = allow;
+        worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockItemRouter.CAN_EMIT, canEmit));
     }
 
     public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
@@ -450,17 +463,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public void checkForRedstonePulse() {
+        redstonePower = worldObj.isBlockIndirectlyGettingPowered(pos);
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
-            int power = getWorld().isBlockIndirectlyGettingPowered(pos);
-            if (power > lastPower && pulseCounter >= tickRate) {
+            if (redstonePower > lastPower && pulseCounter >= tickRate) {
                 executeModules(true);
                 pulseCounter = 0;
                 if (active) {
                     activeTimer = tickRate;
                 }
             }
-            lastPower = power;
+            lastPower = redstonePower;
         }
     }
 
@@ -477,7 +490,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public int getRedstoneLevel(EnumFacing facing, boolean strong) {
         if (!canEmit) {
-            return 0;
+            // -1 means the block shouldn't have any special redstone handling
+            return -1;
         }
         int i = facing.ordinal();
         if (strong) {
@@ -556,12 +570,38 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return bufferHandler.getStackInSlot(0) == null;
     }
 
+    public ItemStack peekBuffer(int amount) {
+        return bufferHandler.extractItem(0, amount, true);
+    }
+
+    public ItemStack extractBuffer(int amount) {
+        return bufferHandler.extractItem(0, amount, false);
+    }
+
+    public ItemStack insertBuffer(ItemStack stack) {
+        return bufferHandler.insertItem(0, stack, false);
+    }
+
     public boolean getEcoMode() {
         return ecoMode;
     }
 
     public void setHasPulsedModules(boolean hasPulsedModules) {
         this.hasPulsedModules = hasPulsedModules;
+    }
+
+    public int getRedstonePower() {
+        if (redstonePower < 0) {
+            redstonePower = worldObj.isBlockIndirectlyGettingPowered(pos);
+        }
+        return redstonePower;
+    }
+
+    public NBTTagCompound getExtData() {
+        if (extData == null) {
+            extData = new NBTTagCompound();
+        }
+        return extData;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////

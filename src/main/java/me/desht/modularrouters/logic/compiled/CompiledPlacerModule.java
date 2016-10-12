@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -24,57 +25,23 @@ public class CompiledPlacerModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        ItemStack buffer = router.getBufferItemStack();
-        if (buffer == null || getDirection() == Module.RelativeDirection.NONE || !getFilter().pass(buffer)) {
+        if (getDirection() == Module.RelativeDirection.NONE) {
             return false;
         }
-
+        ItemStack toPlace = router.peekBuffer(1);
+        if (toPlace == null || !getFilter().pass(toPlace)) {
+            return false;
+        }
+        World w = router.getWorld();
         BlockPos pos = getTarget().pos;
-        World world = router.getWorld();
-        IBlockState currentState = world.getBlockState(pos);
-        if (!currentState.getBlock().isAir(currentState, world, pos) || !currentState.getBlock().isReplaceable(world, pos)) {
-            return false;
-        }
-
-        ItemStack toPlace = router.getBuffer().extractItem(0, 1, true);
-        IBlockState newState = getPlaceableState(toPlace);
-        if (newState == null) {
-            return false;
-        }
-
-        if (newState.getBlock().canPlaceBlockAt(world, pos)) {
-            EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
-            if (fakePlayer == null) {
-                return false;
+        if (BlockUtil.tryPlaceAsBlock(toPlace, w, pos)) {
+            if (Config.placerParticles) {
+                w.playEvent(2001, pos, Block.getStateId(w.getBlockState(pos)));
             }
-            BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
-            BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer);
-            MinecraftForge.EVENT_BUS.post(event);
-            if (!event.isCanceled() && world.setBlockState(pos, newState)) {
-                router.getBuffer().extractItem(0, 1, false);
-                if (Config.placerParticles) {
-                    world.playEvent(2001, pos, Block.getStateId(newState));
-                }
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
-
-    private IBlockState getPlaceableState(ItemStack stack) {
-        // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
-        Item item = stack.getItem();
-        if (item instanceof ItemBlock) {
-            return ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
-        } else if (item instanceof ItemBlockSpecial) {
-            return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
-        } else if (item instanceof ItemRedstone){
-            return Blocks.REDSTONE_WIRE.getDefaultState();
+            router.extractBuffer(1);
+            return true;
         } else {
-            return null;
+            return false;
         }
     }
 }

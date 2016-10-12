@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -44,33 +45,19 @@ public class CompiledBreakerModule extends CompiledModule {
                 return false;
             }
             BlockPos pos = getTarget().pos;
+            List<ItemStack> drops = Lists.newArrayList();
             IBlockState state = world.getBlockState(pos);
-            Block block = state.getBlock();
-            if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof BlockLiquid) {
-                return false;
-            }
-            Item item = Item.getItemFromBlock(block);
-            if (item == null) {
-                return false;
-            }
-            if (getFilter().pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
-                EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
-                BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
-                MinecraftForge.EVENT_BUS.post(breakEvent);
-                if (!breakEvent.isCanceled()) {
-                    List<ItemStack> drops = getDrops(world, pos, fakePlayer);
-                    for (ItemStack drop : drops) {
-                        ItemStack excess = router.getBuffer().insertItem(0, drop, false);
-                        if (excess != null) {
-                            dropItems(world, pos, excess);
-                        }
+            if (BlockUtil.tryBreakBlock(world, pos, getFilter(), drops, silkTouch, fortune)) {
+                for (ItemStack drop : drops) {
+                    ItemStack excess = router.getBuffer().insertItem(0, drop, false);
+                    if (excess != null) {
+                        dropItems(world, pos, excess);
                     }
-                    if (Config.breakerParticles) {
-                        world.playEvent(2001, pos, Block.getStateId(state));
-                    }
-                    world.setBlockToAir(pos);
-                    return true;
                 }
+                if (Config.breakerParticles) {
+                    world.playEvent(2001, pos, Block.getStateId(state));
+                }
+                return true;
             }
         }
         return false;
@@ -79,24 +66,5 @@ public class CompiledBreakerModule extends CompiledModule {
     private void dropItems(World world, BlockPos pos, ItemStack stack) {
         EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
         world.spawnEntityInWorld(item);
-    }
-
-    private List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player) {
-        IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-
-        if (silkTouch) {
-            Item item = Item.getItemFromBlock(block);
-            if (item == null) {
-                return Collections.emptyList();
-            } else {
-                return Lists.newArrayList(new ItemStack(item, 1, block.getMetaFromState(state)));
-            }
-        }
-
-        List<ItemStack> drops = block.getDrops(world, pos, state, fortune);
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, 1.0F, false, player);
-
-        return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
 }

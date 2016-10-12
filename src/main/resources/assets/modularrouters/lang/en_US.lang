@@ -15,6 +15,7 @@ item.detectorModule.name=Detector Module
 item.modsorterModule.name=Mod Sorter Module
 item.flingerModule.name=Flinger Module
 item.playerModule.name=Player Module
+item.extruderModule.name=Extruder Module
 item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade
@@ -97,6 +98,7 @@ gui.config.configKey=Key to press (in the Item Router GUI) to configure installe
 gui.config.startWithGuide=New players start with a copy of the guide book
 gui.config.ecoTimeout=If a router in eco-mode is idle for this many server ticks, it will go into low-power mode
 gui.config.lowPowerTickRate=An eco-mode router in low-power mode will only tick every this many server ticks
+gui.config.extruderSound=Play sounds when an Extruder Module extends or contracts
 
 # Item tooltips
 itemText.misc.holdShiftCtrl=Hold §e§oShift§r§7 for settings, §e§oCtrl§r§7 for info
@@ -141,6 +143,7 @@ itemText.usage.item.detectorModule=Emits a redstone signal from the router in th
 itemText.usage.item.modsorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already items from the same mod in that inventory.
 itemText.usage.item.flingerModule=Throws items from the router's buffer potentially over a long distance.  Adjust speed, pitch & yaw from the module's GUI.
 itemText.usage.item.playerModule=Remotely transfers items between a player's main or armor inventory and the router's buffer.
+itemText.usage.item.extruderModule=When the router has a redstone signal, deploys items in the buffer as blocks; when no redstone signal, breaks those blocks and pulls them back into the router's buffer.
 itemText.usage.item.securityUpgrade=Protects router; only listed players can access the router.\n• Right-click a player to add them to this upgrade\n• Sneak + Right-click player to remove them
 itemText.usage.item.stackUpgrade=Increases the number of items processed per router tick.\n• Max. items processed per operation: %d\n• Max. useful upgrades: %d
 itemText.usage.item.speedUpgrade=Increases the router tick rate.\n• Router will tick every %.02f sec\n• Max. useful upgrades: %d

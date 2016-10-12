@@ -3,13 +3,18 @@ package me.desht.modularrouters.proxy;
 import amerifrance.guideapi.api.GuideAPI;
 import amerifrance.guideapi.api.impl.Book;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
@@ -20,12 +25,17 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
+
         MinecraftForge.EVENT_BUS.register(new Config.ConfigEventHandler());
+
+        // the can_emit property has no effect on block rendering, so let's not create unnecessary variants
+        ModelLoader.setCustomStateMapper(ModBlocks.itemRouter, new StateMap.Builder().ignore(BlockItemRouter.CAN_EMIT).build());
     }
 
     @Override
     public void init() {
         super.init();
+
         MinecraftForge.EVENT_BUS.register(RenderListener.class);
     }
 

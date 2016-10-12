@@ -55,11 +55,12 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public static final PropertyBool OPEN_D = PropertyBool.create("open_d");
     public static final PropertyBool OPEN_L = PropertyBool.create("open_l");
     public static final PropertyBool OPEN_R = PropertyBool.create("open_r");
+    public static final PropertyBool CAN_EMIT = PropertyBool.create("can_emit");
 
     public BlockItemRouter() {
         super(Material.IRON, "itemRouter");
         setHardness(5.0f);
-        setDefaultState(getDefaultState().withProperty(ACTIVE, false));
+        setDefaultState(getDefaultState().withProperty(ACTIVE, false).withProperty(CAN_EMIT, false));
     }
 
     @SideOnly(Side.CLIENT)
@@ -140,7 +141,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R);
+        return new BlockStateContainer(this, FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT);
     }
 
     @Override
@@ -276,14 +277,15 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public boolean canProvidePower(IBlockState state) {
-        return true;
+        return state.getValue(BlockItemRouter.CAN_EMIT);
     }
 
     @Override
     public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         TileEntity te = blockAccess.getTileEntity(pos);
         if (te instanceof TileEntityItemRouter) {
-            return ((TileEntityItemRouter) te).getRedstoneLevel(side, false);
+            int l = ((TileEntityItemRouter) te).getRedstoneLevel(side, false);
+            return l < 0 ? super.getWeakPower(blockState, blockAccess, pos, side) : l;
         } else {
             return 0;
         }
@@ -293,7 +295,8 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         TileEntity te = blockAccess.getTileEntity(pos);
         if (te instanceof TileEntityItemRouter) {
-            return ((TileEntityItemRouter) te).getRedstoneLevel(side, true);
+            int l = ((TileEntityItemRouter) te).getRedstoneLevel(side, true);
+            return l < 0 ? super.getStrongPower(blockState, blockAccess, pos, side) : l;
         } else {
             return 0;
         }

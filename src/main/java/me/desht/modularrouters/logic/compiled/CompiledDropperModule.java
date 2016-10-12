@@ -17,7 +17,7 @@ public class CompiledDropperModule extends CompiledModule {
         ItemStack stack = router.getBufferItemStack();
         if (stack != null && getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack)) {
             int nItems = router.getItemsPerTick();
-            ItemStack toDrop = router.getBuffer().extractItem(0, nItems, true);
+            ItemStack toDrop = router.peekBuffer(nItems);
             BlockPos pos = getTarget().pos;
             EnumFacing face = getTarget().face;
             EntityItem item = new EntityItem(router.getWorld(),
@@ -27,7 +27,7 @@ public class CompiledDropperModule extends CompiledModule {
                     toDrop);
             setupItemVelocity(router, item);
             if (router.getWorld().spawnEntityInWorld(item)) {
-                router.getBuffer().extractItem(0, toDrop.stackSize, false);
+                router.extractBuffer(toDrop.stackSize);
                 return true;
             } else {
                 return false;

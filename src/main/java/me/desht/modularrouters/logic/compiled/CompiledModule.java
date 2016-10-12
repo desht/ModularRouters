@@ -17,6 +17,7 @@ public abstract class CompiledModule {
     private final RouterTarget target;
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
+    private final EnumFacing facing;
 
     private int lastMatchPos = 0;
 
@@ -31,6 +32,7 @@ public abstract class CompiledModule {
         termination = module.terminates(stack);
         target = setupTarget(router, stack);
         behaviour = module.getRedstoneBehaviour(stack);
+        facing = router.getAbsoluteFacing(direction);
     }
 
     public abstract boolean execute(TileEntityItemRouter router);
@@ -57,6 +59,10 @@ public abstract class CompiledModule {
 
     public RouterRedstoneBehaviour getRedstoneBehaviour() {
         return behaviour;
+    }
+
+    public EnumFacing getFacing() {
+        return facing;
     }
 
     public void onCompiled(TileEntityItemRouter router) {

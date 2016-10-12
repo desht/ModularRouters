@@ -54,10 +54,10 @@ public class ModularRouters {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        proxy.preInit();
         Config.preInit();
         ModItems.init();
         ModBlocks.init();
+        proxy.preInit();
         setupNetwork();
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
         IntegrationHandler.registerGuideBook();
