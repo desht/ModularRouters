@@ -12,8 +12,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -35,7 +39,7 @@ public class CamouflageUpgrade extends Upgrade {
     @Override
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey(NBT_STATE_NAME)) {
-            list.add(I18n.format("itemText.camouflage.held", getHeldStateDisplayName(itemstack)));
+            list.add(I18n.format("itemText.camouflage.held", getCamoStateDisplayName(itemstack)));
         }
     }
 
@@ -47,10 +51,10 @@ public class CamouflageUpgrade extends Upgrade {
     @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
-        router.setCamouflage(getHeldState(stack));
+        router.setCamouflage(getCamoState(stack));
     }
 
-    public static void setHeldState(ItemStack stack, IBlockState heldState) {
+    public static void setCamoState(ItemStack stack, IBlockState heldState) {
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
@@ -72,12 +76,12 @@ public class CamouflageUpgrade extends Upgrade {
         return b != null ? b.getStateFromMeta(compound.getInteger(NBT_STATE_META)) : null;
     }
 
-    public static IBlockState getHeldState(ItemStack stack) {
+    public static IBlockState getCamoState(ItemStack stack) {
         return stack.hasTagCompound() ? readFromNBT(stack.getTagCompound()) : null;
     }
 
-    public static String getHeldStateDisplayName(ItemStack stack) {
-        IBlockState state = getHeldState(stack);
+    public static String getCamoStateDisplayName(ItemStack stack) {
+        IBlockState state = getCamoState(stack);
         if (state != null) {
             Block b = state.getBlock();
             Item item = Item.getItemFromBlock(b);
@@ -95,13 +99,22 @@ public class CamouflageUpgrade extends Upgrade {
             ItemStack stack = player.getHeldItem(event.getHand());
             if (!player.getEntityWorld().isRemote && ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.CAMOUFLAGE) && player.isSneaking()) {
                 IBlockState state = event.getWorld().getBlockState(event.getPos());
-                setHeldState(stack, state);
-                if (event.getWorld().isRemote) {
-                    event.getEntityPlayer().playSound(SoundEvents.BLOCK_NOTE_PLING, 1.0f, 1.0f);
-                } else {
-                    event.getEntityPlayer().addChatMessage(new TextComponentTranslation("itemText.camouflage.held", getHeldStateDisplayName(stack)));
+                if (isBlockOKForCamo(state, event.getWorld(), event.getPos())) {
+                    setCamoState(stack, state);
+                    event.getEntityPlayer().addChatMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)));
                 }
             }
+        }
+
+        private static boolean isBlockOKForCamo(IBlockState state, World world, BlockPos pos) {
+            if (state.getRenderType() != EnumBlockRenderType.MODEL)
+                return false;
+
+            AxisAlignedBB coll = state.getCollisionBoundingBox(world, pos);
+            if (coll == null || coll.equals(Block.NULL_AABB))
+                return false;
+
+            return true;
         }
     }
 }

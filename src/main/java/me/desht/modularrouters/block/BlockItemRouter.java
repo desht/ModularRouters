@@ -23,6 +23,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -32,6 +33,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -47,6 +49,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,43 +65,31 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public static final PropertyBool OPEN_L = PropertyBool.create("open_l");
     public static final PropertyBool OPEN_R = PropertyBool.create("open_r");
     public static final PropertyBool CAN_EMIT = PropertyBool.create("can_emit");
-    public static final PropertyObject<IBlockState> HELD_STATE = new PropertyObject<>("held_state", IBlockState.class);
-    public static final PropertyObject<IBlockAccess> HELD_WORLD = new PropertyObject<>("held_state", IBlockAccess.class);
-    public static final PropertyObject<BlockPos> HELD_POS = new PropertyObject<>("held_state", BlockPos.class);
+    public static final PropertyObject<IBlockState> CAMOUFLAGE_STATE = new PropertyObject<>("held_state", IBlockState.class);
 
     public BlockItemRouter() {
         super(Material.IRON, BLOCK_NAME);
         setHardness(5.0f);
         setSoundType(SoundType.METAL);
         setDefaultState(((IExtendedBlockState) blockState.getBaseState())
-                .withProperty(HELD_STATE, null)
-                .withProperty(HELD_POS, null)
-                .withProperty(HELD_WORLD, null)
+                .withProperty(CAMOUFLAGE_STATE, null)
                 .withProperty(ACTIVE, false)
                 .withProperty(CAN_EMIT, false)
         );
     }
 
-//    @SideOnly(Side.CLIENT)
-//    public void initModel() {
-//        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-//    }
-
     @Override
     protected BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[] { FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT },
-                new IUnlistedProperty[] { HELD_STATE, HELD_POS, HELD_WORLD });
+                new IUnlistedProperty[] {CAMOUFLAGE_STATE});
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        state = ((IExtendedBlockState) state)
-                .withProperty(HELD_WORLD, world)
-                .withProperty(HELD_POS, pos);
         if (world.getTileEntity(pos) instanceof TileEntityItemRouter) {
             TileEntityItemRouter te = (TileEntityItemRouter) world.getTileEntity(pos);
-            return ((IExtendedBlockState) state).withProperty(HELD_STATE, te.getCamouflage());
+            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, te.getCamouflage());
         }
         return state;
     }
@@ -119,6 +110,34 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        IBlockState camo = getCamoState(state, source, pos);
+        return camo != null ? camo.getBoundingBox(source, pos) : super.getBoundingBox(state, source, pos);
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+        IBlockState camo = getCamoState(blockState, worldIn, pos);
+        return camo != null ? camo.getCollisionBoundingBox(worldIn, pos) : super.getCollisionBoundingBox(blockState, worldIn, pos);
+    }
+
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
+        IBlockState camo = getCamoState(state, worldIn, pos);
+        if (camo != null) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, camo.getBoundingBox(worldIn, pos));
+        } else {
+            super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn);
+        }
+    }
+
+    private IBlockState getCamoState(IBlockState state, IBlockAccess blockAccess, BlockPos pos) {
+        TileEntity te = blockAccess.getTileEntity(pos);
+        return te instanceof TileEntityItemRouter ? ((TileEntityItemRouter) te).getCamouflage() : null;
     }
 
     @Override

@@ -150,6 +150,7 @@ itemText.usage.item.securityUpgrade=Protects router; only listed players can acc
 itemText.usage.item.stackUpgrade=Increases the number of items processed per router tick.\n• Max. items processed per operation: %d\n• Max. useful upgrades: %d
 itemText.usage.item.speedUpgrade=Increases the router tick rate.\n• Router will tick every %.02f sec\n• Max. useful upgrades: %d
 itemText.usage.item.rangeUpgrade=Extends the range of these modules: %s
+itemText.usage.item.camouflageUpgrade=Makes the router look like another block.\n• Sneak + Right-click a solid block to copy its appearance onto the upgrade.
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s
