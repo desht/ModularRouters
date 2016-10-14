@@ -43,6 +43,7 @@ public class SecurityUpgrade extends Upgrade {
 
     @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
+        super.onCompiled(stack, router);
         Set<UUID> ids = getPlayerIDs(stack);
         router.addPermittedIds(ids);
     }

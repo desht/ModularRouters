@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiProxy;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
@@ -70,6 +71,7 @@ public class ModularRouters {
         ModRecipes.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
+        MinecraftForge.EVENT_BUS.register(CamouflageUpgrade.Interacted.class);
         IntegrationHandler.registerWaila();
         IntegrationHandler.registerTOP();
     }

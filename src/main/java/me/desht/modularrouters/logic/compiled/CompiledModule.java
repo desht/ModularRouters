@@ -32,7 +32,7 @@ public abstract class CompiledModule {
         termination = module.terminates(stack);
         target = setupTarget(router, stack);
         behaviour = module.getRedstoneBehaviour(stack);
-        facing = router.getAbsoluteFacing(direction);
+        facing = router == null ? null : router.getAbsoluteFacing(direction);
     }
 
     public abstract boolean execute(TileEntityItemRouter router);

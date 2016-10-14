@@ -21,6 +21,7 @@ item.speedUpgrade.name=Speed Upgrade
 item.stackUpgrade.name=Stack Upgrade
 item.rangeUpgrade.name=Range Upgrade
 item.securityUpgrade.name=Security Upgrade
+item.camouflageUpgrade.name=Camouflage Upgrade
 item.overrideCard.name=Security Override Card
 item.GuideBook.name=§l§nModular Routers
 
@@ -123,6 +124,7 @@ itemText.misc.flingerDetails=§eSpeed: §b%f§f | §ePitch: §b%f§f | §eYaw: �
 itemText.misc.operation=Operation
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=§eOwner: §b%s
+itemText.camouflage.held=§eCamouflage as: §b%s
 itemText.targetValidation.OK=§a✔ Target OK
 itemText.targetValidation.OUT_OF_RANGE=§c✘ Out of Range
 itemText.targetValidation.NOT_LOADED=§c✘ Not Loaded

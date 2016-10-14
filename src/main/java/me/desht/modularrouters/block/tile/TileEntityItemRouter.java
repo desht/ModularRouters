@@ -8,6 +8,7 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -87,8 +88,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private boolean ecoMode = false;  // track eco-mode
     private int ecoCounter = Config.ecoTimeout;
     private boolean hasPulsedModules = false;
-
     private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
+    private IBlockState camouflage = null;  // block to masquerade as
 
     public TileEntityItemRouter() {
         super();
@@ -134,6 +135,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         compound.setBoolean("Active", active);
         compound.setByte("Sides", sidesOpen);
         compound.setBoolean("Eco", ecoMode);
+        if (camouflage != null) {
+            CamouflageUpgrade.writeToNBT(compound, camouflage);
+        }
         return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), compound);
     }
 
@@ -142,9 +146,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         boolean newActive = pkt.getNbtCompound().getBoolean("Active");
         byte newSidesOpen = pkt.getNbtCompound().getByte("Sides");
         boolean newEco = pkt.getNbtCompound().getBoolean("Eco");
+        IBlockState camo = CamouflageUpgrade.readFromNBT(pkt.getNbtCompound());
+
         setActive(newActive);
         setSidesOpen(newSidesOpen);
         setEcoMode(newEco);
+        setCamouflage(camo);
     }
 
     @Override
@@ -307,11 +314,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
-            if (!worldObj.isRemote) {
-                sendBlockstateToClients();
-            } else {
-                worldObj.markBlockRangeForRenderUpdate(pos, pos);
-            }
+            handleSync();
         }
     }
 
@@ -322,11 +325,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void setSidesOpen(byte sidesOpen) {
         if (this.sidesOpen != sidesOpen) {
             this.sidesOpen = sidesOpen;
-            if (!worldObj.isRemote) {
-                sendBlockstateToClients();
-            } else {
-                worldObj.markBlockRangeForRenderUpdate(pos, pos);
-            }
+            handleSync();
         }
     }
 
@@ -334,16 +333,30 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (newEco != ecoMode) {
             ecoMode = newEco;
             ecoCounter = Config.ecoTimeout;
-            if (!worldObj.isRemote) {
-                sendBlockstateToClients();
-            } else {
-                worldObj.markBlockRangeForRenderUpdate(pos, pos);
-            }
+            handleSync();
         }
     }
 
-    private void sendBlockstateToClients() {
-        worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+    public IBlockState getCamouflage() {
+        return camouflage;
+    }
+
+    public void setCamouflage(IBlockState newCamouflage) {
+        if (newCamouflage != camouflage) {
+            System.out.println("setting camo [" + pos + "] = " + newCamouflage);
+            this.camouflage = newCamouflage;
+            handleSync();
+        }
+    }
+
+    private void handleSync() {
+        // some TE parameter changed that the client needs to know about for rendering:
+        // if on server, sync TE data to client; if on client, mark the TE pos for re-render
+        if (!worldObj.isRemote) {
+            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+        } else {
+            worldObj.markBlockRangeForRenderUpdate(pos, pos);
+        }
     }
 
     /**
@@ -376,6 +389,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             ModularRouters.logger.debug("recompiling upgrades for item router @ " + pos);
             Arrays.fill(upgradeCount, 0);
             permitted.clear();
+            setCamouflage(null);
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
                 Upgrade upgrade = ItemUpgrade.getUpgrade(stack);
@@ -677,5 +691,4 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void clear() {
         bufferHandler.setStackInSlot(0, null);
     }
-
 }

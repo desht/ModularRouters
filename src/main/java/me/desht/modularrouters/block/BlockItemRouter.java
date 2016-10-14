@@ -12,14 +12,16 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.PropertyObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +38,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,6 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockItemRouter extends BlockBase implements ITileEntityProvider, TOPInfoProvider {
+    public static final String BLOCK_NAME = "itemRouter";
+
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
     public static final PropertyBool OPEN_F = PropertyBool.create("open_f");
@@ -56,16 +62,45 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public static final PropertyBool OPEN_L = PropertyBool.create("open_l");
     public static final PropertyBool OPEN_R = PropertyBool.create("open_r");
     public static final PropertyBool CAN_EMIT = PropertyBool.create("can_emit");
+    public static final PropertyObject<IBlockState> HELD_STATE = new PropertyObject<>("held_state", IBlockState.class);
+    public static final PropertyObject<IBlockAccess> HELD_WORLD = new PropertyObject<>("held_state", IBlockAccess.class);
+    public static final PropertyObject<BlockPos> HELD_POS = new PropertyObject<>("held_state", BlockPos.class);
 
     public BlockItemRouter() {
-        super(Material.IRON, "itemRouter");
+        super(Material.IRON, BLOCK_NAME);
         setHardness(5.0f);
-        setDefaultState(getDefaultState().withProperty(ACTIVE, false).withProperty(CAN_EMIT, false));
+        setSoundType(SoundType.METAL);
+        setDefaultState(((IExtendedBlockState) blockState.getBaseState())
+                .withProperty(HELD_STATE, null)
+                .withProperty(HELD_POS, null)
+                .withProperty(HELD_WORLD, null)
+                .withProperty(ACTIVE, false)
+                .withProperty(CAN_EMIT, false)
+        );
     }
 
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+//    @SideOnly(Side.CLIENT)
+//    public void initModel() {
+//        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+//    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new ExtendedBlockState(this,
+                new IProperty[] { FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT },
+                new IUnlistedProperty[] { HELD_STATE, HELD_POS, HELD_WORLD });
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        state = ((IExtendedBlockState) state)
+                .withProperty(HELD_WORLD, world)
+                .withProperty(HELD_POS, pos);
+        if (world.getTileEntity(pos) instanceof TileEntityItemRouter) {
+            TileEntityItemRouter te = (TileEntityItemRouter) world.getTileEntity(pos);
+            return ((IExtendedBlockState) state).withProperty(HELD_STATE, te.getCamouflage());
+        }
+        return state;
     }
 
     @Override
@@ -137,11 +172,6 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT);
     }
 
     @Override

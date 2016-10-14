@@ -18,7 +18,8 @@ public class ItemUpgrade extends ItemBase {
         STACK,
         SPEED,
         RANGE,
-        SECURITY;
+        SECURITY,
+        CAMOUFLAGE;
 
         public static UpgradeType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemUpgrade ? values()[stack.getItemDamage()] : null;
@@ -33,6 +34,7 @@ public class ItemUpgrade extends ItemBase {
         registerUpgrade(UpgradeType.SPEED, new SpeedUpgrade());
         registerUpgrade(UpgradeType.RANGE, new RangeUpgrade());
         registerUpgrade(UpgradeType.SECURITY, new SecurityUpgrade());
+        registerUpgrade(UpgradeType.CAMOUFLAGE, new CamouflageUpgrade());
     }
 
     public ItemUpgrade() {
@@ -52,7 +54,7 @@ public class ItemUpgrade extends ItemBase {
         Upgrade upgrade = getUpgrade(itemstack);
         if (upgrade != null) {
             upgrade.addBasicInformation(itemstack, player, list, par4);
-            if (GuiScreen.isShiftKeyDown() && upgrade.hasExtraInformation()) {
+            if (GuiScreen.isShiftKeyDown()) {
                 upgrade.addExtraInformation(itemstack, player, list, par4);
             } else if (GuiScreen.isCtrlKeyDown()) {
                 upgrade.addUsageInformation(itemstack, player, list, par4);
