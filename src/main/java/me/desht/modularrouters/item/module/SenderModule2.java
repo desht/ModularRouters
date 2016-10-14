@@ -29,10 +29,10 @@ public class SenderModule2 extends TargetedSender {
 
     @Override
     protected SenderModule1.SenderTarget findTargetInventory(TileEntityItemRouter router, CompiledModule settings) {
-        RouterTarget target = settings.getTarget();
         SenderModule2 module = (SenderModule2) settings.getModule();
 
-        if (!module.validateTarget(router, target, true).isOK()) {
+        RouterTarget target = settings.getTarget();
+        if (target == null || !module.validateTarget(router, target, true).isOK()) {
             return null;
         }
 
