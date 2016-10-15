@@ -37,8 +37,6 @@ public class CompiledModSorterModule extends CompiledSorterModule {
     }
 
     private String getMod(ItemStack stack) {
-        String reg = stack.getItem().getRegistryName().toString();
-        return reg.substring(0, reg.indexOf(':'));
+        return stack.getItem().getRegistryName().getResourceDomain();
     }
-
 }
