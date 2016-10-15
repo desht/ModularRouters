@@ -135,6 +135,16 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         }
     }
 
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
     private IBlockState getCamoState(IBlockState state, IBlockAccess blockAccess, BlockPos pos) {
         TileEntity te = blockAccess.getTileEntity(pos);
         return te instanceof TileEntityItemRouter ? ((TileEntityItemRouter) te).getCamouflage() : null;

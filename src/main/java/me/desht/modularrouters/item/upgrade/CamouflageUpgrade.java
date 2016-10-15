@@ -1,5 +1,6 @@
 package me.desht.modularrouters.item.upgrade;
 
+import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
 import net.minecraft.block.Block;
@@ -14,6 +15,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -54,18 +56,18 @@ public class CamouflageUpgrade extends Upgrade {
         router.setCamouflage(getCamoState(stack));
     }
 
-    public static void setCamoState(ItemStack stack, IBlockState heldState) {
+    public static void setCamoState(ItemStack stack, IBlockState camoState) {
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
         NBTTagCompound compound = stack.getTagCompound();
-        writeToNBT(compound, heldState);
+        writeToNBT(compound, camoState);
     }
 
-    public static void writeToNBT(NBTTagCompound compound, IBlockState heldState) {
-        Block b = heldState.getBlock();
+    public static void writeToNBT(NBTTagCompound compound, IBlockState camoState) {
+        Block b = camoState.getBlock();
         compound.setString(NBT_STATE_NAME, b.getRegistryName().toString());
-        compound.setInteger(NBT_STATE_META, b.getMetaFromState(heldState));
+        compound.setInteger(NBT_STATE_META, b.getMetaFromState(camoState));
     }
 
     public static IBlockState readFromNBT(NBTTagCompound compound) {
@@ -97,24 +99,24 @@ public class CamouflageUpgrade extends Upgrade {
         public static void onInteracted(PlayerInteractEvent.RightClickBlock event) {
             EntityPlayer player = event.getEntityPlayer();
             ItemStack stack = player.getHeldItem(event.getHand());
-            if (!player.getEntityWorld().isRemote && ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.CAMOUFLAGE) && player.isSneaking()) {
+            if (ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.CAMOUFLAGE) && player.isSneaking()) {
                 IBlockState state = event.getWorld().getBlockState(event.getPos());
                 if (isBlockOKForCamo(state, event.getWorld(), event.getPos())) {
                     setCamoState(stack, state);
-                    event.getEntityPlayer().addChatMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)));
+                    if (!event.getWorld().isRemote) {
+                        event.getEntityPlayer().addChatMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)));
+                    } else {
+                        event.getEntityPlayer().playSound(SoundEvents.BLOCK_NOTE_PLING, 1.0f, 1.5f);
+                    }
+                } else if (event.getWorld().isRemote) {
+                    event.getEntityPlayer().playSound(SoundEvents.BLOCK_NOTE_BASS, 1.0f, 1.0f);
                 }
             }
         }
 
         private static boolean isBlockOKForCamo(IBlockState state, World world, BlockPos pos) {
-            if (state.getRenderType() != EnumBlockRenderType.MODEL)
-                return false;
-
-            AxisAlignedBB coll = state.getCollisionBoundingBox(world, pos);
-            if (coll == null || coll.equals(Block.NULL_AABB))
-                return false;
-
-            return true;
+            // trying to camo a router as itself = recursion hell
+            return state.getRenderType() == EnumBlockRenderType.MODEL && state.getBlock() != ModBlocks.itemRouter;
         }
     }
 }

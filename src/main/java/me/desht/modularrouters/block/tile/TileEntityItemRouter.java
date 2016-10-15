@@ -3,6 +3,7 @@ package me.desht.modularrouters.block.tile;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
@@ -343,7 +344,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public void setCamouflage(IBlockState newCamouflage) {
         if (newCamouflage != camouflage) {
-            System.out.println("setting camo [" + pos + "] = " + newCamouflage);
             this.camouflage = newCamouflage;
             handleSync();
         }
