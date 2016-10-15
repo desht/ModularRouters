@@ -3,6 +3,8 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.sound.MRSoundEvents;
+import me.desht.modularrouters.sound.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -106,10 +108,10 @@ public class CamouflageUpgrade extends Upgrade {
                     if (!event.getWorld().isRemote) {
                         event.getEntityPlayer().addChatMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)));
                     } else {
-                        event.getEntityPlayer().playSound(SoundEvents.BLOCK_NOTE_PLING, 1.0f, 1.5f);
+                        event.getEntityPlayer().playSound(MRSoundEvents.success, 1.0f, 1.5f);
                     }
                 } else if (event.getWorld().isRemote) {
-                    event.getEntityPlayer().playSound(SoundEvents.BLOCK_NOTE_BASS, 1.0f, 1.0f);
+                    event.getEntityPlayer().playSound(MRSoundEvents.error, 1.0f, 1.0f);
                 }
             }
         }

@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -178,7 +179,7 @@ public class SecurityUpgrade extends Upgrade {
                     String name = targetPlayer.getDisplayNameString();
                     Result res = event.getEntityPlayer().isSneaking() ? su.removePlayer(stack, id) : su.addPlayer(stack, id, name);
                     if (event.getWorld().isRemote) {
-                        event.getEntityPlayer().playSound(res.isError() ? SoundEvents.BLOCK_NOTE_BASS : SoundEvents.BLOCK_NOTE_PLING, 1.0f, 1.0f);
+                        event.getEntityPlayer().playSound(res.isError() ? MRSoundEvents.error : MRSoundEvents.success, 1.0f, 1.0f);
                     } else {
                         event.getEntityPlayer().addChatMessage(new TextComponentTranslation("chatText.security." + res.toString(), name));
                     }

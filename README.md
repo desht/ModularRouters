@@ -22,4 +22,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 This project includes, with minor alterations, some source code from the Botania project.  Under the terms of the [Botania license](http://botaniamod.net/license.php) (Copyleft clause), 
 I am hereby stating that code in the ``me.desht.modularrouters.client.fx`` package is attributable to Vazkii, and if you copy it you must abide by the terms of the Botania license.
- 
+
+This project includes the following free sound files:
+
+* http://freesound.org/people/GabrielAraujo/sounds/242501/
+* http://freesound.org/people/Autistic%20Lucario/sounds/142608/

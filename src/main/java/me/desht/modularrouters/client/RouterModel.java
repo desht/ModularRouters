@@ -24,7 +24,11 @@ public class RouterModel implements IBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return handleBlockState(state).getQuads(state, side, rand);
+        try {
+            return handleBlockState(state).getQuads(state, side, rand);
+        } catch (IllegalArgumentException e) {
+            return uncamouflagedModel.getQuads(state, side, rand);
+        }
     }
 
     private IBakedModel handleBlockState(IBlockState state) {

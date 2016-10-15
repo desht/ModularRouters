@@ -1,0 +1,12 @@
+{
+  "error" : {
+    "category" : "master",
+    "subtitle" : "chatText.subtitle.error",
+    "sounds" : [ "modularrouters:error"]
+  },
+  "success" : {
+    "category" : "master",
+    "subtitle" : "chatText.subtitle.success",
+    "sounds" : [ "modularrouters:success"]
+  }
+}

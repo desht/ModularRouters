@@ -161,6 +161,8 @@ chatText.security.ERROR=Couldn't add player [%s] (internal error)
 chatText.security.FULL=Security upgrade list full!
 chatText.security.ALREADY_ADDED=Player [%s] is already on this upgrade
 chatText.security.NOT_PRESENT=Player [%s] is not on this uprade
+chatText.subtitle.error=Error
+chatText.subtitle.success=Success
 
 # Guidebook text
 guidebook.para.introText=§lWelcome to Modular Routers!\n\nThis aims to provide an alternative approach for moving items around in various ways.  With a single block - the Item Router - and one or more plug-in modules, you can pull items from an inventory (including modded inventories like Storage Drawers), send them to other inventories near & far, place items as blocks, break blocks, drop items into the world, sort items, and much more.\n\nThink of the Item Router like a super-configurable Hopper on steroids...

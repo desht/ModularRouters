@@ -11,6 +11,7 @@ import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
+import me.desht.modularrouters.sound.ModSounds;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -58,6 +59,7 @@ public class ModularRouters {
         Config.preInit();
         ModItems.init();
         ModBlocks.init();
+        ModSounds.init();
         proxy.preInit();
         setupNetwork();
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
