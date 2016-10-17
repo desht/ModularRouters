@@ -3,7 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.logic.Filter;
+import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.RouterTarget;
 import net.minecraft.item.ItemStack;

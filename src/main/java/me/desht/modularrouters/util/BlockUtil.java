@@ -1,8 +1,7 @@
 package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.logic.Filter;
+import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;

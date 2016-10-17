@@ -8,6 +8,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import java.util.Objects;
 
 // Generic base class for unlisted properties
+// With thanks to Vazkii's Botania code
 public class PropertyObject<T> implements IUnlistedProperty<T> {
 
     private final String name;

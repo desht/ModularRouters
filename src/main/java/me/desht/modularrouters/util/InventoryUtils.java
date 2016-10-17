@@ -1,8 +1,5 @@
 package me.desht.modularrouters.util;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.logic.Filter;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
