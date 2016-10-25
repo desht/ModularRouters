@@ -1,14 +1,13 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -17,6 +16,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -57,10 +57,9 @@ public class CompiledPlayerModule extends CompiledModule {
 
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
-            NBTTagList o = compound.getTagList("Owner", Constants.NBT.TAG_STRING);
-            playerName = o.getStringTagAt(0);
-            String s = o.getStringTagAt(1);
-            playerId = s.isEmpty() ? null : UUID.fromString(s);
+            Pair<String,UUID> owner = ItemModule.getOwnerNameAndId(stack);
+            playerName = owner.getLeft();
+            playerId = owner.getRight();
             operation = Operation.values()[compound.getInteger(NBT_OPERATION)];
             section = Section.values()[compound.getInteger(NBT_SECTION)];
             if (router != null && !router.getWorld().isRemote) {

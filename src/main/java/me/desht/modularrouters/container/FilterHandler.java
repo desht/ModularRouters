@@ -1,5 +1,6 @@
 package me.desht.modularrouters.container;
 
+import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -9,6 +10,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 public class FilterHandler implements IItemHandlerModifiable {
     private final ItemStack moduleStack;
     private final ItemStack[] filters;
+
+    public FilterHandler(ItemStack moduleStack) {
+        this(moduleStack, Filter.FILTER_SIZE);
+    }
 
     public FilterHandler(ItemStack moduleStack, int size) {
         this.moduleStack = moduleStack;
@@ -34,7 +39,7 @@ public class FilterHandler implements IItemHandlerModifiable {
     }
 
     private void readfromNBT(NBTTagCompound compound) {
-        NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
+        NBTTagList items = compound.getTagList(Filter.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < items.tagCount(); ++i) {
             NBTTagCompound item = items.getCompoundTagAt(i);
@@ -56,7 +61,7 @@ public class FilterHandler implements IItemHandlerModifiable {
                 items.appendTag(item);
             }
         }
-        compound.setTag("ModuleFilter", items);
+        compound.setTag(Filter.NBT_FILTER, items);
     }
 
     @Override

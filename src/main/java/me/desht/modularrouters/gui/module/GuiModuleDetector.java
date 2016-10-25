@@ -1,9 +1,9 @@
-package me.desht.modularrouters.gui;
+package me.desht.modularrouters.gui.module;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.container.ModuleContainer;
-import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.ItemStackButton;
+import me.desht.modularrouters.gui.widgets.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.TextFieldWidget;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -48,12 +48,14 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     public void initGui() {
         super.initGui();
 
-        SignalLevelField textBox = new SignalLevelField(this, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 17, 20, 12);
+        TextFieldManager manager = getTextFieldManager().clear();
+
+        SignalLevelField textBox = new SignalLevelField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 17, 20, 12);
         textBox.setText(Integer.toString(signalStrength));
         textBox.setGuiResponder(this);
-        addTextField(textBox);
+        manager.addTextField(textBox);
 
-        focus(0);
+        manager.focus(0);
 
         String label = I18n.format("itemText.misc.strongSignal." + isStrong);
         buttonList.add(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label));
@@ -116,7 +118,7 @@ public class GuiModuleDetector extends GuiModule implements GuiPageButtonList.Gu
     }
 
     private class SignalLevelField extends TextFieldWidget {
-        SignalLevelField(GuiContainerBase parent, int id, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
+        SignalLevelField(TextFieldManager parent, int id, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
             super(parent, id, fontrendererObj, x, y, par5Width, par6Height);
             setMaxStringLength(2);
             setValidator(input -> {

@@ -6,7 +6,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
-import me.desht.modularrouters.gui.GuiModule;
+import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -18,7 +18,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -164,10 +163,6 @@ public abstract class Module {
         }
     }
 
-//    public RouterTarget getTarget(ItemStack stack) {
-//        return null;
-//    }
-
     /**
      * Basic information for the module, which is always shown.
      */
@@ -221,8 +216,8 @@ public abstract class Module {
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityItemRouter) {
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null) {
             if (!player.isSneaking()) {
                 player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
                 return EnumActionResult.SUCCESS;

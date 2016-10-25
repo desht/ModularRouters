@@ -67,6 +67,12 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public static final PropertyBool CAN_EMIT = PropertyBool.create("can_emit");
     public static final PropertyObject<IBlockState> CAMOUFLAGE_STATE = new PropertyObject<>("held_state", IBlockState.class);
 
+    public static final String NBT_MODULES = "Modules";
+    public static final String NBT_UPGRADES = "Upgrades";
+    public static final String NBT_MODULE_COUNT = "ModuleCount";
+    public static final String NBT_UPGRADE_COUNT = "UpgradeCount";
+    public static final String NBT_REDSTONE_BEHAVIOUR = "RedstoneBehaviour";
+
     public BlockItemRouter() {
         super(Material.IRON, BLOCK_NAME);
         setHardness(5.0f);
@@ -87,18 +93,17 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (world.getTileEntity(pos) instanceof TileEntityItemRouter) {
-            TileEntityItemRouter te = (TileEntityItemRouter) world.getTileEntity(pos);
-            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, te.getCamouflage());
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null) {
+            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, router.getCamouflage());
         }
         return state;
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityItemRouter) {
-            TileEntityItemRouter router = (TileEntityItemRouter) te;
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null) {
             state = state.withProperty(ACTIVE, router.isActive());
             for (Module.RelativeDirection side : Module.RelativeDirection.realSides()) {
                 state = state.withProperty(side.getProperty(), router.isSideOpen(side));
@@ -146,8 +151,8 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     }
 
     private IBlockState getCamoState(IBlockState state, IBlockAccess blockAccess, BlockPos pos) {
-        TileEntity te = blockAccess.getTileEntity(pos);
-        return te instanceof TileEntityItemRouter ? ((TileEntityItemRouter) te).getCamouflage() : null;
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
+        return router != null ? router.getCamouflage() : null;
     }
 
     @Override
@@ -164,15 +169,15 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
-        TileEntityItemRouter te = (TileEntityItemRouter) world.getTileEntity(pos);
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null) {
-            ((ItemStackHandler) te.getModules()).deserializeNBT(compound.getCompoundTag("Modules"));
-            ((ItemStackHandler) te.getUpgrades()).deserializeNBT(compound.getCompoundTag("Upgrades"));
+        if (router != null && compound != null) {
+            ((ItemStackHandler) router.getModules()).deserializeNBT(compound.getCompoundTag(NBT_MODULES));
+            ((ItemStackHandler) router.getUpgrades()).deserializeNBT(compound.getCompoundTag(NBT_UPGRADES));
             try {
-                te.setRedstoneBehaviour(RouterRedstoneBehaviour.valueOf(compound.getString("RedstoneBehaviour")));
+                router.setRedstoneBehaviour(RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_BEHAVIOUR)));
             } catch (IllegalArgumentException e) {
-                te.setRedstoneBehaviour(RouterRedstoneBehaviour.ALWAYS);
+                router.setRedstoneBehaviour(RouterRedstoneBehaviour.ALWAYS);
             }
         }
     }
@@ -194,9 +199,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         IBlockState state = world.getBlockState(pos);
         if (axis.getAxis() != EnumFacing.Axis.Y) {
             world.setBlockState(pos, state.withProperty(FACING, axis));
-            TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileEntityItemRouter) {
-                ((TileEntityItemRouter) te).recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+            if (router != null) {
+                router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
             }
             return true;
         }
@@ -210,9 +215,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState blockstate) {
-        TileEntityItemRouter te = (TileEntityItemRouter) world.getTileEntity(pos);
-        if (te != null) {
-            InventoryUtils.dropInventoryItems(world, pos, te.getBuffer());
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null) {
+            InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
             world.updateComparatorOutputLevel(pos, this);
         }
         super.breakBlock(world, pos, blockstate);
@@ -225,9 +230,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos pos) {
-        TileEntityItemRouter te = (TileEntityItemRouter) world.getTileEntity(pos);
-        if (te != null) {
-            ItemStack stack = te.getBufferItemStack();
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null) {
+            ItemStack stack = router.getBufferItemStack();
             return stack == null ? 0 : MathHelper.floor_float(1 + ((float) stack.stackSize / (float) stack.getMaxStackSize()) * 14);
         } else {
             return 0;
@@ -250,21 +255,20 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         List<ItemStack> l = new ArrayList<>();
 
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityItemRouter) {
-            TileEntityItemRouter router = (TileEntityItemRouter) te;
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null) {
             ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
             if (router.getModuleCount() > 0 || router.getSpeedUpgrades() > 0 || router.getStackUpgrades() > 0) {
                 if (!stack.hasTagCompound()) {
                     stack.setTagCompound(new NBTTagCompound());
                 }
                 NBTTagCompound compound = stack.getTagCompound();
-                compound.setTag("Modules", ((ItemStackHandler) router.getModules()).serializeNBT());
-                compound.setTag("Upgrades", ((ItemStackHandler) router.getUpgrades()).serializeNBT());
-                compound.setString("RedstoneBehaviour", router.getRedstoneBehaviour().toString());
-                compound.setInteger("ModuleCount", router.getModuleCount());
+                compound.setTag(NBT_MODULES, ((ItemStackHandler) router.getModules()).serializeNBT());
+                compound.setTag(NBT_UPGRADES, ((ItemStackHandler) router.getUpgrades()).serializeNBT());
+                compound.setString(NBT_REDSTONE_BEHAVIOUR, router.getRedstoneBehaviour().toString());
+                compound.setInteger(NBT_MODULE_COUNT, router.getModuleCount());
                 for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-                    compound.setInteger("UpgradeCount." + type, router.getUpgradeCount(type));
+                    compound.setInteger(NBT_UPGRADE_COUNT + "." + type, router.getUpgradeCount(type));
                 }
             }
             l.add(stack);
@@ -276,11 +280,11 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         NBTTagCompound compound = itemstack.getTagCompound();
-        if (compound != null && compound.hasKey("ModuleCount")) {
+        if (compound != null && compound.hasKey(NBT_MODULE_COUNT)) {
             list.add(I18n.format("itemText.misc.routerConfigured"));
-            MiscUtil.appendMultiline(list, "itemText.misc.moduleCount", compound.getInteger("ModuleCount"));
+            MiscUtil.appendMultiline(list, "itemText.misc.moduleCount", compound.getInteger(NBT_MODULE_COUNT));
             for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-                int c = compound.getInteger("UpgradeCount." + type);
+                int c = compound.getInteger(NBT_UPGRADE_COUNT + "." + type);
                 if (c > 0) {
                     String name = I18n.format("item." + type.toString().toLowerCase() + "Upgrade.name");
                     list.add(I18n.format("itemText.misc.upgradeCount", name, c));
@@ -292,10 +296,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote && !player.isSneaking()) {
-            TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileEntityItemRouter) {
-                // TODO allow op override
-                if (((TileEntityItemRouter) te).isPermitted(player)) {
+            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+            if (router != null) {
+                if (router.isPermitted(player)) {
                     player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
                 } else {
                     player.addChatMessage(new TextComponentTranslation("chatText.security.accessDenied"));
@@ -308,9 +311,8 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     @Override
     @Optional.Method(modid = "theoneprobe")
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof TileEntityItemRouter) {
-            TileEntityItemRouter router = (TileEntityItemRouter) te;
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, data.getPos());
+        if (router != null) {
             if (router.isPermitted(player)) {
                 IItemHandler modules = router.getModules();
                 IProbeInfo sub = probeInfo.horizontal();
@@ -341,9 +343,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        TileEntity te = blockAccess.getTileEntity(pos);
-        if (te instanceof TileEntityItemRouter) {
-            int l = ((TileEntityItemRouter) te).getRedstoneLevel(side, false);
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
+        if (router != null) {
+            int l = router.getRedstoneLevel(side, false);
             return l < 0 ? super.getWeakPower(blockState, blockAccess, pos, side) : l;
         } else {
             return 0;
@@ -352,9 +354,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        TileEntity te = blockAccess.getTileEntity(pos);
-        if (te instanceof TileEntityItemRouter) {
-            int l = ((TileEntityItemRouter) te).getRedstoneLevel(side, true);
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
+        if (router != null) {
+            int l = router.getRedstoneLevel(side, true);
             return l < 0 ? super.getStrongPower(blockState, blockAccess, pos, side) : l;
         } else {
             return 0;
@@ -374,9 +376,9 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-        TileEntity te = worldIn.getTileEntity(pos);
-        if (te instanceof TileEntityItemRouter) {
-            ((TileEntityItemRouter) te).checkForRedstonePulse();
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(worldIn, pos);
+        if (router != null) {
+            router.checkForRedstonePulse();
         }
     }
 

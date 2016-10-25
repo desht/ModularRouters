@@ -4,7 +4,10 @@ import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -29,11 +32,15 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.UUID;
 
 public class ItemModule extends ItemBase {
+    private static final String NBT_CONFIG_SLOT = "ConfigSlot";
+    private static final String NBT_OWNER = "Owner";
 
     // add new types at the end!
     public enum ModuleType {
@@ -144,7 +151,6 @@ public class ItemModule extends ItemBase {
         if (!world.isRemote) {
             int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
             player.openGui(ModularRouters.instance, guiId, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
@@ -185,12 +191,19 @@ public class ItemModule extends ItemBase {
             Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
         }
-        NBTTagList items = compound.getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
+        NBTTagList items = compound.getTagList(Filter.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
         list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (module.isBlacklist(itemstack) ? "2" : "1")) + ":");
         if (items.tagCount() > 0) {
             for (int i = 0; i < items.tagCount(); i++) {
                 ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
-                list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
+                SmartFilter f = ItemSmartFilter.getFilter(s);
+                if (f == null) {
+                    list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
+                } else {
+                    int size = f.getSize(s);
+                    String suffix = size > 0 ? " [" + f.getSize(s) + "]" : "";
+                    list.add(" \u2022 " + TextFormatting.AQUA + TextFormatting.ITALIC + s.getDisplayName() + suffix);
+                }
             }
         } else {
             list.add("  " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
@@ -234,7 +247,38 @@ public class ItemModule extends ItemBase {
         NBTTagList owner = new NBTTagList();
         owner.appendTag(new NBTTagString(player.getDisplayNameString()));
         owner.appendTag(new NBTTagString(player.getUniqueID().toString()));
-        compound.setTag("Owner", owner);
+        compound.setTag(NBT_OWNER, owner);
         stack.setTagCompound(compound);
+    }
+
+    private static final Pair<String,UUID> NO_OWNER = Pair.of("", null);
+
+    public static Pair<String, UUID> getOwnerNameAndId(ItemStack stack) {
+        if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey(NBT_OWNER)) {
+            return NO_OWNER;
+        }
+        NBTTagList l = stack.getTagCompound().getTagList(NBT_OWNER, Constants.NBT.TAG_STRING);
+        return Pair.of(l.getStringTagAt(0), UUID.fromString(l.getStringTagAt(1)));
+    }
+
+    public static void setFilterConfigSlot(ItemStack stack, int slot) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            compound = new NBTTagCompound();
+        }
+        if (slot < 0) {
+            compound.removeTag(NBT_CONFIG_SLOT);
+        } else {
+            compound.setInteger(NBT_CONFIG_SLOT, slot);
+        }
+        stack.setTagCompound(compound);
+    }
+
+    public static int getFilterConfigSlot(ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(NBT_CONFIG_SLOT)) {
+            return stack.getTagCompound().getInteger(NBT_CONFIG_SLOT);
+        } else {
+            return -1;
+        }
     }
 }

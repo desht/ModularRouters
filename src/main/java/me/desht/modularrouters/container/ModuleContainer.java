@@ -2,6 +2,7 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -12,9 +13,7 @@ import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
 public class ModuleContainer extends Container {
-
-    private static final int N_FILTER_SLOTS = 9;
-    private static final int INV_START = N_FILTER_SLOTS;
+    private static final int INV_START = Filter.FILTER_SIZE;
     private static final int INV_END = INV_START + 26;
     private static final int HOTBAR_START = INV_END + 1;
     private static final int HOTBAR_END = HOTBAR_START + 8;
@@ -32,12 +31,12 @@ public class ModuleContainer extends Container {
     }
 
     public ModuleContainer(EntityPlayer player, ItemStack moduleStack, TileEntityItemRouter router) {
-        this.filterHandler = new FilterHandler(moduleStack, N_FILTER_SLOTS);
+        this.filterHandler = new FilterHandler(moduleStack, Filter.FILTER_SIZE);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
-        this.router = router;
+        this.router = router;  // can be null
 
         // slots for the (ghost) filter items
-        for (int i = 0; i < N_FILTER_SLOTS; i++) {
+        for (int i = 0; i < Filter.FILTER_SIZE; i++) {
             addSlotToContainer(new FilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
         }
 
@@ -69,20 +68,20 @@ public class ModuleContainer extends Container {
             stack = stackInSlot.copy();
             stack.stackSize = 1;
 
-            if (index < N_FILTER_SLOTS) {
+            if (index < Filter.FILTER_SIZE) {
                 // shift-clicking in a filter slot: clear it from the filter
                 slot.putStack(null);
             } else if (index >= INV_START) {
                 // shift-clicking in player inventory: copy it into the filter (if not already present)
                 // but don't remove it from player inventory
                 int freeSlot;
-                for (freeSlot = 0; freeSlot < N_FILTER_SLOTS; freeSlot++) {
+                for (freeSlot = 0; freeSlot < Filter.FILTER_SIZE; freeSlot++) {
                     ItemStack stack0 = filterHandler.getStackInSlot(freeSlot);
                     if (stack0 == null || stack0.stackSize == 0 || stack0.isItemEqual(stack)) {
                         break;
                     }
                 }
-                if (freeSlot < N_FILTER_SLOTS) {
+                if (freeSlot < Filter.FILTER_SIZE) {
                     Slot s = inventorySlots.get(freeSlot);
                     s.putStack(stack);
                     slot.putStack(stackInSlot);
@@ -96,7 +95,7 @@ public class ModuleContainer extends Container {
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         ModularRouters.logger.debug("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
 
-        if (dragType > 1 && slot < N_FILTER_SLOTS && slot >= 0) {
+        if (dragType > 1 && slot < Filter.FILTER_SIZE && slot >= 0) {
             // no dragging items over the filter
             return null;
         }
@@ -108,7 +107,7 @@ public class ModuleContainer extends Container {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
-                if (slot < N_FILTER_SLOTS && slot >= 0) {
+                if (slot < Filter.FILTER_SIZE && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
                     if (player.inventory.getItemStack() != null) {
                         ItemStack stack1 = player.inventory.getItemStack().copy();
@@ -120,7 +119,7 @@ public class ModuleContainer extends Container {
                     return null;
                 }
             case THROW:
-                if (slot < N_FILTER_SLOTS && slot >= 0) {
+                if (slot < Filter.FILTER_SIZE && slot >= 0) {
                     return null;
                 }
         }

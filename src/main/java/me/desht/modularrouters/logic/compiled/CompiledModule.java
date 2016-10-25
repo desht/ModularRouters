@@ -3,9 +3,9 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
@@ -26,11 +26,11 @@ public abstract class CompiledModule {
             throw new IllegalArgumentException("expected module router module, got " + stack);
         }
 
-        filter = new Filter(stack);
         module = ItemModule.getModule(stack);
         direction = module.getDirectionFromNBT(stack);
-        termination = module.terminates(stack);
         target = setupTarget(router, stack);
+        filter = new Filter(target, stack);
+        termination = module.terminates(stack);
         behaviour = module.getRedstoneBehaviour(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
     }

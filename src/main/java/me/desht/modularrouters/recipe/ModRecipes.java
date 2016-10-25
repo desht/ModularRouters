@@ -7,6 +7,7 @@ import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -34,6 +35,10 @@ public class ModRecipes {
                 'p', Items.PAPER, 'd', Items.DIAMOND, 'n', Items.GOLD_NUGGET);
         for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
             GameRegistry.addRecipe(ItemUpgrade.getUpgrade(type).getRecipe());
+        }
+
+        for (ItemSmartFilter.FilterType type : ItemSmartFilter.FilterType.values()) {
+            GameRegistry.addRecipe(ItemSmartFilter.getFilter(type).getRecipe());
         }
 
         RecipeSorter.register(ModularRouters.modId + ":enchantBreaker", EnchantBreakerModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");

@@ -3,7 +3,6 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -32,16 +31,12 @@ public class RouterSettingsMessage implements IMessage {
     @Override
     public void fromBytes(ByteBuf byteBuf) {
         BlockPos pos = new BlockPos(byteBuf.readInt(), byteBuf.readInt(), byteBuf.readInt());
-        WorldServer w = DimensionManager.getWorld(byteBuf.readInt());
-
-        if (w != null) {
-            TileEntity te = w.getTileEntity(pos);
-            if (te instanceof TileEntityItemRouter) {
-                router = (TileEntityItemRouter) te;
-                rrb = RouterRedstoneBehaviour.values()[byteBuf.readByte()];
-                eco = byteBuf.readBoolean();
-            }
+        WorldServer world = DimensionManager.getWorld(byteBuf.readInt());
+        if (world != null) {
+            router = TileEntityItemRouter.getRouterAt(world, pos);
         }
+        rrb = RouterRedstoneBehaviour.values()[byteBuf.readByte()];
+        eco = byteBuf.readBoolean();
     }
 
     @Override

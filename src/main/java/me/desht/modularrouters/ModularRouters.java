@@ -3,7 +3,7 @@ package me.desht.modularrouters;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.gui.GuiProxy;
+import me.desht.modularrouters.gui.GuiHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
@@ -12,6 +12,7 @@ import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
 import me.desht.modularrouters.sound.ModSounds;
+import me.desht.modularrouters.util.ModNameCache;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -43,6 +44,9 @@ public class ModularRouters {
     public static final int GUI_MODULE_HELD_OFF = modGuiIndex++;
     public static final int GUI_ROUTER = modGuiIndex++;
     public static final int GUI_MODULE_INSTALLED = modGuiIndex++;
+    public static final int GUI_FILTER_HELD_MAIN = modGuiIndex++;
+    public static final int GUI_FILTER_HELD_OFF = modGuiIndex++;
+    public static final int GUI_FILTER_INSTALLED = modGuiIndex++;
 
     @CapabilityInject(IItemHandler.class)
     public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
@@ -71,7 +75,7 @@ public class ModularRouters {
     public void init(FMLInitializationEvent event) {
         proxy.init();
         ModRecipes.init();
-        NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
         MinecraftForge.EVENT_BUS.register(CamouflageUpgrade.Interacted.class);
         IntegrationHandler.registerWaila();
@@ -81,15 +85,17 @@ public class ModularRouters {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+        ModNameCache.init();
     }
 
     private void setupNetwork() {
         int d = 0;
         network = NetworkRegistry.INSTANCE.newSimpleChannel(ModularRouters.modId);
-        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
         network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(FilterSettingsMessage.Handler.class, FilterSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(OpenGuiMessage.Handler.class, OpenGuiMessage.class, d++, Side.SERVER);
         network.registerMessage(ParticleBeamMessage.Handler.class, ParticleBeamMessage.class, d++, Side.CLIENT);
-        network.registerMessage(ModuleConfigMessage.Handler.class, ModuleConfigMessage.class, d++, Side.SERVER);
-        network.registerMessage(ReopenRouterMessage.Handler.class, ReopenRouterMessage.class, d++, Side.SERVER);
+        network.registerMessage(GuiSyncMessage.Handler.class, GuiSyncMessage.class, d++, Side.CLIENT);
     }
 }

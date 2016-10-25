@@ -7,7 +7,6 @@ import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 

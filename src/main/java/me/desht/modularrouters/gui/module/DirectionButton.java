@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui;
+package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.gui.widgets.RadioButton;
 import me.desht.modularrouters.item.module.Module;

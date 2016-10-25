@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item;
 
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -11,6 +12,7 @@ public class ModItems {
     public static ItemBase blankUpgrade;
     public static ItemUpgrade upgrade;
     public static ItemBase overrideCard;
+    public static ItemSmartFilter smartFilter;
 
     public static void init() {
         blankModule = register(new ItemBase("blankModule"));
@@ -18,6 +20,7 @@ public class ModItems {
         blankUpgrade = register(new ItemBase("blankUpgrade"));
         upgrade = register(new ItemUpgrade(), ItemUpgrade.SUBTYPES);
         overrideCard = register(new ItemBase("overrideCard"));
+        smartFilter = register(new ItemSmartFilter(), ItemSmartFilter.SUBTYPES);
     }
 
     private static <T extends Item> T register(T item) {

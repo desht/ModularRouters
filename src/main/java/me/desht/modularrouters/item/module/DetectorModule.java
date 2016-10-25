@@ -1,8 +1,8 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.gui.GuiModule;
-import me.desht.modularrouters.gui.GuiModuleDetector;
+import me.desht.modularrouters.gui.module.GuiModule;
+import me.desht.modularrouters.gui.module.GuiModuleDetector;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;

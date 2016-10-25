@@ -1,8 +1,8 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.gui.GuiModule;
-import me.desht.modularrouters.gui.GuiModuleFlinger;
+import me.desht.modularrouters.gui.module.GuiModule;
+import me.desht.modularrouters.gui.module.GuiModuleFlinger;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;

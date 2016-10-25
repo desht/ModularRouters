@@ -24,6 +24,9 @@ item.securityUpgrade.name=Security Upgrade
 item.camouflageUpgrade.name=Camouflage Upgrade
 item.overrideCard.name=Security Override Card
 item.GuideBook.name=§l§nModular Routers
+item.bulkitemFilter.name=Bulk Item Filter
+item.modFilter.name=Mod Filter
+item.regexFilter.name=Regex Filter
 
 # Blocks
 tile.itemRouter.name=Item Router
@@ -62,6 +65,10 @@ guiText.tooltip.flinger.pitch=§bPitch (-90.0 → 90.0)
 guiText.tooltip.flinger.yaw=§bYaw (-60.0 → 60.0)
 guiText.tooltip.flinger.common=Type a value, use §eCursor Up/Down§r, or mouse wheel to adjust.\n§fHold §eShift§r for fine adjustment\n§fHold §eCtrl§r for coarse adjustment
 guiText.tooltip.detectorHint=Type a redstone signal level, use §eCursor Up/Down§r, or mouse wheel to adjust.\n§fUse toggle button to emit a weak or strong signal.
+guiText.tooltip.clearFilter=Clear Filter
+guiText.tooltip.loadFilter=Load Filter\n from §e%s§r @ %s\n§oExisting filter contents will be overwritten!
+guiText.tooltip.mergeFilter=Merge Filter\n from §e%s§r @ %s
+guiText.tooltip.removeFilterHint=§7§oSneak + Left-Click: remove item from filter
 guiText.label.direction=Direction
 guiText.label.modules=Modules
 guiText.label.upgrades=Upgrades
@@ -73,6 +80,7 @@ guiText.label.playerSect.MAIN=Main
 guiText.label.playerSect.ARMOR=Armor
 guiText.label.playerSect.OFFHAND=Offhand
 guiText.label.playerSect.ENDER=Ender
+guiText.label.regexError=Invalid regular expression
 
 # Config GUI
 gui.config.mainTitle=Modular Routers Configuration
@@ -122,6 +130,9 @@ itemText.misc.strongSignal.false=Weak
 itemText.misc.strongSignal.true=Strong
 itemText.misc.flingerDetails=§eSpeed: §b%f§f | §ePitch: §b%f§f | §eYaw: §b%f
 itemText.misc.operation=Operation
+itemText.misc.bulkItemFilter.count=%d item(s) in filter
+itemText.misc.regexFilter.count=%d regex(es) in filter
+itemText.misc.modFilter.count=%d mod(s) in filter
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=§eOwner: §b%s
 itemText.camouflage.held=§eCamouflage as: §b%s
@@ -151,9 +162,13 @@ itemText.usage.item.stackUpgrade=Increases the number of items processed per rou
 itemText.usage.item.speedUpgrade=Increases the router tick rate.\n• Router will tick every %.02f sec\n• Max. useful upgrades: %d
 itemText.usage.item.rangeUpgrade=Extends the range of these modules: %s
 itemText.usage.item.camouflageUpgrade=Makes the router look like another block.\n• Sneak + Right-click a solid block to copy its appearance onto the upgrade.
+itemText.usage.item.bulkitemFilter=High-capacity, high-performance filter for large numbers of items;\ncan not filter by NBT data, however.\nInsert into a router module like any other item.\n• Sneak + Right-click any inventory to merge contents into filter.\n• Right-click to examine/configure.
+itemText.usage.item.regexFilter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click to view/configure.
+itemText.usage.item.modFilter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click to view/configure.
 
 # Player chat messages
 chatText.misc.targetSet=Target set: %s
+chatText.misc.inventoryMerged=Merged %d item(s) into the %s
 chatText.security.accessDenied=§c--[Access Denied]--
 chatText.security.ADDED=Added player [%s]
 chatText.security.REMOVED=Removed player [%s]

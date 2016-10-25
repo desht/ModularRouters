@@ -170,6 +170,6 @@ public abstract class TargetedModule extends Module {
         OK,
         OUT_OF_RANGE,
         NOT_LOADED,
-        NOT_INVENTORY;
+        NOT_INVENTORY
     }
 }

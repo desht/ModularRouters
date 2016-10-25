@@ -1,8 +1,8 @@
-package me.desht.modularrouters.gui;
+package me.desht.modularrouters.gui.module;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.container.ModuleContainer;
-import me.desht.modularrouters.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.gui.widgets.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.TextFieldWidget;
 import me.desht.modularrouters.gui.widgets.TexturedButton;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
@@ -50,23 +50,25 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_BASE + 1, guiLeft + 130, guiTop + 33, 16, 16, "pitch"));
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_BASE + 2, guiLeft + 130, guiTop + 51, 16, 16, "yaw"));
 
-        FloatField t1 = new FloatField(this, FIELD_SPEED, fontRendererObj, guiLeft + 148, guiTop + 17, 35, 12, 0.0f, 20.0f);
+        TextFieldManager manager = getTextFieldManager().clear();
+
+        FloatField t1 = new FloatField(manager, FIELD_SPEED, fontRendererObj, guiLeft + 148, guiTop + 17, 35, 12, 0.0f, 20.0f);
         t1.setText(Float.toString(speed));
         t1.setGuiResponder(this);
         t1.setIncr(0.1f, 1.0f, 10.0f);
-        addTextField(t1);
+        manager.addTextField(t1);
 
-        FloatField t2 = new FloatField(this, FIELD_PITCH, fontRendererObj, guiLeft + 148, guiTop + 35, 35, 12, -90.0f, 90.0f);
+        FloatField t2 = new FloatField(manager, FIELD_PITCH, fontRendererObj, guiLeft + 148, guiTop + 35, 35, 12, -90.0f, 90.0f);
         t2.setText(Float.toString(pitch));
         t2.setGuiResponder(this);
-        addTextField(t2);
+        manager.addTextField(t2);
 
-        FloatField t3 = new FloatField(this, FIELD_YAW, fontRendererObj, guiLeft + 148, guiTop + 53, 35, 12, -60.0f, 60.0f);
+        FloatField t3 = new FloatField(manager, FIELD_YAW, fontRendererObj, guiLeft + 148, guiTop + 53, 35, 12, -60.0f, 60.0f);
         t3.setText(Float.toString(yaw));
         t3.setGuiResponder(this);
-        addTextField(t3);
+        manager.addTextField(t3);
 
-        focus(FIELD_SPEED);
+        manager.focus(FIELD_SPEED);
     }
 
     @Override
@@ -140,7 +142,7 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
         private float fine = 0.1f;
         private float coarse = 5.0f;
 
-        public FloatField(GuiContainerBase parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
+        public FloatField(TextFieldManager parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
             super(parent, componentId, fontrendererObj, x, y, par5Width, par6Height);
             this.min = min;
             this.max = max;

@@ -3,6 +3,9 @@ package me.desht.modularrouters.logic.filter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.SmartFilter;
+import me.desht.modularrouters.logic.RouterTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import net.minecraft.item.ItemStack;
@@ -14,6 +17,10 @@ import org.apache.commons.lang3.Validate;
 import java.util.List;
 
 public class Filter {
+    public static final int FILTER_SIZE = 9;
+
+    public static final String NBT_FILTER = "ModuleFilter";
+
     private final Flags flags;
     private final List<IItemMatcher> matchers = Lists.newArrayList();
 
@@ -21,23 +28,28 @@ public class Filter {
         flags = new Flags();
     }
 
-    public Filter(ItemStack moduleStack) {
+    public Filter(RouterTarget target, ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule) {
             flags = new Flags(moduleStack);
             // it's safe to assume that the module actually has NBT data at this point...
-            NBTTagList tagList = moduleStack.getTagCompound().getTagList("ModuleFilter", Constants.NBT.TAG_COMPOUND);
+            NBTTagList tagList = moduleStack.getTagCompound().getTagList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
                 ItemStack filterStack = ItemStack.loadItemStackFromNBT(tagCompound);
-                matchers.add(createMatcher(filterStack));
+                matchers.add(createMatcher(filterStack, moduleStack, target));
             }
         } else {
             flags = new Flags();
         }
     }
 
-    private IItemMatcher createMatcher(ItemStack stack) {
-        return new SimpleItemMatcher(stack);
+    private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack, RouterTarget target) {
+        if (filterStack.getItem() instanceof ItemSmartFilter) {
+            SmartFilter f = ItemSmartFilter.getFilter(filterStack);
+            return f.compile(filterStack, moduleStack, target);
+        } else {
+            return new SimpleItemMatcher(filterStack);
+        }
     }
 
     public boolean pass(ItemStack stack) {

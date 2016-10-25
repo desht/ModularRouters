@@ -5,26 +5,17 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.BlockUtil;
-import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.world.BlockEvent;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CompiledBreakerModule extends CompiledModule {
     private final boolean silkTouch;

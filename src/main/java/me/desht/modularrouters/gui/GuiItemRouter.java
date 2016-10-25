@@ -7,9 +7,8 @@ import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.network.ModuleConfigMessage;
+import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -37,14 +36,14 @@ public class GuiItemRouter extends GuiContainerBase {
     private static final int ECO_BUTTON_ID = 2;
 
     public final TileEntityItemRouter router;
-    private final InventoryPlayer inventoryPlayer;
+//    private final InventoryPlayer inventoryPlayer;
 
     public GuiItemRouter(InventoryPlayer inventoryPlayer, TileEntityItemRouter router) {
         super(new ItemRouterContainer(inventoryPlayer, router));
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
         this.router = router;
-        this.inventoryPlayer = inventoryPlayer;
+//        this.inventoryPlayer = inventoryPlayer;
     }
 
     @Override
@@ -88,7 +87,7 @@ public class GuiItemRouter extends GuiContainerBase {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i1) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
+        mc.getTextureManager().bindTexture(textureLocation);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
@@ -102,8 +101,9 @@ public class GuiItemRouter extends GuiContainerBase {
             Slot slot = getSlotUnderMouse();
             if (slot != null && slot.slotNumber >= MODULE_START && slot.slotNumber < MODULE_END
                     && slot.getHasStack() && slot.getStack().getItem() instanceof ItemModule) {
-                ModularRouters.network.sendToServer(new ModuleConfigMessage(router.getPos(), slot.getSlotIndex()));
-                router.playerConfiguringModule(inventoryPlayer.player, slot.getSlotIndex());
+//                ModularRouters.network.sendToServer(new ModuleConfigMessage(router.getPos(), slot.getSlotIndex()));
+                ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), slot.getSlotIndex()));
+                router.playerConfiguringModule(mc.thePlayer, slot.getSlotIndex());
                 return;
             }
         }

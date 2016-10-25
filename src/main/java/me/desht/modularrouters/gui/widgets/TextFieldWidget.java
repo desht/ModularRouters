@@ -4,9 +4,9 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
 
 public class TextFieldWidget extends GuiTextField {
-    private final GuiContainerBase parent;
+    private final TextFieldManager parent;
 
-    public TextFieldWidget(GuiContainerBase parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
+    public TextFieldWidget(TextFieldManager parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
         super(componentId, fontrendererObj, x, y, par5Width, par6Height);
         this.parent = parent;
     }

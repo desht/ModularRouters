@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.SenderModule2;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.RouterTarget;

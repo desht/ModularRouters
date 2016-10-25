@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui;
+package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;

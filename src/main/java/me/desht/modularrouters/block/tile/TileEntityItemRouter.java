@@ -3,7 +3,6 @@ package me.desht.modularrouters.block.tile;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
@@ -28,12 +27,14 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,7 +55,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private final ItemStackHandler bufferHandler = new ItemStackHandler(1) {
         @Override
         public void onContentsChanged(int slot) {
-            worldObj.updateComparatorOutputLevel(pos, getBlockType());
+            markDirty();
         }
     };
     private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
@@ -78,7 +79,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     // when a player wants to configure an installed module, this tracks the slot
     // number received from the client-side GUI for that player
-    private final Map<UUID, Integer> playerToSlot = new HashMap<>();
+    private final Map<UUID, Pair<Integer, Integer>> playerToSlot = new HashMap<>();
 
     private int redstonePower = -1;  // current redstone power (updated via onNeighborChange())
     private int lastPower;  // tracks previous redstone power level for pulse mode
@@ -169,11 +170,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     @Override
     public <T> T getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (side == null) {
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(joined);
-            } else {
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(bufferHandler);
-            }
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(bufferHandler);
         }
         return super.getCapability(cap, side);
     }
@@ -403,6 +400,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
         }
 
+        if (recompileNeeded != 0) markDirty();
+
         recompileNeeded = 0;
     }
 
@@ -456,21 +455,34 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return bufferHandler.getStackInSlot(0);
     }
 
-    public void playerConfiguringModule(EntityPlayer player, int slotIndex) {
+
+    public void playerConfiguringModule(EntityPlayer player, int slotIndex, int filterIndex) {
         if (slotIndex >= 0) {
-            playerToSlot.put(player.getUniqueID(), slotIndex);
+            playerToSlot.put(player.getUniqueID(), Pair.of(slotIndex, filterIndex));
         } else {
             playerToSlot.remove(player.getUniqueID());
         }
+    }
+
+    public void playerConfiguringModule(EntityPlayer player, int slotIndex) {
+        playerConfiguringModule(player, slotIndex, -1);
     }
 
     public void clearConfigSlot(EntityPlayer player) {
         playerToSlot.remove(player.getUniqueID());
     }
 
-    public int getConfigSlot(EntityPlayer player) {
+    public int getModuleConfigSlot(EntityPlayer player) {
         if (playerToSlot.containsKey(player.getUniqueID())) {
-            return playerToSlot.get(player.getUniqueID());
+            return playerToSlot.get(player.getUniqueID()).getLeft();
+        } else {
+            return -1;
+        }
+    }
+
+    public int getFilterConfigSlot(EntityPlayer player) {
+        if (playerToSlot.containsKey(player.getUniqueID())) {
+            return playerToSlot.get(player.getUniqueID()).getRight();
         } else {
             return -1;
         }
@@ -533,9 +545,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         } else {
             for (EnumFacing facing : EnumFacing.values()) {
                 int i = facing.ordinal();
-                // if the signal type (strong/weak) has changed, notify neighbours of block in that direction
+                // if the signal op (strong/weak) has changed, notify neighbours of block in that direction
                 // if the signal strength has changed, notify immediate neighbours
-                //   - and if signal type is strong, also notify neighbours of neighbour
+                //   - and if signal op is strong, also notify neighbours of neighbour
                 if (newSignalType[i] != signalType[i]) {
                     toNotify.add(facing.getOpposite());
                     signalType[i] = newSignalType[i];
@@ -616,6 +628,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             extData = new NBTTagCompound();
         }
         return extData;
+    }
+
+    public static TileEntityItemRouter getRouterAt(IBlockAccess world, BlockPos routerPos) {
+        TileEntity te = world.getTileEntity(routerPos);
+        return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////

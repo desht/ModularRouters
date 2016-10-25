@@ -8,17 +8,15 @@ import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +25,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SecurityUpgrade extends Upgrade {
+    public static final String NBT_PLAYERS = "Players";
+
     @Override
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         list.add(I18n.format("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
@@ -63,11 +63,11 @@ public class SecurityUpgrade extends Upgrade {
         }
 
         Set<UUID> res = Sets.newHashSet();
-        NBTTagList o = compound.getTagList("Owner", Constants.NBT.TAG_STRING);
-        res.add(UUID.fromString(o.getStringTagAt(1)));
+        Pair<String, UUID> owner = ItemModule.getOwnerNameAndId(stack);
+        res.add(owner.getRight());
 
-        if (compound.hasKey("Players")) {
-            NBTTagCompound p = compound.getCompoundTag("Players");
+        if (compound.hasKey(NBT_PLAYERS)) {
+            NBTTagCompound p = compound.getCompoundTag(NBT_PLAYERS);
             res.addAll(p.getKeySet().stream().map(UUID::fromString).collect(Collectors.toList()));
         }
         return res;
@@ -80,12 +80,8 @@ public class SecurityUpgrade extends Upgrade {
      * @return (displayable) owner name
      */
     public String getOwnerName(ItemStack stack) {
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) {
-            return "???"; // shouldn't ever happen
-        }
-        NBTTagList o = compound.getTagList("Owner", Constants.NBT.TAG_STRING);
-        return o.getStringTagAt(0);
+        Pair<String, UUID> owner = ItemModule.getOwnerNameAndId(stack);
+        return owner.getLeft().isEmpty() ? "???" : owner.getLeft();
     }
 
     /**
@@ -96,8 +92,8 @@ public class SecurityUpgrade extends Upgrade {
      */
     public Set<String> getPlayerNames(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null && compound.hasKey("Players")) {
-            NBTTagCompound p = compound.getCompoundTag("Players");
+        if (compound != null && compound.hasKey(NBT_PLAYERS)) {
+            NBTTagCompound p = compound.getCompoundTag(NBT_PLAYERS);
             return Sets.newHashSet(p.getKeySet().stream().map(p::getString).sorted().collect(Collectors.toList()));
         } else {
             return Collections.emptySet();
@@ -115,10 +111,10 @@ public class SecurityUpgrade extends Upgrade {
     public Interacted.Result addPlayer(ItemStack stack, String id, String name) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
-            if (!compound.hasKey("Players")) {
-                compound.setTag("Players", new NBTTagCompound());
+            if (!compound.hasKey(NBT_PLAYERS)) {
+                compound.setTag(NBT_PLAYERS, new NBTTagCompound());
             }
-            NBTTagCompound p = compound.getCompoundTag("Players");
+            NBTTagCompound p = compound.getCompoundTag(NBT_PLAYERS);
             if (p.hasKey(id)) {
                 return Interacted.Result.ALREADY_ADDED;  // already there, do nothing
             }
@@ -134,10 +130,10 @@ public class SecurityUpgrade extends Upgrade {
     private Interacted.Result removePlayer(ItemStack stack, String id) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
-            if (!compound.hasKey("Players")) {
-                compound.setTag("Players", new NBTTagCompound());
+            if (!compound.hasKey(NBT_PLAYERS)) {
+                compound.setTag(NBT_PLAYERS, new NBTTagCompound());
             }
-            NBTTagCompound p = compound.getCompoundTag("Players");
+            NBTTagCompound p = compound.getCompoundTag(NBT_PLAYERS);
             if (p.hasKey(id)) {
                 p.removeTag(id);
                 return Interacted.Result.REMOVED;

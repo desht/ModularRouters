@@ -4,19 +4,10 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.BlockUtil;
-import me.desht.modularrouters.util.FakePlayer;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class CompiledPlacerModule extends CompiledModule {
     public CompiledPlacerModule(TileEntityItemRouter router, ItemStack stack) {

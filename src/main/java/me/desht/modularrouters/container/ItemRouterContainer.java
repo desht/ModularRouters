@@ -106,7 +106,7 @@ public class ItemRouterContainer extends Container {
                 return null;
             }
         } else {
-            System.err.print("Invalid slotIndex:" + sourceSlotIndex);
+            System.err.print("Invalid moduleSlotIndex:" + sourceSlotIndex);
             return null;
         }
 

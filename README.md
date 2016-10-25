@@ -25,5 +25,5 @@ I am hereby stating that code in the ``me.desht.modularrouters.client.fx`` packa
 
 This project includes the following free sound files:
 
-* http://freesound.org/people/GabrielAraujo/sounds/242501/
+* http://freesound.org/people/Scrampunk/sounds/345297/
 * http://freesound.org/people/Autistic%20Lucario/sounds/142608/

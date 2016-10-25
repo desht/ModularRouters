@@ -7,7 +7,7 @@ import net.minecraft.client.resources.I18n;
 import java.util.Collections;
 
 public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstoneBehaviour> {
-    RedstoneBehaviourButton(int buttonId, int x, int y, int width, int height, RouterRedstoneBehaviour initialVal) {
+    public RedstoneBehaviourButton(int buttonId, int x, int y, int width, int height, RouterRedstoneBehaviour initialVal) {
         super(buttonId, x, y, width, height, initialVal);
     }
 

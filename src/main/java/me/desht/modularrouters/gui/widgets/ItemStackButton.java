@@ -15,6 +15,10 @@ public class ItemStackButton extends TexturedButton {
         this.flat = flat;
     }
 
+    public ItemStack getRenderStack() {
+        return renderStack;
+    }
+
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         mc.getTextureManager().bindTexture(resourceLocation);
