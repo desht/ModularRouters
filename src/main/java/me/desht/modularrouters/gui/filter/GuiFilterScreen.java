@@ -30,7 +30,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if ((keyCode == Keyboard.KEY_ESCAPE || keyCode == Keyboard.KEY_E)) {
+        if (keyCode == Keyboard.KEY_ESCAPE || (keyCode == Keyboard.KEY_E) && (!hasTextFieldManager() || !getTextFieldManager().isFocused())) {
             // Intercept ESC/E and immediately reopen the previous GUI, if any
             if (closeGUI()) return;
         }

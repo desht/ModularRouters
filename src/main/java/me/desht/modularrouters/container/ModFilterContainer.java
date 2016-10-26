@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -18,14 +19,14 @@ public class ModFilterContainer extends FilterContainer {
     private static final int PLAYER_INV_Y = 162;
     private static final int PLAYER_HOTBAR_Y = 220;
 
-    public final ItemStackHandler handler;
+    public final IItemHandlerModifiable handler;
     public final ItemStack filterStack;
 
     public ModFilterContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
         super(player, filterStack, router);
         this.filterStack = filterStack;
 
-        handler = new ItemStackHandler(1);
+        handler = new GhostItemHandler(1);
 
         // slot for the ghost item
         addSlotToContainer(new SlotItemHandler(handler, 0, 7, 19));

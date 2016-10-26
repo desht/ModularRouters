@@ -29,9 +29,8 @@ public class Filter {
     }
 
     public Filter(RouterTarget target, ItemStack moduleStack) {
-        if (moduleStack.getItem() instanceof ItemModule) {
+        if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTagCompound()) {
             flags = new Flags(moduleStack);
-            // it's safe to assume that the module actually has NBT data at this point...
             NBTTagList tagList = moduleStack.getTagCompound().getTagList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);

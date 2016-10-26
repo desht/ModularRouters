@@ -55,10 +55,16 @@ public class ModuleSettingsMessage extends BaseSettingsMessage {
                 // get the new setting into the module item, which could either be held by the player
                 // or installed in an item router
                 EntityPlayer player = ctx.getServerHandler().playerEntity;
-                TileEntityItemRouter router = msg.routerPos == null ? null : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), msg.routerPos);
-                ItemStack moduleStack = router == null ?
-                        player.getHeldItem(msg.hand) :
-                        router.getModules().getStackInSlot(msg.moduleSlotIndex);
+                ItemStack moduleStack = null;
+                if (msg.routerPos != null) {
+                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), msg.routerPos);
+                    if (router != null) {
+                        moduleStack = router.getModules().getStackInSlot(msg.moduleSlotIndex);
+                        router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+                    }
+                } else if (msg.hand != null) {
+                    moduleStack = player.getHeldItem(msg.hand);
+                }
                 if (ItemModule.getModule(moduleStack) != null) {
                     NBTTagCompound compound = moduleStack.getTagCompound();
                     if (compound != null) {
@@ -73,7 +79,7 @@ public class ModuleSettingsMessage extends BaseSettingsMessage {
                         }
                     }
                 } else {
-                    ModularRouters.logger.warn("player not holding expected item router module!  ignoring attempt to change settings");
+                    ModularRouters.logger.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName() + " - expected module not found");
                 }
 
             });

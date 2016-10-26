@@ -18,7 +18,7 @@ public class ModelBakeEventHandler {
                 = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(ModBlocks.itemRouter);
         for (Map.Entry<IBlockState,ModelResourceLocation> entry : map.entrySet()) {
             Object object = event.getModelRegistry().getObject(entry.getValue());
-            if (object instanceof IBakedModel) {
+            if (object != null) {
                 IBakedModel existing = (IBakedModel) object;
                 RouterModel customModel = new RouterModel(existing);
                 event.getModelRegistry().putObject(entry.getValue(), customModel);

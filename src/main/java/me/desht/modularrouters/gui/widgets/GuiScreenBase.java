@@ -14,6 +14,10 @@ public abstract class GuiScreenBase extends GuiScreen {
         return textFieldManager;
     }
 
+    protected boolean hasTextFieldManager() {
+        return textFieldManager != null;
+    }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);

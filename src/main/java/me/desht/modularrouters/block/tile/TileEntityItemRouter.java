@@ -1,7 +1,6 @@
 package me.desht.modularrouters.block.tile;
 
 import com.google.common.collect.Sets;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.ModItems;
@@ -33,7 +32,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -60,8 +58,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     };
     private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
     private final ItemStackHandler upgradesHandler = new RouterItemHandler.UpgradeHandler(this);
-
-    private final CombinedInvWrapper joined = new CombinedInvWrapper(bufferHandler, modulesHandler, upgradesHandler);
 
     private final List<CompiledModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
@@ -363,7 +359,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         // modules
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
             setHasPulsedModules(false);
-            ModularRouters.logger.debug("recompiling modules for item router @ " + pos);
             byte newSidesOpen = 0;
             for (CompiledModule cm : compiledModules) {
                 cm.cleanup(this);
@@ -383,7 +378,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
 
         if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
-            ModularRouters.logger.debug("recompiling upgrades for item router @ " + pos);
             Arrays.fill(upgradeCount, 0);
             permitted.clear();
             setCamouflage(null);

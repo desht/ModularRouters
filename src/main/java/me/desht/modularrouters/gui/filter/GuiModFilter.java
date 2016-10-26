@@ -14,6 +14,7 @@ import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
@@ -40,9 +41,9 @@ public class GuiModFilter extends GuiContainerBase {
     private final int filterSlotIndex;
     private final EnumHand hand;
     private final ItemStack filterStack;
-
     private final List<String> mods = Lists.newArrayList();
 
+    private ItemStack prevInSlot = null;
     private String modId = "";
     private String modName = "";
 
@@ -96,12 +97,13 @@ public class GuiModFilter extends GuiContainerBase {
         super.updateScreen();
 
         ItemStack inSlot = inventorySlots.getInventory().get(0);
-        if (inSlot != null && modId.isEmpty()) {
+        if (inSlot == null && prevInSlot != null) {
+            modId = modName = "";
+        } else if (inSlot != null && (prevInSlot == null || !inSlot.isItemEqualIgnoreDurability(prevInSlot))) {
             modId = inSlot.getItem().getRegistryName().getResourceDomain();
             modName = ModNameCache.getModName(modId);
-        } else if (inSlot == null && !modId.isEmpty()) {
-            modId = modName = "";
         }
+        prevInSlot = inSlot;
     }
 
     @Override

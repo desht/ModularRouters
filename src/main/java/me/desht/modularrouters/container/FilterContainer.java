@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 
 public abstract class FilterContainer extends Container {
     public FilterContainer(EntityPlayer player, ItemStack stack, TileEntityItemRouter router) {
-
     }
 
     @Override

@@ -104,7 +104,7 @@ public class TextFieldManager {
         focus(field);
     }
 
-    protected boolean isFocused() {
+    public boolean isFocused() {
         return focusedField >= 0;
     }
 

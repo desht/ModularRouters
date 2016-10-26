@@ -81,7 +81,7 @@ public abstract class CompiledModule {
 
     /**
      * Get the last position where we found a match.  Caching this can help reduce the amount of inventory searching
-     * needed.
+     * needed for some modules.
      *
      * @param offset offset from the last saved position
      * @param size size of the inventory being searched
@@ -102,6 +102,14 @@ public abstract class CompiledModule {
         this.lastMatchPos = lastMatchPos;
     }
 
+    /**
+     * Default target for this module is the block adjacent to the router, in the module's
+     * configured direction.  Can be overridden, though.
+     *
+     * @param router router in which the module is installed
+     * @param stack the module itemstack
+     * @return a router target object
+     */
     protected RouterTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
         if (router == null) {
             return null;
