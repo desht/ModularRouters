@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ public class RegexMatcher implements IItemMatcher {
 
         for (String r : regex) {
             try {
-                // TODO case sensitivity configurable
+                // TODO case sensitivity configurable?
                 Pattern pat = Pattern.compile(r, Pattern.CASE_INSENSITIVE);
                 patterns.add(pat);
             } catch (PatternSyntaxException e) {
@@ -28,11 +29,10 @@ public class RegexMatcher implements IItemMatcher {
 
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        if (stack == null) {
-            return false;
-        }
+        if (stack == null) return false;
+        String name = TextFormatting.getTextWithoutFormattingCodes(stack.hasDisplayName() ? stack.getDisplayName() : stack.getUnlocalizedName());
         for (Pattern pat : patterns) {
-            if (pat.matcher(stack.getDisplayName()).find()) {
+            if (pat.matcher(name).find()) {
                 return true;
             }
         }
