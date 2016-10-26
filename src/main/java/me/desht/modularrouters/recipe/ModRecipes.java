@@ -12,6 +12,7 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -27,7 +28,8 @@ public class ModRecipes {
                 " r ", "ppp", "nnn",
                 'r', Items.REDSTONE, 'p', Items.PAPER, 'n', Items.GOLD_NUGGET);
         for (ModuleType type : ModuleType.values()) {
-            GameRegistry.addRecipe(ItemModule.getModule(type).getRecipe());
+            IRecipe recipe = ItemModule.getModule(type).getRecipe();
+            if (recipe != null) GameRegistry.addRecipe(recipe);
         }
 
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 6),
@@ -40,6 +42,10 @@ public class ModRecipes {
         for (ItemSmartFilter.FilterType type : ItemSmartFilter.FilterType.values()) {
             GameRegistry.addRecipe(ItemSmartFilter.getFilter(type).getRecipe());
         }
+        // special case for deprecated mod sorter module
+        GameRegistry.addShapelessRecipe(
+                ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.MOD),
+                ItemModule.makeItemStack(ModuleType.MODSORTER));
 
         RecipeSorter.register(ModularRouters.modId + ":enchantBreaker", EnchantBreakerModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
         GameRegistry.addRecipe(new EnchantBreakerModuleRecipe(ItemModule.makeItemStack(ModuleType.BREAKER), ItemModule.makeItemStack(ModuleType.BREAKER), Items.ENCHANTED_BOOK));
