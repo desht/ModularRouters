@@ -51,7 +51,9 @@ public class CompiledExtruderModule extends CompiledModule {
                         InventoryUtils.dropItems(router.getWorld(), pos, excess);
                     }
                 }
-                router.getWorld().playSound(null, pos, SoundEvents.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
+                if (Config.extruderSound) {
+                    router.getWorld().playSound(null, pos, SoundEvents.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
+                }
                 return true;
             }
         }
