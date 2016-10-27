@@ -8,18 +8,18 @@ import net.minecraft.util.math.BlockPos;
  * Represents the blockpos that a module in a particular router has targeted, including the dimension
  * and face of the block where insertion/extraction will occur.
  */
-public class RouterTarget {
+public class ModuleTarget {
     public final int dimId;
     public final BlockPos pos;
     public final EnumFacing face;
 
-    public RouterTarget(int dimId, int x, int y, int z, EnumFacing face) {
+    public ModuleTarget(int dimId, int x, int y, int z, EnumFacing face) {
         this.dimId = dimId;
         this.pos = new BlockPos(x, y, z);
         this.face = face;
     }
 
-    public RouterTarget(int dimension, BlockPos position, EnumFacing face) {
+    public ModuleTarget(int dimension, BlockPos position, EnumFacing face) {
         this(dimension, position.getX(), position.getY(), position.getZ(), face);
     }
 
@@ -33,8 +33,8 @@ public class RouterTarget {
         return ext;
     }
 
-    public static RouterTarget fromNBT(NBTTagCompound nbt) {
-        return new RouterTarget(nbt.getInteger("Dim"),
+    public static ModuleTarget fromNBT(NBTTagCompound nbt) {
+        return new ModuleTarget(nbt.getInteger("Dim"),
                 nbt.getInteger("X"), nbt.getInteger("Y"), nbt.getInteger("Z"),
                 EnumFacing.values()[nbt.getByte("Face")]);
     }

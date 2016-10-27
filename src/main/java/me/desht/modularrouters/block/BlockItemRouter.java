@@ -119,20 +119,20 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        IBlockState camo = getCamoState(state, source, pos);
+        IBlockState camo = getCamoState(source, pos);
         return camo != null ? camo.getBoundingBox(source, pos) : super.getBoundingBox(state, source, pos);
     }
 
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-        IBlockState camo = getCamoState(blockState, worldIn, pos);
+        IBlockState camo = getCamoState(worldIn, pos);
         return camo != null ? camo.getCollisionBoundingBox(worldIn, pos) : super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
-        IBlockState camo = getCamoState(state, worldIn, pos);
+        IBlockState camo = getCamoState(worldIn, pos);
         if (camo != null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, camo.getBoundingBox(worldIn, pos));
         } else {
@@ -150,7 +150,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         return false;
     }
 
-    private IBlockState getCamoState(IBlockState state, IBlockAccess blockAccess, BlockPos pos) {
+    private IBlockState getCamoState(IBlockAccess blockAccess, BlockPos pos) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
         return router != null ? router.getCamouflage() : null;
     }

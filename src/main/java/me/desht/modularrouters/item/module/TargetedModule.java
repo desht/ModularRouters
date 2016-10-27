@@ -5,7 +5,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.fx.Vector3;
 import me.desht.modularrouters.gui.GuiItemRouter;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
@@ -59,7 +59,7 @@ public abstract class TargetedModule extends Module {
     protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(stack, player, list, par4);
 
-        RouterTarget target = getTarget(stack);
+        ModuleTarget target = getTarget(stack);
         if (target != null) {
             list.add(I18n.format("itemText.misc.target", target.dimId, target.pos.getX(), target.pos.getY(), target.pos.getZ(), target.face.getName()));
             if (target.dimId == player.getEntityWorld().provider.getDimension()) {
@@ -107,7 +107,7 @@ public abstract class TargetedModule extends Module {
         stack.setTagCompound(compound);
     }
 
-    public static RouterTarget getTarget(ItemStack stack) {
+    public static ModuleTarget getTarget(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_TARGET)) {
             NBTTagCompound target = compound.getCompoundTag(NBT_TARGET);
@@ -116,7 +116,7 @@ public abstract class TargetedModule extends Module {
             int y = target.getInteger("Y");
             int z = target.getInteger("Z");
             EnumFacing face = EnumFacing.values()[target.getInteger("Face")];
-            return new RouterTarget(dimId, x, y, z, face);
+            return new ModuleTarget(dimId, x, y, z, face);
         } else {
             return null;
         }
@@ -143,8 +143,8 @@ public abstract class TargetedModule extends Module {
         }
         lastSwing.put(player.getUniqueID(), now);
 
-        RouterTarget src = new RouterTarget(world.provider.getDimension(), player.getPosition(), null);
-        RouterTarget target = getTarget(stack);
+        ModuleTarget src = new ModuleTarget(world.provider.getDimension(), player.getPosition(), null);
+        ModuleTarget target = getTarget(stack);
         if (target == null) {
             return false;
         }
@@ -160,10 +160,10 @@ public abstract class TargetedModule extends Module {
         return true;
     }
 
-    public abstract TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget src, RouterTarget dst, boolean validateBlocks);
+    public abstract TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget src, ModuleTarget dst, boolean validateBlocks);
 
-    private TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget dst, boolean validateBlocks) {
-        return validateTarget(router, new RouterTarget(router.getWorld().provider.getDimension(), router.getPos(), null), dst, validateBlocks);
+    private TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget dst, boolean validateBlocks) {
+        return validateTarget(router, new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos(), null), dst, validateBlocks);
     }
 
     enum TargetValidation {

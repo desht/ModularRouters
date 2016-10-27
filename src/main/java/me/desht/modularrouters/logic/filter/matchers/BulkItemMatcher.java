@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.collect.Sets;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.item.Item;
@@ -13,7 +13,7 @@ public class BulkItemMatcher implements IItemMatcher {
     private final Set<Integer> byId = Sets.newHashSet();
     private final Set<Long> byIdAndMeta = Sets.newHashSet();
 
-    public BulkItemMatcher(SetofItemStack stacks, RouterTarget target) {
+    public BulkItemMatcher(SetofItemStack stacks, ModuleTarget target) {
         for (ItemStack stack : stacks) {
             int id = Item.getIdFromItem(stack.getItem());
             byId.add(id);

@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.VacuumModule;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -62,13 +62,13 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public RouterTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    public ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
         if (router == null) {
             return null;
         }
         Module.RelativeDirection dir = getDirection();
         int offset = dir == Module.RelativeDirection.NONE ? 0 : VacuumModule.getVacuumRange(router) + 1;
         EnumFacing facing = router.getAbsoluteFacing(dir);
-        return new RouterTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
+        return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
     }
 }

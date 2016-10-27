@@ -8,7 +8,7 @@ import me.desht.modularrouters.gui.widgets.ItemStackButton;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.util.InventoryUtils;
@@ -46,7 +46,7 @@ public class GuiBulkItemFilter extends GuiFilterScreen {
     private final SetofItemStack stacks;
 
     private int xPos, yPos;
-    private RouterTarget target;
+    private ModuleTarget target;
 
     public GuiBulkItemFilter(ItemStack filterStack, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
         super(filterStack, routerPos, moduleSlotIndex, filterSlotIndex, hand);

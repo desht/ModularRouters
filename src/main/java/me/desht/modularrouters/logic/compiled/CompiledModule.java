@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -14,7 +14,7 @@ public abstract class CompiledModule {
     private final Filter filter;
     private final Module module;
     private final Module.RelativeDirection direction;
-    private final RouterTarget target;
+    private final ModuleTarget target;
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
     private final EnumFacing facing;
@@ -49,7 +49,7 @@ public abstract class CompiledModule {
         return direction;
     }
 
-    public RouterTarget getTarget() {
+    public ModuleTarget getTarget() {
         return target;
     }
 
@@ -110,12 +110,12 @@ public abstract class CompiledModule {
      * @param stack the module itemstack
      * @return a router target object
      */
-    protected RouterTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
         if (router == null) {
             return null;
         }
         EnumFacing facing = router.getAbsoluteFacing(direction);
-        return new RouterTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing), facing.getOpposite());
+        return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing), facing.getOpposite());
     }
 
     /**

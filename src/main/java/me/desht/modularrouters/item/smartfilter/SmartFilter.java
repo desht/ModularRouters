@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.FilterSlot;
 import me.desht.modularrouters.gui.module.GuiModule;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
@@ -64,7 +64,7 @@ public abstract class SmartFilter {
      * @param target
      * @return a new IItemMatcher implementation
      */
-    public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, RouterTarget target);
+    public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target);
 
     public abstract IRecipe getRecipe();
 

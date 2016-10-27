@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.smartfilter;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -39,7 +39,7 @@ public class BulkItemFilter extends SmartFilter {
     private static final int MAX_SIZE = 54;
 
     @Override
-    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, RouterTarget target) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
         return new BulkItemMatcher(getFilterItems(filterStack), target);
     }
 
@@ -175,7 +175,7 @@ public class BulkItemFilter extends SmartFilter {
     }
 
     private IItemHandler getInventory(FilterSettingsMessage msg) {
-        RouterTarget target = RouterTarget.fromNBT(msg.getExtData());
+        ModuleTarget target = ModuleTarget.fromNBT(msg.getExtData());
         World w = DimensionManager.getWorld(target.dimId);
         if (w != null) {
             return InventoryUtils.getInventory(w, target.pos, target.face);

@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
 import net.minecraft.init.Items;
@@ -35,7 +35,7 @@ public class SenderModule2 extends TargetedModule {
     }
 
     @Override
-    public TargetValidation validateTarget(TileEntityItemRouter router, RouterTarget src, RouterTarget dst, boolean validateBlocks) {
+    public TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
         if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(router))) {
             return TargetValidation.OUT_OF_RANGE;
         }

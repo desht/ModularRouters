@@ -5,7 +5,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,7 @@ public class Filter {
         flags = new Flags();
     }
 
-    public Filter(RouterTarget target, ItemStack moduleStack) {
+    public Filter(ModuleTarget target, ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTagCompound()) {
             flags = new Flags(moduleStack);
             NBTTagList tagList = moduleStack.getTagCompound().getTagList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
@@ -42,7 +42,7 @@ public class Filter {
         }
     }
 
-    private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack, RouterTarget target) {
+    private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
         if (filterStack.getItem() instanceof ItemSmartFilter) {
             SmartFilter f = ItemSmartFilter.getFilter(filterStack);
             return f.compile(filterStack, moduleStack, target);

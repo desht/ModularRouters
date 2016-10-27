@@ -3,7 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.SenderModule2;
 import me.desht.modularrouters.item.module.TargetedModule;
-import me.desht.modularrouters.logic.RouterTarget;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
@@ -16,13 +16,13 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     }
 
     @Override
-    protected RouterTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
         return TargetedModule.getTarget(stack);
     }
 
     @Override
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
-        RouterTarget target = getTarget();
+        ModuleTarget target = getTarget();
         if (target == null || !validate(router, target)) {
             return null;
         }
@@ -36,7 +36,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
         return null;
     }
 
-    protected boolean validate(TileEntityItemRouter router, RouterTarget target) {
+    protected boolean validate(TileEntityItemRouter router, ModuleTarget target) {
         return !(isRangeLimited() &&
                 (router.getWorld().provider.getDimension() != target.dimId
                 || router.getPos().distanceSq(target.pos) > SenderModule2.maxDistanceSq(router)));
