@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.module.ExtruderModule;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.init.SoundEvents;
@@ -24,8 +25,7 @@ public class CompiledExtruderModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        // TODO max distance configurable
-        if (router.getRedstonePower() > 0 && !router.isBufferEmpty() && distance < 16) {
+        if (router.getRedstonePower() > 0 && !router.isBufferEmpty() && distance < ExtruderModule.maxDistance(router)) {
             // try to extend
             BlockPos nextPos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);

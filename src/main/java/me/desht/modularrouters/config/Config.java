@@ -36,6 +36,8 @@ public class Config {
         public static final boolean START_WITH_GUIDE = false;
         public static final int ECO_TIMEOUT = 300;
         public static final int LOW_POWER_INTERVAL = 100;
+        public static final int EXTRUDER_BASE_RANGE = 12;
+        public static final int EXTRUDER_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
     }
 
     public static char configKey;
@@ -50,6 +52,8 @@ public class Config {
     public static int sender2MaxRange;
     public static int vacuumBaseRange;
     public static int vacuumMaxRange;
+    public static int extruderBaseRange;
+    public static int extruderMaxRange;
     public static boolean senderParticles;
     public static boolean breakerParticles;
     public static boolean extruderSound;
@@ -138,6 +142,13 @@ public class Config {
                 "Vacuum Module Max Range", 1, Integer.MAX_VALUE);
         propVacuumMaxRange.setLanguageKey("gui.config.vacuumMaxRange");
 
+        Property propExtruderBaseRange = config.get(CATEGORY_NAME_MODULE, "extruderBaseRange", Defaults.EXTRUDER_BASE_RANGE,
+                "Extruder Module Base Range", 1, Integer.MAX_VALUE);
+        propExtruderBaseRange.setLanguageKey("gui.config.extruderBaseRange");
+        Property propExtruderMaxRange = config.get(CATEGORY_NAME_MODULE, "extruderMaxRange", Defaults.EXTRUDER_MAX_RANGE,
+                "Extruder Module Max Range", 1, Integer.MAX_VALUE);
+        propExtruderMaxRange.setLanguageKey("gui.config.extruderMaxRange");
+
         Property propVacuumParticles = config.get(CATEGORY_NAME_MODULE, "vacuumParticles", Defaults.VACUUM_PARTICLES,
                 "Show particles when Vacuum Module absorbs items");
         propVacuumParticles.setLanguageKey("gui.config.vacuumParticles");
@@ -174,6 +185,8 @@ public class Config {
                 propSender2MaxRange,
                 propVacuumBaseRange,
                 propVacuumMaxRange,
+                propExtruderBaseRange,
+                propExtruderMaxRange,
                 propSenderParticles,
                 propVacuumParticles,
                 propPlacerParticles,
@@ -199,6 +212,8 @@ public class Config {
             sender2MaxRange = propSender2MaxRange.getInt();
             vacuumBaseRange = propVacuumBaseRange.getInt();
             vacuumMaxRange = propVacuumMaxRange.getInt();
+            extruderBaseRange = propExtruderBaseRange.getInt();
+            extruderMaxRange = propExtruderMaxRange.getInt();
             senderParticles = propSenderParticles.getBoolean();
             vacuumParticles = propVacuumParticles.getBoolean();
             placerParticles = propPlacerParticles.getBoolean();
@@ -219,6 +234,8 @@ public class Config {
         propSender2MaxRange.set(sender2MaxRange);
         propVacuumBaseRange.set(vacuumBaseRange);
         propVacuumMaxRange.set(vacuumMaxRange);
+        propExtruderBaseRange.set(extruderBaseRange);
+        propExtruderMaxRange.set(extruderMaxRange);
         propSenderParticles.set(senderParticles);
         propVacuumParticles.set(vacuumParticles);
         propPlacerParticles.set(placerParticles);
