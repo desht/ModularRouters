@@ -7,6 +7,7 @@ import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.init.Blocks;
@@ -52,7 +53,10 @@ public class ModRecipes {
 
         RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneUpgradeRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
-            GameRegistry.addRecipe(new RedstoneUpgradeRecipe(ItemModule.makeItemStack(type),
+            ItemStack output = ItemModule.makeItemStack(type);
+            Module.validateNBT(output);
+            RedstoneUpgradeRecipe.addRedstoneNbt(output.getTagCompound());
+            GameRegistry.addRecipe(new RedstoneUpgradeRecipe(output,
                     " R ", "TMT",
                     'R', Items.REDSTONE,
                     'T', Blocks.REDSTONE_TORCH,

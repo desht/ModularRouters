@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public abstract class SmartFilter {
-
     /**
      * Basic information for the module, which is always shown.
      */
@@ -83,7 +82,20 @@ public abstract class SmartFilter {
         return EnumActionResult.PASS;
     }
 
+    /**
+     * Handle a filter settings message received from a client-side GUI by updating the filter itemstack appropriately.
+     *
+     * @param message received message
+     * @param filterStack item stack of the filter that needs to be updated
+     * @return
+     */
     public abstract IMessage dispatchMessage(FilterSettingsMessage message, ItemStack filterStack);
 
+    /**
+     * Get the number of "things" in this filter.
+     *
+     * @param filterStack item stack of the filter
+     * @return the number of "things"
+     */
     public abstract int getSize(ItemStack filterStack);
 }

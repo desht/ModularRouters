@@ -29,10 +29,14 @@ public class RedstoneUpgradeRecipe extends ShapedOreRecipe {
             }
         }
         if (compound != null) {
-            compound.setBoolean(Module.NBT_REDSTONE_ENABLED, true);
-            compound.setString(Module.NBT_REDSTONE_MODE, RouterRedstoneBehaviour.ALWAYS.toString());
+            addRedstoneNbt(compound);
             out.setTagCompound(compound);
         }
         return out;
+    }
+
+    public static void addRedstoneNbt(NBTTagCompound compound) {
+        compound.setBoolean(Module.NBT_REDSTONE_ENABLED, true);
+        compound.setString(Module.NBT_REDSTONE_MODE, RouterRedstoneBehaviour.ALWAYS.toString());
     }
 }
