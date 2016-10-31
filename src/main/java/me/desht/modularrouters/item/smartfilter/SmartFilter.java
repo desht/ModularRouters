@@ -61,7 +61,7 @@ public abstract class SmartFilter {
      *
      * @param filterStack the filter item
      * @param moduleStack the module that the filter is in - may be null
-     * @param target
+     * @param target target of the module when in a router - may be null
      * @return a new IItemMatcher implementation
      */
     public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target);

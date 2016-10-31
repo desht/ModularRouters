@@ -7,6 +7,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -109,7 +110,7 @@ public class FilterGuiFactory {
     private static ItemStack getStackInSlot(ItemStack moduleStack, int filterIdx) {
         NBTTagCompound compound = moduleStack.getTagCompound();
         if (compound != null) {
-            NBTTagList items = compound.getTagList(Filter.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
+            NBTTagList items = compound.getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
             NBTBase b = items.get(filterIdx);
             if (b instanceof NBTTagCompound) {
                 return ItemStack.loadItemStackFromNBT((NBTTagCompound) b);

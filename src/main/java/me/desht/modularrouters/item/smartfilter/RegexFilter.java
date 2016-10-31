@@ -94,7 +94,7 @@ public class RegexFilter extends SmartFilter {
         List<String> l;
         switch (message.getOp()) {
             case ADD_STRING:
-                String regex = message.getExtData().getString("String");
+                String regex = message.getNbtData().getString("String");
                 l = getRegexList(filterStack);
                 if (l.size() < MAX_SIZE) {
                     l.add(regex);
@@ -103,7 +103,7 @@ public class RegexFilter extends SmartFilter {
                 }
                 break;
             case REMOVE_AT:
-                int pos = message.getExtData().getInteger("Pos");
+                int pos = message.getNbtData().getInteger("Pos");
                 l = getRegexList(filterStack);
                 if (pos >= 0 && pos < l.size()) {
                     l.remove(pos);

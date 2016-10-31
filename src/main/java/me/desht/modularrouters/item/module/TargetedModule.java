@@ -9,6 +9,7 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -96,7 +97,7 @@ public abstract class TargetedModule extends Module {
     }
 
     private static void setTarget(ItemStack stack, World world, BlockPos pos, EnumFacing face) {
-        NBTTagCompound compound = validateNBT(stack);
+        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         NBTTagCompound target = new NBTTagCompound();
         target.setInteger("Dimension", world.provider.getDimension());
         target.setInteger("X", pos.getX());

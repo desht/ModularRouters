@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -37,7 +38,7 @@ public class CompiledDetectorModule extends CompiledModule {
     }
 
     private void setupNBT(ItemStack stack) {
-        NBTTagCompound compound = Module.validateNBT(stack);
+        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         if (!compound.hasKey(NBT_SIGNAL_LEVEL)) {
             compound.setInteger(NBT_SIGNAL_LEVEL, 15);
         }

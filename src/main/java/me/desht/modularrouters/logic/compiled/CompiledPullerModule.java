@@ -16,7 +16,7 @@ public class CompiledPullerModule extends CompiledModule {
         if (getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull()) {
             IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
             if (handler != null) {
-                int taken = transferItems(handler, router);
+                int taken = transferToRouter(handler, router);
                 return taken > 0;
             }
         }

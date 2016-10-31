@@ -32,10 +32,10 @@ public class ItemRouterContainer extends Container {
     public static final int TE_FIRST_SLOT = 36;
     private static final int TE_LAST_SLOT = TE_FIRST_SLOT + UPGRADE_SLOT_END;
 
-    private final TileEntityItemRouter itemRouterTE;
+    private final TileEntityItemRouter router;
 
-    public ItemRouterContainer(InventoryPlayer invPlayer, TileEntityItemRouter itemRouterTE) {
-        this.itemRouterTE = itemRouterTE;
+    public ItemRouterContainer(InventoryPlayer invPlayer, TileEntityItemRouter router) {
+        this.router = router;
 
         // player's hotbar
         for (int x = 0; x < 9; x++) {
@@ -52,26 +52,26 @@ public class ItemRouterContainer extends Container {
         }
 
         // item router buffer
-        addSlotToContainer(new SlotItemHandler(itemRouterTE.getBuffer(), BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS) {
+        addSlotToContainer(new SlotItemHandler(router.getBuffer(), BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS) {
             @Override
             public void onSlotChanged() {
-                itemRouterTE.getWorld().updateComparatorOutputLevel(itemRouterTE.getPos(), itemRouterTE.getBlockType());
+                router.getWorld().updateComparatorOutputLevel(router.getPos(), router.getBlockType());
             }
         });
         // item router modules
         for (int slot = 0; slot < 9; slot++) {
-            addSlotToContainer(new ValidatingSlot.Module(itemRouterTE.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
+            addSlotToContainer(new ValidatingSlot.Module(router.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
         }
         // item router upgrades
         for (int slot = 0; slot < 4; slot++) {
-            addSlotToContainer(new ValidatingSlot.Upgrade(itemRouterTE.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
+            addSlotToContainer(new ValidatingSlot.Upgrade(router.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return itemRouterTE.getWorld().getTileEntity(itemRouterTE.getPos()) == itemRouterTE
-                && player.getDistanceSq(itemRouterTE.getPos().add(0.5, 0.5, 0.5)) <= 64;
+        return router.getWorld().getTileEntity(router.getPos()) == router
+                && player.getDistanceSq(router.getPos().add(0.5, 0.5, 0.5)) <= 64;
     }
 
     @Override
@@ -95,10 +95,12 @@ public class ItemRouterContainer extends Container {
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + UPGRADE_SLOT_START, TE_FIRST_SLOT + UPGRADE_SLOT_END + 1, false)) {
                     return null;
                 }
+                router.recompileNeeded(TileEntityItemRouter.COMPILE_UPGRADES);
             } else {
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + BUFFER_SLOT, TE_FIRST_SLOT + BUFFER_SLOT + 1, false)) {
                     return null;
                 }
+                router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
             }
         } else if (sourceSlotIndex >= TE_FIRST_SLOT && sourceSlotIndex < TE_FIRST_SLOT + TE_LAST_SLOT) {
             // This is a TE slot so merge the stack into the players inventory
@@ -106,7 +108,7 @@ public class ItemRouterContainer extends Container {
                 return null;
             }
         } else {
-            System.err.print("Invalid moduleSlotIndex:" + sourceSlotIndex);
+            System.err.print("Invalid moduleSlotIndex: " + sourceSlotIndex);
             return null;
         }
 

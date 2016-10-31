@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +18,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     public CompiledFlingerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = Module.validateNBT(stack);
+        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         for (String key : new String[] { NBT_SPEED, NBT_PITCH, NBT_YAW }) {
             if (!compound.hasKey(key)) {
                 compound.setFloat(key, 0.0f);

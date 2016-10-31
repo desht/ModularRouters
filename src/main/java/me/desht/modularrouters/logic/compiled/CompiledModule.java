@@ -3,12 +3,15 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.CountedItemStacks;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public abstract class CompiledModule {
     private final Filter filter;
@@ -18,6 +21,7 @@ public abstract class CompiledModule {
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
     private final EnumFacing facing;
+    private final int regulationAmount;
 
     private int lastMatchPos = 0;
 
@@ -27,11 +31,12 @@ public abstract class CompiledModule {
         }
 
         module = ItemModule.getModule(stack);
-        direction = module.getDirectionFromNBT(stack);
+        direction = ModuleHelper.getDirectionFromNBT(stack);
         target = setupTarget(router, stack);
         filter = new Filter(target, stack);
-        termination = module.terminates(stack);
-        behaviour = module.getRedstoneBehaviour(stack);
+        termination = ModuleHelper.terminates(stack);
+        behaviour = ModuleHelper.getRedstoneBehaviour(stack);
+        regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
     }
 
@@ -61,7 +66,11 @@ public abstract class CompiledModule {
         return behaviour;
     }
 
-    public EnumFacing getFacing() {
+    int getRegulationAmount() {
+        return regulationAmount;
+    }
+
+    EnumFacing getFacing() {
         return facing;
     }
 
@@ -75,10 +84,6 @@ public abstract class CompiledModule {
         // does nothing by default
     }
 
-    public int getLastMatchPos() {
-        return lastMatchPos;
-    }
-
     /**
      * Get the last position where we found a match.  Caching this can help reduce the amount of inventory searching
      * needed for some modules.
@@ -87,7 +92,7 @@ public abstract class CompiledModule {
      * @param size size of the inventory being searched
      * @return the last position including offset, and wrapped to start of inventory if necessary
      */
-    public int getLastMatchPos(int offset, int size) {
+    int getLastMatchPos(int offset, int size) {
         int pos = lastMatchPos + offset;
         if (pos >= size) pos -= size;
         return pos;
@@ -98,7 +103,7 @@ public abstract class CompiledModule {
      *
      * @param lastMatchPos last matched position
      */
-    public void setLastMatchPos(int lastMatchPos) {
+    void setLastMatchPos(int lastMatchPos) {
         this.lastMatchPos = lastMatchPos;
     }
 
@@ -123,25 +128,66 @@ public abstract class CompiledModule {
      * items attempted depends on the router's stack upgrades.
      *
      * @param handler the item handler
-     * @param router the router
+     * @param router  the router
      * @return number of items actually transferred
      */
-    protected int transferItems(IItemHandler handler, TileEntityItemRouter router) {
-        int toTake = router.getItemsPerTick();
+    int transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
+        CountedItemStacks count = null;
+        if (getRegulationAmount() > 0) {
+            count = new CountedItemStacks(handler);
+        }
+
+        ItemStack wanted = findItemToPull(router, handler, router.getItemsPerTick(), count);
+        if (wanted == null) {
+            return 0;
+        }
+
+        if (count != null) {
+            wanted.stackSize = Math.min(wanted.stackSize, count.getOrDefault(wanted, 0) - getRegulationAmount());
+            if (wanted.stackSize <= 0) {
+                return 0;
+            }
+        }
+
+        int totalInserted = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             int pos = getLastMatchPos(i, handler.getSlots());
-            ItemStack toExtract = handler.extractItem(pos, toTake, true);
-            if (toExtract != null && getFilter().pass(toExtract)) {
-                ItemStack notInserted = router.getBuffer().insertItem(0, toExtract, false);
-                int inserted = toExtract.stackSize - (notInserted == null ? 0 : notInserted.stackSize);
+            ItemStack toPull = handler.extractItem(pos, wanted.stackSize, true);
+            if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
+                // this item is suitable for pulling
+                ItemStack notInserted = router.insertBuffer(toPull);
+                int inserted = toPull.stackSize - (notInserted == null ? 0 : notInserted.stackSize);
                 handler.extractItem(pos, inserted, false);
-                toTake -= inserted;
-                if (toTake <= 0 || router.isBufferFull()) {
+                wanted.stackSize -= inserted;
+                totalInserted += inserted;
+                if (wanted.stackSize <= 0 || router.isBufferFull()) {
                     setLastMatchPos(pos);
-                    return inserted;
+                    return totalInserted;
                 }
             }
         }
-        return router.getItemsPerTick() - toTake;
+        return totalInserted;
+    }
+
+    private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {
+        ItemStack stackInRouter = router.peekBuffer(1);
+        ItemStack result = null;
+        if (stackInRouter != null && getFilter().pass(stackInRouter)) {
+            // something in the router - try to pull more of that
+            result = stackInRouter.copy();
+            result.stackSize = nToTake;
+        } else if (stackInRouter == null) {
+            // router empty - just pull the next item that passes the filter
+            for (int i = 0; i < handler.getSlots(); i++) {
+                int pos = getLastMatchPos(i, handler.getSlots());
+                ItemStack stack = handler.getStackInSlot(pos);
+                if (stack != null && getFilter().pass(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
+                    setLastMatchPos(pos);
+                    result = stack.copy();
+                    result.stackSize = nToTake;
+                }
+            }
+        }
+        return result;
     }
 }

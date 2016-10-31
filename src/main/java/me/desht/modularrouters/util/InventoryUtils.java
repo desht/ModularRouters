@@ -98,4 +98,28 @@ public class InventoryUtils {
         EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
         return world.spawnEntityInWorld(item);
     }
+
+    /**
+     * Get a count of the given item in the given item handler.  NBT data is not considered.
+     *
+     * @param toCount
+     * @param handler
+     * @param max maximum number of items to count
+     * @param matchMeta whether or not to consider item metadata
+     * @return number of items found, or max
+     */
+    public static int countItems(ItemStack toCount, IItemHandler handler, int max, boolean matchMeta) {
+        int count = 0;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
+            if (stack != null) {
+                boolean match = matchMeta ? stack.isItemEqual(toCount) : stack.isItemEqualIgnoreDurability(toCount);
+                if (match) {
+                    count += stack.stackSize;
+                }
+                if (count >= max) return max;
+            }
+        }
+        return count;
+    }
 }

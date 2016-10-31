@@ -13,11 +13,21 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
         super(container);
     }
 
-    protected TextFieldManager getTextFieldManager() {
-        if (textFieldManager == null) {
-            textFieldManager = new TextFieldManager(this);
-        }
+    protected boolean hasTextFieldManager() {
+        return textFieldManager != null;
+    }
+
+    protected TextFieldManager createTextFieldManager() {
+        textFieldManager = new TextFieldManager(this);
         return textFieldManager;
+    }
+
+    protected TextFieldManager getTextFieldManager() {
+        return textFieldManager;
+    }
+
+    protected TextFieldManager getOrCreateTextFieldManager() {
+        return hasTextFieldManager() ? getTextFieldManager() : createTextFieldManager();
     }
 
     @Override

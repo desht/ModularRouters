@@ -1,6 +1,7 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,7 +23,7 @@ public class FilterHandler extends GhostItemHandler {
         if (!moduleStack.hasTagCompound()) {
             moduleStack.setTagCompound(new NBTTagCompound());
         }
-        deserializeNBT(moduleStack.getTagCompound().getTagList(Filter.NBT_FILTER, Constants.NBT.TAG_COMPOUND));
+        deserializeNBT(moduleStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND));
     }
 
     public ItemStack getModuleItemStack() {
@@ -35,6 +36,6 @@ public class FilterHandler extends GhostItemHandler {
                 items[i] = null;
             }
         }
-        moduleStack.getTagCompound().setTag(Filter.NBT_FILTER, serializeNBT());
+        moduleStack.getTagCompound().setTag(ModuleHelper.NBT_FILTER, serializeNBT());
     }
 }

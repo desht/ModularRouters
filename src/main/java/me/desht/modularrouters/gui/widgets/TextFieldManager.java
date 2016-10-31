@@ -78,6 +78,7 @@ public class TextFieldManager {
 
     public void addTextField(TextFieldWidget textField) {
         textFields.add(textField);
+        textField.setOrdinal(textFields.size() - 1);
     }
 
     public void focus(int field) {
@@ -108,12 +109,12 @@ public class TextFieldManager {
         return focusedField >= 0;
     }
 
-    protected void onTextFieldFocusChange(int id, boolean newFocus) {
-        if (id == textFields.size() - 1) {
+    protected void onTextFieldFocusChange(int ordinal, boolean newFocus) {
+        if (ordinal == textFields.size() - 1) {
             focusedField = -1;
             for (TextFieldWidget t : textFields) {
                 if (t.isFocused()) {
-                    focusedField = t.getId();
+                    focusedField = t.getOrdinal();
                     break;
                 }
             }

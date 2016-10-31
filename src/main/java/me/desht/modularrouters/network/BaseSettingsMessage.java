@@ -11,16 +11,16 @@ public abstract class BaseSettingsMessage implements IMessage {
     protected BlockPos routerPos;
     protected EnumHand hand;
     protected int moduleSlotIndex;
-    protected NBTTagCompound extData;
+    protected NBTTagCompound nbtData;
 
     public BaseSettingsMessage() {
     }
 
-    public BaseSettingsMessage(BlockPos routerPos, EnumHand hand, int moduleSlotIndex, NBTTagCompound extData) {
+    public BaseSettingsMessage(BlockPos routerPos, EnumHand hand, int moduleSlotIndex, NBTTagCompound nbtData) {
         this.routerPos = routerPos;
         this.moduleSlotIndex = moduleSlotIndex;
         this.hand = hand;
-        this.extData = extData;
+        this.nbtData = nbtData;
     }
 
     @Override
@@ -31,7 +31,7 @@ public abstract class BaseSettingsMessage implements IMessage {
         } else {
             hand = EnumHand.values()[buf.readByte()];
         }
-        extData = ByteBufUtils.readTag(buf);
+        nbtData = ByteBufUtils.readTag(buf);
     }
 
     @Override
@@ -44,7 +44,7 @@ public abstract class BaseSettingsMessage implements IMessage {
             writePos(buf, routerPos);
             buf.writeByte(moduleSlotIndex);
         }
-        ByteBufUtils.writeTag(buf, extData);
+        ByteBufUtils.writeTag(buf, nbtData);
     }
 
     protected void writePos(ByteBuf buf, BlockPos pos) {
@@ -57,7 +57,7 @@ public abstract class BaseSettingsMessage implements IMessage {
         return new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 
-    public NBTTagCompound getExtData() {
-        return extData;
+    public NBTTagCompound getNbtData() {
+        return nbtData;
     }
 }

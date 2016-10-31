@@ -7,6 +7,7 @@ import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
 import mcjty.theoneprobe.rendering.RenderHelper;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,7 @@ public class ElementModule implements IElement {
 
     public ElementModule(ItemStack stack) {
         this.type = ItemModule.ModuleType.values()[stack.getItemDamage()];
-        this.dir = ItemModule.getModule(type).getDirectionFromNBT(stack);
+        this.dir = ModuleHelper.getDirectionFromNBT(stack);
     }
 
     public ElementModule(ByteBuf buf) {

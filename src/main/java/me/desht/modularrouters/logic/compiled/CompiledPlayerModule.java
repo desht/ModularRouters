@@ -90,7 +90,7 @@ public class CompiledPlayerModule extends CompiledModule {
         switch (operation) {
             case EXTRACT:
                 if (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize()) {
-                    int taken = transferItems(itemHandler, router);
+                    int taken = transferToRouter(itemHandler, router);
                     return taken > 0;
                 }
                 break;
@@ -99,7 +99,15 @@ public class CompiledPlayerModule extends CompiledModule {
                     if (getSection() == CompiledPlayerModule.Section.ARMOR) {
                         return insertArmor(router, itemHandler, bufferStack);
                     } else {
-                        int sent = InventoryUtils.transferItems(router.getBuffer(), itemHandler, 0, router.getItemsPerTick());
+                        int nToSend = router.getItemsPerTick();
+                        if (getRegulationAmount() > 0) {
+                            int existing = InventoryUtils.countItems(bufferStack, itemHandler, getRegulationAmount(), !getFilter().getFlags().isIgnoreMeta());
+                            nToSend = Math.min(nToSend, getRegulationAmount() - existing);
+                            if (nToSend <= 0) {
+                                return false;
+                            }
+                        }
+                        int sent = InventoryUtils.transferItems(router.getBuffer(), itemHandler, 0, nToSend);
                         return sent > 0;
                     }
                 }

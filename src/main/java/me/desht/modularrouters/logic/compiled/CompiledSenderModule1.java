@@ -7,6 +7,7 @@ import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.SenderModule1;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -31,7 +32,15 @@ public class CompiledSenderModule1 extends CompiledModule {
         if (bufferStack != null && getFilter().pass(bufferStack)) {
             PositionedItemHandler target = findTargetInventory(router);
             if (target != null) {
-                int sent = InventoryUtils.transferItems(buffer, target.handler, 0, router.getItemsPerTick());
+                int nToSend = router.getItemsPerTick();
+                if (getRegulationAmount() > 0) {
+                    int existing = InventoryUtils.countItems(bufferStack, target.handler, getRegulationAmount(), !getFilter().getFlags().isIgnoreMeta());
+                    nToSend = Math.min(nToSend, getRegulationAmount() - existing);
+                    if (nToSend <= 0) {
+                        return false;
+                    }
+                }
+                int sent = InventoryUtils.transferItems(buffer, target.handler, 0, nToSend);
                 if (sent > 0) {
                     if (Config.senderParticles) {
                         playParticles(router, target.pos, (float)sent / (float)bufferStack.getMaxStackSize());

@@ -136,7 +136,7 @@ public class BulkItemFilter extends SmartFilter {
                 }
                 return new GuiSyncMessage(filterStack);
             case REMOVE_ITEM:
-                ItemStack toRemove = ItemStack.loadItemStackFromNBT(message.getExtData());
+                ItemStack toRemove = ItemStack.loadItemStackFromNBT(message.getNbtData());
                 if (removeFromFilter(filterStack, toRemove)) {
                     return new GuiSyncMessage(filterStack);
                 } else {
@@ -175,7 +175,7 @@ public class BulkItemFilter extends SmartFilter {
     }
 
     private IItemHandler getInventory(FilterSettingsMessage msg) {
-        ModuleTarget target = ModuleTarget.fromNBT(msg.getExtData());
+        ModuleTarget target = ModuleTarget.fromNBT(msg.getNbtData());
         World w = DimensionManager.getWorld(target.dimId);
         if (w != null) {
             return InventoryUtils.getInventory(w, target.pos, target.face);

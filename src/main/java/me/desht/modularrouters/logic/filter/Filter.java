@@ -8,6 +8,7 @@ import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,9 +19,6 @@ import java.util.List;
 
 public class Filter {
     public static final int FILTER_SIZE = 9;
-
-    public static final String NBT_FILTER = "ModuleFilter";
-
     private final Flags flags;
     private final List<IItemMatcher> matchers = Lists.newArrayList();
 
@@ -31,7 +29,7 @@ public class Filter {
     public Filter(ModuleTarget target, ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTagCompound()) {
             flags = new Flags(moduleStack);
-            NBTTagList tagList = moduleStack.getTagCompound().getTagList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
+            NBTTagList tagList = moduleStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
                 ItemStack filterStack = ItemStack.loadItemStackFromNBT(tagCompound);
@@ -62,6 +60,10 @@ public class Filter {
         return flags.isBlacklist();
     }
 
+    public Flags getFlags() {
+        return flags;
+    }
+
     public class Flags {
         private final boolean blacklist;
         private final boolean ignoreMeta;
@@ -72,10 +74,10 @@ public class Filter {
             Validate.isTrue(moduleStack.getItem() instanceof ItemModule);
 
             Module module = ItemModule.getModule(moduleStack);
-            blacklist = module.isBlacklist(moduleStack);
-            ignoreMeta = module.ignoreMeta(moduleStack);
-            ignoreNBT = module.ignoreNBT(moduleStack);
-            ignoreOredict = module.ignoreOreDict(moduleStack);
+            blacklist = ModuleHelper.isBlacklist(moduleStack);
+            ignoreMeta = ModuleHelper.ignoreMeta(moduleStack);
+            ignoreNBT = ModuleHelper.ignoreNBT(moduleStack);
+            ignoreOredict = ModuleHelper.ignoreOreDict(moduleStack);
         }
 
         public Flags() {

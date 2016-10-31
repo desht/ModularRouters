@@ -9,6 +9,7 @@ import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -147,7 +148,7 @@ public class ItemModule extends ItemBase {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        Module.validateNBT(stack);
+        ModuleHelper.validateNBT(stack);
         if (!world.isRemote) {
             int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
             player.openGui(ModularRouters.instance, guiId, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
@@ -186,13 +187,12 @@ public class ItemModule extends ItemBase {
     }
 
     private void addSettingsInformation(ItemStack itemstack, List<String> list, Module module) {
-        NBTTagCompound compound = Module.validateNBT(itemstack);
         if (module.isDirectional()) {
-            Module.RelativeDirection dir = module.getDirectionFromNBT(itemstack);
+            Module.RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
         }
-        NBTTagList items = compound.getTagList(Filter.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (module.isBlacklist(itemstack) ? "2" : "1")) + ":");
+        NBTTagList items = ModuleHelper.getFilterItems(itemstack);
+        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (ModuleHelper.isBlacklist(itemstack) ? "2" : "1")) + ":");
         if (items.tagCount() > 0) {
             for (int i = 0; i < items.tagCount(); i++) {
                 ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
@@ -210,15 +210,19 @@ public class ItemModule extends ItemBase {
         }
         list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
                 Joiner.on(" | ").join(
-                        compose("IGNORE_META", module.ignoreMeta(itemstack)),
-                        compose("IGNORE_NBT", module.ignoreNBT(itemstack)),
-                        compose("IGNORE_OREDICT", module.ignoreOreDict(itemstack)),
-                        compose("TERMINATE", !module.terminates(itemstack))
+                        compose("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
+                        compose("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
+                        compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
+                        compose("TERMINATE", !ModuleHelper.terminates(itemstack))
                 ));
-        if (module.isRedstoneBehaviourEnabled(itemstack)) {
-            RouterRedstoneBehaviour rrb = module.getRedstoneBehaviour(itemstack);
+        if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
+            RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.redstone.label")
                     + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
+        }
+        if (ModuleHelper.isRegulatorEnabled(itemstack)) {
+            int amount = ModuleHelper.getRegulatorAmount(itemstack);
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.regulator.label", amount));
         }
     }
 

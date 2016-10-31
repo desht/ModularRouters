@@ -6,8 +6,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;
-import me.desht.modularrouters.gui.widgets.GuiContainerBase;
-import me.desht.modularrouters.gui.widgets.ToggleButton;
+import me.desht.modularrouters.gui.widgets.*;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.ModuleFlags;
@@ -17,7 +16,11 @@ import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
+import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -30,11 +33,22 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-public class GuiModule extends GuiContainerBase {
+public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/module.png");
+    private static final int REGULATOR_TEXTFIELD_ID = 0;
     static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
     private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
     private static final int REDSTONE_BUTTON_ID = BACK_BUTTON_ID + 1;
+    private static final int REGULATOR_TOOLTIP_ID = BACK_BUTTON_ID + 1;
+
+    /**
+     * Base ID for extra buttons added by submodules
+     */
+    static final int EXTRA_BUTTON_BASE = 1000;
+    /**
+     * Base ID for extra textfields added by submodules
+     */
+    static final int EXTRA_TEXTFIELD_BASE = 1000;
 
     private static final int GUI_HEIGHT = 182;
     private static final int GUI_WIDTH = 192;
@@ -48,6 +62,7 @@ public class GuiModule extends GuiContainerBase {
     private final EnumHand hand;
     private RelativeDirection facing;
     private int sendDelay;
+    private int regulatorAmount;
     private RedstoneBehaviourButton rbb;
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
@@ -63,7 +78,8 @@ public class GuiModule extends GuiContainerBase {
         this.routerPos = routerPos;
         this.moduleSlotIndex = slotIndex;
         this.hand = hand;
-        this.facing = module.getDirectionFromNBT(moduleItemStack);
+        this.facing = ModuleHelper.getDirectionFromNBT(moduleItemStack);
+        this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
     }
@@ -73,17 +89,11 @@ public class GuiModule extends GuiContainerBase {
         buttonList.clear();
         super.initGui();
 
-        addToggleButton(ModuleFlags.BLACKLIST, 7, 74);
-        addToggleButton(ModuleFlags.IGNORE_META, 24, 74);
-        addToggleButton(ModuleFlags.IGNORE_NBT, 41, 74);
-        addToggleButton(ModuleFlags.IGNORE_OREDICT, 58, 74);
-        addToggleButton(ModuleFlags.TERMINATE, 75, 74);
-
-        if (module.isRedstoneBehaviourEnabled(moduleItemStack)) {
-            rbb = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
-                    this.guiLeft + 92, this.guiTop + 74, BUTTON_WIDTH, BUTTON_HEIGHT, module.getRedstoneBehaviour(moduleItemStack));
-            buttonList.add(rbb);
-        }
+        addToggleButton(ModuleFlags.BLACKLIST, 7, 75);
+        addToggleButton(ModuleFlags.IGNORE_META, 24, 75);
+        addToggleButton(ModuleFlags.IGNORE_NBT, 41, 75);
+        addToggleButton(ModuleFlags.IGNORE_OREDICT, 58, 75);
+        addToggleButton(ModuleFlags.TERMINATE, 75, 75);
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -95,6 +105,20 @@ public class GuiModule extends GuiContainerBase {
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
+        if (ModuleHelper.isRedstoneBehaviourEnabled(moduleItemStack)) {
+            rbb = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
+                    this.guiLeft + 92, this.guiTop + 75, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
+            buttonList.add(rbb);
+        }
+
+        if (ModuleHelper.isRegulatorEnabled(moduleItemStack)) {
+            TextFieldManager manager = createTextFieldManager();
+            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRendererObj, guiLeft + 166, guiTop + 77, 20, 12, 0, 64);
+            field.setValue(ModuleHelper.getRegulatorAmount(moduleItemStack));
+            field.setGuiResponder(this);
+            buttonList.add(new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 148, guiTop + 74));
+        }
+
         if (routerPos != null) {
             buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop));
         }
@@ -102,7 +126,7 @@ public class GuiModule extends GuiContainerBase {
 
     private void addToggleButton(ModuleFlags setting, int x, int y) {
         toggleButtons[setting.ordinal()] = new ModuleToggleButton(setting, this.guiLeft + x, this.guiTop + y);
-        toggleButtons[setting.ordinal()].setToggled(module.checkFlag(moduleItemStack, setting));
+        toggleButtons[setting.ordinal()].setToggled(ModuleHelper.checkFlag(moduleItemStack, setting));
         buttonList.add(toggleButtons[setting.ordinal()]);
     }
 
@@ -156,6 +180,17 @@ public class GuiModule extends GuiContainerBase {
     }
 
     void sendModuleSettingsToServer() {
+        ModularRouters.network.sendToServer(new ModuleSettingsMessage(routerPos, moduleSlotIndex, hand, buildMessageData()));
+    }
+
+    /**
+     * Encode the message data for this module.  This NBT data will be copied directly
+     * into the module itemstack's NBT when the server receives the updateTextFields message.
+     * Overriding subclasses must call the superclass method!
+     *
+     * @return the message data NBT
+     */
+    protected NBTTagCompound buildMessageData() {
         byte flags = (byte) (facing.ordinal() << 4);
         for (ModuleFlags setting : ModuleFlags.values()) {
             if (getToggleButton(setting).isToggled()) {
@@ -163,17 +198,11 @@ public class GuiModule extends GuiContainerBase {
             }
         }
         RouterRedstoneBehaviour behaviour = rbb == null ? RouterRedstoneBehaviour.ALWAYS : rbb.getState();
-        ModularRouters.network.sendToServer(new ModuleSettingsMessage(flags, behaviour, routerPos, moduleSlotIndex, hand, getExtMessageData()));
-    }
-
-    /**
-     * Encode extended message data for this module.  This NBT data will be copied directly
-     * into the module itemstack's NBT when the server receives the updateTextFields message.
-     *
-     * @return extended message data
-     */
-    protected NBTTagCompound getExtMessageData() {
-        return null;
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setByte(ModuleHelper.NBT_FLAGS, flags);
+        compound.setByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
+        compound.setInteger(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
+        return compound;
     }
 
     private ModuleToggleButton getToggleButton(ModuleFlags flags) {
@@ -263,6 +292,52 @@ public class GuiModule extends GuiContainerBase {
         if (sendDelay > 0) {
             // ensure no delayed updates get lost
             sendModuleSettingsToServer();
+        }
+    }
+
+    @Override
+    public void setEntryValue(int id, boolean value) {
+        // nothing
+    }
+
+    @Override
+    public void setEntryValue(int id, float value) {
+        // nothing
+    }
+
+    @Override
+    public void setEntryValue(int id, String value) {
+        if (id == REGULATOR_TEXTFIELD_ID) {
+            regulatorAmount = value.isEmpty() ? 0 : Integer.parseInt(value);
+            sendModuleSettingsDelayed(5);
+        }
+    }
+
+    private static class RegulatorTooltipButton extends TexturedButton {
+        public RegulatorTooltipButton(int buttonId, int x, int y) {
+            super(buttonId, x, y, 16, 16);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.regulatorTooltip");
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.intFieldTooltip");
+        }
+
+        @Override
+        protected int getTextureX() {
+            return 112;
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 0;
+        }
+
+        @Override
+        protected boolean drawStandardBackground() {
+            return false;
+        }
+
+        @Override
+        public void playPressSound(SoundHandler soundHandlerIn) {
+            // no sound
         }
     }
 }

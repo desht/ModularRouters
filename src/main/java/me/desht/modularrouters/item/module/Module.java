@@ -7,7 +7,6 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
-import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
@@ -17,7 +16,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -26,14 +24,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class Module {
-
-    public static final String NBT_FLAGS = "Flags";
-    public static final String NBT_REDSTONE_ENABLED = "RedstoneEnabled";
-    public static final String NBT_REDSTONE_MODE = "RedstoneMode";
 
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
@@ -112,57 +105,6 @@ public abstract class Module {
 
     public abstract CompiledModule compile(TileEntityItemRouter router, ItemStack stack);
 
-    public boolean isBlacklist(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.BLACKLIST);
-    }
-
-    public boolean ignoreMeta(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.IGNORE_META);
-    }
-
-    public boolean ignoreNBT(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.IGNORE_NBT);
-    }
-
-    public boolean ignoreOreDict(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.IGNORE_OREDICT);
-    }
-
-    public boolean terminates(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.TERMINATE);
-    }
-
-    public boolean checkFlag(ItemStack stack, ModuleFlags flag) {
-        NBTTagCompound compound = validateNBT(stack);
-        return (compound.getByte(NBT_FLAGS) & flag.getMask()) != 0x0;
-    }
-
-    public RelativeDirection getDirectionFromNBT(ItemStack stack) {
-        if (!isDirectional()) {
-            return RelativeDirection.NONE;
-        }
-        NBTTagCompound compound = validateNBT(stack);
-        return RelativeDirection.values()[(compound.getByte(NBT_FLAGS) & 0x70) >> 4];
-    }
-
-    public boolean isRedstoneBehaviourEnabled(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getBoolean(NBT_REDSTONE_ENABLED);
-    }
-
-    public RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        if (compound.getBoolean(NBT_REDSTONE_ENABLED) && compound.hasKey(NBT_REDSTONE_MODE)) {
-            try {
-                return RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-            } catch (IllegalArgumentException e) {
-                return RouterRedstoneBehaviour.ALWAYS;
-            }
-        } else {
-            return RouterRedstoneBehaviour.ALWAYS;
-        }
-    }
-
     /**
      * Basic information for the module, which is always shown.
      */
@@ -194,24 +136,6 @@ public abstract class Module {
 
     public Object[] getExtraUsageParams() {
         return new Object[0];
-    }
-
-    @Nonnull
-    public static NBTTagCompound validateNBT(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
-        }
-        NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(NBT_FLAGS)) {
-            byte flags = 0x0;
-            for (ModuleFlags b : ModuleFlags.values()) {
-                if (b.getDefaultValue()) {
-                    flags |= b.getMask();
-                }
-            }
-            compound.setByte(NBT_FLAGS, flags);
-        }
-        return compound;
     }
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
