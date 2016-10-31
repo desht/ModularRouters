@@ -3,9 +3,13 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSorterModule;
+import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.List;
 
 public class SorterModule extends Module {
     @Override
@@ -15,7 +19,15 @@ public class SorterModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SORTER),
-                ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR), ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1));
+        // deprecated in favour of bulk item filters
+        return null;
+//        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SORTER),
+//                ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR), ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1));
+    }
+
+    @Override
+    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addBasicInformation(itemstack, player, list, par4);
+        MiscUtil.appendMultiline(list, "itemText.deprecated.sorter");
     }
 }

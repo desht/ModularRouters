@@ -45,7 +45,10 @@ public class ModRecipes {
         for (ItemSmartFilter.FilterType type : ItemSmartFilter.FilterType.values()) {
             GameRegistry.addRecipe(ItemSmartFilter.getFilter(type).getRecipe());
         }
-        // special case for deprecated mod sorter module
+        // special case for deprecated sorter & mod sorter modules
+        GameRegistry.addShapelessRecipe(
+                ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
+                ItemModule.makeItemStack(ModuleType.SORTER));
         GameRegistry.addShapelessRecipe(
                 ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.MOD),
                 ItemModule.makeItemStack(ModuleType.MODSORTER));

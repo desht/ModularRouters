@@ -25,6 +25,7 @@ public class ModSorterModule extends SorterModule {
     @Override
     public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         super.addBasicInformation(itemstack, player, list, par4);
+        list.remove(list.size() - 1); list.remove(list.size() - 1);  // remove sorter deprecation message
         MiscUtil.appendMultiline(list, "itemText.deprecated.modSorter");
     }
 
