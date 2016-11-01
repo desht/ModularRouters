@@ -6,7 +6,7 @@ import net.minecraft.client.resources.I18n;
 
 class Buttons {
     static class AddButton extends TexturedButton {
-        public AddButton(int buttonId, int x, int y) {
+        AddButton(int buttonId, int x, int y) {
             super(buttonId, x, y, 16, 16);
         }
 
@@ -22,7 +22,7 @@ class Buttons {
     }
 
     static class DeleteButton extends TexturedButton {
-        public DeleteButton(int buttonId, int x, int y) {
+        DeleteButton(int buttonId, int x, int y) {
             super(buttonId, x, y, 16, 16);
         }
 

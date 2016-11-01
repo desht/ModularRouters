@@ -14,7 +14,6 @@ import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;

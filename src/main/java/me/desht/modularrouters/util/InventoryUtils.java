@@ -102,11 +102,11 @@ public class InventoryUtils {
     /**
      * Get a count of the given item in the given item handler.  NBT data is not considered.
      *
-     * @param toCount
-     * @param handler
+     * @param toCount the item to count
+     * @param handler the inventory to check
      * @param max maximum number of items to count
      * @param matchMeta whether or not to consider item metadata
-     * @return number of items found, or max
+     * @return number of items found, or the supplied max, whichever is smaller
      */
     public static int countItems(ItemStack toCount, IItemHandler handler, int max, boolean matchMeta) {
         int count = 0;

@@ -17,11 +17,11 @@ public class TextFieldManager {
         this.parent = parent;
     }
 
-    public void drawTextFields() {
+    void drawTextFields() {
         textFields.forEach(TextFieldWidget::drawTextBox);
     }
 
-    public void updateTextFields() {
+    void updateTextFields() {
         if (focusedField >= 0) {
             textFields.get(focusedField).updateCursorCounter();
         }
@@ -33,7 +33,7 @@ public class TextFieldManager {
      * @return true if a text field handle the mouse event, false if not
      * @throws IOException
      */
-    public boolean handleMouseInput() throws IOException {
+    boolean handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
         if (wheel == 0) {
             return false;
@@ -56,13 +56,13 @@ public class TextFieldManager {
         return false;
     }
 
-    public void mouseClicked(int x, int y, int btn) throws IOException {
+    void mouseClicked(int x, int y, int btn) throws IOException {
         for (TextFieldWidget field : textFields) {
             field.mouseClicked(x, y, btn);
         }
     }
 
-    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
+    boolean keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == Keyboard.KEY_TAB) {
             if (GuiScreen.isShiftKeyDown()) {
                 focusPrev();
@@ -93,13 +93,13 @@ public class TextFieldManager {
         }
     }
 
-    public void focusNext() {
+    private void focusNext() {
         int field = focusedField + 1;
         if (field >= textFields.size()) field = 0;
         focus(field);
     }
 
-    public void focusPrev() {
+    private void focusPrev() {
         int field = focusedField - 1;
         if (field < 0) field = textFields.size() - 1;
         focus(field);
@@ -109,7 +109,7 @@ public class TextFieldManager {
         return focusedField >= 0;
     }
 
-    protected void onTextFieldFocusChange(int ordinal, boolean newFocus) {
+    void onTextFieldFocusChange(int ordinal, boolean newFocus) {
         if (ordinal == textFields.size() - 1) {
             focusedField = -1;
             for (TextFieldWidget t : textFields) {

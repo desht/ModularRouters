@@ -25,14 +25,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SecurityUpgrade extends Upgrade {
-    public static final String NBT_PLAYERS = "Players";
+    private static final String NBT_PLAYERS = "Players";
+    private static final int MAX_PLAYERS = 6;
 
     @Override
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         list.add(I18n.format("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
-            list.add(I18n.format("itemText.security.count", names.size(), getMaxPlayers()));
+            list.add(I18n.format("itemText.security.count", names.size(), MAX_PLAYERS));
             list.addAll(names.stream().map(name -> " \u2022 " + TextFormatting.YELLOW + name).sorted().collect(Collectors.toList()));
         }
     }
@@ -45,8 +46,7 @@ public class SecurityUpgrade extends Upgrade {
     @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
-        Set<UUID> ids = getPlayerIDs(stack);
-        router.addPermittedIds(ids);
+        router.addPermittedIds(getPlayerIDs(stack));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class SecurityUpgrade extends Upgrade {
                 'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
     }
 
-    public Set<UUID> getPlayerIDs(ItemStack stack) {
+    private static Set<UUID> getPlayerIDs(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound == null) {
             return Collections.emptySet();
@@ -79,7 +79,7 @@ public class SecurityUpgrade extends Upgrade {
      * @param stack the upgrade itemstack
      * @return (displayable) owner name
      */
-    public String getOwnerName(ItemStack stack) {
+    private static String getOwnerName(ItemStack stack) {
         Pair<String, UUID> owner = ItemModule.getOwnerNameAndId(stack);
         return owner.getLeft().isEmpty() ? "???" : owner.getLeft();
     }
@@ -90,7 +90,7 @@ public class SecurityUpgrade extends Upgrade {
      * @param stack the upgrade itemstack
      * @return set of (displayable) player names
      */
-    public Set<String> getPlayerNames(ItemStack stack) {
+    private static Set<String> getPlayerNames(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_PLAYERS)) {
             NBTTagCompound p = compound.getCompoundTag(NBT_PLAYERS);
@@ -100,15 +100,7 @@ public class SecurityUpgrade extends Upgrade {
         }
     }
 
-    /**
-     * Maximum number of players that can be added to one upgrade.
-     * @return max players
-     */
-    public int getMaxPlayers() {
-        return 6;
-    }
-
-    public Interacted.Result addPlayer(ItemStack stack, String id, String name) {
+    private static Interacted.Result addPlayer(ItemStack stack, String id, String name) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
             if (!compound.hasKey(NBT_PLAYERS)) {
@@ -118,7 +110,7 @@ public class SecurityUpgrade extends Upgrade {
             if (p.hasKey(id)) {
                 return Interacted.Result.ALREADY_ADDED;  // already there, do nothing
             }
-            if (p.getSize() >= getMaxPlayers()) {
+            if (p.getSize() >= MAX_PLAYERS) {
                 return Interacted.Result.FULL;  // list full
             }
             p.setString(id, name);
@@ -127,7 +119,7 @@ public class SecurityUpgrade extends Upgrade {
         return Interacted.Result.ERROR;
     }
 
-    private Interacted.Result removePlayer(ItemStack stack, String id) {
+    private static Interacted.Result removePlayer(ItemStack stack, String id) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
             if (!compound.hasKey(NBT_PLAYERS)) {
@@ -169,11 +161,10 @@ public class SecurityUpgrade extends Upgrade {
             if (event.getTarget() instanceof EntityPlayer) {
                 ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
                 if (ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.SECURITY)) {
-                    SecurityUpgrade su = (SecurityUpgrade) ItemUpgrade.getUpgrade(stack);
                     EntityPlayer targetPlayer = (EntityPlayer) event.getTarget();
                     String id = targetPlayer.getUniqueID().toString();
                     String name = targetPlayer.getDisplayNameString();
-                    Result res = event.getEntityPlayer().isSneaking() ? su.removePlayer(stack, id) : su.addPlayer(stack, id, name);
+                    Result res = event.getEntityPlayer().isSneaking() ? removePlayer(stack, id) : addPlayer(stack, id, name);
                     if (event.getWorld().isRemote) {
                         event.getEntityPlayer().playSound(res.isError() ? MRSoundEvents.error : MRSoundEvents.success, 1.0f, 1.0f);
                     } else {
