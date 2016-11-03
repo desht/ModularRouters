@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-public abstract class ModuleUpgradeRecipe extends ShapedOreRecipe {
-    public ModuleUpgradeRecipe(ItemStack result, Object... recipe) {
+abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
+    ModuleEnhancementRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
 

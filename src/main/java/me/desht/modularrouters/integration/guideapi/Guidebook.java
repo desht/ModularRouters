@@ -55,8 +55,7 @@ public class Guidebook {
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerText"), 250));
         pages.add(new PageIRecipe(
                         new ShapedOreRecipe(new ItemStack(ModBlocks.itemRouter, 4),
-                                "ibi", "bmb", "ibi",
-                                'b', Blocks.IRON_BARS, 'i', Items.IRON_INGOT, 'm', ModItems.blankModule)
+                                "ibi", "bmb", "ibi", 'b', Blocks.IRON_BARS, 'i', Items.IRON_INGOT, 'm', ModItems.blankModule)
                 )
         );
         entries.put(new ResourceLocation(ModularRouters.modId, "router"),
@@ -70,6 +69,19 @@ public class Guidebook {
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleOverview", ModuleType.values().length, String.valueOf(Config.configKey)), 250));
         entries.put(new ResourceLocation(ModularRouters.modId, "moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleRedstone", ModuleType.values().length, String.valueOf(Config.configKey)), 250));
+        pages.add(new PageIRecipe(
+                new ShapedOreRecipe(new ItemStack(ModItems.blankModule),
+                        " r ", "tmt", " r ", 'r', Items.REDSTONE, 'm', ModItems.blankModule, 't', Blocks.REDSTONE_TORCH)
+        ));
+        entries.put(new ResourceLocation(ModularRouters.modId, "moduleRedstone"), new EntryItemStack(pages, translate("guidebook.words.redstone"), new ItemStack(Items.REDSTONE)));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleRegulator", ModuleType.values().length, String.valueOf(Config.configKey)), 250));
+        pages.add(new PageIRecipe(
+                new ShapedOreRecipe(new ItemStack(ModItems.blankModule),
+                        " q ", "cmc", " q ",
+                        'q', Items.QUARTZ, 'm', ModItems.blankModule, 'c', Items.COMPARATOR)
+        ));
+        entries.put(new ResourceLocation(ModularRouters.modId, "moduleRegulator"), new EntryItemStack(pages, translate("guidebook.words.regulator"), new ItemStack(Items.QUARTZ)));
         pages = Arrays.asList(
                 new PageText(translate("guidebook.para.blankModule")),
                 new PageIRecipe(new ShapedOreRecipe(new ItemStack(ModItems.blankModule, 6),

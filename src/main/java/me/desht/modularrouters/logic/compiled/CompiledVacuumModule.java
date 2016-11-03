@@ -35,19 +35,24 @@ public class CompiledVacuumModule extends CompiledModule {
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
         int toPickUp = router.getItemsPerTick();
+
         for (EntityItem item : items) {
             if (item.isDead || item.cannotPickup()) {
                 continue;
             }
-            ItemStack stack = item.getEntityItem();
-            if ((bufferStack == null || ItemHandlerHelper.canItemStacksStack(stack, bufferStack)) && getFilter().pass(stack)) {
-                ItemStack vacuumed = stack.splitStack(router.getItemsPerTick());
+            ItemStack stackOnGround = item.getEntityItem();
+            if ((bufferStack == null || ItemHandlerHelper.canItemStacksStack(stackOnGround, bufferStack)) && getFilter().pass(stackOnGround)) {
+                int inRouter = bufferStack == null ? 0 : bufferStack.stackSize;
+                int spaceInRouter = getRegulationAmount() > 0 ?
+                        Math.min(stackOnGround.getMaxStackSize(), getRegulationAmount()) - inRouter :
+                        stackOnGround.getMaxStackSize() - inRouter;
+                ItemStack vacuumed = stackOnGround.splitStack(Math.min(router.getItemsPerTick(), spaceInRouter));
                 ItemStack excess = router.insertBuffer(vacuumed);
                 int remaining = excess == null ? 0 : excess.stackSize;
-                stack.stackSize += remaining;
+                stackOnGround.stackSize += remaining;
                 int inserted = vacuumed.stackSize - remaining;
                 toPickUp -= inserted;
-                if (stack.stackSize <= 0) {
+                if (stackOnGround.stackSize <= 0) {
                     item.setDead();
                 }
                 if (inserted > 0 && Config.vacuumParticles) {

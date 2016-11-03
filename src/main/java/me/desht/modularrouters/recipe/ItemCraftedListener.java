@@ -5,7 +5,7 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
-public class ItemCraftedListener {
+class ItemCraftedListener {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         // security upgrade and player modules need to be tagged with the player when crafted

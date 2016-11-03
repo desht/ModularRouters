@@ -7,7 +7,6 @@ import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -53,8 +52,10 @@ public class ModRecipes {
                 ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.MOD),
                 ItemModule.makeItemStack(ModuleType.MODSORTER));
 
-        RecipeSorter.register(ModularRouters.modId + ":enchantBreaker", EnchantBreakerModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
-        GameRegistry.addRecipe(new EnchantBreakerModuleRecipe(ItemModule.makeItemStack(ModuleType.BREAKER), ItemModule.makeItemStack(ModuleType.BREAKER), Items.ENCHANTED_BOOK));
+        RecipeSorter.register(ModularRouters.modId + ":enchantModule", EnchantModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        for (ModuleType type : EnchantModuleRecipe.validEnchantments.keySet()) {
+            GameRegistry.addRecipe(new EnchantModuleRecipe(ItemModule.makeItemStack(type), ItemModule.makeItemStack(type), Items.ENCHANTED_BOOK));
+        }
 
         addRedstoneUpgradeRecipes();
         addRegulatorUpgradeRecipes();
@@ -67,12 +68,12 @@ public class ModRecipes {
     }
 
     private static void addRedstoneUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneUpgradeRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
             ItemStack output = ItemModule.makeItemStack(type);
             ModuleHelper.setRedstoneBehaviour(output, true, RouterRedstoneBehaviour.ALWAYS);
-            GameRegistry.addRecipe(new RedstoneUpgradeRecipe(output,
-                    " R ", "TMT",
+            GameRegistry.addRecipe(new RedstoneEnhancementRecipe(output,
+                    " R ", "TMT", " R ",
                     'R', Items.REDSTONE,
                     'T', Blocks.REDSTONE_TORCH,
                     'M', ItemModule.makeItemStack(type)));
@@ -80,14 +81,14 @@ public class ModRecipes {
     }
 
     private static void addRegulatorUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorUpgradeRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
-            if (!RegulatorUpgradeRecipe.appliesTo(type)) {
+            if (!RegulatorEnhancementRecipe.appliesTo(type)) {
                 continue;
             }
             ItemStack output = ItemModule.makeItemStack(type);
             ModuleHelper.setRegulatorAmount(output, true, 1);
-            GameRegistry.addRecipe(new RegulatorUpgradeRecipe(output,
+            GameRegistry.addRecipe(new RegulatorEnhancementRecipe(output,
                     " Q ", "CMC", " Q ",
                     'Q', Items.QUARTZ,
                     'C', Items.COMPARATOR,

@@ -4,8 +4,11 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -13,6 +16,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
+import java.util.Map;
 
 public class ExtruderModule extends Module {
     @Override
@@ -23,6 +27,15 @@ public class ExtruderModule extends Module {
     @Override
     public Object[] getExtraUsageParams() {
         return new Object[]{Config.Defaults.EXTRUDER_BASE_RANGE, Config.Defaults.EXTRUDER_MAX_RANGE};
+    }
+
+    @Override
+    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addUsageInformation(itemstack, player, list, par4);
+        Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
+        if (ench.isEmpty()) {
+            MiscUtil.appendMultiline(list, "itemText.misc.enchantExtruderHint");
+        }
     }
 
     @Override

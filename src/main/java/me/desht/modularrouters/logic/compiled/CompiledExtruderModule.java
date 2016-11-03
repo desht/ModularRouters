@@ -7,6 +7,8 @@ import me.desht.modularrouters.item.module.ExtruderModule;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
@@ -18,11 +20,13 @@ import java.util.List;
 public class CompiledExtruderModule extends CompiledModule {
     public static final String NBT_EXTRUDER_DIST = "ExtruderDist";
 
+    private final boolean silkTouch;
     private int distance;  // marks the current extension length (0 = no extrusion)
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         distance = router.getExtData().getInteger(NBT_EXTRUDER_DIST + getFacing());
+        silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
     }
 
     @Override
@@ -30,7 +34,7 @@ public class CompiledExtruderModule extends CompiledModule {
         boolean extend = shouldExtend(router);
         World world = router.getWorld();
 
-        if (extend && !router.isBufferEmpty() && distance < ExtruderModule.maxDistance(router)) {
+        if (extend && !router.isBufferEmpty() && distance < ExtruderModule.maxDistance(router) && isRegulationOK(router, false)) {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
@@ -46,14 +50,14 @@ public class CompiledExtruderModule extends CompiledModule {
                 }
                 return true;
             }
-        } else if (!extend && !router.isBufferFull() && distance > 0) {
+        } else if (!extend && !router.isBufferFull() && distance > 0 && isRegulationOK(router, true)) {
             // try to retract
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
             distance--;
             router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
             List<ItemStack> drops = Lists.newArrayList();
             IBlockState oldState = world.getBlockState(breakPos);
-            if (BlockUtil.tryBreakBlock(world, breakPos, getFilter(), drops, false, 0)) {
+            if (BlockUtil.tryBreakBlock(world, breakPos, getFilter(), drops, silkTouch, 0)) {
                 for (ItemStack drop : drops) {
                     ItemStack excess = router.insertBuffer(drop);
                     if (excess != null) {

@@ -1,13 +1,11 @@
 package me.desht.modularrouters.recipe;
 
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
-public class RegulatorUpgradeRecipe extends ModuleUpgradeRecipe {
-    RegulatorUpgradeRecipe(ItemStack result, Object... recipe) {
+class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
+    RegulatorEnhancementRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
 
@@ -16,13 +14,8 @@ public class RegulatorUpgradeRecipe extends ModuleUpgradeRecipe {
         ModuleHelper.setRegulatorAmount(stack, true, 1);
     }
 
-    public static boolean appliesTo(ItemModule.ModuleType type) {
-        switch (type) {
-            case SENDER1: case SENDER2: case SENDER3:
-            case PULLER: case PLAYER:
-                return true;
-        }
-        return false;
+    static boolean appliesTo(ItemModule.ModuleType type) {
+        return type != ItemModule.ModuleType.DETECTOR;
     }
 
     @Override

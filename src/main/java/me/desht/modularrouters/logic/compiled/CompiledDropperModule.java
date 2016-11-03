@@ -15,8 +15,8 @@ public class CompiledDropperModule extends CompiledModule {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (stack != null && getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack)) {
-            int nItems = router.getItemsPerTick();
+        if (stack != null && getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack) && isRegulationOK(router, false)) {
+            int nItems = Math.min(router.getItemsPerTick(), stack.stackSize) - getRegulationAmount();
             ItemStack toDrop = router.peekBuffer(nItems);
             BlockPos pos = getTarget().pos;
             EnumFacing face = getTarget().face;
@@ -25,6 +25,7 @@ public class CompiledDropperModule extends CompiledModule {
                     pos.getY() + 0.5 + 0.2 * face.getFrontOffsetY(),
                     pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
                     toDrop);
+            item.setPickupDelay(40);  // same as player dropping an item
             setupItemVelocity(router, item);
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.extractBuffer(toDrop.stackSize);
