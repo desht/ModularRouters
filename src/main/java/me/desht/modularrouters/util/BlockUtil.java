@@ -38,31 +38,35 @@ public class BlockUtil {
         }
     }
 
-    public static boolean tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos) {
+    /**
+     * Try to place the given item as a block in the world.
+     *
+     * @param toPlace item to place
+     * @param world the world
+     * @param pos position in the world to place at
+     * @return the new block state if successful, null otherwise
+     */
+    public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos) {
         IBlockState currentState = world.getBlockState(pos);
         if (!currentState.getBlock().isAir(currentState, world, pos) || !currentState.getBlock().isReplaceable(world, pos)) {
-            return false;
+            return null;
         }
 
         IBlockState newState = getPlaceableState(toPlace);
-        if (newState == null) {
-            return false;
-        }
-
-        if (newState.getBlock().canPlaceBlockAt(world, pos)) {
+        if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
             EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
             if (fakePlayer == null) {
-                return false;
+                return null;
             }
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState)) {
-                return true;
+                return newState;
             }
         }
 
-        return false;
+        return null;
     }
 
     public static boolean tryBreakBlock(World world, BlockPos pos, Filter filter, List<ItemStack> drops, boolean silkTouch, int fortune) {

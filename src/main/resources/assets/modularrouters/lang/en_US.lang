@@ -142,6 +142,12 @@ itemText.misc.modFilter.count=%d mod(s) in filter
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=§eOwner: §b%s
 itemText.camouflage.held=§eCamouflage as: §b%s
+itemText.extruder.mode.ALWAYS=§eExtend: §bWith redstone signal > 0
+itemText.extruder.mode.LOW=§eExtend: §bWith redstone signal = 0
+itemText.extruder.mode.HIGH=§eExtend: §bWith redstone signal = 15
+itemText.extruder.mode.NEVER=§eExtend: §bNever
+itemText.extruder.mode.PULSE=§eExtend: §bNever
+
 
 # Usage tooltips
 itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
@@ -158,7 +164,7 @@ itemText.usage.item.detectorModule=Emits a redstone signal from the router in th
 itemText.usage.item.modsorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already items from the same mod in that inventory.
 itemText.usage.item.flingerModule=Throws items from the router's buffer potentially over a long distance.  Adjust speed, pitch & yaw from the module's GUI.
 itemText.usage.item.playerModule=Remotely transfers items between a player's main or armor inventory and the router's buffer.
-itemText.usage.item.extruderModule=When the router has a redstone signal, deploys items in the buffer as blocks; when no redstone signal, breaks those blocks and pulls them back into the router's buffer.\nMax distance: %d blocks (%d with Range Upgrades)
+itemText.usage.item.extruderModule=Places or removes blocks in a line along the module's direction, depending on the router's redstone signal level.\nDefault is to place with a signal and remove with no signal; activate the module's redstone mode for custom behaviour.
 itemText.usage.item.securityUpgrade=Protects router; only listed players can access the router.\n• Right-click a player to add them to this upgrade\n• Sneak + Right-click player to remove them
 itemText.usage.item.stackUpgrade=Increases the number of items processed per router tick.\n• Max. items processed per operation: %d\n• Max. useful upgrades: %d
 itemText.usage.item.speedUpgrade=Increases the router tick rate.\n• Router will tick every %.02f sec\n• Max. useful upgrades: %d

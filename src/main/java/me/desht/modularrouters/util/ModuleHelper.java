@@ -96,7 +96,7 @@ public class ModuleHelper {
 
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
         NBTTagCompound compound = validateNBT(stack);
-        if (compound.getBoolean(NBT_REDSTONE_ENABLED) && compound.hasKey(NBT_REDSTONE_MODE)) {
+        if (compound.getBoolean(NBT_REDSTONE_ENABLED)) {
             try {
                 // check for mode stored as a string (v1.0), or as a byte (v1.1+)
                 int id = compound.getTagId(NBT_REDSTONE_MODE);

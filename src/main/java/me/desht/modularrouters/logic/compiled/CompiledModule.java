@@ -3,7 +3,6 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
@@ -212,5 +211,9 @@ public abstract class CompiledModule {
      */
     public ModuleTarget getActualTarget(TileEntityItemRouter router) {
         return getTarget();
+    }
+
+    public boolean shouldRun(boolean powered, boolean pulsed) {
+        return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 }

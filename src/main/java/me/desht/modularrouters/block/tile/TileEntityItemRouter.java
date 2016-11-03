@@ -266,7 +266,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 Arrays.fill(newSignalType, SignalType.NONE);
             }
             for (CompiledModule cm : compiledModules) {
-                if (cm != null && cm.getRedstoneBehaviour().shouldRun(powered, pulsed) && cm.execute(this)) {
+                if (cm != null && cm.shouldRun(powered, pulsed) && cm.execute(this)) {
                     newActive = true;
                     if (cm.termination()) {
                         break;

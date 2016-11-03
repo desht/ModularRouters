@@ -4,10 +4,15 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.List;
 
 public class ExtruderModule extends Module {
     @Override
@@ -18,6 +23,12 @@ public class ExtruderModule extends Module {
     @Override
     public Object[] getExtraUsageParams() {
         return new Object[]{Config.Defaults.EXTRUDER_BASE_RANGE, Config.Defaults.EXTRUDER_MAX_RANGE};
+    }
+
+    @Override
+    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addExtraInformation(stack, player, list, par4);
+        list.add(I18n.format("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(stack)));
     }
 
     @Override
