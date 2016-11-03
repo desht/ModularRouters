@@ -36,8 +36,8 @@ public class ModuleGuiFactory {
         return null;
     }
 
-    public static Container createContainer(EntityPlayer player, ItemStack stack) {
-        return new ModuleContainer(player, stack);
+    public static Container createContainer(EntityPlayer player, EnumHand hand) {
+        return new ModuleContainer(player, hand, player.getHeldItem(hand));
     }
 
     public static Container createContainer(EntityPlayer player, World world, int x, int y, int z) {
@@ -47,7 +47,7 @@ public class ModuleGuiFactory {
             if (slotIndex >= 0) {
                 router.clearConfigSlot(player);
                 ItemStack installedModuleStack = router.getModules().getStackInSlot(slotIndex);
-                return installedModuleStack == null ? null : new ModuleContainer(player, installedModuleStack, router);
+                return installedModuleStack == null ? null : new ModuleContainer(player, null, installedModuleStack, router);
             }
         }
         return null;
@@ -62,7 +62,7 @@ public class ModuleGuiFactory {
         try {
             Constructor<? extends GuiModule> ctor = clazz.getConstructor(ModuleContainer.class, BlockPos.class, Integer.class, EnumHand.class);
             TileEntityItemRouter router = routerPos == null ? null : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos);
-            return ctor.newInstance(new ModuleContainer(player, moduleStack, router), routerPos, slotIndex, hand);
+            return ctor.newInstance(new ModuleContainer(player, hand, moduleStack, router), routerPos, slotIndex, hand);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return null;

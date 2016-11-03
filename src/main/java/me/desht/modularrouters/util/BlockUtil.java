@@ -106,4 +106,21 @@ public class BlockUtil {
 
         return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
+
+    public static String getBlockName(World w, BlockPos pos) {
+        if (w == null) {
+            return null;
+        }
+        IBlockState state = w.getBlockState(pos);
+        if (state.getBlock().isAir(state, w, pos)) {
+            return "";
+        } else {
+            ItemStack stack = state.getBlock().getItem(w, pos, state);
+            if (stack != null) {
+                return stack.getDisplayName();
+            } else {
+                return state.getBlock().getLocalizedName();
+            }
+        }
+    }
 }

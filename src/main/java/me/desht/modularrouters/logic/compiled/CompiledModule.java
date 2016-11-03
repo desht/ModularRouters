@@ -3,13 +3,16 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.CountedItemStacks;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -54,6 +57,12 @@ public abstract class CompiledModule {
         return direction;
     }
 
+    /**
+     * Get the static target for a router module.  This is set up when the router is compiled, and does not
+     * necessarily reflect the true target for all modules.  Use getActualTarget() to be sure.
+     *
+     * @return the static target set up when the router was compiled
+     */
     public ModuleTarget getTarget() {
         return target;
     }
@@ -109,7 +118,7 @@ public abstract class CompiledModule {
 
     /**
      * Default target for this module is the block adjacent to the router, in the module's
-     * configured direction.  Can be overridden, though.
+     * configured direction.  Can be overridden by submodules.
      *
      * @param router router in which the module is installed
      * @param stack the module itemstack
@@ -120,7 +129,10 @@ public abstract class CompiledModule {
             return null;
         }
         EnumFacing facing = router.getAbsoluteFacing(direction);
-        return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing), facing.getOpposite());
+        BlockPos pos = router.getPos().offset(facing);
+        String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
+        int dim = router.getWorld().provider.getDimension();
+        return new ModuleTarget(dim, router.getPos().offset(facing), facing.getOpposite(), blockName);
     }
 
     /**
@@ -189,5 +201,16 @@ public abstract class CompiledModule {
             }
         }
         return result;
+    }
+
+    /**
+     * Get the real target for this module, which is not necessarily the same as the result of getTarget().
+     * E.g. for a Sender Mk1, the real target may be a few blocks away, and may change without router recompilation
+     * if blocks are placed or removed.
+     *
+     * @return the real target for this module
+     */
+    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
+        return getTarget();
     }
 }

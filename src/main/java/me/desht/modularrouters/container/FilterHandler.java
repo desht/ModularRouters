@@ -2,12 +2,10 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class FilterHandler extends GhostItemHandler {
     private final ItemStack moduleStack;
@@ -20,9 +18,7 @@ public class FilterHandler extends GhostItemHandler {
         super(size);
         this.moduleStack = moduleStack;
 
-        if (!moduleStack.hasTagCompound()) {
-            moduleStack.setTagCompound(new NBTTagCompound());
-        }
+        ModuleHelper.validateNBT(moduleStack);
         deserializeNBT(moduleStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND));
     }
 

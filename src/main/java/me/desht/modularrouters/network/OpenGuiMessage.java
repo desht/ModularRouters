@@ -25,7 +25,7 @@ public class OpenGuiMessage extends BaseSettingsMessage {
         ROUTER,
         MODULE_HELD,
         MODULE_INSTALLED,
-        FILTER,
+        FILTER_HELD,
         FILTER_INSTALLED
     }
 
@@ -53,8 +53,8 @@ public class OpenGuiMessage extends BaseSettingsMessage {
         return new OpenGuiMessage(What.MODULE_INSTALLED, routerPos, null, moduleSlotIndex, -1);
     }
 
-    public static OpenGuiMessage openFilterInModule(int filterSlotIndex) {
-        return new OpenGuiMessage(What.FILTER, null, null, -1, filterSlotIndex);
+    public static OpenGuiMessage openFilterInModule(EnumHand hand, int filterSlotIndex) {
+        return new OpenGuiMessage(What.FILTER_HELD, null, hand, -1, filterSlotIndex);
     }
 
     public static OpenGuiMessage openFilterInInstalledModule(BlockPos routerPos, int moduleSlotIndex, int filterSlotIndex) {
@@ -75,7 +75,8 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                 routerPos = readPos(buf);
                 moduleSlotIndex = (int) buf.readByte();
                 break;
-            case FILTER:
+            case FILTER_HELD:
+                hand = EnumHand.values()[buf.readByte()];
                 filterSlotIndex = buf.readByte();
                 break;
             case FILTER_INSTALLED:
@@ -100,7 +101,8 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                 writePos(buf, routerPos);
                 buf.writeByte(moduleSlotIndex);
                 break;
-            case FILTER:
+            case FILTER_HELD:
+                buf.writeByte(hand.ordinal());
                 buf.writeByte(filterSlotIndex);
                 break;
             case FILTER_INSTALLED:
@@ -144,7 +146,7 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                                     player.worldObj, pos.getX(), pos.getY(), pos.getZ());
                         }
                         break;
-                    case FILTER:
+                    case FILTER_HELD:
                         // filter is in a module in player's hand
                         // record the filter slot in the module itemstack's NBT - client needs this when creating the GUI
                         ItemModule.setFilterConfigSlot(player.getHeldItem(message.hand), message.filterSlotIndex);

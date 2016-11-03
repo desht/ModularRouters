@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic;
 
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -12,30 +13,42 @@ public class ModuleTarget {
     public final int dimId;
     public final BlockPos pos;
     public final EnumFacing face;
+    public final String invName;
 
-    public ModuleTarget(int dimId, int x, int y, int z, EnumFacing face) {
+    public ModuleTarget(int dimId, BlockPos pos, EnumFacing face, String invName) {
         this.dimId = dimId;
-        this.pos = new BlockPos(x, y, z);
+        this.pos = pos;
         this.face = face;
+        this.invName = invName;
     }
 
-    public ModuleTarget(int dimension, BlockPos position, EnumFacing face) {
-        this(dimension, position.getX(), position.getY(), position.getZ(), face);
+    public ModuleTarget(int dimId, BlockPos pos, EnumFacing face) {
+        this(dimId, pos, face, "");
+    }
+
+    public ModuleTarget(int dimId, BlockPos pos) {
+        this(dimId, pos, null);
     }
 
     public NBTTagCompound toNBT() {
         NBTTagCompound ext = new NBTTagCompound();
-        ext.setInteger("Dim", dimId);
+        ext.setInteger("Dimension", dimId);
         ext.setInteger("X", pos.getX());
         ext.setInteger("Y", pos.getY());
         ext.setInteger("Z", pos.getZ());
         ext.setByte("Face", (byte) face.ordinal());
+        ext.setString("InvName", invName);
         return ext;
     }
 
     public static ModuleTarget fromNBT(NBTTagCompound nbt) {
-        return new ModuleTarget(nbt.getInteger("Dim"),
-                nbt.getInteger("X"), nbt.getInteger("Y"), nbt.getInteger("Z"),
-                EnumFacing.values()[nbt.getByte("Face")]);
+        BlockPos pos = new BlockPos(nbt.getInteger("X"), nbt.getInteger("Y"), nbt.getInteger("Z"));
+        EnumFacing face = EnumFacing.values()[nbt.getByte("Face")];
+        return new ModuleTarget(nbt.getInteger("Dimension"), pos, face, nbt.getString("InvName"));
+    }
+
+    @Override
+    public String toString() {
+        return MiscUtil.locToString(dimId, pos) + " " + face + " [" + invName + "]";
     }
 }

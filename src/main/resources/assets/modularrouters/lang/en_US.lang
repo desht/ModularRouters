@@ -128,9 +128,8 @@ itemText.misc.IGNORE_NBT=NBT
 itemText.misc.IGNORE_OREDICT=Oredict
 itemText.misc.TERMINATE=Termination
 itemText.misc.flags=Flags
-itemText.misc.target=§eTarget: §bDIM %d §f|§b [%d %d %d] §f|§b %s
 itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
-itemText.misc.configureHint=Press §e'%s'§7 to configure
+itemText.misc.configureHint=Press §e[%s]§7 to configure
 itemText.misc.redstoneLevel=§eSignal Level: §b%d (%s)
 itemText.misc.strongSignal.false=Weak
 itemText.misc.strongSignal.true=Strong
@@ -142,10 +141,6 @@ itemText.misc.modFilter.count=%d mod(s) in filter
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=§eOwner: §b%s
 itemText.camouflage.held=§eCamouflage as: §b%s
-itemText.targetValidation.OK=§a✔ Target OK
-itemText.targetValidation.OUT_OF_RANGE=§c✘ Out of Range
-itemText.targetValidation.NOT_LOADED=§c✘ Not Loaded
-itemText.targetValidation.NOT_INVENTORY=§c✘ No Inventory
 
 # Usage tooltips
 itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
@@ -175,7 +170,6 @@ itemText.deprecated.modSorter=§oDeprecated Module; use a Mod Filter instead.\n�
 itemText.deprecated.sorter=§oDeprecated Module; use a Bulk Item Filter instead.\n§oThis module can be crafted into a Bulk Item Filter.
 
 # Player chat messages
-chatText.misc.targetSet=Target set: %s
 chatText.misc.inventoryMerged=Merged %d item(s) into the %s
 chatText.security.accessDenied=§c--[Access Denied]--
 chatText.security.ADDED=Added player [%s]
@@ -186,6 +180,12 @@ chatText.security.ALREADY_ADDED=Player [%s] is already on this upgrade
 chatText.security.NOT_PRESENT=Player [%s] is not on this uprade
 chatText.subtitle.error=Error
 chatText.subtitle.success=Success
+chatText.misc.target=§eTarget: §b%s
+chatText.misc.targetSet=§eTarget set: §b%s
+chatText.targetValidation.OK=§a✔ Target OK
+chatText.targetValidation.OUT_OF_RANGE=§c✘ Out of Range
+chatText.targetValidation.NOT_LOADED=§c✘ Not Loaded
+chatText.targetValidation.NOT_INVENTORY=§c✘ No Inventory
 
 # Guidebook text
 guidebook.para.introText=§lWelcome to Modular Routers!\n\nThis aims to provide an alternative approach for moving items around in various ways.  With a single block - the Item Router - and one or more plug-in modules, you can pull items from an inventory (including modded inventories like Storage Drawers), send them to other inventories near & far, place items as blocks, break blocks, drop items into the world, sort items, and much more.\n\nThink of the Item Router like a super-configurable Hopper on steroids...

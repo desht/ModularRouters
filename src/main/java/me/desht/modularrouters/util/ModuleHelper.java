@@ -1,11 +1,13 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -24,11 +26,11 @@ public class ModuleHelper {
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
-        }
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(NBT_FLAGS)) {
+        if (compound == null) {
+            stack.setTagCompound(compound = new NBTTagCompound());
+        }
+        if (compound.getTagId(NBT_FLAGS) != Constants.NBT.TAG_BYTE) {
             byte flags = 0x0;
             for (Module.ModuleFlags b : Module.ModuleFlags.values()) {
                 if (b.getDefaultValue()) {
@@ -36,6 +38,9 @@ public class ModuleHelper {
                 }
             }
             compound.setByte(NBT_FLAGS, flags);
+        }
+        if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_LIST) {
+            compound.setTag(NBT_FILTER, new NBTTagList());
         }
         return compound;
     }

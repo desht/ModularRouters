@@ -8,6 +8,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -26,18 +27,21 @@ public class ModuleContainer extends Container {
     private final int currentSlot;
     private final TileEntityItemRouter router;
 
-    public ModuleContainer(EntityPlayer player, ItemStack moduleStack) {
-        this(player, moduleStack, null);
+    public ModuleContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
+        this(player, hand, moduleStack, null);
     }
 
-    public ModuleContainer(EntityPlayer player, ItemStack moduleStack, TileEntityItemRouter router) {
+    public ModuleContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
         this.filterHandler = new FilterHandler(moduleStack, Filter.FILTER_SIZE);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
         this.router = router;  // can be null
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
-            addSlotToContainer(new FilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
+            FilterSlot slot = router == null ?
+                    new FilterSlot(filterHandler, player, hand, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
+                    new FilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3));
+            addSlotToContainer(slot);
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
@@ -61,30 +65,29 @@ public class ModuleContainer extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         ItemStack stack;
-        Slot slot = inventorySlots.get(index);
+        Slot srcSlot = inventorySlots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stackInSlot = slot.getStack();
+        if (srcSlot != null && srcSlot.getHasStack()) {
+            ItemStack stackInSlot = srcSlot.getStack();
             stack = stackInSlot.copy();
             stack.stackSize = 1;
 
             if (index < Filter.FILTER_SIZE) {
                 // shift-clicking in a filter slot: clear it from the filter
-                slot.putStack(null);
+                srcSlot.putStack(null);
             } else if (index >= INV_START) {
                 // shift-clicking in player inventory: copy it into the filter (if not already present)
                 // but don't remove it from player inventory
                 int freeSlot;
                 for (freeSlot = 0; freeSlot < Filter.FILTER_SIZE; freeSlot++) {
                     ItemStack stack0 = filterHandler.getStackInSlot(freeSlot);
-                    if (stack0 == null || stack0.stackSize == 0 || stack0.isItemEqual(stack)) {
+                    if (stack0 == null || stack0.stackSize == 0 || ItemStack.areItemStacksEqual(stack0, stack)) {
                         break;
                     }
                 }
                 if (freeSlot < Filter.FILTER_SIZE) {
-                    Slot s = inventorySlots.get(freeSlot);
-                    s.putStack(stack);
-                    slot.putStack(stackInSlot);
+                    inventorySlots.get(freeSlot).putStack(stack);
+                    srcSlot.putStack(stackInSlot);
                 }
             }
         }

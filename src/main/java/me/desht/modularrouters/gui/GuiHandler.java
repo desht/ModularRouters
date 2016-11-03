@@ -18,9 +18,9 @@ public class GuiHandler implements IGuiHandler {
             TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, new BlockPos(x, y, z));
             return router != null ? new ItemRouterContainer(player.inventory, router) : null;
         } else if (ID == ModularRouters.GUI_MODULE_HELD_MAIN) {
-            return ModuleGuiFactory.createContainer(player, player.getHeldItem(EnumHand.MAIN_HAND));
+            return ModuleGuiFactory.createContainer(player, EnumHand.MAIN_HAND);
         } else if (ID == ModularRouters.GUI_MODULE_HELD_OFF) {
-            return ModuleGuiFactory.createContainer(player, player.getHeldItem(EnumHand.OFF_HAND));
+            return ModuleGuiFactory.createContainer(player, EnumHand.OFF_HAND);
         } else if (ID == ModularRouters.GUI_MODULE_INSTALLED) {
             return ModuleGuiFactory.createContainer(player, world, x, y, z);
         } else if (ID == ModularRouters.GUI_FILTER_HELD_MAIN) {

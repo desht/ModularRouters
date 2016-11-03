@@ -72,14 +72,15 @@ public class GuiBulkItemFilter extends GuiFilterScreen {
                 ItemStack moduleStack = router.getModules().getStackInSlot(moduleSlotIndex);
                 Module m = ItemModule.getModule(moduleStack);
                 CompiledModule cm = m.compile(router, moduleStack);
-                target = cm.getTarget();
-                // TODO - won't work if target in a different dimension
-                IItemHandler inv = InventoryUtils.getInventory(mc.theWorld, target.pos, target.face);
-                String name = getItemNameAtPos(cm.getTarget().pos);
-                //
-                if (inv != null) {
-                    buttonList.add(new Buttons.MergeButton(MERGE_BUTTON_ID, xPos + 28, yPos + 135, MiscUtil.locToString(mc.theWorld, cm.getTarget().pos), name));
-                    buttonList.add(new Buttons.LoadButton(LOAD_BUTTON_ID, xPos + 48, yPos + 135, MiscUtil.locToString(mc.theWorld, cm.getTarget().pos), name));
+                target = cm.getActualTarget(router);
+                // This should work even if the target is in another dimension, since the target name
+                // is stored in the module item NBT, which was set up server-side.
+                // Using getActualTarget() here *should* ensure that we always see the right target...
+                if (target != null && target.invName != null && !target.invName.isEmpty()) {
+                    buttonList.add(new Buttons.MergeButton(MERGE_BUTTON_ID, xPos + 28, yPos + 135,
+                            MiscUtil.locToString(target.dimId, target.pos), target.invName));
+                    buttonList.add(new Buttons.LoadButton(LOAD_BUTTON_ID, xPos + 48, yPos + 135,
+                            MiscUtil.locToString(target.dimId, target.pos), target.invName));
                 }
             }
         }

@@ -5,15 +5,17 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.SenderModule1;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
+import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -63,20 +65,29 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
+        ModuleTarget target = getActualTarget(router);
+        if (target != null) {
+            IItemHandler handler = InventoryUtils.getInventory(DimensionManager.getWorld(target.dimId), target.pos, target.face);
+            return handler == null ? null : new PositionedItemHandler(target.pos, handler);
+        }
+        return null;
+    }
+
+    @Override
+    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
         if (getDirection() == Module.RelativeDirection.NONE) {
             return null;
         }
-        BlockPos pos = getTarget().pos;
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
         EnumFacing face = getTarget().face;
         for (int i = 1; i < SenderModule1.maxDistance(router); i++) {
             World world = router.getWorld();
-            IItemHandler handler = InventoryUtils.getInventory(world, pos, face);
-            if (handler != null) {
-                return new PositionedItemHandler(pos, handler);
+            if (world.getTileEntity(pos) != null) {
+                return new ModuleTarget(world.provider.getDimension(), pos.toImmutable(), face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
                 return null;
             }
-            pos = pos.offset(getFacing());
+            pos.move(getFacing());
         }
         return null;
     }
@@ -86,11 +97,11 @@ public class CompiledSenderModule1 extends CompiledModule {
         return !state.getBlock().isBlockSolid(w, pos, face) || !state.isOpaqueCube();
     }
 
-    public static class PositionedItemHandler {
+    static class PositionedItemHandler {
         private final BlockPos pos;
         private final IItemHandler handler;
 
-        public PositionedItemHandler(BlockPos pos, IItemHandler handler) {
+        PositionedItemHandler(BlockPos pos, IItemHandler handler) {
             this.pos = pos;
             this.handler = handler;
         }

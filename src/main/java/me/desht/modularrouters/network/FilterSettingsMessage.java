@@ -97,6 +97,9 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
                         if (filterHandler != null) {
                             filterHandler.setStackInSlot(message.filterIndex, filterStack);
                             filterHandler.save();
+                            if (message.hand != null) {
+                                player.setHeldItem(message.hand, filterHandler.getModuleItemStack());
+                            }
                         }
                         if (response != null) {
                             // send to any nearby players in case they also have the GUI open

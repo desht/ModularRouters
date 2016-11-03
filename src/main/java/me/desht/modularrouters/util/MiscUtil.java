@@ -16,7 +16,11 @@ public class MiscUtil {
     }
 
     public static String locToString(World world, BlockPos pos) {
-        return String.format("[%d %d,%d,%d]", world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ());
+        return locToString(world.provider.getDimension(), pos);
+    }
+
+    public static String locToString(int dim, BlockPos pos) {
+        return String.format("DIM:%d X:%d Y:%d Z:%d", dim, pos.getX(), pos.getY(), pos.getZ());
     }
 
     public static String translate(String key, Object... args) {

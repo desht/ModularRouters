@@ -17,7 +17,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
 
     @Override
     protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
-        return TargetedModule.getTarget(stack);
+        return TargetedModule.getTarget(stack, !router.getWorld().isRemote);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
         }
 
         WorldServer w = DimensionManager.getWorld(target.dimId);
-        if (w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
+        if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
             IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
             return handler == null ? null : new PositionedItemHandler(target.pos, handler);
         }
@@ -47,4 +47,8 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
         return true;
     }
 
+    @Override
+    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
+        return getTarget();
+    }
 }

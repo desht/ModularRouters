@@ -12,7 +12,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializable<NBTTagList> {
     protected final ItemStack[] items;
 
-    public GhostItemHandler(int size) {
+    GhostItemHandler(int size) {
         this.items = new ItemStack[size];
     }
 

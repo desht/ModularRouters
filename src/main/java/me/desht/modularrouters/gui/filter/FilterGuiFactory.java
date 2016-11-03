@@ -3,21 +3,17 @@ package me.desht.modularrouters.gui.filter;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.FilterContainer;
+import me.desht.modularrouters.container.FilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -74,8 +70,20 @@ public class FilterGuiFactory {
         }
     }
 
-    public static Container createContainer(EntityPlayer player, ItemStack filterStack) {
-        return createContainer(player, filterStack, null);
+    public static Container createContainer(EntityPlayer player, ItemStack heldStack) {
+        if (ItemModule.getModule(heldStack) != null) {
+            // filter is in a module in player's hand
+            int filterIndex = ItemModule.getFilterConfigSlot(heldStack);
+            if (filterIndex >= 0) {
+                ItemStack filterStack = getFilterStackInUninstalledModule(heldStack, filterIndex);
+                ItemModule.setFilterConfigSlot(heldStack, -1);
+                return createContainer(player, filterStack, null);
+            }
+        } else {
+            // filter is held directly in player's hand
+            return createContainer(player, heldStack, null);
+        }
+        return null;
     }
 
     public static Container createContainer(EntityPlayer player, World world, int x, int y, int z) {
@@ -107,17 +115,13 @@ public class FilterGuiFactory {
     }
 
     private static ItemStack getStackInSlot(ItemStack moduleStack, int filterIdx) {
-        NBTTagCompound compound = moduleStack.getTagCompound();
-        if (compound != null) {
-            NBTTagList items = compound.getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-            NBTBase b = items.get(filterIdx);
-            if (b instanceof NBTTagCompound) {
-                return ItemStack.loadItemStackFromNBT((NBTTagCompound) b);
-            } else {
-                ModularRouters.logger.warn("can't find filter item in module: index=" + filterIdx);
-            }
+        FilterHandler handler = new FilterHandler(moduleStack);
+        ItemStack stack = handler.getStackInSlot(filterIdx);
+        if (stack != null) {
+            return stack;
+        } else {
+            ModularRouters.logger.warn("can't find filter item in module '" + moduleStack + "', slot " + filterIdx);
+            return null;
         }
-        return null;
     }
-
 }
