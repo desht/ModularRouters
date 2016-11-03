@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class RegulatorUpgradeRecipe extends ModuleUpgradeRecipe {
-    public RegulatorUpgradeRecipe(ItemStack result, Object... recipe) {
+    RegulatorUpgradeRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
 
@@ -23,5 +23,10 @@ public class RegulatorUpgradeRecipe extends ModuleUpgradeRecipe {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    protected boolean validateItem(ItemStack stack) {
+        return !ModuleHelper.isRegulatorEnabled(stack);
     }
 }

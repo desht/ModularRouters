@@ -4,11 +4,23 @@ import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public abstract class ModuleUpgradeRecipe extends ShapedOreRecipe {
     public ModuleUpgradeRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
+    }
+
+    @Override
+    public boolean matches(InventoryCrafting inv, World world) {
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (ItemModule.getModule(stack) != null && !validateItem(stack)) {
+                return false;
+            }
+        }
+        return super.matches(inv, world);
     }
 
     @Override
@@ -28,6 +40,14 @@ public abstract class ModuleUpgradeRecipe extends ShapedOreRecipe {
         }
         return out;
     }
+
+    /**
+     * Check that the item is OK for an upgrade to be applied.
+     *
+     * @param stack the item to check
+     * @return true if the item is OK for upgrading
+     */
+    protected abstract boolean validateItem(ItemStack stack);
 
     /**
      * Do what's necessary to the item to enable the upgrade, generally modifying the item's NBT in some way.
