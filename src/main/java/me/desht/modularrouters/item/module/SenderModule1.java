@@ -28,6 +28,6 @@ public class SenderModule1 extends Module {
     }
 
     public static int maxDistance(TileEntityItemRouter router) {
-        return Config.sender1BaseRange + Math.min(router.getRangeUpgrades(), Config.sender1BaseRange);
+        return Math.min(Config.sender1MaxRange, Config.sender1BaseRange + router.getRangeUpgrades());
     }
 }
