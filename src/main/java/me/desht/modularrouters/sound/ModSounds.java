@@ -11,7 +11,8 @@ public class ModSounds {
     public static void init() {
         String[] sounds = {
                 "error",
-                "success"
+                "success",
+                "thud"
         };
 
         for (String s : sounds) {

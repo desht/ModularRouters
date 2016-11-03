@@ -42,7 +42,7 @@ public class CompiledVacuumModule extends CompiledModule {
             ItemStack stack = item.getEntityItem();
             if ((bufferStack == null || ItemHandlerHelper.canItemStacksStack(stack, bufferStack)) && getFilter().pass(stack)) {
                 ItemStack vacuumed = stack.splitStack(router.getItemsPerTick());
-                ItemStack excess = router.getBuffer().insertItem(0, vacuumed, false);
+                ItemStack excess = router.insertBuffer(vacuumed);
                 int remaining = excess == null ? 0 : excess.stackSize;
                 stack.stackSize += remaining;
                 int inserted = vacuumed.stackSize - remaining;

@@ -8,5 +8,10 @@
     "category" : "master",
     "subtitle" : "chatText.subtitle.success",
     "sounds" : [ "modularrouters:success"]
+  },
+  "thud" : {
+    "category" : "master",
+    "subtitle" : "chatText.subtitle.thud",
+    "sounds" : [ "modularrouters:thud"]
   }
 }

@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class Config {
 
     public static class Defaults {
-
         public static final int BASE_TICK_RATE = 20;
         public static final int TICKS_PER_UPGRADE = 2;
         public static final int SENDER1_BASE_RANGE = 8;
@@ -31,6 +30,7 @@ public class Config {
         public static final boolean VACUUM_PARTICLES = true;
         public static final boolean PLACER_PARTICLES = true;
         public static final boolean BREAKER_PARTICLES = true;
+        public static final boolean FLINGER_EFFECTS = true;
         public static final boolean EXTRUDER_SOUND = true;
         public static final char CONFIG_KEY = 'c';
         public static final boolean START_WITH_GUIDE = false;
@@ -56,14 +56,15 @@ public class Config {
     public static int extruderMaxRange;
     public static boolean senderParticles;
     public static boolean breakerParticles;
+    public static boolean flingerEffects;
     public static boolean extruderSound;
     public static boolean placerParticles;
     public static boolean vacuumParticles;
     public static boolean startWithGuide;
 
-    public static final String CATEGORY_NAME_ROUTER = "category_router";
-    public static final String CATEGORY_NAME_MODULE = "category_module";
-    public static final String CATEGORY_NAME_MISC = "category_misc";
+    static final String CATEGORY_NAME_ROUTER = "category_router";
+    static final String CATEGORY_NAME_MODULE = "category_module";
+    static final String CATEGORY_NAME_MISC = "category_misc";
     private static Configuration config;
 
     public static Configuration getConfig() {
@@ -162,8 +163,11 @@ public class Config {
                 "Show particles when Breaker Module breaks a block");
         propBreakerParticles.setLanguageKey("gui.config.breakerParticles");
         Property propExtruderSound = config.get(CATEGORY_NAME_MODULE, "extruderSound", Defaults.EXTRUDER_SOUND,
-                "Play sounds when Extruder Module extends or contracts");
+                "Play sounds when Extruder Module extends or withdraws");
         propExtruderSound.setLanguageKey("gui.config.extruderSound");
+        Property propFlingerEffects = config.get(CATEGORY_NAME_MODULE, "flingerEffects", Defaults.FLINGER_EFFECTS,
+                "Play sound & smoke effect when Flinger Module flings an item");
+        propFlingerEffects.setLanguageKey("gui.config.flingerEffects");
 
         Property propStartWithGuide = config.get(CATEGORY_NAME_MISC, "startWithGuide", Defaults.START_WITH_GUIDE,
                 "New players spawn with a guide book");
@@ -191,7 +195,8 @@ public class Config {
                 propVacuumParticles,
                 propPlacerParticles,
                 propBreakerParticles,
-                propExtruderSound
+                propExtruderSound,
+                propFlingerEffects
         ).stream().map(Property::getName).collect(Collectors.toList()));
 
         config.setCategoryPropertyOrder(CATEGORY_NAME_MISC, Collections.singletonList(
@@ -219,6 +224,7 @@ public class Config {
             placerParticles = propPlacerParticles.getBoolean();
             breakerParticles = propBreakerParticles.getBoolean();
             extruderSound = propExtruderSound.getBoolean();
+            flingerEffects = propFlingerEffects.getBoolean();
             startWithGuide = propStartWithGuide.getBoolean();
         }
 
@@ -241,6 +247,7 @@ public class Config {
         propPlacerParticles.set(placerParticles);
         propBreakerParticles.set(breakerParticles);
         propExtruderSound.set(extruderSound);
+        propFlingerEffects.set(flingerEffects);
         propStartWithGuide.set(startWithGuide);
 
         if (config.hasChanged()) {
@@ -252,7 +259,7 @@ public class Config {
         @SubscribeEvent(priority = EventPriority.NORMAL)
         public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
             if (ModularRouters.modId.equals(event.getModID()) && !event.isWorldRunning()) {
-                if (event.getConfigID().equals(CATEGORY_NAME_ROUTER) || event.getConfigID().equals(CATEGORY_NAME_MODULE)) {
+                if (event.getConfigID().equals(CATEGORY_NAME_ROUTER) || event.getConfigID().equals(CATEGORY_NAME_MODULE) || event.getConfigID().equals(CATEGORY_NAME_MISC)) {
                     syncFromGUI();
                 }
             }
