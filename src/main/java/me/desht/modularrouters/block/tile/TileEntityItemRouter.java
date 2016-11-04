@@ -17,6 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -29,6 +31,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -44,6 +47,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public static final int COMPILE_MODULES = 0x01;
     public static final int COMPILE_UPGRADES = 0x02;
+
+    public static final String NBT_ACTIVE = "Active";
+    public static final String NBT_ACTIVE_TIMER = "ActiveTimer";
+    public static final String NBT_ECO_MODE = "EcoMode";
+    public static final String NBT_SIDES = "Sides";
+    public static final String NBT_PERMITTED = "Permitted";
+    public static final String NBT_BUFFER = "Buffer";
+    public static final String NBT_MODULES = "Modules";
+    public static final String NBT_UPGRADES = "Upgrades";
+    public static final String NBT_EXTRA = "Extra";
+    public static final String NBT_REDSTONE_MODE = "Redstone";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -64,6 +78,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
     private final int[] upgradeCount = new int[ItemUpgrade.UpgradeType.values().length];
+    private int moduleCount;
 
     // for tracking redstone emission levels for the detector module
     private final int SIDES = EnumFacing.values().length;
@@ -122,30 +137,65 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     @Override
     public NBTTagCompound getUpdateTag() {
-        NBTTagCompound nbtTagCompound = super.getUpdateTag();
-        writeToNBT(nbtTagCompound);
-        return nbtTagCompound;
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setInteger("x", pos.getX());
+        compound.setInteger("y", pos.getY());
+        compound.setInteger("z", pos.getZ());
+
+        // these fields are needed for WAILA
+        NBTTagList list = new NBTTagList();
+        for (UUID u : permitted) {
+            list.appendTag(new NBTTagString(u.toString()));
+        }
+        compound.setTag(NBT_PERMITTED, list);
+        compound.setInteger(BlockItemRouter.NBT_MODULE_COUNT, getModuleCount());
+        for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+            compound.setInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type, getUpgradeCount(type));
+        }
+
+        // these fields are needed for rendering
+        compound.setBoolean(NBT_ACTIVE, active);
+        compound.setByte(NBT_SIDES, sidesOpen);
+        compound.setBoolean(NBT_ECO_MODE, ecoMode);
+        if (camouflage != null) {
+            CamouflageUpgrade.writeToNBT(compound, camouflage);
+        }
+        return compound;
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        processClientSync(tag);
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setBoolean("Active", active);
-        compound.setByte("Sides", sidesOpen);
-        compound.setBoolean("Eco", ecoMode);
-        if (camouflage != null) {
-            CamouflageUpgrade.writeToNBT(compound, camouflage);
-        }
-        return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), compound);
+        return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), getUpdateTag());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        boolean newActive = pkt.getNbtCompound().getBoolean("Active");
-        byte newSidesOpen = pkt.getNbtCompound().getByte("Sides");
-        boolean newEco = pkt.getNbtCompound().getBoolean("Eco");
-        IBlockState camo = CamouflageUpgrade.readFromNBT(pkt.getNbtCompound());
+        processClientSync(pkt.getNbtCompound());
+    }
 
+    private void processClientSync(NBTTagCompound compound) {
+        NBTTagList l = compound.getTagList(NBT_PERMITTED, Constants.NBT.TAG_STRING);
+        permitted.clear();
+        for (int i = 0; i < l.tagCount(); i++) {
+            permitted.add(UUID.fromString(l.getStringTagAt(i)));
+        }
+        moduleCount = compound.getInteger(BlockItemRouter.NBT_MODULE_COUNT);
+        for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+            upgradeCount[type.ordinal()] = compound.getInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type);
+        }
+
+        // these fields are needed for rendering
+        boolean newActive = compound.getBoolean(NBT_ACTIVE);
+        byte newSidesOpen = compound.getByte(NBT_SIDES);
+        boolean newEco = compound.getBoolean(NBT_ECO_MODE);
+        IBlockState camo = CamouflageUpgrade.readFromNBT(compound);
         setActive(newActive);
         setSidesOpen(newSidesOpen);
         setEcoMode(newEco);
@@ -174,20 +224,20 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        bufferHandler.deserializeNBT(nbt.getCompoundTag("Buffer"));
-        modulesHandler.deserializeNBT(nbt.getCompoundTag("Modules"));
-        upgradesHandler.deserializeNBT(nbt.getCompoundTag("Upgrades"));
+        bufferHandler.deserializeNBT(nbt.getCompoundTag(NBT_BUFFER));
+        modulesHandler.deserializeNBT(nbt.getCompoundTag(NBT_MODULES));
+        upgradesHandler.deserializeNBT(nbt.getCompoundTag(NBT_UPGRADES));
         try {
-            redstoneBehaviour = RouterRedstoneBehaviour.valueOf(nbt.getString("Redstone"));
+            redstoneBehaviour = RouterRedstoneBehaviour.valueOf(nbt.getString(NBT_REDSTONE_MODE));
         } catch (IllegalArgumentException e) {
             // shouldn't ever happen...
             redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
         }
-        active = nbt.getBoolean("Active");
-        activeTimer = nbt.getInteger("ActiveTimer");
-        ecoMode = nbt.getBoolean("EcoMode");
+        active = nbt.getBoolean(NBT_ACTIVE);
+        activeTimer = nbt.getInteger(NBT_ACTIVE_TIMER);
+        ecoMode = nbt.getBoolean(NBT_ECO_MODE);
 
-        NBTTagCompound ext = nbt.getCompoundTag("Extra");
+        NBTTagCompound ext = nbt.getCompoundTag(NBT_EXTRA);
         NBTTagCompound ext1 = getExtData();
         if (ext != null) {
             for (String key : ext.getKeySet()) {
@@ -200,20 +250,20 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt = super.writeToNBT(nbt);
-        nbt.setTag("Buffer", bufferHandler.serializeNBT());
-        nbt.setTag("Modules", modulesHandler.serializeNBT());
-        nbt.setTag("Upgrades", upgradesHandler.serializeNBT());
-        nbt.setString("Redstone", redstoneBehaviour.name());
-        nbt.setBoolean("Active", active);
-        nbt.setInteger("ActiveTimer", activeTimer);
-        nbt.setBoolean("EcoMode", ecoMode);
+        nbt.setTag(NBT_BUFFER, bufferHandler.serializeNBT());
+        nbt.setTag(NBT_MODULES, modulesHandler.serializeNBT());
+        nbt.setTag(NBT_UPGRADES, upgradesHandler.serializeNBT());
+        nbt.setString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
+        nbt.setBoolean(NBT_ACTIVE, active);
+        nbt.setInteger(NBT_ACTIVE_TIMER, activeTimer);
+        nbt.setBoolean(NBT_ECO_MODE, ecoMode);
 
         NBTTagCompound ext = new NBTTagCompound();
         NBTTagCompound ext1 = getExtData();
         for (String key : ext1.getKeySet()) {
             ext.setTag(key, ext1.getTag(key));
         }
-        nbt.setTag("Extra", ext);
+        nbt.setTag(NBT_EXTRA, ext);
 
         return nbt;
     }
@@ -356,6 +406,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
      * Compile installed modules & upgrades etc. into internal data for faster execution
      */
     private void compile() {
+        if (worldObj.isRemote) {
+            return;
+        }
+
         // modules
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
             setHasPulsedModules(false);
@@ -374,6 +428,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                     newSidesOpen |= cms.getDirection().getMask();
                 }
             }
+            moduleCount = compiledModules.size();
             setSidesOpen(newSidesOpen);
         }
 
@@ -394,9 +449,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
         }
 
-        if (recompileNeeded != 0) markDirty();
-
-        recompileNeeded = 0;
+        if (recompileNeeded != 0) {
+            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+            markDirty();
+            recompileNeeded = 0;
+        }
     }
 
     public void setAllowRedstoneEmission(boolean allow) {
@@ -417,7 +474,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public int getModuleCount() {
-        return compiledModules.size();
+        return moduleCount;
     }
 
     public int getSpeedUpgrades() {

@@ -10,6 +10,7 @@ import me.desht.modularrouters.integration.top.TOPInfoProvider;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.PropertyObject;
@@ -295,13 +296,14 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote && !player.isSneaking()) {
+        if (!player.isSneaking()) {
             TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
             if (router != null) {
-                if (router.isPermitted(player)) {
+                if (router.isPermitted(player) && !world.isRemote) {
                     player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
-                } else {
+                } else if (!router.isPermitted(player) && world.isRemote) {
                     player.addChatMessage(new TextComponentTranslation("chatText.security.accessDenied"));
+                    player.playSound(MRSoundEvents.error, 1.0f, 1.0f);
                 }
             }
         }
