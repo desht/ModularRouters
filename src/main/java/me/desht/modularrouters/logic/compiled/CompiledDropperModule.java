@@ -25,7 +25,6 @@ public class CompiledDropperModule extends CompiledModule {
                     pos.getY() + 0.5 + 0.2 * face.getFrontOffsetY(),
                     pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
                     toDrop);
-            item.setPickupDelay(40);  // same as player dropping an item
             setupItemVelocity(router, item);
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.extractBuffer(toDrop.stackSize);
