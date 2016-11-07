@@ -7,7 +7,6 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.gui.GuiScreen;

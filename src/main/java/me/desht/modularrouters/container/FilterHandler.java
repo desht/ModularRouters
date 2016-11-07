@@ -2,9 +2,7 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.util.Constants;
 
 public class FilterHandler extends GhostItemHandler {

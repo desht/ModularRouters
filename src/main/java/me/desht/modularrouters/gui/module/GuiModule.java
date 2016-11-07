@@ -3,7 +3,6 @@ package me.desht.modularrouters.gui.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

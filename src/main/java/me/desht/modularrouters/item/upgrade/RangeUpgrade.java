@@ -15,8 +15,8 @@ class RangeUpgrade extends Upgrade {
 
     @Override
     public Object[] getExtraUsageParams() {
-        List<String> l = applicable.stream().map(m -> "\u2022 " + MiscUtil.translate("item." + m + ".name")).collect(Collectors.toList());
-        return l.toArray(new String[0]);
+        String s = applicable.stream().map(m -> MiscUtil.translate("item." + m + ".name")).collect(Collectors.joining(", "));
+        return new String[] { s };
     }
 
     @Override
