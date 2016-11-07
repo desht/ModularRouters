@@ -154,10 +154,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             compound.setInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type, getUpgradeCount(type));
         }
 
+        compound.setByte(NBT_REDSTONE_MODE, (byte) redstoneBehaviour.ordinal());
+        compound.setBoolean(NBT_ECO_MODE, ecoMode);
+
         // these fields are needed for rendering
         compound.setBoolean(NBT_ACTIVE, active);
         compound.setByte(NBT_SIDES, sidesOpen);
-        compound.setBoolean(NBT_ECO_MODE, ecoMode);
         if (camouflage != null) {
             CamouflageUpgrade.writeToNBT(compound, camouflage);
         }
@@ -190,6 +192,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
             upgradeCount[type.ordinal()] = compound.getInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type);
         }
+
+        RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
+        setRedstoneBehaviour(newRedstoneBehaviour);
 
         // these fields are needed for rendering
         boolean newActive = compound.getBoolean(NBT_ACTIVE);
@@ -344,6 +349,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
             lastPower = getRedstonePower();
         }
+        handleSync(false);
     }
 
     /**
@@ -358,7 +364,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
-            handleSync();
+            handleSync(true);
         }
     }
 
@@ -369,7 +375,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void setSidesOpen(byte sidesOpen) {
         if (this.sidesOpen != sidesOpen) {
             this.sidesOpen = sidesOpen;
-            handleSync();
+            handleSync(true);
         }
     }
 
@@ -377,7 +383,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (newEco != ecoMode) {
             ecoMode = newEco;
             ecoCounter = Config.ecoTimeout;
-            handleSync();
+            handleSync(false);
         }
     }
 
@@ -388,16 +394,16 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void setCamouflage(IBlockState newCamouflage) {
         if (newCamouflage != camouflage) {
             this.camouflage = newCamouflage;
-            handleSync();
+            handleSync(true);
         }
     }
 
-    private void handleSync() {
-        // some TE parameter changed that the client needs to know about for rendering:
-        // if on server, sync TE data to client; if on client, mark the TE pos for re-render
+    private void handleSync(boolean renderUpdate) {
+        // some tile entity field changed that the client needs to know about
+        // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         if (!worldObj.isRemote) {
             worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-        } else {
+        } else if (worldObj.isRemote && renderUpdate) {
             worldObj.markBlockRangeForRenderUpdate(pos, pos);
         }
     }
