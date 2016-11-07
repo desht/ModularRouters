@@ -8,6 +8,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.items.SlotItemHandler;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
@@ -59,11 +60,11 @@ public class ItemRouterContainer extends Container {
             }
         });
         // item router modules
-        for (int slot = 0; slot < 9; slot++) {
+        for (int slot = 0; slot < TileEntityItemRouter.N_MODULE_SLOTS; slot++) {
             addSlotToContainer(new ValidatingSlot.Module(router.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
         }
         // item router upgrades
-        for (int slot = 0; slot < 4; slot++) {
+        for (int slot = 0; slot < TileEntityItemRouter.N_UPGRADE_SLOTS; slot++) {
             addSlotToContainer(new ValidatingSlot.Upgrade(router.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
     }

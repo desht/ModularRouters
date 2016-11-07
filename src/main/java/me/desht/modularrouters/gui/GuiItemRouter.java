@@ -95,16 +95,26 @@ public class GuiItemRouter extends GuiContainerBase {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (typedChar == Config.configKey) {
-            Slot slot = getSlotUnderMouse();
-            if (slot != null && slot.slotNumber >= MODULE_START && slot.slotNumber < MODULE_END
-                    && slot.getHasStack() && slot.getStack().getItem() instanceof ItemModule) {
-                ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), slot.getSlotIndex()));
-                router.playerConfiguringModule(mc.thePlayer, slot.getSlotIndex());
-                return;
-            }
+        if (typedChar != Config.configKey || !handleModuleConfig()) {
+            super.keyTyped(typedChar, keyCode);
         }
-        super.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
+    protected void mouseClicked(int x, int y, int btn) throws IOException {
+        if (btn != 2 || !handleModuleConfig()) {
+            super.mouseClicked(x, y, btn);
+        }
+    }
+
+    private boolean handleModuleConfig() {
+        Slot slot = getSlotUnderMouse();
+        if (slot == null || ItemModule.getModule(slot.getStack()) == null || slot.slotNumber < MODULE_START || slot.slotNumber >= MODULE_END) {
+            return false;
+        }
+        router.playerConfiguringModule(mc.thePlayer, slot.slotNumber - MODULE_START);
+        ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), slot.getSlotIndex()));
+        return true;
     }
 
     private static class RouterEcoButton extends TexturedToggleButton {

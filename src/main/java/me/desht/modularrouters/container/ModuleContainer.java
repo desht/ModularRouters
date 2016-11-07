@@ -1,6 +1,5 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +23,7 @@ public class ModuleContainer extends Container {
     private static final int PLAYER_HOTBAR_Y = PLAYER_INV_Y + 58;
 
     public final FilterHandler filterHandler;
-    private final int currentSlot;
+    private final int currentSlot;  // currently-selected slot for player
     private final TileEntityItemRouter router;
 
     public ModuleContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
@@ -34,7 +33,7 @@ public class ModuleContainer extends Container {
     public ModuleContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
         this.filterHandler = new FilterHandler(moduleStack, Filter.FILTER_SIZE);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
-        this.router = router;  // can be null
+        this.router = router;  // null if module is in player's hand
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
@@ -96,20 +95,15 @@ public class ModuleContainer extends Container {
 
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        ModularRouters.logger.debug("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
-
-        if (dragType > 1 && slot < Filter.FILTER_SIZE && slot >= 0) {
-            // no dragging items over the filter
-            return null;
-        }
-        if (router == null && slot == currentSlot) {
-            // no messing with the module that triggered this container's creation
-            return null;
-        }
+//        System.out.println("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
 
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
+                if (router == null && slot == currentSlot) {
+                    // no messing with the module that triggered this container's creation
+                    return null;
+                }
                 if (slot < Filter.FILTER_SIZE && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
                     if (player.inventory.getItemStack() != null) {

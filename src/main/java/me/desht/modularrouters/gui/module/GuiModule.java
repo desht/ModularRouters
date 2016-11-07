@@ -3,6 +3,7 @@ package me.desht.modularrouters.gui.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.container.ItemRouterContainer;
 import me.desht.modularrouters.container.ModuleContainer;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;
@@ -14,6 +15,7 @@ import me.desht.modularrouters.item.module.Module.RelativeDirection;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.util.MiscUtil;
@@ -238,52 +240,55 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
             ModularRouters.network.sendToServer(OpenGuiMessage.openRouter(routerPos));
-        } else if (typedChar == Config.configKey) {
-            // trying to configure an installed smart filter?
-            handleFilterConfig();
+            return;
+        } else if (typedChar == Config.configKey && handleFilterConfig()) {
+            // trying to configure an installed smart filter, we're done
         } else {
             super.keyTyped(typedChar, keyCode);
         }
     }
 
-    private void handleFilterConfig() {
+    @Override
+    protected void mouseClicked(int x, int y, int btn) throws IOException {
+        if (btn != 2 || !handleFilterConfig()) {
+            super.mouseClicked(x, y, btn);
+        }
+    }
+
+    private boolean handleFilterConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || !slot.getHasStack()) {
-            return;
+        if (slot == null || ItemSmartFilter.getFilter(slot.getStack()) == null || slot.slotNumber < 0 || slot.slotNumber >= Filter.FILTER_SIZE) {
+            return false;
         }
         int filterSlotIndex = slot.slotNumber;
-        if (filterSlotIndex >= 0 && filterSlotIndex < 9) {
-            SmartFilter filter = ItemSmartFilter.getFilter(slot.getStack());
-            if (filter == null) {
-                return;
-            }
-            if (routerPos != null) {
-                // module is installed in a router
-                TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
-                if (router != null) {
-                    router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex, slot.getSlotIndex());
-                    if (filter.hasGuiContainer()) {
-                        ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
-                    } else {
-                        // no container, just open the client-side GUI directly
-                        mc.thePlayer.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.theWorld,
-                                routerPos.getX(), routerPos.getY(), routerPos.getZ());
-                    }
-                }
-            } else if (hand != null) {
-                // module is in player's hand
-                // record the filter slot in the module itemstack's NBT - we'll need this when opening the GUI later
-                ItemModule.setFilterConfigSlot(mc.thePlayer.getHeldItem(hand), filterSlotIndex);
+        SmartFilter filter = ItemSmartFilter.getFilter(slot.getStack());
+        if (routerPos != null) {
+            // module is installed in a router
+            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
+            if (router != null) {
+                router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex, slot.getSlotIndex());
                 if (filter.hasGuiContainer()) {
-                    ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInModule(hand, filterSlotIndex));
+                    ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
                 } else {
                     // no container, just open the client-side GUI directly
-                    mc.thePlayer.openGui(ModularRouters.instance,
-                            hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF,
-                            mc.theWorld, 0, 0, 0);
+                    mc.thePlayer.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.theWorld,
+                            routerPos.getX(), routerPos.getY(), routerPos.getZ());
                 }
             }
+        } else if (hand != null) {
+            // module is in player's hand
+            // record the filter slot in the module itemstack's NBT - we'll need this when opening the GUI later
+            ItemModule.setFilterConfigSlot(mc.thePlayer.getHeldItem(hand), filterSlotIndex);
+            if (filter.hasGuiContainer()) {
+                ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInModule(hand, filterSlotIndex));
+            } else {
+                // no container, just open the client-side GUI directly
+                mc.thePlayer.openGui(ModularRouters.instance,
+                        hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF,
+                        mc.theWorld, 0, 0, 0);
+            }
         }
+        return true;
     }
 
     @Override
