@@ -80,8 +80,9 @@ public class CompiledSenderModule1 extends CompiledModule {
         }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
         EnumFacing face = getTarget().face;
-        for (int i = 1; i < SenderModule1.maxDistance(router); i++) {
-            World world = router.getWorld();
+        World world = router.getWorld();
+        int max = SenderModule1.maxDistance(router);
+        for (int i = 1; i < max; i++) {
             if (world.getTileEntity(pos) != null) {
                 return new ModuleTarget(world.provider.getDimension(), pos.toImmutable(), face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
