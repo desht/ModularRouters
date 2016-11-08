@@ -12,7 +12,7 @@ import net.minecraft.util.EnumHand;
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ModuleContainer extends Container {
+public class ContainerModule extends Container {
     private static final int INV_START = Filter.FILTER_SIZE;
     private static final int INV_END = INV_START + 26;
     private static final int HOTBAR_START = INV_END + 1;
@@ -26,11 +26,11 @@ public class ModuleContainer extends Container {
     private final int currentSlot;  // currently-selected slot for player
     private final TileEntityItemRouter router;
 
-    public ModuleContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
+    public ContainerModule(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
         this(player, hand, moduleStack, null);
     }
 
-    public ModuleContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
+    public ContainerModule(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
         this.filterHandler = new FilterHandler(moduleStack, Filter.FILTER_SIZE);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
         this.router = router;  // null if module is in player's hand

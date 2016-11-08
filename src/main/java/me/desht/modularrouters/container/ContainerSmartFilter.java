@@ -5,8 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
-public abstract class FilterContainer extends Container {
-    public FilterContainer(EntityPlayer player, ItemStack stack, TileEntityItemRouter router) {
+public abstract class ContainerSmartFilter extends Container {
+    public ContainerSmartFilter(EntityPlayer player, ItemStack stack, TileEntityItemRouter router) {
     }
 
     @Override

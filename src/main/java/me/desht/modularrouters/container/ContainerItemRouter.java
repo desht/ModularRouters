@@ -13,7 +13,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ItemRouterContainer extends Container {
+public class ContainerItemRouter extends Container {
     public static final int BUFFER_SLOT = 0;
     public static final int MODULE_SLOT_START = 1;
     public static final int MODULE_SLOT_END = 9;
@@ -34,7 +34,7 @@ public class ItemRouterContainer extends Container {
 
     private final TileEntityItemRouter router;
 
-    public ItemRouterContainer(InventoryPlayer invPlayer, TileEntityItemRouter router) {
+    public ContainerItemRouter(InventoryPlayer invPlayer, TileEntityItemRouter router) {
         this.router = router;
 
         // player's hotbar

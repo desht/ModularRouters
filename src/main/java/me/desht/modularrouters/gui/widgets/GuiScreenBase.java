@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public abstract class GuiScreenBase extends GuiScreen {
     private TextFieldManager textFieldManager;
+    private int delayTicks;
 
     protected TextFieldManager getTextFieldManager() {
         if (textFieldManager == null) {
@@ -30,7 +31,20 @@ public abstract class GuiScreenBase extends GuiScreen {
     @Override
     public void updateScreen() {
         super.updateScreen();
+        if (delayTicks > 0) {
+            delayTicks--;
+            if (delayTicks == 0) {
+                sendSettingsToServer();
+            }
+        }
         if (textFieldManager != null) textFieldManager.updateTextFields();
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        if (textFieldManager == null || !textFieldManager.handleMouseInput()) {
+            super.handleMouseInput();
+        }
     }
 
     @Override
@@ -44,5 +58,22 @@ public abstract class GuiScreenBase extends GuiScreen {
         if (textFieldManager == null || !textFieldManager.keyTyped(typedChar, keyCode)) {
             super.keyTyped(typedChar, keyCode);
         }
+    }
+
+    @Override
+    public void onGuiClosed() {
+        if (delayTicks > 0) {
+            // flush pending changes
+            sendSettingsToServer();
+        }
+        super.onGuiClosed();
+    }
+
+    protected final void sendSettingsDelayed(int delayTicks) {
+        this.delayTicks = delayTicks;
+    }
+
+    protected void sendSettingsToServer() {
+        // does nothing, override in subclasses
     }
 }

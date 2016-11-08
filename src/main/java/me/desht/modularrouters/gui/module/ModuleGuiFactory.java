@@ -1,7 +1,7 @@
 package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.ModuleContainer;
+import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +37,7 @@ public class ModuleGuiFactory {
     }
 
     public static Container createContainer(EntityPlayer player, EnumHand hand) {
-        return new ModuleContainer(player, hand, player.getHeldItem(hand));
+        return new ContainerModule(player, hand, player.getHeldItem(hand));
     }
 
     public static Container createContainer(EntityPlayer player, World world, int x, int y, int z) {
@@ -47,7 +47,7 @@ public class ModuleGuiFactory {
             if (slotIndex >= 0) {
                 router.clearConfigSlot(player);
                 ItemStack installedModuleStack = router.getModules().getStackInSlot(slotIndex);
-                return installedModuleStack == null ? null : new ModuleContainer(player, null, installedModuleStack, router);
+                return installedModuleStack == null ? null : new ContainerModule(player, null, installedModuleStack, router);
             }
         }
         return null;
@@ -60,9 +60,9 @@ public class ModuleGuiFactory {
         }
         Class<? extends GuiModule> clazz = module.getGuiHandler();
         try {
-            Constructor<? extends GuiModule> ctor = clazz.getConstructor(ModuleContainer.class, BlockPos.class, Integer.class, EnumHand.class);
+            Constructor<? extends GuiModule> ctor = clazz.getConstructor(ContainerModule.class, BlockPos.class, Integer.class, EnumHand.class);
             TileEntityItemRouter router = routerPos == null ? null : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos);
-            return ctor.newInstance(new ModuleContainer(player, hand, moduleStack, router), routerPos, slotIndex, hand);
+            return ctor.newInstance(new ContainerModule(player, hand, moduleStack, router), routerPos, slotIndex, hand);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return null;

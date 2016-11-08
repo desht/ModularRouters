@@ -1,6 +1,6 @@
 package me.desht.modularrouters.gui.module;
 
-import me.desht.modularrouters.container.ModuleContainer;
+import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.widgets.IntegerTextField;
 import me.desht.modularrouters.gui.widgets.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.TextFieldManager;
@@ -25,11 +25,11 @@ public class GuiModuleDetector extends GuiModule {
     private int signalStrength;
     private boolean isStrong;
 
-    public GuiModuleDetector(ModuleContainer containerItem, EnumHand hand) {
+    public GuiModuleDetector(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
     }
 
-    public GuiModuleDetector(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
+    public GuiModuleDetector(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
         CompiledDetectorModule settings = new CompiledDetectorModule(null, moduleItemStack);

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.gui.module;
 
-import me.desht.modularrouters.container.ModuleContainer;
+import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -16,11 +16,11 @@ public class GuiModulePlayer extends GuiModule {
     private CompiledPlayerModule.Operation operation;
     private CompiledPlayerModule.Section section;
 
-    public GuiModulePlayer(ModuleContainer containerItem, EnumHand hand) {
+    public GuiModulePlayer(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
     }
 
-    public GuiModulePlayer(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
+    public GuiModulePlayer(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);

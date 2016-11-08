@@ -1,6 +1,6 @@
 package me.desht.modularrouters.gui.module;
 
-import me.desht.modularrouters.container.ModuleContainer;
+import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.widgets.FloatTextField;
 import me.desht.modularrouters.gui.widgets.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.TexturedButton;
@@ -22,11 +22,11 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     private float pitch;
     private float yaw;
 
-    public GuiModuleFlinger(ModuleContainer containerItem, EnumHand hand) {
+    public GuiModuleFlinger(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
     }
 
-    public GuiModuleFlinger(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
+    public GuiModuleFlinger(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem, routerPos, slotIndex, hand);
 
         CompiledFlingerModule fs = new CompiledFlingerModule(null, moduleItemStack);

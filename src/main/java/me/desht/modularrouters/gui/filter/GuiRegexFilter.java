@@ -54,7 +54,6 @@ public class GuiRegexFilter extends GuiFilterScreen {
 
         TextFieldManager manager = getTextFieldManager().clear();
         regexTextField = new RegexTextField(this, 1, fontRendererObj, xPos + 8, yPos + 22, 144, 18);
-        manager.addTextField(regexTextField);
 
         manager.focus(0);
 

@@ -22,6 +22,7 @@ item.stackUpgrade.name=Stack Upgrade
 item.rangeUpgrade.name=Range Upgrade
 item.securityUpgrade.name=Security Upgrade
 item.camouflageUpgrade.name=Camouflage Upgrade
+item.syncUpgrade.name=Sync Upgrade
 item.overrideCard.name=Security Override Card
 item.GuideBook.name=§l§nModular Routers
 item.bulkitemFilter.name=Bulk Item Filter
@@ -72,6 +73,7 @@ guiText.tooltip.loadFilter=Load Filter\n from §e%s§r @ %s\n§oExisting filter 
 guiText.tooltip.mergeFilter=Merge Filter\n from §e%s§r @ %s
 guiText.tooltip.removeFilterHint=§7§oSneak + Left-Click: remove item from filter
 guiText.tooltip.regulatorTooltip=§bItem Regulation Enabled\nWhen inserting: only insert when inventory has fewer than this many of the item.\nWhen extracting: only extract if inventory has more than this many of the item.
+guiText.tooltip.tunedValue=§bTuned Value
 guiText.label.direction=Direction
 guiText.label.modules=Modules
 guiText.label.upgrades=Upgrades
@@ -142,13 +144,13 @@ itemText.misc.regexFilter.count=%d regex(es) in filter
 itemText.misc.modFilter.count=%d mod(s) in filter
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=§eOwner: §b%s
+itemText.sync.tuning=§eTuned Value: §b%d
 itemText.camouflage.held=§eCamouflage as: §b%s
 itemText.extruder.mode.ALWAYS=§eExtend: §bWith redstone signal > 0
 itemText.extruder.mode.LOW=§eExtend: §bWith redstone signal = 0
 itemText.extruder.mode.HIGH=§eExtend: §bWith redstone signal = 15
 itemText.extruder.mode.NEVER=§eExtend: §bNever
 itemText.extruder.mode.PULSE=§eExtend: §bNever
-
 
 # Usage tooltips
 itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
@@ -171,6 +173,7 @@ itemText.usage.item.stackUpgrade=Increases the number of items processed per rou
 itemText.usage.item.speedUpgrade=Increases the router tick rate.\n• Router will tick every %.02f sec\n• Max. useful upgrades: %d
 itemText.usage.item.rangeUpgrade=Extends the range of %s
 itemText.usage.item.camouflageUpgrade=Makes the router look like another block.\n• Sneak + Right-click a solid block to copy its appearance onto the upgrade.
+itemText.usage.item.syncUpgrade=Makes routers activate together.\n• Right-click: open tuning GUI\n• Sneak + Right-click: tune to a random value.\n• All routers with the same-tuned Sync Upgrade (and same number of Speed Upgrades) will tick at the same time.
 itemText.usage.item.bulkitemFilter=High-capacity, high-performance filter for large numbers of items;\ncan not filter by NBT data, however.\nInsert into a router module like any other item.\n• Sneak + Right-click any inventory to merge contents into filter.\n• Right-click to examine/configure.
 itemText.usage.item.regexFilter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click to view/configure.
 itemText.usage.item.modFilter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click to view/configure.

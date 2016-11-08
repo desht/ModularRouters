@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.smartfilter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.ModFilterContainer;
+import me.desht.modularrouters.container.ContainerModFilter;
 import me.desht.modularrouters.gui.filter.GuiModFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -97,7 +97,7 @@ public class ModFilter extends SmartFilter {
 
     @Override
     public Container createContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
-        return new ModFilterContainer(player, filterStack, router);
+        return new ContainerModFilter(player, filterStack, router);
     }
 
     @Override

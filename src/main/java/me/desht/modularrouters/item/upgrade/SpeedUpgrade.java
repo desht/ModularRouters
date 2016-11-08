@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class SpeedUpgrade extends Upgrade {
@@ -19,7 +20,9 @@ public class SpeedUpgrade extends Upgrade {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SPEED),
-                ModItems.blankUpgrade, Items.BLAZE_POWDER, Items.SUGAR, Items.GUNPOWDER, Items.REDSTONE);
+        return new ShapedOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SPEED),
+                "pgp", "nbn", "srs",
+                'p', Items.REDSTONE, 'b', ModItems.blankUpgrade, 'r', Items.BLAZE_ROD,
+                's', Items.GUNPOWDER, 'g', Items.GOLD_INGOT, 'n', Items.GOLD_NUGGET);
     }
 }

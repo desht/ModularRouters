@@ -19,6 +19,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class ModRecipes {
     public static void init() {
@@ -34,9 +35,10 @@ public class ModRecipes {
             if (recipe != null) GameRegistry.addRecipe(recipe);
         }
 
+        ItemStack lapis = new ItemStack(Items.DYE, 1, 4);
         GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 6),
                 "ppn", "pdn", " pn",
-                'p', Items.PAPER, 'd', Items.DIAMOND, 'n', Items.GOLD_NUGGET);
+                'p', Items.PAPER, 'd', lapis, 'n', Items.GOLD_NUGGET);
         for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
             GameRegistry.addRecipe(ItemUpgrade.getUpgrade(type).getRecipe());
         }

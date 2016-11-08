@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ModFilterContainer extends FilterContainer {
+public class ContainerModFilter extends ContainerSmartFilter {
     private static final int PLAYER_INV_X = 8;
     private static final int PLAYER_INV_Y = 162;
     private static final int PLAYER_HOTBAR_Y = 220;
@@ -21,7 +21,7 @@ public class ModFilterContainer extends FilterContainer {
     public final IItemHandlerModifiable handler;
     public final ItemStack filterStack;
 
-    public ModFilterContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
+    public ContainerModFilter(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
         super(player, filterStack, router);
         this.filterStack = filterStack;
 

@@ -102,7 +102,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private int ecoCounter = Config.ecoTimeout;
     private boolean hasPulsedModules = false;
     private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
-    private IBlockState camouflage = null;  // block to masquerade as
+    private IBlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
+    private int tunedSyncValue; // for synchronisation tuning, set by Sync Upgrade
 
     public TileEntityItemRouter() {
         super();
@@ -249,6 +250,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 ext1.setTag(key, ext.getTag(key));
             }
         }
+
+        // When restoring, give the counter a random initial value to avoid all saved routers
+        // having the same counter and firing simultaneously, which could conceivably cause lag
+        // spikes if there are many routers in the world.
+        // The -1 value indicates that a random value should be picked at the next compile.
+        counter = -1;
     }
 
     @Nonnull
@@ -442,6 +449,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             Arrays.fill(upgradeCount, 0);
             permitted.clear();
             setCamouflage(null);
+            tunedSyncValue = -1;
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
                 Upgrade upgrade = ItemUpgrade.getUpgrade(stack);
@@ -455,11 +463,31 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
         }
 
+        if (tunedSyncValue > 0) {
+            counter = calculateSyncCounter();
+        } else if (counter < 0) {
+            counter = new Random().nextInt(tickRate);
+        }
+
         if (recompileNeeded != 0) {
             worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
             markDirty();
             recompileNeeded = 0;
         }
+    }
+
+    public void setTunedSyncValue(int newValue) {
+        tunedSyncValue = newValue;
+    }
+
+    private int calculateSyncCounter() {
+        int compileTime = (int) (getWorld().getTotalWorldTime() % tickRate);
+        int tuning = tunedSyncValue % tickRate;
+
+        System.out.println("compile=" + compileTime + ", tuning=" + tunedSyncValue + " tickrate=" + tickRate + " tuning'=" + tuning);
+        int res = (tickRate - (tuning - compileTime)) % tickRate;
+        System.out.println("  res=" + res);
+        return res;
     }
 
     public void setAllowRedstoneEmission(boolean allow) {

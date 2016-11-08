@@ -3,7 +3,7 @@ package me.desht.modularrouters.gui;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.ItemRouterContainer;
+import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -38,7 +38,7 @@ public class GuiItemRouter extends GuiContainerBase {
     public final TileEntityItemRouter router;
 
     public GuiItemRouter(InventoryPlayer inventoryPlayer, TileEntityItemRouter router) {
-        super(new ItemRouterContainer(inventoryPlayer, router));
+        super(new ContainerItemRouter(inventoryPlayer, router));
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
         this.router = router;
@@ -90,8 +90,8 @@ public class GuiItemRouter extends GuiContainerBase {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
-    private static final int MODULE_START = ItemRouterContainer.TE_FIRST_SLOT + ItemRouterContainer.MODULE_SLOT_START;
-    private static final int MODULE_END = ItemRouterContainer.TE_FIRST_SLOT + ItemRouterContainer.MODULE_SLOT_END;
+    private static final int MODULE_START = ContainerItemRouter.TE_FIRST_SLOT + ContainerItemRouter.MODULE_SLOT_START;
+    private static final int MODULE_END = ContainerItemRouter.TE_FIRST_SLOT + ContainerItemRouter.MODULE_SLOT_END;
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {

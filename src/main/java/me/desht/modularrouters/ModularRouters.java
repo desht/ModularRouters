@@ -8,6 +8,7 @@ import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
+import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
@@ -47,6 +48,7 @@ public class ModularRouters {
     public static final int GUI_FILTER_HELD_MAIN = modGuiIndex++;
     public static final int GUI_FILTER_HELD_OFF = modGuiIndex++;
     public static final int GUI_FILTER_INSTALLED = modGuiIndex++;
+    public static final int GUI_SYNC_UPGRADE = modGuiIndex++;
 
     @CapabilityInject(IItemHandler.class)
     public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
@@ -97,5 +99,6 @@ public class ModularRouters {
         network.registerMessage(OpenGuiMessage.Handler.class, OpenGuiMessage.class, d++, Side.SERVER);
         network.registerMessage(ParticleBeamMessage.Handler.class, ParticleBeamMessage.class, d++, Side.CLIENT);
         network.registerMessage(GuiSyncMessage.Handler.class, GuiSyncMessage.class, d++, Side.CLIENT);
+        network.registerMessage(SyncUpgradeSettingsMessage.Handler.class, SyncUpgradeSettingsMessage.class, d++, Side.SERVER);
     }
 }

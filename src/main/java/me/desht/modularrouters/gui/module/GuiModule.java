@@ -3,7 +3,7 @@ package me.desht.modularrouters.gui.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.ModuleContainer;
+import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;
 import me.desht.modularrouters.gui.widgets.*;
@@ -68,11 +68,11 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
 
-    public GuiModule(ModuleContainer containerItem, EnumHand hand) {
+    public GuiModule(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
     }
 
-    public GuiModule(ModuleContainer containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
+    public GuiModule(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem);
         this.moduleItemStack = containerItem.filterHandler.getModuleItemStack();
         this.module = ItemModule.getModule(moduleItemStack);

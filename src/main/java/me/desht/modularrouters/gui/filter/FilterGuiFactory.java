@@ -2,7 +2,7 @@ package me.desht.modularrouters.gui.filter;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.FilterContainer;
+import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.container.FilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
@@ -57,7 +57,7 @@ public class FilterGuiFactory {
             SmartFilter filter = ItemSmartFilter.getFilter(filterStack);
             Class<? extends GuiScreen> clazz = filter.getGuiHandler();
             if (filter.hasGuiContainer()) {
-                Constructor<? extends GuiScreen> ctor = clazz.getConstructor(FilterContainer.class, BlockPos.class, Integer.class, Integer.class, EnumHand.class);
+                Constructor<? extends GuiScreen> ctor = clazz.getConstructor(ContainerSmartFilter.class, BlockPos.class, Integer.class, Integer.class, EnumHand.class);
                 TileEntityItemRouter router = routerPos == null ? null : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos);
                 return ctor.newInstance(createContainer(player, filterStack, router), routerPos, moduleSlotIndex, filterSlotIndex, hand);
             } else {

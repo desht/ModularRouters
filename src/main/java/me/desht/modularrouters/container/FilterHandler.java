@@ -12,7 +12,7 @@ public class FilterHandler extends GhostItemHandler {
         this(moduleStack, Filter.FILTER_SIZE);
     }
 
-    public FilterHandler(ItemStack moduleStack, int size) {
+    FilterHandler(ItemStack moduleStack, int size) {
         super(size);
         this.moduleStack = moduleStack;
 

@@ -3,8 +3,8 @@ package me.desht.modularrouters.gui.filter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.FilterContainer;
-import me.desht.modularrouters.container.ModFilterContainer;
+import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.ContainerModFilter;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -46,7 +46,7 @@ public class GuiModFilter extends GuiContainerBase {
     private String modId = "";
     private String modName = "";
 
-    public GuiModFilter(FilterContainer container, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
+    public GuiModFilter(ContainerSmartFilter container, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
         super(container);
 
         this.routerPos = routerPos;
@@ -54,7 +54,7 @@ public class GuiModFilter extends GuiContainerBase {
         this.filterSlotIndex = filterSlotIndex;
         this.hand = hand;
 
-        this.filterStack = ((ModFilterContainer) container).filterStack;
+        this.filterStack = ((ContainerModFilter) container).filterStack;
 
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
