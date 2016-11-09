@@ -4,6 +4,7 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.widgets.FloatTextField;
 import me.desht.modularrouters.gui.widgets.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.TexturedButton;
+import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
@@ -39,22 +40,26 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     public void initGui() {
         super.initGui();
 
-        buttonList.add(new TooltipButton(GuiModule.EXTRA_BUTTON_BASE, guiLeft + 130, guiTop + 15, "speed"));
-        buttonList.add(new TooltipButton(GuiModule.EXTRA_BUTTON_BASE + 1, guiLeft + 130, guiTop + 33, "pitch"));
-        buttonList.add(new TooltipButton(GuiModule.EXTRA_BUTTON_BASE + 2, guiLeft + 130, guiTop + 51, "yaw"));
+        buttonList.add(new TooltipButton(GuiModule.EXTRA_BUTTON_BASE, guiLeft + 130, guiTop + 15, "speed", FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED));
+        buttonList.add(new TooltipButton(GuiModule.EXTRA_BUTTON_BASE + 1, guiLeft + 130, guiTop + 33, "pitch", FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH));
+        buttonList.add(new TooltipButton(GuiModule.EXTRA_BUTTON_BASE + 2, guiLeft + 130, guiTop + 51, "yaw", FlingerModule.MIN_YAW, FlingerModule.MAX_YAW));
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        FloatTextField t1 = new FloatTextField(manager, FIELD_SPEED, fontRendererObj, guiLeft + 148, guiTop + 17, 35, 12, 0.0f, 20.0f);
+        FloatTextField t1 = new FloatTextField(manager, FIELD_SPEED, fontRendererObj, guiLeft + 148, guiTop + 17, 35, 12,
+                FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED);
         t1.setValue(speed);
         t1.setGuiResponder(this);
-        t1.setIncr(0.1f, 1.0f, 10.0f);
+        t1.setIncr(0.1f, 0.5f, 10.0f);
+        t1.setPrecision(2);
 
-        FloatTextField t2 = new FloatTextField(manager, FIELD_PITCH, fontRendererObj, guiLeft + 148, guiTop + 35, 35, 12, -90.0f, 90.0f);
+        FloatTextField t2 = new FloatTextField(manager, FIELD_PITCH, fontRendererObj, guiLeft + 148, guiTop + 35, 35, 12,
+                FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH);
         t2.setValue(pitch);
         t2.setGuiResponder(this);
 
-        FloatTextField t3 = new FloatTextField(manager, FIELD_YAW, fontRendererObj, guiLeft + 148, guiTop + 53, 35, 12, -60.0f, 60.0f);
+        FloatTextField t3 = new FloatTextField(manager, FIELD_YAW, fontRendererObj, guiLeft + 148, guiTop + 53, 35, 12,
+                FlingerModule.MIN_YAW, FlingerModule.MAX_YAW);
         t3.setValue(yaw);
         t3.setGuiResponder(this);
 
@@ -87,9 +92,9 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     }
 
     private static class TooltipButton extends TexturedButton {
-        TooltipButton(int buttonId, int x, int y, String key) {
+        TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
             super(buttonId, x, y, 16, 16);
-            tooltip1.add(I18n.format("guiText.tooltip.flinger." + key));
+            tooltip1.add(I18n.format("guiText.tooltip.flinger." + key, min, max));
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.floatFieldTooltip");
         }
 

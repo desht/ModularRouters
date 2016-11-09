@@ -18,8 +18,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -47,17 +45,17 @@ public class SyncUpgrade extends Upgrade {
         list.add(I18n.format("itemText.sync.tuning", getTunedValue(itemstack)));
     }
 
+    @Override
+    public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
+        router.setTunedSyncValue(getTunedValue(stack));
+    }
+
     public static int getTunedValue(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound == null) {
             return 0;
         }
         return compound.getInteger(NBT_TUNING);
-    }
-
-    @Override
-    public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
-        router.setTunedSyncValue(getTunedValue(stack));
     }
 
     public static void setTunedValue(ItemStack stack, int newValue) {
@@ -70,6 +68,9 @@ public class SyncUpgrade extends Upgrade {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+        if (hand != EnumHand.MAIN_HAND) {
+            return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
+        }
         if (worldIn.isRemote && !playerIn.isSneaking()) {
             BlockPos pos = playerIn.getPosition();
             playerIn.openGui(ModularRouters.instance, ModularRouters.GUI_SYNC_UPGRADE, worldIn, pos.getX(), pos.getY(), pos.getZ());

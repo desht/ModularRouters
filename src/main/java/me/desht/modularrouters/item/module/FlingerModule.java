@@ -17,6 +17,13 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import java.util.List;
 
 public class FlingerModule extends DropperModule {
+    public static final float MIN_SPEED = 0.0f;
+    public static final float MAX_SPEED = 20.0f;
+    public static final float MIN_PITCH = -90.0f;
+    public static final float MAX_PITCH = 90.0f;
+    public static final float MIN_YAW = -60.0f;
+    public static final float MAX_YAW = 60.0f;
+
     @Override
     public IRecipe getRecipe() {
         return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLINGER),

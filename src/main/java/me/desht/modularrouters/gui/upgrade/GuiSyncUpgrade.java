@@ -44,7 +44,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 73, yPos + 23, 25, 16, 0, Config.baseTickRate);
+        intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 73, yPos + 23, 25, 16, 0, Config.baseTickRate - 1);
         intField.setValue(tunedValue);
         intField.setGuiResponder(this);
 
@@ -101,7 +101,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
             super(buttonId, x, y, width, height, renderStack, true);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue");
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, Config.baseTickRate - 1);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.intFieldTooltip");
         }
 

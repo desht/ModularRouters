@@ -58,6 +58,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public static final String NBT_UPGRADES = "Upgrades";
     public static final String NBT_EXTRA = "Extra";
     public static final String NBT_REDSTONE_MODE = "Redstone";
+    private static final String NBT_TICK_RATE = "TickRate";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -103,7 +104,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private boolean hasPulsedModules = false;
     private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
     private IBlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
-    private int tunedSyncValue; // for synchronisation tuning, set by Sync Upgrade
+    private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
 
     public TileEntityItemRouter() {
         super();
@@ -157,6 +158,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
         compound.setByte(NBT_REDSTONE_MODE, (byte) redstoneBehaviour.ordinal());
         compound.setBoolean(NBT_ECO_MODE, ecoMode);
+        compound.setInteger(NBT_TICK_RATE, tickRate);
 
         // these fields are needed for rendering
         compound.setBoolean(NBT_ACTIVE, active);
@@ -196,6 +198,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
         RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
         setRedstoneBehaviour(newRedstoneBehaviour);
+        tickRate = compound.getInteger(NBT_TICK_RATE);
 
         // these fields are needed for rendering
         boolean newActive = compound.getBoolean(NBT_ACTIVE);
@@ -463,7 +466,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
         }
 
-        if (tunedSyncValue > 0) {
+        if (tunedSyncValue >= 0) {
+            // router has a sync upgrade - init the counter accordingly
             counter = calculateSyncCounter();
         } else if (counter < 0) {
             counter = new Random().nextInt(tickRate);
@@ -481,13 +485,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     private int calculateSyncCounter() {
+        // use the current (total) world time and router's tick rate to determine a value
+        // for the tick counter that ensures the router always executes at a certain time
         int compileTime = (int) (getWorld().getTotalWorldTime() % tickRate);
         int tuning = tunedSyncValue % tickRate;
+        int delta = tuning - compileTime;
+        if (delta <= 0) delta += tickRate;
 
-        System.out.println("compile=" + compileTime + ", tuning=" + tunedSyncValue + " tickrate=" + tickRate + " tuning'=" + tuning);
-        int res = (tickRate - (tuning - compileTime)) % tickRate;
-        System.out.println("  res=" + res);
-        return res;
+        return tickRate - delta;
     }
 
     public void setAllowRedstoneEmission(boolean allow) {

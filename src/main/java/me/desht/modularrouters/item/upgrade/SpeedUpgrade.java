@@ -14,8 +14,8 @@ public class SpeedUpgrade extends Upgrade {
     public Object[] getExtraUsageParams() {
         int maxUseful = (int) Math.ceil((Config.baseTickRate - Config.hardMinTickRate) / (double) Config.ticksPerUpgrade);
         TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
-        float tickRate = router == null ? 1.0f : router.getTickRate() / 20.0f;
-        return new Object[] { tickRate, maxUseful };
+        int tickRate = router == null ? 20 : router.getTickRate();
+        return new Object[] { tickRate / 20.0f, tickRate, maxUseful };
     }
 
     @Override
