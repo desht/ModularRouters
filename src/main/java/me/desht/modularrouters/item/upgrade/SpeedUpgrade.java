@@ -21,8 +21,8 @@ public class SpeedUpgrade extends Upgrade {
     @Override
     public IRecipe getRecipe() {
         return new ShapedOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SPEED),
-                "pgp", "nbn", "srs",
+                "pnp", "nbn", "grg",
                 'p', Items.REDSTONE, 'b', ModItems.blankUpgrade, 'r', Items.BLAZE_ROD,
-                's', Items.GUNPOWDER, 'g', Items.GOLD_INGOT, 'n', Items.GOLD_NUGGET);
+                'g', Items.GUNPOWDER, 'n', Items.GOLD_NUGGET);
     }
 }
