@@ -52,11 +52,11 @@ public class CompiledExtruderModule extends CompiledModule {
         } else if (!extend && !router.isBufferFull() && distance > 0 && isRegulationOK(router, true)) {
             // try to retract
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
-            distance--;
-            router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
             List<ItemStack> drops = Lists.newArrayList();
             IBlockState oldState = world.getBlockState(breakPos);
             if (BlockUtil.tryBreakBlock(world, breakPos, getFilter(), drops, silkTouch, 0)) {
+                distance--;
+                router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
                 for (ItemStack drop : drops) {
                     ItemStack excess = router.insertBuffer(drop);
                     if (excess != null) {
