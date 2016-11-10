@@ -53,7 +53,8 @@ public class GuiRegexFilter extends GuiFilterScreen {
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        regexTextField = new RegexTextField(this, 1, fontRendererObj, xPos + 8, yPos + 22, 144, 18);
+        regexTextField = new RegexTextField(this, 1, fontRendererObj, xPos + 10, yPos + 27, 144, 18);
+        regexTextField.useGuiTextBackground();
 
         manager.focus(0);
 
@@ -62,7 +63,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         if (filterSlotIndex >= 0) {
             buttonList.add(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos));
         }
-        buttonList.add(new Buttons.AddButton(ADD_REGEX_ID, xPos + 156, yPos + 23));
+        buttonList.add(new Buttons.AddButton(ADD_REGEX_ID, xPos + 155, yPos + 23));
         for (int i = 0; i < regexList.size(); i++) {
             buttonList.add(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19));
         }
