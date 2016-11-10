@@ -56,7 +56,7 @@ public class FloatTextField extends TextFieldWidget {
 
     public void setValue(float newVal) {
         if (newVal >= min && newVal <= max) {
-            setText(Float.toString(newVal));
+            setText(String.format(precStr, newVal));
         }
     }
 

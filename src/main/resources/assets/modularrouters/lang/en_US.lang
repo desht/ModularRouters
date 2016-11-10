@@ -174,11 +174,11 @@ itemText.usage.item.speedUpgrade=Increases the router tick rate.\n• Router wil
 itemText.usage.item.rangeUpgrade=Extends the range of %s
 itemText.usage.item.camouflageUpgrade=Makes the router look like another block.\n• Sneak + Right-click a solid block to copy its appearance onto the upgrade.
 itemText.usage.item.syncUpgrade=Makes routers activate together.\n• Right-click: open tuning GUI\n• Sneak + Right-click: tune to a random value.\n• All routers with the same-tuned Sync Upgrade (and same number of Speed Upgrades) will run at the same time.
-itemText.usage.item.bulkitemFilter=High-capacity, high-performance filter for large numbers of items;\ncan not filter by NBT data, however.\nInsert into a router module like any other item.\n• Sneak + Right-click any inventory to merge contents into filter.\n• Right-click to examine/configure.
-itemText.usage.item.regexFilter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click to view/configure.
-itemText.usage.item.modFilter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click to view/configure.
-itemText.deprecated.modSorter=§oDeprecated Module; use a Mod Filter instead.\n§oThis module can be crafted into a Mod Filter.
-itemText.deprecated.sorter=§oDeprecated Module; use a Bulk Item Filter instead.\n§oThis module can be crafted into a Bulk Item Filter.
+itemText.usage.item.bulkitemFilter=High-capacity, high-performance filter for large numbers of items;\ncan not filter by NBT data, however.\nInsert into a router module like any other item.\n• Sneak + Right-click any inventory: merge contents into filter.\n• Right-click: view/configure.
+itemText.usage.item.regexFilter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click: view/configure.
+itemText.usage.item.modFilter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click: view/configure.
+itemText.deprecated.modSorter=§oDeprecated Module; use a Sender Module & Mod Filter instead.\n§oThis module can be crafted into a Mod Filter.
+itemText.deprecated.sorter=§oDeprecated Module; use a Sender Module & Bulk Item Filter instead.\n§oThis module can be crafted into a Bulk Item Filter.
 
 # Player chat messages
 chatText.misc.inventoryMerged=Merged %d item(s) into the %s

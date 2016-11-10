@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -91,10 +92,10 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         super.initGui();
 
         addToggleButton(ModuleFlags.BLACKLIST, 7, 75);
-        addToggleButton(ModuleFlags.IGNORE_META, 24, 75);
-        addToggleButton(ModuleFlags.IGNORE_NBT, 41, 75);
-        addToggleButton(ModuleFlags.IGNORE_OREDICT, 58, 75);
-        addToggleButton(ModuleFlags.TERMINATE, 75, 75);
+        addToggleButton(ModuleFlags.IGNORE_META, 25, 75);
+        addToggleButton(ModuleFlags.IGNORE_NBT, 43, 75);
+        addToggleButton(ModuleFlags.IGNORE_OREDICT, 61, 75);
+        addToggleButton(ModuleFlags.TERMINATE, 79, 75);
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -108,7 +109,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
         if (ModuleHelper.isRedstoneBehaviourEnabled(moduleItemStack)) {
             rbb = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
-                    this.guiLeft + 92, this.guiTop + 75, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
+                    this.guiLeft + 97, this.guiTop + 75, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
             buttonList.add(rbb);
         }
 
@@ -125,10 +126,10 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
     }
 
-    private void addToggleButton(ModuleFlags setting, int x, int y) {
-        toggleButtons[setting.ordinal()] = new ModuleToggleButton(setting, this.guiLeft + x, this.guiTop + y);
-        toggleButtons[setting.ordinal()].setToggled(ModuleHelper.checkFlag(moduleItemStack, setting));
-        buttonList.add(toggleButtons[setting.ordinal()]);
+    private void addToggleButton(ModuleFlags flag, int x, int y) {
+        toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.guiLeft + x, this.guiTop + y);
+        toggleButtons[flag.ordinal()].setToggled(ModuleHelper.checkFlag(moduleItemStack, flag));
+        buttonList.add(toggleButtons[flag.ordinal()]);
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
@@ -342,6 +343,50 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         @Override
         public void playPressSound(SoundHandler soundHandlerIn) {
             // no sound
+        }
+    }
+
+    private static class ModuleToggleButton extends TexturedToggleButton {
+        ModuleToggleButton(ModuleFlags setting, int x, int y) {
+            super(setting.ordinal(), x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + ModuleFlags.values()[id] + ".1");
+            MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + ModuleFlags.values()[id] + ".2");
+        }
+
+        @Override
+        protected int getTextureX() {
+            return this.id * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 32;
+        }
+    }
+
+    private static class DirectionButton extends RadioButton {
+        private static final int DIRECTION_GROUP = 1;
+        private final RelativeDirection direction;
+
+        public DirectionButton(RelativeDirection dir, int x, int y) {
+            super(dir.ordinal() + DIRECTION_BASE_ID, DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+            this.direction = dir;
+            tooltip1.add(TextFormatting.GRAY + I18n.format("guiText.tooltip." + dir));
+            tooltip2.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip." + dir));
+        }
+
+        @Override
+        protected int getTextureX() {
+            return direction.ordinal() * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 48;
+        }
+
+        public RelativeDirection getDirection() {
+            return direction;
         }
     }
 }

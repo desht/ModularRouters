@@ -44,9 +44,10 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 73, yPos + 23, 25, 16, 0, Config.baseTickRate - 1);
+        intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 77, yPos + 27, 25, 16, 0, Config.baseTickRate - 1);
         intField.setValue(tunedValue);
         intField.setGuiResponder(this);
+        intField.useGuiTextBackground();
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, xPos + 55, yPos + 24, 16, 16, clockStack));
 

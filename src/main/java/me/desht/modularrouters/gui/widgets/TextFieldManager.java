@@ -2,12 +2,16 @@ package me.desht.modularrouters.gui.widgets;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Handles a collection of TextFieldWidget objects, sending events and managing Tab-focus etc.
+ */
 public class TextFieldManager {
     private final List<TextFieldWidget> textFields = Lists.newArrayList();
     private int focusedField = -1;
@@ -18,6 +22,8 @@ public class TextFieldManager {
     }
 
     void drawTextFields() {
+        GlStateManager.disableLighting();
+        GlStateManager.disableBlend();
         textFields.forEach(TextFieldWidget::drawTextBox);
     }
 
@@ -30,7 +36,7 @@ public class TextFieldManager {
     /**
      * See if any textfields are interested in a mouse event
      *
-     * @return true if a text field handle the mouse event, false if not
+     * @return true if a text field handled the mouse event, false if not
      * @throws IOException
      */
     boolean handleMouseInput() throws IOException {
@@ -76,9 +82,9 @@ public class TextFieldManager {
         return false;
     }
 
-    public void addTextField(TextFieldWidget textField) {
+    int addTextField(TextFieldWidget textField) {
         textFields.add(textField);
-        textField.setOrdinal(textFields.size() - 1);
+        return textFields.size() - 1;
     }
 
     public void focus(int field) {

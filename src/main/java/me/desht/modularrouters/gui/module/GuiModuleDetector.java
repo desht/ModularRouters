@@ -43,10 +43,11 @@ public class GuiModuleDetector extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        IntegerTextField textBox = new IntegerTextField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 17, 20, 12, 0, 15);
-        textBox.setValue(signalStrength);
-        textBox.setGuiResponder(this);
-        textBox.setIncr(1, 4);
+        IntegerTextField intField = new IntegerTextField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
+        intField.setValue(signalStrength);
+        intField.setGuiResponder(this);
+        intField.setIncr(1, 4);
+        intField.useGuiTextBackground();
 
         manager.focus(0);
 
@@ -54,6 +55,13 @@ public class GuiModuleDetector extends GuiModule {
         buttonList.add(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label));
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        // super has already bound the correct texture
+        this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, 0, 182, 21, 14);  // text entry field custom background
     }
 
     @Override
