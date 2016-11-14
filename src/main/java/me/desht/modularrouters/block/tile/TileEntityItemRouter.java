@@ -79,6 +79,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
     private final int[] upgradeCount = new int[ItemUpgrade.UpgradeType.values().length];
+    private int totalUpgradeCount;
     private int moduleCount;
 
     // for tracking redstone emission levels for the detector module
@@ -450,6 +451,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
         if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
             Arrays.fill(upgradeCount, 0);
+            totalUpgradeCount = 0;
             permitted.clear();
             setCamouflage(null);
             tunedSyncValue = -1;
@@ -458,6 +460,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 Upgrade upgrade = ItemUpgrade.getUpgrade(stack);
                 if (upgrade != null) {
                     upgradeCount[stack.getItemDamage()] += stack.stackSize;
+                    totalUpgradeCount += stack.stackSize;
                     upgrade.onCompiled(stack, this);
                 }
             }
@@ -500,10 +503,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockItemRouter.CAN_EMIT, canEmit));
     }
 
-    public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
-        return upgradeCount[type.ordinal()];
-    }
-
     public static int calculateTickRate(int nSpeedUpgrades) {
         return Math.max(Config.hardMinTickRate, Config.baseTickRate - Config.ticksPerUpgrade * nSpeedUpgrades);
     }
@@ -516,16 +515,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return moduleCount;
     }
 
-    public int getSpeedUpgrades() {
-        return getUpgradeCount(ItemUpgrade.UpgradeType.SPEED);
+    public int getUpgradeCount() {
+        return totalUpgradeCount;
     }
 
-    public int getStackUpgrades() {
-        return getUpgradeCount(ItemUpgrade.UpgradeType.STACK);
-    }
-
-    public int getRangeUpgrades() {
-        return getUpgradeCount(ItemUpgrade.UpgradeType.RANGE);
+    public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
+        return upgradeCount[type.ordinal()];
     }
 
     public void recompileNeeded(int what) {

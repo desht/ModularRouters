@@ -210,7 +210,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int i) {
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileEntityItemRouter();
     }
 
@@ -259,7 +259,7 @@ public class BlockItemRouter extends BlockBase implements ITileEntityProvider, T
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         if (router != null) {
             ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
-            if (router.getModuleCount() > 0 || router.getSpeedUpgrades() > 0 || router.getStackUpgrades() > 0) {
+            if (router.getModuleCount() > 0 || router.getUpgradeCount() > 0) {
                 if (!stack.hasTagCompound()) {
                     stack.setTagCompound(new NBTTagCompound());
                 }

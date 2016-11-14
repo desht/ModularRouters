@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
@@ -61,7 +62,7 @@ public class SenderModule2 extends TargetedModule {
 
     public static int maxDistanceSq(TileEntityItemRouter router) {
         // TODO precalculate to avoid repeated multiplications
-        int r = Math.min(Config.sender2BaseRange + (router == null ? 0 : router.getRangeUpgrades()), Config.sender2MaxRange);
+        int r = Math.min(Config.sender2BaseRange + (router == null ? 0 : router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE)), Config.sender2MaxRange);
         return r * r;
     }
 }
