@@ -141,13 +141,13 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
+    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
+        IBlockState camo = getCamoState(world, pos);
+        if (camo != null) {
+            return camo.doesSideBlockRendering(world, pos, face);
+        } else {
+            return true;
+        }
     }
 
     private IBlockState getCamoState(IBlockAccess blockAccess, BlockPos pos) {

@@ -35,8 +35,8 @@ public class RouterModel implements IBakedModel {
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState ext = (IExtendedBlockState) state;
             IBlockState camoState = ext.getValue(BlockItemRouter.CAMOUFLAGE_STATE);
-            BlockModelShapes blockModelShapes = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes();
             if (camoState != null) {
+                BlockModelShapes blockModelShapes = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes();
                 return blockModelShapes.getModelForState(camoState);
             }
         }
