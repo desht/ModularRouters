@@ -150,6 +150,17 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         }
     }
 
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        // ensure levers etc. can be attached to the block even though it can possibly emit redstone
+        IBlockState camo = getCamoState(world, pos);
+        if (camo != null) {
+            return camo.isSideSolid(world, pos, side);
+        } else {
+            return true;
+        }
+    }
+
     private IBlockState getCamoState(IBlockAccess blockAccess, BlockPos pos) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
         return router != null ? router.getCamouflage() : null;
@@ -367,12 +378,6 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        // ensure levers etc. can be attached to the block even though it can emit redstone
-        return true;
     }
 
     @Override

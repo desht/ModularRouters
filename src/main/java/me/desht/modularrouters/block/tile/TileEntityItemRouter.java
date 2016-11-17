@@ -427,7 +427,27 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             return;
         }
 
-        // modules
+        compileModules();
+        compileUpgrades();
+
+        if (tunedSyncValue >= 0) {
+            // router has a sync upgrade - init the counter accordingly
+            counter = calculateSyncCounter();
+        } else if (counter < 0) {
+            // we've just restored from NBT - start off with a random counter value
+            // to avoid lots of routers all ticking at the same time
+            counter = new Random().nextInt(tickRate);
+        }
+
+        if (recompileNeeded != 0) {
+            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+            markDirty();
+            recompileNeeded = 0;
+        }
+    }
+
+    private void compileModules() {
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
             setHasPulsedModules(false);
             byte newSidesOpen = 0;
@@ -448,7 +468,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             moduleCount = compiledModules.size();
             setSidesOpen(newSidesOpen);
         }
+    }
 
+    private void compileUpgrades() {
         if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
             Arrays.fill(upgradeCount, 0);
             totalUpgradeCount = 0;
@@ -467,19 +489,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
             tickRate = calculateTickRate(getUpgradeCount(ItemUpgrade.UpgradeType.SPEED));
             itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
-        }
-
-        if (tunedSyncValue >= 0) {
-            // router has a sync upgrade - init the counter accordingly
-            counter = calculateSyncCounter();
-        } else if (counter < 0) {
-            counter = new Random().nextInt(tickRate);
-        }
-
-        if (recompileNeeded != 0) {
-            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-            markDirty();
-            recompileNeeded = 0;
         }
     }
 
