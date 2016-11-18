@@ -103,7 +103,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
             super(buttonId, x, y, width, height, renderStack, true);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, Config.baseTickRate - 1);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.intFieldTooltip");
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

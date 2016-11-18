@@ -85,16 +85,15 @@ public class ModRecipes {
     private static void addRegulatorUpgradeRecipes() {
         RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
-            if (!RegulatorEnhancementRecipe.appliesTo(type)) {
-                continue;
+            if (RegulatorEnhancementRecipe.appliesTo(type)) {
+                ItemStack output = ItemModule.makeItemStack(type);
+                ModuleHelper.setRegulatorAmount(output, true, 1);
+                GameRegistry.addRecipe(new RegulatorEnhancementRecipe(output,
+                        " Q ", "CMC", " Q ",
+                        'Q', Items.QUARTZ,
+                        'C', Items.COMPARATOR,
+                        'M', ItemModule.makeItemStack(type)));
             }
-            ItemStack output = ItemModule.makeItemStack(type);
-            ModuleHelper.setRegulatorAmount(output, true, 1);
-            GameRegistry.addRecipe(new RegulatorEnhancementRecipe(output,
-                    " Q ", "CMC", " Q ",
-                    'Q', Items.QUARTZ,
-                    'C', Items.COMPARATOR,
-                    'M', ItemModule.makeItemStack(type)));
         }
     }
 }

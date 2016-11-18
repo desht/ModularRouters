@@ -10,7 +10,8 @@ public class IntegerTextField extends TextFieldWidget {
     private final int min;
     private final int max;
     private int incr = 1;
-    private int coarseAdjustMult = 10;
+    private int coarseIncr = 10;
+    private int fineIncr = 1;
 
     private static final Pattern INT_MATCHER = Pattern.compile("^-?[0-9]+$");
 
@@ -37,9 +38,9 @@ public class IntegerTextField extends TextFieldWidget {
     public boolean textboxKeyTyped(char typedChar, int keyCode) {
         switch (keyCode) {
             case Keyboard.KEY_UP:
-                return adjustField(1);
+                return adjustField(getAdjustment());
             case Keyboard.KEY_DOWN:
-                return adjustField(-1);
+                return adjustField(-getAdjustment());
             case Keyboard.KEY_PRIOR:
                 return adjustField(max);
             case Keyboard.KEY_NEXT:
@@ -51,7 +52,7 @@ public class IntegerTextField extends TextFieldWidget {
 
     @Override
     public void onMouseWheel(int direction) {
-        adjustField(direction > 0 ? incr : -incr);
+        adjustField(direction > 0 ? getAdjustment() : -getAdjustment());
     }
 
     public void setValue(int val) {
@@ -61,15 +62,26 @@ public class IntegerTextField extends TextFieldWidget {
     }
 
     public void setIncr(int incr, int coarseAdjustMult) {
+        setIncr(incr, coarseAdjustMult, 1);
+    }
+
+    public void setIncr(int incr, int coarseAdjustMult, int fineAdjustDiv) {
         this.incr = incr;
-        this.coarseAdjustMult = coarseAdjustMult;
+        this.coarseIncr = incr * coarseAdjustMult;
+        this.fineIncr = incr / fineAdjustDiv;
+    }
+
+    private int getAdjustment() {
+        if (GuiScreen.isShiftKeyDown()) {
+            return coarseIncr;
+        } else if (GuiScreen.isCtrlKeyDown()) {
+            return fineIncr;
+        } else {
+            return incr;
+        }
     }
 
     private boolean adjustField(int adj) {
-        if (GuiScreen.isShiftKeyDown()) {
-            adj *= coarseAdjustMult;
-        }
-
         int val;
         try {
             val = Integer.parseInt(getText());

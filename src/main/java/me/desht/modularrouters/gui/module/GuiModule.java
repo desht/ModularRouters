@@ -19,6 +19,7 @@ import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiPageButtonList;
@@ -26,6 +27,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -187,7 +189,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     /**
      * Encode the message data for this module.  This NBT data will be copied directly
-     * into the module itemstack's NBT when the server receives the updateTextFields message.
+     * into the module itemstack's NBT when the server receives the module settings message.
      * Overriding subclasses must call the superclass method!
      *
      * @return the message data NBT
@@ -262,18 +264,16 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
         int filterSlotIndex = slot.slotNumber;
         SmartFilter filter = ItemSmartFilter.getFilter(slot.getStack());
-        if (routerPos != null) {
+        TileEntityItemRouter router = getItemRouterTE();
+        if (router != null) {
             // module is installed in a router
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
-            if (router != null) {
-                router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex, slot.getSlotIndex());
-                if (filter.hasGuiContainer()) {
-                    ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
-                } else {
-                    // no container, just open the client-side GUI directly
-                    mc.thePlayer.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.theWorld,
-                            routerPos.getX(), routerPos.getY(), routerPos.getZ());
-                }
+            router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex, slot.getSlotIndex());
+            if (filter.hasGuiContainer()) {
+                ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
+            } else {
+                // no container, just open the client-side GUI directly
+                mc.thePlayer.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.theWorld,
+                        routerPos.getX(), routerPos.getY(), routerPos.getZ());
             }
         } else if (hand != null) {
             // module is in player's hand
@@ -318,11 +318,19 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
     }
 
+    protected TileEntityItemRouter getItemRouterTE() {
+        if (routerPos != null) {
+            TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(routerPos);
+            return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
+        }
+        return null;
+    }
+
     private static class RegulatorTooltipButton extends TexturedButton {
         public RegulatorTooltipButton(int buttonId, int x, int y) {
             super(buttonId, x, y, 16, 16);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.regulatorTooltip");
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.intFieldTooltip");
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

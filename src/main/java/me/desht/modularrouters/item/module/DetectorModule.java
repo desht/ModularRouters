@@ -51,4 +51,9 @@ public class DetectorModule extends Module {
         return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR),
                 ModItems.blankModule, Items.COMPARATOR);
     }
+
+    @Override
+    public boolean canBeRegulated() {
+        return false;
+    }
 }

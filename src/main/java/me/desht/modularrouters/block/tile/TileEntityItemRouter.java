@@ -1,14 +1,17 @@
 package me.desht.modularrouters.block.tile;
 
 import com.google.common.collect.Sets;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
+import me.desht.modularrouters.item.module.FluidModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -59,6 +62,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public static final String NBT_EXTRA = "Extra";
     public static final String NBT_REDSTONE_MODE = "Redstone";
     private static final String NBT_TICK_RATE = "TickRate";
+    private static final String NBT_FLUID_TRANSFER_RATE = "FluidTransfer";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -78,7 +82,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
-    private final int[] upgradeCount = new int[ItemUpgrade.UpgradeType.values().length];
+    private int fluidTransferRate;  // mB/t
+    private int fluidTransferRemainingIn = 0;
+    private int fluidTransferRemainingOut = 0;
+    private final int[] upgradeCount = new int[UpgradeType.values().length];
     private int totalUpgradeCount;
     private int moduleCount;
 
@@ -153,13 +160,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
         compound.setTag(NBT_PERMITTED, list);
         compound.setInteger(BlockItemRouter.NBT_MODULE_COUNT, getModuleCount());
-        for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+        for (UpgradeType type : UpgradeType.values()) {
             compound.setInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type, getUpgradeCount(type));
         }
 
         compound.setByte(NBT_REDSTONE_MODE, (byte) redstoneBehaviour.ordinal());
         compound.setBoolean(NBT_ECO_MODE, ecoMode);
         compound.setInteger(NBT_TICK_RATE, tickRate);
+        compound.setInteger(NBT_FLUID_TRANSFER_RATE, fluidTransferRate);
 
         // these fields are needed for rendering
         compound.setBoolean(NBT_ACTIVE, active);
@@ -193,13 +201,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             permitted.add(UUID.fromString(l.getStringTagAt(i)));
         }
         moduleCount = compound.getInteger(BlockItemRouter.NBT_MODULE_COUNT);
-        for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
+        for (UpgradeType type : UpgradeType.values()) {
             upgradeCount[type.ordinal()] = compound.getInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type);
         }
 
         RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
         setRedstoneBehaviour(newRedstoneBehaviour);
         tickRate = compound.getInteger(NBT_TICK_RATE);
+        fluidTransferRate = compound.getInteger(NBT_FLUID_TRANSFER_RATE);
 
         // these fields are needed for rendering
         boolean newActive = compound.getBoolean(NBT_ACTIVE);
@@ -307,6 +316,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             }
         } else {
             if (counter >= getTickRate()) {
+                allocateFluidTransfer(counter);
                 executeModules(false);
                 counter = 0;
             }
@@ -487,8 +497,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 }
             }
 
-            tickRate = calculateTickRate(getUpgradeCount(ItemUpgrade.UpgradeType.SPEED));
-            itemsPerTick = calculateItemsPerTick(getUpgradeCount(ItemUpgrade.UpgradeType.STACK));
+            itemsPerTick = 1 << (Math.min(6, getUpgradeCount(UpgradeType.STACK)));
+            tickRate = Math.max(Config.hardMinTickRate,
+                    Config.baseTickRate - Config.ticksPerUpgrade * getUpgradeCount(UpgradeType.SPEED));
+            fluidTransferRate = Math.min(Config.fluidMaxTransferRate,
+                    Config.fluidBaseTransferRate + getUpgradeCount(UpgradeType.FLUID) * Config.mBperFluidUpgrade);
         }
     }
 
@@ -512,14 +525,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockItemRouter.CAN_EMIT, canEmit));
     }
 
-    public static int calculateTickRate(int nSpeedUpgrades) {
-        return Math.max(Config.hardMinTickRate, Config.baseTickRate - Config.ticksPerUpgrade * nSpeedUpgrades);
-    }
-
-    public static int calculateItemsPerTick(int nStackUpgrades) {
-        return 1 << (Math.min(6, nStackUpgrades));  // 6 upgrades at most => 64 items
-    }
-
     public int getModuleCount() {
         return moduleCount;
     }
@@ -528,7 +533,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return totalUpgradeCount;
     }
 
-    public int getUpgradeCount(ItemUpgrade.UpgradeType type) {
+    public int getUpgradeCount(UpgradeType type) {
         return upgradeCount[type.ordinal()];
     }
 
@@ -538,6 +543,37 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public int getItemsPerTick() {
         return itemsPerTick;
+    }
+
+    private void allocateFluidTransfer(int ticks) {
+        // increment the in/out fluid transfer allowance based on the number of ticks which have passed
+        // and the current fluid transfer rate of the router (which depends on the number of fluid upgrades)
+        int maxTransfer = Config.baseTickRate * fluidTransferRate;
+        fluidTransferRemainingIn = Math.min(fluidTransferRemainingIn + ticks * fluidTransferRate, maxTransfer);
+        fluidTransferRemainingOut = Math.min(fluidTransferRemainingOut + ticks * fluidTransferRate, maxTransfer);
+    }
+
+    public int getFluidTransferRate() {
+        return fluidTransferRate;
+    }
+
+    public int getRemainingFluidTransferAllowance(FluidModule.FluidDirection dir) {
+        return dir == FluidModule.FluidDirection.IN ? fluidTransferRemainingIn : fluidTransferRemainingOut;
+    }
+
+    public void transferredFluid(int amount, FluidModule.FluidDirection dir) {
+        switch (dir) {
+            case IN:
+                if (fluidTransferRemainingIn < amount) ModularRouters.logger.warn("fluid transfer: " + fluidTransferRemainingIn + " < " + amount);
+                fluidTransferRemainingIn = Math.max(0, fluidTransferRemainingIn - amount);
+                break;
+            case OUT:
+                if (fluidTransferRemainingOut < amount) ModularRouters.logger.warn("fluid transfer: " + fluidTransferRemainingOut + " < " + amount);
+                fluidTransferRemainingOut = Math.max(0, fluidTransferRemainingOut - amount);
+                break;
+            default:
+                break;
+        }
     }
 
     public EnumFacing getAbsoluteFacing(Module.RelativeDirection direction) {
@@ -587,6 +623,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
             if (redstonePower > lastPower && pulseCounter >= tickRate) {
+                allocateFluidTransfer(Math.min(pulseCounter, Config.baseTickRate));
                 executeModules(true);
                 pulseCounter = 0;
                 if (active) {

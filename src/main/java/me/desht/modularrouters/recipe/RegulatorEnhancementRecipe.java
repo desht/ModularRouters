@@ -15,7 +15,7 @@ class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
     }
 
     static boolean appliesTo(ItemModule.ModuleType type) {
-        return type != ItemModule.ModuleType.DETECTOR;
+        return ItemModule.getModule(type).canBeRegulated();
     }
 
     @Override

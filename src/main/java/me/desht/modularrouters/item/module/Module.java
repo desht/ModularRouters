@@ -163,4 +163,6 @@ public abstract class Module {
     }
 
     public abstract IRecipe getRecipe();
+
+    public boolean canBeRegulated() { return true; }
 }

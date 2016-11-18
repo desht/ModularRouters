@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 public class Config {
 
+
     public static class Defaults {
         public static final int BASE_TICK_RATE = 20;
         public static final int TICKS_PER_UPGRADE = 2;
@@ -26,6 +27,9 @@ public class Config {
         public static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
         public static final int VACUUM_BASE_RANGE = 6;
         public static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
+        public static final int FLUID_BASE_TRANSFER = 50;  // mB / tick
+        public static final int FLUID_MAX_TRANSFER = 400;
+        public static final int MB_PER_FLUID_UPGRADE = 10;
         public static final boolean SENDER_PARTICLES = true;
         public static final boolean VACUUM_PARTICLES = true;
         public static final boolean PLACER_PARTICLES = true;
@@ -54,6 +58,9 @@ public class Config {
     public static int vacuumMaxRange;
     public static int extruderBaseRange;
     public static int extruderMaxRange;
+    public static int fluidBaseTransferRate;
+    public static int fluidMaxTransferRate;
+    public static int mBperFluidUpgrade;
     public static boolean senderParticles;
     public static boolean breakerParticles;
     public static boolean flingerEffects;
@@ -150,6 +157,13 @@ public class Config {
                 "Extruder Module Max Range", 1, Integer.MAX_VALUE);
         propExtruderMaxRange.setLanguageKey("gui.config.extruderMaxRange");
 
+        Property propFluidBaseTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidBaseTransfer", Defaults.FLUID_BASE_TRANSFER,
+                "Fluid Module Base Transfer Rate", 0, Integer.MAX_VALUE);
+        Property propFluidMaxTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidMaxTransfer", Defaults.FLUID_MAX_TRANSFER,
+                "Fluid Module Hard Max Transfer Rate", 0, Integer.MAX_VALUE);
+        Property propMBperFluidUpgrade = config.get(CATEGORY_NAME_ROUTER, "mBperFluidUpgrade", Defaults.MB_PER_FLUID_UPGRADE,
+                "Router's fluid transfer rate increase per Fluid Upgrade", 0, Integer.MAX_VALUE);
+
         Property propVacuumParticles = config.get(CATEGORY_NAME_MODULE, "vacuumParticles", Defaults.VACUUM_PARTICLES,
                 "Show particles when Vacuum Module absorbs items");
         propVacuumParticles.setLanguageKey("gui.config.vacuumParticles");
@@ -179,7 +193,10 @@ public class Config {
                 propHardMinTicks,
                 propConfigKey,
                 propEcoTimeout,
-                propLowPowerTickRate
+                propLowPowerTickRate,
+                propFluidBaseTransfer,
+                propFluidMaxTransfer,
+                propMBperFluidUpgrade
         ).stream().map(Property::getName).collect(Collectors.toList()));
 
         config.setCategoryPropertyOrder(CATEGORY_NAME_MODULE, Arrays.asList(
@@ -219,6 +236,9 @@ public class Config {
             vacuumMaxRange = propVacuumMaxRange.getInt();
             extruderBaseRange = propExtruderBaseRange.getInt();
             extruderMaxRange = propExtruderMaxRange.getInt();
+            fluidBaseTransferRate = propFluidBaseTransfer.getInt();
+            fluidMaxTransferRate = propFluidMaxTransfer.getInt();
+            mBperFluidUpgrade = propMBperFluidUpgrade.getInt();
             senderParticles = propSenderParticles.getBoolean();
             vacuumParticles = propVacuumParticles.getBoolean();
             placerParticles = propPlacerParticles.getBoolean();
@@ -242,6 +262,9 @@ public class Config {
         propVacuumMaxRange.set(vacuumMaxRange);
         propExtruderBaseRange.set(extruderBaseRange);
         propExtruderMaxRange.set(extruderMaxRange);
+        propFluidBaseTransfer.set(fluidBaseTransferRate);
+        propFluidMaxTransfer.set(fluidMaxTransferRate);
+        propMBperFluidUpgrade.set(mBperFluidUpgrade);
         propSenderParticles.set(senderParticles);
         propVacuumParticles.set(vacuumParticles);
         propPlacerParticles.set(placerParticles);

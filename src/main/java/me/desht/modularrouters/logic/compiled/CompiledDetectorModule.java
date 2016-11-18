@@ -16,8 +16,7 @@ public class CompiledDetectorModule extends CompiledModule {
     public CompiledDetectorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        setupNBT(stack);
-        NBTTagCompound compound = stack.getTagCompound();
+        NBTTagCompound compound = setupNBT(stack);
         signalLevel = compound == null ? 0 : compound.getByte(NBT_SIGNAL_LEVEL);
         strongSignal = compound != null && compound.getBoolean(NBT_STRONG_SIGNAL);
     }
@@ -36,7 +35,7 @@ public class CompiledDetectorModule extends CompiledModule {
         return true;
     }
 
-    private void setupNBT(ItemStack stack) {
+    private NBTTagCompound setupNBT(ItemStack stack) {
         NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         if (!compound.hasKey(NBT_SIGNAL_LEVEL)) {
             compound.setInteger(NBT_SIGNAL_LEVEL, 15);
@@ -44,6 +43,7 @@ public class CompiledDetectorModule extends CompiledModule {
         if (!compound.hasKey(NBT_STRONG_SIGNAL)) {
             compound.setBoolean(NBT_STRONG_SIGNAL, false);
         }
+        return compound;
     }
 
     public int getSignalLevel() {

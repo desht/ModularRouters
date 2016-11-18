@@ -97,7 +97,7 @@ public class GuiModuleDetector extends GuiModule {
         TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
             super(buttonId, x, y, width, height, renderStack, true);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.detectorTooltip");
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.intFieldTooltip");
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

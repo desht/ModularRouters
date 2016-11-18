@@ -78,6 +78,13 @@ public abstract class CompiledModule {
         return regulationAmount;
     }
 
+    /**
+     * Get the absolute direction this module faces, based on its relative direction and the facing of the router
+     * in which it's installed.  This will be null the module isn't installed in a router, or the router's facing
+     * direction if the module's relative direction is NONE.
+     *
+     * @return absolute direction of the module
+     */
     EnumFacing getFacing() {
         return facing;
     }
