@@ -13,7 +13,10 @@ public class CompiledVoidModule extends CompiledModule  {
         ItemStack stack = router.getBufferItemStack();
         if (stack != null && getFilter().pass(stack)) {
             // bye bye items
-            int toVoid = Math.min(router.getItemsPerTick(), stack.stackSize) - getRegulationAmount();
+            int toVoid = Math.min(router.getItemsPerTick(), stack.stackSize - getRegulationAmount());
+            if (toVoid <= 0) {
+                return false;
+            }
             ItemStack gone = router.getBuffer().extractItem(0, toVoid, false);
             return gone != null && gone.stackSize > 0;
         }
