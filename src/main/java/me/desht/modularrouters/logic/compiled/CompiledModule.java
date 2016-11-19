@@ -217,7 +217,7 @@ public abstract class CompiledModule {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 
-    protected boolean isRegulationOK(TileEntityItemRouter router, boolean inbound) {
+    boolean isRegulationOK(TileEntityItemRouter router, boolean inbound) {
         if (regulationAmount == 0) return true; // no regulation
         int items = router.getBufferItemStack() == null ? 0 : router.getBufferItemStack().stackSize;
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
