@@ -16,7 +16,10 @@ public class CompiledDropperModule extends CompiledModule {
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
         if (stack != null && getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack) && isRegulationOK(router, false)) {
-            int nItems = Math.min(router.getItemsPerTick(), stack.stackSize) - getRegulationAmount();
+            int nItems = Math.min(router.getItemsPerTick(), stack.stackSize - getRegulationAmount());
+            if (nItems < 0) {
+                return false;
+            }
             ItemStack toDrop = router.peekBuffer(nItems);
             BlockPos pos = getTarget().pos;
             EnumFacing face = getTarget().face;
