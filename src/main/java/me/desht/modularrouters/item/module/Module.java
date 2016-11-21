@@ -8,6 +8,8 @@ import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
+import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.client.Minecraft;
@@ -27,7 +29,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public abstract class Module {
-
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -165,4 +166,24 @@ public abstract class Module {
     public abstract IRecipe getRecipe();
 
     public boolean canBeRegulated() { return true; }
+
+    /**
+     * Check if the given item is OK for this module's filter.
+     *
+     * @param stack the item to check
+     * @return true if the item may be inserted in the module's filter, false otherwise
+     */
+    public boolean isItemValidForFilter(ItemStack stack) {
+        return true;
+    }
+
+    /**
+     * Get the item matcher to be used for simple items, i.e. not smart filters.
+     *
+     * @param stack the item to be matched
+     * @return an item matcher object
+     */
+    public IItemMatcher getFilterItemMatcher(ItemStack stack) {
+        return new SimpleItemMatcher(stack);
+    }
 }

@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.FluidModule;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -32,7 +31,7 @@ public class CompiledFluidModule extends CompiledModule {
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
 
-        if (getDirection() == Module.RelativeDirection.NONE || stack == null || stack.stackSize != 1) {
+        if (getDirection() == Module.RelativeDirection.NONE || stack == null || stack.stackSize != 1 || !getFilter().pass(stack)) {
             return false;
         }
 

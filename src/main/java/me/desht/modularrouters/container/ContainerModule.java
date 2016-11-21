@@ -106,8 +106,9 @@ public class ContainerModule extends Container {
                 }
                 if (slot < Filter.FILTER_SIZE && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
-                    if (player.inventory.getItemStack() != null) {
-                        ItemStack stack1 = player.inventory.getItemStack().copy();
+                    ItemStack stackOnCursor = player.inventory.getItemStack();
+                    if (stackOnCursor != null) {
+                        ItemStack stack1 = stackOnCursor.copy();
                         stack1.stackSize = 1;
                         s.putStack(stack1);
                     } else {

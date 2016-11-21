@@ -6,12 +6,17 @@ import me.desht.modularrouters.gui.module.GuiModuleFluid;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
+import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
+import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -53,5 +58,16 @@ public class FluidModule extends Module {
     @Override
     public boolean canBeRegulated() {
         return false;
+    }
+
+    @Override
+    public boolean isItemValidForFilter(ItemStack stack) {
+        // only fluid-holding items can go into a fluid module's filter
+        return stack == null || (stack.stackSize == 1 && FluidUtil.getFluidContained(stack) != null);
+    }
+
+    @Override
+    public IItemMatcher getFilterItemMatcher(ItemStack stack) {
+        return new FluidMatcher(stack);
     }
 }

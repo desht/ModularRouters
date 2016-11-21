@@ -5,10 +5,13 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
+
+import javax.annotation.Nullable;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -52,12 +55,8 @@ public class ContainerItemRouter extends Container {
         }
 
         // item router buffer
-        addSlotToContainer(new SlotItemHandler(router.getBuffer(), BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS) {
-            @Override
-            public void onSlotChanged() {
-                router.getWorld().updateComparatorOutputLevel(router.getPos(), router.getBlockType());
-            }
-        });
+        addSlotToContainer(new BufferSlot(router, BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS));
+
         // item router modules
         for (int slot = 0; slot < TileEntityItemRouter.N_MODULE_SLOTS; slot++) {
             addSlotToContainer(new ValidatingSlot.Module(router.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));

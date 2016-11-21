@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.container.BufferHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule;
@@ -35,6 +36,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -69,12 +71,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     private RouterRedstoneBehaviour redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
 
-    private final ItemStackHandler bufferHandler = new ItemStackHandler(1) {
-        @Override
-        public void onContentsChanged(int slot) {
-            markDirty();
-        }
-    };
+    private final BufferHandler bufferHandler = new BufferHandler(this);
     private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
     private final ItemStackHandler upgradesHandler = new RouterItemHandler.UpgradeHandler(this);
 
@@ -82,12 +79,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private int tickRate = Config.baseTickRate;
     private int itemsPerTick = 1;
-    private int fluidTransferRate;  // mB/t
-    private int fluidTransferRemainingIn = 0;
-    private int fluidTransferRemainingOut = 0;
     private final int[] upgradeCount = new int[UpgradeType.values().length];
     private int totalUpgradeCount;
     private int moduleCount;
+
+    private int fluidTransferRate;  // mB/t
+    private int fluidTransferRemainingIn = 0;
+    private int fluidTransferRemainingOut = 0;
 
     // for tracking redstone emission levels for the detector module
     private final int SIDES = EnumFacing.values().length;
@@ -228,7 +226,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> cap, EnumFacing side) {
-        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(cap, side);
+        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
+                || (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && bufferHandler.getFluidHandler() != null)
+                || super.hasCapability(cap, side);
     }
 
     @Nonnull
@@ -236,6 +236,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public <T> T getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(bufferHandler);
+        }
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(bufferHandler.getFluidHandler());
         }
         return super.getCapability(cap, side);
     }
@@ -584,7 +587,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public ItemStack getBufferItemStack() {
         return bufferHandler.getStackInSlot(0);
     }
-
 
     public void playerConfiguringModule(EntityPlayer player, int slotIndex, int filterIndex) {
         if (slotIndex >= 0) {

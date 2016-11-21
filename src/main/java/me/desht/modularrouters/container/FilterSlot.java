@@ -1,6 +1,8 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.Module;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;

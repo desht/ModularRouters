@@ -1,5 +1,7 @@
 package me.desht.modularrouters.container;
 
+import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
@@ -31,5 +33,19 @@ public class FilterHandler extends GhostItemHandler {
             }
         }
         moduleStack.getTagCompound().setTag(ModuleHelper.NBT_FILTER, serializeNBT());
+    }
+
+    @Override
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        Module module = ItemModule.getModule(moduleStack);
+        return module.isItemValidForFilter(stack) ? super.insertItem(slot, stack, simulate) : stack;
+    }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        Module module = ItemModule.getModule(moduleStack);
+        if (module.isItemValidForFilter(stack)) {
+            super.setStackInSlot(slot, stack);
+        }
     }
 }

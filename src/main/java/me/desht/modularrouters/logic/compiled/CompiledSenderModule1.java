@@ -29,7 +29,7 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
+        IItemHandler buffer = router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
         if (bufferStack != null && getFilter().pass(bufferStack)) {
             PositionedItemHandler target = findTargetInventory(router);

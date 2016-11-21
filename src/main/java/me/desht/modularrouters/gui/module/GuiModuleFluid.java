@@ -11,6 +11,7 @@ import me.desht.modularrouters.gui.widgets.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.TexturedCyclerButton;
 import me.desht.modularrouters.item.module.FluidModule;
+import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
@@ -23,6 +24,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GuiModuleFluid extends GuiModule {
@@ -34,7 +37,7 @@ public class GuiModuleFluid extends GuiModule {
     private static final int TOOLTIP_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
     private static final int FLUID_DIRECTION_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
 
-    private FluidModule.FluidDirection fluidDirection;
+    private FluidDirection fluidDirection;
     private int maxTransfer;
 
     public GuiModuleFluid(ContainerModule containerItem, EnumHand hand) {
@@ -117,7 +120,9 @@ public class GuiModuleFluid extends GuiModule {
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.fluidTransferTooltip");
             TileEntityItemRouter router = getItemRouterTE();
             if (router != null) {
-                tooltip1.add(TextFormatting.GRAY + I18n.format("itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
+                int ftRate = router.getFluidTransferRate();
+                int tickRate = router.getTickRate();
+                tooltip1.add(TextFormatting.GRAY + I18n.format("guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
             }
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
@@ -128,18 +133,22 @@ public class GuiModuleFluid extends GuiModule {
         }
     }
 
-    private static class FluidDirectionButton extends TexturedCyclerButton<FluidModule.FluidDirection> {
-        private final List<String> tooltip2 = Lists.newArrayList();
+    private static class FluidDirectionButton extends TexturedCyclerButton<FluidDirection> {
+        private final List<List<String>> tooltips = Lists.newArrayList();
 
-        FluidDirectionButton(int buttonId, int x, int y, FluidModule.FluidDirection initialVal) {
+        FluidDirectionButton(int buttonId, int x, int y, FluidDirection initialVal) {
             super(buttonId, x, y, 16, 16, initialVal);
-            tooltip1.add(I18n.format("itemText.fluidDirection.IN"));
-            tooltip2.add(I18n.format("itemText.fluidDirection.OUT"));
+
+            for (FluidDirection dir : FluidDirection.values()) {
+                List<String> tip = new ArrayList<>();
+                MiscUtil.appendMultiline(tip, "itemText.fluidDirection." + dir);
+                tooltips.add(tip);
+            }
         }
 
         @Override
         protected int getTextureX() {
-            return getState() == FluidModule.FluidDirection.IN ? 160 : 176;
+            return 160 + getState().ordinal() * 16;
         }
 
         @Override
@@ -148,8 +157,9 @@ public class GuiModuleFluid extends GuiModule {
         }
 
         @Override
-        public List<String> getTooltip() {
-            return getState() == FluidModule.FluidDirection.IN ? tooltip1 : tooltip2;
+        public java.util.List<String> getTooltip() {
+            return tooltips.get(getState().ordinal());
         }
+
     }
 }

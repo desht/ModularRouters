@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModSorterModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
@@ -45,7 +46,8 @@ public class Filter {
             SmartFilter f = ItemSmartFilter.getFilter(filterStack);
             return f.compile(filterStack, moduleStack, target);
         } else {
-            return new SimpleItemMatcher(filterStack);
+            Module module = ItemModule.getModule(moduleStack);
+            return module.getFilterItemMatcher(filterStack);
         }
     }
 
