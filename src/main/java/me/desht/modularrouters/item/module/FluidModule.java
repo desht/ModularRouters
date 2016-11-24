@@ -8,6 +8,7 @@ import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,8 +40,9 @@ public class FluidModule extends Module {
     public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(itemstack, player, list, par4);
         CompiledFluidModule cfm = new CompiledFluidModule(null, itemstack);
-        String dir = I18n.format("itemText.fluidDirection." + cfm.getFluidDirection());
-        list.add(I18n.format("itemText.misc.maxFluidTransfer", cfm.getMaxTransfer(), dir));
+        String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
+        list.add(I18n.format("itemText.fluid.direction", dir));
+        list.add(I18n.format("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
     }
 
     @Override

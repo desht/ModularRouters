@@ -138,11 +138,8 @@ public class GuiModuleFluid extends GuiModule {
 
         FluidDirectionButton(int buttonId, int x, int y, FluidDirection initialVal) {
             super(buttonId, x, y, 16, 16, initialVal);
-
             for (FluidDirection dir : FluidDirection.values()) {
-                List<String> tip = new ArrayList<>();
-                MiscUtil.appendMultiline(tip, "itemText.fluidDirection." + dir);
-                tooltips.add(tip);
+                tooltips.add(Collections.singletonList(I18n.format("itemText.fluid.direction." + dir)));
             }
         }
 
