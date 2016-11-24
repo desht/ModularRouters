@@ -4,7 +4,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 public class CompiledModSorterModule extends CompiledSorterModule {
     public CompiledModSorterModule(TileEntityItemRouter router, ItemStack stack) {

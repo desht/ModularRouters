@@ -2,13 +2,11 @@ package me.desht.modularrouters.logic.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.ModSorterModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
-import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -7,7 +7,6 @@ import me.desht.modularrouters.item.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class SpeedUpgrade extends Upgrade {
     @Override

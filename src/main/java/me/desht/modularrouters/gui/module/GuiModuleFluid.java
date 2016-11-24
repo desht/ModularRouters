@@ -10,7 +10,6 @@ import me.desht.modularrouters.gui.widgets.IntegerTextField;
 import me.desht.modularrouters.gui.widgets.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.TexturedCyclerButton;
-import me.desht.modularrouters.item.module.FluidModule;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -24,7 +23,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

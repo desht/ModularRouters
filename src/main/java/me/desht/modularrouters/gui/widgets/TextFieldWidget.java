@@ -1,7 +1,6 @@
 package me.desht.modularrouters.gui.widgets;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiTextField;
 
 public class TextFieldWidget extends GuiTextField {

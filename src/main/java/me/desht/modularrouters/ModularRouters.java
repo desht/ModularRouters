@@ -8,7 +8,6 @@ import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
-import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;

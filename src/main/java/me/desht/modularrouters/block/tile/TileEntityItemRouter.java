@@ -560,7 +560,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return fluidTransferRate;
     }
 
-    public int getRemainingFluidTransferAllowance(FluidModule.FluidDirection dir) {
+    public int getCurrentFluidTransferAllowance(FluidModule.FluidDirection dir) {
         return dir == FluidModule.FluidDirection.IN ? fluidTransferRemainingIn : fluidTransferRemainingOut;
     }
 
