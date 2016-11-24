@@ -33,7 +33,7 @@ public class ItemStackButton extends TexturedButton {
         }
         int x = xPosition + (width - 18) / 2;
         int y = yPosition + (height - 18) / 2;
-        RenderHelper.renderItemStack(mc, renderStack, x, y, "");
+        RenderHelper.renderItemStack(mc, getRenderStack(), x, y, "");
         this.mouseDragged(mc, mouseX, mouseY);
     }
 

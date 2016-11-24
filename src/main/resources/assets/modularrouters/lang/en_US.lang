@@ -83,12 +83,12 @@ guiText.label.upgrades=Upgrades
 guiText.label.filters=Filters
 guiText.label.buffer=Buffer
 guiText.label.installed= (installed)
-guiText.label.playerOp.EXTRACT=Extract
-guiText.label.playerOp.INSERT=Insert
-guiText.label.playerSect.MAIN=Main
-guiText.label.playerSect.ARMOR=Armor
-guiText.label.playerSect.OFFHAND=Offhand
-guiText.label.playerSect.ENDER=Ender
+guiText.label.playerOp.EXTRACT=From Player to Item Router
+guiText.label.playerOp.INSERT=From Item Router to Player
+guiText.label.playerSect.MAIN=Main Inventory
+guiText.label.playerSect.ARMOR=Armor Slots
+guiText.label.playerSect.OFFHAND=Offhand Slot
+guiText.label.playerSect.ENDER=Ender Inventory
 guiText.label.regexError=Invalid regular expression
 
 # Config GUI

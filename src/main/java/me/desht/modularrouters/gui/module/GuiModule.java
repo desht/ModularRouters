@@ -233,6 +233,9 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+        if (!module.isDirectional()) {
+            drawTexturedModalRect(x + 69, y + 17, 204, 0, 52, 52);
+        }
     }
 
     @Override

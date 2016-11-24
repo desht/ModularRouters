@@ -30,7 +30,7 @@ public class PlayerModule extends Module {
         list.add(TextFormatting.YELLOW + I18n.format("itemText.security.owner", cpm.getPlayerName()));
         list.add(TextFormatting.YELLOW + String.format(TextFormatting.YELLOW + "%s: " + TextFormatting.AQUA + "%s %s %s",
                 I18n.format("itemText.misc.operation"),
-                I18n.format("guiText.label.playerOp." + cpm.getOperation()),
+                I18n.format("tile.itemRouter.name"),
                 cpm.getOperation().getSymbol(),
                 I18n.format("guiText.label.playerSect." + cpm.getSection())));
     }

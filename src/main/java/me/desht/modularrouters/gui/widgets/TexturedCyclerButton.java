@@ -16,7 +16,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
 
     public void setState(T newState) { state = newState; }
 
-    public void cycle(boolean forward) {
+    public T cycle(boolean forward) {
         int b = state.ordinal();
         b += forward ? 1 : -1;
 
@@ -27,5 +27,6 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
         }
 
         state = (T) state.getClass().getEnumConstants()[b];
+        return state;
     }
 }
