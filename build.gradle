@@ -47,12 +47,17 @@ repositories {
         name = "guideapi"
         url = 'http://tehnut.info/maven/'
     }
+    maven {
+        name = "tesla"
+        url = "http://maven.epoxide.xyz"
+    }
 }
 
 dependencies {
     deobfCompile group: "mcp.mobius.waila", name: "Waila", version: config.waila_version
     deobfCompile group: "mcjty.theoneprobe", name: "TheOneProbe", version: config.top_version
     deobfCompile "info.amerifrance.guideapi:Guide-API:1.10.2-2.0.2-45"
+    compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.49"
 }
 
 processResources {
