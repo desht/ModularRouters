@@ -62,6 +62,7 @@ public class BlockUtil {
             BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState)) {
+                newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
                 return newState;
             }
         }
@@ -79,12 +80,14 @@ public class BlockUtil {
         if (item == null) {
             return false;
         }
-        if (filter.pass(new ItemStack(item, 1, block.getMetaFromState(state)))) {
-            EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
+
+        EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
+        List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, silkTouch, fortune);
+        drops.addAll(allDrops.stream().filter(filter::pass).collect(Collectors.toList()));
+        if (allDrops.isEmpty() || drops.size() == allDrops.size()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
-                drops.addAll(getDrops(world, pos, fakePlayer, silkTouch, fortune));
                 world.setBlockToAir(pos);
                 return true;
             }
