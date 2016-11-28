@@ -29,7 +29,8 @@ public class ItemSmartFilter extends ItemBase {
     public enum FilterType {
         BULKITEM,
         MOD,
-        REGEX;
+        REGEX,
+        INSPECTION;
 
         public static FilterType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemSmartFilter ? values()[stack.getItemDamage()] : null;
@@ -43,6 +44,7 @@ public class ItemSmartFilter extends ItemBase {
         registerSubItem(FilterType.BULKITEM, new BulkItemFilter());
         registerSubItem(FilterType.MOD, new ModFilter());
         registerSubItem(FilterType.REGEX, new RegexFilter());
+        registerSubItem(FilterType.INSPECTION, new InspectionFilter());
     }
 
     private static void registerSubItem(FilterType type, SmartFilter handler) {

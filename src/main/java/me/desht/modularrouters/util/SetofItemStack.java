@@ -49,7 +49,7 @@ public class SetofItemStack extends TCustomHashSet<ItemStack> {
     private static Comparator<? super ItemStack> compareStacks = new Comparator<ItemStack>() {
         @Override
         public int compare(ItemStack o1, ItemStack o2) {
-            // compare by mod, then by display name
+            // matches by mod, then by display name
             int c = o1.getItem().getRegistryName().getResourceDomain().compareTo(o2.getItem().getRegistryName().getResourceDomain());
             if (c != 0) return c;
             return o1.getDisplayName().compareTo(o2.getDisplayName());

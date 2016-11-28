@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModuleFluid;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
@@ -61,8 +62,10 @@ public class FluidModule extends Module {
 
     @Override
     public boolean isItemValidForFilter(ItemStack stack) {
-        // only fluid-holding items can go into a fluid module's filter
-        return stack == null || (stack.stackSize == 1 && FluidUtil.getFluidContained(stack) != null);
+        // only fluid-holding items or a smart filter item can go into a fluid module's filter
+        return stack == null
+                || (stack.stackSize == 1 && FluidUtil.getFluidContained(stack) != null)
+                || ItemSmartFilter.getFilter(stack) != null;
     }
 
     @Override

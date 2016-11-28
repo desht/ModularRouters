@@ -30,6 +30,7 @@ item.GuideBook.name=§l§nModular Routers
 item.bulkitemFilter.name=Bulk Item Filter
 item.modFilter.name=Mod Filter
 item.regexFilter.name=Regex Filter
+item.inspectionFilter.name=Inspection Filter
 
 # Blocks
 tile.itemRouter.name=Item Router
@@ -90,6 +91,20 @@ guiText.label.playerSect.ARMOR=Armor Slots
 guiText.label.playerSect.OFFHAND=Offhand Slot
 guiText.label.playerSect.ENDER=Ender Inventory
 guiText.label.regexError=Invalid regular expression
+guiText.label.inspectionSubject.NONE=
+guiText.label.inspectionSubject.DURABILITY=Durability
+guiText.label.inspectionSubject.FLUID=Fluid Level
+guiText.label.inspectionSubject.ENERGY=Energy Level
+guiText.label.inspectionSubject.ENCHANT=Enchantment
+guiText.label.inspectionOp.NONE=
+guiText.label.inspectionOp.GT=>
+guiText.label.inspectionOp.LT=<
+guiText.label.inspectionOp.GE=>=
+guiText.label.inspectionOp.LE=<=
+guiText.label.inspectionOp.EQ==
+guiText.label.inspectionOp.NE=!=
+guiText.label.matchAll.false=Match Any
+guiText.label.matchAll.true=Match All
 
 # Config GUI
 gui.config.mainTitle=Modular Routers Configuration
@@ -187,6 +202,7 @@ itemText.usage.item.fluidUpgradeRouter=• This router's transfer rate: %d mB/ti
 itemText.usage.item.bulkitemFilter=High-capacity, high-performance filter for large numbers of items;\ncan not filter by NBT data, however.\nInsert into a router module like any other item.\n• Sneak + Right-click any inventory: merge contents into filter.\n• Right-click: view/configure.
 itemText.usage.item.regexFilter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.usage.item.modFilter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click: view/configure.
+itemText.usage.item.inspectionFilter=Filter items by inspecting various properties of the item.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.deprecated.modSorter=§oDeprecated Module; use a Sender Module & Mod Filter instead.\n§oThis module can be crafted into a Mod Filter.
 itemText.deprecated.sorter=§oDeprecated Module; use a Sender Module & Bulk Item Filter instead.\n§oThis module can be crafted into a Bulk Item Filter.
 
@@ -196,7 +212,7 @@ chatText.security.accessDenied=§c--[Access Denied]--
 chatText.security.ADDED=Added player [%s]
 chatText.security.REMOVED=Removed player [%s]
 chatText.security.ERROR=Couldn't add player [%s] (internal error)
-chatText.security.FULL=Security upgrade list full!
+chatText.security.FULL=Security upgrade items full!
 chatText.security.ALREADY_ADDED=Player [%s] is already on this upgrade
 chatText.security.NOT_PRESENT=Player [%s] is not on this uprade
 chatText.subtitle.error=Error

@@ -146,7 +146,7 @@ public class Guidebook {
     }
 
     private static void buildModulePages(Map<ResourceLocation, EntryAbstract> entries) {
-        // get a list of modules, sorted by their localized names
+        // get a items of modules, sorted by their localized names
         List<ModuleType> types = Lists.newArrayList(ModuleType.values()).stream()
                 .map(ItemModule::makeItemStack)
                 .sorted((s1, s2) -> translate(s1.getUnlocalizedName()).compareTo(translate(s2.getUnlocalizedName())))
@@ -166,7 +166,7 @@ public class Guidebook {
     }
 
     private static void buildUpgradePages(Map<ResourceLocation, EntryAbstract> entries) {
-        // get a list of upgrades, sorted by their localized names
+        // get a items of upgrades, sorted by their localized names
         List<UpgradeType> types = Lists.newArrayList(UpgradeType.values()).stream()
                 .map(ItemUpgrade::makeItemStack)
                 .sorted((s1, s2) -> translate(s1.getUnlocalizedName()).compareTo(translate(s2.getUnlocalizedName())))

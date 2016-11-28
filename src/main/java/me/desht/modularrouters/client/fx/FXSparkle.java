@@ -158,7 +158,7 @@ public class FXSparkle extends Particle {
         double d1 = y - (double)blockpos.getY();
         double d2 = z - (double)blockpos.getZ();
 
-        // Botania - change collision box list check to !airblock check
+        // Botania - change collision box items check to !airblock check
         if (!worldObj.isAirBlock(blockpos))
         {
             EnumFacing enumfacing = EnumFacing.UP;

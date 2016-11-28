@@ -85,7 +85,7 @@ public class SecurityUpgrade extends Upgrade {
     }
 
     /**
-     * Get a list of player names added to this security upgrade, not including the owner.
+     * Get a items of player names added to this security upgrade, not including the owner.
      *
      * @param stack the upgrade itemstack
      * @return set of (displayable) player names
@@ -111,7 +111,7 @@ public class SecurityUpgrade extends Upgrade {
                 return Interacted.Result.ALREADY_ADDED;  // already there, do nothing
             }
             if (p.getSize() >= MAX_PLAYERS) {
-                return Interacted.Result.FULL;  // list full
+                return Interacted.Result.FULL;  // items full
             }
             p.setString(id, name);
             return Interacted.Result.ADDED;

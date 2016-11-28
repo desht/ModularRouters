@@ -61,6 +61,16 @@ public class IntegerTextField extends TextFieldWidget {
         }
     }
 
+    public int getValue() {
+        int val;
+        try {
+            val = Integer.parseInt(getText());
+        } catch (NumberFormatException e) {
+            val = min;
+        }
+        return val;
+    }
+
     public void setIncr(int incr, int coarseAdjustMult) {
         setIncr(incr, coarseAdjustMult, 1);
     }
@@ -82,14 +92,8 @@ public class IntegerTextField extends TextFieldWidget {
     }
 
     private boolean adjustField(int adj) {
-        int val;
-        try {
-            val = Integer.parseInt(getText());
-        } catch (NumberFormatException e) {
-            val = min;
-        }
         setText("");
-        writeText(Integer.toString(Math.max(min, Math.min(max, val + adj))));
+        writeText(Integer.toString(Math.max(min, Math.min(max, getValue() + adj))));
         return true;
     }
 }

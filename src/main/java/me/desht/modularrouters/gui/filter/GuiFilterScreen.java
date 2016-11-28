@@ -5,8 +5,10 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.gui.widgets.IResyncableGui;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Keyboard;
@@ -55,5 +57,29 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
             }
         }
         return false;
+    }
+
+    protected void sendAddStringMessage(String key, String s) {
+        NBTTagCompound ext = new NBTTagCompound();
+        ext.setString(key, s);
+        if (routerPos != null) {
+            ModularRouters.network.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.ADD_STRING, routerPos, moduleSlotIndex, filterSlotIndex, ext));
+        } else {
+            ModularRouters.network.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.ADD_STRING, hand, filterSlotIndex, ext));
+        }
+    }
+
+    protected void sendRemovePosMessage(int pos) {
+        NBTTagCompound ext = new NBTTagCompound();
+        ext.setInteger("Pos", pos);
+        if (routerPos != null) {
+            ModularRouters.network.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.REMOVE_AT, routerPos, moduleSlotIndex, filterSlotIndex, ext));
+        } else {
+            ModularRouters.network.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.REMOVE_AT, hand, filterSlotIndex, ext));
+        }
     }
 }

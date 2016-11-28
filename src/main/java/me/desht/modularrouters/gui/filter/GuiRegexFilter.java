@@ -105,7 +105,8 @@ public class GuiRegexFilter extends GuiFilterScreen {
         if (button.id == ADD_REGEX_ID && !regexTextField.getText().isEmpty()) {
             addRegex();
         } else if (button.id >= BASE_REMOVE_ID && button.id < BASE_REMOVE_ID + regexList.size()) {
-            removeRegexAt(button.id - BASE_REMOVE_ID);
+            sendRemovePosMessage(button.id - BASE_REMOVE_ID);
+//            removeRegexAt(button.id - BASE_REMOVE_ID);
         } else if (button.id == BACK_BUTTON_ID) {
             closeGUI();
         } else {
@@ -113,18 +114,18 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
     }
 
-    private void removeRegexAt(int pos) {
-        NBTTagCompound ext = new NBTTagCompound();
-        ext.setInteger("Pos", pos);
-        if (routerPos != null) {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.REMOVE_AT, routerPos, moduleSlotIndex, filterSlotIndex, ext));
-        } else {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.REMOVE_AT, hand, filterSlotIndex, ext));
-        }
-        errorMsg = "";
-    }
+//    private void removeRegexAt(int pos) {
+//        NBTTagCompound ext = new NBTTagCompound();
+//        ext.setInteger("Pos", pos);
+//        if (routerPos != null) {
+//            ModularRouters.network.sendToServer(new FilterSettingsMessage(
+//                    FilterSettingsMessage.Operation.REMOVE_AT, routerPos, moduleSlotIndex, filterSlotIndex, ext));
+//        } else {
+//            ModularRouters.network.sendToServer(new FilterSettingsMessage(
+//                    FilterSettingsMessage.Operation.REMOVE_AT, hand, filterSlotIndex, ext));
+//        }
+//        errorMsg = "";
+//    }
 
     private void addRegex() {
         NBTTagCompound ext = new NBTTagCompound();
