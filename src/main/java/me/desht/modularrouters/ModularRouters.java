@@ -81,6 +81,7 @@ public class ModularRouters {
         MinecraftForge.EVENT_BUS.register(CamouflageUpgrade.Interacted.class);
         IntegrationHandler.registerWaila();
         IntegrationHandler.registerTOP();
+        IntegrationHandler.registerTesla();
     }
 
     @Mod.EventHandler

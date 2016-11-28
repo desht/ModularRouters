@@ -5,6 +5,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.BufferHandler;
+import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule;
@@ -16,6 +17,8 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import net.darkhax.tesla.capability.TeslaCapabilities;
+import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -36,6 +39,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -226,9 +230,26 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> cap, EnumFacing side) {
-        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
-                || (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && bufferHandler.getFluidHandler() != null)
-                || super.hasCapability(cap, side);
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return true;
+        } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && bufferHandler.getFluidHandler() != null) {
+            return true;
+        } else if (cap == CapabilityEnergy.ENERGY && getBufferItemStack() != null && getBufferItemStack().hasCapability(CapabilityEnergy.ENERGY, null)) {
+            return true;
+        } else if (TeslaIntegration.enabled && hasTeslaCap(cap, getBufferItemStack())) {
+            return true;
+        } else {
+            return super.hasCapability(cap, side);
+        }
+    }
+
+    private boolean hasTeslaCap(Capability<?> cap, ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+        return cap == TeslaCapabilities.CAPABILITY_HOLDER && TeslaUtils.isTeslaHolder(stack, null)
+                || cap == TeslaCapabilities.CAPABILITY_PRODUCER && TeslaUtils.isTeslaProducer(stack, null)
+                || cap == TeslaCapabilities.CAPABILITY_CONSUMER && TeslaUtils.isTeslaConsumer(stack, null);
     }
 
     @Nonnull
@@ -236,9 +257,21 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public <T> T getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(bufferHandler);
-        }
-        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(bufferHandler.getFluidHandler());
+        } else if (cap == CapabilityEnergy.ENERGY && getBufferItemStack() != null) {
+            return CapabilityEnergy.ENERGY.cast(getBufferItemStack().getCapability(CapabilityEnergy.ENERGY, null));
+        } else if (TeslaIntegration.enabled && getBufferItemStack() != null) {
+            ItemStack stack = getBufferItemStack();
+            if (stack != null) {
+                if (cap == TeslaCapabilities.CAPABILITY_HOLDER/* && TeslaUtils.isTeslaHolder(stack, null)*/) {
+                    return TeslaCapabilities.CAPABILITY_HOLDER.cast(TeslaUtils.getTeslaHolder(stack, null));
+                } else if (cap == TeslaCapabilities.CAPABILITY_CONSUMER/* && TeslaUtils.isTeslaConsumer(stack, null)*/) {
+                    return TeslaCapabilities.CAPABILITY_CONSUMER.cast(TeslaUtils.getTeslaConsumer(stack, null));
+                } else if (cap == TeslaCapabilities.CAPABILITY_PRODUCER/* && TeslaUtils.isTeslaProducer(stack, null)*/) {
+                    return TeslaCapabilities.CAPABILITY_PRODUCER.cast(TeslaUtils.getTeslaProducer(stack, null));
+                }
+            }
         }
         return super.getCapability(cap, side);
     }

@@ -2,6 +2,7 @@ package me.desht.modularrouters.integration;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.integration.guideapi.Guidebook;
+import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.integration.top.TOPCompatibility;
 import me.desht.modularrouters.integration.waila.WailaIntegration;
 import net.minecraftforge.fml.common.Loader;
@@ -23,6 +24,12 @@ public class IntegrationHandler {
         if (Loader.isModLoaded("guideapi")) {
             Guidebook.buildGuide();
             ModularRouters.proxy.addGuidebookModel(Guidebook.guideBook);
+        }
+    }
+
+    public static void registerTesla() {
+        if (Loader.isModLoaded("tesla")) {
+            TeslaIntegration.setup();
         }
     }
 }
