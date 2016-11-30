@@ -22,7 +22,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
     protected final EnumHand hand;
     protected final String title;
 
-    public GuiFilterScreen(ItemStack filterStack, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
+    GuiFilterScreen(ItemStack filterStack, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
         this.routerPos = routerPos;
         this.moduleSlotIndex = moduleSlotIndex;
         this.filterSlotIndex = filterSlotIndex;
@@ -39,7 +39,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
         super.keyTyped(typedChar, keyCode);
     }
 
-    protected boolean closeGUI() {
+    boolean closeGUI() {
         if (routerPos != null) {
             // need to re-open module GUI for module in router slot <moduleSlotIndex>
             TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
@@ -59,7 +59,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
         return false;
     }
 
-    protected void sendAddStringMessage(String key, String s) {
+    void sendAddStringMessage(String key, String s) {
         NBTTagCompound ext = new NBTTagCompound();
         ext.setString(key, s);
         if (routerPos != null) {
@@ -71,7 +71,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
         }
     }
 
-    protected void sendRemovePosMessage(int pos) {
+    void sendRemovePosMessage(int pos) {
         NBTTagCompound ext = new NBTTagCompound();
         ext.setInteger("Pos", pos);
         if (routerPos != null) {

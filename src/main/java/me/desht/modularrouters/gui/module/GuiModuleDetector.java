@@ -1,9 +1,9 @@
 package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.gui.widgets.IntegerTextField;
-import me.desht.modularrouters.gui.widgets.ItemStackButton;
-import me.desht.modularrouters.gui.widgets.TextFieldManager;
+import me.desht.modularrouters.gui.widgets.textfield.IntegerTextField;
+import me.desht.modularrouters.gui.widgets.button.ItemStackButton;
+import me.desht.modularrouters.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;

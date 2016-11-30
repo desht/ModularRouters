@@ -1,6 +1,6 @@
 package me.desht.modularrouters.gui.filter;
 
-import me.desht.modularrouters.gui.widgets.TexturedButton;
+import me.desht.modularrouters.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
 

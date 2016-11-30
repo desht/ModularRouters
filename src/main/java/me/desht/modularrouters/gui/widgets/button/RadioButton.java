@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.button;
 
 public abstract class RadioButton extends TexturedToggleButton {
     private final int groupId;

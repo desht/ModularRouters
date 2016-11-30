@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.button;
 
 public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedButton {
     private T state;

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.gui;
 
-import me.desht.modularrouters.gui.widgets.TexturedCyclerButton;
+import me.desht.modularrouters.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.client.resources.I18n;
 

@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;

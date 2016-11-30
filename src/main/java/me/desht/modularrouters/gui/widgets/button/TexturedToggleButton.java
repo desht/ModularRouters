@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.button;
 
 import java.util.ArrayList;
 import java.util.List;

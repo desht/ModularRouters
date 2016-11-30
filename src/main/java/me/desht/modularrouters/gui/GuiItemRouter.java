@@ -5,7 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
-import me.desht.modularrouters.gui.widgets.TexturedToggleButton;
+import me.desht.modularrouters.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;

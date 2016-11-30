@@ -3,16 +3,14 @@ package me.desht.modularrouters.gui.filter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.gui.BackButton;
-import me.desht.modularrouters.gui.widgets.TextFieldManager;
-import me.desht.modularrouters.gui.widgets.TextFieldWidget;
+import me.desht.modularrouters.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.gui.widgets.textfield.TextFieldWidget;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
-import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -106,7 +104,6 @@ public class GuiRegexFilter extends GuiFilterScreen {
             addRegex();
         } else if (button.id >= BASE_REMOVE_ID && button.id < BASE_REMOVE_ID + regexList.size()) {
             sendRemovePosMessage(button.id - BASE_REMOVE_ID);
-//            removeRegexAt(button.id - BASE_REMOVE_ID);
         } else if (button.id == BACK_BUTTON_ID) {
             closeGUI();
         } else {
@@ -114,45 +111,20 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
     }
 
-//    private void removeRegexAt(int pos) {
-//        NBTTagCompound ext = new NBTTagCompound();
-//        ext.setInteger("Pos", pos);
-//        if (routerPos != null) {
-//            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-//                    FilterSettingsMessage.Operation.REMOVE_AT, routerPos, moduleSlotIndex, filterSlotIndex, ext));
-//        } else {
-//            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-//                    FilterSettingsMessage.Operation.REMOVE_AT, hand, filterSlotIndex, ext));
-//        }
-//        errorMsg = "";
-//    }
-
     private void addRegex() {
-        NBTTagCompound ext = new NBTTagCompound();
-        String regex = regexTextField.getText();
-
         try {
+            String regex = regexTextField.getText();
             //noinspection ResultOfMethodCallIgnored
             Pattern.compile(regex);
+            sendAddStringMessage("String", regex);
+            regexTextField.setText("");
+            getTextFieldManager().focus(0);
+            errorMsg = "";
         } catch (PatternSyntaxException e) {
             mc.thePlayer.playSound(MRSoundEvents.error, 1.0f, 1.0f);
             errorMsg = I18n.format("guiText.label.regexError");
             errorTimer = 60;
-            return;
         }
-
-        ext.setString("String", regex);
-        if (routerPos != null) {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.ADD_STRING, routerPos, moduleSlotIndex, filterSlotIndex, ext));
-        } else {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.ADD_STRING, hand, filterSlotIndex, ext));
-        }
-
-        regexTextField.setText("");
-        getTextFieldManager().focus(0);
-        errorMsg = "";
     }
 
     @Override

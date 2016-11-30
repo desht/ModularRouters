@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.button;
 
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.Minecraft;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TexturedButton extends GuiButton implements ITooltipButton {
-    protected final ResourceLocation resourceLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/widgets.png");
+    protected static final ResourceLocation resourceLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/widgets.png");
     protected final List<String> tooltip1;
 
     public TexturedButton(int buttonId, int x, int y, int width, int height) {

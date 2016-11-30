@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.textfield;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,13 +21,13 @@ public class TextFieldManager {
         this.parent = parent;
     }
 
-    void drawTextFields() {
+    public void drawTextFields() {
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
         textFields.forEach(TextFieldWidget::drawTextBox);
     }
 
-    void updateTextFields() {
+    public void updateTextFields() {
         if (focusedField >= 0) {
             textFields.get(focusedField).updateCursorCounter();
         }
@@ -39,7 +39,7 @@ public class TextFieldManager {
      * @return true if a text field handled the mouse event, false if not
      * @throws IOException
      */
-    boolean handleMouseInput() throws IOException {
+    public boolean handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
         if (wheel == 0) {
             return false;
@@ -62,13 +62,13 @@ public class TextFieldManager {
         return false;
     }
 
-    void mouseClicked(int x, int y, int btn) throws IOException {
+    public void mouseClicked(int x, int y, int btn) throws IOException {
         for (TextFieldWidget field : textFields) {
             field.mouseClicked(x, y, btn);
         }
     }
 
-    boolean keyTyped(char typedChar, int keyCode) throws IOException {
+    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == Keyboard.KEY_TAB) {
             if (GuiScreen.isShiftKeyDown()) {
                 focusPrev();

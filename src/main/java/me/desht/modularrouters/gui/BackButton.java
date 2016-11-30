@@ -1,6 +1,6 @@
 package me.desht.modularrouters.gui;
 
-import me.desht.modularrouters.gui.widgets.TexturedButton;
+import me.desht.modularrouters.gui.widgets.button.TexturedButton;
 
 public class BackButton extends TexturedButton {
     public BackButton(int buttonId, int x, int y) {

@@ -1,5 +1,7 @@
 package me.desht.modularrouters.gui.widgets;
 
+import me.desht.modularrouters.gui.widgets.button.ITooltipButton;
+import me.desht.modularrouters.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.io.IOException;

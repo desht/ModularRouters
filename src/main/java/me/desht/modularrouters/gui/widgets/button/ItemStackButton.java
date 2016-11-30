@@ -1,4 +1,4 @@
-package me.desht.modularrouters.gui.widgets;
+package me.desht.modularrouters.gui.widgets.button;
 
 import me.desht.modularrouters.client.RenderHelper;
 import net.minecraft.client.Minecraft;
