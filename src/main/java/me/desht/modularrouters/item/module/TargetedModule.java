@@ -75,7 +75,7 @@ public abstract class TargetedModule extends Module {
                 TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
                 TargetValidation val = validateTarget(router, target, false);
                 if (val != TargetValidation.OK) {
-                    list.add(I18n.format("itemText.targetValidation." + val));
+                    list.add(I18n.format("chatText.targetValidation." + val));
                 }
             }
         }
