@@ -1,5 +1,6 @@
 package me.desht.modularrouters.block.tile;
 
+import cofh.api.energy.IEnergyContainerItem;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
@@ -17,6 +18,7 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.RFEnergyWrapper;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.block.state.IBlockState;
@@ -234,13 +236,18 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             return true;
         } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && bufferHandler.getFluidHandler() != null) {
             return true;
-        } else if (cap == CapabilityEnergy.ENERGY && getBufferItemStack() != null && getBufferItemStack().hasCapability(CapabilityEnergy.ENERGY, null)) {
+        } else if (hasForgeEnergyCap(cap, getBufferItemStack())) {
             return true;
         } else if (TeslaIntegration.enabled && hasTeslaCap(cap, getBufferItemStack())) {
             return true;
         } else {
             return super.hasCapability(cap, side);
         }
+    }
+
+    private boolean hasForgeEnergyCap(Capability<?> cap, ItemStack stack) {
+        return cap == CapabilityEnergy.ENERGY && stack != null &&
+                (stack.hasCapability(CapabilityEnergy.ENERGY, null) || stack.getItem() instanceof IEnergyContainerItem);
     }
 
     private boolean hasTeslaCap(Capability<?> cap, ItemStack stack) {
@@ -257,20 +264,27 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public <T> T getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(bufferHandler);
-        } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        }
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(bufferHandler.getFluidHandler());
-        } else if (cap == CapabilityEnergy.ENERGY && getBufferItemStack() != null) {
-            return CapabilityEnergy.ENERGY.cast(getBufferItemStack().getCapability(CapabilityEnergy.ENERGY, null));
-        } else if (TeslaIntegration.enabled && getBufferItemStack() != null) {
+        }
+        if (getBufferItemStack() != null) {
             ItemStack stack = getBufferItemStack();
-            if (stack != null) {
-                if (cap == TeslaCapabilities.CAPABILITY_HOLDER/* && TeslaUtils.isTeslaHolder(stack, null)*/) {
+            if (cap == CapabilityEnergy.ENERGY) {
+                return CapabilityEnergy.ENERGY.cast(stack.getCapability(CapabilityEnergy.ENERGY, null));
+            }
+            if (TeslaIntegration.enabled) {
+                if (cap == TeslaCapabilities.CAPABILITY_HOLDER) {
                     return TeslaCapabilities.CAPABILITY_HOLDER.cast(TeslaUtils.getTeslaHolder(stack, null));
-                } else if (cap == TeslaCapabilities.CAPABILITY_CONSUMER/* && TeslaUtils.isTeslaConsumer(stack, null)*/) {
+                } else if (cap == TeslaCapabilities.CAPABILITY_CONSUMER) {
                     return TeslaCapabilities.CAPABILITY_CONSUMER.cast(TeslaUtils.getTeslaConsumer(stack, null));
-                } else if (cap == TeslaCapabilities.CAPABILITY_PRODUCER/* && TeslaUtils.isTeslaProducer(stack, null)*/) {
+                } else if (cap == TeslaCapabilities.CAPABILITY_PRODUCER) {
                     return TeslaCapabilities.CAPABILITY_PRODUCER.cast(TeslaUtils.getTeslaProducer(stack, null));
                 }
+            }
+            if (stack.getItem() instanceof IEnergyContainerItem) {
+                // we don't implement CoFH RF interface, but we can expose it via Forge Energy
+                return CapabilityEnergy.ENERGY.cast(new RFEnergyWrapper(stack));
             }
         }
         return super.getCapability(cap, side);

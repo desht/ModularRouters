@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
+import cofh.api.energy.IEnergyContainerItem;
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.logic.filter.Filter;
@@ -158,6 +159,9 @@ public class InspectionMatcher implements IItemMatcher {
             } else if (TeslaIntegration.enabled && TeslaUtils.isTeslaHolder(stack, null)) {
                 ITeslaHolder h = TeslaUtils.getTeslaHolder(stack, null);
                 return Optional.of(asPercentage(h.getStoredPower(), h.getCapacity()));
+            } else if (stack.getItem() instanceof IEnergyContainerItem) {
+                IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();
+                return Optional.of(asPercentage(containerItem.getEnergyStored(stack), containerItem.getMaxEnergyStored(stack)));
             }
             return Optional.empty();
         }
