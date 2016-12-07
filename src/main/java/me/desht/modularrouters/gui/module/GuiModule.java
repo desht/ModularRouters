@@ -83,7 +83,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     public GuiModule(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem);
-        this.moduleItemStack = containerItem.filterHandler.getModuleItemStack();
+        this.moduleItemStack = containerItem.filterHandler.getHoldingItemStack();
         this.module = ItemModule.getModule(moduleItemStack);
         this.routerPos = routerPos;
         this.moduleSlotIndex = slotIndex;
@@ -236,11 +236,9 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
-        int x = (width - xSize) / 2;
-        int y = (height - ySize) / 2;
-        drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         if (!module.isDirectional()) {
-            drawTexturedModalRect(x + 69, y + 17, 204, 0, 52, 52);
+            drawTexturedModalRect(guiLeft + 69, guiTop + 17, 204, 0, 52, 52);
         }
     }
 

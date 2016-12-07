@@ -1,20 +1,27 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.container.ContainerBulkItemFilter;
+import me.desht.modularrouters.container.FilterHandler;
+import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
 import me.desht.modularrouters.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +33,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.IItemHandler;
@@ -35,39 +41,37 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import java.util.List;
 
 public class BulkItemFilter extends SmartFilter {
-    private static final String NBT_ITEMS = "Items";
-    private static final int MAX_SIZE = 54;
+    public static final int FILTER_SIZE = 54;
+    private static final String NBT_ITEMS_DEPRECATED = "Items";
+    public static final Flags DEF_FLAGS = new Flags((byte) 0x00); //Flags.with(ModuleFlags.IGNORE_NBT, ModuleFlags.IGNORE_META);
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
-        return new BulkItemMatcher(getFilterItems(filterStack), target);
+        Flags flags = moduleStack == null ? DEF_FLAGS : new Flags(moduleStack);
+        SetofItemStack stacks = getFilterItems(filterStack, flags);
+        return new BulkItemMatcher(stacks, flags);
     }
 
-    public static SetofItemStack getFilterItems(ItemStack filterStack) {
+    private static SetofItemStack getFilterItems(ItemStack filterStack, Flags flags) {
         if (filterStack.hasTagCompound()) {
             NBTTagCompound compound = filterStack.getTagCompound();
-            NBTTagList items = compound.getTagList(NBT_ITEMS, Constants.NBT.TAG_COMPOUND);
-            SetofItemStack stacks = new SetofItemStack(items.tagCount());
-            for (int i = 0; i < items.tagCount(); i++) {
-                NBTTagCompound c = (NBTTagCompound) items.get(i);
-                stacks.add(ItemStack.loadItemStackFromNBT(c));
+            if (compound.hasKey(ModuleHelper.NBT_FILTER)) {
+                // v1.2 and later - filter is in the "ModuleFilter" tag
+                FilterHandler handler = new BulkFilterHandler(filterStack);
+                return SetofItemStack.fromItemHandler(handler, flags);
+            } else {
+                // v1.1 and earlier - filter is in the "Items" tag
+                NBTTagList items = compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND);
+                SetofItemStack stacks = new SetofItemStack(items.tagCount(), flags);
+                for (int i = 0; i < items.tagCount(); i++) {
+                    NBTTagCompound c = (NBTTagCompound) items.get(i);
+                    stacks.add(ItemStack.loadItemStackFromNBT(c));
+                }
+                return stacks;
             }
-            return stacks;
         } else {
-            return new SetofItemStack();
+            return new SetofItemStack(DEF_FLAGS);
         }
-    }
-
-    private static void setFilterItems(ItemStack filterStack, SetofItemStack items) {
-        if (!filterStack.hasTagCompound()) {
-            filterStack.setTagCompound(new NBTTagCompound());
-        }
-        NBTTagList list = new NBTTagList();
-        for (ItemStack stack : items) {
-            list.appendTag(stack.serializeNBT());
-        }
-        NBTTagCompound compound = filterStack.getTagCompound();
-        compound.setTag(NBT_ITEMS, list);
     }
 
     @Override
@@ -93,7 +97,12 @@ public class BulkItemFilter extends SmartFilter {
 
     @Override
     public boolean hasGuiContainer() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public Container createContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
+        return new ContainerBulkItemFilter(player, filterStack, router);
     }
 
     @Override
@@ -116,32 +125,21 @@ public class BulkItemFilter extends SmartFilter {
     }
 
     @Override
-    public IMessage dispatchMessage(FilterSettingsMessage message, ItemStack filterStack) {
-        IItemHandler srcInv;
+    public IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+        ContainerBulkItemFilter con = player.openContainer instanceof ContainerBulkItemFilter ?
+                (ContainerBulkItemFilter) player.openContainer : null;
+        Flags flags = moduleStack == null ? DEF_FLAGS : new Flags(moduleStack);
+
         switch (message.getOp()) {
             case CLEAR_ALL:
-                setFilterItems(filterStack, new SetofItemStack());
-                return null;
+                if (con != null) con.clearSlots();
+                break;
             case MERGE:
-                srcInv = getInventory(message);
-                if (srcInv != null) {
-                    int n = mergeInventory(filterStack, srcInv);
-                }
-                return new GuiSyncMessage(filterStack);
+                if (con != null) con.mergeInventory(message.getTargetInventory(), flags, false);
+                break;
             case LOAD:
-                srcInv = getInventory(message);
-                if (srcInv != null) {
-                    setFilterItems(filterStack, new SetofItemStack());
-                    int n = mergeInventory(filterStack, srcInv);
-                }
-                return new GuiSyncMessage(filterStack);
-            case REMOVE_ITEM:
-                ItemStack toRemove = ItemStack.loadItemStackFromNBT(message.getNbtData());
-                if (removeFromFilter(filterStack, toRemove)) {
-                    return new GuiSyncMessage(filterStack);
-                } else {
-                    return null;
-                }
+                if (con != null) con.mergeInventory(message.getTargetInventory(), flags, true);
+                break;
             default:
                 ModularRouters.logger.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
                 break;
@@ -152,56 +150,39 @@ public class BulkItemFilter extends SmartFilter {
     @Override
     public int getSize(ItemStack filterStack) {
         if (filterStack.hasTagCompound()) {
-            return filterStack.getTagCompound().getTagList(NBT_ITEMS, Constants.NBT.TAG_COMPOUND).tagCount();
+            NBTTagCompound compound = filterStack.getTagCompound();
+            if (compound.hasKey(NBT_ITEMS_DEPRECATED)) {
+                // v1.1.x and earlier
+                return compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND).tagCount();
+            } else {
+                // v1.2.0 and later
+                return FilterHandler.getItemCount(filterStack);
+            }
         } else {
             return 0;
         }
     }
 
-    private boolean removeFromFilter(ItemStack filterStack, ItemStack toRemove) {
-        SetofItemStack stacks = getFilterItems(filterStack);
-        if (stacks.remove(toRemove)) {
-            NBTTagCompound compound = new NBTTagCompound();
-            NBTTagList list = new NBTTagList();
-            for (ItemStack stack : stacks) {
-                list.appendTag(stack.serializeNBT());
-            }
-            compound.setTag(NBT_ITEMS, list);
-            filterStack.setTagCompound(compound);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private IItemHandler getInventory(FilterSettingsMessage msg) {
-        ModuleTarget target = ModuleTarget.fromNBT(msg.getNbtData());
-        World w = DimensionManager.getWorld(target.dimId);
-        if (w != null) {
-            return InventoryUtils.getInventory(w, target.pos, target.face);
-        }
-        return null;
-    }
-
     private int mergeInventory(ItemStack filterStack, IItemHandler srcInventory) {
-        SetofItemStack stacks = getFilterItems(filterStack);
+        SetofItemStack stacks = getFilterItems(filterStack, DEF_FLAGS);
         int origSize = stacks.size();
 
-        for (int i = 0; i < srcInventory.getSlots() && stacks.size() < MAX_SIZE; i++) {
+        for (int i = 0; i < srcInventory.getSlots() && stacks.size() < FILTER_SIZE; i++) {
             ItemStack stack = srcInventory.getStackInSlot(i);
             if (stack != null) {
-                stacks.add(stack);
+                ItemStack stack1 = stack.copy();
+                stack1.stackSize = 1;
+                stacks.add(stack1);
             }
         }
 
-        NBTTagCompound compound = new NBTTagCompound();
-        NBTTagList list = new NBTTagList();
-        for (ItemStack stack : stacks) {
-            list.appendTag(stack.serializeNBT());
+        BulkFilterHandler handler = new BulkFilterHandler(filterStack);
+        int slot = 0;
+        for (ItemStack stack : stacks.sortedList()) {
+            handler.setStackInSlot(slot++, stack);
         }
-        compound.setTag(NBT_ITEMS, list);
-        filterStack.setTagCompound(compound);
+        handler.save();
 
-        return list.tagCount() - origSize;
+        return stacks.size() - origSize;
     }
 }

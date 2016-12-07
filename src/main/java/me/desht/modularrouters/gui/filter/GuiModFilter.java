@@ -2,15 +2,10 @@ package me.desht.modularrouters.gui.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.ContainerModFilter;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.gui.BackButton;
-import me.desht.modularrouters.gui.widgets.GuiContainerBase;
-import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
@@ -19,13 +14,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.List;
 
-public class GuiModFilter extends GuiContainerBase {
+public class GuiModFilter extends GuiFilterContainer {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/modfilter.png");
 
     private static final int GUI_WIDTH = 176;
@@ -35,11 +29,6 @@ public class GuiModFilter extends GuiContainerBase {
     private static final int BACK_BUTTON_ID = 2;
     private static final int BASE_REMOVE_ID = 100;
 
-    private final BlockPos routerPos;
-    private final int moduleSlotIndex;
-    private final int filterSlotIndex;
-    private final EnumHand hand;
-    private final ItemStack filterStack;
     private final List<String> mods = Lists.newArrayList();
 
     private ItemStack prevInSlot = null;
@@ -47,14 +36,7 @@ public class GuiModFilter extends GuiContainerBase {
     private String modName = "";
 
     public GuiModFilter(ContainerSmartFilter container, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
-        super(container);
-
-        this.routerPos = routerPos;
-        this.moduleSlotIndex = moduleSlotIndex;
-        this.filterSlotIndex = filterSlotIndex;
-        this.hand = hand;
-
-        this.filterStack = ((ContainerModFilter) container).filterStack;
+        super(container, routerPos, moduleSlotIndex, filterSlotIndex, hand);
 
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
@@ -109,9 +91,7 @@ public class GuiModFilter extends GuiContainerBase {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
-        int x = (width - xSize) / 2;
-        int y = (height - ySize) / 2;
-        drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
     }
 
     @Override
@@ -142,35 +122,6 @@ public class GuiModFilter extends GuiContainerBase {
         } else {
             super.actionPerformed(button);
         }
-    }
-
-    private boolean closeGUI() {
-        if (routerPos != null) {
-            // need to re-open module GUI for module in router slot <moduleSlotIndex>
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
-            if (router != null) {
-                router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex);
-                ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(routerPos, moduleSlotIndex));
-                return true;
-            }
-        } else if (hand != null) {
-            ItemStack stack = mc.thePlayer.getHeldItem(hand);
-            if (ItemModule.getModule(stack) != null) {
-                // need to re-open module GUI for module in player's hand
-                ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInHand(hand));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if ((keyCode == Keyboard.KEY_ESCAPE || keyCode == Keyboard.KEY_E)) {
-            // Intercept ESC/E and immediately reopen the previous GUI, if any
-            if (closeGUI()) return;
-        }
-        super.keyTyped(typedChar, keyCode);
     }
 
     @Override

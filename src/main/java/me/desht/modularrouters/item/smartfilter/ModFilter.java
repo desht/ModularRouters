@@ -101,7 +101,7 @@ public class ModFilter extends SmartFilter {
     }
 
     @Override
-    public IMessage dispatchMessage(FilterSettingsMessage message, ItemStack filterStack) {
+    public IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
         switch (message.getOp()) {
             case ADD_STRING:

@@ -90,7 +90,7 @@ public class InspectionFilter extends SmartFilter {
     }
 
     @Override
-    public IMessage dispatchMessage(FilterSettingsMessage message, ItemStack filterStack) {
+    public IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         ComparisonList comparisonList = getComparisonList(filterStack);
 
         switch (message.getOp()) {

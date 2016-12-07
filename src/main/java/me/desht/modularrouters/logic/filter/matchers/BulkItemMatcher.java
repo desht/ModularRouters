@@ -1,38 +1,45 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.collect.Sets;
-import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.util.SetofItemStack;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Set;
 
 public class BulkItemMatcher implements IItemMatcher {
-    private final Set<Integer> byId = Sets.newHashSet();
-    private final Set<Long> byIdAndMeta = Sets.newHashSet();
+    private final SetofItemStack stacks;
+    private final Set<Integer> oreDictIds;
 
-    public BulkItemMatcher(SetofItemStack stacks, ModuleTarget target) {
-        for (ItemStack stack : stacks) {
-            int id = Item.getIdFromItem(stack.getItem());
-            byId.add(id);
-            byIdAndMeta.add(idAndMeta(stack));
+    public BulkItemMatcher(SetofItemStack stacks, Flags flags) {
+        this.stacks = stacks;
+        this.oreDictIds = Sets.newHashSet();
+        if (!flags.isIgnoreOredict()) {
+            for (ItemStack stack : stacks) {
+                for (int id : OreDictionary.getOreIDs(stack)) {
+                    oreDictIds.add(id);
+                }
+            }
         }
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        int id = Item.getIdFromItem(stack.getItem());
-        if (flags.isIgnoreMeta()) {
-            return byId.contains(id);
-        } else {
-            return byIdAndMeta.contains(idAndMeta(stack));
+    public boolean matchItem(ItemStack stack, Flags flags) {
+        if (stacks.contains(stack)) {
+            return true;
+        } else if (!flags.isIgnoreOredict() && matchOreDict(stack)) {
+            return true;
         }
+        return false;
     }
 
-    private static long idAndMeta(ItemStack stack) {
-        int id = Item.getIdFromItem(stack.getItem());
-        return ((long)id << 32) | stack.getItemDamage();
+    private boolean matchOreDict(ItemStack stack) {
+        for (int id : OreDictionary.getOreIDs(stack)) {
+            if (oreDictIds.contains(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -49,7 +49,7 @@ public class FilterSlot extends SlotItemHandler {
         handler.save();
 
         if (player != null && hand != null) {
-            player.setHeldItem(hand, handler.getModuleItemStack());
+            player.setHeldItem(hand, handler.getHoldingItemStack());
         } else if (router != null && serverSide) {
             router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
         }

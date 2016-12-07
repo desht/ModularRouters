@@ -1,46 +1,39 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.FilterHandler.ModuleFilterHandler;
+import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
+import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nullable;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ContainerModule extends Container {
-    private static final int INV_START = Filter.FILTER_SIZE;
-    private static final int INV_END = INV_START + 26;
-    private static final int HOTBAR_START = INV_END + 1;
-    private static final int HOTBAR_END = HOTBAR_START + 8;
+public class ContainerBulkItemFilter extends ContainerSmartFilter {
+    private static final int PLAYER_INV_X = 8;
+    private static final int PLAYER_INV_Y = 151;
+    private static final int PLAYER_HOTBAR_Y = 209;
 
-    private static final int PLAYER_INV_Y = 100;
-    private static final int PLAYER_INV_X = 16;
-    private static final int PLAYER_HOTBAR_Y = PLAYER_INV_Y + 58;
+    private final FilterHandler handler;
 
-    public final FilterHandler filterHandler;
-    private final int currentSlot;  // currently-selected slot for player
-    private final TileEntityItemRouter router;
+    public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
+        super(player, filterStack, router);
 
-    public ContainerModule(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
-        this(player, hand, moduleStack, null);
-    }
-
-    public ContainerModule(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
-        this.filterHandler = new ModuleFilterHandler(moduleStack);
-        this.currentSlot = player.inventory.currentItem + HOTBAR_START;
-        this.router = router;  // null if module is in player's hand
+        handler = new BulkFilterHandler(filterStack);
 
         // slots for the (ghost) filter items
-        for (int i = 0; i < Filter.FILTER_SIZE; i++) {
+        for (int i = 0; i < handler.getSlots(); i++) {
             FilterSlot slot = router == null ?
-                    new FilterSlot(filterHandler, player, hand, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
-                    new FilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3));
+                    new FilterSlot(handler, player, EnumHand.MAIN_HAND, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
+                    new FilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
             addSlotToContainer(slot);
         }
 
@@ -57,13 +50,52 @@ public class ContainerModule extends Container {
         }
     }
 
-    @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
-        return true;
+    public void clearSlots() {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            handler.setStackInSlot(i, null);
+        }
+        handler.save();
+
+        if (getRouter() != null && !getRouter().getWorld().isRemote) {
+            getRouter().recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+        }
     }
 
+    public int mergeInventory(IItemHandler srcInv, Filter.Flags flags, boolean clearFirst) {
+        if (srcInv == null) {
+            return 0;
+        }
+        SetofItemStack stacks = clearFirst ? new SetofItemStack(flags) : SetofItemStack.fromItemHandler(handler, flags);
+        int origSize = stacks.size();
+
+        for (int i = 0; i < srcInv.getSlots() && stacks.size() < handler.getSlots(); i++) {
+            ItemStack stack = srcInv.getStackInSlot(i);
+            if (stack != null) {
+                ItemStack stack1 = stack.copy();
+                stack1.stackSize = 1;
+                stacks.add(stack1);
+            }
+        }
+
+        int slot = 0;
+        for (ItemStack stack : stacks.sortedList()) {
+            handler.setStackInSlot(slot++, stack);
+        }
+        while (slot < handler.getSlots()) {
+            handler.setStackInSlot(slot++, null);
+        }
+        handler.save();
+
+        if (getRouter() != null && !getRouter().getWorld().isRemote) {
+            getRouter().recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+        }
+
+        return stacks.size() - origSize;
+    }
+
+    @Nullable
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack stack;
         Slot srcSlot = inventorySlots.get(index);
 
@@ -72,20 +104,20 @@ public class ContainerModule extends Container {
             stack = stackInSlot.copy();
             stack.stackSize = 1;
 
-            if (index < Filter.FILTER_SIZE) {
+            if (index < handler.getSlots()) {
                 // shift-clicking in a filter slot: clear it from the filter
                 srcSlot.putStack(null);
-            } else if (index >= INV_START) {
+            } else if (index >= handler.getSlots()) {
                 // shift-clicking in player inventory: copy it into the filter (if not already present)
                 // but don't remove it from player inventory
                 int freeSlot;
-                for (freeSlot = 0; freeSlot < Filter.FILTER_SIZE; freeSlot++) {
-                    ItemStack stack0 = filterHandler.getStackInSlot(freeSlot);
+                for (freeSlot = 0; freeSlot < handler.getSlots(); freeSlot++) {
+                    ItemStack stack0 = handler.getStackInSlot(freeSlot);
                     if (stack0 == null || stack0.stackSize == 0 || ItemStack.areItemStacksEqual(stack0, stack)) {
                         break;
                     }
                 }
-                if (freeSlot < Filter.FILTER_SIZE) {
+                if (freeSlot < handler.getSlots()) {
                     inventorySlots.get(freeSlot).putStack(stack);
                     srcSlot.putStack(stackInSlot);
                 }
@@ -94,18 +126,13 @@ public class ContainerModule extends Container {
         return null;
     }
 
+    @Nullable
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-//        System.out.println("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
-
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
-                if (router == null && slot == currentSlot) {
-                    // no messing with the module that triggered this container's creation
-                    return null;
-                }
-                if (slot < Filter.FILTER_SIZE && slot >= 0) {
+                if (slot < handler.getSlots() && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
                     ItemStack stackOnCursor = player.inventory.getItemStack();
                     if (stackOnCursor != null) {
@@ -118,7 +145,7 @@ public class ContainerModule extends Container {
                     return null;
                 }
             case THROW:
-                if (slot < Filter.FILTER_SIZE && slot >= 0) {
+                if (slot < handler.getSlots() && slot >= 0) {
                     return null;
                 }
         }

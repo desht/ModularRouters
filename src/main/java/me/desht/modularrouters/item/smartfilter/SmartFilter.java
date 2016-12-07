@@ -85,17 +85,19 @@ public abstract class SmartFilter {
     /**
      * Handle a filter settings message received from a client-side GUI by updating the filter itemstack appropriately.
      *
+     * @param player player sending/receiving the message
      * @param message received message
      * @param filterStack item stack of the filter that needs to be updated
-     * @return
+     * @param moduleStack item stack of the module the filter is installed in, if any (may be null)
+     * @return a new message to send to the client, e.g. to resync the GUI (may be null to send nothing)
      */
-    public abstract IMessage dispatchMessage(FilterSettingsMessage message, ItemStack filterStack);
+    public abstract IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack);
 
     /**
-     * Get the number of "things" in this filter.
+     * Get the number of items in this filter, mainly for client display purposes.
      *
      * @param filterStack item stack of the filter
-     * @return the number of "things"
+     * @return the number of items
      */
     public abstract int getSize(ItemStack filterStack);
 }

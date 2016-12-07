@@ -19,11 +19,9 @@ public class ContainerModFilter extends ContainerSmartFilter {
     private static final int PLAYER_HOTBAR_Y = 220;
 
     public final IItemHandlerModifiable handler;
-    public final ItemStack filterStack;
 
     public ContainerModFilter(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
         super(player, filterStack, router);
-        this.filterStack = filterStack;
 
         handler = new GhostItemHandler(1);
 

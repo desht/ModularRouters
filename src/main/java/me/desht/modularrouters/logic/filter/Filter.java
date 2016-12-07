@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.filter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -18,11 +19,12 @@ import java.util.List;
 
 public class Filter {
     public static final int FILTER_SIZE = 9;
+
     private final Flags flags;
     private final List<IItemMatcher> matchers = Lists.newArrayList();
 
     public Filter() {
-        flags = new Flags();
+        flags = Flags.DEFAULT_FLAGS;
     }
 
     public Filter(ModuleTarget target, ItemStack moduleStack) {
@@ -35,7 +37,7 @@ public class Filter {
                 matchers.add(createMatcher(filterStack, moduleStack, target));
             }
         } else {
-            flags = new Flags();
+            flags = Flags.DEFAULT_FLAGS;
         }
     }
 
@@ -64,7 +66,9 @@ public class Filter {
         return flags;
     }
 
-    public class Flags {
+    public static class Flags {
+        static final Flags DEFAULT_FLAGS = new Flags();
+
         private final boolean blacklist;
         private final boolean ignoreMeta;
         private final boolean ignoreNBT;
@@ -72,8 +76,6 @@ public class Filter {
 
         public Flags(ItemStack moduleStack) {
             Validate.isTrue(moduleStack.getItem() instanceof ItemModule);
-
-            Module module = ItemModule.getModule(moduleStack);
             blacklist = ModuleHelper.isBlacklist(moduleStack);
             ignoreMeta = ModuleHelper.ignoreMeta(moduleStack);
             ignoreNBT = ModuleHelper.ignoreNBT(moduleStack);
@@ -81,10 +83,17 @@ public class Filter {
         }
 
         public Flags() {
-            blacklist = false;
-            ignoreMeta = false;
-            ignoreNBT = true;
-            ignoreOredict = true;
+            blacklist = ModuleFlags.BLACKLIST.getDefaultValue();
+            ignoreMeta = ModuleFlags.IGNORE_META.getDefaultValue();
+            ignoreNBT = ModuleFlags.IGNORE_NBT.getDefaultValue();
+            ignoreOredict = ModuleFlags.IGNORE_OREDICT.getDefaultValue();
+        }
+
+        public Flags(byte mask) {
+            blacklist = (mask & ModuleFlags.BLACKLIST.getMask()) != 0;
+            ignoreMeta = (mask & ModuleFlags.IGNORE_META.getMask()) != 0;
+            ignoreNBT = (mask & ModuleFlags.IGNORE_NBT.getMask()) != 0;
+            ignoreOredict = (mask & ModuleFlags.IGNORE_OREDICT.getMask()) != 0;
         }
 
         public boolean isBlacklist() {
@@ -103,5 +112,12 @@ public class Filter {
             return ignoreOredict;
         }
 
+        public static Flags with(Module.ModuleFlags... flags) {
+            byte mask = 0;
+            for (ModuleFlags flag : flags) {
+                mask |= flag.getMask();
+            }
+            return new Flags(mask);
+        }
     }
 }

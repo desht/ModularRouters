@@ -4,20 +4,27 @@ import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.FilterHandler;
+import me.desht.modularrouters.container.FilterHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
+import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.IItemHandler;
 
 /**
  * Sent when a filter's settings have been changed in any way via its GUI.
@@ -65,6 +72,15 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
         return op;
     }
 
+    public IItemHandler getTargetInventory() {
+        ModuleTarget target = ModuleTarget.fromNBT(getNbtData());
+        World w = DimensionManager.getWorld(target.dimId);
+        if (w != null) {
+            return InventoryUtils.getInventory(w, target.pos, target.face);
+        }
+        return null;
+    }
+
     public static class Handler implements IMessageHandler<FilterSettingsMessage, IMessage> {
         @Override
         public IMessage onMessage(FilterSettingsMessage message, MessageContext ctx) {
@@ -72,19 +88,21 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
             mainThread.addScheduledTask(() -> {
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                 ItemStack filterStack = null;
+                ItemStack moduleStack = null;
                 FilterHandler filterHandler = null;
                 if (message.routerPos != null) {
                     TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.worldObj, message.routerPos);
                     if (router != null) {
-                        ItemStack moduleStack = router.getModules().getStackInSlot(message.moduleSlotIndex);
-                        filterHandler = new FilterHandler(moduleStack);
+                        moduleStack = router.getModules().getStackInSlot(message.moduleSlotIndex);
+                        filterHandler = new ModuleFilterHandler(moduleStack);
                         filterStack = filterHandler.getStackInSlot(message.filterIndex);
                         router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
                     }
                 } else if (message.hand != null) {
                     ItemStack heldStack = player.getHeldItem(message.hand);
                     if (ItemModule.getModule(heldStack) != null) {
-                        filterHandler = new FilterHandler(heldStack);
+                        moduleStack = heldStack;
+                        filterHandler = new ModuleFilterHandler(moduleStack);
                         filterStack = filterHandler.getStackInSlot(message.filterIndex);
                     } else if (ItemSmartFilter.getFilter(heldStack) != null) {
                         filterStack = heldStack;
@@ -93,12 +111,12 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
                 if (filterStack != null) {
                     SmartFilter sf = ItemSmartFilter.getFilter(filterStack);
                     if (sf != null) {
-                        IMessage response = sf.dispatchMessage(message, filterStack);
+                        IMessage response = sf.dispatchMessage(player, message, filterStack, moduleStack);
                         if (filterHandler != null) {
                             filterHandler.setStackInSlot(message.filterIndex, filterStack);
                             filterHandler.save();
                             if (message.hand != null) {
-                                player.setHeldItem(message.hand, filterHandler.getModuleItemStack());
+                                player.setHeldItem(message.hand, filterHandler.getHoldingItemStack());
                             }
                         }
                         if (response != null) {
