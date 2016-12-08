@@ -69,7 +69,7 @@ public class ModuleEnhancementRecipeCategory extends BlankRecipeCategory {
         guiItemStacks.init(craftOutputSlot, false, 119, 24);
 
         // doesn't seem to do anything!
-        recipeLayout.setRecipeTransferButton(background.getWidth() - 42, background.getHeight() - 42);
+        recipeLayout.setRecipeTransferButton(143, 48);
 
         List<List<ItemStack>> inputs = ingredients.getInputs(ItemStack.class);
         List<ItemStack> outputs = ingredients.getOutputs(ItemStack.class);
