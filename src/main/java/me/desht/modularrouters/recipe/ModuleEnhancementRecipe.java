@@ -7,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
+public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     ModuleEnhancementRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
@@ -42,7 +42,7 @@ abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     }
 
     /**
-     * Check that the item is OK for an upgrade to be applied.
+     * Check that the output item is OK for an upgrade to be applied.
      *
      * @param stack the item to check
      * @return true if the item is OK for upgrading
@@ -56,4 +56,9 @@ abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
      * @param stack the item to modify
      */
     public abstract void enableUpgrade(ItemStack stack);
+
+    /**
+     * Return a simple identifier for the recipe.  Used mainly for documentation/translation purposes (e.g. JEI)
+     */
+    public abstract String getRecipeId();
 }

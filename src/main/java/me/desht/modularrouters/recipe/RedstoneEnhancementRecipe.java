@@ -4,7 +4,7 @@ import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 
-class RedstoneEnhancementRecipe extends ModuleEnhancementRecipe {
+public class RedstoneEnhancementRecipe extends ModuleEnhancementRecipe {
     RedstoneEnhancementRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
@@ -12,6 +12,11 @@ class RedstoneEnhancementRecipe extends ModuleEnhancementRecipe {
     @Override
     public void enableUpgrade(ItemStack stack) {
         ModuleHelper.setRedstoneBehaviour(stack, true, RouterRedstoneBehaviour.ALWAYS);
+    }
+
+    @Override
+    public String getRecipeId() {
+        return "redstone";
     }
 
     @Override

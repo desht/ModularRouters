@@ -1,9 +1,13 @@
 package me.desht.modularrouters.util;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.text.WordUtils;
+import org.apache.http.util.TextUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MiscUtil {
@@ -13,6 +17,10 @@ public class MiscUtil {
         for (String s : raw.split("\\\\n")) {
             result.add((n++ > 0 ? "\u00a77" : "") + s);
         }
+    }
+
+    public static String[] splitLong(String key, int len, Object... args) {
+        return WordUtils.wrap(I18n.format(key, args), len, "=CUT", false).split("=CUT");
     }
 
     public static String locToString(World world, BlockPos pos) {

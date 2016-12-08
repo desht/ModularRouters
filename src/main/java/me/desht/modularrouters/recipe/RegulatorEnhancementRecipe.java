@@ -4,7 +4,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 
-class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
+public class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
     RegulatorEnhancementRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
@@ -12,6 +12,11 @@ class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
     @Override
     public void enableUpgrade(ItemStack stack) {
         ModuleHelper.setRegulatorAmount(stack, true, 1);
+    }
+
+    @Override
+    public String getRecipeId() {
+        return "regulator";
     }
 
     static boolean appliesTo(ItemModule.ModuleType type) {

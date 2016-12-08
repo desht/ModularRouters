@@ -242,3 +242,10 @@ guidebook.words.overview=Overview
 guidebook.words.ecoMode=Eco Mode
 guidebook.words.redstone=Redstone Enhancement
 guidebook.words.regulator=Regulator Enhancement
+
+# JEI text
+jei.enhancement.title=Module Enhancement
+jei.enhancement.redstone.name=Redstone Enhancement
+jei.enhancement.redstone.description=Allow a module to define its own specific redstone behaviour
+jei.enhancement.regulator.name=Regulator Enhancement
+jei.enhancement.regulator.description=Allow precise control over how many items are kept in an inventory
