@@ -24,9 +24,9 @@ public class ContainerItemRouter extends Container {
     private static final int HOTBAR_YPOS = 162;
     private static final int PLAYER_INVENTORY_XPOS = 8;
     private static final int PLAYER_INVENTORY_YPOS = 104;
-    private static final int MODULE_XPOS = 8;
+    public static final int MODULE_XPOS = 8;
     private static final int MODULE_YPOS = 72;
-    private static final int UPGRADE_XPOS = 98;
+    public static final int UPGRADE_XPOS = 80;
     private static final int UPGRADE_YPOS = 40;
     public static final int TE_FIRST_SLOT = 36;
     private static final int TE_LAST_SLOT = TE_FIRST_SLOT + UPGRADE_SLOT_END;

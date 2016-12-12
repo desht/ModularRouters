@@ -78,8 +78,8 @@ public class GuiItemRouter extends GuiContainerBase {
         String title = router.getDisplayName().getUnformattedText();
         fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("guiText.label.upgrades"), 98, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("guiText.label.modules"), 8, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, Color.darkGray.getRGB());
     }
 
