@@ -60,9 +60,8 @@ public class BulkItemFilter extends SmartFilter {
                 SetofItemStack stacks = new SetofItemStack(items.tagCount(), flags);
                 for (int i = 0; i < items.tagCount(); i++) {
                     NBTTagCompound c = (NBTTagCompound) items.get(i);
-                    ItemStack stack = ItemStack.loadItemStackFromNBT(c);
-                    stacks.add(stack);
                     handler.setStackInSlot(i, stack);
+                    stacks.add(new ItemStack(c));
                 }
                 handler.save();
                 compound.removeTag(NBT_ITEMS_DEPRECATED);
@@ -115,7 +114,7 @@ public class BulkItemFilter extends SmartFilter {
             IItemHandler handler = InventoryUtils.getInventory(world, pos, face);
             if (handler != null) {
                 int nAdded = mergeInventory(stack, handler);
-                player.addChatMessage(new TextComponentTranslation("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()));
+                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
                 world.playSound(null, pos, MRSoundEvents.success, SoundCategory.MASTER, 1.0f, 1.0f);
                 return EnumActionResult.SUCCESS;
             } else {
@@ -130,7 +129,7 @@ public class BulkItemFilter extends SmartFilter {
     public IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         ContainerBulkItemFilter con = player.openContainer instanceof ContainerBulkItemFilter ?
                 (ContainerBulkItemFilter) player.openContainer : null;
-        Flags flags = moduleStack == null ? DEF_FLAGS : new Flags(moduleStack);
+        Flags flags = moduleStack.isEmpty() ? DEF_FLAGS : new Flags(moduleStack);
 
         switch (message.getOp()) {
             case CLEAR_ALL:
@@ -171,9 +170,9 @@ public class BulkItemFilter extends SmartFilter {
 
         for (int i = 0; i < srcInventory.getSlots() && stacks.size() < FILTER_SIZE; i++) {
             ItemStack stack = srcInventory.getStackInSlot(i);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 ItemStack stack1 = stack.copy();
-                stack1.stackSize = 1;
+                stack1.setCount(1);
                 stacks.add(stack1);
             }
         }
