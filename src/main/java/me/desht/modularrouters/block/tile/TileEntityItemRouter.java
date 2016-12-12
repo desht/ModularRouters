@@ -31,9 +31,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -199,14 +197,21 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     private void processClientSync(NBTTagCompound compound) {
+        // called client-side
+        boolean rerenderNeeded = false;
+
         NBTTagList l = compound.getTagList(NBT_PERMITTED, Constants.NBT.TAG_STRING);
         permitted.clear();
         for (int i = 0; i < l.tagCount(); i++) {
             permitted.add(UUID.fromString(l.getStringTagAt(i)));
         }
         moduleCount = compound.getInteger(BlockItemRouter.NBT_MODULE_COUNT);
+        int mufflers = getUpgradeCount(UpgradeType.MUFFLER);  // 3 muffler upgrades stops the active animation
         for (UpgradeType type : UpgradeType.values()) {
             upgradeCount[type.ordinal()] = compound.getInteger(BlockItemRouter.NBT_UPGRADE_COUNT + "." + type);
+        }
+        if (mufflers < 3 && getUpgradeCount(UpgradeType.MUFFLER) >= 3 || mufflers >= 3 && getUpgradeCount(UpgradeType.MUFFLER) < 3) {
+            rerenderNeeded = true;
         }
 
         RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
@@ -223,6 +228,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         setSidesOpen(newSidesOpen);
         setEcoMode(newEco);
         setCamouflage(camo);
+
+        if (rerenderNeeded) {
+            getWorld().markBlockRangeForRenderUpdate(pos, pos);
+        }
     }
 
     @Override
@@ -268,10 +277,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(bufferHandler.getFluidHandler());
         }
-        if (getBufferItemStack() != null) {
-            ItemStack stack = getBufferItemStack();
+        ItemStack stack = getBufferItemStack();
+        if (stack != null) {
             if (cap == CapabilityEnergy.ENERGY) {
-                return CapabilityEnergy.ENERGY.cast(stack.getCapability(CapabilityEnergy.ENERGY, null));
+                if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+                    return CapabilityEnergy.ENERGY.cast(stack.getCapability(CapabilityEnergy.ENERGY, null));
+                } else if (stack.getItem() instanceof IEnergyContainerItem) {
+                    return CapabilityEnergy.ENERGY.cast(new RFEnergyWrapper(stack));
+                }
+                // shouldn't get here; if we do, caller is probably in trouble
             }
             if (TeslaIntegration.enabled) {
                 if (cap == TeslaCapabilities.CAPABILITY_HOLDER) {
@@ -281,10 +295,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 } else if (cap == TeslaCapabilities.CAPABILITY_PRODUCER) {
                     return TeslaCapabilities.CAPABILITY_PRODUCER.cast(TeslaUtils.getTeslaProducer(stack, null));
                 }
-            }
-            if (stack.getItem() instanceof IEnergyContainerItem) {
-                // we don't implement CoFH RF interface, but we can expose it via Forge Energy
-                return CapabilityEnergy.ENERGY.cast(new RFEnergyWrapper(stack));
             }
         }
         return super.getCapability(cap, side);
@@ -500,8 +510,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
 
         if (recompileNeeded != 0) {
-            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+            IBlockState state = worldObj.getBlockState(pos);
+            worldObj.notifyBlockUpdate(pos, state, state, 3);
+            worldObj.notifyNeighborsOfStateChange(pos, state.getBlock());
             markDirty();
             recompileNeeded = 0;
         }
@@ -813,6 +824,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public static TileEntityItemRouter getRouterAt(IBlockAccess world, BlockPos routerPos) {
         TileEntity te = world.getTileEntity(routerPos);
         return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
+    }
+
+    public void playSound(EntityPlayer player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        if (getUpgradeCount(UpgradeType.MUFFLER) == 0) {
+            getWorld().playSound(player, pos, sound, category, volume, pitch);
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////

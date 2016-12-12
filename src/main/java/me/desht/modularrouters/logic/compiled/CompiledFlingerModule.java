@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -43,8 +44,10 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         if (fired && Config.flingerEffects) {
             ModuleTarget t = getTarget();
             int n = Math.round(speed * 5);
-            ((WorldServer) router.getWorld()).spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, false, t.pos.getX() + 0.5, t.pos.getY() + 0.5, t.pos.getZ() + 0.5, n, 0.0, 0.0, 0.0, 0.0);
-            router.getWorld().playSound(null, t.pos, MRSoundEvents.thud, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
+            if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
+                ((WorldServer) router.getWorld()).spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, false, t.pos.getX() + 0.5, t.pos.getY() + 0.5, t.pos.getZ() + 0.5, n, 0.0, 0.0, 0.0, 0.0);
+            }
+            router.playSound(null, t.pos, MRSoundEvents.thud, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
         }
 
         return fired;

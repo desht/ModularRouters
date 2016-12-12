@@ -43,7 +43,7 @@ public class CompiledExtruderModule extends CompiledModule {
                 distance++;
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
                 if (Config.extruderSound) {
-                    world.playSound(null, placePos,
+                    router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                 }
@@ -64,7 +64,7 @@ public class CompiledExtruderModule extends CompiledModule {
                     }
                 }
                 if (Config.extruderSound) {
-                    world.playSound(null, breakPos,
+                    router.playSound(null, breakPos,
                             oldState.getBlock().getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -45,7 +46,7 @@ public class CompiledBreakerModule extends CompiledModule {
                         dropItems(world, pos, excess);
                     }
                 }
-                if (Config.breakerParticles) {
+                if (Config.breakerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {
                     world.playEvent(2001, pos, Block.getStateId(state));
                 }
                 return true;
