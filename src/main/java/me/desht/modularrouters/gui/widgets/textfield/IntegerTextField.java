@@ -93,8 +93,10 @@ public class IntegerTextField extends TextFieldWidget {
 
     private boolean adjustField(int adj) {
         int newVal = Math.max(min, Math.min(max, getValue() + adj));
-        setText("");
-        writeText(Integer.toString(newVal));
+        if (newVal != getValue()) {
+            setText("");
+            writeText(Integer.toString(newVal));
+        }
         return true;
     }
 }

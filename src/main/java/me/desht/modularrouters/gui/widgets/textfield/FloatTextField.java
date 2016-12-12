@@ -71,8 +71,11 @@ public class FloatTextField extends TextFieldWidget {
             adj *= coarse;
         }
         float val = Float.parseFloat(getText());
-        setText("");
-        writeText(String.format(precStr, Math.max(min, Math.min(max, val + adj))));
+        float newVal = Math.max(min, Math.min(max, val + adj));
+        if (newVal != val) {
+            setText("");
+            writeText(String.format(precStr, newVal));
+        }
         return true;
     }
 }
