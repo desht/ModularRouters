@@ -118,7 +118,7 @@ public class FilterGuiFactory {
     private static ItemStack getStackInSlot(ItemStack moduleStack, int filterIdx) {
         FilterHandler handler = new ModuleFilterHandler(moduleStack);
         ItemStack stack = handler.getStackInSlot(filterIdx);
-        if (stack != null) {
+        if (!stack.isEmpty()) {
             return stack;
         } else {
             ModularRouters.logger.warn("can't find filter item in module '" + moduleStack + "', slot " + filterIdx);

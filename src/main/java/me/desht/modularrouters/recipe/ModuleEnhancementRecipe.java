@@ -29,7 +29,7 @@ public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
         NBTTagCompound compound = null;
         for (int i = 0; i < var1.getSizeInventory(); i++) {
             ItemStack stack = var1.getStackInSlot(i);
-            if (stack != null && stack.getItem() instanceof ItemModule) {
+            if (ItemModule.getModule(stack) != null) {
                 compound = stack.getTagCompound();
                 break;
             }

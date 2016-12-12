@@ -60,7 +60,7 @@ public class SetofItemStack extends TCustomHashSet<ItemStack> {
         List<ItemStack> stacks = new ArrayList<>();
         for (int i = 0; i < h.getSlots(); i++) {
             ItemStack stack = h.getStackInSlot(i);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 stacks.add(stack);
             }
         }

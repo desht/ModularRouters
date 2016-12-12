@@ -8,10 +8,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -53,9 +50,9 @@ public class ItemUpgrade extends ItemBase {
     }
 
     @Override
-    public void getSubItems(@Nonnull Item item, CreativeTabs tab, List<ItemStack> stacks) {
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         for (int i = 0; i < SUBTYPES; i++) {
-            stacks.add(new ItemStack(item, 1, i));
+            subItems.add(new ItemStack(itemIn, 1, i));
         }
     }
 
@@ -86,13 +83,15 @@ public class ItemUpgrade extends ItemBase {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        return getUpgrade(itemStackIn).onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        ItemStack stack = playerIn.getHeldItem(handIn);
+        return getUpgrade(stack).onItemRightClick(stack, worldIn, playerIn, handIn);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        return getUpgrade(stack).onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
+        return getUpgrade(stack).onItemUse(stack, player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     private static void registerUpgrade(UpgradeType type, Upgrade handler) {
@@ -108,7 +107,7 @@ public class ItemUpgrade extends ItemBase {
     }
 
     public static Upgrade getUpgrade(ItemStack stack) {
-        return stack != null && stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
+        return stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
     }
 
     public static Upgrade getUpgrade(UpgradeType type) {
@@ -116,6 +115,6 @@ public class ItemUpgrade extends ItemBase {
     }
 
     public static boolean isType(ItemStack stack, UpgradeType type) {
-        return stack != null && stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() == type.ordinal();
+        return stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() == type.ordinal();
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -38,13 +39,13 @@ public class CompiledFluidModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        ItemStack stack = router.getBufferItemStack();
+        ItemStack containerStack = router.getBufferItemStack();
 
-        if (getDirection() == Module.RelativeDirection.NONE || stack == null || stack.stackSize != 1 || !getFilter().pass(stack)) {
+        if (getDirection() == Module.RelativeDirection.NONE || containerStack.getCount() != 1 || !getFilter().pass(containerStack)) {
             return false;
         }
 
-        IFluidHandler routerFluidHandler = FluidUtil.getFluidHandler(stack);
+        IFluidHandler routerFluidHandler = FluidUtil.getFluidHandler(containerStack);
         if (routerFluidHandler == null) {
             return false;
         }
@@ -58,7 +59,7 @@ public class CompiledFluidModule extends CompiledModule {
         }
         if (worldFluidHandler == null) {
             // special case: try to pour fluid out into the world?
-            return fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerFluidHandler, router.getWorld(), getTarget().pos);
+            return fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerFluidHandler, router.getWorld(), getTarget().pos, containerStack);
         }
 
         switch (fluidDirection) {
@@ -83,15 +84,16 @@ public class CompiledFluidModule extends CompiledModule {
         return false;
     }
 
-    private boolean tryPourOutFluid(IFluidHandler routerFluidHandler, World world, BlockPos pos) {
+    private boolean tryPourOutFluid(IFluidHandler routerFluidHandler, World world, BlockPos pos, ItemStack containerStack) {
         FluidStack toPlace = routerFluidHandler.drain(1000, false);
         if (toPlace == null || toPlace.amount < 1000) {
             return false;  // must be a full bucket's worth to place in the world
         }
-        if (FluidUtil.tryPlaceFluid(null, world, toPlace, pos)) {
+        FluidActionResult res = FluidUtil.tryPlaceFluid(null, world, pos, containerStack, toPlace);
+        if (res.isSuccess()) {
             routerFluidHandler.drain(1000, true);
             // ensure that liquids start flowing (without this, water & lava stay static)
-            world.notifyBlockOfStateChange(pos, world.getBlockState(pos).getBlock());
+            world.neighborChanged(pos, world.getBlockState(pos).getBlock(), pos);
             return true;
         }
         return false;

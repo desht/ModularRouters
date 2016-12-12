@@ -15,7 +15,7 @@ public class CompiledModSorterModule extends CompiledSorterModule {
         IItemHandler buffer = router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
 
-        if (bufferStack != null && getFilter().pass(bufferStack)) {
+        if (getFilter().pass(bufferStack)) {
             IItemHandler handler = findTargetInventory(router);
             if (handler == null) {
                 return false;
@@ -23,7 +23,7 @@ public class CompiledModSorterModule extends CompiledSorterModule {
             String mod = getMod(bufferStack);
             for (int i = 0; i < handler.getSlots(); i++) {
                 ItemStack stack = handler.getStackInSlot(i);
-                if (stack != null) {
+                if (!stack.isEmpty()) {
                     String mod2 = getMod(stack);
                     if (mod.equals(mod2)) {
                         int sent = InventoryUtils.transferItems(buffer, handler, 0, router.getItemsPerTick());

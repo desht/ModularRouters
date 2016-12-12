@@ -116,7 +116,7 @@ public class OpenGuiMessage extends BaseSettingsMessage {
     public static class Handler implements IMessageHandler<OpenGuiMessage, IMessage> {
         @Override
         public IMessage onMessage(OpenGuiMessage message, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
             mainThread.addScheduledTask(() -> {
                 EntityPlayer player = ctx.getServerHandler().playerEntity;
                 BlockPos pos = player.getPosition();
@@ -130,20 +130,20 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                         if (router != null) {
                             player.openGui(ModularRouters.instance,
                                     ModularRouters.GUI_ROUTER,
-                                    player.worldObj, pos.getX(), pos.getY(), pos.getZ());
+                                    player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
                         }
                         break;
                     case MODULE_HELD:
                         player.openGui(ModularRouters.instance,
                                 message.hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF,
-                                player.worldObj, pos.getX(), pos.getY(), pos.getZ());
+                                player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
                         break;
                     case MODULE_INSTALLED:
                         if (router != null) {
                             router.playerConfiguringModule(player, message.moduleSlotIndex);
                             player.openGui(ModularRouters.instance,
                                     ModularRouters.GUI_MODULE_INSTALLED,
-                                    player.worldObj, pos.getX(), pos.getY(), pos.getZ());
+                                    player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
                         }
                         break;
                     case FILTER_HELD:
@@ -152,7 +152,7 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                         ItemModule.setFilterConfigSlot(player.getHeldItem(message.hand), message.filterSlotIndex);
                         player.openGui(ModularRouters.instance,
                                 message.hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF,
-                                player.worldObj, pos.getX(), pos.getY(), pos.getZ());
+                                player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
                         break;
                     case FILTER_INSTALLED:
                         if (router != null) {
@@ -160,7 +160,7 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                             router.playerConfiguringModule(player, message.moduleSlotIndex, message.filterSlotIndex);
                             player.openGui(ModularRouters.instance,
                                     ModularRouters.GUI_FILTER_INSTALLED,
-                                    player.worldObj, pos.getX(), pos.getY(), pos.getZ());
+                                    player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
                         }
                         break;
                 }

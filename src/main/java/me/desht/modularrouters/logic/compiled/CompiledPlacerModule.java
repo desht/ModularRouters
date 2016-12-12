@@ -17,11 +17,11 @@ public class CompiledPlacerModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        if (getDirection() == Module.RelativeDirection.NONE || !isRegulationOK(router, false)) {
+        if (getDirection() == Module.RelativeDirection.NONE || !isRegulationOK(router, false) || router.isBufferEmpty()) {
             return false;
         }
         ItemStack toPlace = router.peekBuffer(1);
-        if (toPlace == null || !getFilter().pass(toPlace)) {
+        if (!getFilter().pass(toPlace)) {
             return false;
         }
         World w = router.getWorld();

@@ -61,10 +61,6 @@ public class ModRecipes {
         addRedstoneUpgradeRecipes();
         addRegulatorUpgradeRecipes();
 
-        if (Loader.isModLoaded("guideapi")) {
-            GameRegistry.addShapelessRecipe(GuideAPI.getStackFromBook(Guidebook.guideBook), Items.BOOK, ModItems.blankModule);
-        }
-
         MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
     }
 

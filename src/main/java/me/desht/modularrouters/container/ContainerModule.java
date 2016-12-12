@@ -70,18 +70,18 @@ public class ContainerModule extends Container {
         if (srcSlot != null && srcSlot.getHasStack()) {
             ItemStack stackInSlot = srcSlot.getStack();
             stack = stackInSlot.copy();
-            stack.stackSize = 1;
+            stack.setCount(1);
 
             if (index < Filter.FILTER_SIZE) {
                 // shift-clicking in a filter slot: clear it from the filter
-                srcSlot.putStack(null);
+                srcSlot.putStack(ItemStack.EMPTY);
             } else if (index >= INV_START) {
                 // shift-clicking in player inventory: copy it into the filter (if not already present)
                 // but don't remove it from player inventory
                 int freeSlot;
                 for (freeSlot = 0; freeSlot < Filter.FILTER_SIZE; freeSlot++) {
                     ItemStack stack0 = filterHandler.getStackInSlot(freeSlot);
-                    if (stack0 == null || stack0.stackSize == 0 || ItemStack.areItemStacksEqual(stack0, stack)) {
+                    if (stack0.isEmpty() || ItemStack.areItemStacksEqual(stack0, stack)) {
                         break;
                     }
                 }
@@ -108,12 +108,12 @@ public class ContainerModule extends Container {
                 if (slot < Filter.FILTER_SIZE && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
                     ItemStack stackOnCursor = player.inventory.getItemStack();
-                    if (stackOnCursor != null) {
+                    if (!stackOnCursor.isEmpty()) {
                         ItemStack stack1 = stackOnCursor.copy();
-                        stack1.stackSize = 1;
+                        stack1.setCount(1);
                         s.putStack(stack1);
                     } else {
-                        s.putStack(null);
+                        s.putStack(ItemStack.EMPTY);
                     }
                     return null;
                 }

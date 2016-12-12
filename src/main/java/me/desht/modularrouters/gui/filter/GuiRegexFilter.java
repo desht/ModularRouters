@@ -121,7 +121,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
             getTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
-            mc.thePlayer.playSound(MRSoundEvents.error, 1.0f, 1.0f);
+            mc.player.playSound(MRSoundEvents.error, 1.0f, 1.0f);
             errorMsg = I18n.format("guiText.label.regexError");
             errorTimer = 60;
         }

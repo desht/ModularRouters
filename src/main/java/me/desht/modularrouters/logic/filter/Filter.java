@@ -33,8 +33,11 @@ public class Filter {
             NBTTagList tagList = moduleStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-                ItemStack filterStack = ItemStack.loadItemStackFromNBT(tagCompound);
-                matchers.add(createMatcher(filterStack, moduleStack, target));
+                ItemStack filterStack = new ItemStack(tagCompound);
+                IItemMatcher matcher = createMatcher(filterStack, moduleStack, target);
+                if (matcher != null) {
+                    matchers.add(matcher);
+                }
             }
         } else {
             flags = Flags.DEFAULT_FLAGS;
@@ -42,16 +45,26 @@ public class Filter {
     }
 
     private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
-        if (filterStack.getItem() instanceof ItemSmartFilter) {
-            SmartFilter f = ItemSmartFilter.getFilter(filterStack);
+        SmartFilter f = ItemSmartFilter.getFilter(filterStack);
+        if (f != null) {
             return f.compile(filterStack, moduleStack, target);
         } else {
             Module module = ItemModule.getModule(moduleStack);
-            return module.getFilterItemMatcher(filterStack);
+            return module == null ? null : module.getFilterItemMatcher(filterStack);
         }
     }
 
+    /**
+     * Check if this filter would allow the given item stack through.  Will always return false if the item
+     * stack is empty.
+     * @param stack the stack to test
+     * @return true if the stack should be passed, false otherwise
+     */
     public boolean pass(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return false;
+        }
+
         for (IItemMatcher matcher : matchers) {
             if (matcher.matchItem(stack, flags)) {
                 return !flags.isBlacklist();

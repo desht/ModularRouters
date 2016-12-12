@@ -31,7 +31,7 @@ public class FakePlayer {
         if (theFakePlayer.get() == null) {
             theFakePlayer = createNewPlayer(world, pos);
         } else {
-            theFakePlayer.get().worldObj = world;
+            theFakePlayer.get().world = world;
             theFakePlayer.get().posX = pos.getX();
             theFakePlayer.get().posY = pos.getY();
             theFakePlayer.get().posZ = pos.getZ();

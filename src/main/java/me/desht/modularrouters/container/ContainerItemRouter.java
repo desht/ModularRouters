@@ -108,13 +108,13 @@ public class ContainerItemRouter extends Container {
         }
 
         // If stack size == 0 (the entire stack was moved) set slot contents to null
-        if (sourceStack.stackSize == 0) {
+        if (sourceStack.isEmpty()) {
             sourceSlot.putStack(null);
         } else {
             sourceSlot.onSlotChanged();
         }
 
-        sourceSlot.onPickupFromSlot(player, sourceStack);
+        sourceSlot.onTake(player, sourceStack);
         return copyOfSourceStack;
     }
 }

@@ -27,13 +27,13 @@ public class BufferHandler extends ItemStackHandler {
 
         ItemStack stack = getStackInSlot(0);
 
-        IFluidHandler newHandler = (stack != null && stack.stackSize == 1) ? FluidUtil.getFluidHandler(stack) : null;
+        IFluidHandler newHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : null;
         if (newHandler != fluidHandler) {
             boolean doUpdate = newHandler == null || fluidHandler == null;
             fluidHandler = newHandler;
             if (doUpdate) {
                 // in case any fluid pipes need to connect/disconnect
-                router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.itemRouter);
+                router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.itemRouter, true);
             }
         }
 
@@ -41,13 +41,12 @@ public class BufferHandler extends ItemStackHandler {
         if (newEnergyHandler != energyHandler) {
             // in case any cables need to connect/disconnect
             energyHandler = newEnergyHandler;
-            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.itemRouter);
+            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.itemRouter, true);
         }
     }
 
     private boolean canHandleEnergy(ItemStack stack) {
-        return stack != null &&
-                (stack.hasCapability(CapabilityEnergy.ENERGY, null) ||
+        return (stack.hasCapability(CapabilityEnergy.ENERGY, null) ||
                 (TeslaIntegration.enabled && TeslaUtils.hasTeslaSupport(stack, null)));
     }
 
@@ -56,7 +55,7 @@ public class BufferHandler extends ItemStackHandler {
         super.deserializeNBT(nbt);
 
         ItemStack stack = getStackInSlot(0);
-        fluidHandler = (stack != null && stack.stackSize == 1) ? FluidUtil.getFluidHandler(stack) : null;
+        fluidHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : null;
     }
 
     public IFluidHandler getFluidHandler() {

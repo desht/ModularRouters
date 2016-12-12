@@ -100,7 +100,7 @@ public class CamouflageUpgrade extends Upgrade {
                 if (isBlockOKForCamo(state)) {
                     setCamoState(stack, state);
                     if (!event.getWorld().isRemote) {
-                        event.getEntityPlayer().addChatMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)));
+                        event.getEntityPlayer().sendStatusMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)), false);
                     } else {
                         event.getEntityPlayer().playSound(MRSoundEvents.success, 1.0f, 1.5f);
                     }

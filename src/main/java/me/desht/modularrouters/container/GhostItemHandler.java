@@ -20,7 +20,7 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
     public NBTTagList serializeNBT() {
         NBTTagList items = new NBTTagList();
         for (int i = 0; i < getSlots(); i++) {
-            if (getStackInSlot(i) != null) {
+            if (!getStackInSlot(i).isEmpty()) {
                 NBTTagCompound item = new NBTTagCompound();
                 item.setInteger("Slot", i);
                 getStackInSlot(i).writeToNBT(item);
@@ -33,10 +33,10 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
     @Override
     public void deserializeNBT(NBTTagList list) {
         for (int i = 0; i < list.tagCount(); ++i) {
-            NBTTagCompound item = list.getCompoundTagAt(i);
-            int slot = item.getInteger("Slot");
+            NBTTagCompound compound = list.getCompoundTagAt(i);
+            int slot = compound.getInteger("Slot");
             if (slot >= 0 && slot < items.length) {
-                items[slot] = ItemStack.loadItemStackFromNBT(item);
+                items[slot] = new ItemStack(compound);
             }
         }
     }
@@ -53,8 +53,8 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (!simulate) {
-            ItemStack stack1 = ItemStack.copyItemStack(stack);
-            stack1.stackSize = 1;
+            ItemStack stack1 = stack.copy();
+            stack1.setCount(1);
             items[slot] = stack1;
         }
         return stack;
@@ -63,9 +63,14 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (!simulate) {
-            items[slot] = null;
+            items[slot] = ItemStack.EMPTY;
         }
-        return null;
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return 1;
     }
 
     @Override

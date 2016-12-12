@@ -52,7 +52,7 @@ public abstract class TargetedModule extends Module {
                         setTarget(stack, world, pos, face);
                         ModuleTarget tgt = getTarget(stack, true);
                         if (tgt != null) {
-                            player.addChatMessage(new TextComponentTranslation("chatText.misc.targetSet", tgt.toString()));
+                            player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetSet", tgt.toString()), false);
                         }
                     }
                     return EnumActionResult.SUCCESS;
@@ -172,9 +172,9 @@ public abstract class TargetedModule extends Module {
         if (src.dimId == target.dimId) {
             ModularRouters.network.sendTo(new ParticleBeamMessage(orig.x, orig.y, orig.z, end.x, end.y, end.z, null), player);
         }
-        player.addChatMessage(new TextComponentTranslation("chatText.misc.target", target.toString())
+        player.sendStatusMessage(new TextComponentTranslation("chatText.misc.target", target.toString())
                 .appendText("  ")
-                .appendSibling(new TextComponentTranslation("chatText.targetValidation." + res)));
+                .appendSibling(new TextComponentTranslation("chatText.targetValidation." + res)), false);
         return true;
     }
 

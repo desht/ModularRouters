@@ -34,12 +34,12 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
-        ItemStack book = null;
-        ItemStack module = null;
+        ItemStack book = ItemStack.EMPTY;
+        ItemStack module = ItemStack.EMPTY;
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 if (stack.getItem() == Items.ENCHANTED_BOOK) {
                     book = stack.copy();
                 } else if (stack.getItem() == ModItems.module) {
@@ -49,25 +49,23 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
                 }
             }
         }
-        return book != null && module != null && EnchantmentHelper.getEnchantments(module).isEmpty() && getValidEnchantment(book, module) != null;
+        return !book.isEmpty() && !module.isEmpty() && EnchantmentHelper.getEnchantments(module).isEmpty() && getValidEnchantment(book, module) != null;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        ItemStack book = null;
-        ItemStack module = null;
+        ItemStack book = ItemStack.EMPTY;
+        ItemStack module = ItemStack.EMPTY;
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (stack != null) {
-                if (stack.getItem() == Items.ENCHANTED_BOOK) {
-                    book = stack;
-                } else if (stack.getItem() == ModItems.module) {
-                    module = stack.copy();
-                }
+            if (stack.getItem() == Items.ENCHANTED_BOOK) {
+                book = stack;
+            } else if (stack.getItem() == ModItems.module) {
+                module = stack.copy();
             }
         }
-        if (book != null && module != null) {
+        if (!book.isEmpty() && !module.isEmpty()) {
             EnchantmentData ench = getValidEnchantment(book, module);
             if (ench != null) {
                 ItemStack result = module.copy();

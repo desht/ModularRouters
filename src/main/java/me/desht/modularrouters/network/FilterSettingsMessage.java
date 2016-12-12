@@ -84,14 +84,14 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
     public static class Handler implements IMessageHandler<FilterSettingsMessage, IMessage> {
         @Override
         public IMessage onMessage(FilterSettingsMessage message, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
             mainThread.addScheduledTask(() -> {
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-                ItemStack filterStack = null;
-                ItemStack moduleStack = null;
+                ItemStack filterStack = ItemStack.EMPTY;
+                ItemStack moduleStack = ItemStack.EMPTY;
                 FilterHandler filterHandler = null;
                 if (message.routerPos != null) {
-                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.worldObj, message.routerPos);
+                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), message.routerPos);
                     if (router != null) {
                         moduleStack = router.getModules().getStackInSlot(message.moduleSlotIndex);
                         filterHandler = new ModuleFilterHandler(moduleStack);
@@ -108,22 +108,20 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
                         filterStack = heldStack;
                     }
                 }
-                if (filterStack != null) {
-                    SmartFilter sf = ItemSmartFilter.getFilter(filterStack);
-                    if (sf != null) {
-                        IMessage response = sf.dispatchMessage(player, message, filterStack, moduleStack);
-                        if (filterHandler != null) {
-                            filterHandler.setStackInSlot(message.filterIndex, filterStack);
-                            filterHandler.save();
-                            if (message.hand != null) {
-                                player.setHeldItem(message.hand, filterHandler.getHoldingItemStack());
-                            }
+                SmartFilter sf = ItemSmartFilter.getFilter(filterStack);
+                if (sf != null) {
+                    IMessage response = sf.dispatchMessage(player, message, filterStack, moduleStack);
+                    if (filterHandler != null) {
+                        filterHandler.setStackInSlot(message.filterIndex, filterStack);
+                        filterHandler.save();
+                        if (message.hand != null) {
+                            player.setHeldItem(message.hand, filterHandler.getHoldingItemStack());
                         }
-                        if (response != null) {
-                            // send to any nearby players in case they also have the GUI open
-                            NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 8);
-                            ModularRouters.network.sendToAllAround(response, tp);
-                        }
+                    }
+                    if (response != null) {
+                        // send to any nearby players in case they also have the GUI open
+                        NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 8);
+                        ModularRouters.network.sendToAllAround(response, tp);
                     }
                 }
             });

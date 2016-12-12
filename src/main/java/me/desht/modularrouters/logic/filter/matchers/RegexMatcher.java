@@ -29,8 +29,13 @@ public class RegexMatcher implements IItemMatcher {
 
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        if (stack == null) return false;
+        if (stack.isEmpty()) {
+            return false;
+        }
         String name = TextFormatting.getTextWithoutFormattingCodes(stack.hasDisplayName() ? stack.getDisplayName() : stack.getUnlocalizedName());
+        if (name == null) {
+            return false;
+        }
         for (Pattern pat : patterns) {
             if (pat.matcher(name).find()) {
                 return true;

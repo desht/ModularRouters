@@ -41,7 +41,7 @@ public class CompiledBreakerModule extends CompiledModule {
             if (BlockUtil.tryBreakBlock(world, pos, getFilter(), drops, silkTouch, fortune)) {
                 for (ItemStack drop : drops) {
                     ItemStack excess = router.getBuffer().insertItem(0, drop, false);
-                    if (excess != null) {
+                    if (!excess.isEmpty()) {
                         dropItems(world, pos, excess);
                     }
                 }
@@ -56,6 +56,6 @@ public class CompiledBreakerModule extends CompiledModule {
 
     private void dropItems(World world, BlockPos pos, ItemStack stack) {
         EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-        world.spawnEntityInWorld(item);
+        world.spawnEntity(item);
     }
 }

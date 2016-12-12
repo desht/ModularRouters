@@ -41,18 +41,18 @@ public class CompiledVacuumModule extends CompiledModule {
                 continue;
             }
             ItemStack stackOnGround = item.getEntityItem();
-            if ((bufferStack == null || ItemHandlerHelper.canItemStacksStack(stackOnGround, bufferStack)) && getFilter().pass(stackOnGround)) {
-                int inRouter = bufferStack == null ? 0 : bufferStack.stackSize;
+            if ((bufferStack.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackOnGround, bufferStack)) && getFilter().pass(stackOnGround)) {
+                int inRouter = bufferStack.getCount();
                 int spaceInRouter = getRegulationAmount() > 0 ?
                         Math.min(stackOnGround.getMaxStackSize(), getRegulationAmount()) - inRouter :
                         stackOnGround.getMaxStackSize() - inRouter;
                 ItemStack vacuumed = stackOnGround.splitStack(Math.min(router.getItemsPerTick(), spaceInRouter));
                 ItemStack excess = router.insertBuffer(vacuumed);
-                int remaining = excess == null ? 0 : excess.stackSize;
-                stackOnGround.stackSize += remaining;
-                int inserted = vacuumed.stackSize - remaining;
+                int remaining = excess == null ? 0 : excess.getCount();
+                stackOnGround.grow(remaining);
+                int inserted = vacuumed.getCount() - remaining;
                 toPickUp -= inserted;
-                if (stackOnGround.stackSize <= 0) {
+                if (stackOnGround.isEmpty()) {
                     item.setDead();
                 }
                 if (inserted > 0 && Config.vacuumParticles) {

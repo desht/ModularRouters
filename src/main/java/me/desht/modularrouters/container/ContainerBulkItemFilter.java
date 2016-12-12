@@ -8,6 +8,7 @@ import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.IItemHandler;
@@ -70,9 +71,9 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
 
         for (int i = 0; i < srcInv.getSlots() && stacks.size() < handler.getSlots(); i++) {
             ItemStack stack = srcInv.getStackInSlot(i);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 ItemStack stack1 = stack.copy();
-                stack1.stackSize = 1;
+                stack1.setCount(1);
                 stacks.add(stack1);
             }
         }
@@ -102,18 +103,18 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         if (srcSlot != null && srcSlot.getHasStack()) {
             ItemStack stackInSlot = srcSlot.getStack();
             stack = stackInSlot.copy();
-            stack.stackSize = 1;
+            stack.setCount(1);
 
             if (index < handler.getSlots()) {
                 // shift-clicking in a filter slot: clear it from the filter
-                srcSlot.putStack(null);
+                srcSlot.putStack(ItemStack.EMPTY);
             } else if (index >= handler.getSlots()) {
                 // shift-clicking in player inventory: copy it into the filter (if not already present)
                 // but don't remove it from player inventory
                 int freeSlot;
                 for (freeSlot = 0; freeSlot < handler.getSlots(); freeSlot++) {
                     ItemStack stack0 = handler.getStackInSlot(freeSlot);
-                    if (stack0 == null || stack0.stackSize == 0 || ItemStack.areItemStacksEqual(stack0, stack)) {
+                    if (stack0.isEmpty() || ItemStack.areItemStacksEqual(stack0, stack)) {
                         break;
                     }
                 }
@@ -135,12 +136,12 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
                 if (slot < handler.getSlots() && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
                     ItemStack stackOnCursor = player.inventory.getItemStack();
-                    if (stackOnCursor != null) {
+                    if (!stackOnCursor.isEmpty()) {
                         ItemStack stack1 = stackOnCursor.copy();
-                        stack1.stackSize = 1;
+                        stack1.setCount(1);
                         s.putStack(stack1);
                     } else {
-                        s.putStack(null);
+                        s.putStack(ItemStack.EMPTY);
                     }
                     return null;
                 }

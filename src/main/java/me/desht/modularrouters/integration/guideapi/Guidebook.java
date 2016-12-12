@@ -1,6 +1,8 @@
 package me.desht.modularrouters.integration.guideapi;
 
 import amerifrance.guideapi.api.GuideAPI;
+import amerifrance.guideapi.api.GuideBook;
+import amerifrance.guideapi.api.IGuideBook;
 import amerifrance.guideapi.api.IPage;
 import amerifrance.guideapi.api.impl.Book;
 import amerifrance.guideapi.api.impl.abstraction.CategoryAbstract;
@@ -26,8 +28,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -35,10 +39,13 @@ import java.util.stream.Collectors;
 
 import static me.desht.modularrouters.util.MiscUtil.translate;
 
-public class Guidebook {
-    public static Book guideBook = new Book();
+@GuideBook
+public class Guidebook implements IGuideBook {
+    public static Book guideBook;
 
-    public static void buildGuide() {
+    @Nullable
+    @Override
+    public Book buildBook() {
         Map<ResourceLocation, EntryAbstract> entries;
         List<CategoryAbstract> categories = new ArrayList<>();
         List<IPage> pages;
@@ -116,15 +123,16 @@ public class Guidebook {
         categories.add(new CategoryItemStack(entries, translate("guiText.label.filters"), ItemSmartFilter.makeItemStack(FilterType.BULKITEM)));
 
         // and done
+        guideBook = new Book();
         guideBook.setAuthor("desht");
         guideBook.setTitle("Modular Routers Guide");
         guideBook.setDisplayName("Modular Routers Guide");
         guideBook.setColor(Color.CYAN);
         guideBook.setCategoryList(categories);
-        guideBook.setRegistryName(ModularRouters.modId, "guidebook");
+        guideBook.setRegistryName(new ResourceLocation(ModularRouters.modId, "guidebook"));
         guideBook.setSpawnWithBook(Config.startWithGuide);
 
-        GuideAPI.BOOKS.register(guideBook);
+        return guideBook;
     }
 
     private static void buildFilterPages(Map<ResourceLocation, EntryAbstract> entries) {
@@ -183,5 +191,14 @@ public class Guidebook {
             entries.put(new ResourceLocation(ModularRouters.modId, unlocalizedName),
                     new EntryItemStack(pages1, localizedName, upgrade));
         }
+    }
+    @Override
+    public void handleModel(ItemStack bookStack) {
+        GuideAPI.setModel(guideBook);
+    }
+
+    @Override
+    public void handlePost(ItemStack bookStack) {
+        GameRegistry.addShapelessRecipe(bookStack, ModItems.blankModule, Items.BOOK);
     }
 }

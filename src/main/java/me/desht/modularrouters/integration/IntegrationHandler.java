@@ -20,12 +20,12 @@ public class IntegrationHandler {
         }
     }
 
-    public static void registerGuideBook() {
-        if (Loader.isModLoaded("guideapi")) {
-            Guidebook.buildGuide();
-            ModularRouters.proxy.addGuidebookModel(Guidebook.guideBook);
-        }
-    }
+//    public static void registerGuideBook() {
+//        if (Loader.isModLoaded("guideapi")) {
+//            Guidebook.buildGuide();
+//            ModularRouters.proxy.addGuidebookModel(Guidebook.guideBook);
+//        }
+//    }
 
     public static void registerTesla() {
         if (Loader.isModLoaded("tesla")) {

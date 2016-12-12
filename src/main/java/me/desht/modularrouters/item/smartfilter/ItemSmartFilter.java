@@ -10,10 +10,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,7 +71,7 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     @Override
-    public void getSubItems(@Nonnull Item item, CreativeTabs tab, List<ItemStack> stacks) {
+    public void getSubItems(@Nonnull Item item, CreativeTabs tab, NonNullList<ItemStack> stacks) {
         for (int i = 0; i < SUBTYPES; i++) {
             stacks.add(new ItemStack(item, 1, i));
         }
@@ -92,7 +89,7 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     public static SmartFilter getFilter(ItemStack stack) {
-        if (stack == null || !(stack.getItem() instanceof ItemSmartFilter)) {
+        if (!(stack.getItem() instanceof ItemSmartFilter)) {
             return null;
         }
         return stack.getItemDamage() < filters.length ? filters[stack.getItemDamage()] : null;
@@ -116,18 +113,20 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         SmartFilter filter = getFilter(stack);
         int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF;
         if (!world.isRemote && filter.hasGuiContainer() || world.isRemote && !filter.hasGuiContainer()) {
-            player.openGui(ModularRouters.instance, guiId, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(ModularRouters.instance, guiId, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
+        ItemStack stack = player.getHeldItem(hand);
         return getFilter(stack).onItemUse(stack, player, world, pos, hand, face, x, y, z);
     }
 

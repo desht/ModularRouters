@@ -40,12 +40,12 @@ public class ModuleSettingsMessage extends BaseSettingsMessage {
     public static class Handler implements IMessageHandler<ModuleSettingsMessage, IMessage> {
         @Override
         public IMessage onMessage(ModuleSettingsMessage msg, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
             mainThread.addScheduledTask(() -> {
                 // Get the new settings into the module item, which could either be held by the player
                 // or installed in an item router
                 EntityPlayer player = ctx.getServerHandler().playerEntity;
-                ItemStack moduleStack = null;
+                ItemStack moduleStack = ItemStack.EMPTY;
                 if (msg.routerPos != null) {
                     TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), msg.routerPos);
                     if (router != null) {

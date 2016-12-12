@@ -38,9 +38,6 @@ public class CommonProxy {
         return null;
     }
 
-    public void addGuidebookModel(Book guideBook) {
-    }
-
     public TileEntityItemRouter getOpenItemRouter() {
         return null;
     }

@@ -15,9 +15,9 @@ public class CompiledDropperModule extends CompiledModule {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (stack != null && getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack) && isRegulationOK(router, false)) {
-            int nItems = Math.min(router.getItemsPerTick(), stack.stackSize - getRegulationAmount());
-            if (nItems < 0) {
+        if (getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack) && isRegulationOK(router, false)) {
+            int nItems = Math.min(router.getItemsPerTick(), stack.getCount() - getRegulationAmount());
+            if (nItems <= 0) {
                 return false;
             }
             ItemStack toDrop = router.peekBuffer(nItems);
@@ -29,8 +29,8 @@ public class CompiledDropperModule extends CompiledModule {
                     pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
                     toDrop);
             setupItemVelocity(router, item);
-            if (router.getWorld().spawnEntityInWorld(item)) {
-                router.extractBuffer(toDrop.stackSize);
+            if (router.getWorld().spawnEntity(item)) {
+                router.extractBuffer(toDrop.getCount());
                 return true;
             } else {
                 return false;

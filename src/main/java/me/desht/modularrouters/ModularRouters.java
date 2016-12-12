@@ -68,7 +68,6 @@ public class ModularRouters {
         proxy.preInit();
         setupNetwork();
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
-        IntegrationHandler.registerGuideBook();
         logger.info(name + " is loading!");
     }
 

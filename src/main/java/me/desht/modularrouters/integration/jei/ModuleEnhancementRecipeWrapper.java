@@ -79,11 +79,13 @@ public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
         guiItemStacks.addTooltipCallback(this);
 
         List<List<ItemStack>> inputs = ingredients.getInputs(ItemStack.class);
-        List<ItemStack> outputs = ingredients.getOutputs(ItemStack.class);
+        List<List<ItemStack>> outputs = ingredients.getOutputs(ItemStack.class);
+
+        guiItemStacks.set(craftOutputSlot, outputs.get(0).get(0));  // ??
 
         ICraftingGridHelper craftingGridHelper =
                 helpers.getGuiHelper().createCraftingGridHelper(craftInputSlot1, craftOutputSlot);
-        craftingGridHelper.setInputStacks(guiItemStacks, inputs, getWidth(), getHeight());
-        craftingGridHelper.setOutput(guiItemStacks, outputs);
+        craftingGridHelper.setInputs(guiItemStacks, inputs, getWidth(), getHeight());
+//        craftingGridHelper.setOutput(guiItemStacks, outputs);
     }
 }

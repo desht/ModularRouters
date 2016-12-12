@@ -17,7 +17,7 @@ public class CompiledSorterModule extends CompiledModule {
         ItemStackHandler buffer = (ItemStackHandler) router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
 
-        if (bufferStack != null && getFilter().pass(bufferStack)) {
+        if (getFilter().pass(bufferStack)) {
             IItemHandler handler = findTargetInventory(router);
             if (handler == null) {
                 return false;

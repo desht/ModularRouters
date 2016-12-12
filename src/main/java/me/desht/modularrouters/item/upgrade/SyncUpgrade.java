@@ -77,7 +77,7 @@ public class SyncUpgrade extends Upgrade {
         } else if (playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
                 setTunedValue(itemStackIn, new Random().nextInt(Config.baseTickRate));
-                playerIn.addChatMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(itemStackIn)));
+                playerIn.sendStatusMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(itemStackIn)), false);
             } else {
                 playerIn.playSound(MRSoundEvents.success, 1.0f, 1.5f);
             }

@@ -156,13 +156,13 @@ public abstract class CompiledModule {
         }
 
         ItemStack wanted = findItemToPull(router, handler, router.getItemsPerTick(), count);
-        if (wanted == null) {
+        if (wanted.isEmpty()) {
             return 0;
         }
 
         if (count != null) {
-            wanted.stackSize = Math.min(wanted.stackSize, count.getOrDefault(wanted, 0) - getRegulationAmount());
-            if (wanted.stackSize <= 0) {
+            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
+            if (wanted.isEmpty()) {
                 return 0;
             }
         }
@@ -170,15 +170,15 @@ public abstract class CompiledModule {
         int totalInserted = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             int pos = getLastMatchPos(i, handler.getSlots());
-            ItemStack toPull = handler.extractItem(pos, wanted.stackSize, true);
+            ItemStack toPull = handler.extractItem(pos, wanted.getCount(), true);
             if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
                 // this item is suitable for pulling
                 ItemStack notInserted = router.insertBuffer(toPull);
-                int inserted = toPull.stackSize - (notInserted == null ? 0 : notInserted.stackSize);
+                int inserted = toPull.getCount() - notInserted.getCount();
                 handler.extractItem(pos, inserted, false);
-                wanted.stackSize -= inserted;
+                wanted.shrink(inserted);
                 totalInserted += inserted;
-                if (wanted.stackSize <= 0 || router.isBufferFull()) {
+                if (wanted.isEmpty() || router.isBufferFull()) {
                     setLastMatchPos(pos);
                     return totalInserted;
                 }
@@ -189,20 +189,20 @@ public abstract class CompiledModule {
 
     private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
-        ItemStack result = null;
-        if (stackInRouter != null && getFilter().pass(stackInRouter)) {
+        ItemStack result = ItemStack.EMPTY;
+        if (!stackInRouter.isEmpty() && getFilter().pass(stackInRouter)) {
             // something in the router - try to pull more of that
             result = stackInRouter.copy();
-            result.stackSize = nToTake;
-        } else if (stackInRouter == null) {
+            result.setCount(nToTake);
+        } else if (stackInRouter.isEmpty()) {
             // router empty - just pull the next item that passes the filter
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (stack != null && getFilter().pass(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
+                if (!stack.isEmpty() && getFilter().pass(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
                     setLastMatchPos(pos);
                     result = stack.copy();
-                    result.stackSize = nToTake;
+                    result.setCount(nToTake);
                 }
             }
         }
@@ -224,9 +224,9 @@ public abstract class CompiledModule {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 
-    protected boolean isRegulationOK(TileEntityItemRouter router, boolean inbound) {
+    boolean isRegulationOK(TileEntityItemRouter router, boolean inbound) {
         if (regulationAmount == 0) return true; // no regulation
-        int items = router.getBufferItemStack() == null ? 0 : router.getBufferItemStack().stackSize;
+        int items = router.getBufferItemStack().isEmpty() ? 0 : router.getBufferItemStack().getCount();
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
     }
 }

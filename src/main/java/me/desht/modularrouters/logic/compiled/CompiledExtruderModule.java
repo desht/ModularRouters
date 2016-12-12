@@ -59,7 +59,7 @@ public class CompiledExtruderModule extends CompiledModule {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
                 for (ItemStack drop : drops) {
                     ItemStack excess = router.insertBuffer(drop);
-                    if (excess != null) {
+                    if (!excess.isEmpty()) {
                         InventoryUtils.dropItems(world, breakPos, excess);
                     }
                 }

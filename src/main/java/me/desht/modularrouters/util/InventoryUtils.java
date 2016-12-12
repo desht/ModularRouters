@@ -23,17 +23,17 @@ public class InventoryUtils {
         Random random = new Random();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack itemStack = itemHandler.getStackInSlot(i);
-            if (itemStack != null) {
+            if (!itemStack.isEmpty()) {
                 float offsetX = random.nextFloat() * 0.8f + 0.1f;
                 float offsetY = random.nextFloat() * 0.8f + 0.1f;
                 float offsetZ = random.nextFloat() * 0.8f + 0.1f;
-                while (itemStack.stackSize > 0) {
+                while (!itemStack.isEmpty()) {
                     int stackSize = random.nextInt(21) + 10;
-                    if (stackSize > itemStack.stackSize) {
-                        stackSize = itemStack.stackSize;
+                    if (stackSize > itemStack.getCount()) {
+                        stackSize = itemStack.getCount();
                     }
 
-                    itemStack.stackSize -= stackSize;
+                    itemStack.shrink(stackSize);
                     EntityItem entityitem = new EntityItem(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize, itemStack.getMetadata()));
                     if (itemStack.hasTagCompound()) {
                         entityitem.getEntityItem().setTagCompound(itemStack.getTagCompound().copy());
@@ -43,7 +43,7 @@ public class InventoryUtils {
                     entityitem.motionX = random.nextGaussian() * (double) motionScale;
                     entityitem.motionY = random.nextGaussian() * (double) motionScale + 0.20000000298023224D;
                     entityitem.motionZ = random.nextGaussian() * (double) motionScale;
-                    world.spawnEntityInWorld(entityitem);
+                    world.spawnEntity(entityitem);
                 }
             }
         }
@@ -85,18 +85,18 @@ public class InventoryUtils {
             return 0;
         }
         ItemStack toSend = from.extractItem(slot, count, true);
-        if (toSend == null) {
+        if (toSend.isEmpty()) {
             return 0;
         }
         ItemStack excess = ItemHandlerHelper.insertItem(to, toSend, false);
-        int inserted = toSend.stackSize - (excess == null ? 0 : excess.stackSize);
+        int inserted = toSend.getCount() - excess.getCount();
         from.extractItem(slot, inserted, false);
         return inserted;
     }
 
     public static boolean dropItems(World world, BlockPos pos, ItemStack stack) {
         EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-        return world.spawnEntityInWorld(item);
+        return world.spawnEntity(item);
     }
 
     /**
@@ -112,10 +112,10 @@ public class InventoryUtils {
         int count = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 boolean match = matchMeta ? stack.isItemEqual(toCount) : stack.isItemEqualIgnoreDurability(toCount);
                 if (match) {
-                    count += stack.stackSize;
+                    count += stack.getCount();
                 }
                 if (count >= max) return max;
             }

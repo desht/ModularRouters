@@ -246,12 +246,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     private boolean hasForgeEnergyCap(Capability<?> cap, ItemStack stack) {
-        return cap == CapabilityEnergy.ENERGY && stack != null &&
+        return cap == CapabilityEnergy.ENERGY &&
                 (stack.hasCapability(CapabilityEnergy.ENERGY, null) || stack.getItem() instanceof IEnergyContainerItem);
     }
 
     private boolean hasTeslaCap(Capability<?> cap, ItemStack stack) {
-        if (stack == null) {
+        if (stack.isEmpty()) {
             return false;
         }
         return cap == TeslaCapabilities.CAPABILITY_HOLDER && TeslaUtils.isTeslaHolder(stack, null)
@@ -268,7 +268,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(bufferHandler.getFluidHandler());
         }
-        if (getBufferItemStack() != null) {
+        if (!getBufferItemStack().isEmpty()) {
             ItemStack stack = getBufferItemStack();
             if (cap == CapabilityEnergy.ENERGY) {
                 return CapabilityEnergy.ENERGY.cast(stack.getCapability(CapabilityEnergy.ENERGY, null));
@@ -349,7 +349,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             compile();
         }
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -472,10 +472,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private void handleSync(boolean renderUpdate) {
         // some tile entity field changed that the client needs to know about
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
-        if (!worldObj.isRemote) {
-            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-        } else if (worldObj.isRemote && renderUpdate) {
-            worldObj.markBlockRangeForRenderUpdate(pos, pos);
+        if (!getWorld().isRemote) {
+            getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
+        } else if (getWorld().isRemote && renderUpdate) {
+            getWorld().markBlockRangeForRenderUpdate(pos, pos);
         }
     }
 
@@ -483,7 +483,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
      * Compile installed modules & upgrades etc. into internal data for faster execution
      */
     private void compile() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -500,8 +500,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
 
         if (recompileNeeded != 0) {
-            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+            IBlockState state = getWorld().getBlockState(pos);
+            getWorld().notifyBlockUpdate(pos, state, state, 3);
+            getWorld().notifyNeighborsOfStateChange(pos, state.getBlock(), true);
             markDirty();
             recompileNeeded = 0;
         }
@@ -541,8 +542,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
                 Upgrade upgrade = ItemUpgrade.getUpgrade(stack);
                 if (upgrade != null) {
-                    upgradeCount[stack.getItemDamage()] += stack.stackSize;
-                    totalUpgradeCount += stack.stackSize;
+                    upgradeCount[stack.getItemDamage()] += stack.getCount();
+                    totalUpgradeCount += stack.getCount();
                     upgrade.onCompiled(stack, this);
                 }
             }
@@ -572,7 +573,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public void setAllowRedstoneEmission(boolean allow) {
         canEmit = allow;
-        worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockItemRouter.CAN_EMIT, canEmit));
+        getWorld().setBlockState(pos, getWorld().getBlockState(pos).withProperty(BlockItemRouter.CAN_EMIT, canEmit));
     }
 
     public int getModuleCount() {
@@ -627,7 +628,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public EnumFacing getAbsoluteFacing(Module.RelativeDirection direction) {
-        IBlockState state = worldObj.getBlockState(pos);
+        IBlockState state = getWorld().getBlockState(pos);
         return direction.toEnumFacing(state.getValue(BlockItemRouter.FACING));
     }
 
@@ -668,7 +669,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public void checkForRedstonePulse() {
-        redstonePower = worldObj.isBlockIndirectlyGettingPowered(pos);
+        redstonePower = getWorld().isBlockIndirectlyGettingPowered(pos);
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
             if (redstonePower > lastPower && pulseCounter >= tickRate) {
@@ -744,10 +745,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
         for (EnumFacing f : toNotify) {
             BlockPos pos2 = pos.offset(f);
-            worldObj.notifyNeighborsOfStateChange(pos2, worldObj.getBlockState(pos2).getBlock());
+            getWorld().notifyNeighborsOfStateChange(pos2, getWorld().getBlockState(pos2).getBlock(), true);
         }
         if (notifyOwnNeighbours) {
-            worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+            getWorld().notifyNeighborsOfStateChange(pos, getWorld().getBlockState(pos).getBlock(), true);
         }
     }
 
@@ -769,11 +770,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public boolean isBufferFull() {
         ItemStack stack = bufferHandler.getStackInSlot(0);
-        return stack != null && stack.stackSize >= stack.getMaxStackSize();
+        return !stack.isEmpty() && stack.getCount() >= stack.getMaxStackSize();
     }
 
     public boolean isBufferEmpty() {
-        return bufferHandler.getStackInSlot(0) == null;
+        return bufferHandler.getStackInSlot(0).isEmpty();
     }
 
     public ItemStack peekBuffer(int amount) {
@@ -798,7 +799,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public int getRedstonePower() {
         if (redstonePower < 0) {
-            redstonePower = worldObj.isBlockIndirectlyGettingPowered(pos);
+            redstonePower = getWorld().isBlockIndirectlyGettingPowered(pos);
         }
         return redstonePower;
     }
@@ -822,6 +823,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     @Override
     public int getSizeInventory() {
         return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getStackInSlot(0).isEmpty();
     }
 
     @Nullable
@@ -853,7 +859,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return true;
     }
 

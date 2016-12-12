@@ -7,6 +7,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
+    // TODO update for MC 1.11
     private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
 
     public static IBlockState getPlaceableState(ItemStack stack) {
@@ -77,7 +79,7 @@ public class BlockUtil {
             return false;
         }
         Item item = Item.getItemFromBlock(block);
-        if (item == null) {
+        if (item == Items.AIR) {
             return false;
         }
 
@@ -101,7 +103,7 @@ public class BlockUtil {
 
         if (silkTouch) {
             Item item = Item.getItemFromBlock(block);
-            if (item == null) {
+            if (item == Items.AIR) {
                 return Collections.emptyList();
             } else {
                 return Lists.newArrayList(new ItemStack(item, 1, block.getMetaFromState(state)));
@@ -123,7 +125,7 @@ public class BlockUtil {
             return "";
         } else {
             ItemStack stack = state.getBlock().getItem(w, pos, state);
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 return stack.getDisplayName();
             } else {
                 return state.getBlock().getLocalizedName();

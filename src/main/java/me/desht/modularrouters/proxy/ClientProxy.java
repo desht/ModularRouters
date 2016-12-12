@@ -91,17 +91,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public World theClientWorld() {
-        return Minecraft.getMinecraft().theWorld;
+        return Minecraft.getMinecraft().world;
     }
 
     @Override
     public IThreadListener threadListener() {
         return Minecraft.getMinecraft();
-    }
-
-    @Override
-    public void addGuidebookModel(Book guideBook) {
-        GuideAPI.setModel(guideBook);
     }
 
     @Override

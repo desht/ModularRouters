@@ -50,11 +50,11 @@ public class ContainerModFilter extends ContainerSmartFilter {
         if (slot != null && slot.getHasStack()) {
             ItemStack stackInSlot = slot.getStack();
             stack = stackInSlot.copy();
-            stack.stackSize = 1;
+            stack.setCount(1);
 
             if (index == 0) {
                 // shift-clicking in the ghost slot: clear it from the filter
-                slot.putStack(null);
+                slot.putStack(ItemStack.EMPTY);
             } else if (index >= 1) {
                 // shift-clicking in player inventory: copy it into the ghost slot
                 // but don't remove it from player inventory
@@ -74,12 +74,12 @@ public class ContainerModFilter extends ContainerSmartFilter {
                 // normal left-click
                 if (slot == 0) {
                     Slot s = inventorySlots.get(slot);
-                    if (player.inventory.getItemStack() != null) {
+                    if (!player.inventory.getItemStack().isEmpty()) {
                         ItemStack stack1 = player.inventory.getItemStack().copy();
-                        stack1.stackSize = 1;
+                        stack1.setCount(1);
                         s.putStack(stack1);
                     } else {
-                        s.putStack(null);
+                        s.putStack(ItemStack.EMPTY);
                     }
                     return null;
                 }

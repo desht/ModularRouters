@@ -78,9 +78,9 @@ public class GuiModFilter extends GuiFilterContainer {
         super.updateScreen();
 
         ItemStack inSlot = inventorySlots.getInventory().get(0);
-        if (inSlot == null && prevInSlot != null) {
+        if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             modId = modName = "";
-        } else if (inSlot != null && (prevInSlot == null || !inSlot.isItemEqualIgnoreDurability(prevInSlot))) {
+        } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !inSlot.isItemEqualIgnoreDurability(prevInSlot))) {
             modId = inSlot.getItem().getRegistryName().getResourceDomain();
             modName = ModNameCache.getModName(modId);
         }

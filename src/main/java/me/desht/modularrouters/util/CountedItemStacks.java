@@ -31,8 +31,8 @@ public class CountedItemStacks extends TCustomHashMap<ItemStack, Integer> {
 
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
-            if (stack != null) {
-                put(stack, getOrDefault(stack, 0) + stack.stackSize);
+            if (!stack.isEmpty()) {
+                put(stack, getOrDefault(stack, 0) + stack.getCount());
             }
         }
     }

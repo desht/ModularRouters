@@ -50,7 +50,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop));
         }
         if (moduleSlotIndex >= 0) {
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
+            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.world, routerPos);
             if (router != null) {
                 ItemStack moduleStack = router.getModules().getStackInSlot(moduleSlotIndex);
                 Module m = ItemModule.getModule(moduleStack);

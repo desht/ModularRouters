@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.upgrade;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.sound.MRSoundEvents;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -63,7 +63,7 @@ public class SecurityUpgrade extends Upgrade {
         }
 
         Set<UUID> res = Sets.newHashSet();
-        Pair<String, UUID> owner = ItemModule.getOwnerNameAndId(stack);
+        Pair<String, UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
         res.add(owner.getRight());
 
         if (compound.hasKey(NBT_PLAYERS)) {
@@ -80,7 +80,7 @@ public class SecurityUpgrade extends Upgrade {
      * @return (displayable) owner name
      */
     private static String getOwnerName(ItemStack stack) {
-        Pair<String, UUID> owner = ItemModule.getOwnerNameAndId(stack);
+        Pair<String, UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
         return owner.getLeft().isEmpty() ? "???" : owner.getLeft();
     }
 
@@ -150,8 +150,8 @@ public class SecurityUpgrade extends Upgrade {
             EntityPlayer player = event.getEntityPlayer();
             ItemStack stack = player.getHeldItem(event.getHand());
             if (!player.getEntityWorld().isRemote && ItemUpgrade.isType(stack, ItemUpgrade.UpgradeType.SECURITY) && player.isSneaking()) {
-                ItemModule.setOwner(stack, player);
-                player.addChatMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayNameString()));
+                ModuleHelper.setOwner(stack, player);
+                player.sendStatusMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayNameString()), false);
                 event.setCanceled(true);
             }
         }
@@ -168,7 +168,7 @@ public class SecurityUpgrade extends Upgrade {
                     if (event.getWorld().isRemote) {
                         event.getEntityPlayer().playSound(res.isError() ? MRSoundEvents.error : MRSoundEvents.success, 1.0f, 1.0f);
                     } else {
-                        event.getEntityPlayer().addChatMessage(new TextComponentTranslation("chatText.security." + res.toString(), name));
+                        event.getEntityPlayer().sendStatusMessage(new TextComponentTranslation("chatText.security." + res.toString(), name), false);
                     }
                     event.setCanceled(true);
                 }

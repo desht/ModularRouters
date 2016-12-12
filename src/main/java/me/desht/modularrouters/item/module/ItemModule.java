@@ -19,10 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -40,7 +37,6 @@ import java.util.UUID;
 
 public class ItemModule extends ItemBase {
     private static final String NBT_CONFIG_SLOT = "ConfigSlot";
-    private static final String NBT_OWNER = "Owner";
 
     // add new types at the end!
     public enum ModuleType {
@@ -114,7 +110,7 @@ public class ItemModule extends ItemBase {
     }
 
     @Override
-    public void getSubItems(@Nonnull Item item, CreativeTabs tab, List<ItemStack> stacks) {
+    public void getSubItems(@Nonnull Item item, CreativeTabs tab, NonNullList<ItemStack> stacks) {
         for (int i = 0; i < SUBTYPES; i++) {
             stacks.add(new ItemStack(item, 1, i));
         }
@@ -132,7 +128,7 @@ public class ItemModule extends ItemBase {
     }
 
     public static Module getModule(ItemStack stack) {
-        if (stack == null || !(stack.getItem() instanceof ItemModule)) {
+        if (!(stack.getItem() instanceof ItemModule)) {
             return null;
         }
         return stack.getItemDamage() < modules.length ? modules[stack.getItemDamage()] : null;
@@ -148,11 +144,12 @@ public class ItemModule extends ItemBase {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         ModuleHelper.validateNBT(stack);
         if (!world.isRemote) {
             int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
-            player.openGui(ModularRouters.instance, guiId, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(ModularRouters.instance, guiId, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
@@ -163,8 +160,9 @@ public class ItemModule extends ItemBase {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
+        ItemStack stack = player.getHeldItem(hand);
         return getModule(stack).onItemUse(stack, player, world, pos, hand, face, x, y, z);
     }
 
@@ -196,7 +194,7 @@ public class ItemModule extends ItemBase {
         list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (ModuleHelper.isBlacklist(itemstack) ? "2" : "1")) + ":");
         if (items.tagCount() > 0) {
             for (int i = 0; i < items.tagCount(); i++) {
-                ItemStack s = ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(i));
+                ItemStack s = new ItemStack(items.getCompoundTagAt(i));
                 SmartFilter f = ItemSmartFilter.getFilter(s);
                 if (f == null) {
                     list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
@@ -242,28 +240,6 @@ public class ItemModule extends ItemBase {
 
     public static boolean isType(ItemStack stack, ModuleType type) {
         return stack != null && stack.getItem() instanceof ItemModule && stack.getItemDamage() == type.ordinal();
-    }
-
-    public static void setOwner(ItemStack stack, EntityPlayer player) {
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) {
-            compound = new NBTTagCompound();
-        }
-        NBTTagList owner = new NBTTagList();
-        owner.appendTag(new NBTTagString(player.getDisplayNameString()));
-        owner.appendTag(new NBTTagString(player.getUniqueID().toString()));
-        compound.setTag(NBT_OWNER, owner);
-        stack.setTagCompound(compound);
-    }
-
-    private static final Pair<String,UUID> NO_OWNER = Pair.of("", null);
-
-    public static Pair<String, UUID> getOwnerNameAndId(ItemStack stack) {
-        if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey(NBT_OWNER)) {
-            return NO_OWNER;
-        }
-        NBTTagList l = stack.getTagCompound().getTagList(NBT_OWNER, Constants.NBT.TAG_STRING);
-        return Pair.of(l.getStringTagAt(0), UUID.fromString(l.getStringTagAt(1)));
     }
 
     public static void setFilterConfigSlot(ItemStack stack, int slot) {

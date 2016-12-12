@@ -22,7 +22,7 @@ abstract class RouterItemHandler extends ItemStackHandler {
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (clazz.isInstance(stack.getItem())) {
             ItemStack res = super.insertItem(slot, stack, simulate);
-            if (res == null || res.stackSize < stack.stackSize) {
+            if (res.getCount() < stack.getCount()) {
                 router.recompileNeeded(flag);
             }
             return res;

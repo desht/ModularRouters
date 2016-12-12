@@ -274,25 +274,25 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         TileEntityItemRouter router = getItemRouterTE();
         if (router != null) {
             // module is installed in a router
-            router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex, slot.getSlotIndex());
+            router.playerConfiguringModule(mc.player, moduleSlotIndex, slot.getSlotIndex());
             if (filter.hasGuiContainer()) {
                 ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
             } else {
                 // no container, just open the client-side GUI directly
-                mc.thePlayer.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.theWorld,
+                mc.player.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.world,
                         routerPos.getX(), routerPos.getY(), routerPos.getZ());
             }
         } else if (hand != null) {
             // module is in player's hand
             // record the filter slot in the module itemstack's NBT - we'll need this when opening the GUI later
-            ItemModule.setFilterConfigSlot(mc.thePlayer.getHeldItem(hand), filterSlotIndex);
+            ItemModule.setFilterConfigSlot(mc.player.getHeldItem(hand), filterSlotIndex);
             if (filter.hasGuiContainer()) {
                 ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInModule(hand, filterSlotIndex));
             } else {
                 // no container, just open the client-side GUI directly
-                mc.thePlayer.openGui(ModularRouters.instance,
+                mc.player.openGui(ModularRouters.instance,
                         hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF,
-                        mc.theWorld, 0, 0, 0);
+                        mc.world, 0, 0, 0);
             }
         }
         return true;
@@ -327,7 +327,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     protected TileEntityItemRouter getItemRouterTE() {
         if (routerPos != null) {
-            TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(routerPos);
+            TileEntity te = Minecraft.getMinecraft().world.getTileEntity(routerPos);
             return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
         }
         return null;

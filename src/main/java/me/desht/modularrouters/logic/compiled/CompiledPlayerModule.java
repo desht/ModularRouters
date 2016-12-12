@@ -1,8 +1,8 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,23 +27,12 @@ public class CompiledPlayerModule extends CompiledModule {
 
     public enum Operation {
         EXTRACT, INSERT;
-        public Operation toggle() {
-            return this == INSERT ? EXTRACT : INSERT;
-        }
+
         public String getSymbol() { return this == INSERT ? "⟹" : "⟸"; }
     }
 
     public enum Section {
-        MAIN, ARMOR, OFFHAND, ENDER;
-        public Section cycle(int dir) {
-            int n = ordinal() + dir;
-            if (n >= values().length) {
-                n = 0;
-            } else if (n < 0) {
-                n = values().length - 1;
-            }
-            return values()[n];
-        }
+        MAIN, ARMOR, OFFHAND, ENDER
     }
 
     private final Operation operation;
@@ -57,7 +46,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
-            Pair<String,UUID> owner = ItemModule.getOwnerNameAndId(stack);
+            Pair<String,UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
             playerName = owner.getLeft();
             playerId = owner.getRight();
             operation = Operation.values()[compound.getInteger(NBT_OPERATION)];
@@ -89,13 +78,13 @@ public class CompiledPlayerModule extends CompiledModule {
         ItemStack bufferStack = router.getBufferItemStack();
         switch (operation) {
             case EXTRACT:
-                if (bufferStack == null || bufferStack.stackSize < bufferStack.getMaxStackSize()) {
+                if (bufferStack.getCount() < bufferStack.getMaxStackSize()) {
                     int taken = transferToRouter(itemHandler, router);
                     return taken > 0;
                 }
                 break;
             case INSERT:
-                if (bufferStack != null && getFilter().pass(bufferStack)) {
+                if (getFilter().pass(bufferStack)) {
                     if (getSection() == CompiledPlayerModule.Section.ARMOR) {
                         return insertArmor(router, itemHandler, bufferStack);
                     } else {
@@ -165,13 +154,13 @@ public class CompiledPlayerModule extends CompiledModule {
 
     private boolean insertArmor(TileEntityItemRouter router, IItemHandler itemHandler, ItemStack armorStack) {
         int slot = getSlotForArmorItem(armorStack);
-        if (slot >= 0 && itemHandler.getStackInSlot(slot) == null) {
+        if (slot >= 0 && itemHandler.getStackInSlot(slot).isEmpty()) {
             ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
-            if (extracted == null) {
+            if (extracted.isEmpty()) {
                 return false;
             }
             ItemStack res = itemHandler.insertItem(slot, extracted, false);
-            return res == null;
+            return res.isEmpty();
         } else {
             return false;
         }

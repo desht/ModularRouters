@@ -112,7 +112,7 @@ public class GuiItemRouter extends GuiContainerBase {
         if (slot == null || ItemModule.getModule(slot.getStack()) == null || slot.slotNumber < MODULE_START || slot.slotNumber >= MODULE_END) {
             return false;
         }
-        router.playerConfiguringModule(mc.thePlayer, slot.slotNumber - MODULE_START);
+        router.playerConfiguringModule(mc.player, slot.slotNumber - MODULE_START);
         ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), slot.getSlotIndex()));
         return true;
     }

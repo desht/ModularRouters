@@ -5,6 +5,7 @@ import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModulePlayer;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -66,8 +67,8 @@ public class PlayerModule extends Module {
         if (world.isRemote) {
             return EnumActionResult.SUCCESS;
         } else if (player.isSneaking()) {
-            ItemModule.setOwner(stack, player);
-            player.addChatMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayNameString()));
+            ModuleHelper.setOwner(stack, player);
+            player.sendStatusMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayNameString()), false);
             return EnumActionResult.SUCCESS;
         } else {
             return super.onItemUse(stack, player, world, pos, hand, face, x, y, z);

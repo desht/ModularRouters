@@ -125,7 +125,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         IBlockState camo = getCamoState(worldIn, pos);
         return camo != null ? camo.getCollisionBoundingBox(worldIn, pos) : super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
@@ -167,10 +167,10 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
-    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        if (blockFaceClickedOn.getFrontOffsetY() == 0) {
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        if (facing.getFrontOffsetY() == 0) {
             // placed against a vertical surface - have it face away from that surface
-            return this.getDefaultState().withProperty(FACING, blockFaceClickedOn);
+            return this.getDefaultState().withProperty(FACING, facing);
         } else {
             // have the router face the player
             EnumFacing enumfacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
@@ -249,7 +249,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         if (router != null) {
             ItemStack stack = router.getBufferItemStack();
-            return stack == null ? 0 : MathHelper.floor_float(1 + ((float) stack.stackSize / (float) stack.getMaxStackSize()) * 14);
+            return stack.isEmpty() ? 0 : MathHelper.floor(1 + ((float) stack.getCount() / (float) stack.getMaxStackSize()) * 14);
         } else {
             return 0;
         }
@@ -310,14 +310,14 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!player.isSneaking()) {
             TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
             if (router != null) {
                 if (router.isPermitted(player) && !world.isRemote) {
                     player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
                 } else if (!router.isPermitted(player) && world.isRemote) {
-                    player.addChatMessage(new TextComponentTranslation("chatText.security.accessDenied"));
+                    player.sendStatusMessage(new TextComponentTranslation("chatText.security.accessDenied"), false);
                     player.playSound(MRSoundEvents.error, 1.0f, 1.0f);
                 }
             }
@@ -335,7 +335,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
                 IProbeInfo sub = probeInfo.horizontal();
                 for (int i = 0; i < modules.getSlots(); i++) {
                     ItemStack stack = modules.getStackInSlot(i);
-                    if (stack != null) {
+                    if (!stack.isEmpty()) {
                         sub.element(new ElementModule(stack));
                     }
                 }
@@ -386,11 +386,10 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(worldIn, pos);
         if (router != null) {
             router.checkForRedstonePulse();
         }
     }
-
 }

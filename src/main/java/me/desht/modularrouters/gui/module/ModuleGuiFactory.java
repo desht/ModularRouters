@@ -30,7 +30,7 @@ public class ModuleGuiFactory {
             if (moduleSlotIndex >= 0) {
                 router.clearConfigSlot(player);
                 ItemStack installedModuleStack = router.getModules().getStackInSlot(moduleSlotIndex);
-                return installedModuleStack == null ? null : ModuleGuiFactory.createGui(player, installedModuleStack, router.getPos(), moduleSlotIndex);
+                return installedModuleStack.isEmpty() ? null : ModuleGuiFactory.createGui(player, installedModuleStack, router.getPos(), moduleSlotIndex);
             }
         }
         return null;
@@ -47,7 +47,7 @@ public class ModuleGuiFactory {
             if (slotIndex >= 0) {
                 router.clearConfigSlot(player);
                 ItemStack installedModuleStack = router.getModules().getStackInSlot(slotIndex);
-                return installedModuleStack == null ? null : new ContainerModule(player, null, installedModuleStack, router);
+                return installedModuleStack.isEmpty() ? null : new ContainerModule(player, null, installedModuleStack, router);
             }
         }
         return null;

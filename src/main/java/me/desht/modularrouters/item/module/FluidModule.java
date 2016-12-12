@@ -63,8 +63,8 @@ public class FluidModule extends Module {
     @Override
     public boolean isItemValidForFilter(ItemStack stack) {
         // only fluid-holding items or a smart filter item can go into a fluid module's filter
-        return stack == null
-                || (stack.stackSize == 1 && FluidUtil.getFluidContained(stack) != null)
+        return stack.isEmpty()
+                || (stack.getCount() == 1 && FluidUtil.getFluidContained(stack) != null)
                 || ItemSmartFilter.getFilter(stack) != null;
     }
 

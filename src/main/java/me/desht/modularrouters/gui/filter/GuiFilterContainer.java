@@ -34,14 +34,14 @@ abstract class GuiFilterContainer extends GuiContainerBase {
     boolean closeGUI() {
         if (routerPos != null) {
             // need to re-open module GUI for module in router slot <moduleSlotIndex>
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.theWorld, routerPos);
+            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.world, routerPos);
             if (router != null) {
-                router.playerConfiguringModule(mc.thePlayer, moduleSlotIndex);
+                router.playerConfiguringModule(mc.player, moduleSlotIndex);
                 ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(routerPos, moduleSlotIndex));
                 return true;
             }
         } else if (hand != null) {
-            ItemStack stack = mc.thePlayer.getHeldItem(hand);
+            ItemStack stack = mc.player.getHeldItem(hand);
             if (ItemModule.getModule(stack) != null) {
                 // need to re-open module GUI for module in player's hand
                 ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInHand(hand));

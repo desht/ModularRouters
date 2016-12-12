@@ -14,11 +14,6 @@ public abstract class BaseEnhancementRecipeHandler<T extends ModuleEnhancementRe
     }
 
     @Override
-    public String getRecipeCategoryUid() {
-        return VanillaRecipeCategoryUid.CRAFTING;
-    }
-
-    @Override
     public String getRecipeCategoryUid(T recipe) {
         return VanillaRecipeCategoryUid.CRAFTING;
     }

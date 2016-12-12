@@ -16,6 +16,6 @@ public class ModMatcher implements IItemMatcher {
 
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        return stack != null && modSet.contains(stack.getItem().getRegistryName().getResourceDomain());
+        return !stack.isEmpty() && modSet.contains(stack.getItem().getRegistryName().getResourceDomain());
     }
 }
