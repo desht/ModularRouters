@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -27,15 +28,16 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
 
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, float val) {
-        double x = router.getPos().getX() + 0.5;
-        double y = router.getPos().getY() + 0.5;
-        double z = router.getPos().getZ() + 0.5;
-        EnumFacing facing = router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
-        double x2 = x + facing.getFrontOffsetX() * 1.2;
-        y2 = (y2 < y - 2 || y2 > y + 2) ? y : y2 + (r.nextDouble() - 0.5) / 5.0;
-        double z2 = z + facing.getFrontOffsetZ() * 1.2;
-        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), x, y, z, 32);
-        ModularRouters.network.sendToAllAround(new ParticleBeamMessage(x, y, z, x2, y2, z2, Color.getHSBColor(0.83333f, 1.0f, 0.8f)), point);
+        if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
+            double x = router.getPos().getX() + 0.5;
+            double y = router.getPos().getY() + 0.5;
+            double z = router.getPos().getZ() + 0.5;
+            EnumFacing facing = router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
+            double x2 = x + facing.getFrontOffsetX() * 1.2;
+            y2 = (y2 < y - 2 || y2 > y + 2) ? y : y2 + (r.nextDouble() - 0.5) / 5.0;
+            double z2 = z + facing.getFrontOffsetZ() * 1.2;
+            NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), x, y, z, 32);
+            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(x, y, z, x2, y2, z2, Color.getHSBColor(0.83333f, 1.0f, 0.8f)), point);
+        }
     }
-
 }

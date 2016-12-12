@@ -5,6 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.SenderModule1;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.BlockUtil;
@@ -56,11 +57,13 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, float val) {
-        Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
-        Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
-        Color color = Color.getHSBColor(val, 1.0f, 1.0f);
-        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.xCoord, vec1.yCoord, vec1.zCoord, 32);
-        ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, color), point);
+        if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
+            Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
+            Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
+            Color color = Color.getHSBColor(val, 1.0f, 1.0f);
+            NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.xCoord, vec1.yCoord, vec1.zCoord, 32);
+            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, color), point);
+        }
     }
 
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
