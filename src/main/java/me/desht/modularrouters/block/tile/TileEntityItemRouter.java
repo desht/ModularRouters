@@ -52,7 +52,7 @@ import java.util.*;
 
 public class TileEntityItemRouter extends TileEntity implements ITickable, IInventory {
     public static final int N_MODULE_SLOTS = 9;
-    public static final int N_UPGRADE_SLOTS = 4;
+    public static final int N_UPGRADE_SLOTS = 5;
 
     public static final int COMPILE_MODULES = 0x01;
     public static final int COMPILE_UPGRADES = 0x02;
@@ -300,11 +300,22 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return super.getCapability(cap, side);
     }
 
+    private void checkUpgradeSlotCount(NBTTagCompound c) {
+        // handle upgrades size change from 4->5 (v1.2.0)
+        if (c.getTagId("Size") == Constants.NBT.TAG_INT) {
+            int size = c.getInteger("Size");
+            if (size < N_UPGRADE_SLOTS) {
+                c.setInteger("Size", N_UPGRADE_SLOTS);
+            }
+        }
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         bufferHandler.deserializeNBT(nbt.getCompoundTag(NBT_BUFFER));
         modulesHandler.deserializeNBT(nbt.getCompoundTag(NBT_MODULES));
+        checkUpgradeSlotCount(nbt.getCompoundTag(NBT_UPGRADES));
         upgradesHandler.deserializeNBT(nbt.getCompoundTag(NBT_UPGRADES));
         try {
             redstoneBehaviour = RouterRedstoneBehaviour.valueOf(nbt.getString(NBT_REDSTONE_MODE));
