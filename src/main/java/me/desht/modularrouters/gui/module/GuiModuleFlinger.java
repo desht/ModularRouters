@@ -48,10 +48,10 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
 
         FloatTextField t1 = new FloatTextField(manager, FIELD_SPEED, fontRendererObj, guiLeft + 152, guiTop + 19, 35, 12,
                 FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED);
+        t1.setPrecision(2);
         t1.setValue(speed);
         t1.setGuiResponder(this);
         t1.setIncr(0.1f, 0.5f, 10.0f);
-        t1.setPrecision(2);
         t1.useGuiTextBackground();
 
         FloatTextField t2 = new FloatTextField(manager, FIELD_PITCH, fontRendererObj, guiLeft + 152, guiTop + 37, 35, 12,
