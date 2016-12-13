@@ -5,9 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.text.WordUtils;
-import org.apache.http.util.TextUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MiscUtil {
