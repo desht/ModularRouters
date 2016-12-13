@@ -9,7 +9,6 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;

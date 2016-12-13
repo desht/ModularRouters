@@ -2,7 +2,6 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
-import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.entity.player.EntityPlayer;

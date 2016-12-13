@@ -1,9 +1,9 @@
 package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;

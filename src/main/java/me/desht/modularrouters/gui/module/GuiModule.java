@@ -6,7 +6,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;
-import me.desht.modularrouters.gui.widgets.*;
+import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.button.RadioButton;
 import me.desht.modularrouters.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.gui.widgets.button.TexturedToggleButton;

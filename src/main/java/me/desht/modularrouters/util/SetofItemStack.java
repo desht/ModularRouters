@@ -2,7 +2,6 @@ package me.desht.modularrouters.util;
 
 import gnu.trove.set.hash.TCustomHashSet;
 import gnu.trove.strategy.HashingStrategy;
-import me.desht.modularrouters.container.FilterHandler;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
