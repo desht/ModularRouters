@@ -2,14 +2,19 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 public class CompiledDropperModule extends CompiledModule {
+    private final int pickupDelay;
+
     public CompiledDropperModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
+
+        pickupDelay = ModuleHelper.getPickupDelay(stack);
     }
 
     @Override
@@ -28,6 +33,7 @@ public class CompiledDropperModule extends CompiledModule {
                     pos.getY() + 0.5 + 0.2 * face.getFrontOffsetY(),
                     pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
                     toDrop);
+            item.setPickupDelay(pickupDelay);
             setupItemVelocity(router, item);
             if (router.getWorld().spawnEntityInWorld(item)) {
                 router.extractBuffer(toDrop.stackSize);

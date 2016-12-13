@@ -21,6 +21,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 
+import java.util.Arrays;
+
 public class ModRecipes {
     public static void init() {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.itemRouter, 4),
@@ -69,6 +71,7 @@ public class ModRecipes {
 
         addRedstoneUpgradeRecipes();
         addRegulatorUpgradeRecipes();
+        addPickupDelayRecipes();
 
         if (Loader.isModLoaded("guideapi")) {
             GameRegistry.addShapelessRecipe(GuideAPI.getStackFromBook(Guidebook.guideBook), Items.BOOK, ModItems.blankModule);
@@ -102,6 +105,18 @@ public class ModRecipes {
                         'C', Items.COMPARATOR,
                         'M', ItemModule.makeItemStack(type)));
             }
+        }
+    }
+
+    private static void addPickupDelayRecipes() {
+        RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        for (ModuleType type : new ItemModule.ModuleType[] { ModuleType.DROPPER, ModuleType.FLINGER} ) {
+            ItemStack output = ItemModule.makeItemStack(type);
+            ModuleHelper.increasePickupDelay(output);
+            GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(output,
+                    "SM",
+                    'S', Items.SLIME_BALL,
+                    'M', ItemModule.makeItemStack(type)));
         }
     }
 }
