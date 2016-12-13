@@ -43,7 +43,7 @@ import java.util.List;
 public class BulkItemFilter extends SmartFilter {
     public static final int FILTER_SIZE = 54;
     private static final String NBT_ITEMS_DEPRECATED = "Items";
-    public static final Flags DEF_FLAGS = new Flags((byte) 0x00); //Flags.with(ModuleFlags.IGNORE_NBT, ModuleFlags.IGNORE_META);
+    public static final Flags DEF_FLAGS = new Flags((byte) 0x00);
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
@@ -55,19 +55,23 @@ public class BulkItemFilter extends SmartFilter {
     private static SetofItemStack getFilterItems(ItemStack filterStack, Flags flags) {
         if (filterStack.hasTagCompound()) {
             NBTTagCompound compound = filterStack.getTagCompound();
-            if (compound.hasKey(ModuleHelper.NBT_FILTER)) {
-                // v1.2 and later - filter is in the "ModuleFilter" tag
-                FilterHandler handler = new BulkFilterHandler(filterStack);
-                return SetofItemStack.fromItemHandler(handler, flags);
-            } else {
-                // v1.1 and earlier - filter is in the "Items" tag
+            FilterHandler handler = new BulkFilterHandler(filterStack);
+            if (compound.hasKey(NBT_ITEMS_DEPRECATED)) {
+                // migrate the old-style bulk filter
                 NBTTagList items = compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND);
                 SetofItemStack stacks = new SetofItemStack(items.tagCount(), flags);
                 for (int i = 0; i < items.tagCount(); i++) {
                     NBTTagCompound c = (NBTTagCompound) items.get(i);
-                    stacks.add(new ItemStack(c));
+                    ItemStack stack = ItemStack.loadItemStackFromNBT(c);
+                    stacks.add(stack);
+                    handler.setStackInSlot(i, stack);
                 }
+                handler.save();
+                compound.removeTag(NBT_ITEMS_DEPRECATED);
                 return stacks;
+            } else {
+                // new-style filter; simple case
+                return SetofItemStack.fromItemHandler(handler, flags);
             }
         } else {
             return new SetofItemStack(DEF_FLAGS);
@@ -113,7 +117,7 @@ public class BulkItemFilter extends SmartFilter {
             IItemHandler handler = InventoryUtils.getInventory(world, pos, face);
             if (handler != null) {
                 int nAdded = mergeInventory(stack, handler);
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
+                player.addChatMessage(new TextComponentTranslation("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()));
                 world.playSound(null, pos, MRSoundEvents.success, SoundCategory.MASTER, 1.0f, 1.0f);
                 return EnumActionResult.SUCCESS;
             } else {
@@ -128,7 +132,7 @@ public class BulkItemFilter extends SmartFilter {
     public IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         ContainerBulkItemFilter con = player.openContainer instanceof ContainerBulkItemFilter ?
                 (ContainerBulkItemFilter) player.openContainer : null;
-        Flags flags = moduleStack.isEmpty() ? DEF_FLAGS : new Flags(moduleStack);
+        Flags flags = moduleStack == null ? DEF_FLAGS : new Flags(moduleStack);
 
         switch (message.getOp()) {
             case CLEAR_ALL:
@@ -169,9 +173,9 @@ public class BulkItemFilter extends SmartFilter {
 
         for (int i = 0; i < srcInventory.getSlots() && stacks.size() < FILTER_SIZE; i++) {
             ItemStack stack = srcInventory.getStackInSlot(i);
-            if (!stack.isEmpty()) {
+            if (stack != null) {
                 ItemStack stack1 = stack.copy();
-                stack1.setCount(1);
+                stack1.stackSize = 1;
                 stacks.add(stack1);
             }
         }
