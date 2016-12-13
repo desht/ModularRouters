@@ -11,6 +11,7 @@ import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -55,7 +56,15 @@ public class ModRecipes {
 
         RecipeSorter.register(ModularRouters.modId + ":enchantModule", EnchantModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
         for (ModuleType type : EnchantModuleRecipe.validEnchantments.keySet()) {
-            GameRegistry.addRecipe(new EnchantModuleRecipe(ItemModule.makeItemStack(type), ItemModule.makeItemStack(type), Items.ENCHANTED_BOOK));
+            for (Enchantment ench : EnchantModuleRecipe.validEnchantments.get(type)) {
+                for (int level = ench.getMinLevel(); level <= ench.getMaxLevel(); level++) {
+                    ItemStack resStack = ItemModule.makeItemStack(type);
+                    ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+                    resStack.addEnchantment(ench, level);
+                    book.addEnchantment(ench, level);
+                    GameRegistry.addRecipe(new EnchantModuleRecipe(resStack, ItemModule.makeItemStack(type), book));
+                }
+            }
         }
 
         addRedstoneUpgradeRecipes();
