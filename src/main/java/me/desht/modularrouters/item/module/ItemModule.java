@@ -223,6 +223,10 @@ public class ItemModule extends ItemBase {
             int amount = ModuleHelper.getRegulatorAmount(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.regulator.label", amount));
         }
+        int pickupDelay = ModuleHelper.getPickupDelay(itemstack);
+        if (pickupDelay > 0) {
+            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
+        }
     }
 
     private String compose(String key, boolean flag) {

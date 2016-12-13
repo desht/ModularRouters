@@ -3,16 +3,12 @@ package me.desht.modularrouters.util;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
 
 /**
  * Collection of static convenience methods for managing NBT data in a module itemstack.
@@ -24,8 +20,7 @@ public class ModuleHelper {
     public static final String NBT_REGULATOR_ENABLED = "RegulatorEnabled";
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
-    private static final String NBT_OWNER = "Owner";
-
+    public static final String NBT_PICKUP_DELAY = "PickupDelay";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
@@ -135,26 +130,14 @@ public class ModuleHelper {
         return compound.getTagList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
     }
 
-    public static void setOwner(ItemStack stack, EntityPlayer player) {
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) {
-            compound = new NBTTagCompound();
-        }
-        NBTTagList owner = new NBTTagList();
-        owner.appendTag(new NBTTagString(player.getDisplayNameString()));
-        owner.appendTag(new NBTTagString(player.getUniqueID().toString()));
-        compound.setTag(NBT_OWNER, owner);
-        stack.setTagCompound(compound);
+    public static void increasePickupDelay(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        int delay = compound.getInteger(NBT_PICKUP_DELAY);
+        compound.setInteger(NBT_PICKUP_DELAY, delay + 10);  // ticks
     }
 
-    private static final Pair<String,UUID> NO_OWNER = Pair.of("", null);
-
-    public static Pair<String, UUID> getOwnerNameAndId(ItemStack stack) {
-        if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey(NBT_OWNER)) {
-            return NO_OWNER;
-        }
-        NBTTagList l = stack.getTagCompound().getTagList(NBT_OWNER, Constants.NBT.TAG_STRING);
-        return Pair.of(l.getStringTagAt(0), UUID.fromString(l.getStringTagAt(1)));
+    public static int getPickupDelay(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        return compound.getInteger(NBT_PICKUP_DELAY);
     }
-
 }

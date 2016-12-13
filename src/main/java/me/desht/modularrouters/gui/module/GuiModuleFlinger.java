@@ -107,7 +107,7 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
         TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
             super(buttonId, x, y, 16, 16);
             tooltip1.add(I18n.format("guiText.tooltip.flinger." + key, min, max));
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.floatFieldTooltip");
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
