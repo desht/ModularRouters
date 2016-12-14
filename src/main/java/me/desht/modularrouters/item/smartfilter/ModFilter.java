@@ -22,6 +22,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -96,8 +97,8 @@ public class ModFilter extends SmartFilter {
     }
 
     @Override
-    public Container createContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
-        return new ContainerModFilter(player, filterStack, router);
+    public Container createContainer(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
+        return new ContainerModFilter(player, filterStack, hand, router);
     }
 
     @Override

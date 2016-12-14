@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -20,8 +21,8 @@ public class ContainerModFilter extends ContainerSmartFilter {
 
     public final IItemHandlerModifiable handler;
 
-    public ContainerModFilter(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
-        super(player, filterStack, router);
+    public ContainerModFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
+        super(player, filterStack, hand, router);
 
         handler = new GhostItemHandler(1);
 
@@ -57,7 +58,7 @@ public class ContainerModFilter extends ContainerSmartFilter {
                 slot.putStack(ItemStack.EMPTY);
             } else if (index >= 1) {
                 // shift-clicking in player inventory: copy it into the ghost slot
-                // but don't remove it from player inventory
+                // but don't remove it from playerpack inventory
                 Slot s = inventorySlots.get(0);
                 s.putStack(stack);
                 slot.putStack(stackInSlot);

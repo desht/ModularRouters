@@ -74,7 +74,7 @@ public abstract class SmartFilter {
         return false;
     }
 
-    public Container createContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
+    public Container createContainer(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
         return null;
     }
 

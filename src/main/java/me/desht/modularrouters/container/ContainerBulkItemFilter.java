@@ -29,8 +29,8 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     private final int currentSlot;  // currently-selected slot for player
     private final TileEntityItemRouter router;
 
-    public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
-        super(player, filterStack, router);
+    public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
+        super(player, filterStack, hand, router);
 
         this.handler = new BulkFilterHandler(filterStack);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
@@ -39,7 +39,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
             FilterSlot slot = router == null ?
-                    new FilterSlot(handler, player, EnumHand.MAIN_HAND, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
+                    new FilterSlot(handler, player, hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
                     new FilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
             addSlotToContainer(slot);
         }
