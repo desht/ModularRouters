@@ -132,7 +132,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     @Override
     public ITextComponent getDisplayName() {
-        return new TextComponentTranslation("tile.itemRouter.name");
+        return new TextComponentTranslation("tile.item_router.name");
     }
 
     public IItemHandler getBuffer() {

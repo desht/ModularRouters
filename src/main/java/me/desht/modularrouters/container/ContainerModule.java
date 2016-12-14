@@ -102,7 +102,7 @@ public class ContainerModule extends Container {
             case PICKUP:
                 // normal left-click
                 if (router == null && slot == currentSlot) {
-                    // no messing with the module that triggered this container's creation
+                    // no messing with the module    that triggered this container's creation
                     return ItemStack.EMPTY;
                 }
                 if (slot < Filter.FILTER_SIZE && slot >= 0) {

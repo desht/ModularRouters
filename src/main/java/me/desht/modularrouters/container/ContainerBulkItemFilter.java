@@ -2,32 +2,39 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
+import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.IItemHandler;
-
-import javax.annotation.Nullable;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
 public class ContainerBulkItemFilter extends ContainerSmartFilter {
+    private static final int INV_START = BulkItemFilter.FILTER_SIZE;
+    private static final int INV_END = INV_START + 26;
+    private static final int HOTBAR_START = INV_END + 1;
+    private static final int HOTBAR_END = HOTBAR_START + 8;
+
     private static final int PLAYER_INV_X = 8;
     private static final int PLAYER_INV_Y = 151;
     private static final int PLAYER_HOTBAR_Y = 209;
 
     private final FilterHandler handler;
+    private final int currentSlot;  // currently-selected slot for player
+    private final TileEntityItemRouter router;
 
     public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
         super(player, filterStack, router);
 
-        handler = new BulkFilterHandler(filterStack);
+        this.handler = new BulkFilterHandler(filterStack);
+        this.currentSlot = player.inventory.currentItem + HOTBAR_START;
+        this.router = router;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
@@ -52,7 +59,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
 
     public void clearSlots() {
         for (int i = 0; i < handler.getSlots(); i++) {
-            handler.setStackInSlot(i, null);
+            handler.setStackInSlot(i, ItemStack.EMPTY);
         }
         handler.save();
 
@@ -82,7 +89,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
             handler.setStackInSlot(slot++, stack);
         }
         while (slot < handler.getSlots()) {
-            handler.setStackInSlot(slot++, null);
+            handler.setStackInSlot(slot++, ItemStack.EMPTY);
         }
         handler.save();
 
@@ -93,7 +100,6 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         return stacks.size() - origSize;
     }
 
-    @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack stack;
@@ -126,12 +132,15 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         return ItemStack.EMPTY;
     }
 
-    @Nullable
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
+                if (router == null && slot == currentSlot) {
+                    // no messing with the module that triggered this container's creation
+                    return ItemStack.EMPTY;
+                }
                 if (slot < handler.getSlots() && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
                     ItemStack stackOnCursor = player.inventory.getItemStack();

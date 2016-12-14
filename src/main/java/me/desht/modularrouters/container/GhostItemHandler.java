@@ -6,6 +6,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import java.util.Arrays;
+
 /**
  * Handler for a ghost inventory; only holds copies of items, and can't be extracted from.
  */
@@ -14,9 +16,7 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
 
     GhostItemHandler(int size) {
         this.items = new ItemStack[size];
-        for (int i = 0; i < size; i++) {
-            items[i] = ItemStack.EMPTY;
-        }
+        Arrays.fill(this.items, ItemStack.EMPTY);
     }
 
     @Override

@@ -50,11 +50,6 @@ public class FilterHandler extends GhostItemHandler {
      * Save the contents of the item handler onto the holder item stack's NBT
      */
     public void save() {
-//        for (int i = 0; i < items.length; i++) {
-//            if (items[i] != null && items[i].isEmpty()) {
-//                items[i] = null;
-//            }
-//        }
         holderStack.getTagCompound().setTag(ModuleHelper.NBT_FILTER, serializeNBT());
     }
 
