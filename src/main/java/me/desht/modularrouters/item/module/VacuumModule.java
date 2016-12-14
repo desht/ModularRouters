@@ -2,20 +2,34 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
+import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import java.util.List;
+
 public class VacuumModule extends Module {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledVacuumModule(router, stack);
+    }
+
+    @Override
+    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addExtraInformation(stack, player, list, par4);
+        if (ModuleHelper.hasFastPickup(stack)) {
+            list.add(I18n.format("itemText.misc.fastPickup"));
+        }
     }
 
     @Override

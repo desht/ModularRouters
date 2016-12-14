@@ -21,6 +21,7 @@ public class ModuleHelper {
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
     public static final String NBT_PICKUP_DELAY = "PickupDelay";
+    private static final String NBT_FAST_PICKUP = "FastPickup";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
@@ -139,5 +140,15 @@ public class ModuleHelper {
     public static int getPickupDelay(ItemStack stack) {
         NBTTagCompound compound = validateNBT(stack);
         return compound.getInteger(NBT_PICKUP_DELAY);
+    }
+
+    public static void addFastPickup(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        compound.setBoolean(NBT_FAST_PICKUP, true);
+    }
+
+    public static boolean hasFastPickup(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        return compound.getBoolean(NBT_FAST_PICKUP);
     }
 }

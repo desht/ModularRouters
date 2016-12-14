@@ -7,6 +7,7 @@ import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -18,10 +19,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
-
-import java.util.Arrays;
 
 public class ModRecipes {
     public static void init() {
@@ -72,12 +72,23 @@ public class ModRecipes {
         addRedstoneUpgradeRecipes();
         addRegulatorUpgradeRecipes();
         addPickupDelayRecipes();
+        addFastPickupRecipe();
 
         if (Loader.isModLoaded("guideapi")) {
             GameRegistry.addShapelessRecipe(GuideAPI.getStackFromBook(Guidebook.guideBook), Items.BOOK, ModItems.blankModule);
         }
 
         MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
+    }
+
+    private static void addFastPickupRecipe() {
+        RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        ItemStack output = ItemModule.makeItemStack(ModuleType.VACUUM);
+        ModuleHelper.addFastPickup(output);
+        GameRegistry.addRecipe(new FastPickupEnhancementRecipe(output,
+                "FM",
+                'F', Items.FISHING_ROD,
+                'M', ItemModule.makeItemStack(ModuleType.VACUUM)));
     }
 
     private static void addRedstoneUpgradeRecipes() {
