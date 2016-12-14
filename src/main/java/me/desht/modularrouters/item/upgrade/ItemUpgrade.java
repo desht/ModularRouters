@@ -81,7 +81,7 @@ public class ItemUpgrade extends ItemBase {
 
     @Override
     public String getSubTypeName(int meta) {
-        return UpgradeType.values()[meta].name().toLowerCase() + "Upgrade";
+        return UpgradeType.values()[meta].name().toLowerCase() + "_upgrade";
     }
 
     @Override

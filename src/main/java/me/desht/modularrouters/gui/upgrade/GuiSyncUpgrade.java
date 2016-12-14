@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.GuiResponder {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/syncUpgrade.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/sync_upgrade.png");
     private static final ItemStack clockStack = new ItemStack(Items.CLOCK);
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 48;

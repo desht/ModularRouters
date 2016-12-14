@@ -63,7 +63,7 @@ public class ContainerModFilter extends ContainerSmartFilter {
                 slot.putStack(stackInSlot);
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Nullable
@@ -81,11 +81,11 @@ public class ContainerModFilter extends ContainerSmartFilter {
                     } else {
                         s.putStack(ItemStack.EMPTY);
                     }
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             case THROW:
                 if (slot == 0) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
         }
         return super.slotClick(slot, dragType, clickTypeIn, player);

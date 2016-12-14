@@ -109,7 +109,7 @@ public class ContainerItemRouter extends Container {
 
         // If stack size == 0 (the entire stack was moved) set slot contents to null
         if (sourceStack.isEmpty()) {
-            sourceSlot.putStack(null);
+            sourceSlot.putStack(ItemStack.EMPTY);
         } else {
             sourceSlot.onSlotChanged();
         }

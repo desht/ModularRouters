@@ -15,11 +15,11 @@ public class ModItems {
     public static ItemSmartFilter smartFilter;
 
     public static void init() {
-        blankModule = register(new ItemBase("blankModule"));
+        blankModule = register(new ItemBase("blank_module"));
         module = register(new ItemModule(), ItemModule.SUBTYPES);
-        blankUpgrade = register(new ItemBase("blankUpgrade"));
+        blankUpgrade = register(new ItemBase("blank_upgrade"));
         upgrade = register(new ItemUpgrade(), ItemUpgrade.SUBTYPES);
-        overrideCard = register(new ItemBase("overrideCard"));
+        overrideCard = register(new ItemBase("override_card"));
         smartFilter = register(new ItemSmartFilter(), ItemSmartFilter.SUBTYPES);
     }
 

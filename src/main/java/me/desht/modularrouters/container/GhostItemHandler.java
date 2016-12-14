@@ -14,6 +14,9 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
 
     GhostItemHandler(int size) {
         this.items = new ItemStack[size];
+        for (int i = 0; i < size; i++) {
+            items[i] = ItemStack.EMPTY;
+        }
     }
 
     @Override

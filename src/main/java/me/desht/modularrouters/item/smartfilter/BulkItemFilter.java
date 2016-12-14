@@ -60,6 +60,7 @@ public class BulkItemFilter extends SmartFilter {
                 SetofItemStack stacks = new SetofItemStack(items.tagCount(), flags);
                 for (int i = 0; i < items.tagCount(); i++) {
                     NBTTagCompound c = (NBTTagCompound) items.get(i);
+                    ItemStack stack = new ItemStack(c);
                     handler.setStackInSlot(i, stack);
                     stacks.add(new ItemStack(c));
                 }

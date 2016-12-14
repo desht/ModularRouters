@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
-    public static final String BLOCK_NAME = "itemRouter";
+    public static final String BLOCK_NAME = "item_router";
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyBool ACTIVE = PropertyBool.create("active");

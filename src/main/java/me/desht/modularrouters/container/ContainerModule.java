@@ -91,7 +91,7 @@ public class ContainerModule extends Container {
                 }
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class ContainerModule extends Container {
                 // normal left-click
                 if (router == null && slot == currentSlot) {
                     // no messing with the module that triggered this container's creation
-                    return null;
+                    return ItemStack.EMPTY;
                 }
                 if (slot < Filter.FILTER_SIZE && slot >= 0) {
                     Slot s = inventorySlots.get(slot);
@@ -115,11 +115,11 @@ public class ContainerModule extends Container {
                     } else {
                         s.putStack(ItemStack.EMPTY);
                     }
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             case THROW:
                 if (slot < Filter.FILTER_SIZE && slot >= 0) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
         }
         return super.slotClick(slot, dragType, clickTypeIn, player);

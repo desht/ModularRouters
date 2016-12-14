@@ -123,7 +123,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
                 }
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Nullable
@@ -142,11 +142,11 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
                     } else {
                         s.putStack(ItemStack.EMPTY);
                     }
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             case THROW:
                 if (slot < handler.getSlots() && slot >= 0) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
         }
         return super.slotClick(slot, dragType, clickTypeIn, player);

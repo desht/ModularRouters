@@ -85,7 +85,7 @@ public class ItemSmartFilter extends ItemBase {
 
     @Override
     public String getSubTypeName(int meta) {
-        return ItemSmartFilter.FilterType.values()[meta].name().toLowerCase() + "Filter";
+        return ItemSmartFilter.FilterType.values()[meta].name().toLowerCase() + "_filter";
     }
 
     public static SmartFilter getFilter(ItemStack stack) {

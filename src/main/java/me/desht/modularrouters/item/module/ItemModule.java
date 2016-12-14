@@ -124,7 +124,7 @@ public class ItemModule extends ItemBase {
 
     @Override
     public String getSubTypeName(int meta) {
-        return ItemModule.ModuleType.values()[meta].name().toLowerCase() + "Module";
+        return ItemModule.ModuleType.values()[meta].name().toLowerCase() + "_module";
     }
 
     public static Module getModule(ItemStack stack) {
