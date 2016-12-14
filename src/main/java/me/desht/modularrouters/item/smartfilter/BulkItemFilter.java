@@ -103,8 +103,8 @@ public class BulkItemFilter extends SmartFilter {
     }
 
     @Override
-    public Container createContainer(EntityPlayer player, ItemStack filterStack, TileEntityItemRouter router) {
-        return new ContainerBulkItemFilter(player, filterStack, router);
+    public Container createContainer(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
+        return new ContainerBulkItemFilter(player, filterStack, hand, router);
     }
 
     @Override

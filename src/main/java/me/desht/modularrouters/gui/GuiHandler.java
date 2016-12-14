@@ -25,9 +25,9 @@ public class GuiHandler implements IGuiHandler {
         } else if (ID == ModularRouters.GUI_MODULE_INSTALLED) {
             return ModuleGuiFactory.createContainer(player, world, x, y, z);
         } else if (ID == ModularRouters.GUI_FILTER_HELD_MAIN) {
-            return FilterGuiFactory.createContainer(player, player.getHeldItem(EnumHand.MAIN_HAND));
+            return FilterGuiFactory.createContainer(player, EnumHand.MAIN_HAND);
         } else if (ID == ModularRouters.GUI_FILTER_HELD_OFF) {
-            return FilterGuiFactory.createContainer(player, player.getHeldItem(EnumHand.OFF_HAND));
+            return FilterGuiFactory.createContainer(player, EnumHand.OFF_HAND);
         } else if (ID == ModularRouters.GUI_FILTER_INSTALLED) {
             return FilterGuiFactory.createContainer(player, world, x, y, z);
         }
