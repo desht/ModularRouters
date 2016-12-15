@@ -2,10 +2,12 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.VacuumModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -18,8 +20,11 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
+    private final boolean fastPickup;
+
     public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
+        fastPickup = ModuleHelper.hasFastPickup(stack);
     }
 
     @Override
@@ -38,7 +43,7 @@ public class CompiledVacuumModule extends CompiledModule {
         int toPickUp = router.getItemsPerTick();
 
         for (EntityItem item : items) {
-            if (item.isDead || item.cannotPickup()) {
+            if (item.isDead || (!fastPickup && item.cannotPickup())) {
                 continue;
             }
             ItemStack stackOnGround = item.getEntityItem();

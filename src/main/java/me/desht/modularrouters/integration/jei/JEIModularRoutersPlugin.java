@@ -14,7 +14,8 @@ public class JEIModularRoutersPlugin extends BlankModPlugin {
         registry.addRecipeHandlers(
                 new RedstoneEnhancementRecipeHandler(jeiHelpers),
                 new RegulatorEnhancementRecipeHandler(jeiHelpers),
-                new PickupDelayEnhancementRecipeHandler(jeiHelpers)
+                new PickupDelayEnhancementRecipeHandler(jeiHelpers),
+                new FastPickupEnhancementRecipeHandler(jeiHelpers)
         );
     }
 }
