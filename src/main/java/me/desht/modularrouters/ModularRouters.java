@@ -78,7 +78,7 @@ public class ModularRouters {
         NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
         MinecraftForge.EVENT_BUS.register(CamouflageUpgrade.Interacted.class);
-//        IntegrationHandler.registerWaila();
+        IntegrationHandler.registerWaila();
         IntegrationHandler.registerTOP();
         IntegrationHandler.registerTesla();
     }
