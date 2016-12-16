@@ -36,7 +36,7 @@ public class RouterDataProvider implements IWailaDataProvider {
                 MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", router.getModuleCount());
                 for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
                     if (router.getUpgradeCount(type) > 0) {
-                        String name = MiscUtil.translate("item." + type.toString().toLowerCase() + "Upgrade.name");
+                        String name = MiscUtil.translate("item." + type.toString().toLowerCase() + "_upgrade.name");
                         currenttip.add(MiscUtil.translate("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
                     }
                 }

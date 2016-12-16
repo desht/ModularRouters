@@ -1,7 +1,7 @@
 package me.desht.modularrouters.integration.jei;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.recipe.ModuleEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.ModuleEnhancementRecipe;
 import me.desht.modularrouters.util.MiscUtil;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.gui.ICraftingGridHelper;

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.RegulatorEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.RegulatorEnhancementRecipe;
 import mezz.jei.api.IJeiHelpers;
 
 public class RegulatorEnhancementRecipeHandler extends BaseEnhancementRecipeHandler<RegulatorEnhancementRecipe> {

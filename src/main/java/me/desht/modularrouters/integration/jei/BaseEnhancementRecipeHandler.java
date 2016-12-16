@@ -1,6 +1,6 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.ModuleEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.ModuleEnhancementRecipe;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.recipe.IRecipeHandler;
 import mezz.jei.api.recipe.IRecipeWrapper;

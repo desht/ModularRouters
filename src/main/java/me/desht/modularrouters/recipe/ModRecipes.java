@@ -1,16 +1,17 @@
 package me.desht.modularrouters.recipe;
 
-import amerifrance.guideapi.api.GuideAPI;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
-import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.recipe.enhancement.FastPickupEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.PickupDelayEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.RedstoneEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.RegulatorEnhancementRecipe;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
@@ -18,8 +19,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 
@@ -79,24 +78,13 @@ public class ModRecipes {
 
     private static void addFastPickupRecipe() {
         RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
-        ItemStack output = ItemModule.makeItemStack(ModuleType.VACUUM);
-        ModuleHelper.addFastPickup(output);
-        GameRegistry.addRecipe(new FastPickupEnhancementRecipe(output,
-                "FM",
-                'F', Items.FISHING_ROD,
-                'M', ItemModule.makeItemStack(ModuleType.VACUUM)));
+        GameRegistry.addRecipe(new FastPickupEnhancementRecipe(ModuleType.VACUUM));
     }
 
     private static void addRedstoneUpgradeRecipes() {
         RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
-            ItemStack output = ItemModule.makeItemStack(type);
-            ModuleHelper.setRedstoneBehaviour(output, true, RouterRedstoneBehaviour.ALWAYS);
-            GameRegistry.addRecipe(new RedstoneEnhancementRecipe(output,
-                    " R ", "TMT", " R ",
-                    'R', Items.REDSTONE,
-                    'T', Blocks.REDSTONE_TORCH,
-                    'M', ItemModule.makeItemStack(type)));
+            GameRegistry.addRecipe(new RedstoneEnhancementRecipe(type));
         }
     }
 
@@ -104,13 +92,7 @@ public class ModRecipes {
         RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
             if (RegulatorEnhancementRecipe.appliesTo(type)) {
-                ItemStack output = ItemModule.makeItemStack(type);
-                ModuleHelper.setRegulatorAmount(output, true, 1);
-                GameRegistry.addRecipe(new RegulatorEnhancementRecipe(output,
-                        " Q ", "CMC", " Q ",
-                        'Q', Items.QUARTZ,
-                        'C', Items.COMPARATOR,
-                        'M', ItemModule.makeItemStack(type)));
+                GameRegistry.addRecipe(new RegulatorEnhancementRecipe(type));
             }
         }
     }
@@ -118,12 +100,7 @@ public class ModRecipes {
     private static void addPickupDelayRecipes() {
         RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : new ItemModule.ModuleType[] { ModuleType.DROPPER, ModuleType.FLINGER} ) {
-            ItemStack output = ItemModule.makeItemStack(type);
-            ModuleHelper.increasePickupDelay(output);
-            GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(output,
-                    "SM",
-                    'S', Items.SLIME_BALL,
-                    'M', ItemModule.makeItemStack(type)));
+            GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(type));
         }
     }
 }

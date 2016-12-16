@@ -29,7 +29,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ModularRouters.modId, version = ModularRouters.version, name = ModularRouters.name,
-        guiFactory = ModularRouters.GUIFACTORY, dependencies = "after:Waila;after:guideapi;after:theoneprobe")
+        guiFactory = ModularRouters.GUIFACTORY, dependencies = "after:Waila;before:guideapi;after:theoneprobe")
 public class ModularRouters {
     public static final String modId = "modularrouters";
     public static final String name = "Modular Routers";

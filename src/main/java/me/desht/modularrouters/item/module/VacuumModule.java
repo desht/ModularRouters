@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class VacuumModule extends Module {
     protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(stack, player, list, par4);
         if (ModuleHelper.hasFastPickup(stack)) {
-            list.add(I18n.format("itemText.misc.fastPickup"));
+            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.fastPickup"));
         }
     }
 

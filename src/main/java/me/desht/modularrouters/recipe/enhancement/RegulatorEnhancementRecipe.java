@@ -1,16 +1,20 @@
-package me.desht.modularrouters.recipe;
+package me.desht.modularrouters.recipe.enhancement;
 
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
-    RegulatorEnhancementRecipe(ItemStack result, Object... recipe) {
-        super(result, recipe);
+    public RegulatorEnhancementRecipe(ItemModule.ModuleType type) {
+        super(ItemModule.makeItemStack(type),  " Q ", "CMC", " Q ",
+                'Q', Items.QUARTZ,
+                'C', Items.COMPARATOR,
+                'M', ItemModule.makeItemStack(type));
     }
 
     @Override
-    public void enableUpgrade(ItemStack stack) {
+    public void applyEnhancement(ItemStack stack) {
         ModuleHelper.setRegulatorAmount(stack, true, 1);
     }
 
@@ -19,12 +23,12 @@ public class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
         return "regulator";
     }
 
-    static boolean appliesTo(ItemModule.ModuleType type) {
+    public static boolean appliesTo(ItemModule.ModuleType type) {
         return ItemModule.getModule(type).canBeRegulated();
     }
 
     @Override
-    protected boolean validateItem(ItemStack stack) {
+    protected boolean validateModule(ItemStack stack) {
         return !ModuleHelper.isRegulatorEnabled(stack);
     }
 }

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.RedstoneEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.RedstoneEnhancementRecipe;
 import mezz.jei.api.IJeiHelpers;
 
 public class RedstoneEnhancementRecipeHandler extends BaseEnhancementRecipeHandler<RedstoneEnhancementRecipe> {

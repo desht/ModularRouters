@@ -1,6 +1,6 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.PickupDelayEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.PickupDelayEnhancementRecipe;
 import mezz.jei.api.IJeiHelpers;
 
 public class PickupDelayEnhancementRecipeHandler extends BaseEnhancementRecipeHandler<PickupDelayEnhancementRecipe> {

@@ -1,4 +1,4 @@
-package me.desht.modularrouters.recipe;
+package me.desht.modularrouters.recipe.enhancement;
 
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.inventory.InventoryCrafting;
@@ -10,13 +10,14 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     ModuleEnhancementRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
+//        applyEnhancement(result);
     }
 
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (ItemModule.getModule(stack) != null && !validateItem(stack)) {
+            if (ItemModule.getModule(stack) != null && !validateModule(stack)) {
                 return false;
             }
         }
@@ -36,29 +37,31 @@ public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
         }
         if (compound != null) {
             out.setTagCompound(compound.copy());
-            enableUpgrade(out);
+            applyEnhancement(out);
         }
         return out;
     }
 
     /**
-     * Check that the output item is OK for an upgrade to be applied.
+     * Check that the output item is OK for an enhancement to be applied.
      *
      * @param stack the item to check
-     * @return true if the item is OK for upgrading
+     * @return true if the item is OK for enhancement
      */
-    protected abstract boolean validateItem(ItemStack stack);
+    protected abstract boolean validateModule(ItemStack stack);
 
     /**
-     * Do what's necessary to the item to enable the upgrade, generally modifying the item's NBT in some way.
+     * Do what's necessary to the item to enable the enhancement, generally modifying the item's NBT in some way.
      * The item is guaranteed to have some NBT when this is called, i.e. getTagCompound() will not return null.
      *
      * @param stack the item to modify
      */
-    public abstract void enableUpgrade(ItemStack stack);
+    public abstract void applyEnhancement(ItemStack stack);
 
     /**
      * Return a simple identifier for the recipe.  Used mainly for documentation/translation purposes (e.g. JEI)
+     *
+     * @return the recipe ID
      */
     public abstract String getRecipeId();
 }

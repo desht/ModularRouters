@@ -81,6 +81,7 @@ public class Guidebook implements IGuideBook {
                 new ShapedOreRecipe(new ItemStack(ModItems.blankModule),
                         " r ", "tmt", " r ", 'r', Items.REDSTONE, 'm', ModItems.blankModule, 't', Blocks.REDSTONE_TORCH)
         ));
+
         entries.put(new ResourceLocation(ModularRouters.modId, "moduleRedstone"), new EntryItemStack(pages, translate("guidebook.words.redstone"), new ItemStack(Items.REDSTONE)));
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleRegulator", ModuleType.values().length, String.valueOf(Config.configKey)), 250));
         pages.add(new PageIRecipe(

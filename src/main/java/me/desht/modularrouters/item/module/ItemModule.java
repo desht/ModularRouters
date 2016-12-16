@@ -216,16 +216,16 @@ public class ItemModule extends ItemBase {
                 ));
         if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
             RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.redstone.label")
+            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.redstone.label")
                     + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
         }
         if (ModuleHelper.isRegulatorEnabled(itemstack)) {
             int amount = ModuleHelper.getRegulatorAmount(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.regulator.label", amount));
+            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.regulator.label", amount));
         }
         int pickupDelay = ModuleHelper.getPickupDelay(itemstack);
         if (pickupDelay > 0) {
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
+            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
         }
     }
 
