@@ -32,6 +32,8 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
         super(player, filterStack, hand, router);
 
+        BulkItemFilter.checkAndMigrateOldNBT(filterStack);
+
         this.handler = new BulkFilterHandler(filterStack);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
         this.router = router;

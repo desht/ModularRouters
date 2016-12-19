@@ -41,7 +41,7 @@ import java.util.List;
 public class BulkItemFilter extends SmartFilter {
     public static final int FILTER_SIZE = 54;
     private static final String NBT_ITEMS_DEPRECATED = "Items";
-    public static final Flags DEF_FLAGS = new Flags((byte) 0x00);
+    private static final Flags DEF_FLAGS = new Flags((byte) 0x00);
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
@@ -52,25 +52,9 @@ public class BulkItemFilter extends SmartFilter {
 
     private static SetofItemStack getFilterItems(ItemStack filterStack, Flags flags) {
         if (filterStack.hasTagCompound()) {
-            NBTTagCompound compound = filterStack.getTagCompound();
+            checkAndMigrateOldNBT(filterStack);
             FilterHandler handler = new BulkFilterHandler(filterStack);
-            if (compound.hasKey(NBT_ITEMS_DEPRECATED)) {
-                // migrate the old-style bulk filter
-                NBTTagList items = compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND);
-                SetofItemStack stacks = new SetofItemStack(items.tagCount(), flags);
-                for (int i = 0; i < items.tagCount(); i++) {
-                    NBTTagCompound c = (NBTTagCompound) items.get(i);
-                    ItemStack stack = new ItemStack(c);
-                    handler.setStackInSlot(i, stack);
-                    stacks.add(new ItemStack(c));
-                }
-                handler.save();
-                compound.removeTag(NBT_ITEMS_DEPRECATED);
-                return stacks;
-            } else {
-                // new-style filter; simple case
-                return SetofItemStack.fromItemHandler(handler, flags);
-            }
+            return SetofItemStack.fromItemHandler(handler, flags);
         } else {
             return new SetofItemStack(DEF_FLAGS);
         }
@@ -186,5 +170,27 @@ public class BulkItemFilter extends SmartFilter {
         handler.save();
 
         return stacks.size() - origSize;
+    }
+
+    /**
+     * Check for old-style (pre-v1.2.0) filter NBT and migrate it to the new format.
+     *
+     * @param filterStack the bulk filter item to check
+     */
+    public static void checkAndMigrateOldNBT(ItemStack filterStack) {
+        NBTTagCompound compound = filterStack.getTagCompound();
+        if (compound != null && compound.hasKey(NBT_ITEMS_DEPRECATED)) {
+            // migrate the old-style bulk filter
+            FilterHandler handler = new BulkFilterHandler(filterStack);
+            NBTTagList items = compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < items.tagCount(); i++) {
+                NBTTagCompound c = (NBTTagCompound) items.get(i);
+                ItemStack stack = new ItemStack(c);
+                stack.setCount(1);
+                handler.setStackInSlot(i, stack);
+            }
+            handler.save();
+            compound.removeTag(NBT_ITEMS_DEPRECATED);
+        }
     }
 }
