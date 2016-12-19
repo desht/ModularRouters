@@ -2,6 +2,7 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
+import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +27,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
         super(player, filterStack, hand, router);
 
+        BulkItemFilter.checkAndMigrateOldNBT(filterStack);
         handler = new BulkFilterHandler(filterStack);
 
         // slots for the (ghost) filter items
