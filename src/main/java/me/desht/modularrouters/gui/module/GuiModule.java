@@ -38,6 +38,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import org.apache.commons.lang3.Range;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -70,6 +71,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private final BlockPos routerPos;
     private final int moduleSlotIndex;
     private final EnumHand hand;
+    protected final boolean regulationEnabled;
     private RelativeDirection facing;
     private int sendDelay;
     private int regulatorAmount;
@@ -89,6 +91,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         this.moduleSlotIndex = slotIndex;
         this.hand = hand;
         this.facing = ModuleHelper.getDirectionFromNBT(moduleItemStack);
+        this.regulationEnabled = ModuleHelper.isRegulatorEnabled(moduleItemStack);
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
@@ -121,12 +124,15 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             buttonList.add(rbb);
         }
 
-        if (ModuleHelper.isRegulatorEnabled(moduleItemStack)) {
+        if (regulationEnabled) {
             TextFieldManager manager = createTextFieldManager();
-            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRendererObj, guiLeft + 166, guiTop + 77, 20, 12, 0, 64);
+            Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
+            int xOff = module.isFluidModule() ? 0 : 10;
+            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRendererObj, guiLeft + 156 + xOff, guiTop + 77,
+                    20, 12, range.getMinimum(), range.getMaximum());
             field.setValue(ModuleHelper.getRegulatorAmount(moduleItemStack));
             field.setGuiResponder(this);
-            buttonList.add(new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 148, guiTop + 74));
+            buttonList.add(new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 138 + xOff, guiTop + 74, module.isFluidModule()));
         }
 
         if (routerPos != null) {
@@ -334,9 +340,9 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     private static class RegulatorTooltipButton extends TexturedButton {
-        public RegulatorTooltipButton(int buttonId, int x, int y) {
+        public RegulatorTooltipButton(int buttonId, int x, int y, boolean isFluid) {
             super(buttonId, x, y, 16, 16);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.regulatorTooltip");
+            MiscUtil.appendMultiline(tooltip1, isFluid ? "guiText.tooltip.fluidRegulatorTooltip" : "guiText.tooltip.regulatorTooltip");
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 

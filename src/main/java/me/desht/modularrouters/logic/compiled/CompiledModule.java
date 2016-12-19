@@ -74,7 +74,7 @@ public abstract class CompiledModule {
         return behaviour;
     }
 
-    int getRegulationAmount() {
+    public int getRegulationAmount() {
         return regulationAmount;
     }
 

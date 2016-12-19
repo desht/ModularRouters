@@ -56,11 +56,6 @@ public class FluidModule extends Module {
     }
 
     @Override
-    public boolean canBeRegulated() {
-        return false;
-    }
-
-    @Override
     public boolean isItemValidForFilter(ItemStack stack) {
         // only fluid-holding items or a smart filter item can go into a fluid module's filter
         return stack.isEmpty()
@@ -71,5 +66,10 @@ public class FluidModule extends Module {
     @Override
     public IItemMatcher getFilterItemMatcher(ItemStack stack) {
         return new FluidMatcher(stack);
+    }
+
+    @Override
+    public boolean isFluidModule() {
+        return true;
     }
 }

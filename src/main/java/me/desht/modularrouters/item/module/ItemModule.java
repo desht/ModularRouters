@@ -178,6 +178,7 @@ public class ItemModule extends ItemBase {
         if (GuiScreen.isShiftKeyDown()) {
             addSettingsInformation(itemstack, list, module);
             module.addExtraInformation(itemstack, player, list, par4);
+            addEnhancementInformation(itemstack, list, module);
         } else if (GuiScreen.isCtrlKeyDown()) {
             module.addUsageInformation(itemstack, player, list, par4);
         } else {
@@ -214,6 +215,9 @@ public class ItemModule extends ItemBase {
                         compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
                         compose("TERMINATE", !ModuleHelper.terminates(itemstack))
                 ));
+    }
+
+    private void addEnhancementInformation(ItemStack itemstack, List<String> list, Module module) {
         if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
             RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
             list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.redstone.label")

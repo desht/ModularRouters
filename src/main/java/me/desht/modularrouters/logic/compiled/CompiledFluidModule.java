@@ -4,6 +4,8 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -77,7 +79,7 @@ public class CompiledFluidModule extends CompiledModule {
         int count = 0;
         for (EnumFacing face : EnumFacing.HORIZONTALS) {
             IBlockState state2 = world.getBlockState(pos.offset(face));
-            if (state2.getBlock() == Blocks.WATER) {
+            if (state2.getBlock() == Blocks.WATER && state2.getValue(BlockLiquid.LEVEL) == 0) {
                 if (++count >= 2) return true;
             }
         }
@@ -100,6 +102,13 @@ public class CompiledFluidModule extends CompiledModule {
     }
 
     private boolean doTransfer(TileEntityItemRouter router, IFluidHandler src, IFluidHandler dest, FluidDirection direction) {
+        if (getRegulationAmount() > 0) {
+            if (direction == FluidDirection.IN && checkFluidPercent(src) <= getRegulationAmount()) {
+                return false;
+            } else if (direction == FluidDirection.OUT && checkFluidPercent(dest) >= getRegulationAmount()) {
+                return false;
+            }
+        }
         int amount = Math.min(maxTransfer, router.getCurrentFluidTransferAllowance(direction));
         FluidStack newStack = FluidUtil.tryFluidTransfer(dest, src, amount, false);
         if (newStack != null && newStack.amount > 0) {
@@ -110,6 +119,16 @@ public class CompiledFluidModule extends CompiledModule {
             }
         }
         return false;
+    }
+
+    private int checkFluidPercent(IFluidHandler handler) {
+        // note: total amount of all fluids in all tanks... not ideal for inventories with multiple tanks
+        int total = 0, max = 0;
+        for (IFluidTankProperties tank : handler.getTankProperties()) {
+            max += tank.getCapacity();
+            if (tank.getContents() != null) total += tank.getContents().amount;
+        }
+        return (total * 100) / max;
     }
 
     private NBTTagCompound setupNBT(ItemStack stack) {

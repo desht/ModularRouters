@@ -165,7 +165,13 @@ public abstract class Module {
 
     public abstract IRecipe getRecipe();
 
-    public boolean canBeRegulated() { return true; }
+    public boolean isFluidModule() {
+        return false;
+    }
+
+    public boolean canBeRegulated() {
+        return true;
+    }
 
     /**
      * Check if the given item is OK for this module's filter.
