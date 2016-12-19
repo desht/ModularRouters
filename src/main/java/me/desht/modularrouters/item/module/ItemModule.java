@@ -180,6 +180,7 @@ public class ItemModule extends ItemBase {
         if (GuiScreen.isShiftKeyDown()) {
             addSettingsInformation(itemstack, list, module);
             module.addExtraInformation(itemstack, player, list, par4);
+            addEnhancementInformation(itemstack, list, module);
         } else if (GuiScreen.isCtrlKeyDown()) {
             module.addUsageInformation(itemstack, player, list, par4);
         } else {
@@ -216,18 +217,22 @@ public class ItemModule extends ItemBase {
                         compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
                         compose("TERMINATE", !ModuleHelper.terminates(itemstack))
                 ));
+    }
+
+    private void addEnhancementInformation(ItemStack itemstack, List<String> list, Module module) {
         if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
             RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.redstone.label")
+            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.redstone.label")
                     + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
         }
         if (ModuleHelper.isRegulatorEnabled(itemstack)) {
             int amount = ModuleHelper.getRegulatorAmount(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.regulator.label", amount));
+            String key = module.isFluidModule() ? "guiText.tooltip.regulator.labelFluid" : "guiText.tooltip.regulator.label";
+            list.add(TextFormatting.GREEN + I18n.format(key, amount));
         }
         int pickupDelay = ModuleHelper.getPickupDelay(itemstack);
         if (pickupDelay > 0) {
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
+            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
         }
     }
 
