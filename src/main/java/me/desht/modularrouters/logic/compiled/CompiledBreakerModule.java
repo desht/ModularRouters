@@ -31,7 +31,7 @@ public class CompiledBreakerModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        if (getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull() && isRegulationOK(router, true)) {
+        if (getDirection() != Module.RelativeDirection.NONE && isRegulationOK(router, true)) {
             World world = router.getWorld();
             if (!(world instanceof WorldServer)) {
                 return false;
