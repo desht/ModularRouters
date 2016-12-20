@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -23,16 +24,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
-    // appears not necessary for 1.11
-//    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
+    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
 
     public static IBlockState getPlaceableState(ItemStack stack) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
         Item item = stack.getItem();
         if (item instanceof ItemBlock) {
             return ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
-//        } else if (item instanceof ItemBlockSpecial) {
-//            return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
+        } else if (item instanceof ItemBlockSpecial) {
+            return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
         } else if (item instanceof ItemRedstone){
             return Blocks.REDSTONE_WIRE.getDefaultState();
         } else {
@@ -61,9 +61,11 @@ public class BlockUtil {
                 return null;
             }
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
-            BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer);
+            fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
+            BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer, EnumHand.MAIN_HAND);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState)) {
+                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
                 return newState;
             }
