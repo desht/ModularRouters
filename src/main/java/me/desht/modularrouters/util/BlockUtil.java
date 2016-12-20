@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
-    // TODO update for MC 1.11
-    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
+    // appears not necessary for 1.11
+//    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
 
     public static IBlockState getPlaceableState(ItemStack stack) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
         Item item = stack.getItem();
         if (item instanceof ItemBlock) {
             return ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
-        } else if (item instanceof ItemBlockSpecial) {
-            return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
+//        } else if (item instanceof ItemBlockSpecial) {
+//            return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
         } else if (item instanceof ItemRedstone){
             return Blocks.REDSTONE_WIRE.getDefaultState();
         } else {
