@@ -10,17 +10,13 @@ public class FluidMatcher implements IItemMatcher {
     private final Fluid fluid;
 
     public FluidMatcher(ItemStack stack) {
-        if (stack != null) {
-            FluidStack fluidStack = FluidUtil.getFluidContained(stack);
-            this.fluid = fluidStack != null ? fluidStack.getFluid() : null;
-        } else {
-            this.fluid = null;
-        }
+        FluidStack fluidStack = FluidUtil.getFluidContained(stack);
+        this.fluid = fluidStack != null ? fluidStack.getFluid() : null;
     }
 
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        FluidStack fStack2 = stack == null ? null : FluidUtil.getFluidContained(stack);
+        FluidStack fStack2 = FluidUtil.getFluidContained(stack);
         return fStack2 != null && fStack2.getFluid() == fluid;
     }
 }

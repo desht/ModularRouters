@@ -45,7 +45,7 @@ public class BulkItemFilter extends SmartFilter {
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
-        Flags flags = moduleStack == null ? DEF_FLAGS : new Flags(moduleStack);
+        Flags flags = moduleStack.isEmpty() ? DEF_FLAGS : new Flags(moduleStack);
         SetofItemStack stacks = getFilterItems(filterStack, flags);
         return new BulkItemMatcher(stacks, flags);
     }

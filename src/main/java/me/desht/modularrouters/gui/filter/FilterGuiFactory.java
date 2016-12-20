@@ -50,7 +50,7 @@ public class FilterGuiFactory {
             return null;
         }
 
-        if (filterStack == null) {
+        if (filterStack.isEmpty()) {
             return null;
         }
 

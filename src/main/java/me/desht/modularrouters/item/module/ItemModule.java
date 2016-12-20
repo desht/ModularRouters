@@ -247,7 +247,7 @@ public class ItemModule extends ItemBase {
     }
 
     public static boolean isType(ItemStack stack, ModuleType type) {
-        return stack != null && stack.getItem() instanceof ItemModule && stack.getItemDamage() == type.ordinal();
+        return stack.getItem() instanceof ItemModule && stack.getItemDamage() == type.ordinal();
     }
 
     public static void setFilterConfigSlot(ItemStack stack, int slot) {
