@@ -7,14 +7,14 @@ import net.minecraft.item.ItemStack;
 
 public class PickupDelayEnhancementRecipe extends ModuleEnhancementRecipe {
     public PickupDelayEnhancementRecipe(ItemModule.ModuleType type) {
-        super(ItemModule.makeItemStack(type), "SM",
+        super(ModuleHelper.makeItemStack(type), "SM",
                 'S', Items.SLIME_BALL,
-                'M', ItemModule.makeItemStack(type));
+                'M', ModuleHelper.makeItemStack(type));
     }
 
     @Override
     protected boolean validateModule(ItemStack stack) {
-        return ItemModule.isType(stack, ItemModule.ModuleType.FLINGER) || ItemModule.isType(stack, ItemModule.ModuleType.DROPPER);
+        return ModuleHelper.isModuleType(stack, ItemModule.ModuleType.FLINGER, ItemModule.ModuleType.DROPPER);
     }
 
     @Override

@@ -3,7 +3,7 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IThreadListener;
@@ -149,7 +149,7 @@ public class OpenGuiMessage extends BaseSettingsMessage {
                     case FILTER_HELD:
                         // filter is in a module in player's hand
                         // record the filter slot in the module itemstack's NBT - client needs this when creating the GUI
-                        ItemModule.setFilterConfigSlot(player.getHeldItem(message.hand), message.filterSlotIndex);
+                        ModuleHelper.setFilterConfigSlot(player.getHeldItem(message.hand), message.filterSlotIndex);
                         player.openGui(ModularRouters.instance,
                                 message.hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF,
                                 player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());

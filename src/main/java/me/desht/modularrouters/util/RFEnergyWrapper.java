@@ -5,6 +5,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.apache.commons.lang3.Validate;
 
+/**
+ * Wrapper to make CoFH RF items look like Forge Energy holders.
+ */
 public class RFEnergyWrapper implements IEnergyStorage {
     private final ItemStack stack;
     private final IEnergyContainerItem container;

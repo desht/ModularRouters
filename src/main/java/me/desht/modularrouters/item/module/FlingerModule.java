@@ -5,6 +5,7 @@ import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModuleFlinger;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -26,8 +27,8 @@ public class FlingerModule extends DropperModule {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLINGER),
-                ItemModule.makeItemStack(ItemModule.ModuleType.DROPPER), Items.GUNPOWDER);
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.FLINGER),
+                ModuleHelper.makeItemStack(ItemModule.ModuleType.DROPPER), Items.GUNPOWDER);
     }
 
     @Override

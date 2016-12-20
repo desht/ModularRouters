@@ -8,6 +8,7 @@ import me.desht.modularrouters.container.FilterHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -41,9 +42,9 @@ public class FilterGuiFactory {
     private static GuiScreen createGui(EntityPlayer player, ItemStack heldStack, BlockPos routerPos, int moduleSlotIndex, int filterSlotIndex, EnumHand hand) {
         ItemStack filterStack;
         if (ItemModule.getModule(heldStack) != null) {
-            filterSlotIndex = ItemModule.getFilterConfigSlot(heldStack);
+            filterSlotIndex = ModuleHelper.getFilterConfigSlot(heldStack);
             filterStack = getFilterStackInUninstalledModule(heldStack, filterSlotIndex);
-            ItemModule.setFilterConfigSlot(heldStack, -1);
+            ModuleHelper.setFilterConfigSlot(heldStack, -1);
         } else if (ItemSmartFilter.getFilter(heldStack) != null) {
             filterStack = heldStack;
         } else {
@@ -82,10 +83,10 @@ public class FilterGuiFactory {
         ItemStack heldStack = player.getHeldItem(hand);
         if (ItemModule.getModule(heldStack) != null) {
             // filter is in a module in player's hand
-            int filterIndex = ItemModule.getFilterConfigSlot(heldStack);
+            int filterIndex = ModuleHelper.getFilterConfigSlot(heldStack);
             if (filterIndex >= 0) {
                 ItemStack filterStack = getFilterStackInUninstalledModule(heldStack, filterIndex);
-                ItemModule.setFilterConfigSlot(heldStack, -1);
+                ModuleHelper.setFilterConfigSlot(heldStack, -1);
                 return createContainer(player, filterStack, hand, null);
             }
         } else {

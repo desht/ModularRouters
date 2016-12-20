@@ -7,10 +7,10 @@ import net.minecraft.item.ItemStack;
 
 public class RegulatorEnhancementRecipe extends ModuleEnhancementRecipe {
     public RegulatorEnhancementRecipe(ItemModule.ModuleType type) {
-        super(ItemModule.makeItemStack(type),  " Q ", "CMC", " Q ",
+        super(ModuleHelper.makeItemStack(type),  " Q ", "CMC", " Q ",
                 'Q', Items.QUARTZ,
                 'C', Items.COMPARATOR,
-                'M', ItemModule.makeItemStack(type));
+                'M', ModuleHelper.makeItemStack(type));
     }
 
     @Override

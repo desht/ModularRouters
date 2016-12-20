@@ -291,7 +291,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         } else if (hand != null) {
             // module is in player's hand
             // record the filter slot in the module itemstack's NBT - we'll need this when opening the GUI later
-            ItemModule.setFilterConfigSlot(mc.player.getHeldItem(hand), filterSlotIndex);
+            ModuleHelper.setFilterConfigSlot(mc.player.getHeldItem(hand), filterSlotIndex);
             if (filter.hasGuiContainer()) {
                 ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInModule(hand, filterSlotIndex));
             } else {

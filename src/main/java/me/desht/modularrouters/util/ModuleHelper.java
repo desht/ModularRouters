@@ -1,6 +1,8 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +29,7 @@ public class ModuleHelper {
     private static final String NBT_OWNER = "Owner";
     public static final String NBT_PICKUP_DELAY = "PickupDelay";
     private static final String NBT_FAST_PICKUP = "FastPickup";
+    private static final String NBT_CONFIG_SLOT = "ConfigSlot";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
@@ -179,4 +182,43 @@ public class ModuleHelper {
         return Pair.of(l.getStringTagAt(0), UUID.fromString(l.getStringTagAt(1)));
     }
 
+    public static ItemStack makeItemStack(ModuleType type) {
+        return makeItemStack(type, 1);
+    }
+
+    public static ItemStack makeItemStack(ModuleType type, int amount) {
+        return new ItemStack(ModItems.module, amount, type.ordinal());
+    }
+
+    public static boolean isModuleType(ItemStack stack, ModuleType... types) {
+        if (stack.getItem() instanceof ItemModule) {
+            for (ModuleType type : types) {
+                if (stack.getItemDamage() == type.ordinal()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void setFilterConfigSlot(ItemStack stack, int slot) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            compound = new NBTTagCompound();
+        }
+        if (slot < 0) {
+            compound.removeTag(NBT_CONFIG_SLOT);
+        } else {
+            compound.setInteger(NBT_CONFIG_SLOT, slot);
+        }
+        stack.setTagCompound(compound);
+    }
+
+    public static int getFilterConfigSlot(ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(NBT_CONFIG_SLOT)) {
+            return stack.getTagCompound().getInteger(NBT_CONFIG_SLOT);
+        } else {
+            return -1;
+        }
+    }
 }

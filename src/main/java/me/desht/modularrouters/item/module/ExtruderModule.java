@@ -47,10 +47,10 @@ public class ExtruderModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.EXTRUDER),
-                ItemModule.makeItemStack(ItemModule.ModuleType.PLACER),
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER),
+                ModuleHelper.makeItemStack(ItemModule.ModuleType.PLACER),
                 Items.REDSTONE,
-                ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER));
+                ModuleHelper.makeItemStack(ItemModule.ModuleType.BREAKER));
     }
 
     public static int maxDistance(TileEntityItemRouter router) {

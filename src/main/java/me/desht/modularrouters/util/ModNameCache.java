@@ -7,6 +7,9 @@ import net.minecraftforge.fml.common.ModContainer;
 
 import java.util.Map;
 
+/**
+ * Maintains a cache of mod id's to "friendly" mod names.
+ */
 public class ModNameCache {
     private static final Map<String, String> id2name = Maps.newHashMap();
 

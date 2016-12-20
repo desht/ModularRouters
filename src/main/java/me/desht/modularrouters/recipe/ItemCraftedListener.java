@@ -10,7 +10,7 @@ class ItemCraftedListener {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         // security upgrade and player modules need to be tagged with the player when crafted
-        if (ItemUpgrade.isType(event.crafting, ItemUpgrade.UpgradeType.SECURITY) || ItemModule.isType(event.crafting, ItemModule.ModuleType.PLAYER)) {
+        if (ItemUpgrade.isType(event.crafting, ItemUpgrade.UpgradeType.SECURITY) || ModuleHelper.isModuleType(event.crafting, ItemModule.ModuleType.PLAYER)) {
             ModuleHelper.setOwner(event.crafting, event.player);
         }
     }

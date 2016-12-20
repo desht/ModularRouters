@@ -55,28 +55,25 @@ public class SetofItemStack extends TCustomHashSet<ItemStack> {
         super(new ItemStackHashingStrategy(filterFlags), collection);
     }
 
-    public static SetofItemStack fromItemHandler(IItemHandler h, Flags filterFlags) {
-        List<ItemStack> stacks = new ArrayList<>();
-        for (int i = 0; i < h.getSlots(); i++) {
-            ItemStack stack = h.getStackInSlot(i);
+    public static SetofItemStack fromItemHandler(IItemHandler handler, Flags filterFlags) {
+        List<ItemStack> itemStacks = new ArrayList<>();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                stacks.add(stack);
+                itemStacks.add(stack);
             }
         }
-        return new SetofItemStack(stacks, filterFlags);
+        return new SetofItemStack(itemStacks, filterFlags);
     }
 
     public List<ItemStack> sortedList() {
         return this.stream().sorted(compareStacks).collect(Collectors.toList());
     }
 
-    private static final Comparator<? super ItemStack> compareStacks = new Comparator<ItemStack>() {
-        @Override
-        public int compare(ItemStack o1, ItemStack o2) {
-            // matches by mod, then by display name
-            int c = o1.getItem().getRegistryName().getResourceDomain().compareTo(o2.getItem().getRegistryName().getResourceDomain());
-            if (c != 0) return c;
-            return o1.getDisplayName().compareTo(o2.getDisplayName());
-        }
+    private static final Comparator<? super ItemStack> compareStacks = (Comparator<ItemStack>) (o1, o2) -> {
+        // matches by mod, then by display name
+        int c = o1.getItem().getRegistryName().getResourceDomain().compareTo(o2.getItem().getRegistryName().getResourceDomain());
+        if (c != 0) return c;
+        return o1.getDisplayName().compareTo(o2.getDisplayName());
     };
 }

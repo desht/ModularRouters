@@ -9,6 +9,7 @@ import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -45,7 +46,7 @@ public class FluidModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.FLUID),
+        return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.FLUID),
                 " c ", "gmg",
                 'm', ModItems.blankModule, 'c', Items.CAULDRON, 'g', Blocks.GLASS);
     }

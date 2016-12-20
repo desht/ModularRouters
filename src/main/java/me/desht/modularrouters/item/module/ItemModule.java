@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemModule extends ItemBase {
-    private static final String NBT_CONFIG_SLOT = "ConfigSlot";
 
     // add new types at the end!
     public enum ModuleType {
@@ -238,36 +237,4 @@ public class ItemModule extends ItemBase {
         return (flag ? TextFormatting.DARK_GRAY + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
-    public static ItemStack makeItemStack(ModuleType type) {
-        return makeItemStack(type, 1);
-    }
-
-    public static ItemStack makeItemStack(ModuleType type, int amount) {
-        return new ItemStack(ModItems.module, amount, type.ordinal());
-    }
-
-    public static boolean isType(ItemStack stack, ModuleType type) {
-        return stack.getItem() instanceof ItemModule && stack.getItemDamage() == type.ordinal();
-    }
-
-    public static void setFilterConfigSlot(ItemStack stack, int slot) {
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) {
-            compound = new NBTTagCompound();
-        }
-        if (slot < 0) {
-            compound.removeTag(NBT_CONFIG_SLOT);
-        } else {
-            compound.setInteger(NBT_CONFIG_SLOT, slot);
-        }
-        stack.setTagCompound(compound);
-    }
-
-    public static int getFilterConfigSlot(ItemStack stack) {
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(NBT_CONFIG_SLOT)) {
-            return stack.getTagCompound().getInteger(NBT_CONFIG_SLOT);
-        } else {
-            return -1;
-        }
-    }
 }

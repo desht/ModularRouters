@@ -9,11 +9,11 @@ import net.minecraft.item.ItemStack;
 
 public class RedstoneEnhancementRecipe extends ModuleEnhancementRecipe {
     public RedstoneEnhancementRecipe(ItemModule.ModuleType type) {
-        super(ItemModule.makeItemStack(type),
+        super(ModuleHelper.makeItemStack(type),
                 " R ", "TMT", " R ",
                 'R', Items.REDSTONE,
                 'T', Blocks.REDSTONE_TORCH,
-                'M', ItemModule.makeItemStack(type));
+                'M', ModuleHelper.makeItemStack(type));
     }
 
     @Override

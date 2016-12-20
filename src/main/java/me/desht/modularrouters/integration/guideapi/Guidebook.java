@@ -24,6 +24,7 @@ import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter.FilterType;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -157,13 +158,13 @@ public class Guidebook implements IGuideBook {
     private static void buildModulePages(Map<ResourceLocation, EntryAbstract> entries) {
         // get a items of modules, sorted by their localized names
         List<ModuleType> types = Lists.newArrayList(ModuleType.values()).stream()
-                .map(ItemModule::makeItemStack)
+                .map(ModuleHelper::makeItemStack)
                 .sorted((s1, s2) -> translate(s1.getUnlocalizedName()).compareTo(translate(s2.getUnlocalizedName())))
                 .map(ModuleType::getType)
                 .collect(Collectors.toList());
 
         for (ModuleType type : types) {
-            ItemStack module = ItemModule.makeItemStack(type);
+            ItemStack module = ModuleHelper.makeItemStack(type);
             String unlocalizedName = module.getItem().getUnlocalizedName(module);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName, ItemModule.getModule(type).getExtraUsageParams())));

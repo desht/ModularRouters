@@ -16,9 +16,17 @@ import net.minecraftforge.items.VanillaDoubleChestItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class InventoryUtils {
+    /**
+     * Drop all items from the given item handler into the world as item entities with random offsets & motions.
+     *
+     * @param world the world
+     * @param pos blockpos to drop at (usually position of the item handler tile entity)
+     * @param itemHandler the item handler
+     */
     public static void dropInventoryItems(World world, BlockPos pos, IItemHandler itemHandler) {
         Random random = new Random();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -49,8 +57,15 @@ public class InventoryUtils {
         }
     }
 
-    // Adapted from Botania's InventoryHelper class (which was in turned adapted from OpenBlocks...)
-    public static IItemHandler getInventory(World world, BlockPos pos, EnumFacing side) {
+    /**
+     * Get the inventory (item handler) at the given place, from the given side.
+     * @param world the world
+     * @param pos block position of the item handler TE
+     * @param side side to access the TE from (may be null)
+     * @return the item handler, or null if there is none
+     */
+    public static IItemHandler getInventory(World world, BlockPos pos, @Nullable EnumFacing side) {
+        // Adapted from Botania's InventoryHelper class (which was in turned adapted from OpenBlocks...)
         TileEntity te = world.getTileEntity(pos);
         if (te == null) {
             return null;
@@ -80,6 +95,15 @@ public class InventoryUtils {
         return ret;
     }
 
+    /**
+     * Transfer some items from the given slot in the given source item handler to the given destination handler.
+     *
+     * @param from source item handler
+     * @param to destination item handler
+     * @param slot slot in the source handler
+     * @param count number of items to attempt to transfer
+     * @return number of items actually transferred
+     */
     public static int transferItems(IItemHandler from, IItemHandler to, int slot, int count) {
         if (from == null || to == null || count == 0) {
             return 0;
@@ -94,6 +118,14 @@ public class InventoryUtils {
         return inserted;
     }
 
+    /**
+     * Drop an item stack into the world as an item entity.
+     *
+     * @param world the world
+     * @param pos the block position (entity will spawn in centre of block pos)
+     * @param stack itemstack to drop
+     * @return true if the entity was spawned, false otherwise
+     */
     public static boolean dropItems(World world, BlockPos pos, ItemStack stack) {
         EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
         return world.spawnEntity(item);
