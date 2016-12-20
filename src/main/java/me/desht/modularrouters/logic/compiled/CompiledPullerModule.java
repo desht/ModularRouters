@@ -14,12 +14,16 @@ public class CompiledPullerModule extends CompiledModule {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         if (getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull()) {
-            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
+            IItemHandler handler = getTargetInventory(router);
             if (handler != null) {
                 int taken = transferToRouter(handler, router);
                 return taken > 0;
             }
         }
         return false;
+    }
+
+    protected IItemHandler getTargetInventory(TileEntityItemRouter router) {
+        return InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
     }
 }

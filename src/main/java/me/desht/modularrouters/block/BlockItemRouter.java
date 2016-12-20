@@ -272,9 +272,9 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         List<ItemStack> l = new ArrayList<>();
 
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
         if (router != null) {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
-            if (router.getModuleCount() > 0 || router.getUpgradeCount() > 0) {
+            if (router.getModuleCount() > 0 || router.getUpgradeCount() > 0 || router.getRedstoneBehaviour() != RouterRedstoneBehaviour.ALWAYS) {
                 if (!stack.hasTagCompound()) {
                     stack.setTagCompound(new NBTTagCompound());
                 }
