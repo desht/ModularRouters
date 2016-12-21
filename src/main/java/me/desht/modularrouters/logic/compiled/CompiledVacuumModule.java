@@ -2,7 +2,6 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.ValidatingSlot;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.VacuumModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -47,7 +46,7 @@ public class CompiledVacuumModule extends CompiledModule {
                 continue;
             }
             ItemStack stackOnGround = item.getEntityItem();
-            if ((bufferStack.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackOnGround, bufferStack)) && getFilter().pass(stackOnGround)) {
+            if ((bufferStack.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackOnGround, bufferStack)) && getFilter().test(stackOnGround)) {
                 int inRouter = bufferStack.getCount();
                 int spaceInRouter = getRegulationAmount() > 0 ?
                         Math.min(stackOnGround.getMaxStackSize(), getRegulationAmount()) - inRouter :

@@ -22,7 +22,7 @@ public class CompiledPlacerModule extends CompiledModule {
             return false;
         }
         ItemStack toPlace = router.peekBuffer(1);
-        if (!getFilter().pass(toPlace)) {
+        if (!getFilter().test(toPlace)) {
             return false;
         }
         World w = router.getWorld();

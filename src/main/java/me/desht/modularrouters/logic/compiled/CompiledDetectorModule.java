@@ -26,7 +26,7 @@ public class CompiledDetectorModule extends CompiledModule {
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
 
-        if (!getFilter().pass(stack)) {
+        if (!getFilter().test(stack)) {
             return false;
         }
 

@@ -37,26 +37,15 @@ public class CompiledBreakerModule extends CompiledModule {
                 return false;
             }
             BlockPos pos = getTarget().pos;
-            List<ItemStack> drops = Lists.newArrayList();
-            IBlockState state = world.getBlockState(pos);
-            if (BlockUtil.tryBreakBlock(world, pos, getFilter(), drops, silkTouch, fortune)) {
-                for (ItemStack drop : drops) {
-                    ItemStack excess = router.getBuffer().insertItem(0, drop, false);
-                    if (!excess.isEmpty()) {
-                        dropItems(world, pos, excess);
-                    }
-                }
+            BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
+            if (dropResult.isBlockBroken()) {
+                dropResult.processDrops(world, pos, router.getBuffer());
                 if (Config.breakerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {
-                    world.playEvent(2001, pos, Block.getStateId(state));
+                    world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
                 }
                 return true;
             }
         }
         return false;
-    }
-
-    private void dropItems(World world, BlockPos pos, ItemStack stack) {
-        EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-        world.spawnEntity(item);
     }
 }

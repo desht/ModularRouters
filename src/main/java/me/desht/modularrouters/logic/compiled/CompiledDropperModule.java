@@ -20,7 +20,7 @@ public class CompiledDropperModule extends CompiledModule {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (getDirection() != Module.RelativeDirection.NONE && getFilter().pass(stack) && isRegulationOK(router, false)) {
+        if (getDirection() != Module.RelativeDirection.NONE && getFilter().test(stack) && isRegulationOK(router, false)) {
             int nItems = Math.min(router.getItemsPerTick(), stack.getCount() - getRegulationAmount());
             if (nItems <= 0) {
                 return false;

@@ -11,7 +11,7 @@ public class CompiledVoidModule extends CompiledModule  {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (getFilter().pass(stack)) {
+        if (getFilter().test(stack)) {
             // bye bye items
             int toVoid = Math.min(router.getItemsPerTick(), stack.getCount() - getRegulationAmount());
             if (toVoid <= 0) {

@@ -3,6 +3,7 @@ package me.desht.modularrouters.util;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,28 +14,34 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
-    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
+    private static final String[] REED_ITEM = new String[]{"block", "field_150935_a", "a"};
 
-    public static IBlockState getPlaceableState(ItemStack stack) {
+    private static IBlockState getPlaceableState(ItemStack stack, World world, BlockPos pos) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
         Item item = stack.getItem();
         if (item instanceof ItemBlock) {
             return ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
         } else if (item instanceof ItemBlockSpecial) {
             return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
-        } else if (item instanceof ItemRedstone){
+        } else if (item instanceof ItemRedstone) {
             return Blocks.REDSTONE_WIRE.getDefaultState();
+        } else if (item instanceof IPlantable) {
+            IBlockState state = ((IPlantable) item).getPlant(world, pos);
+            return ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
         } else {
             return null;
         }
@@ -44,8 +51,8 @@ public class BlockUtil {
      * Try to place the given item as a block in the world.
      *
      * @param toPlace item to place
-     * @param world the world
-     * @param pos position in the world to place at
+     * @param world   the world
+     * @param pos     position in the world to place at
      * @return the new block state if successful, null otherwise
      */
     public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos) {
@@ -54,7 +61,7 @@ public class BlockUtil {
             return null;
         }
 
-        IBlockState newState = getPlaceableState(toPlace);
+        IBlockState newState = getPlaceableState(toPlace, world, pos);
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
             EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
             if (fakePlayer == null) {
@@ -74,29 +81,38 @@ public class BlockUtil {
         return null;
     }
 
-    public static boolean tryBreakBlock(World world, BlockPos pos, Filter filter, List<ItemStack> drops, boolean silkTouch, int fortune) {
+    /**
+     * Try to break the block at the given position. If the block has any drops, but no drops pass the filter, then the
+     * block will not be broken. Liquid, air & unbreakable blocks (bedrock etc.) will never be broken.  Drops will be
+     * available via the DropResult object, organised by whether or not they passed the filter.
+     *
+     * @param world     the world
+     * @param pos       the block position
+     * @param filter    filter for the block's drops
+     * @param silkTouch use silk touch when breaking the block
+     * @param fortune   use fortune when breaking the block
+     * @return a drop result object
+     */
+    public static DropResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof BlockLiquid) {
-            return false;
-        }
-        Item item = Item.getItemFromBlock(block);
-        if (item == Items.AIR) {
-            return false;
+            return DropResult.NOT_BROKEN;
         }
 
         EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
         List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, silkTouch, fortune);
-        drops.addAll(allDrops.stream().filter(filter::pass).collect(Collectors.toList()));
-        if (allDrops.isEmpty() || drops.size() == allDrops.size()) {
+
+        Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
+        if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 world.setBlockToAir(pos);
-                return true;
+                return new DropResult(true, groups);
             }
         }
-        return false;
+        return DropResult.NOT_BROKEN;
     }
 
     private static List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player, boolean silkTouch, int fortune) {
@@ -131,6 +147,38 @@ public class BlockUtil {
                 return stack.getDisplayName();
             } else {
                 return state.getBlock().getLocalizedName();
+            }
+        }
+    }
+
+    public static class DropResult {
+        static final DropResult NOT_BROKEN = new DropResult(false, Collections.emptyMap());
+
+        private final boolean blockBroken;
+        private final Map<Boolean,List<ItemStack>> drops;
+
+        DropResult(boolean blockBroken, Map<Boolean, List<ItemStack>> drops) {
+            this.blockBroken = blockBroken;
+            this.drops = drops;
+        }
+
+        public boolean isBlockBroken() {
+            return blockBroken;
+        }
+
+        List<ItemStack> getFilteredDrops(boolean passed) {
+            return drops.getOrDefault(passed, Collections.emptyList());
+        }
+
+        public void processDrops(World world, BlockPos pos, IItemHandler handler) {
+            for (ItemStack drop : getFilteredDrops(true)) {
+                ItemStack excess = handler.insertItem(0, drop, false);
+                if (!excess.isEmpty()) {
+                    InventoryUtils.dropItems(world, pos, excess);
+                }
+            }
+            for (ItemStack drop : getFilteredDrops(false)) {
+                InventoryUtils.dropItems(world, pos, drop);
             }
         }
     }

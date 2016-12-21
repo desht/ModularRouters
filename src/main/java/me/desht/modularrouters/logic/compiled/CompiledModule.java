@@ -190,7 +190,7 @@ public abstract class CompiledModule {
     private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
         ItemStack result = ItemStack.EMPTY;
-        if (!stackInRouter.isEmpty() && getFilter().pass(stackInRouter)) {
+        if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
             // something in the router - try to pull more of that
             result = stackInRouter.copy();
             result.setCount(nToTake);
@@ -199,7 +199,7 @@ public abstract class CompiledModule {
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (!stack.isEmpty() && getFilter().pass(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
+                if (!stack.isEmpty() && getFilter().test(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
                     setLastMatchPos(pos);
                     result = stack.copy();
                     result.setCount(nToTake);
