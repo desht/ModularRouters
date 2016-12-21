@@ -4,7 +4,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -60,9 +59,15 @@ public class CompiledFluidModule extends CompiledModule {
         } else {
             worldFluidHandler = FluidUtil.getFluidHandler(router.getWorld(), getTarget().pos, getFacing().getOpposite());
         }
+
         if (worldFluidHandler == null) {
-            // special case: try to pour fluid out into the world?
-            return fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerFluidHandler, router.getWorld(), getTarget().pos, containerStack);
+            // no fluid handler at the target blockpos - try to pour fluid out into the world?
+            if (fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerFluidHandler, router.getWorld(), getTarget().pos, containerStack)) {
+                router.setBufferItemStack(routerFluidHandler.getContainer());
+                return true;
+            } else {
+                return false;
+            }
         }
 
         boolean transferDone;
