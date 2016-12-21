@@ -17,7 +17,7 @@ public class ContainerItemRouter extends Container {
     public static final int MODULE_SLOT_START = 1;
     public static final int MODULE_SLOT_END = 9;
     public static final int UPGRADE_SLOT_START = 10;
-    public static final int UPGRADE_SLOT_END = 13;
+    public static final int UPGRADE_SLOT_END = 14;
     private static final int BUFFER_XPOS = 8;
     private static final int BUFFER_YPOS = 40;
     private static final int HOTBAR_XPOS = 8;
@@ -55,11 +55,11 @@ public class ContainerItemRouter extends Container {
 
         // item router modules
         for (int slot = 0; slot < TileEntityItemRouter.N_MODULE_SLOTS; slot++) {
-            addSlotToContainer(new ValidatingSlot.Module(router.getModules(), slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
+            addSlotToContainer(new ValidatingSlot.Module(router, slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
         }
         // item router upgrades
         for (int slot = 0; slot < TileEntityItemRouter.N_UPGRADE_SLOTS; slot++) {
-            addSlotToContainer(new ValidatingSlot.Upgrade(router.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
+            addSlotToContainer(new ValidatingSlot.Upgrade(router, slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
     }
 
@@ -73,7 +73,7 @@ public class ContainerItemRouter extends Container {
     public ItemStack transferStackInSlot(EntityPlayer player, int sourceSlotIndex) {
         Slot sourceSlot = inventorySlots.get(sourceSlotIndex);
         if (sourceSlot == null || !sourceSlot.getHasStack()) {
-            return null;
+            return ItemStack.EMPTY;
         }
         ItemStack sourceStack = sourceSlot.getStack();
         ItemStack copyOfSourceStack = sourceStack.copy();
@@ -84,27 +84,25 @@ public class ContainerItemRouter extends Container {
             if (sourceStack.getItem() instanceof ItemModule) {
                 // shift-clicked a module: see if there's a free module slot
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             } else if (sourceStack.getItem() instanceof ItemUpgrade) {
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + UPGRADE_SLOT_START, TE_FIRST_SLOT + UPGRADE_SLOT_END + 1, false)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
-                router.recompileNeeded(TileEntityItemRouter.COMPILE_UPGRADES);
             } else {
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + BUFFER_SLOT, TE_FIRST_SLOT + BUFFER_SLOT + 1, false)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
-                router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
             }
         } else if (sourceSlotIndex >= TE_FIRST_SLOT && sourceSlotIndex < TE_FIRST_SLOT + TE_LAST_SLOT) {
             // This is a TE slot so merge the stack into the players inventory
             if (!mergeItemStack(sourceStack, 0, TE_FIRST_SLOT - 1, false)) {
-                return null;
+                return ItemStack.EMPTY;
             }
         } else {
             System.err.print("Invalid moduleSlotIndex: " + sourceSlotIndex);
-            return null;
+            return ItemStack.EMPTY;
         }
 
         // If stack size == 0 (the entire stack was moved) set slot contents to null
