@@ -302,7 +302,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
             for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
                 int c = compound.getInteger(NBT_UPGRADE_COUNT + "." + type);
                 if (c > 0) {
-                    String name = I18n.format("item." + type.toString().toLowerCase() + "Upgrade.name");
+                    String name = I18n.format("item." + type.toString().toLowerCase() + "_upgrade.name");
                     list.add(I18n.format("itemText.misc.upgradeCount", name, c));
                 }
             }

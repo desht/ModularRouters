@@ -810,6 +810,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         return bufferHandler.insertItem(0, stack, false);
     }
 
+    public void setBufferItemStack(ItemStack stack) {
+        bufferHandler.setStackInSlot(0, stack);
+    }
+
     public boolean getEcoMode() {
         return ecoMode;
     }
@@ -921,4 +925,5 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public void clear() {
         bufferHandler.setStackInSlot(0, null);
     }
+
 }

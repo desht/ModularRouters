@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
@@ -47,7 +48,7 @@ public class CompiledFluidModule extends CompiledModule {
             return false;
         }
 
-        IFluidHandler routerFluidHandler = FluidUtil.getFluidHandler(containerStack);
+        IFluidHandlerItem routerFluidHandler = FluidUtil.getFluidHandler(containerStack);
         if (routerFluidHandler == null) {
             return false;
         }
@@ -64,11 +65,20 @@ public class CompiledFluidModule extends CompiledModule {
             return fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerFluidHandler, router.getWorld(), getTarget().pos, containerStack);
         }
 
+        boolean transferDone;
         switch (fluidDirection) {
-            case IN: return doTransfer(router, worldFluidHandler, routerFluidHandler, FluidDirection.IN);
-            case OUT: return doTransfer(router, routerFluidHandler, worldFluidHandler, FluidDirection.OUT);
+            case IN:
+                transferDone = doTransfer(router, worldFluidHandler, routerFluidHandler, FluidDirection.IN);
+                break;
+            case OUT:
+                transferDone = doTransfer(router, routerFluidHandler, worldFluidHandler, FluidDirection.OUT);
+                break;
             default: return false;
         }
+        if (transferDone) {
+            router.setBufferItemStack(routerFluidHandler.getContainer());
+        }
+        return transferDone;
     }
 
     private boolean isInfiniteWaterSource(World world, BlockPos pos) {
