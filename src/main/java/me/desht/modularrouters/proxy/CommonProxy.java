@@ -1,6 +1,5 @@
 package me.desht.modularrouters.proxy;
 
-import amerifrance.guideapi.api.impl.Book;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;

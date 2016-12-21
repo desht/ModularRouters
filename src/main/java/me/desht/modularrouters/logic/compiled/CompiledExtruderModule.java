@@ -1,6 +1,5 @@
 package me.desht.modularrouters.logic.compiled;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.ExtruderModule;
@@ -12,8 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 public class CompiledExtruderModule extends CompiledModule {
     public static final String NBT_EXTRUDER_DIST = "ExtruderDist";
@@ -52,11 +49,11 @@ public class CompiledExtruderModule extends CompiledModule {
             // try to retract
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
             IBlockState oldState = world.getBlockState(breakPos);
-            BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
-            if (dropResult.isBlockBroken()) {
+            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
+            if (breakResult.isBlockBroken()) {
                 distance--;
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
-                dropResult.processDrops(world, breakPos, router.getBuffer());
+                breakResult.processDrops(world, breakPos, router.getBuffer());
                 if (Config.extruderSound) {
                     router.playSound(null, breakPos,
                             oldState.getBlock().getSoundType(oldState, world, breakPos, null).getBreakSound(),

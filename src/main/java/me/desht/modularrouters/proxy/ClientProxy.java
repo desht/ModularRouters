@@ -1,7 +1,5 @@
 package me.desht.modularrouters.proxy;
 
-import amerifrance.guideapi.api.GuideAPI;
-import amerifrance.guideapi.api.impl.Book;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.ModBlocks;

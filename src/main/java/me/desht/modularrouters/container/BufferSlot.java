@@ -1,7 +1,6 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 class BufferSlot extends SlotItemHandler {

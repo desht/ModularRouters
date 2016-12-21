@@ -1,22 +1,17 @@
 package me.desht.modularrouters.logic.compiled;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
-import java.util.List;
 
 public class CompiledBreakerModule extends CompiledModule {
     private final boolean silkTouch;
@@ -37,9 +32,9 @@ public class CompiledBreakerModule extends CompiledModule {
                 return false;
             }
             BlockPos pos = getTarget().pos;
-            BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
-            if (dropResult.isBlockBroken()) {
-                dropResult.processDrops(world, pos, router.getBuffer());
+            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
+            if (breakResult.isBlockBroken()) {
+                breakResult.processDrops(world, pos, router.getBuffer());
                 if (Config.breakerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {
                     world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
                 }
