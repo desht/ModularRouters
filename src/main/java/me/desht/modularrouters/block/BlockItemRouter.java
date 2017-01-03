@@ -33,6 +33,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -131,12 +132,12 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
         IBlockState camo = getCamoState(worldIn, pos);
         if (camo != null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, camo.getBoundingBox(worldIn, pos));
         } else {
-            super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn);
+            super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, p_185477_7_);
         }
     }
 
@@ -269,7 +270,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
 
     @Override
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        List<ItemStack> l = new ArrayList<>();
+        NonNullList<ItemStack> l = NonNullList.create();
 
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         ItemStack stack = new ItemStack(Item.getItemFromBlock(this));

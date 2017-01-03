@@ -5,9 +5,9 @@ import gnu.trove.strategy.HashingStrategy;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -56,7 +56,7 @@ public class SetofItemStack extends TCustomHashSet<ItemStack> {
     }
 
     public static SetofItemStack fromItemHandler(IItemHandler handler, Flags filterFlags) {
-        List<ItemStack> itemStacks = new ArrayList<>();
+        NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {

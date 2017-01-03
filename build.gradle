@@ -56,10 +56,13 @@ repositories {
 dependencies {
     deobfCompile "mcp.mobius.waila:Hwyla:${config.waila_version}"
     deobfCompile group: "mcjty.theoneprobe", name: "TheOneProbe", version: config.top_version
-    deobfCompile "info.amerifrance.guideapi:Guide-API:${config.mc_version}-${config.guideapi_version}"
-    deobfCompile "mezz.jei:jei_${config.mc_version}:${config.jei_version}:api"
-    compile "net.darkhax.tesla:Tesla:${config.mc_version}-${config.tesla_version}"
-    runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
+    //deobfCompile "info.amerifrance.guideapi:Guide-API:${config.mc_version}-${config.guideapi_version}"
+    //deobfCompile "mezz.jei:jei_${config.mc_version}:${config.jei_version}:api"
+    deobfCompile "info.amerifrance.guideapi:Guide-API:1.11-${config.guideapi_version}"
+    deobfCompile "mezz.jei:jei_1.11:${config.jei_version}:api"
+    compile "net.darkhax.tesla:Tesla:${config.tesla_version}"
+    //runtime "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
+    runtime "mezz.jei:jei_1.11:${config.jei_version}"
 }
 
 processResources {
