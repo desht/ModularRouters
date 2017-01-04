@@ -13,11 +13,6 @@ class BufferSlot extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack) {
-        return true;
-    }
-
-    @Override
     public void onSlotChanged() {
         // unfortunately we can't leave this entirely to BufferHandler#onSlotChanged()
         // seems like that doesn't always get called at the right time

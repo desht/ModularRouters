@@ -5,7 +5,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.ExtruderModule;
 import me.desht.modularrouters.util.BlockUtil;
-import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
@@ -49,20 +48,16 @@ public class CompiledExtruderModule extends CompiledModule {
                 }
                 return true;
             }
-        } else if (!extend && !router.isBufferFull() && distance > 0 && isRegulationOK(router, true)) {
+        } else if (!extend && distance > 0 && isRegulationOK(router, true)) {
             // try to retract
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
             List<ItemStack> drops = Lists.newArrayList();
             IBlockState oldState = world.getBlockState(breakPos);
-            if (BlockUtil.tryBreakBlock(world, breakPos, getFilter(), drops, silkTouch, 0)) {
+            BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
+            if (dropResult.isBlockBroken()) {
                 distance--;
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
-                for (ItemStack drop : drops) {
-                    ItemStack excess = router.insertBuffer(drop);
-                    if (excess != null) {
-                        InventoryUtils.dropItems(world, breakPos, excess);
-                    }
-                }
+                dropResult.processDrops(world, breakPos, router.getBuffer());
                 if (Config.extruderSound) {
                     router.playSound(null, breakPos,
                             oldState.getBlock().getSoundType(oldState, world, breakPos, null).getBreakSound(),

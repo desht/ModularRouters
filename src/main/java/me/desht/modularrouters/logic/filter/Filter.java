@@ -16,8 +16,9 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.Validate;
 
 import java.util.List;
+import java.util.function.Predicate;
 
-public class Filter {
+public class Filter implements Predicate<ItemStack> {
     public static final int FILTER_SIZE = 9;
 
     private final Flags flags;
@@ -51,14 +52,15 @@ public class Filter {
         }
     }
 
-    public boolean pass(ItemStack stack) {
+    @Override
+    public boolean test(ItemStack stack) {
         for (IItemMatcher matcher : matchers) {
             if (matcher.matchItem(stack, flags)) {
                 return !flags.isBlacklist();
             }
         }
 
-        // no matches: pass if this is a blacklist, fail if a whitelist
+        // no matches: test if this is a blacklist, fail if a whitelist
         return flags.isBlacklist();
     }
 

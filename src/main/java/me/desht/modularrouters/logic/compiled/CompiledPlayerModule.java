@@ -95,7 +95,7 @@ public class CompiledPlayerModule extends CompiledModule {
                 }
                 break;
             case INSERT:
-                if (bufferStack != null && getFilter().pass(bufferStack)) {
+                if (bufferStack != null && getFilter().test(bufferStack)) {
                     if (getSection() == CompiledPlayerModule.Section.ARMOR) {
                         return insertArmor(router, itemHandler, bufferStack);
                     } else {
