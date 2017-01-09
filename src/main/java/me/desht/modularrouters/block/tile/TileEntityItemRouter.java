@@ -35,8 +35,10 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -833,7 +835,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     public static TileEntityItemRouter getRouterAt(IBlockAccess world, BlockPos routerPos) {
-        TileEntity te = world.getTileEntity(routerPos);
+        TileEntity te = world instanceof ChunkCache ?
+                ((ChunkCache) world).func_190300_a(routerPos, Chunk.EnumCreateEntityType.CHECK) :
+                world.getTileEntity(routerPos);
         return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
     }
 
