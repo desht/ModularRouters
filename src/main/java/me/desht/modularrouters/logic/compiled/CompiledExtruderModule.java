@@ -57,10 +57,10 @@ public class CompiledExtruderModule extends CompiledModule {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
             }
-            BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
-            if (dropResult.isBlockBroken()) {
+            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
+            if (breakResult.isBlockBroken()) {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
-                dropResult.processDrops(world, breakPos, router.getBuffer());
+                breakResult.processDrops(world, breakPos, router.getBuffer());
                 if (Config.extruderSound) {
                     router.playSound(null, breakPos,
                             oldBlock.getSoundType(oldState, world, breakPos, null).getBreakSound(),

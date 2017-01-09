@@ -143,11 +143,11 @@ public class BlockUtil {
      * @param fortune   use fortune when breaking the block
      * @return a drop result object
      */
-    public static DropResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
+    public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof BlockLiquid) {
-            return DropResult.NOT_BROKEN;
+            return BreakResult.NOT_BROKEN;
         }
 
         EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
@@ -159,10 +159,10 @@ public class BlockUtil {
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 world.setBlockToAir(pos);
-                return new DropResult(true, groups);
+                return new BreakResult(true, groups);
             }
         }
-        return DropResult.NOT_BROKEN;
+        return BreakResult.NOT_BROKEN;
     }
 
     private static List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player, boolean silkTouch, int fortune) {
@@ -201,13 +201,13 @@ public class BlockUtil {
         }
     }
 
-    public static class DropResult {
-        static final DropResult NOT_BROKEN = new DropResult(false, Collections.emptyMap());
+    public static class BreakResult {
+        static final BreakResult NOT_BROKEN = new BreakResult(false, Collections.emptyMap());
 
         private final boolean blockBroken;
         private final Map<Boolean, List<ItemStack>> drops;
 
-        DropResult(boolean blockBroken, Map<Boolean, List<ItemStack>> drops) {
+        BreakResult(boolean blockBroken, Map<Boolean, List<ItemStack>> drops) {
             this.blockBroken = blockBroken;
             this.drops = drops;
         }

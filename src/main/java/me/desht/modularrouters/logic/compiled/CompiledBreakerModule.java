@@ -32,9 +32,9 @@ public class CompiledBreakerModule extends CompiledModule {
                 return false;
             }
             BlockPos pos = getTarget().pos;
-            BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
-            if (dropResult.isBlockBroken()) {
-                dropResult.processDrops(world, pos, router.getBuffer());
+            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
+            if (breakResult.isBlockBroken()) {
+                breakResult.processDrops(world, pos, router.getBuffer());
                 if (Config.breakerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {
                     world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
                 }
