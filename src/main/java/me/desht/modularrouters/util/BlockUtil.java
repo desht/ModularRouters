@@ -1,20 +1,29 @@
 package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -26,40 +35,82 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
-    private static final String[] REED_ITEM = new String[] { "block", "field_150935_a", "a" };
+    private static final String[] REED_ITEM = new String[]{"block", "field_150935_a", "a"};
 
-    private static IBlockState getPlaceableState(ItemStack stack, World world, BlockPos pos) {
+    private static IBlockState getPlaceableState(ItemStack stack, World world, BlockPos pos, EnumFacing facing) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
         Item item = stack.getItem();
+        IBlockState res = null;
         if (item instanceof ItemBlock) {
-            return ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
+            res = ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
         } else if (item instanceof ItemBlockSpecial) {
-            return ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
+            res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
         } else if (item instanceof ItemRedstone) {
-            return Blocks.REDSTONE_WIRE.getDefaultState();
+            res = Blocks.REDSTONE_WIRE.getDefaultState();
         } else if (item instanceof IPlantable) {
             IBlockState state = ((IPlantable) item).getPlant(world, pos);
-            return ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
-        } else {
-            return null;
+            res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
+        } else if (item instanceof ItemSkull) {
+            res = Blocks.SKULL.getDefaultState();
+            // try to place skull on horizontal surface below if possible
+            BlockPos pos2 = pos.down();
+            if (world.getBlockState(pos2).isSideSolid(world, pos2, EnumFacing.UP)) {
+                facing = EnumFacing.UP;
+            }
+        }
+        if (res != null && res.getProperties().containsKey(BlockDirectional.FACING)) {
+            res = res.withProperty(BlockDirectional.FACING, facing);
+        }
+        return res;
+    }
+
+    private static void handleSkullPlacement(World worldIn, BlockPos pos, ItemStack stack, EnumFacing facing) {
+        // adapted from ItemSkull#onItemUse()
+
+        int i = 0;
+        if (worldIn.getBlockState(pos).getValue(BlockDirectional.FACING) == EnumFacing.UP) {
+            i = MathHelper.floor_double((double) (facing.getOpposite().getHorizontalAngle() * 16.0F / 360.0F) + 0.5D) & 15;
+        }
+
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+        if (tileentity instanceof TileEntitySkull) {
+            TileEntitySkull tileentityskull = (TileEntitySkull) tileentity;
+            if (stack.getMetadata() == 3) {   // player head
+                GameProfile gameprofile = null;
+                if (stack.hasTagCompound()) {
+                    NBTTagCompound nbttagcompound = stack.getTagCompound();
+                    if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_COMPOUND)) {
+                        gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
+                    } else if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_STRING) && !nbttagcompound.getString("SkullOwner").isEmpty()) {
+                        gameprofile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
+                    }
+                }
+                tileentityskull.setPlayerProfile(gameprofile);
+            } else {
+                tileentityskull.setType(stack.getMetadata());
+            }
+
+            tileentityskull.setSkullRotation(i);
+            Blocks.SKULL.checkWitherSpawn(worldIn, pos, tileentityskull);
         }
     }
 
     /**
-     * Try to place the given item as a block in the world.
+     * Try to place the given item as a block in the world.  This will fail if the block currently at the
+     * placement position isn't replaceable, or world physics disallows the new block from being placed.
      *
      * @param toPlace item to place
-     * @param world the world
-     * @param pos position in the world to place at
+     * @param world   the world
+     * @param pos     position in the world to place at
      * @return the new block state if successful, null otherwise
      */
-    public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos) {
+    public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, EnumFacing facing) {
         IBlockState currentState = world.getBlockState(pos);
-        if (!currentState.getBlock().isAir(currentState, world, pos) || !currentState.getBlock().isReplaceable(world, pos)) {
+        if (!currentState.getBlock().isReplaceable(world, pos)) {
             return null;
         }
 
-        IBlockState newState = getPlaceableState(toPlace, world, pos);
+        IBlockState newState = getPlaceableState(toPlace, world, pos, facing);
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
             EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
             if (fakePlayer == null) {
@@ -70,6 +121,9 @@ public class BlockUtil {
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState)) {
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
+                if (newState.getBlock() == Blocks.SKULL) {
+                    handleSkullPlacement(world, pos, toPlace, facing);
+                }
                 return newState;
             }
         }
@@ -148,34 +202,34 @@ public class BlockUtil {
     }
 
     public static class DropResult {
-         static final DropResult NOT_BROKEN = new DropResult(false, Collections.emptyMap());
+        static final DropResult NOT_BROKEN = new DropResult(false, Collections.emptyMap());
 
-         private final boolean blockBroken;
-         private final Map<Boolean,List<ItemStack>> drops;
+        private final boolean blockBroken;
+        private final Map<Boolean, List<ItemStack>> drops;
 
-         DropResult(boolean blockBroken, Map<Boolean, List<ItemStack>> drops) {
-             this.blockBroken = blockBroken;
-             this.drops = drops;
-         }
+        DropResult(boolean blockBroken, Map<Boolean, List<ItemStack>> drops) {
+            this.blockBroken = blockBroken;
+            this.drops = drops;
+        }
 
-         public boolean isBlockBroken() {
-             return blockBroken;
-         }
+        public boolean isBlockBroken() {
+            return blockBroken;
+        }
 
-         List<ItemStack> getFilteredDrops(boolean passed) {
-             return drops.getOrDefault(passed, Collections.emptyList());
-         }
+        List<ItemStack> getFilteredDrops(boolean passed) {
+            return drops.getOrDefault(passed, Collections.emptyList());
+        }
 
-         public void processDrops(World world, BlockPos pos, IItemHandler handler) {
-             for (ItemStack drop : getFilteredDrops(true)) {
-                 ItemStack excess = handler.insertItem(0, drop, false);
-                 if (excess != null) {
-                     InventoryUtils.dropItems(world, pos, excess);
-                 }
-             }
-             for (ItemStack drop : getFilteredDrops(false)) {
-                 InventoryUtils.dropItems(world, pos, drop);
-             }
-         }
-     }
+        public void processDrops(World world, BlockPos pos, IItemHandler handler) {
+            for (ItemStack drop : getFilteredDrops(true)) {
+                ItemStack excess = handler.insertItem(0, drop, false);
+                if (excess != null) {
+                    InventoryUtils.dropItems(world, pos, excess);
+                }
+            }
+            for (ItemStack drop : getFilteredDrops(false)) {
+                InventoryUtils.dropItems(world, pos, drop);
+            }
+        }
+    }
 }

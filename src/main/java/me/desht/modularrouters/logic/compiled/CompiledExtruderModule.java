@@ -1,10 +1,11 @@
 package me.desht.modularrouters.logic.compiled;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.ExtruderModule;
 import me.desht.modularrouters.util.BlockUtil;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
@@ -12,11 +13,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.List;
+import net.minecraftforge.fluids.IFluidBlock;
 
 public class CompiledExtruderModule extends CompiledModule {
-    public static final String NBT_EXTRUDER_DIST = "ExtruderDist";
+    private static final String NBT_EXTRUDER_DIST = "ExtruderDist";
 
     private final boolean silkTouch;
     private int distance;  // marks the current extension length (0 = no extrusion)
@@ -36,11 +36,10 @@ public class CompiledExtruderModule extends CompiledModule {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
-            IBlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos);
+            IBlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos, getFacing());
             if (state != null) {
                 router.extractBuffer(1);
-                distance++;
-                router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
+                router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), ++distance);
                 if (Config.extruderSound) {
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
@@ -51,16 +50,20 @@ public class CompiledExtruderModule extends CompiledModule {
         } else if (!extend && distance > 0 && isRegulationOK(router, true)) {
             // try to retract
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
-            List<ItemStack> drops = Lists.newArrayList();
             IBlockState oldState = world.getBlockState(breakPos);
+            Block oldBlock = oldState.getBlock();
+            if (oldBlock.isAir(oldState, world, breakPos) || oldBlock instanceof BlockLiquid || oldBlock instanceof IFluidBlock) {
+                // nothing there? continue to retract anyway...
+                router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
+                return false;
+            }
             BlockUtil.DropResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
             if (dropResult.isBlockBroken()) {
-                distance--;
-                router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), distance);
+                router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());
                 if (Config.extruderSound) {
                     router.playSound(null, breakPos,
-                            oldState.getBlock().getSoundType(oldState, world, breakPos, null).getBreakSound(),
+                            oldBlock.getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                 }
                 return true;
