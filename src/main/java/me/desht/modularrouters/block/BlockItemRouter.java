@@ -43,7 +43,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -51,6 +53,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
@@ -393,4 +396,32 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         }
     }
 
+    @Override
+    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
+            return false;
+        }
+        return super.canEntityDestroy(state, world, pos, entity);
+    }
+
+    public static class ExplosionHandler {
+        @SubscribeEvent
+        public static void onExplosion(ExplosionEvent.Detonate event) {
+            System.out.println("detonate!");
+            Iterator<BlockPos> iter = event.getAffectedBlocks().iterator();
+            while (iter.hasNext()) {
+                BlockPos pos = iter.next();
+                IBlockState state = event.getWorld().getBlockState(pos);
+                if (state.getBlock() == ModBlocks.itemRouter) {
+                    System.out.println("found router @ " + pos);
+                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(event.getWorld(), pos);
+                    System.out.println("blast upgrade count: " + router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST));
+                    if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
 }
