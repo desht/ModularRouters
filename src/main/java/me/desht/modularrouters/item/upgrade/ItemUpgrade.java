@@ -25,7 +25,8 @@ public class ItemUpgrade extends ItemBase {
         CAMOUFLAGE,
         SYNC,
         FLUID,
-        MUFFLER;
+        MUFFLER,
+        BLAST;
 
         public static UpgradeType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemUpgrade ? values()[stack.getItemDamage()] : null;
@@ -44,6 +45,7 @@ public class ItemUpgrade extends ItemBase {
         registerUpgrade(UpgradeType.SYNC, new SyncUpgrade());
         registerUpgrade(UpgradeType.FLUID, new FluidUpgrade());
         registerUpgrade(UpgradeType.MUFFLER, new MufflerUpgrade());
+        registerUpgrade(UpgradeType.BLAST, new BlastUpgrade());
     }
 
     public ItemUpgrade() {

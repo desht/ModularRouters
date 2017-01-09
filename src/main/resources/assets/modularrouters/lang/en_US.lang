@@ -1,4 +1,5 @@
 # Items
+<<<<<<< HEAD
 item.blank_module.name=Blank Module
 item.receiver_module.name=Receiver Module
 item.puller_module.name=Puller Module
@@ -31,6 +32,37 @@ item.bulkitem_filter.name=Bulk Item Filter
 item.mod_filter.name=Mod Filter
 item.regex_filter.name=Regex Filter
 item.inspection_filter.name=Inspection Filter
+=======
+item.blankModule.name=Blank Module
+item.receiverModule.name=Receiver Module
+item.pullerModule.name=Puller Module
+item.sender1Module.name=Sender Module Mk1
+item.sender2Module.name=Sender Module Mk2
+item.sender3Module.name=Sender Module Mk3
+item.sorterModule.name=Sorter Module
+item.vacuumModule.name=Vacuum Module
+item.dropperModule.name=Dropper Module
+item.placerModule.name=Placer Module
+item.breakerModule.name=Breaker Module
+item.voidModule.name=Void Module
+item.detectorModule.name=Detector Module
+item.modsorterModule.name=Mod Sorter Module
+item.flingerModule.name=Flinger Module
+item.playerModule.name=Player Module
+item.extruderModule.name=Extruder Module
+item.fluidModule.name=Fluid Module
+item.blankUpgrade.name=Blank Upgrade
+item.speedUpgrade.name=Speed Upgrade
+item.stackUpgrade.name=Stack Upgrade
+item.rangeUpgrade.name=Range Upgrade
+item.securityUpgrade.name=Security Upgrade
+item.camouflageUpgrade.name=Camouflage Upgrade
+item.syncUpgrade.name=Sync Upgrade
+item.fluidUpgrade.name=Fluid Transfer Upgrade
+item.mufflerUpgrade.name=Muffler Upgrade
+item.blastUpgrade.name=Blast Upgrade
+item.overrideCard.name=Security Override Card
+>>>>>>> 6bbd2ca... Added the blast upgrade: router explosion/destruction protection
 item.GuideBook.name=§l§nModular Routers
 
 # Blocks
@@ -204,7 +236,8 @@ itemText.usage.item.camouflage_upgrade=Makes the router look like another block.
 itemText.usage.item.sync_upgrade=Makes routers activate together.\n• Right-click: open tuning GUI\n• Sneak + Right-click: tune to a random value.\n• All routers with the same-tuned Sync Upgrade (and same number of Speed Upgrades) will run at the same time.
 itemText.usage.item.fluid_upgrade=Increases the amount of fluid a router can transfer (in each direction) by %d mB/tick.
 itemText.usage.item.fluidUpgradeRouter=• This router's transfer rate: %d mB/tick
-itemText.usage.item.muffler_upgrade=Suppresses sound & particle effects from routers/modules\n• 1 upgrade will suppress sound effects\n• 2 or more will also suppress particle effects\n• 3 or more will also suppress the router-active animation.
+itemText.usage.item.muffler_upgrade=Suppresses sound & particle effects from routers/modules:\n• 1 upgrade will suppress sound effects\n• 2 or more will also suppress particle effects\n• 3 or more will also suppress the router-active animation.
+itemText.usage.item.blast_upgrade=Makes the router immune to explosion damage and boss destruction.
 itemText.usage.item.bulkitem_filter=High-capacity, high-performance filter for large numbers of items.\nInsert into a router module like any other item.\n• Sneak + Right-click any inventory: merge contents into filter.\n• Right-click: view/configure.
 itemText.usage.item.regex_filter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.usage.item.mod_filter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click: view/configure.
