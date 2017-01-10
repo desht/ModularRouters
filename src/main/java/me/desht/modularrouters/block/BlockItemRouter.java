@@ -408,15 +408,12 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     public static class ExplosionHandler {
         @SubscribeEvent
         public static void onExplosion(ExplosionEvent.Detonate event) {
-            System.out.println("detonate!");
             Iterator<BlockPos> iter = event.getAffectedBlocks().iterator();
             while (iter.hasNext()) {
                 BlockPos pos = iter.next();
                 IBlockState state = event.getWorld().getBlockState(pos);
                 if (state.getBlock() == ModBlocks.itemRouter) {
-                    System.out.println("found router @ " + pos);
                     TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(event.getWorld(), pos);
-                    System.out.println("blast upgrade count: " + router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST));
                     if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
                         iter.remove();
                     }
