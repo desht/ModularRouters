@@ -21,9 +21,9 @@ public class Config {
         public static final int TICKS_PER_UPGRADE = 2;
         public static final int SENDER1_BASE_RANGE = 8;
         public static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
-        public static final int SENDER2_BASE_RANGE = 16;
+        public static final int SENDER2_BASE_RANGE = 24;
         public static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
-        public static final int PULLER2_BASE_RANGE = 16;
+        public static final int PULLER2_BASE_RANGE = 12;
         public static final int PULLER2_MAX_RANGE = PULLER2_BASE_RANGE * 2;
         public static final int VACUUM_BASE_RANGE = 6;
         public static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
