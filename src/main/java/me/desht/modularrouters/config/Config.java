@@ -31,6 +31,7 @@ public class Config {
         public static final int FLUID_MAX_TRANSFER = 400;
         public static final int MB_PER_FLUID_UPGRADE = 10;
         public static final boolean SENDER_PARTICLES = true;
+        public static final boolean PULLER_PARTICLES = true;
         public static final boolean VACUUM_PARTICLES = true;
         public static final boolean PLACER_PARTICLES = true;
         public static final boolean BREAKER_PARTICLES = true;
@@ -64,6 +65,7 @@ public class Config {
     public static int fluidMaxTransferRate;
     public static int mBperFluidUpgrade;
     public static boolean senderParticles;
+    public static boolean pullerParticles;
     public static boolean breakerParticles;
     public static boolean flingerEffects;
     public static boolean extruderSound;
@@ -179,6 +181,9 @@ public class Config {
         Property propSenderParticles = config.get(CATEGORY_NAME_MODULE, "senderParticles", Defaults.SENDER_PARTICLES,
                 "Show particles when Sender Modules send items");
         propSenderParticles.setLanguageKey("gui.config.senderParticles");
+        Property propPullerParticles = config.get(CATEGORY_NAME_MODULE, "pullerParticles", Defaults.PULLER_PARTICLES,
+                "Show particles when Puller Mk2 Module pulls items");
+        propSenderParticles.setLanguageKey("gui.config.senderParticles");
         Property propPlacerParticles = config.get(CATEGORY_NAME_MODULE, "placerParticles", Defaults.PLACER_PARTICLES,
                 "Show particles when Placer Module places a block");
         propPlacerParticles.setLanguageKey("gui.config.placerParticles");
@@ -220,6 +225,7 @@ public class Config {
                 propPuller2BaseRange,
                 propPuller2MaxRange,
                 propSenderParticles,
+                propPullerParticles,
                 propVacuumParticles,
                 propPlacerParticles,
                 propBreakerParticles,
@@ -253,6 +259,7 @@ public class Config {
             fluidMaxTransferRate = propFluidMaxTransfer.getInt();
             mBperFluidUpgrade = propMBperFluidUpgrade.getInt();
             senderParticles = propSenderParticles.getBoolean();
+            pullerParticles = propPullerParticles.getBoolean();
             vacuumParticles = propVacuumParticles.getBoolean();
             placerParticles = propPlacerParticles.getBoolean();
             breakerParticles = propBreakerParticles.getBoolean();
@@ -281,6 +288,7 @@ public class Config {
         propFluidMaxTransfer.set(fluidMaxTransferRate);
         propMBperFluidUpgrade.set(mBperFluidUpgrade);
         propSenderParticles.set(senderParticles);
+        propPullerParticles.set(pullerParticles);
         propVacuumParticles.set(vacuumParticles);
         propPlacerParticles.set(placerParticles);
         propBreakerParticles.set(breakerParticles);

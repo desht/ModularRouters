@@ -1,7 +1,9 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +21,9 @@ public class CompiledPullerModule extends CompiledModule {
             if (handler != null) {
                 int taken = transferToRouter(handler, router);
                 if (taken > 0) {
-                    playParticles(router, getTarget().pos);
+                    if (Config.pullerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
+                        playParticles(router, getTarget().pos);
+                    }
                     return true;
                 }
             }
