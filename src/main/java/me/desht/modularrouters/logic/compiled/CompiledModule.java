@@ -42,6 +42,13 @@ public abstract class CompiledModule {
         facing = router == null ? null : router.getAbsoluteFacing(direction);
     }
 
+    /**
+     * Execute this installed module.  When this is called, the router has already verified that the module has a
+     * valid target, i.e. getTarget() will not return null.  This should only be called by the router.
+     *
+     * @param router router the module is installed in
+     * @return true if the module did some work, false otherwise
+     */
     public abstract boolean execute(TileEntityItemRouter router);
 
     public Module getModule() {
@@ -65,6 +72,8 @@ public abstract class CompiledModule {
     public ModuleTarget getTarget() {
         return target;
     }
+
+    public boolean hasTarget() { return target != null; }
 
     public boolean termination() {
         return termination;
@@ -131,7 +140,7 @@ public abstract class CompiledModule {
      * @return a router target object
      */
     protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
-        if (router == null) {
+        if (router == null || (module.isDirectional() && direction == Module.RelativeDirection.NONE)) {
             return null;
         }
         EnumFacing facing = router.getAbsoluteFacing(direction);
@@ -161,6 +170,7 @@ public abstract class CompiledModule {
         }
 
         if (count != null) {
+            // item regulation in force
             wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
             if (wanted.isEmpty()) {
                 return 0;

@@ -48,7 +48,8 @@ public class ItemModule extends ItemBase {
         FLINGER,
         PLAYER,
         EXTRUDER,
-        FLUID;
+        FLUID,
+        PULLER2;
 
         public static ModuleType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemModule ? values()[stack.getItemDamage()] : null;
@@ -74,6 +75,7 @@ public class ItemModule extends ItemBase {
         registerSubItem(ModuleType.PLAYER, new PlayerModule());
         registerSubItem(ModuleType.EXTRUDER, new ExtruderModule());
         registerSubItem(ModuleType.FLUID, new FluidModule());
+        registerSubItem(ModuleType.PULLER2, new PullerModule2());
     }
 
     private static void registerSubItem(ModuleType type, Module handler) {

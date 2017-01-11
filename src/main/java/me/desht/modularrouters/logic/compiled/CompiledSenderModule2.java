@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.SenderModule2;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
@@ -36,10 +35,11 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
         return null;
     }
 
-    protected boolean validate(TileEntityItemRouter router, ModuleTarget target) {
+    private boolean validate(TileEntityItemRouter router, ModuleTarget target) {
+        TargetedModule targetedModule = (TargetedModule) getModule();
         return !(isRangeLimited() &&
                 (router.getWorld().provider.getDimension() != target.dimId
-                || router.getPos().distanceSq(target.pos) > SenderModule2.maxDistanceSq(router)));
+                || router.getPos().distanceSq(target.pos) > targetedModule.maxDistanceSq(router)));
 
     }
 

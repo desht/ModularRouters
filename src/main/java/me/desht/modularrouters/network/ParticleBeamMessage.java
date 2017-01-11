@@ -13,6 +13,7 @@ import java.awt.*;
 
 public class ParticleBeamMessage implements IMessage {
     private int rgb;
+    private float size;
     private boolean flat;
     private double x;
     private double y;
@@ -24,7 +25,7 @@ public class ParticleBeamMessage implements IMessage {
     public ParticleBeamMessage() {
     }
 
-    public ParticleBeamMessage(double x, double y, double z, double x2, double y2, double z2, Color color) {
+    public ParticleBeamMessage(double x, double y, double z, double x2, double y2, double z2, Color color, float size) {
         this.x2 = x2;
         this.y2 = y2;
         this.z2 = z2;
@@ -33,6 +34,7 @@ public class ParticleBeamMessage implements IMessage {
         this.z = z;
         this.flat = color != null;
         this.rgb = flat ? color.getRGB() : 0;
+        this.size = size;
     }
 
     @Override
@@ -45,6 +47,7 @@ public class ParticleBeamMessage implements IMessage {
         z2 = buf.readDouble();
         flat = buf.readBoolean();
         rgb = buf.readInt();
+        size = buf.readByte() / 255.0f;
     }
 
     @Override
@@ -57,6 +60,7 @@ public class ParticleBeamMessage implements IMessage {
         buf.writeDouble(z2);
         buf.writeBoolean(flat);
         buf.writeInt(rgb);
+        buf.writeByte((byte)(size * 255));
     }
 
     public static class Handler implements IMessageHandler<ParticleBeamMessage, IMessage> {
@@ -64,7 +68,11 @@ public class ParticleBeamMessage implements IMessage {
         public IMessage onMessage(ParticleBeamMessage msg, MessageContext ctx) {
             World w = ModularRouters.proxy.theClientWorld();
             if (w != null) {
-                ParticleBeam.doParticleBeam(w, new Vector3(msg.x, msg.y, msg.z), new Vector3(msg.x2, msg.y2, msg.z2), msg.flat ? new Color(msg.rgb) : null);
+                ParticleBeam.doParticleBeam(w,
+                        new Vector3(msg.x, msg.y, msg.z),
+                        new Vector3(msg.x2, msg.y2, msg.z2),
+                        msg.flat ? new Color(msg.rgb) : null,
+                        msg.size);
             }
             return null;
         }

@@ -21,6 +21,10 @@ public class CompiledDetectorModule extends CompiledModule {
         strongSignal = compound != null && compound.getBoolean(NBT_STRONG_SIGNAL);
     }
 
+    @Override
+    public boolean hasTarget() {
+        return true;
+    }
 
     @Override
     public boolean execute(TileEntityItemRouter router) {

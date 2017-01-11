@@ -1,8 +1,8 @@
 # Items
-<<<<<<< HEAD
 item.blank_module.name=Blank Module
 item.receiver_module.name=Receiver Module
-item.puller_module.name=Puller Module
+item.puller_module.name=Puller Module Mk1
+item.puller2_module.name=Puller Module Mk2
 item.sender1_module.name=Sender Module Mk1
 item.sender2_module.name=Sender Module Mk2
 item.sender3_module.name=Sender Module Mk3
@@ -32,37 +32,6 @@ item.bulkitem_filter.name=Bulk Item Filter
 item.mod_filter.name=Mod Filter
 item.regex_filter.name=Regex Filter
 item.inspection_filter.name=Inspection Filter
-=======
-item.blankModule.name=Blank Module
-item.receiverModule.name=Receiver Module
-item.pullerModule.name=Puller Module
-item.sender1Module.name=Sender Module Mk1
-item.sender2Module.name=Sender Module Mk2
-item.sender3Module.name=Sender Module Mk3
-item.sorterModule.name=Sorter Module
-item.vacuumModule.name=Vacuum Module
-item.dropperModule.name=Dropper Module
-item.placerModule.name=Placer Module
-item.breakerModule.name=Breaker Module
-item.voidModule.name=Void Module
-item.detectorModule.name=Detector Module
-item.modsorterModule.name=Mod Sorter Module
-item.flingerModule.name=Flinger Module
-item.playerModule.name=Player Module
-item.extruderModule.name=Extruder Module
-item.fluidModule.name=Fluid Module
-item.blankUpgrade.name=Blank Upgrade
-item.speedUpgrade.name=Speed Upgrade
-item.stackUpgrade.name=Stack Upgrade
-item.rangeUpgrade.name=Range Upgrade
-item.securityUpgrade.name=Security Upgrade
-item.camouflageUpgrade.name=Camouflage Upgrade
-item.syncUpgrade.name=Sync Upgrade
-item.fluidUpgrade.name=Fluid Transfer Upgrade
-item.mufflerUpgrade.name=Muffler Upgrade
-item.blastUpgrade.name=Blast Upgrade
-item.overrideCard.name=Security Override Card
->>>>>>> 6bbd2ca... Added the blast upgrade: router explosion/destruction protection
 item.GuideBook.name=§l§nModular Routers
 
 # Blocks
@@ -216,6 +185,7 @@ itemText.usage.item.breaker_module=Breaks a block adjacent to the router in the 
 itemText.usage.item.dropper_module=Drops items from the router's buffer in the module's configured direction.
 itemText.usage.item.placer_module=Places an item from the router's buffer as a block in the module's configured direction, if possible.
 itemText.usage.item.puller_module=Extracts items from an adjacent inventory in the module's configured direction, into the router's buffer.
+itemText.usage.item.puller2_module=Extracts items from any inventory within a spherical range of %d blocks (%d with Range Upgrades), into the router's buffer.
 itemText.usage.item.sender1_module=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).\nClear line of sight required; opaque blocks will prevent sending.
 itemText.usage.item.sender2_module=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).\nClear line of sight NOT required.\n• Sneak + Right-Click a block to set target\n• Left-Click to indicate current target's position
 itemText.usage.item.sender3_module=Sends items from the router's buffer to any inventory in any dimension.\n• Sneak + Right-Click a block to set target\n• Left-Click to indicate current target's position

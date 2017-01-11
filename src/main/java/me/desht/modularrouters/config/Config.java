@@ -10,13 +10,11 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Config {
-
 
     public static class Defaults {
         public static final int BASE_TICK_RATE = 20;
@@ -25,6 +23,8 @@ public class Config {
         public static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
         public static final int SENDER2_BASE_RANGE = 16;
         public static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
+        public static final int PULLER2_BASE_RANGE = 16;
+        public static final int PULLER2_MAX_RANGE = PULLER2_BASE_RANGE * 2;
         public static final int VACUUM_BASE_RANGE = 6;
         public static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
         public static final int FLUID_BASE_TRANSFER = 50;  // mB / tick
@@ -58,6 +58,8 @@ public class Config {
     public static int vacuumMaxRange;
     public static int extruderBaseRange;
     public static int extruderMaxRange;
+    public static int puller2MaxRange;
+    public static int puller2BaseRange;
     public static int fluidBaseTransferRate;
     public static int fluidMaxTransferRate;
     public static int mBperFluidUpgrade;
@@ -157,6 +159,13 @@ public class Config {
                 "Extruder Module Max Range", 1, Integer.MAX_VALUE);
         propExtruderMaxRange.setLanguageKey("gui.config.extruderMaxRange");
 
+        Property propPuller2BaseRange = config.get(CATEGORY_NAME_MODULE, "puller2BaseRange", Defaults.PULLER2_BASE_RANGE,
+                "Puller Module Mk2 Base Range", 1, Integer.MAX_VALUE);
+        propSender2BaseRange.setLanguageKey("gui.config.puller2BaseRange");
+        Property propPuller2MaxRange = config.get(CATEGORY_NAME_MODULE, "puller2MaxRange", Defaults.PULLER2_MAX_RANGE,
+                "Puller Module Mk2 Max Range", 1, Integer.MAX_VALUE);
+        propSender2MaxRange.setLanguageKey("gui.config.puller2MaxRange");
+
         Property propFluidBaseTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidBaseTransfer", Defaults.FLUID_BASE_TRANSFER,
                 "Fluid Module Base Transfer Rate", 0, Integer.MAX_VALUE);
         Property propFluidMaxTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidMaxTransfer", Defaults.FLUID_MAX_TRANSFER,
@@ -187,7 +196,7 @@ public class Config {
                 "New players spawn with a guide book");
         propStartWithGuide.setLanguageKey("gui.config.startWithGuide");
 
-        config.setCategoryPropertyOrder(CATEGORY_NAME_ROUTER, Arrays.asList(
+        config.setCategoryPropertyOrder(CATEGORY_NAME_ROUTER, Stream.of(
                 propBaseTickRate,
                 propTicksPerUpgrade,
                 propHardMinTicks,
@@ -197,9 +206,9 @@ public class Config {
                 propFluidBaseTransfer,
                 propFluidMaxTransfer,
                 propMBperFluidUpgrade
-        ).stream().map(Property::getName).collect(Collectors.toList()));
+        ).map(Property::getName).collect(Collectors.toList()));
 
-        config.setCategoryPropertyOrder(CATEGORY_NAME_MODULE, Arrays.asList(
+        config.setCategoryPropertyOrder(CATEGORY_NAME_MODULE, Stream.of(
                 propSender1BaseRange,
                 propSender1MaxRange,
                 propSender2BaseRange,
@@ -208,17 +217,19 @@ public class Config {
                 propVacuumMaxRange,
                 propExtruderBaseRange,
                 propExtruderMaxRange,
+                propPuller2BaseRange,
+                propPuller2MaxRange,
                 propSenderParticles,
                 propVacuumParticles,
                 propPlacerParticles,
                 propBreakerParticles,
                 propExtruderSound,
                 propFlingerEffects
-        ).stream().map(Property::getName).collect(Collectors.toList()));
+        ).map(Property::getName).collect(Collectors.toList()));
 
-        config.setCategoryPropertyOrder(CATEGORY_NAME_MISC, Collections.singletonList(
+        config.setCategoryPropertyOrder(CATEGORY_NAME_MISC, Stream.of(
                 propStartWithGuide
-        ).stream().map(Property::getName).collect(Collectors.toList()));
+        ).map(Property::getName).collect(Collectors.toList()));
 
         if (readFieldsFromConfig) {
             baseTickRate = Math.max(1, propBaseTickRate.getInt(Defaults.BASE_TICK_RATE));
@@ -236,6 +247,8 @@ public class Config {
             vacuumMaxRange = propVacuumMaxRange.getInt();
             extruderBaseRange = propExtruderBaseRange.getInt();
             extruderMaxRange = propExtruderMaxRange.getInt();
+            puller2BaseRange = propPuller2BaseRange.getInt();
+            puller2MaxRange = propPuller2MaxRange.getInt();
             fluidBaseTransferRate = propFluidBaseTransfer.getInt();
             fluidMaxTransferRate = propFluidMaxTransfer.getInt();
             mBperFluidUpgrade = propMBperFluidUpgrade.getInt();
@@ -262,6 +275,8 @@ public class Config {
         propVacuumMaxRange.set(vacuumMaxRange);
         propExtruderBaseRange.set(extruderBaseRange);
         propExtruderMaxRange.set(extruderMaxRange);
+        propPuller2BaseRange.set(puller2BaseRange);
+        propPuller2MaxRange.set(puller2MaxRange);
         propFluidBaseTransfer.set(fluidBaseTransferRate);
         propFluidMaxTransfer.set(fluidMaxTransferRate);
         propMBperFluidUpgrade.set(mBperFluidUpgrade);

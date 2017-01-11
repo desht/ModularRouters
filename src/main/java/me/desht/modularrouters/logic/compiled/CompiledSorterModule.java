@@ -35,9 +35,6 @@ public class CompiledSorterModule extends CompiledModule {
     }
 
     IItemHandler findTargetInventory(TileEntityItemRouter router) {
-        if (getDirection() == Module.RelativeDirection.NONE) {
-            return null;
-        }
         return InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
     }
 }

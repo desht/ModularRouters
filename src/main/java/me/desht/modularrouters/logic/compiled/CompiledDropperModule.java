@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -20,9 +19,9 @@ public class CompiledDropperModule extends CompiledModule {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (getDirection() != Module.RelativeDirection.NONE && getFilter().test(stack) && isRegulationOK(router, false)) {
+        if (getFilter().test(stack) && isRegulationOK(router, false)) {
             int nItems = Math.min(router.getItemsPerTick(), stack.getCount() - getRegulationAmount());
-            if (nItems <= 0) {
+            if (nItems < 0) {
                 return false;
             }
             ItemStack toDrop = router.peekBuffer(nItems);
