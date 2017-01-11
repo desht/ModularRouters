@@ -73,7 +73,8 @@ public abstract class TargetedModule extends Module {
             list.add(I18n.format("chatText.misc.target", target.toString()));
             if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
                 TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
-                TargetValidation val = validateTarget(router, target, false);
+                ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos());
+                TargetValidation val = validateTarget(router, moduleTarget, target, false);
                 if (val != TargetValidation.OK) {
                     list.add(I18n.format("chatText.targetValidation." + val));
                 }
@@ -116,14 +117,14 @@ public abstract class TargetedModule extends Module {
      * server-side, it will also revalidate the name of the target block if the checkName parameter is true.
      *
      * @param stack the module item stack
-     * @param checkName verify the name of the target block - only works server-side
+     * @param checkBlockName verify the name of the target block - only works server-side
      * @return targeting data
      */
-    public static ModuleTarget getTarget(ItemStack stack, boolean checkName) {
+    public static ModuleTarget getTarget(ItemStack stack, boolean checkBlockName) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.getTagId(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
             ModuleTarget target = ModuleTarget.fromNBT(compound.getCompoundTag(NBT_TARGET));
-            if (checkName) {
+            if (checkBlockName) {
                 WorldServer w = DimensionManager.getWorld(target.dimId);
                 if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
                     String invName = BlockUtil.getBlockName(w, target.pos);
@@ -137,7 +138,6 @@ public abstract class TargetedModule extends Module {
         }
         return null;
     }
-
 
     @Override
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
@@ -170,7 +170,7 @@ public abstract class TargetedModule extends Module {
         Vector3 orig = Vector3.fromEntityCenter(player);
         Vector3 end = Vector3.fromBlockPos(target.pos).add(0.5);
         if (src.dimId == target.dimId) {
-            ModularRouters.network.sendTo(new ParticleBeamMessage(orig.x, orig.y, orig.z, end.x, end.y, end.z, null), player);
+            ModularRouters.network.sendTo(new ParticleBeamMessage(orig.x, orig.y, orig.z, end.x, end.y, end.z, null, 0.5f), player);
         }
         player.addChatMessage(new TextComponentTranslation("chatText.misc.target", target.toString())
                 .appendText("  ")
@@ -178,11 +178,51 @@ public abstract class TargetedModule extends Module {
         return true;
     }
 
-    public abstract TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget src, ModuleTarget dst, boolean validateBlocks);
+    /**
+     * Do some validation checks on the module's target.
+     *
+     * @param router item router the module is installed in (may be null)
+     * @param src position and dimension of the module (could be a router or player)
+     * @param dst position and dimension of the module's target
+     * @param validateBlocks true if the destination block should be validated; loaded and holding an inventory
+     * @return the validation result
+     */
+    protected TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
+        if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(router))) {
+            return TargetValidation.OUT_OF_RANGE;
+        }
 
-    private TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget dst, boolean validateBlocks) {
-        return validateTarget(router, new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos()), dst, validateBlocks);
+        // validateBlocks will be true only when this is called server-side by left-clicking the module in hand,
+        // or when the router is actually executing the module;
+        // we can't reliably validate chunk loading or inventory presence on the client (for tooltip generation)
+        if (validateBlocks) {
+            WorldServer w = DimensionManager.getWorld(dst.dimId);
+            if (w == null || !w.getChunkProvider().chunkExists(dst.pos.getX() >> 4, dst.pos.getZ() >> 4)) {
+                return TargetValidation.NOT_LOADED;
+            }
+            if (w.getTileEntity(dst.pos) == null) {
+                return TargetValidation.NOT_INVENTORY;
+            }
+        }
+        return TargetValidation.OK;
     }
+
+    /**
+     * Does this module have limited range?
+     *
+     * @return true if range is limited, false otherwise
+     */
+    protected boolean isRangeLimited() {
+        return true;
+    }
+
+    /**
+     * Get the (square of) the maximum distance that this module can reach.
+     *
+     * @param router router the module is installed in (may be null)
+     * @return
+     */
+    public abstract int maxDistanceSq(TileEntityItemRouter router);
 
     enum TargetValidation {
         OK,

@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
 public class CompiledPullerModule extends CompiledModule {
@@ -13,13 +14,20 @@ public class CompiledPullerModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        if (getDirection() != Module.RelativeDirection.NONE && !router.isBufferFull()) {
+        if (!router.isBufferFull()) {
             IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
             if (handler != null) {
                 int taken = transferToRouter(handler, router);
-                return taken > 0;
+                if (taken > 0) {
+                    playParticles(router, getTarget().pos);
+                    return true;
+                }
             }
         }
         return false;
+    }
+
+    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
+        // do nothing by default
     }
 }

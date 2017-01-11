@@ -41,7 +41,7 @@ public class CompiledFluidModule extends CompiledModule {
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
 
-        if (getDirection() == Module.RelativeDirection.NONE || stack == null || stack.stackSize != 1 || !getFilter().test(stack)) {
+        if (stack == null || stack.stackSize != 1 || !getFilter().test(stack)) {
             return false;
         }
 

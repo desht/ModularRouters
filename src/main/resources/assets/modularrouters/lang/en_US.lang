@@ -1,7 +1,8 @@
 # Items
 item.blankModule.name=Blank Module
 item.receiverModule.name=Receiver Module
-item.pullerModule.name=Puller Module
+item.pullerModule.name=Puller Module Mk1
+item.puller2Module.name=Puller Module Mk2
 item.sender1Module.name=Sender Module Mk1
 item.sender2Module.name=Sender Module Mk2
 item.sender3Module.name=Sender Module Mk3
@@ -185,6 +186,7 @@ itemText.usage.item.breakerModule=Breaks a block adjacent to the router in the m
 itemText.usage.item.dropperModule=Drops items from the router's buffer in the module's configured direction.
 itemText.usage.item.placerModule=Places an item from the router's buffer as a block in the module's configured direction, if possible.
 itemText.usage.item.pullerModule=Extracts items from an adjacent inventory in the module's configured direction, into the router's buffer.
+itemText.usage.item.puller2Module=Extracts items from any inventory within a spherical range of %d blocks (%d with Range Upgrades), into the router's buffer.
 itemText.usage.item.sender1Module=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).\nClear line of sight required; opaque blocks will prevent sending.
 itemText.usage.item.sender2Module=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).\nClear line of sight NOT required.\n• Sneak + Right-Click a block to set target\n• Left-Click to indicate current target's position
 itemText.usage.item.sender3Module=Sends items from the router's buffer to any inventory in any dimension.\n• Sneak + Right-Click a block to set target\n• Left-Click to indicate current target's position

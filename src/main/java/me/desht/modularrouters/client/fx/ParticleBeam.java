@@ -9,10 +9,10 @@ public class ParticleBeam {
 	private static final int MAX_ITERS = 500;
 
     public static void doParticleBeam(World world, Vector3 orig, Vector3 end) {
-        doParticleBeam(world, orig, end, null);
+        doParticleBeam(world, orig, end, null, 0.5f);
     }
 
-    public static void doParticleBeam(World world, Vector3 orig, Vector3 end, Color flatColor) {
+    public static void doParticleBeam(World world, Vector3 orig, Vector3 end, Color flatColor, float size) {
 		if (!world.isRemote)
 			return;
 

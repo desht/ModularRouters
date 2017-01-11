@@ -16,6 +16,7 @@ import java.util.Random;
 public class CompiledSenderModule3 extends CompiledSenderModule2 {
     private double y2 = -1.0;
     private final Random r = new Random();
+    private static final Color particleColor = Color.MAGENTA;
 
     public CompiledSenderModule3(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
@@ -27,7 +28,7 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
     }
 
     @Override
-    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, float val) {
+    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
         if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
             double x = router.getPos().getX() + 0.5;
             double y = router.getPos().getY() + 0.5;
@@ -37,7 +38,7 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
             y2 = (y2 < y - 2 || y2 > y + 2) ? y : y2 + (r.nextDouble() - 0.5) / 5.0;
             double z2 = z + facing.getFrontOffsetZ() * 1.2;
             NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), x, y, z, 32);
-            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(x, y, z, x2, y2, z2, Color.getHSBColor(0.83333f, 1.0f, 0.8f)), point);
+            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(x, y, z, x2, y2, z2, particleColor, 0.7f), point);
         }
     }
 }

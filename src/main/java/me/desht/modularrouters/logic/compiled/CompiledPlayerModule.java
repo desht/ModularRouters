@@ -77,11 +77,13 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
+    public boolean hasTarget() {
+        return getPlayer() != null;
+    }
+
+    @Override
     public boolean execute(TileEntityItemRouter router) {
-        EntityPlayer player = getPlayer();
-        if (player == null) {
-            return false;
-        }
+        EntityPlayer player = getPlayer();  // will be non-null if we get here
         IItemHandler itemHandler = getHandler(player);
         if (itemHandler == null) {
             return false;

@@ -23,6 +23,8 @@ import net.minecraftforge.items.IItemHandler;
 import java.awt.*;
 
 public class CompiledSenderModule1 extends CompiledModule {
+    private static final Color particleColor = Color.ORANGE;
+
     public CompiledSenderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
     }
@@ -45,7 +47,7 @@ public class CompiledSenderModule1 extends CompiledModule {
                 int sent = InventoryUtils.transferItems(buffer, target.handler, 0, nToSend);
                 if (sent > 0) {
                     if (Config.senderParticles) {
-                        playParticles(router, target.pos, (float)sent / (float)bufferStack.getMaxStackSize());
+                        playParticles(router, target.pos);
                     }
                     return true;
                 } else {
@@ -56,13 +58,12 @@ public class CompiledSenderModule1 extends CompiledModule {
         return false;
     }
 
-    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, float val) {
+    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
         if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
             Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
-            Color color = Color.getHSBColor(val, 1.0f, 1.0f);
             NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.xCoord, vec1.yCoord, vec1.zCoord, 32);
-            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, color), point);
+            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, particleColor, 0.3f), point);
         }
     }
 
@@ -77,9 +78,6 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     @Override
     public ModuleTarget getActualTarget(TileEntityItemRouter router) {
-        if (getDirection() == Module.RelativeDirection.NONE) {
-            return null;
-        }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
         EnumFacing face = getTarget().face;
         World world = router.getWorld();
