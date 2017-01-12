@@ -19,7 +19,7 @@ public class SenderModule1 extends Module {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[] { Config.Defaults.SENDER1_BASE_RANGE, Config.Defaults.SENDER1_MAX_RANGE };
+        return new Object[] { Config.sender1BaseRange, Config.sender1MaxRange };
     }
 
     @Override

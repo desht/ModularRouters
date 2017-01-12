@@ -2,7 +2,6 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;

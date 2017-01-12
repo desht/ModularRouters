@@ -3,17 +3,12 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-
-import java.util.Optional;
 
 public class SenderModule2 extends TargetedModule {
     @Override
@@ -29,7 +24,7 @@ public class SenderModule2 extends TargetedModule {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[]{Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE};
+        return new Object[]{Config.sender2BaseRange, Config.sender2MaxRange};
     }
 
     @Override
