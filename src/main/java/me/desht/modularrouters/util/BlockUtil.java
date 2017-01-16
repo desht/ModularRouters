@@ -39,12 +39,16 @@ import java.util.stream.Collectors;
 public class BlockUtil {
     private static final String[] REED_ITEM = new String[]{"block", "field_150935_a", "a"};
 
-    private static IBlockState getPlaceableState(ItemStack stack, World world, BlockPos pos, EnumFacing facing) {
+    private static IBlockState getPlaceableState(EntityPlayer fakePlayer, ItemStack stack, World world, BlockPos pos, EnumFacing facing) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
         Item item = stack.getItem();
         IBlockState res = null;
         if (item instanceof ItemBlock) {
-            res = ((ItemBlock) item).block.getStateFromMeta(item.getMetadata(stack.getItemDamage()));
+            float hitX = (float) (fakePlayer.posX - pos.getX());
+            float hitY = (float) (fakePlayer.posY - pos.getY());
+            float hitZ = (float) (fakePlayer.posZ - pos.getZ());
+            int meta = item.getMetadata(stack.getItemDamage());
+            res = ((ItemBlock) item).block.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
         } else if (item instanceof ItemBlockSpecial) {
             res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
         } else if (item instanceof ItemRedstone) {
@@ -112,18 +116,20 @@ public class BlockUtil {
             return null;
         }
 
-        IBlockState newState = getPlaceableState(toPlace, world, pos, facing);
+        EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
+        if (fakePlayer == null) {
+            return null;
+        }
+
+        IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing);
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
-            EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
-            if (fakePlayer == null) {
-                return null;
-            }
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
             BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer, EnumHand.MAIN_HAND);
             MinecraftForge.EVENT_BUS.post(event);
-            if (!event.isCanceled() && world.setBlockState(pos, newState)) {
+            if (!event.isCanceled() && world.setBlockState(pos, newState, 3)) {
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                ItemBlock.setTileEntityNBT(world, fakePlayer, pos, toPlace);
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
                 if (newState.getBlock() == Blocks.SKULL) {
                     handleSkullPlacement(world, pos, toPlace, facing);
