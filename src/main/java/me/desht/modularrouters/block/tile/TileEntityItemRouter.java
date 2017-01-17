@@ -117,6 +117,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
     private IBlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
+    private boolean executing;  // are we currently executing modules?
 
     public TileEntityItemRouter() {
         super();
@@ -405,6 +406,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     }
 
     private void executeModules(boolean pulsed) {
+        executing = true;
+
         boolean newActive = false;
 
         boolean powered = pulsed ? true : getRedstonePower() > 0;
@@ -428,6 +431,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
         setActive(newActive);
         prevCanEmit = canEmit;
+        executing = false;
     }
 
     public int getTickRate() {
@@ -693,6 +697,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public void checkForRedstonePulse() {
         redstonePower = worldObj.isBlockIndirectlyGettingPowered(pos);
+        if (executing) {
+            return;  // avoid recursion from executing module triggering more block updates
+        }
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
             if (redstonePower > lastPower && pulseCounter >= tickRate) {
