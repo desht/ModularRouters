@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "modularrouters:items/puller2Module"
+    "layer0": "modularrouters:items/puller2_module"
   }
 }
