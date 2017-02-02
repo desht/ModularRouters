@@ -3,10 +3,7 @@ package me.desht.modularrouters.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockDirectional;
-import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -40,7 +37,7 @@ public class BlockUtil {
     private static final String[] REED_ITEM = new String[]{"block", "field_150935_a", "a"};
 
     private static IBlockState getPlaceableState(EntityPlayer fakePlayer, ItemStack stack, World world, BlockPos pos, EnumFacing facing) {
-        // With thanks to Vazkii for inspiration from the Rannuncarpus code :)
+        // With thanks to Vazkii for inspiration from the Rannuncarpus code, although it's changed a lot since...
         Item item = stack.getItem();
         IBlockState res = null;
         if (item instanceof ItemBlock) {
@@ -53,6 +50,11 @@ public class BlockUtil {
             res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
         } else if (item instanceof ItemRedstone) {
             res = Blocks.REDSTONE_WIRE.getDefaultState();
+        } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
+            res = getCocoaBeanState(fakePlayer, world, pos, facing);
+            if (res != null) {
+                facing = res.getValue(BlockHorizontal.FACING);
+            }
         } else if (item instanceof IPlantable) {
             IBlockState state = ((IPlantable) item).getPlant(world, pos);
             res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
@@ -68,6 +70,31 @@ public class BlockUtil {
             res = res.withProperty(BlockDirectional.FACING, facing);
         }
         return res;
+    }
+
+    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos, EnumFacing facing) {
+        // try to find a jungle log in any horizontal direction
+        for (EnumFacing f : EnumFacing.HORIZONTALS) {
+            IBlockState state = world.getBlockState(pos.offset(f));
+            if (state.getBlock() == Blocks.LOG && state.getValue(BlockOldLog.VARIANT) == BlockPlanks.EnumType.JUNGLE) {
+                float hitX = (float) (fakePlayer.posX - pos.getX());
+                float hitY = (float) (fakePlayer.posY - pos.getY());
+                float hitZ = (float) (fakePlayer.posZ - pos.getZ());
+                fakePlayer.rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
+                return Blocks.COCOA.getStateForPlacement(world, pos, f.getOpposite(), hitX, hitY, hitZ, 0, fakePlayer, EnumHand.MAIN_HAND);
+            }
+        }
+        return null;
+    }
+
+    private static float getYawFromFacing(EnumFacing facing) {
+        switch (facing) {
+            case WEST: return 90f;
+            case NORTH: return 180f;
+            case EAST: return 270f;
+            case SOUTH: return 0f;
+            default: return 0f; // shouldn't happen
+        }
     }
 
     private static void handleSkullPlacement(World worldIn, BlockPos pos, ItemStack stack, EnumFacing facing) {
