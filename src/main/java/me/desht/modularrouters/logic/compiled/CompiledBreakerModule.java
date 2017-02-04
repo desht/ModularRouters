@@ -2,7 +2,6 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;

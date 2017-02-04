@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
