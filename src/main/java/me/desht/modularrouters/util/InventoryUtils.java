@@ -36,16 +36,12 @@ public class InventoryUtils {
                 float offsetY = random.nextFloat() * 0.8f + 0.1f;
                 float offsetZ = random.nextFloat() * 0.8f + 0.1f;
                 while (!itemStack.isEmpty()) {
-                    int stackSize = random.nextInt(21) + 10;
-                    if (stackSize > itemStack.getCount()) {
-                        stackSize = itemStack.getCount();
-                    }
-
-                    itemStack.shrink(stackSize);
+                    int stackSize = Math.min(itemStack.getCount(), random.nextInt(21) + 10);
                     EntityItem entityitem = new EntityItem(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize, itemStack.getMetadata()));
                     if (itemStack.hasTagCompound()) {
                         entityitem.getEntityItem().setTagCompound(itemStack.getTagCompound().copy());
                     }
+                    itemStack.shrink(stackSize);
 
                     float motionScale = 0.05f;
                     entityitem.motionX = random.nextGaussian() * (double) motionScale;
