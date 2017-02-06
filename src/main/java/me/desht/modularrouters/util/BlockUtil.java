@@ -49,7 +49,7 @@ public class BlockUtil {
         } else if (item instanceof ItemRedstone) {
             res = Blocks.REDSTONE_WIRE.getDefaultState();
         } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
-            res = getCocoaBeanState(fakePlayer, world, pos, facing);
+            res = getCocoaBeanState(fakePlayer, world, pos, facing, stack);
             if (res != null) {
                 facing = res.getValue(BlockHorizontal.FACING);
             }
@@ -70,7 +70,7 @@ public class BlockUtil {
         return res;
     }
 
-    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos, EnumFacing facing) {
+    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos, EnumFacing facing, ItemStack stack) {
         // try to find a jungle log in any horizontal direction
         for (EnumFacing f : EnumFacing.HORIZONTALS) {
             IBlockState state = world.getBlockState(pos.offset(f));
@@ -79,7 +79,7 @@ public class BlockUtil {
                 float hitY = (float) (fakePlayer.posY - pos.getY());
                 float hitZ = (float) (fakePlayer.posZ - pos.getZ());
                 fakePlayer.rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
-                return Blocks.COCOA.getStateForPlacement(world, pos, f.getOpposite(), hitX, hitY, hitZ, 0, fakePlayer, EnumHand.MAIN_HAND);
+                return Blocks.COCOA.getStateForPlacement(world, pos, f.getOpposite(), hitX, hitY, hitZ, 0, fakePlayer, stack);
             }
         }
         return null;
