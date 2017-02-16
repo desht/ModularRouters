@@ -209,7 +209,7 @@ public abstract class CompiledModule {
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (stack != null && getFilter().test(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
+                if (stack != null && stack.stackSize > 0 && getFilter().test(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
                     setLastMatchPos(pos);
                     result = stack.copy();
                     result.stackSize = nToTake;
