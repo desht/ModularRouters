@@ -189,7 +189,7 @@ public abstract class CompiledModule {
                 wanted.shrink(inserted);
                 totalInserted += inserted;
                 if (wanted.isEmpty() || router.isBufferFull()) {
-                    setLastMatchPos(pos);
+                    setLastMatchPos(handler.getStackInSlot(pos).isEmpty() ? (pos + 1) % handler.getSlots() : pos);
                     return totalInserted;
                 }
             }
@@ -213,6 +213,7 @@ public abstract class CompiledModule {
                     setLastMatchPos(pos);
                     result = stack.copy();
                     result.setCount(nToTake);
+                    break;
                 }
             }
         }
