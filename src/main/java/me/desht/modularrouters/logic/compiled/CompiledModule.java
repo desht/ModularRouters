@@ -189,7 +189,8 @@ public abstract class CompiledModule {
                 wanted.stackSize -= inserted;
                 totalInserted += inserted;
                 if (wanted.stackSize <= 0 || router.isBufferFull()) {
-                    setLastMatchPos(pos);
+                    ItemStack s = handler.getStackInSlot(pos);
+                    setLastMatchPos((s == null || s.stackSize == 0) ? (pos + 1) % handler.getSlots() : pos);
                     return totalInserted;
                 }
             }
@@ -213,6 +214,7 @@ public abstract class CompiledModule {
                     setLastMatchPos(pos);
                     result = stack.copy();
                     result.stackSize = nToTake;
+                    break;
                 }
             }
         }
