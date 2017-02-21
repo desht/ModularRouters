@@ -50,7 +50,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
     private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
     private static final int REDSTONE_BUTTON_ID = BACK_BUTTON_ID + 1;
-    private static final int REGULATOR_TOOLTIP_ID = BACK_BUTTON_ID + 1;
+    private static final int REGULATOR_TOOLTIP_ID = BACK_BUTTON_ID + 2;
 
     /**
      * Base ID for extra buttons added by submodules
