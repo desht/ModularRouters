@@ -3,6 +3,7 @@ package me.desht.modularrouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
@@ -69,6 +70,7 @@ public class ModularRouters {
         proxy.preInit();
         setupNetwork();
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
+        GameRegistry.registerTileEntity(TileEntityTemplateFrame.class, "template_frame");
         IntegrationHandler.registerGuideBook();
         logger.info(name + " is loading!");
     }

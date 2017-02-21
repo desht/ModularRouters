@@ -1,6 +1,8 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.container.slot.BufferSlot;
+import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.entity.player.EntityPlayer;

@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.BufferHandler;
+import me.desht.modularrouters.container.handler.BufferHandler;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;

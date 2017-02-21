@@ -16,7 +16,8 @@ item.detectorModule.name=Detector Module
 item.modsorterModule.name=Mod Sorter Module
 item.flingerModule.name=Flinger Module
 item.playerModule.name=Player Module
-item.extruderModule.name=Extruder Module
+item.extruderModule.name=Extruder Module Mk1
+item.extruder2Module.name=Extruder Module Mk2
 item.fluidModule.name=Fluid Module
 item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
@@ -37,6 +38,7 @@ item.inspectionFilter.name=Inspection Filter
 
 # Blocks
 tile.itemRouter.name=Item Router
+tile.templateFrame.name=Template Frame
 
 # Tab Group
 itemGroup.modularrouters=Modular Routers
