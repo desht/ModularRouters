@@ -25,7 +25,7 @@ public class SenderModule2 extends TargetedModule {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[]{Config.Defaults.SENDER2_BASE_RANGE, Config.Defaults.SENDER2_MAX_RANGE};
+        return new Object[]{Config.sender2BaseRange, Config.sender2MaxRange};
     }
 
     @Override

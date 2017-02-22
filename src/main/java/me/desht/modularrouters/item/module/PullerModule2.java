@@ -25,7 +25,7 @@ public class PullerModule2 extends TargetedModule {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[]{Config.Defaults.PULLER2_BASE_RANGE, Config.Defaults.PULLER2_MAX_RANGE};
+        return new Object[]{Config.puller2BaseRange, Config.puller2MaxRange};
     }
 
     @Override
