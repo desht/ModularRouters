@@ -17,34 +17,34 @@ import java.util.stream.Stream;
 public class Config {
 
     public static class Defaults {
-        public static final int BASE_TICK_RATE = 20;
-        public static final int TICKS_PER_UPGRADE = 2;
-        public static final int SENDER1_BASE_RANGE = 8;
-        public static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
-        public static final int SENDER2_BASE_RANGE = 24;
-        public static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
-        public static final int PULLER2_BASE_RANGE = 12;
-        public static final int PULLER2_MAX_RANGE = PULLER2_BASE_RANGE * 2;
-        public static final int VACUUM_BASE_RANGE = 6;
-        public static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
-        public static final int FLUID_BASE_TRANSFER = 50;  // mB / tick
-        public static final int FLUID_MAX_TRANSFER = 400;
-        public static final int MB_PER_FLUID_UPGRADE = 10;
-        public static final boolean SENDER_PARTICLES = true;
-        public static final boolean PULLER_PARTICLES = true;
-        public static final boolean VACUUM_PARTICLES = true;
-        public static final boolean PLACER_PARTICLES = true;
-        public static final boolean BREAKER_PARTICLES = true;
-        public static final boolean FLINGER_EFFECTS = true;
-        public static final boolean EXTRUDER_SOUND = true;
-        public static final char CONFIG_KEY = 'c';
-        public static final boolean START_WITH_GUIDE = false;
-        public static final int ECO_TIMEOUT = 300;
-        public static final int LOW_POWER_INTERVAL = 100;
-        public static final int EXTRUDER_BASE_RANGE = 12;
-        public static final int EXTRUDER_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
-        public static final int EXTRUDER2_BASE_RANGE = 24;
-        public static final int EXTRUDER2_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
+        static final int BASE_TICK_RATE = 20;
+        static final int TICKS_PER_UPGRADE = 2;
+        static final int SENDER1_BASE_RANGE = 8;
+        static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
+        static final int SENDER2_BASE_RANGE = 24;
+        static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
+        static final int PULLER2_BASE_RANGE = 12;
+        static final int PULLER2_MAX_RANGE = PULLER2_BASE_RANGE * 2;
+        static final int VACUUM_BASE_RANGE = 6;
+        static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
+        static final int FLUID_BASE_TRANSFER = 50;  // mB / tick
+        static final int FLUID_MAX_TRANSFER = 400;
+        static final int MB_PER_FLUID_UPGRADE = 10;
+        static final boolean SENDER_PARTICLES = true;
+        static final boolean PULLER_PARTICLES = true;
+        static final boolean VACUUM_PARTICLES = true;
+        static final boolean PLACER_PARTICLES = true;
+        static final boolean BREAKER_PARTICLES = true;
+        static final boolean FLINGER_EFFECTS = true;
+        static final boolean EXTRUDER_SOUND = true;
+        static final char CONFIG_KEY = 'c';
+        static final boolean START_WITH_GUIDE = false;
+        static final int ECO_TIMEOUT = 300;
+        static final int LOW_POWER_INTERVAL = 100;
+        static final int EXTRUDER_BASE_RANGE = 12;
+        static final int EXTRUDER_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
+        static final int EXTRUDER2_BASE_RANGE = 24;
+        static final int EXTRUDER2_MAX_RANGE = EXTRUDER2_BASE_RANGE * 2;
     }
 
     public static char configKey;

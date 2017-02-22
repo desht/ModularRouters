@@ -6,8 +6,6 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.List;
-
 public class GuiModuleExtruder2 extends GuiModule {
     private static final int INFO_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
 

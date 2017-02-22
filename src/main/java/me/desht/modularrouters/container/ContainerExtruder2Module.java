@@ -3,11 +3,13 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumHand;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
@@ -69,6 +71,17 @@ public class ContainerExtruder2Module extends ContainerModule {
         return null;
     }
 
+    public static boolean isItemOKForTemplate(ItemStack stack) {
+        if (stack == null) {
+            return true;  //  null is ok, clears the slot
+        }
+        if (!(stack.getItem() instanceof ItemBlock)) {
+            return false;
+        }
+        Block b = ((ItemBlock) stack.getItem()).getBlock();
+        return b.getDefaultState().getRenderType() == EnumBlockRenderType.MODEL;
+    }
+
     private static class TemplateSlot extends BaseModuleSlot<TemplateHandler> {
         public TemplateSlot(TemplateHandler itemHandler, TileEntityItemRouter router, int index, int xPosition, int yPosition) {
             super(itemHandler, router, index, xPosition, yPosition);
@@ -88,12 +101,12 @@ public class ContainerExtruder2Module extends ContainerModule {
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return stack == null || stack.getItem() instanceof ItemBlock ? super.insertItem(slot, stack, simulate) : stack;
+            return isItemOKForTemplate(stack) ? super.insertItem(slot, stack, simulate) : stack;
         }
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            if (stack == null || stack.getItem() instanceof ItemBlock) {
+            if (isItemOKForTemplate(stack)) {
                 super.setStackInSlot(slot, stack);
             }
         }

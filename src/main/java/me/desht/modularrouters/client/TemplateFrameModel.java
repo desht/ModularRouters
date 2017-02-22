@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client;
 
 import me.desht.modularrouters.block.BlockTemplateFrame;
-import me.desht.modularrouters.block.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
