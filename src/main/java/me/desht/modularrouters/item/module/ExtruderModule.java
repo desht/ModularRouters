@@ -27,7 +27,7 @@ public class ExtruderModule extends Module {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[]{Config.Defaults.EXTRUDER_BASE_RANGE, Config.Defaults.EXTRUDER_MAX_RANGE};
+        return new Object[]{Config.extruderBaseRange, Config.extruderMaxRange};
     }
 
     @Override

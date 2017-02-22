@@ -1,6 +1,5 @@
 package me.desht.modularrouters.block;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.util.PropertyObject;
 import net.minecraft.block.material.Material;

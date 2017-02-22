@@ -34,7 +34,7 @@ public class VacuumModule extends Module {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[] { Config.Defaults.VACUUM_BASE_RANGE, Config.Defaults.VACUUM_MAX_RANGE };
+        return new Object[] { Config.vacuumBaseRange, Config.vacuumMaxRange };
     }
 
     @Override

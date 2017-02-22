@@ -12,7 +12,6 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumHand;
