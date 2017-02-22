@@ -6,6 +6,7 @@ import me.desht.modularrouters.gui.module.GuiModuleDetector;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -48,7 +49,7 @@ public class DetectorModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR),
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.DETECTOR),
                 ModItems.blankModule, Items.COMPARATOR);
     }
 

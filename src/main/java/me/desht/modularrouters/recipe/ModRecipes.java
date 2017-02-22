@@ -49,20 +49,20 @@ public class ModRecipes {
         // special case for deprecated sorter & mod sorter modules
         GameRegistry.addShapelessRecipe(
                 ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
-                ItemModule.makeItemStack(ModuleType.SORTER));
+                ModuleHelper.makeItemStack(ModuleType.SORTER));
         GameRegistry.addShapelessRecipe(
                 ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.MOD),
-                ItemModule.makeItemStack(ModuleType.MODSORTER));
+                ModuleHelper.makeItemStack(ModuleType.MODSORTER));
 
         RecipeSorter.register(ModularRouters.modId + ":enchantModule", EnchantModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
         for (ModuleType type : EnchantModuleRecipe.validEnchantments.keySet()) {
             for (Enchantment ench : EnchantModuleRecipe.validEnchantments.get(type)) {
                 for (int level = ench.getMinLevel(); level <= ench.getMaxLevel(); level++) {
-                    ItemStack resStack = ItemModule.makeItemStack(type);
+                    ItemStack resStack = ModuleHelper.makeItemStack(type);
                     ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
                     resStack.addEnchantment(ench, level);
                     book.addEnchantment(ench, level);
-                    GameRegistry.addRecipe(new EnchantModuleRecipe(resStack, ItemModule.makeItemStack(type), book));
+                    GameRegistry.addRecipe(new EnchantModuleRecipe(resStack, ModuleHelper.makeItemStack(type), book));
                 }
             }
         }
@@ -81,24 +81,24 @@ public class ModRecipes {
 
     private static void addFastPickupRecipe() {
         RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
-        ItemStack output = ItemModule.makeItemStack(ModuleType.VACUUM);
+        ItemStack output = ModuleHelper.makeItemStack(ModuleType.VACUUM);
         ModuleHelper.addFastPickup(output);
         GameRegistry.addRecipe(new FastPickupEnhancementRecipe(output,
                 "FM",
                 'F', Items.FISHING_ROD,
-                'M', ItemModule.makeItemStack(ModuleType.VACUUM)));
+                'M', ModuleHelper.makeItemStack(ModuleType.VACUUM)));
     }
 
     private static void addRedstoneUpgradeRecipes() {
         RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
-            ItemStack output = ItemModule.makeItemStack(type);
+            ItemStack output = ModuleHelper.makeItemStack(type);
             ModuleHelper.setRedstoneBehaviour(output, true, RouterRedstoneBehaviour.ALWAYS);
             GameRegistry.addRecipe(new RedstoneEnhancementRecipe(output,
                     " R ", "TMT", " R ",
                     'R', Items.REDSTONE,
                     'T', Blocks.REDSTONE_TORCH,
-                    'M', ItemModule.makeItemStack(type)));
+                    'M', ModuleHelper.makeItemStack(type)));
         }
     }
 
@@ -106,13 +106,13 @@ public class ModRecipes {
         RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : ModuleType.values()) {
             if (RegulatorEnhancementRecipe.appliesTo(type)) {
-                ItemStack output = ItemModule.makeItemStack(type);
+                ItemStack output = ModuleHelper.makeItemStack(type);
                 ModuleHelper.setRegulatorAmount(output, true, 1);
                 GameRegistry.addRecipe(new RegulatorEnhancementRecipe(output,
                         " Q ", "CMC", " Q ",
                         'Q', Items.QUARTZ,
                         'C', Items.COMPARATOR,
-                        'M', ItemModule.makeItemStack(type)));
+                        'M', ModuleHelper.makeItemStack(type)));
             }
         }
     }
@@ -120,12 +120,12 @@ public class ModRecipes {
     private static void addPickupDelayRecipes() {
         RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         for (ModuleType type : new ItemModule.ModuleType[] { ModuleType.DROPPER, ModuleType.FLINGER} ) {
-            ItemStack output = ItemModule.makeItemStack(type);
+            ItemStack output = ModuleHelper.makeItemStack(type);
             ModuleHelper.increasePickupDelay(output);
             GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(output,
                     "SM",
                     'S', Items.SLIME_BALL,
-                    'M', ItemModule.makeItemStack(type)));
+                    'M', ModuleHelper.makeItemStack(type)));
         }
     }
 }

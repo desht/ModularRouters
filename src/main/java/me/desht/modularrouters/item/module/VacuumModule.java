@@ -39,7 +39,7 @@ public class VacuumModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.VACUUM),
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.VACUUM),
                 ModItems.blankModule, Blocks.HOPPER, Items.ENDER_EYE);
     }
 

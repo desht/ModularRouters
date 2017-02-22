@@ -1,5 +1,6 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -150,5 +151,13 @@ public class ModuleHelper {
     public static boolean hasFastPickup(ItemStack stack) {
         NBTTagCompound compound = validateNBT(stack);
         return compound.getBoolean(NBT_FAST_PICKUP);
+    }
+
+    public static ItemStack makeItemStack(ItemModule.ModuleType type) {
+        return makeItemStack(type, 1);
+    }
+
+    public static ItemStack makeItemStack(ItemModule.ModuleType type, int amount) {
+        return new ItemStack(ModItems.module, amount, type.ordinal());
     }
 }

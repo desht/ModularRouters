@@ -31,7 +31,7 @@ public class ElementModule implements IElement {
     @Override
     public void render(int x, int y) {
         RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-        ItemStack stack = ItemModule.makeItemStack(type);
+        ItemStack stack = ModuleHelper.makeItemStack(type);
         IItemStyle style = new ItemStyle().width(getWidth()).height(getHeight());
         String dirStr = String.valueOf(ARROWS.charAt(dir.ordinal()));
         RenderHelper.renderItemStack(Minecraft.getMinecraft(), itemRender, stack, x + (style.getWidth() - 18) / 2, y + (style.getHeight() - 18) / 2, dirStr);

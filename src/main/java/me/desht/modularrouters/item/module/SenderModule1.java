@@ -6,6 +6,7 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule1;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -24,7 +25,7 @@ public class SenderModule1 extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1),
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER1),
                 ModItems.blankModule, Items.BOW, Items.ARROW);
     }
 

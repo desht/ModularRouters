@@ -245,14 +245,6 @@ public class ItemModule extends ItemBase {
         return (flag ? TextFormatting.DARK_GRAY + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
-    public static ItemStack makeItemStack(ModuleType type) {
-        return makeItemStack(type, 1);
-    }
-
-    public static ItemStack makeItemStack(ModuleType type, int amount) {
-        return new ItemStack(ModItems.module, amount, type.ordinal());
-    }
-
     public static boolean isType(ItemStack stack, ModuleType type) {
         return stack != null && stack.getItem() instanceof ItemModule && stack.getItemDamage() == type.ordinal();
     }

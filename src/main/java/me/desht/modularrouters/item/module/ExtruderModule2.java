@@ -9,6 +9,7 @@ import me.desht.modularrouters.gui.module.GuiModuleExtruder2;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -29,12 +30,12 @@ public class ExtruderModule2 extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.EXTRUDER2),
+        return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER2),
                 " e ", "scp",
                 'c', Blocks.CHEST,
-                's', ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1),
-                'e', ItemModule.makeItemStack(ItemModule.ModuleType.EXTRUDER),
-                'p', ItemModule.makeItemStack(ItemModule.ModuleType.PULLER));
+                's', ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER1),
+                'e', ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER),
+                'p', ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER));
     }
 
     @Override

@@ -5,6 +5,7 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +29,7 @@ public class BreakerModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.BREAKER),
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.BREAKER),
                 ModItems.blankModule, Items.IRON_PICKAXE);
     }
 

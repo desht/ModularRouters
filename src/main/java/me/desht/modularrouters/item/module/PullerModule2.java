@@ -5,6 +5,7 @@ import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule2;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -18,8 +19,8 @@ public class PullerModule2 extends TargetedModule {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PULLER2),
-                ItemModule.makeItemStack(ItemModule.ModuleType.PULLER), Items.ENDER_EYE);
+        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER2),
+                ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER), Items.ENDER_EYE);
     }
 
     @Override

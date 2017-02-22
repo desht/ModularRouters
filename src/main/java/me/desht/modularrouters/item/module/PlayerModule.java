@@ -5,6 +5,7 @@ import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModulePlayer;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -52,12 +53,12 @@ public class PlayerModule extends Module {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemModule.makeItemStack(ItemModule.ModuleType.PLAYER),
+        return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.PLAYER),
                 " h ", "szp", " c ",
                 'h', Items.DIAMOND_HELMET,
-                's', ItemModule.makeItemStack(ItemModule.ModuleType.SENDER3),
+                's', ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER3),
                 'z', new ItemStack(Items.SKULL, 1, OreDictionary.WILDCARD_VALUE),
-                'p', ItemModule.makeItemStack(ItemModule.ModuleType.PULLER),
+                'p', ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER),
                 'c', Items.DIAMOND_CHESTPLATE);
     }
 
