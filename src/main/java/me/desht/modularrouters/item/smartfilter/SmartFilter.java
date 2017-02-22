@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.FilterSlot;
+import me.desht.modularrouters.container.slot.BaseModuleSlot.ModuleFilterSlot;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -34,7 +34,7 @@ public abstract class SmartFilter {
     public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiModule) {
             Slot slot = ((GuiModule) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
-            if (slot instanceof FilterSlot) {
+            if (slot instanceof ModuleFilterSlot) {
                 list.add(MiscUtil.translate("itemText.misc.configureHint", String.valueOf(Config.configKey)));
             }
         }

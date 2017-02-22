@@ -1,4 +1,4 @@
-package me.desht.modularrouters.container;
+package me.desht.modularrouters.container.slot;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.ItemBase;
@@ -24,7 +24,7 @@ public abstract class ValidatingSlot extends SlotItemHandler {
     }
 
     public static class Module extends ValidatingSlot {
-        Module(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
+        public Module(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
             super(ItemModule.class, router, router.getModules(), index, xPosition, yPosition);
         }
 
@@ -36,7 +36,7 @@ public abstract class ValidatingSlot extends SlotItemHandler {
     }
 
     public static class Upgrade extends ValidatingSlot {
-        Upgrade(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
+        public Upgrade(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
             super(ItemUpgrade.class, router, router.getUpgrades(), index, xPosition, yPosition);
         }
 

@@ -1,4 +1,4 @@
-package me.desht.modularrouters.container;
+package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
@@ -9,17 +9,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
-public class FilterHandler extends GhostItemHandler {
+public abstract class BaseModuleHandler extends GhostItemHandler {
     private final ItemStack holderStack;
+    private final String tagName;
 
-    public FilterHandler(ItemStack holderStack, int size) {
+    public BaseModuleHandler(ItemStack holderStack, int size, String tagName) {
         super(size);
         this.holderStack = holderStack;
+        this.tagName = tagName;
 
         if (!holderStack.hasTagCompound()) {
             holderStack.setTagCompound(new NBTTagCompound());
         }
-        deserializeNBT(holderStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND));
+        deserializeNBT(holderStack.getTagCompound().getTagList(tagName, Constants.NBT.TAG_COMPOUND));
     }
 
     /**
@@ -27,7 +29,7 @@ public class FilterHandler extends GhostItemHandler {
      *
      * @return the holding itemstack
      */
-    public ItemStack getHoldingItemStack() {
+    public ItemStack getHolderStack() {
         return holderStack;
     }
 
@@ -35,12 +37,12 @@ public class FilterHandler extends GhostItemHandler {
      * Get the number of items in the filter of the given itemstack.  Counts the items without loading the NBT for
      * every item.
      *
-     * @param holderStack item which holds the filter
+     * @param tagName name of the NBT tag the data is under
      * @return number of items in the filter
      */
-    public static int getItemCount(ItemStack holderStack) {
+    public static int getItemCount(ItemStack holderStack, String tagName) {
         if (holderStack.hasTagCompound()) {
-            return holderStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND).tagCount();
+            return holderStack.getTagCompound().getTagList(tagName, Constants.NBT.TAG_COMPOUND).tagCount();
         } else {
             return 0;
         }
@@ -50,29 +52,29 @@ public class FilterHandler extends GhostItemHandler {
      * Save the contents of the item handler onto the holder item stack's NBT
      */
     public void save() {
-        holderStack.getTagCompound().setTag(ModuleHelper.NBT_FILTER, serializeNBT());
+        holderStack.getTagCompound().setTag(tagName, serializeNBT());
     }
 
-    public static class BulkFilterHandler extends FilterHandler {
+    public static class BulkFilterHandler extends BaseModuleHandler {
         public BulkFilterHandler(ItemStack holderStack) {
-            super(holderStack, BulkItemFilter.FILTER_SIZE);
+            super(holderStack, BulkItemFilter.FILTER_SIZE, ModuleHelper.NBT_FILTER);
         }
     }
 
-    public static class ModuleFilterHandler extends FilterHandler {
+    public static class ModuleFilterHandler extends BaseModuleHandler {
         public ModuleFilterHandler(ItemStack holderStack) {
-            super(holderStack, Filter.FILTER_SIZE);
+            super(holderStack, Filter.FILTER_SIZE, ModuleHelper.NBT_FILTER);
         }
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            Module module = ItemModule.getModule(getHoldingItemStack());
+            Module module = ItemModule.getModule(getHolderStack());
             return module.isItemValidForFilter(stack) ? super.insertItem(slot, stack, simulate) : stack;
         }
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            Module module = ItemModule.getModule(getHoldingItemStack());
+            Module module = ItemModule.getModule(getHolderStack());
             if (module.isItemValidForFilter(stack)) {
                 super.setStackInSlot(slot, stack);
             }

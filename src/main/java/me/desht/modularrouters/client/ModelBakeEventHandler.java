@@ -14,6 +14,7 @@ public class ModelBakeEventHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
+        // item router
         Map<IBlockState,ModelResourceLocation> map
                 = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(ModBlocks.itemRouter);
         for (Map.Entry<IBlockState,ModelResourceLocation> entry : map.entrySet()) {
@@ -23,6 +24,14 @@ public class ModelBakeEventHandler {
                 RouterModel customModel = new RouterModel(existing);
                 event.getModelRegistry().putObject(entry.getValue(), customModel);
             }
+        }
+
+        // template frame
+        Object object = event.getModelRegistry().getObject(TemplateFrameModel.variantTag);
+        if (object != null) {
+            IBakedModel existingModel = (IBakedModel) object;
+            TemplateFrameModel customModel = new TemplateFrameModel(existingModel);
+            event.getModelRegistry().putObject(TemplateFrameModel.variantTag, customModel);
         }
     }
 }

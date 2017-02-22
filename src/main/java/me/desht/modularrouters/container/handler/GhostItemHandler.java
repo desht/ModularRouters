@@ -1,4 +1,4 @@
-package me.desht.modularrouters.container;
+package me.desht.modularrouters.container.handler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializable<NBTTagList> {
     protected final ItemStack[] items;
 
-    GhostItemHandler(int size) {
+    public GhostItemHandler(int size) {
         this.items = new ItemStack[size];
         Arrays.fill(this.items, ItemStack.EMPTY);
     }

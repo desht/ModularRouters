@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.smartfilter;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ContainerBulkItemFilter;
-import me.desht.modularrouters.container.FilterHandler;
-import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -14,6 +14,7 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -53,7 +54,7 @@ public class BulkItemFilter extends SmartFilter {
     private static SetofItemStack getFilterItems(ItemStack filterStack, Flags flags) {
         if (filterStack.hasTagCompound()) {
             checkAndMigrateOldNBT(filterStack);
-            FilterHandler handler = new BulkFilterHandler(filterStack);
+            BulkFilterHandler handler = new BulkFilterHandler(filterStack);
             return SetofItemStack.fromItemHandler(handler, flags);
         } else {
             return new SetofItemStack(DEF_FLAGS);
@@ -142,7 +143,7 @@ public class BulkItemFilter extends SmartFilter {
                 return compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND).tagCount();
             } else {
                 // v1.2.0 and later
-                return FilterHandler.getItemCount(filterStack);
+                return BaseModuleHandler.getItemCount(filterStack, ModuleHelper.NBT_FILTER);
             }
         } else {
             return 0;
@@ -181,7 +182,7 @@ public class BulkItemFilter extends SmartFilter {
         NBTTagCompound compound = filterStack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_ITEMS_DEPRECATED)) {
             // migrate the old-style bulk filter
-            FilterHandler handler = new BulkFilterHandler(filterStack);
+            BulkFilterHandler handler = new BulkFilterHandler(filterStack);
             NBTTagList items = compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < items.tagCount(); i++) {
                 NBTTagCompound c = (NBTTagCompound) items.get(i);

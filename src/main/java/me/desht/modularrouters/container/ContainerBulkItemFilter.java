@@ -1,7 +1,8 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.FilterHandler.BulkFilterHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
+import me.desht.modularrouters.container.slot.BaseModuleSlot.BulkFilterSlot;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.SetofItemStack;
@@ -25,9 +26,9 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     private static final int PLAYER_INV_Y = 151;
     private static final int PLAYER_HOTBAR_Y = 209;
 
-    private final FilterHandler handler;
     private final int currentSlot;  // currently-selected slot for player
     private final TileEntityItemRouter router;
+    private final BulkFilterHandler handler;
 
     public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
         super(player, filterStack, hand, router);
@@ -40,9 +41,9 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
 
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
-            FilterSlot slot = router == null ?
-                    new FilterSlot(handler, player, hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
-                    new FilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
+            BulkFilterSlot slot = router == null ?
+                    new BulkFilterSlot(handler, player, hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
+                    new BulkFilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
             addSlotToContainer(slot);
         }
 

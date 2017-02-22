@@ -16,7 +16,8 @@ item.detector_module.name=Detector Module
 item.modsorter_module.name=Mod Sorter Module
 item.flinger_module.name=Flinger Module
 item.player_module.name=Player Module
-item.extruder_module.name=Extruder Module
+item.extruder_module.name=Extruder Module Mk1
+item.extruder2_module.name=Extruder Module Mk2
 item.fluid_module.name=Fluid Module
 item.blank_upgrade.name=Blank Upgrade
 item.speed_upgrade.name=Speed Upgrade
@@ -37,6 +38,7 @@ item.GuideBook.name=§l§nModular Routers
 
 # Blocks
 tile.item_router.name=Item Router
+tile.template_frame.name=Template Frame
 
 # Tab Group
 itemGroup.modularrouters=Modular Routers
@@ -216,7 +218,7 @@ itemText.usage.item.bulkitem_filter=High-capacity, high-performance filter for l
 itemText.usage.item.regex_filter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.usage.item.mod_filter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.usage.item.inspection_filter=Filter items by inspecting various properties of the item.\nInsert into a router module like any other item.\n• Right-click: view/configure.
-itemText.deprecated.modSorter=§oDeprecated Module; use a Sender Module & Mod Filter instead.\n§oThis module can be crafted into a Mod Filter.
+itemText.deprecated.mod_sorter=§oDeprecated Module; use a Sender Module & Mod Filter instead.\n§oThis module can be crafted into a Mod Filter.
 itemText.deprecated.sorter=§oDeprecated Module; use a Sender Module & Bulk Item Filter instead.\n§oThis module can be crafted into a Bulk Item Filter.
 
 # Player chat messages

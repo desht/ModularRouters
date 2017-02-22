@@ -1,0 +1,8 @@
+{
+  "forge_marker": 1,
+  "defaults" : { "model": "modularrouters:template_frame" },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

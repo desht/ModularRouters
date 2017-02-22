@@ -1,4 +1,4 @@
-package me.desht.modularrouters.container;
+package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;

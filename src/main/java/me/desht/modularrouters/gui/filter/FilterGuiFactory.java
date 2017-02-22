@@ -3,8 +3,7 @@ package me.desht.modularrouters.gui.filter;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ContainerSmartFilter;
-import me.desht.modularrouters.container.FilterHandler;
-import me.desht.modularrouters.container.FilterHandler.ModuleFilterHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
@@ -135,7 +134,7 @@ public class FilterGuiFactory {
     }
 
     private static ItemStack getStackInSlot(ItemStack moduleStack, int filterIdx) {
-        FilterHandler handler = new ModuleFilterHandler(moduleStack);
+        ModuleFilterHandler handler = new ModuleFilterHandler(moduleStack);
         ItemStack stack = handler.getStackInSlot(filterIdx);
         if (!stack.isEmpty()) {
             return stack;
