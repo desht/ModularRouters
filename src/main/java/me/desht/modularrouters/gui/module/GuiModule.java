@@ -85,7 +85,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     public GuiModule(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem);
-        this.moduleItemStack = containerItem.filterHandler.getHoldingItemStack();
+        this.moduleItemStack = containerItem.filterHandler.getHolderStack();
         this.module = ItemModule.getModule(moduleItemStack);
         this.routerPos = routerPos;
         this.moduleSlotIndex = slotIndex;

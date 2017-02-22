@@ -3,8 +3,7 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.container.FilterHandler;
-import me.desht.modularrouters.container.FilterHandler.ModuleFilterHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
@@ -88,7 +87,7 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                 ItemStack filterStack = null;
                 ItemStack moduleStack = null;
-                FilterHandler filterHandler = null;
+                ModuleFilterHandler filterHandler = null;
                 if (message.routerPos != null) {
                     TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.worldObj, message.routerPos);
                     if (router != null) {
@@ -115,7 +114,7 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
                             filterHandler.setStackInSlot(message.filterIndex, filterStack);
                             filterHandler.save();
                             if (message.hand != null) {
-                                player.setHeldItem(message.hand, filterHandler.getHoldingItemStack());
+                                player.setHeldItem(message.hand, filterHandler.getHolderStack());
                             }
                         }
                         if (response != null) {

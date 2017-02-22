@@ -17,32 +17,34 @@ import java.util.stream.Stream;
 public class Config {
 
     public static class Defaults {
-        public static final int BASE_TICK_RATE = 20;
-        public static final int TICKS_PER_UPGRADE = 2;
-        public static final int SENDER1_BASE_RANGE = 8;
-        public static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
-        public static final int SENDER2_BASE_RANGE = 24;
-        public static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
-        public static final int PULLER2_BASE_RANGE = 12;
-        public static final int PULLER2_MAX_RANGE = PULLER2_BASE_RANGE * 2;
-        public static final int VACUUM_BASE_RANGE = 6;
-        public static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
-        public static final int FLUID_BASE_TRANSFER = 50;  // mB / tick
-        public static final int FLUID_MAX_TRANSFER = 400;
-        public static final int MB_PER_FLUID_UPGRADE = 10;
-        public static final boolean SENDER_PARTICLES = true;
-        public static final boolean PULLER_PARTICLES = true;
-        public static final boolean VACUUM_PARTICLES = true;
-        public static final boolean PLACER_PARTICLES = true;
-        public static final boolean BREAKER_PARTICLES = true;
-        public static final boolean FLINGER_EFFECTS = true;
-        public static final boolean EXTRUDER_SOUND = true;
-        public static final char CONFIG_KEY = 'c';
-        public static final boolean START_WITH_GUIDE = false;
-        public static final int ECO_TIMEOUT = 300;
-        public static final int LOW_POWER_INTERVAL = 100;
-        public static final int EXTRUDER_BASE_RANGE = 12;
-        public static final int EXTRUDER_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
+        static final int BASE_TICK_RATE = 20;
+        static final int TICKS_PER_UPGRADE = 2;
+        static final int SENDER1_BASE_RANGE = 8;
+        static final int SENDER1_MAX_RANGE = SENDER1_BASE_RANGE * 2;
+        static final int SENDER2_BASE_RANGE = 24;
+        static final int SENDER2_MAX_RANGE = SENDER2_BASE_RANGE * 2;
+        static final int PULLER2_BASE_RANGE = 12;
+        static final int PULLER2_MAX_RANGE = PULLER2_BASE_RANGE * 2;
+        static final int VACUUM_BASE_RANGE = 6;
+        static final int VACUUM_MAX_RANGE = VACUUM_BASE_RANGE * 2;
+        static final int FLUID_BASE_TRANSFER = 50;  // mB / tick
+        static final int FLUID_MAX_TRANSFER = 400;
+        static final int MB_PER_FLUID_UPGRADE = 10;
+        static final boolean SENDER_PARTICLES = true;
+        static final boolean PULLER_PARTICLES = true;
+        static final boolean VACUUM_PARTICLES = true;
+        static final boolean PLACER_PARTICLES = true;
+        static final boolean BREAKER_PARTICLES = true;
+        static final boolean FLINGER_EFFECTS = true;
+        static final boolean EXTRUDER_SOUND = true;
+        static final char CONFIG_KEY = 'c';
+        static final boolean START_WITH_GUIDE = false;
+        static final int ECO_TIMEOUT = 300;
+        static final int LOW_POWER_INTERVAL = 100;
+        static final int EXTRUDER_BASE_RANGE = 12;
+        static final int EXTRUDER_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
+        static final int EXTRUDER2_BASE_RANGE = 24;
+        static final int EXTRUDER2_MAX_RANGE = EXTRUDER2_BASE_RANGE * 2;
     }
 
     public static char configKey;
@@ -59,6 +61,8 @@ public class Config {
     public static int vacuumMaxRange;
     public static int extruderBaseRange;
     public static int extruderMaxRange;
+    public static int extruder2BaseRange;
+    public static int extruder2MaxRange;
     public static int puller2MaxRange;
     public static int puller2BaseRange;
     public static int fluidBaseTransferRate;
@@ -168,6 +172,13 @@ public class Config {
                 "Puller Module Mk2 Max Range", 1, Integer.MAX_VALUE);
         propSender2MaxRange.setLanguageKey("gui.config.puller2MaxRange");
 
+        Property propExtruder2BaseRange = config.get(CATEGORY_NAME_MODULE, "extruder2BaseRange", Defaults.EXTRUDER2_BASE_RANGE,
+                "Extruder Module Mk2 Base Range", 1, Integer.MAX_VALUE);
+        propExtruderBaseRange.setLanguageKey("gui.config.extruder2BaseRange");
+        Property propExtruder2MaxRange = config.get(CATEGORY_NAME_MODULE, "extruder2MaxRange", Defaults.EXTRUDER2_MAX_RANGE,
+                "Extruder Module Mk2 Max Range", 1, Integer.MAX_VALUE);
+        propExtruderMaxRange.setLanguageKey("gui.config.extruder2MaxRange");
+
         Property propFluidBaseTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidBaseTransfer", Defaults.FLUID_BASE_TRANSFER,
                 "Fluid Module Base Transfer Rate", 0, Integer.MAX_VALUE);
         Property propFluidMaxTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidMaxTransfer", Defaults.FLUID_MAX_TRANSFER,
@@ -222,6 +233,8 @@ public class Config {
                 propVacuumMaxRange,
                 propExtruderBaseRange,
                 propExtruderMaxRange,
+                propExtruder2BaseRange,
+                propExtruder2MaxRange,
                 propPuller2BaseRange,
                 propPuller2MaxRange,
                 propSenderParticles,
@@ -253,6 +266,8 @@ public class Config {
             vacuumMaxRange = propVacuumMaxRange.getInt();
             extruderBaseRange = propExtruderBaseRange.getInt();
             extruderMaxRange = propExtruderMaxRange.getInt();
+            extruder2BaseRange = propExtruder2BaseRange.getInt();
+            extruder2MaxRange = propExtruder2MaxRange.getInt();
             puller2BaseRange = propPuller2BaseRange.getInt();
             puller2MaxRange = propPuller2MaxRange.getInt();
             fluidBaseTransferRate = propFluidBaseTransfer.getInt();
@@ -282,6 +297,8 @@ public class Config {
         propVacuumMaxRange.set(vacuumMaxRange);
         propExtruderBaseRange.set(extruderBaseRange);
         propExtruderMaxRange.set(extruderMaxRange);
+        propExtruder2BaseRange.set(extruder2BaseRange);
+        propExtruder2MaxRange.set(extruder2MaxRange);
         propPuller2BaseRange.set(puller2BaseRange);
         propPuller2MaxRange.set(puller2MaxRange);
         propFluidBaseTransfer.set(fluidBaseTransferRate);

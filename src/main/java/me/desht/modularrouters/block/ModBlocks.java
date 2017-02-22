@@ -6,9 +6,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
     public static BlockItemRouter itemRouter;
+    public static BlockTemplateFrame templateFrame;
 
     public static void init() {
         itemRouter = register(new BlockItemRouter());
+        templateFrame = register(new BlockTemplateFrame());
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {

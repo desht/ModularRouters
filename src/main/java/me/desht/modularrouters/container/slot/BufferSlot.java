@@ -1,12 +1,12 @@
-package me.desht.modularrouters.container;
+package me.desht.modularrouters.container.slot;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraftforge.items.SlotItemHandler;
 
-class BufferSlot extends SlotItemHandler {
+public class BufferSlot extends SlotItemHandler {
     private final TileEntityItemRouter router;
 
-    BufferSlot(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
+    public BufferSlot(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
         super(router.getBuffer(), index, xPosition, yPosition);
         this.router = router;
     }

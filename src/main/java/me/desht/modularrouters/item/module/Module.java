@@ -4,7 +4,8 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.Config;
-import me.desht.modularrouters.container.ValidatingSlot;
+import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -153,6 +154,10 @@ public abstract class Module {
 
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
         return false;
+    }
+
+    public ContainerModule createGuiContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
+        return new ContainerModule(player, hand, moduleStack, router);
     }
 
     public Class<? extends GuiModule> getGuiHandler() {

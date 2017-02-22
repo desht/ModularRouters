@@ -16,7 +16,8 @@ item.detectorModule.name=Detector Module
 item.modsorterModule.name=Mod Sorter Module
 item.flingerModule.name=Flinger Module
 item.playerModule.name=Player Module
-item.extruderModule.name=Extruder Module
+item.extruderModule.name=Extruder Module Mk1
+item.extruder2Module.name=Extruder Module Mk2
 item.fluidModule.name=Fluid Module
 item.blankUpgrade.name=Blank Upgrade
 item.speedUpgrade.name=Speed Upgrade
@@ -37,6 +38,7 @@ item.inspectionFilter.name=Inspection Filter
 
 # Blocks
 tile.itemRouter.name=Item Router
+tile.templateFrame.name=Template Frame
 
 # Tab Group
 itemGroup.modularrouters=Modular Routers
@@ -83,6 +85,8 @@ guiText.tooltip.fluidRegulatorTooltip=§bFluid Regulation Enabled\nWhen transfer
 guiText.tooltip.tunedValue=§bTuned Value (%d → %d)
 guiText.tooltip.fluidTransferTooltip=§bMax Fluid Transfer\nMaximum (in mB) that will be attempted in one operation.  This is still limited by the router's overall transfer rate (Fluid and Speed Upgrades)
 guiText.tooltip.maxFluidPerOp=• Transfer Rate: %d mB every %d ticks (%d mB / tick)
+guiText.tooltip.extruder2.template=§bTemplate\nPlace blocks here to use as the extruder template.\n• §eLeft-Click§7: reduce stack size\n• §eRight-Click§7: increase stack size\n• §eShift + Left-Click§7: clear stack
+
 guiText.label.direction=Direction
 guiText.label.modules=Modules
 guiText.label.upgrades=Upgrades
@@ -135,8 +139,10 @@ gui.config.puller2BaseRange=Base Range for Puller Module Mk2 (no Range Upgrades)
 gui.config.puller2MaxRange=Hard Maximum Range for Puller Module Mk2 (with Range Upgrades)
 gui.config.vacuumBaseRange=Base Range for Vacuum Module (no Range Upgrades)
 gui.config.vacuumMaxRange=Hard Maximum Range for Vacuum Module (with Range Upgrades)
-gui.config.extruderBaseRange=Base Range for Extruder Module (no Range Upgrades)
-gui.config.extruderMaxRange=Hard Maximum Range for Extruder Module (with Range Upgrades)
+gui.config.extruderBaseRange=Base Range for Extruder Module Mk1 (no Range Upgrades)
+gui.config.extruderMaxRange=Hard Maximum Range for Extruder Module Mk1 (with Range Upgrades)
+gui.config.extruder2BaseRange=Base Range for Extruder Module Mk2 (no Range Upgrades)
+gui.config.extruder2MaxRange=Hard Maximum Range for Extruder Module Mk2 (with Range Upgrades)
 gui.config.extruderSound=Play sounds when an Extruder Module extends or withdraws
 gui.config.flingerEffects=Play sound and smoke effect when a Flinger Module flings an item
 gui.config.configKey=Key to press (in the Item Router GUI) to configure installed Modules
@@ -200,7 +206,8 @@ itemText.usage.item.detectorModule=Emits a redstone signal from the router in th
 itemText.usage.item.modsorterModule=Places items from the router's buffer into an adjacent inventory, IF there are already items from the same mod in that inventory.
 itemText.usage.item.flingerModule=Throws items from the router's buffer potentially over a long distance.  Adjust speed, pitch & yaw from the module's GUI.
 itemText.usage.item.playerModule=Remotely transfers items between a player's main or armor inventory and the router's buffer.
-itemText.usage.item.extruderModule=Places or removes blocks in a line along the module's direction, depending on the router's redstone signal level.\nDefault is to place with a signal and remove with no signal; add redstone enhancement to the module for custom behaviour.
+itemText.usage.item.extruderModule=Places or removes blocks in a line along the module's direction, depending on the router's redstone signal level.\nDefault is to place with a signal and remove with no signal; add redstone enhancement to the module for custom behaviour.\nRange: %d blocks (%d with Range Upgrades)
+itemText.usage.item.extruder2Module=Operates like the Extruder Mk1, but places template blocks from an internal pattern buffer instead of real blocks from the router's buffer.\nRange: %d blocks (%d with Range Upgrades)
 itemText.usage.item.fluidModule=Transfers fluids to or from the router in the module's direction.\nRouter's buffer must have a fluid container item in it.\nCan transfer to/from tanks or the world.
 itemText.usage.item.securityUpgrade=Protects router; only listed players can access the router.\n• Right-click a player to add them to this upgrade\n• Sneak + Right-click player to remove them
 itemText.usage.item.stackUpgrade=Increases the number of items processed per router tick.\n• Max. items processed per operation: %d\n• Max. useful upgrades: %d

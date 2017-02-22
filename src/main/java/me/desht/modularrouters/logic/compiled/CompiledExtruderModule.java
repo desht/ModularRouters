@@ -16,10 +16,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 
 public class CompiledExtruderModule extends CompiledModule {
-    private static final String NBT_EXTRUDER_DIST = "ExtruderDist";
+    protected static final String NBT_EXTRUDER_DIST = "ExtruderDist";
 
+    protected int distance;  // marks the current extension length (0 = no extrusion)
     private final boolean silkTouch;
-    private int distance;  // marks the current extension length (0 = no extrusion)
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
@@ -77,7 +77,7 @@ public class CompiledExtruderModule extends CompiledModule {
         return true;
     }
 
-    private boolean shouldExtend(TileEntityItemRouter router) {
+    protected boolean shouldExtend(TileEntityItemRouter router) {
         switch (getRedstoneBehaviour()) {
             case ALWAYS:
                 return router.getRedstonePower() > 0;
