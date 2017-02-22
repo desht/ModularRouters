@@ -42,6 +42,8 @@ public class Config {
         public static final int LOW_POWER_INTERVAL = 100;
         public static final int EXTRUDER_BASE_RANGE = 12;
         public static final int EXTRUDER_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
+        public static final int EXTRUDER2_BASE_RANGE = 24;
+        public static final int EXTRUDER2_MAX_RANGE = EXTRUDER_BASE_RANGE * 2;
     }
 
     public static char configKey;
@@ -58,6 +60,8 @@ public class Config {
     public static int vacuumMaxRange;
     public static int extruderBaseRange;
     public static int extruderMaxRange;
+    public static int extruder2BaseRange;
+    public static int extruder2MaxRange;
     public static int puller2MaxRange;
     public static int puller2BaseRange;
     public static int fluidBaseTransferRate;
@@ -166,6 +170,13 @@ public class Config {
                 "Puller Module Mk2 Max Range", 1, Integer.MAX_VALUE);
         propSender2MaxRange.setLanguageKey("gui.config.puller2MaxRange");
 
+        Property propExtruder2BaseRange = config.get(CATEGORY_NAME_MODULE, "extruder2BaseRange", Defaults.EXTRUDER2_BASE_RANGE,
+                "Extruder Module Mk2 Base Range", 1, Integer.MAX_VALUE);
+        propExtruderBaseRange.setLanguageKey("gui.config.extruder2BaseRange");
+        Property propExtruder2MaxRange = config.get(CATEGORY_NAME_MODULE, "extruder2MaxRange", Defaults.EXTRUDER2_MAX_RANGE,
+                "Extruder Module Mk2 Max Range", 1, Integer.MAX_VALUE);
+        propExtruderMaxRange.setLanguageKey("gui.config.extruder2MaxRange");
+
         Property propFluidBaseTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidBaseTransfer", Defaults.FLUID_BASE_TRANSFER,
                 "Fluid Module Base Transfer Rate", 0, Integer.MAX_VALUE);
         Property propFluidMaxTransfer = config.get(CATEGORY_NAME_ROUTER, "fluidMaxTransfer", Defaults.FLUID_MAX_TRANSFER,
@@ -217,6 +228,8 @@ public class Config {
                 propVacuumMaxRange,
                 propExtruderBaseRange,
                 propExtruderMaxRange,
+                propExtruder2BaseRange,
+                propExtruder2MaxRange,
                 propPuller2BaseRange,
                 propPuller2MaxRange,
                 propSenderParticles,
@@ -247,6 +260,8 @@ public class Config {
             vacuumMaxRange = propVacuumMaxRange.getInt();
             extruderBaseRange = propExtruderBaseRange.getInt();
             extruderMaxRange = propExtruderMaxRange.getInt();
+            extruder2BaseRange = propExtruder2BaseRange.getInt();
+            extruder2MaxRange = propExtruder2MaxRange.getInt();
             puller2BaseRange = propPuller2BaseRange.getInt();
             puller2MaxRange = propPuller2MaxRange.getInt();
             fluidBaseTransferRate = propFluidBaseTransfer.getInt();
@@ -275,6 +290,8 @@ public class Config {
         propVacuumMaxRange.set(vacuumMaxRange);
         propExtruderBaseRange.set(extruderBaseRange);
         propExtruderMaxRange.set(extruderMaxRange);
+        propExtruder2BaseRange.set(extruder2BaseRange);
+        propExtruder2MaxRange.set(extruder2MaxRange);
         propPuller2BaseRange.set(puller2BaseRange);
         propPuller2MaxRange.set(puller2MaxRange);
         propFluidBaseTransfer.set(fluidBaseTransferRate);

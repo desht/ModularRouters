@@ -38,9 +38,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
     public void putStack(ItemStack stack) {
         // avoid saving the filter handler unnecessarily
         T handler = (T) getItemHandler();
-        System.out.println("put stack: " + stack + " - stack in slot: " + handler.getStackInSlot(index));
         if (!ItemStack.areItemStacksEqual(stack, handler.getStackInSlot(index))) {
-            System.out.println(" - make the change!");
             handler.setStackInSlot(index, stack);
             onSlotChanged();
         }

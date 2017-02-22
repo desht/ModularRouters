@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class RangeUpgrade extends Upgrade {
-    private final List<String> applicable = Arrays.asList("sender1_module", "sender2_module", "vacuum_module", "extruder_module");
+    private final List<String> applicable = Arrays.asList(
+            "sender1_module", "sender2_module", "vacuum_module", "puller2_module", "extruder_module", "extruder2_module"
+    );
 
     @Override
     public Object[] getExtraUsageParams() {

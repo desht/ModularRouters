@@ -73,31 +73,31 @@ public class TemplateFrameModel implements IPerspectiveAwareModel {
 
     @Override
     public boolean isAmbientOcclusion() {
-        return false;
+        return existingModel.isAmbientOcclusion();
     }
 
     @Override
     public boolean isGui3d() {
-        return false;
+        return existingModel.isGui3d();
     }
 
     @Override
     public boolean isBuiltInRenderer() {
-        return false;
+        return existingModel.isBuiltInRenderer();
     }
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return null;
+        return existingModel.getParticleTexture();
     }
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        return null;
+        return existingModel.getItemCameraTransforms();
     }
 
     @Override
     public ItemOverrideList getOverrides() {
-        return null;
+        return existingModel.getOverrides();
     }
 }
