@@ -18,8 +18,8 @@ import net.minecraftforge.fluids.IFluidBlock;
 public class CompiledExtruderModule extends CompiledModule {
     protected static final String NBT_EXTRUDER_DIST = "ExtruderDist";
 
-    protected final boolean silkTouch;
     protected int distance;  // marks the current extension length (0 = no extrusion)
+    private final boolean silkTouch;
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);

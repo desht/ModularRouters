@@ -1,5 +1,6 @@
 package me.desht.modularrouters.block;
 
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.util.PropertyObject;
 import net.minecraft.block.material.Material;
@@ -52,25 +53,25 @@ public class BlockTemplateFrame extends BlockBase {
 
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        IBlockState camo = getCamoState(state);
+        IBlockState camo = getCamoState(source, pos);
         return camo != null ? camo.getBoundingBox(source, pos) : super.getBoundingBox(state, source, pos);
     }
 
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-        IBlockState camo = getCamoState(blockState);
+        IBlockState camo = getCamoState(worldIn, pos);
         return camo != null ? camo.getCollisionBoundingBox(worldIn, pos) : super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
-        IBlockState camo = getCamoState(state);
+        IBlockState camo = getCamoState(worldIn, pos);
         if (camo != null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, camo.getBoundingBox(worldIn, pos));
         } else {
@@ -80,22 +81,27 @@ public class BlockTemplateFrame extends BlockBase {
 
     @Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
-        IBlockState camo = getCamoState(state);
+        IBlockState camo = getCamoState(world, pos);
         return camo == null || camo.doesSideBlockRendering(world, pos, face);
     }
 
     @Override
     public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         // ensure levers etc. can be attached to the block even though it can possibly emit redstone
-        IBlockState camo = getCamoState(base_state);
+        IBlockState camo = getCamoState(world, pos);
         return camo == null || camo.isSideSolid(world, pos, side);
     }
 
-    private IBlockState getCamoState(IBlockState state) {
-        return state instanceof IExtendedBlockState ?
-                ((IExtendedBlockState) state).getValue(CAMOUFLAGE_STATE) :
-                null;
+    private IBlockState getCamoState(IBlockAccess blockAccess, BlockPos pos) {
+        TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(blockAccess, pos);
+        return te != null ? te.getCamouflage() : null;
     }
+
+//    private IBlockState getCamoState(IBlockState state) {
+//        return state instanceof IExtendedBlockState ?
+//                ((IExtendedBlockState) state).getValue(CAMOUFLAGE_STATE) :
+//                null;
+//    }
 
     @Override
     public boolean hasTileEntity(IBlockState state) {

@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
+import me.desht.modularrouters.item.module.ExtruderModule2;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompiledExtruder2Module extends CompiledExtruderModule {
-    private static final int MAX = 24; // TODO configurable
     private static final ItemStack TEMPLATE_STACK = new ItemStack(ModBlocks.templateFrame);
     private final List<ItemStack> blockList;
 
@@ -28,21 +28,18 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
 
         blockList = new ArrayList<>();
 
+        int maxDist = ExtruderModule2.maxDistance(router);
         TemplateHandler handler = new TemplateHandler(stack);
-        for (int i = 0; i < handler.getSlots() && blockList.size() < MAX; i++) {
+        for (int i = 0; i < handler.getSlots() && blockList.size() < maxDist; i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
             if (stack1 != null) {
                 for (int j = 0; j < stack1.stackSize; j++) {
                     ItemStack copy = stack1.copy();
                     copy.stackSize = 1;
                     blockList.add(copy);
-                    if (blockList.size() >= MAX) break;
+                    if (blockList.size() >= maxDist) break;
                 }
             }
-        }
-
-        for (ItemStack s2 : blockList) {
-            System.out.println("- " + s2);
         }
     }
 
