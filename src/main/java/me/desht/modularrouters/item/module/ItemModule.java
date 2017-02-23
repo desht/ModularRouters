@@ -203,7 +203,8 @@ public class ItemModule extends ItemBase {
                 }
             }
         } else {
-            list.add("  " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
+            String s = list.get(list.size() - 1);
+            list.set(list.size() - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
         }
         list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
                 Joiner.on(" | ").join(

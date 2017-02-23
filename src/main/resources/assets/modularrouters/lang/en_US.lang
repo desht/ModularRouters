@@ -189,6 +189,7 @@ itemText.fluid.maxTransfer=§eFluid Rate:§b Up to %d mB / operation
 itemText.fluid.direction=§eFluid Direction: §b%s
 itemText.fluid.direction.IN=Transfer into Router
 itemText.fluid.direction.OUT=Transfer out of Router
+itemText.extruder2.template=Template Blocks:
 
 # Usage tooltips
 itemText.usage.item.breaker_module=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.

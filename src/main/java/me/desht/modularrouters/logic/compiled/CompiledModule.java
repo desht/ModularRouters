@@ -27,6 +27,14 @@ public abstract class CompiledModule {
 
     private int lastMatchPos = 0;
 
+    /**
+     * Base constructor for compiled modules.  This can be called for both installed and uninstalled modules;
+     * when the module is not installed in a router, null can be passed, and any subclasses must be able to handle
+     * a null router passed to the constructor.
+     *
+     * @param router router the module is instaled in, may be null for an unstalled module
+     * @param stack item stack of the module item being compiled
+     */
     public CompiledModule(TileEntityItemRouter router, ItemStack stack) {
         if (!(stack.getItem() instanceof ItemModule)) {
             throw new IllegalArgumentException("expected module router module, got " + stack);
@@ -46,7 +54,7 @@ public abstract class CompiledModule {
      * Execute this installed module.  When this is called, the router has already verified that the module has a
      * valid target, i.e. getTarget() will not return null.  This should only be called by the router.
      *
-     * @param router router the module is installed in
+     * @param router router the module is installed in, may not be null
      * @return true if the module did some work, false otherwise
      */
     public abstract boolean execute(TileEntityItemRouter router);

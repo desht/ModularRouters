@@ -23,7 +23,7 @@ public class CompiledExtruderModule extends CompiledModule {
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
-        distance = router.getExtData().getInteger(NBT_EXTRUDER_DIST + getFacing());
+        distance = router == null ? 0 : router.getExtData().getInteger(NBT_EXTRUDER_DIST + getFacing());
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
     }
 
