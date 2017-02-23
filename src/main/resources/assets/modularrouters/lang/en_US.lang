@@ -273,3 +273,5 @@ jei.enhancement.pickupDelay.name=Pickup Delay Enhancement
 jei.enhancement.pickupDelay.description=Increases the pickup delay time for dropped items by 10 ticks.  Can be repeated; each craft further increases the delay.  Not reversible!
 jei.enhancement.fastPickup.name=Fast Pickup Enhancement
 jei.enhancement.fastPickup.description=Allows the Vacuum Module to ignore the normal pickup delays on dropped items.
+jei.enhancement.reset.name=Module Reset
+jei.enhancement.reset.description=Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings, enhancements and enchantments, will be lost!

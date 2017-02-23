@@ -1,5 +1,6 @@
 package me.desht.modularrouters.recipe;
 
+import akka.io.Inet;
 import amerifrance.guideapi.api.GuideAPI;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
@@ -7,6 +8,7 @@ import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -67,6 +69,7 @@ public class ModRecipes {
             }
         }
 
+        addSelfCraftRecipes();
         addRedstoneUpgradeRecipes();
         addRegulatorUpgradeRecipes();
         addPickupDelayRecipes();
@@ -77,6 +80,20 @@ public class ModRecipes {
         }
 
         MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
+    }
+
+    private static void addSelfCraftRecipes() {
+        // crafting a module into itself resets all NBT on the module
+        RecipeSorter.register(ModularRouters.modId + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        for (ModuleType type : ModuleType.values()) {
+            if (type == ModuleType.SORTER || type == ModuleType.MODSORTER)
+                continue;
+            ItemStack stack = ModuleHelper.makeItemStack(type);
+            ItemStack output = ModuleHelper.makeItemStack(type);
+            GameRegistry.addRecipe(new ModuleResetRecipe(output,
+                    "M",
+                    'M', stack));
+        }
     }
 
     private static void addFastPickupRecipe() {
