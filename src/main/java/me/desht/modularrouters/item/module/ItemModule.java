@@ -3,7 +3,6 @@ package me.desht.modularrouters.item.module;
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.ItemBase;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -212,7 +211,8 @@ public class ItemModule extends ItemBase {
                 }
             }
         } else {
-            list.add("  " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
+            String s = list.get(list.size() - 1);
+            list.set(list.size() - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
         }
         list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
                 Joiner.on(" | ").join(
