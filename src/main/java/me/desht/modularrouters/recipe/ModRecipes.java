@@ -7,10 +7,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import me.desht.modularrouters.recipe.enhancement.FastPickupEnhancementRecipe;
-import me.desht.modularrouters.recipe.enhancement.PickupDelayEnhancementRecipe;
-import me.desht.modularrouters.recipe.enhancement.RedstoneEnhancementRecipe;
-import me.desht.modularrouters.recipe.enhancement.RegulatorEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.*;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
@@ -67,12 +64,27 @@ public class ModRecipes {
             }
         }
 
+        addSelfCraftRecipes();
         addRedstoneUpgradeRecipes();
         addRegulatorUpgradeRecipes();
         addPickupDelayRecipes();
         addFastPickupRecipe();
 
         MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
+    }
+
+    private static void addSelfCraftRecipes() {
+        // crafting a module into itself resets all NBT on the module
+        RecipeSorter.register(ModularRouters.modId + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        for (ModuleType type : ModuleType.values()) {
+            if (type == ModuleType.SORTER || type == ModuleType.MODSORTER)
+                continue;
+            ItemStack stack = ModuleHelper.makeItemStack(type);
+            ItemStack output = ModuleHelper.makeItemStack(type);
+            GameRegistry.addRecipe(new ModuleResetRecipe(output,
+                    "M",
+                    'M', stack));
+        }
     }
 
     private static void addFastPickupRecipe() {
