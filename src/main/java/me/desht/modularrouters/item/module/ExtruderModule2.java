@@ -37,8 +37,8 @@ public class ExtruderModule2 extends Module {
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);
-            if (blockStack != null && blockStack.stackSize > 0) {
-                list.add(" \u2022 " + TextFormatting.AQUA + blockStack.stackSize + " x " + blockStack.getDisplayName());
+            if (!blockStack.isEmpty()) {
+                list.add(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x " + blockStack.getDisplayName());
             }
         }
         if (list.size() == size) {
