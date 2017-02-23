@@ -10,6 +10,7 @@ import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -18,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -65,6 +67,12 @@ public abstract class TargetedModule extends Module {
         }
 
     @Override
+    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+        super.addUsageInformation(itemstack, player, list, par4);
+        MiscUtil.appendMultiline(list, "itemText.targetingHint");
+    }
+
+    @Override
     protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
         super.addExtraInformation(stack, player, list, par4);
 
@@ -82,6 +90,19 @@ public abstract class TargetedModule extends Module {
         }
     }
 
+    @Override
+    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (getTarget(stack) != null) {
+            if (world.isRemote) {
+                player.playSound(MRSoundEvents.success, 1.0f, 1.3f);
+            } else {
+                setTarget(stack, world, null, null);
+                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetCleared"), false);
+            }
+        }
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+    }
+
     /**
      * Put information about the target into the module item's NBT.  This needs to be done server-side!
      *
@@ -96,9 +117,13 @@ public abstract class TargetedModule extends Module {
             return;
         }
         NBTTagCompound compound = ModuleHelper.validateNBT(stack);
-        String invName = BlockUtil.getBlockName(world, pos);
-        ModuleTarget mt = new ModuleTarget(world.provider.getDimension(), pos, face, invName == null ? "?" : invName);
-        compound.setTag(NBT_TARGET, mt.toNBT());
+        if (pos == null) {
+            compound.removeTag(NBT_TARGET);
+        } else {
+            String invName = BlockUtil.getBlockName(world, pos);
+            ModuleTarget mt = new ModuleTarget(world.provider.getDimension(), pos, face, invName == null ? "?" : invName);
+            compound.setTag(NBT_TARGET, mt.toNBT());
+        }
         stack.setTagCompound(compound);
     }
 

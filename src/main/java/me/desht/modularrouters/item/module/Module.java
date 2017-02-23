@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -142,6 +143,7 @@ public abstract class Module {
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
+        System.out.println("on item use! " + stack);
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         if (router != null) {
             if (!player.isSneaking()) {
@@ -150,6 +152,10 @@ public abstract class Module {
             }
         }
         return EnumActionResult.PASS;
+    }
+
+    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {

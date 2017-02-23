@@ -85,7 +85,7 @@ guiText.tooltip.fluidRegulatorTooltip=§bFluid Regulation Enabled\nWhen transfer
 guiText.tooltip.tunedValue=§bTuned Value (%d → %d)
 guiText.tooltip.fluidTransferTooltip=§bMax Fluid Transfer\nMaximum (in mB) that will be attempted in one operation.  This is still limited by the router's overall transfer rate (Fluid and Speed Upgrades)
 guiText.tooltip.maxFluidPerOp=• Transfer Rate: %d mB every %d ticks (%d mB / tick)
-guiText.tooltip.extruder2.template=§bTemplate\nPlace blocks here to use as the extruder template.\n• §eLeft-Click§7: reduce stack size\n• §eRight-Click§7: increase stack size\n• §eShift + Left-Click§7: clear stack
+guiText.tooltip.extruder2.template=§bTemplate\nPlace copies of block items here to be used as the extruder template.\n• §eLeft-Click:§7 reduce stack size\n• §eRight-Click:§7 increase stack size\n• §eShift + Left-Click:§7 clear stack
 
 guiText.label.direction=Direction
 guiText.label.modules=Modules
@@ -190,6 +190,7 @@ itemText.fluid.direction=§eFluid Direction: §b%s
 itemText.fluid.direction.IN=Transfer into Router
 itemText.fluid.direction.OUT=Transfer out of Router
 itemText.extruder2.template=Template Blocks:
+itemText.targetingHint=• Sneak + Right-Click an inventory to set target,\n  or anywhere else to clear target\n• Left-Click to indicate current target's position
 
 # Usage tooltips
 itemText.usage.item.breaker_module=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
@@ -198,8 +199,8 @@ itemText.usage.item.placer_module=Places an item from the router's buffer as a b
 itemText.usage.item.puller_module=Extracts items from an adjacent inventory in the module's configured direction, into the router's buffer.
 itemText.usage.item.puller2_module=Extracts items from any inventory within a spherical range of %d blocks (%d with Range Upgrades), into the router's buffer.
 itemText.usage.item.sender1_module=Sends items from the router's buffer to any inventory directly along an X/Y/Z axis up to %d blocks away (%d with Range Upgrades).\nClear line of sight required; opaque blocks will prevent sending.
-itemText.usage.item.sender2_module=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).\nClear line of sight NOT required.\n• Sneak + Right-Click a block to set target\n• Left-Click to indicate current target's position
-itemText.usage.item.sender3_module=Sends items from the router's buffer to any inventory in any dimension.\n• Sneak + Right-Click a block to set target\n• Left-Click to indicate current target's position
+itemText.usage.item.sender2_module=Sends items from the router's buffer to any inventory within a spherical range of %d blocks (%d with Range Upgrades).\nClear line of sight NOT required.
+itemText.usage.item.sender3_module=Sends items from the router's buffer to any inventory in any dimension.
 itemText.usage.item.sorter_module=Places items from the router's buffer into an adjacent inventory, IF there are already matching items in that inventory
 itemText.usage.item.vacuum_module=Absorbs items in the world into the router's buffer, within a cubic range of %d blocks (up to %d with Range Upgrades).  Only collects items in the configured direction, or any direction if the direction is NONE.
 itemText.usage.item.void_module=§c*** CAUTION ***\nPermanently destroys items in the buffer!
@@ -241,6 +242,7 @@ chatText.subtitle.success=Success
 chatText.subtitle.thud=*THUD*
 chatText.misc.target=§eTarget: §b%s
 chatText.misc.targetSet=§eTarget set: §b%s
+chatText.misc.targetCleared=§eTarget cleared
 chatText.targetValidation.OK=§a✔ Target OK
 chatText.targetValidation.OUT_OF_RANGE=§c✘ Out of Range
 chatText.targetValidation.NOT_LOADED=§c✘ Not Loaded

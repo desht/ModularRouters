@@ -144,9 +144,13 @@ public class ItemModule extends ItemBase {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         ModuleHelper.validateNBT(stack);
-        if (!world.isRemote) {
-            int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
-            player.openGui(ModularRouters.instance, guiId, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+        if (!player.isSneaking()) {
+            if (!world.isRemote) {
+                int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
+                player.openGui(ModularRouters.instance, guiId, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            }
+        } else {
+            return getModule(stack).onSneakRightClick(stack, world, player, hand);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
