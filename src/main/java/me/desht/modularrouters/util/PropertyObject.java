@@ -1,11 +1,10 @@
 package me.desht.modularrouters.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 // Generic base class for unlisted properties
 // With thanks to Vazkii's Botania code
@@ -24,12 +23,7 @@ public class PropertyObject<T> implements IUnlistedProperty<T> {
     }
 
     public PropertyObject(String name, Class<T> clazz) {
-        this(name, clazz, Predicates.<T>alwaysTrue(), new Function<T, String>() {
-            @Override
-            public String apply(T input) {
-                return Objects.toString(input);
-            }
-        });
+        this(name, clazz, t -> true, Objects::toString);
     }
 
     @Override
@@ -39,7 +33,7 @@ public class PropertyObject<T> implements IUnlistedProperty<T> {
 
     @Override
     public boolean isValid(T value) {
-        return validator.apply(value);
+        return validator.test(value);
     }
 
     @Override
