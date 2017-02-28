@@ -8,6 +8,7 @@ import net.darkhax.tesla.api.ITeslaHolder;
 import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -117,7 +118,7 @@ public class InspectionMatcher implements IItemMatcher {
             return Joiner.on(" ").join(
                     I18n.format("guiText.label.inspectionSubject." + subject),
                     I18n.format("guiText.label.inspectionOp." + op),
-                    target + subject.getSuffix()
+                    target + subject.getDisplaySuffix()
             );
         }
     }
@@ -127,7 +128,8 @@ public class InspectionMatcher implements IItemMatcher {
         DURABILITY,
         FLUID,
         ENERGY,
-        ENCHANT;
+        ENCHANT,
+        FOOD;
 
         private Optional<Integer> getValue(ItemStack stack) {
             switch (this) {
@@ -143,8 +145,18 @@ public class InspectionMatcher implements IItemMatcher {
                     return getEnergyPercent(stack);
                 case ENCHANT:
                     return getHighestEnchantLevel(stack);
+                case FOOD:
+                    return getFoodValue(stack);
                 default:
                     throw new IllegalArgumentException("invalid comparison subject! " + this);
+            }
+        }
+
+        private Optional<Integer> getFoodValue(ItemStack stack) {
+            if (stack.getItem() instanceof ItemFood) {
+                return Optional.of(((ItemFood) stack.getItem()).getHealAmount(stack));
+            } else {
+                return Optional.empty();
             }
         }
 
@@ -182,8 +194,13 @@ public class InspectionMatcher implements IItemMatcher {
             }
         }
 
-        public String getSuffix() {
-            return this == ENCHANT || this == NONE ? "" : "%";
+        public String getDisplaySuffix() {
+            switch (this) {
+                case ENCHANT:case FOOD:case NONE:
+                    return "";
+                default:
+                    return "%";
+            }
         }
 
         public InspectionSubject cycle(int direction) {
