@@ -1,6 +1,6 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.ModuleResetRecipe;
+import me.desht.modularrouters.recipe.enhancement.ModuleResetRecipe;
 import mezz.jei.api.IJeiHelpers;
 
 public class ModuleResetRecipeHandler extends BaseEnhancementRecipeHandler<ModuleResetRecipe> {

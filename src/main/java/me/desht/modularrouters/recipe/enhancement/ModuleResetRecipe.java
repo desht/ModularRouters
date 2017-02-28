@@ -1,23 +1,22 @@
 package me.desht.modularrouters.recipe.enhancement;
 
-import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleResetRecipe extends ModuleEnhancementRecipe {
-    ModuleResetRecipe(ItemStack result, Object... recipe) {
+    public ModuleResetRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
 
     @Override
-    protected boolean validateItem(ItemStack stack) {
-        return !ItemModule.isType(stack, ModuleType.SORTER) && !ItemModule.isType(stack , ModuleType.MODSORTER);
+    protected boolean validateModule(ItemStack stack) {
+        return !ModuleHelper.isModuleType(stack, ModuleType.SORTER) && !ModuleHelper.isModuleType(stack , ModuleType.MODSORTER);
     }
 
     @Override
-    public void enableUpgrade(ItemStack stack) {
+    public void applyEnhancement(ItemStack stack) {
         // reset the module's NBT
         stack.setTagCompound(new NBTTagCompound());
         ModuleHelper.validateNBT(stack);
