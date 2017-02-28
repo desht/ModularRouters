@@ -44,24 +44,26 @@ public class ContainerExtruder2Module extends ContainerModule {
     protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         Slot s = inventorySlots.get(slot);
         ItemStack stackOnCursor = player.inventory.getItemStack();
-        if (!stackOnCursor.isEmpty()) {
+        ItemStack stackInSlot = s.getStack().copy();
+        if (clickTypeIn == ClickType.QUICK_MOVE) {
+            s.putStack(ItemStack.EMPTY);  // shift-left-click clears the slot
+        } else if (!stackOnCursor.isEmpty() && !ItemStack.areItemsEqual(stackInSlot, stackOnCursor)) {
             // placing a new item in the template buffer
             ItemStack stack1 = stackOnCursor.copy();
-            stack1.setCount(1);
+            if (dragType == 1) {
+                stack1.setCount(1);
+            }
             s.putStack(stack1);
-        } else if (clickTypeIn == ClickType.QUICK_MOVE) {
-            s.putStack(null);  // shift-left-click clears the slot
         } else {
-            ItemStack stack = s.getStack();
-            if (!stack.isEmpty()) {
+            if (!stackInSlot.isEmpty()) {
                 if (dragType == 1) {
                     // right-click increments the stack size
-                    stack.grow(1);
+                    stackInSlot.setCount(Math.min(stackInSlot.getMaxStackSize(), stackInSlot.getCount() + 1));
                 } else if (dragType == 0) {
                     // left-click decrements the stack size
-                    stack.shrink(1);
+                    stackInSlot.shrink(1);
                 }
-                s.putStack(stack);
+                s.putStack(stackInSlot);
                 s.onSlotChanged();  // need explicit call here
             }
         }
