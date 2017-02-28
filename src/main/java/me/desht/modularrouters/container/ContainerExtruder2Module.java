@@ -44,27 +44,29 @@ public class ContainerExtruder2Module extends ContainerModule {
     protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         Slot s = inventorySlots.get(slot);
         ItemStack stackOnCursor = player.inventory.getItemStack();
-        if (stackOnCursor != null) {
+        ItemStack stackInSlot = s.getHasStack() ? s.getStack().copy() : null;
+        if (clickTypeIn == ClickType.QUICK_MOVE) {
+            s.putStack(null);  // shift-left-click clears the slot
+        } else if (stackOnCursor != null && !ItemStack.areItemsEqual(stackInSlot, stackOnCursor)) {
             // placing a new item in the template buffer
             ItemStack stack1 = stackOnCursor.copy();
-            stack1.stackSize = 1;
+            if (dragType == 1) {
+                stack1.stackSize = 1;
+            }
             s.putStack(stack1);
-        } else if (clickTypeIn == ClickType.QUICK_MOVE) {
-            s.putStack(null);  // shift-left-click clears the slot
         } else {
-            ItemStack stack = s.getStack();
-            if (stack != null) {
+            if (stackInSlot != null) {
                 if (dragType == 1) {
                     // right-click increments the stack size
-                    stack.stackSize = Math.min(stack.getMaxStackSize(), stack.stackSize + 1);
+                    stackInSlot.stackSize = Math.min(stackInSlot.getMaxStackSize(), stackInSlot.stackSize + 1);
                 } else if (dragType == 0) {
                     // left-click decrements the stack size
-                    stack.stackSize--;
-                    if (stack.stackSize <= 0) {
-                        stack = null;
+                    stackInSlot.stackSize--;
+                    if (stackInSlot.stackSize <= 0) {
+                        stackInSlot = null;
                     }
                 }
-                s.putStack(stack);
+                s.putStack(stackInSlot);
                 s.onSlotChanged();  // need explicit call here
             }
         }
