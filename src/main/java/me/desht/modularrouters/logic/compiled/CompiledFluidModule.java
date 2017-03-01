@@ -88,11 +88,11 @@ public class CompiledFluidModule extends CompiledModule {
     private boolean isInfiniteWaterSource(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
 
-        if (state.getBlock() == Blocks.WATER || (state.getBlock() == Blocks.FLOWING_WATER && state.getValue(BlockLiquid.LEVEL) == 0)) {
+        if ((state.getBlock() == Blocks.WATER || state.getBlock() == Blocks.FLOWING_WATER) && state.getValue(BlockLiquid.LEVEL) == 0) {
             int count = 0;
             for (EnumFacing face : EnumFacing.HORIZONTALS) {
                 IBlockState state2 = world.getBlockState(pos.offset(face));
-                if (state2.getBlock() == Blocks.WATER || (state2.getBlock() == Blocks.FLOWING_WATER && state2.getValue(BlockLiquid.LEVEL) == 0)) {
+                if ((state2.getBlock() == Blocks.WATER || state2.getBlock() == Blocks.FLOWING_WATER) && state2.getValue(BlockLiquid.LEVEL) == 0) {
                     if (++count >= 2) return true;
                 }
             }
