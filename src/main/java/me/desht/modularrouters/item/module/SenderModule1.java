@@ -10,6 +10,7 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class SenderModule1 extends Module {
@@ -30,6 +31,6 @@ public class SenderModule1 extends Module {
     }
 
     public static int maxDistance(TileEntityItemRouter router) {
-        return Math.min(Config.sender1MaxRange, Config.sender1BaseRange + router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE));
+        return router == null ? Config.sender1BaseRange : router.getEffectiveRange(Config.sender1BaseRange, 1, Config.sender1MaxRange);
     }
 }

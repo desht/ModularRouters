@@ -44,6 +44,6 @@ public class VacuumModule extends Module {
     }
 
     public static int getVacuumRange(TileEntityItemRouter router) {
-        return Math.min(Config.vacuumBaseRange + router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE), Config.vacuumMaxRange);
+        return router == null ? Config.vacuumBaseRange : router.getEffectiveRange(Config.vacuumBaseRange, 1, Config.vacuumMaxRange);
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class ModRecipes {
     public static void init() {
@@ -39,6 +40,9 @@ public class ModRecipes {
         for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
             GameRegistry.addRecipe(ItemUpgrade.getUpgrade(type).getRecipe());
         }
+        GameRegistry.addRecipe(new ShapelessOreRecipe(
+                ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGE),
+                ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGEDOWN)));
 
         for (ItemSmartFilter.FilterType type : ItemSmartFilter.FilterType.values()) {
             GameRegistry.addRecipe(ItemSmartFilter.getFilter(type).getRecipe());

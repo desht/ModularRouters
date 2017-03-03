@@ -36,7 +36,7 @@ public class SenderModule2 extends TargetedModule {
     @Override
     public int maxDistanceSq(TileEntityItemRouter router) {
         // TODO precalculate to avoid repeated multiplications
-        int r = Math.min(Config.sender2BaseRange + (router == null ? 0 : router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE)), Config.sender2MaxRange);
+        int r = router == null ? Config.sender2BaseRange : router.getEffectiveRange(Config.sender2BaseRange, 1, Config.sender2MaxRange);
         return r * r;
     }
 }
