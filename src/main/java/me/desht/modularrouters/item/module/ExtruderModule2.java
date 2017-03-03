@@ -56,7 +56,7 @@ public class ExtruderModule2 extends Module {
     public IRecipe getRecipe() {
         return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER2),
                 " e ", "scp",
-                'c', Blocks.CHEST,
+                'c', "chestWood",
                 's', ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER1),
                 'e', ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER),
                 'p', ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER));
@@ -78,6 +78,6 @@ public class ExtruderModule2 extends Module {
     }
 
     public static int maxDistance(TileEntityItemRouter router) {
-        return Math.min(Config.extruder2BaseRange + (router == null ? 0 : router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE)), Config.extruder2MaxRange);
+        return router == null ? Config.extruder2BaseRange : router.getEffectiveRange(Config.extruder2BaseRange, 1, Config.extruder2MaxRange);
     }
 }
