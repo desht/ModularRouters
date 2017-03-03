@@ -29,7 +29,8 @@ public class ItemUpgrade extends ItemBase {
         SYNC,
         FLUID,
         MUFFLER,
-        BLAST;
+        BLAST,
+        RANGEDOWN;
 
         public static UpgradeType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemUpgrade ? values()[stack.getItemDamage()] : null;
@@ -49,6 +50,7 @@ public class ItemUpgrade extends ItemBase {
         registerUpgrade(UpgradeType.FLUID, new FluidUpgrade());
         registerUpgrade(UpgradeType.MUFFLER, new MufflerUpgrade());
         registerUpgrade(UpgradeType.BLAST, new BlastUpgrade());
+        registerUpgrade(UpgradeType.RANGEDOWN, new RangeDowngrade());
     }
 
     public ItemUpgrade() {

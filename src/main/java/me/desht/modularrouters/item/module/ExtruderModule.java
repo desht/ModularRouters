@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
@@ -54,6 +55,6 @@ public class ExtruderModule extends Module {
     }
 
     public static int maxDistance(TileEntityItemRouter router) {
-        return Math.min(Config.extruderBaseRange + (router == null ? 0 : router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE)), Config.extruderMaxRange);
+        return router == null ? Config.extruderBaseRange : router.getEffectiveRange(Config.extruderBaseRange, 1, Config.extruderMaxRange);
     }
 }

@@ -35,7 +35,7 @@ public class PullerModule2 extends TargetedModule {
 
     @Override
     public int maxDistanceSq(TileEntityItemRouter router) {
-        int r = Math.min(Config.puller2BaseRange + (router == null ? 0 : router.getUpgradeCount(ItemUpgrade.UpgradeType.RANGE)), Config.puller2MaxRange);
+        int r = router == null ? Config.puller2BaseRange : router.getEffectiveRange(Config.puller2BaseRange, 1, Config.puller2MaxRange);
         return r * r;
     }
 }
