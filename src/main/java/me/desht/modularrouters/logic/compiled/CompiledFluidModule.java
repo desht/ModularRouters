@@ -11,10 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -42,12 +39,16 @@ public class CompiledFluidModule extends CompiledModule {
     public boolean execute(TileEntityItemRouter router) {
         ItemStack containerStack = router.getBufferItemStack();
 
-        if (containerStack.getCount() != 1 || !getFilter().test(containerStack)) {
+        if (containerStack.getCount() != 1) {
             return false;
         }
 
         IFluidHandlerItem routerFluidHandler = FluidUtil.getFluidHandler(containerStack);
         if (routerFluidHandler == null) {
+            return false;
+        }
+
+        if (fluidDirection == FluidDirection.OUT && !getFilter().test(containerStack)) {
             return false;
         }
 
@@ -67,6 +68,12 @@ public class CompiledFluidModule extends CompiledModule {
             } else {
                 return false;
             }
+        }
+
+        if (fluidDirection == FluidDirection.IN) {
+            FluidStack fluidStack = worldFluidHandler.getTankProperties()[0].getContents();
+            Fluid fluid = fluidStack == null ? null : fluidStack.getFluid();
+            if (!getFilter().testFluid(fluid)) return false;
         }
 
         boolean transferDone;

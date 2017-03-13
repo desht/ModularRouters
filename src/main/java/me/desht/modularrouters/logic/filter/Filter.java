@@ -7,12 +7,15 @@ import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidUtil;
 import org.apache.commons.lang3.Validate;
 
 import java.util.List;
@@ -74,6 +77,15 @@ public class Filter implements Predicate<ItemStack> {
         }
 
         // no matches: test if this is a blacklist, fail if a whitelist
+        return flags.isBlacklist();
+    }
+
+    public boolean testFluid(Fluid fluid) {
+        for (IItemMatcher matcher : matchers) {
+            if (matcher instanceof FluidMatcher && ((FluidMatcher) matcher).matchFluid(fluid)) {
+                return !flags.isBlacklist();
+            }
+        }
         return flags.isBlacklist();
     }
 

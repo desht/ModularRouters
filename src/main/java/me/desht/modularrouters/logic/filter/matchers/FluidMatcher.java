@@ -19,4 +19,8 @@ public class FluidMatcher implements IItemMatcher {
         FluidStack fStack2 = FluidUtil.getFluidContained(stack);
         return fStack2 != null && fStack2.getFluid() == fluid;
     }
+
+    public boolean matchFluid(Fluid fluid) {
+        return fluid == this.fluid;
+    }
 }
