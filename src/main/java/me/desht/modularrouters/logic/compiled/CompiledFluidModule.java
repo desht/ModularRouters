@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -40,12 +41,16 @@ public class CompiledFluidModule extends CompiledModule {
     public boolean execute(TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
 
-        if (stack == null || stack.stackSize != 1 || !getFilter().test(stack)) {
+        if (stack == null || stack.stackSize != 1) {
             return false;
         }
 
         IFluidHandler routerFluidHandler = FluidUtil.getFluidHandler(stack);
         if (routerFluidHandler == null) {
+            return false;
+        }
+
+        if (fluidDirection == FluidDirection.OUT && !getFilter().test(stack)) {
             return false;
         }
 
@@ -56,9 +61,16 @@ public class CompiledFluidModule extends CompiledModule {
         } else {
             worldFluidHandler = FluidUtil.getFluidHandler(router.getWorld(), getTarget().pos, getFacing().getOpposite());
         }
+
         if (worldFluidHandler == null) {
             // special case: try to pour fluid out into the world?
             return fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerFluidHandler, router.getWorld(), getTarget().pos);
+        }
+
+        if (fluidDirection == FluidDirection.IN) {
+            FluidStack fluidStack = worldFluidHandler.getTankProperties()[0].getContents();
+            Fluid fluid = fluidStack == null ? null : fluidStack.getFluid();
+            if (!getFilter().testFluid(fluid)) return false;
         }
 
         switch (fluidDirection) {
