@@ -628,7 +628,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public int getEffectiveRange(int base, int min, int max) {
         int r = base + (getUpgradeCount(UpgradeType.RANGE) - getUpgradeCount(UpgradeType.RANGEDOWN));
-        return Math.max(0, Math.min(r, max));
+        return Math.max(min, Math.min(r, max));
     }
 
     private void allocateFluidTransfer(int ticks) {
