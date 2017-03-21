@@ -71,6 +71,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
     public static final String NBT_REDSTONE_MODE = "Redstone";
     private static final String NBT_TICK_RATE = "TickRate";
     private static final String NBT_FLUID_TRANSFER_RATE = "FluidTransfer";
+    private static final String NBT_ITEMS_PER_TICK = "ItemsPerTick";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -172,6 +173,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         compound.setByte(NBT_REDSTONE_MODE, (byte) redstoneBehaviour.ordinal());
         compound.setBoolean(NBT_ECO_MODE, ecoMode);
         compound.setInteger(NBT_TICK_RATE, tickRate);
+        compound.setInteger(NBT_ITEMS_PER_TICK, itemsPerTick);
         compound.setInteger(NBT_FLUID_TRANSFER_RATE, fluidTransferRate);
 
         // these fields are needed for rendering
@@ -220,6 +222,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
         setRedstoneBehaviour(newRedstoneBehaviour);
         tickRate = compound.getInteger(NBT_TICK_RATE);
+        itemsPerTick = compound.getInteger(NBT_ITEMS_PER_TICK);
         fluidTransferRate = compound.getInteger(NBT_FLUID_TRANSFER_RATE);
 
         // these fields are needed for rendering
