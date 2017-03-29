@@ -48,7 +48,7 @@ public class FluidModule extends Module {
     public IRecipe getRecipe() {
         return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.FLUID),
                 " c ", "gmg",
-                'm', ModItems.blankModule, 'c', Items.CAULDRON, 'g', Blocks.GLASS);
+                'm', ModItems.blankModule, 'c', Items.CAULDRON, 'g', "blockGlass");
     }
 
     @Override
