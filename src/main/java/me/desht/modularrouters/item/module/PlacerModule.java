@@ -19,6 +19,6 @@ public class PlacerModule extends Module {
     @Override
     public IRecipe getRecipe() {
         return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.PLACER),
-                ModItems.blankModule, Blocks.DISPENSER, Blocks.DIRT);
+                ModItems.blankModule, Blocks.DISPENSER, "dirt");
     }
 }
