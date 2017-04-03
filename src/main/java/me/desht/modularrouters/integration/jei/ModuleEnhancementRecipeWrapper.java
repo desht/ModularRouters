@@ -49,7 +49,8 @@ public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
                 ingredients.setOutput(ItemStack.class, recipeOutput);
             }
         } catch (RuntimeException e) {
-            ModularRouters.logger.warn("broken recipe?");
+            ModularRouters.logger.warn("broken recipe: " + recipe.getClass() + " - " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

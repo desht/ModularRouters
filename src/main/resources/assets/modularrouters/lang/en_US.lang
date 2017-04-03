@@ -281,3 +281,5 @@ jei.enhancement.fastPickup.name=Fast Pickup Enhancement
 jei.enhancement.fastPickup.description=Allows the Vacuum Module to ignore the normal pickup delays on dropped items.
 jei.enhancement.reset.name=Module Reset
 jei.enhancement.reset.description=Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings, enhancements and enchantments, will be lost!
+jei.enhancement.xpVacuum.name=XP Vacuum
+jei.enhancement.xpVacuum.description=Allows the Vacuum Module to collect XP orbs.  XP is either converted into Bottles o' Enchanting in the router's buffer, or stored as liquid XP in a tank in the router (if liquid XP is available).

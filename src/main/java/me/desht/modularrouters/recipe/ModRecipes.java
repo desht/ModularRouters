@@ -1,6 +1,5 @@
 package me.desht.modularrouters.recipe;
 
-import akka.io.Inet;
 import amerifrance.guideapi.api.GuideAPI;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
@@ -8,7 +7,6 @@ import me.desht.modularrouters.integration.guideapi.Guidebook;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
-import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -78,6 +76,7 @@ public class ModRecipes {
         addRegulatorUpgradeRecipes();
         addPickupDelayRecipes();
         addFastPickupRecipe();
+        addXPVacuumRecipe();
 
         if (Loader.isModLoaded("guideapi")) {
             GameRegistry.addShapelessRecipe(GuideAPI.getStackFromBook(Guidebook.guideBook), Items.BOOK, ModItems.blankModule);
@@ -88,7 +87,7 @@ public class ModRecipes {
 
     private static void addSelfCraftRecipes() {
         // crafting a module into itself resets all NBT on the module
-        RecipeSorter.register(ModularRouters.modId + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             if (type == ModuleType.SORTER || type == ModuleType.MODSORTER)
                 continue;
@@ -101,7 +100,7 @@ public class ModRecipes {
     }
 
     private static void addFastPickupRecipe() {
-        RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         ItemStack output = ModuleHelper.makeItemStack(ModuleType.VACUUM);
         ModuleHelper.addFastPickup(output);
         GameRegistry.addRecipe(new FastPickupEnhancementRecipe(output,
@@ -111,7 +110,7 @@ public class ModRecipes {
     }
 
     private static void addRedstoneUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             ItemStack output = ModuleHelper.makeItemStack(type);
             ModuleHelper.setRedstoneBehaviour(output, true, RouterRedstoneBehaviour.ALWAYS);
@@ -124,7 +123,7 @@ public class ModRecipes {
     }
 
     private static void addRegulatorUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             if (RegulatorEnhancementRecipe.appliesTo(type)) {
                 ItemStack output = ModuleHelper.makeItemStack(type);
@@ -139,14 +138,25 @@ public class ModRecipes {
     }
 
     private static void addPickupDelayRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : new ItemModule.ModuleType[] { ModuleType.DROPPER, ModuleType.FLINGER} ) {
             ItemStack output = ModuleHelper.makeItemStack(type);
             ModuleHelper.increasePickupDelay(output);
             GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(output,
                     "SM",
-                    'S', Items.SLIME_BALL,
+                    'S', "slimeball",
                     'M', ModuleHelper.makeItemStack(type)));
         }
     }
+
+    private static void addXPVacuumRecipe() {
+        RecipeSorter.register(ModularRouters.modId + ":xpVacuumUpgrade", XPVacuumEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
+        ItemStack output = ModuleHelper.makeItemStack(ModuleType.VACUUM);
+        ModuleHelper.enableXPVacuum(output);
+        GameRegistry.addRecipe(new XPVacuumEnhancementRecipe(output,
+                "SM",
+                'S', Blocks.SOUL_SAND,
+                'M', ModuleHelper.makeItemStack(ModuleType.VACUUM)));
+    }
+
 }
