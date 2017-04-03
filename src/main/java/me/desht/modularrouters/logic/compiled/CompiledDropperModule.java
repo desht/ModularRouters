@@ -21,7 +21,7 @@ public class CompiledDropperModule extends CompiledModule {
         ItemStack stack = router.getBufferItemStack();
         if (stack != null && getFilter().test(stack) && isRegulationOK(router, false)) {
             int nItems = Math.min(router.getItemsPerTick(), stack.stackSize - getRegulationAmount());
-            if (nItems < 0) {
+            if (nItems <= 0) {
                 return false;
             }
             ItemStack toDrop = router.peekBuffer(nItems);
