@@ -16,7 +16,8 @@ public class JEIModularRoutersPlugin extends BlankModPlugin {
                 new RegulatorEnhancementRecipeHandler(jeiHelpers),
                 new PickupDelayEnhancementRecipeHandler(jeiHelpers),
                 new FastPickupEnhancementRecipeHandler(jeiHelpers),
-                new ModuleResetRecipeHandler(jeiHelpers)
+                new ModuleResetRecipeHandler(jeiHelpers),
+                new XPVacuumEnhancementRecipeHandler(jeiHelpers)
         );
     }
 }
