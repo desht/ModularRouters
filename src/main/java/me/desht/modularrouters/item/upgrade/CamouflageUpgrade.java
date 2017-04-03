@@ -30,8 +30,7 @@ public class CamouflageUpgrade extends Upgrade {
     @Override
     public IRecipe getRecipe() {
         return new ShapelessOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.CAMOUFLAGE),
-                ModItems.blankUpgrade,
-                new ItemStack(Items.DYE, 1, 1), new ItemStack(Items.DYE, 1, 2), new ItemStack(Items.DYE, 1, 4));
+                ModItems.blankUpgrade, "dyeRed", "dyeGreen", "dyeBlue");
     }
 
     @Override
