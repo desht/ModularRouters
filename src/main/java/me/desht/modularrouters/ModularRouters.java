@@ -91,6 +91,7 @@ public class ModularRouters {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+        IntegrationHandler.checkForXpJuice();
         ModNameCache.init();
     }
 
