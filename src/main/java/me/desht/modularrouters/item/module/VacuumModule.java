@@ -30,6 +30,9 @@ public class VacuumModule extends Module {
         if (ModuleHelper.hasFastPickup(stack)) {
             list.add(TextFormatting.GREEN + I18n.format("itemText.misc.fastPickup"));
         }
+        if (ModuleHelper.hasXPVacuum(stack)) {
+            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.xpVacuum"));
+        }
     }
 
     @Override

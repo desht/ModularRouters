@@ -177,6 +177,7 @@ itemText.misc.regexFilter.count=%d regex(es) in filter
 itemText.misc.modFilter.count=%d mod(s) in filter
 itemText.misc.pickupDelay=Item Pickup Delay:§b %d ticks (%f sec)
 itemText.misc.fastPickup=Fast Pickup Enabled
+itemText.misc.xpVacuum=XP Vacuum Mode Enabled
 itemText.security.count=%d / %d other player(s):
 itemText.security.owner=§eOwner: §b%s
 itemText.sync.tuning=§eTuned Value: §b%d
