@@ -148,7 +148,7 @@ public class BlockUtil {
         if (fakePlayer == null) {
             return null;
         }
-        fakePlayer.rotationYaw = getYawFromFacing(facing.getOpposite());
+        fakePlayer.rotationYaw = getYawFromFacing(facing);
 
         IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing);
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
