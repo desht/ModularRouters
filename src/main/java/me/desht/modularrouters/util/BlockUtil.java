@@ -100,7 +100,7 @@ public class BlockUtil {
 
         int i = 0;
         if (worldIn.getBlockState(pos).getValue(BlockDirectional.FACING) == EnumFacing.UP) {
-            i = MathHelper.floor_double((double) (facing.getOpposite().getHorizontalAngle() * 16.0F / 360.0F) + 0.5D) & 15;
+            i = MathHelper.floor_double((double) (facing.getHorizontalAngle() * 16.0F / 360.0F) + 0.5D) & 15;
         }
 
         TileEntity tileentity = worldIn.getTileEntity(pos);
@@ -121,7 +121,7 @@ public class BlockUtil {
                 tileentityskull.setType(stack.getMetadata());
             }
 
-            tileentityskull.setSkullRotation(i);
+            tileentityskull.setSkullRotation(i);  // skull will face the router fake-player
             Blocks.SKULL.checkWitherSpawn(worldIn, pos, tileentityskull);
         }
     }
@@ -133,6 +133,7 @@ public class BlockUtil {
      * @param toPlace item to place
      * @param world   the world
      * @param pos     position in the world to place at
+     * @param facing direction the placer is facing
      * @return the new block state if successful, null otherwise
      */
     public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, EnumFacing facing) {
@@ -145,6 +146,7 @@ public class BlockUtil {
         if (fakePlayer == null) {
             return null;
         }
+        fakePlayer.rotationYaw = getYawFromFacing(facing.getOpposite());
 
         IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing);
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
