@@ -167,7 +167,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
 
     @Override
     public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        EnumFacing enumfacing = (placer == null) ? facing : EnumFacing.fromAngle(placer.rotationYaw);
+        EnumFacing enumfacing = (placer == null) ? facing : EnumFacing.fromAngle(placer.rotationYaw).getOpposite();
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
