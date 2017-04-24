@@ -165,22 +165,10 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         return router != null ? router.getCamouflage() : null;
     }
 
-    private IBlockState getCamoState(IBlockState state) {
-        return state instanceof IExtendedBlockState ?
-                ((IExtendedBlockState) state).getValue(CAMOUFLAGE_STATE) :
-                null;
-    }
-
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        if (facing.getFrontOffsetY() == 0) {
-            // placed against a vertical surface - have it face away from that surface
-            return this.getDefaultState().withProperty(FACING, facing);
-        } else {
-            // have the router face the player
-            EnumFacing enumfacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
-            return this.getDefaultState().withProperty(FACING, enumfacing.getOpposite());
-        }
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        EnumFacing enumfacing = (placer == null) ? facing : EnumFacing.fromAngle(placer.rotationYaw);
+        return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
     @Override
