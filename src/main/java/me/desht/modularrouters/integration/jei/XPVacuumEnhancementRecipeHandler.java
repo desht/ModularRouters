@@ -1,6 +1,6 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.XPVacuumEnhancementRecipe;
+import me.desht.modularrouters.recipe.enhancement.XPVacuumEnhancementRecipe;
 import mezz.jei.api.IJeiHelpers;
 
 public class XPVacuumEnhancementRecipeHandler extends BaseEnhancementRecipeHandler<XPVacuumEnhancementRecipe> {

@@ -30,6 +30,7 @@ public class ModuleHelper {
     public static final String NBT_PICKUP_DELAY = "PickupDelay";
     private static final String NBT_FAST_PICKUP = "FastPickup";
     private static final String NBT_CONFIG_SLOT = "ConfigSlot";
+    private static final String NBT_XP_VACUUM = "XPVacuum";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
@@ -220,5 +221,15 @@ public class ModuleHelper {
         } else {
             return -1;
         }
+    }
+
+    public static void enableXPVacuum(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        compound.setBoolean(NBT_XP_VACUUM, true);
+    }
+
+    public static boolean hasXPVacuum(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        return compound.getBoolean(NBT_XP_VACUUM);
     }
 }

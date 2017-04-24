@@ -73,13 +73,14 @@ public class ModRecipes {
         addRegulatorUpgradeRecipes();
         addPickupDelayRecipes();
         addFastPickupRecipe();
+        addXPVacuumRecipe();
 
         MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
     }
 
     private static void addSelfCraftRecipes() {
         // crafting a module into itself resets all NBT on the module
-        RecipeSorter.register(ModularRouters.modId + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             if (type == ModuleType.SORTER || type == ModuleType.MODSORTER)
                 continue;
@@ -92,19 +93,19 @@ public class ModRecipes {
     }
 
     private static void addFastPickupRecipe() {
-        RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         GameRegistry.addRecipe(new FastPickupEnhancementRecipe(ModuleType.VACUUM));
     }
 
     private static void addRedstoneUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             GameRegistry.addRecipe(new RedstoneEnhancementRecipe(type));
         }
     }
 
     private static void addRegulatorUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             if (RegulatorEnhancementRecipe.appliesTo(type)) {
                 GameRegistry.addRecipe(new RegulatorEnhancementRecipe(type));
@@ -113,9 +114,14 @@ public class ModRecipes {
     }
 
     private static void addPickupDelayRecipes() {
-        RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(ModularRouters.modId + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : new ItemModule.ModuleType[] { ModuleType.DROPPER, ModuleType.FLINGER} ) {
             GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(type));
         }
+    }
+
+    private static void addXPVacuumRecipe() {
+        RecipeSorter.register(ModularRouters.modId + ":xpVacuumUpgrade", XPVacuumEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
+        GameRegistry.addRecipe(new XPVacuumEnhancementRecipe(ModuleType.VACUUM));
     }
 }

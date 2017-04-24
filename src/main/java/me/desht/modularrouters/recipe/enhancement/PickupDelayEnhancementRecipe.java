@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 public class PickupDelayEnhancementRecipe extends ModuleEnhancementRecipe {
     public PickupDelayEnhancementRecipe(ItemModule.ModuleType type) {
         super(ModuleHelper.makeItemStack(type), "SM",
-                'S', Items.SLIME_BALL,
+                'S', "slimeball",
                 'M', ModuleHelper.makeItemStack(type));
     }
 
