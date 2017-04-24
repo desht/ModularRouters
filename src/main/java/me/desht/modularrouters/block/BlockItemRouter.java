@@ -291,7 +291,18 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         NBTTagCompound compound = itemstack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_MODULE_COUNT)) {
             list.add(I18n.format("itemText.misc.routerConfigured"));
-            MiscUtil.appendMultiline(list, "itemText.misc.moduleCount", compound.getInteger(NBT_MODULE_COUNT));
+            int modules = compound.getInteger(NBT_MODULE_COUNT);
+            MiscUtil.appendMultiline(list, "itemText.misc.moduleCount", modules);
+            if (modules > 0) {
+                ItemStackHandler modulesHandler = new ItemStackHandler(9);
+                modulesHandler.deserializeNBT(compound.getCompoundTag(NBT_MODULES));
+                for (int i = 0; i < modulesHandler.getSlots(); i++) {
+                    ItemStack moduleStack = modulesHandler.getStackInSlot(i);
+                    if (moduleStack != null) {
+                        list.add(TextFormatting.AQUA + "\u2022 " + I18n.format(moduleStack.getUnlocalizedName() + ".name"));
+                    }
+                }
+            }
             for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
                 int c = compound.getInteger(NBT_UPGRADE_COUNT + "." + type);
                 if (c > 0) {
