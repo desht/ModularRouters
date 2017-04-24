@@ -143,7 +143,6 @@ public abstract class Module {
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
-        System.out.println("on item use! " + stack);
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         if (router != null) {
             if (!player.isSneaking()) {
