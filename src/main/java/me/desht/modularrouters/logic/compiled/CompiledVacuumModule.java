@@ -28,6 +28,7 @@ import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
     private static final int XP_FLUID_RATIO = 20;  // 1 xp = 20mb xp juice
+    private static final int XP_PER_BOTTLE = 7;  // average xp per bottle o' enchanting
 
     private final boolean fastPickup;
     private final boolean xpMode;
@@ -41,7 +42,7 @@ public class CompiledVacuumModule extends CompiledModule {
         super(router, stack);
         fastPickup = ModuleHelper.hasFastPickup(stack);
         xpMode = ModuleHelper.hasXPVacuum(stack);
-        if (IntegrationHandler.fluidXpJuice != null) {
+        if (xpMode && IntegrationHandler.fluidXpJuice != null) {
             xpJuiceStack = new FluidStack(IntegrationHandler.fluidXpJuice, 1000);
         } else {
             xpJuiceStack = null;
@@ -117,7 +118,7 @@ public class CompiledVacuumModule extends CompiledModule {
             xpMethod = XPMethod.BOTTLES;
             // bottles yield 3-11 experience, so an average of 7
             spaceForXp = inRouterStack == null ?
-                    64 * 7 : (inRouterStack.getMaxStackSize() - inRouterStack.stackSize) * 7;
+                    64 * XP_PER_BOTTLE : (inRouterStack.getMaxStackSize() - inRouterStack.stackSize) * XP_PER_BOTTLE;
         } else if (xpJuiceStack != null && inRouterStack.stackSize == 1) {
             xpHandler = FluidUtil.getFluidHandler(inRouterStack);
             if (xpHandler != null) {
@@ -135,17 +136,16 @@ public class CompiledVacuumModule extends CompiledModule {
 
         int initialSpaceForXp = spaceForXp;
         for (EntityXPOrb orb : orbs) {
-            System.out.println("router has space for " + spaceForXp + "xp, found orb with " + orb.getXpValue() + "xp");
             if (orb.getXpValue() > spaceForXp) {
                 break;
             }
             switch (xpMethod) {
                 case BOTTLES:
                     xpBuffered += orb.getXpValue();
-                    if (xpBuffered > 7) {
-                        ItemStack bottleStack = new ItemStack(Items.EXPERIENCE_BOTTLE, xpBuffered / 7);
+                    if (xpBuffered > XP_PER_BOTTLE) {
+                        ItemStack bottleStack = new ItemStack(Items.EXPERIENCE_BOTTLE, xpBuffered / XP_PER_BOTTLE);
                         ItemStack excess = router.insertBuffer(bottleStack);
-                        xpBuffered -= bottleStack.stackSize * 7;
+                        xpBuffered -= bottleStack.stackSize * XP_PER_BOTTLE;
                         if (excess != null) {
                             InventoryUtils.dropItems(router.getWorld(), router.getPos(), excess);
                         }
@@ -155,7 +155,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     FluidStack xpStack = new FluidStack(IntegrationHandler.fluidXpJuice, orb.getXpValue() * XP_FLUID_RATIO + xpBuffered);
                     int filled = xpHandler.fill(xpStack, true);
                     if (filled < xpStack.amount) {
-                        System.out.println(" - tank overflow?");
+                        // tank is too full to store entire amount...
                         spaceForXp = 0;
                         xpBuffered = xpStack.amount - filled;
                     } else {
