@@ -39,8 +39,7 @@ public abstract class Module {
         TERMINATE(false, 0x80);
 
         private final boolean defaultValue;
-
-        private byte mask;
+        private final byte mask;
 
         ModuleFlags(boolean defaultValue, int mask) {
             this.defaultValue = defaultValue;
@@ -65,7 +64,7 @@ public abstract class Module {
         RIGHT(0x08, BlockItemRouter.OPEN_R),
         FRONT(0x10, BlockItemRouter.OPEN_F),
         BACK(0x20, BlockItemRouter.OPEN_B);
-        private static RelativeDirection[] realSides = new RelativeDirection[] { FRONT, BACK, UP, DOWN, LEFT, RIGHT };
+        private static final RelativeDirection[] realSides = new RelativeDirection[] { FRONT, BACK, UP, DOWN, LEFT, RIGHT };
 
         private final int mask;
         private final PropertyBool property;

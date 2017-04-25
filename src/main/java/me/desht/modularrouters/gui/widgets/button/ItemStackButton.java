@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public class ItemStackButton extends TexturedButton {
     private final ItemStack renderStack;
-    private boolean flat;
+    private final boolean flat;
 
     public ItemStackButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack, boolean flat) {
         super(buttonId, x, y, width, height);

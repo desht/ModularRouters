@@ -6,7 +6,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
 public class ItemBase extends Item {
-    protected String name;
+    protected final String name;
 
     public ItemBase(String name) {
         this.name = name;

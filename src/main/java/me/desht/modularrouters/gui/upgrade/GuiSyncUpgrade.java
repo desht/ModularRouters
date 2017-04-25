@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.GuiResponder {
@@ -27,7 +28,6 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
     private static final int VALUE_TEXTFIELD_ID = 1;
     private static final int TOOLTIP_BUTTON_ID = 1;
 
-    private IntegerTextField intField;
     private final String title;
 
     private int xPos, yPos;
@@ -44,7 +44,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 77, yPos + 27, 25, 16, 0, Config.baseTickRate - 1);
+        IntegerTextField intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 77, yPos + 27, 25, 16, 0, Config.baseTickRate - 1);
         intField.setValue(tunedValue);
         intField.setGuiResponder(this);
         intField.useGuiTextBackground();
@@ -87,7 +87,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
     }
 
     @Override
-    public void setEntryValue(int id, String value) {
+    public void setEntryValue(int id, @Nonnull String value) {
         if (id == VALUE_TEXTFIELD_ID) {
             tunedValue = value.isEmpty() ? 0 : Integer.parseInt(value);
             sendSettingsDelayed(5);

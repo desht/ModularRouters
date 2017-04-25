@@ -6,13 +6,16 @@ import mezz.jei.api.recipe.IRecipeHandler;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 
-public abstract class BaseEnhancementRecipeHandler<T extends ModuleEnhancementRecipe> implements IRecipeHandler<T> {
-    protected final IJeiHelpers helpers;
+import javax.annotation.Nonnull;
 
-    public BaseEnhancementRecipeHandler(IJeiHelpers helpers) {
+public abstract class BaseEnhancementRecipeHandler<T extends ModuleEnhancementRecipe> implements IRecipeHandler<T> {
+    private final IJeiHelpers helpers;
+
+    BaseEnhancementRecipeHandler(IJeiHelpers helpers) {
         this.helpers = helpers;
     }
 
+    @Nonnull
     @Override
     public String getRecipeCategoryUid() {
         return VanillaRecipeCategoryUid.CRAFTING;

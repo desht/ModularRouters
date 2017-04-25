@@ -76,8 +76,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private int sendDelay;
     private int regulatorAmount;
     private RedstoneBehaviourButton rbb;
-    private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
-    private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
+    private final DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
+    private final ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
 
     public GuiModule(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);

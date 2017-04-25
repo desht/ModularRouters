@@ -9,7 +9,7 @@ import net.minecraft.item.ItemBlock;
 
 public class BlockBase extends Block {
 
-    protected String name;
+    protected final String name;
 
     public BlockBase(Material material, String name) {
         super(material);

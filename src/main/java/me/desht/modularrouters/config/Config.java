@@ -86,7 +86,7 @@ public class Config {
         return config;
     }
 
-    private static Pattern oneCharPattern = Pattern.compile("^.$");
+    private static final Pattern oneCharPattern = Pattern.compile("^.$");
 
     public static void preInit() {
         File configFile = new File(Loader.instance().getConfigDir(), "modularrouters.cfg");

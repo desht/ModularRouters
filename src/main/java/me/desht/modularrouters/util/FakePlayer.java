@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class FakePlayer {
-    private static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes(ModularRouters.modId.getBytes()), "[" + ModularRouters.name + "]");
+    private static final GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes(ModularRouters.modId.getBytes()), "[" + ModularRouters.name + "]");
     private static WeakReference<EntityPlayer> theFakePlayer = new WeakReference<>(null);
 
     private static WeakReference<EntityPlayer> createNewPlayer(WorldServer world) {

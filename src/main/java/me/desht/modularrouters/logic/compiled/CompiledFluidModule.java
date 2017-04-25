@@ -21,8 +21,8 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 
 public class CompiledFluidModule extends CompiledModule {
-    public static String NBT_MAX_TRANSFER = "MaxTransfer";
-    public static String NBT_FLUID_DIRECTION = "FluidDir";
+    public static final String NBT_MAX_TRANSFER = "MaxTransfer";
+    public static final String NBT_FLUID_DIRECTION = "FluidDir";
 
     private final int maxTransfer;
     private final FluidDirection fluidDirection;

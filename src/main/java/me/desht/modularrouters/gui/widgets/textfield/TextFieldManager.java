@@ -39,7 +39,7 @@ public class TextFieldManager {
      * @return true if a text field handled the mouse event, false if not
      * @throws IOException
      */
-    public boolean handleMouseInput() throws IOException {
+    public boolean handleMouseInput() {
         int wheel = Mouse.getEventDWheel();
         if (wheel == 0) {
             return false;
@@ -62,13 +62,13 @@ public class TextFieldManager {
         return false;
     }
 
-    public void mouseClicked(int x, int y, int btn) throws IOException {
+    public void mouseClicked(int x, int y, int btn) {
         for (TextFieldWidget field : textFields) {
             field.mouseClicked(x, y, btn);
         }
     }
 
-    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
+    public boolean keyTyped(char typedChar, int keyCode) {
         if (keyCode == Keyboard.KEY_TAB) {
             if (GuiScreen.isShiftKeyDown()) {
                 focusPrev();

@@ -70,13 +70,10 @@ public class SetofItemStack extends TCustomHashSet<ItemStack> {
         return this.stream().sorted(compareStacks).collect(Collectors.toList());
     }
 
-    private static final Comparator<? super ItemStack> compareStacks = new Comparator<ItemStack>() {
-        @Override
-        public int compare(ItemStack o1, ItemStack o2) {
-            // matches by mod, then by display name
-            int c = o1.getItem().getRegistryName().getResourceDomain().compareTo(o2.getItem().getRegistryName().getResourceDomain());
-            if (c != 0) return c;
-            return o1.getDisplayName().compareTo(o2.getDisplayName());
-        }
+    private static final Comparator<? super ItemStack> compareStacks = (Comparator<ItemStack>) (o1, o2) -> {
+        // matches by mod, then by display name
+        int c = o1.getItem().getRegistryName().getResourceDomain().compareTo(o2.getItem().getRegistryName().getResourceDomain());
+        if (c != 0) return c;
+        return o1.getDisplayName().compareTo(o2.getDisplayName());
     };
 }

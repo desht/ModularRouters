@@ -7,13 +7,11 @@ import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandle
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModuleExtruder2;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumHand;

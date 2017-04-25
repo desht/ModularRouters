@@ -20,7 +20,7 @@ public class TemplateFrameModel implements IPerspectiveAwareModel {
     public static final ModelResourceLocation variantTag
             = new ModelResourceLocation("modularrouters:templateFrame", "normal");
 
-    private IBakedModel existingModel;
+    private final IBakedModel existingModel;
 
     public TemplateFrameModel(IBakedModel existingModel) {
         this.existingModel = existingModel;
