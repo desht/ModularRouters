@@ -4,8 +4,12 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -36,6 +40,16 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
 
     @Override
     public void putStack(ItemStack stack) {
+        // bit of a hack, but ensures bulk item filter NBT is properly init'd
+         if (ItemSmartFilter.isType(stack, ItemSmartFilter.FilterType.BULKITEM)) {
+             NBTTagCompound compound = stack.getTagCompound();
+             if (compound == null || !compound.hasKey(ModuleHelper.NBT_FILTER)) {
+                 compound = new NBTTagCompound();
+                 compound.setTag(ModuleHelper.NBT_FILTER, new NBTTagList());
+                 stack.setTagCompound(compound);
+             }
+         }
+
         // avoid saving the filter handler unnecessarily
         T handler = (T) getItemHandler();
         if (!ItemStack.areItemStacksEqual(stack, handler.getStackInSlot(index))) {

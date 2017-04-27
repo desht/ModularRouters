@@ -99,6 +99,10 @@ public class ItemSmartFilter extends ItemBase {
         return filters[type.ordinal()];
     }
 
+    public static boolean isType(ItemStack stack, FilterType type) {
+        return stack.getItem() instanceof ItemSmartFilter && stack.getItemDamage() == type.ordinal();
+    }
+
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 1; // return any value greater than zero
