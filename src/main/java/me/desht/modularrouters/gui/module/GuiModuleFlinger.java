@@ -46,7 +46,7 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        FloatTextField t1 = new FloatTextField(manager, FIELD_SPEED, fontRendererObj, guiLeft + 152, guiTop + 19, 35, 12,
+        FloatTextField t1 = new FloatTextField(manager, FIELD_SPEED, fontRenderer, guiLeft + 152, guiTop + 19, 35, 12,
                 FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED);
         t1.setPrecision(2);
         t1.setValue(speed);
@@ -54,13 +54,13 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
         t1.setIncr(0.1f, 0.5f, 10.0f);
         t1.useGuiTextBackground();
 
-        FloatTextField t2 = new FloatTextField(manager, FIELD_PITCH, fontRendererObj, guiLeft + 152, guiTop + 37, 35, 12,
+        FloatTextField t2 = new FloatTextField(manager, FIELD_PITCH, fontRenderer, guiLeft + 152, guiTop + 37, 35, 12,
                 FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH);
         t2.setValue(pitch);
         t2.setGuiResponder(this);
         t2.useGuiTextBackground();
 
-        FloatTextField t3 = new FloatTextField(manager, FIELD_YAW, fontRendererObj, guiLeft + 152, guiTop + 55, 35, 12,
+        FloatTextField t3 = new FloatTextField(manager, FIELD_YAW, fontRenderer, guiLeft + 152, guiTop + 55, 35, 12,
                 FlingerModule.MIN_YAW, FlingerModule.MAX_YAW);
         t3.setValue(yaw);
         t3.setGuiResponder(this);

@@ -51,7 +51,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        regexTextField = new RegexTextField(this, 1, fontRendererObj, xPos + 10, yPos + 27, 144, 18);
+        regexTextField = new RegexTextField(this, 1, fontRenderer, xPos + 10, yPos + 27, 144, 18);
         regexTextField.useGuiTextBackground();
 
         manager.focus(0);
@@ -74,15 +74,15 @@ public class GuiRegexFilter extends GuiFilterScreen {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRendererObj.drawString(title, xPos + GUI_WIDTH / 2 - this.fontRendererObj.getStringWidth(title) / 2, yPos + 6, 0x404040);
+        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2 - fontRenderer.getStringWidth(title) / 2, yPos + 6, 0x404040);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            fontRendererObj.drawString("/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
+            fontRenderer.drawString("/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         if (!errorMsg.isEmpty()) {
-            fontRendererObj.drawString(errorMsg, xPos + 8, yPos + 170, 0x804040);
+            fontRenderer.drawString(errorMsg, xPos + 8, yPos + 170, 0x804040);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

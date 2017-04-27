@@ -72,7 +72,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         }
 
         TextFieldManager manager = getTextFieldManager().clear();
-        valueTextField = new IntegerTextField(manager, 1, fontRendererObj, xPos + 120, yPos + 28, 20, 14, 0, 100);
+        valueTextField = new IntegerTextField(manager, 1, fontRenderer, xPos + 120, yPos + 28, 20, 14, 0, 100);
         valueTextField.useGuiTextBackground();
     }
 
@@ -83,11 +83,11 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRendererObj.drawString(title, xPos + GUI_WIDTH / 2 - this.fontRendererObj.getStringWidth(title) / 2, yPos + 6, 0x404040);
+        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2 - this.fontRenderer.getStringWidth(title) / 2, yPos + 6, 0x404040);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
-            fontRendererObj.drawString(comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
+            fontRenderer.drawString(comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

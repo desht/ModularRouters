@@ -116,9 +116,9 @@ public class OpenGuiMessage extends BaseSettingsMessage {
     public static class Handler implements IMessageHandler<OpenGuiMessage, IMessage> {
         @Override
         public IMessage onMessage(OpenGuiMessage message, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
             mainThread.addScheduledTask(() -> {
-                EntityPlayer player = ctx.getServerHandler().playerEntity;
+                EntityPlayer player = ctx.getServerHandler().player;
                 BlockPos pos = player.getPosition();
                 TileEntityItemRouter router = null;
                 if (message.routerPos != null) {

@@ -31,7 +31,10 @@ import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ModularRouters.modId, version = ModularRouters.version, name = ModularRouters.name,
-        guiFactory = ModularRouters.GUIFACTORY, dependencies = "after:Waila;before:guideapi;after:theoneprobe")
+        guiFactory = ModularRouters.GUIFACTORY,
+        dependencies = "after:Waila;before:guideapi;after:theoneprobe;required-after:forge@[13.20.0.2266,);",
+        acceptedMinecraftVersions = "1.11"
+)
 public class ModularRouters {
     public static final String modId = "modularrouters";
     public static final String name = "Modular Routers";

@@ -71,7 +71,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 8, 0x404040);
+        fontRenderer.drawString(title, this.xSize / 2 - fontRenderer.getStringWidth(title) / 2, 8, 0x404040);
     }
 
     @Override

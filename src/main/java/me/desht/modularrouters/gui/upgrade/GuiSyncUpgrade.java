@@ -43,7 +43,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        IntegerTextField intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRendererObj, xPos + 77, yPos + 27, 25, 16, 0, Config.baseTickRate - 1);
+        IntegerTextField intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRenderer, xPos + 77, yPos + 27, 25, 16, 0, Config.baseTickRate - 1);
         intField.setValue(tunedValue);
         intField.setGuiResponder(this);
         intField.useGuiTextBackground();
@@ -60,7 +60,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRendererObj.drawString(title, xPos + GUI_WIDTH / 2 - this.fontRendererObj.getStringWidth(title) / 2, yPos + 6, 0x404040);
+        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2 - fontRenderer.getStringWidth(title) / 2, yPos + 6, 0x404040);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

@@ -128,7 +128,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             TextFieldManager manager = createTextFieldManager();
             Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
             int xOff = module.isFluidModule() ? 0 : 10;
-            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRendererObj, guiLeft + 156 + xOff, guiTop + 77,
+            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer, guiLeft + 156 + xOff, guiTop + 77,
                     20, 12, range.getMinimum(), range.getMaximum());
             field.setValue(ModuleHelper.getRegulatorAmount(moduleItemStack));
             field.setGuiResponder(this);
@@ -235,7 +235,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String title = moduleItemStack.getDisplayName() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
-        this.fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 5, 0x404040);
+        this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 5, 0x404040);
     }
 
     @Override

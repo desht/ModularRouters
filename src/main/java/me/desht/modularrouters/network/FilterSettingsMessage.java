@@ -82,9 +82,9 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
     public static class Handler implements IMessageHandler<FilterSettingsMessage, IMessage> {
         @Override
         public IMessage onMessage(FilterSettingsMessage message, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
             mainThread.addScheduledTask(() -> {
-                EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+                EntityPlayerMP player = ctx.getServerHandler().player;
                 ItemStack filterStack = ItemStack.EMPTY;
                 ItemStack moduleStack = ItemStack.EMPTY;
                 ModuleFilterHandler filterHandler = null;

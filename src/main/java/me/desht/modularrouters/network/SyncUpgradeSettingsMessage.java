@@ -35,10 +35,10 @@ public class SyncUpgradeSettingsMessage implements IMessage {
     public static class Handler implements IMessageHandler<SyncUpgradeSettingsMessage, IMessage> {
         @Override
         public IMessage onMessage(SyncUpgradeSettingsMessage message, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
             mainThread.addScheduledTask(() -> {
                 // TODO only works for player main hand right now
-                EntityPlayer player = ctx.getServerHandler().playerEntity;
+                EntityPlayer player = ctx.getServerHandler().player;
                 ItemStack held = player.getHeldItem(EnumHand.MAIN_HAND);
                 if (ItemUpgrade.isType(held, ItemUpgrade.UpgradeType.SYNC)) {
                     SyncUpgrade.setTunedValue(held, message.tunedValue);

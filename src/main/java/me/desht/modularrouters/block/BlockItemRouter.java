@@ -198,19 +198,19 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         return facing.getHorizontalIndex();
     }
 
-    @Override
-    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-        IBlockState state = world.getBlockState(pos);
-        if (axis.getAxis() != EnumFacing.Axis.Y) {
-            world.setBlockState(pos, state.withProperty(FACING, axis));
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-            if (router != null) {
-                router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
-            }
-            return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+//        IBlockState state = world.getBlockState(pos);
+//        if (axis.getAxis() != EnumFacing.Axis.Y) {
+//            world.setBlockState(pos, state.withProperty(FACING, state.getValue(FACING).rotateY()));
+//            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+//            if (router != null) {
+//                router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public boolean hasTileEntity(IBlockState state) {

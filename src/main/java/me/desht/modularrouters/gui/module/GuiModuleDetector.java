@@ -43,7 +43,7 @@ public class GuiModuleDetector extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        IntegerTextField intField = new IntegerTextField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
+        IntegerTextField intField = new IntegerTextField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRenderer, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
         intField.setValue(signalStrength);
         intField.setGuiResponder(this);
         intField.setIncr(1, 4);

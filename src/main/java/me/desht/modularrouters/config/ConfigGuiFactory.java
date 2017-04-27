@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.DefaultGuiFactory;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
@@ -16,24 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ConfigGuiFactory implements IModGuiFactory {
-    @Override
-    public void initialize(Minecraft minecraft) {
+public class ConfigGuiFactory extends DefaultGuiFactory {
+    protected ConfigGuiFactory(String modid, String title) {
+        super(modid, title);
     }
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass() {
-        return MRConfigGui.class;
-    }
-
-    @Override
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
-        return null;
-    }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement runtimeOptionCategoryElement) {
-        return null;
+    public GuiScreen createConfigGui(GuiScreen parentScreen) {
+        return new MRConfigGui(parentScreen);
     }
 
     public static class MRConfigGui extends GuiConfig {

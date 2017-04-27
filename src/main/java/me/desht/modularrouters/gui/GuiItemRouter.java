@@ -76,11 +76,11 @@ public class GuiItemRouter extends GuiContainerBase {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String title = router.getDisplayName().getUnformattedText();
-        fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, Color.darkGray.getRGB());
+        fontRenderer.drawString(title, this.xSize / 2 - fontRenderer.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, Color.darkGray.getRGB());
     }
 
     @Override

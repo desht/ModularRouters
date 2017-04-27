@@ -27,7 +27,7 @@ public abstract class GuiScreenBase extends GuiScreen {
         if (textFieldManager != null) textFieldManager.drawTextFields();
         this.buttonList.stream()
                 .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRendererObj));
+                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRenderer));
     }
 
     @Override

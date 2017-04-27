@@ -57,7 +57,7 @@ public class GuiModuleFluid extends GuiModule {
         TextFieldManager manager = getOrCreateTextFieldManager();
 
         int max = Config.baseTickRate * Config.fluidMaxTransferRate;
-        IntegerTextField intField = new IntegerTextField(manager, TRANSFER_TEXTFIELD_ID, fontRendererObj, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
+        IntegerTextField intField = new IntegerTextField(manager, TRANSFER_TEXTFIELD_ID, fontRenderer, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
         intField.setValue(maxTransfer);
         intField.setGuiResponder(this);
         intField.setIncr(100, 10, 10);
@@ -83,7 +83,7 @@ public class GuiModuleFluid extends GuiModule {
         super.drawGuiContainerForegroundLayer(par1, par2);
 
         if (regulationEnabled) {
-            mc.fontRendererObj.drawString("%", 179, 79, 0x404040);
+            mc.fontRenderer.drawString("%", 179, 79, 0x404040);
         }
     }
 

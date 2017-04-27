@@ -38,7 +38,7 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
         if (textFieldManager != null) textFieldManager.drawTextFields();
         this.buttonList.stream()
                 .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRendererObj));
+                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRenderer));
     }
 
     @Override

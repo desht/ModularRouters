@@ -61,15 +61,15 @@ public class GuiModFilter extends GuiFilterContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String title = filterStack.getDisplayName() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
-        fontRendererObj.drawString(title, this.xSize / 2 - this.fontRendererObj.getStringWidth(title) / 2, 8, 0x404040);
+        fontRenderer.drawString(title, this.xSize / 2 - fontRenderer.getStringWidth(title) / 2, 8, 0x404040);
 
         if (!modName.isEmpty()) {
-            fontRendererObj.drawString(modName, 29, 23, 0x404040);
+            fontRenderer.drawString(modName, 29, 23, 0x404040);
         }
 
         for (int i = 0; i < mods.size(); i++) {
             String mod = ModNameCache.getModName(mods.get(i));
-            fontRendererObj.drawString(mod, 28, 47 + i * 19, 0x404080);
+            fontRenderer.drawString(mod, 28, 47 + i * 19, 0x404080);
         }
     }
 

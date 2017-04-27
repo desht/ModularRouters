@@ -52,7 +52,7 @@ public class RouterSettingsMessage implements IMessage {
     public static class Handler implements IMessageHandler<RouterSettingsMessage, IMessage> {
         @Override
         public IMessage onMessage(RouterSettingsMessage msg, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.getEntityWorld();
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
             mainThread.addScheduledTask(() -> {
                 if (msg.router != null) {
                     msg.router.setRedstoneBehaviour(msg.rrb);
