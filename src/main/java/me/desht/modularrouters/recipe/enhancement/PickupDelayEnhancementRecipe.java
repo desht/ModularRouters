@@ -2,7 +2,6 @@ package me.desht.modularrouters.recipe.enhancement;
 
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class PickupDelayEnhancementRecipe extends ModuleEnhancementRecipe {

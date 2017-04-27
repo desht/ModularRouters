@@ -140,7 +140,7 @@ public class Guidebook implements IGuideBook {
     private static void buildFilterPages(Map<ResourceLocation, EntryAbstract> entries) {
         List<FilterType> types = Lists.newArrayList(FilterType.values()).stream()
                 .map(ItemSmartFilter::makeItemStack)
-                .sorted((s1, s2) -> translate(s1.getUnlocalizedName()).compareTo(translate(s2.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
                 .map(FilterType::getType)
                 .collect(Collectors.toList());
         for (FilterType type : types) {
@@ -159,7 +159,7 @@ public class Guidebook implements IGuideBook {
         // get a items of modules, sorted by their localized names
         List<ModuleType> types = Lists.newArrayList(ModuleType.values()).stream()
                 .map(ModuleHelper::makeItemStack)
-                .sorted((s1, s2) -> translate(s1.getUnlocalizedName()).compareTo(translate(s2.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
                 .map(ModuleType::getType)
                 .collect(Collectors.toList());
 
@@ -179,7 +179,7 @@ public class Guidebook implements IGuideBook {
         // get a items of upgrades, sorted by their localized names
         List<UpgradeType> types = Lists.newArrayList(UpgradeType.values()).stream()
                 .map(ItemUpgrade::makeItemStack)
-                .sorted((s1, s2) -> translate(s1.getUnlocalizedName()).compareTo(translate(s2.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
                 .map(UpgradeType::getType)
                 .collect(Collectors.toList());
 

@@ -33,7 +33,7 @@ public class FilterSettingsMessage extends BaseSettingsMessage {
     private Operation op;
 
     public enum Operation {
-        CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG;
+        CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG
     }
 
     public FilterSettingsMessage() {}
