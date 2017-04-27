@@ -2,7 +2,7 @@ package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;
@@ -45,7 +45,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/module.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
     private static final int REGULATOR_TEXTFIELD_ID = 0;
     static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
     private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
@@ -256,7 +256,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
             ModularRouters.network.sendToServer(OpenGuiMessage.openRouter(routerPos));
             return;
-        } else if (typedChar == Config.configKey && handleFilterConfig()) {
+        } else if (typedChar == ConfigHandler.getConfigKey() && handleFilterConfig()) {
             // trying to configure an installed smart filter, we're done
         } else {
             super.keyTyped(typedChar, keyCode);

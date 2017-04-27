@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -41,7 +41,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     public boolean execute(TileEntityItemRouter router) {
         boolean fired = super.execute(router);
 
-        if (fired && Config.flingerEffects) {
+        if (fired && ConfigHandler.module.flingerEffects) {
             ModuleTarget t = getTarget();
             int n = Math.round(speed * 5);
             if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {

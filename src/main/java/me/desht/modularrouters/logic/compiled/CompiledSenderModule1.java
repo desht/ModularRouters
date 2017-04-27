@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.module.SenderModule1;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -45,7 +45,7 @@ public class CompiledSenderModule1 extends CompiledModule {
                 }
                 int sent = InventoryUtils.transferItems(buffer, target.handler, 0, nToSend);
                 if (sent > 0) {
-                    if (Config.senderParticles) {
+                    if (ConfigHandler.module.senderParticles) {
                         playParticles(router, target.pos);
                     }
                     return true;

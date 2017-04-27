@@ -1,7 +1,7 @@
 package me.desht.modularrouters.gui.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.textfield.IntegerTextField;
@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.GuiResponder {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/sync_upgrade.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/sync_upgrade.png");
     private static final ItemStack clockStack = new ItemStack(Items.CLOCK);
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 48;
@@ -43,7 +43,8 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        IntegerTextField intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRenderer, xPos + 77, yPos + 27, 25, 16, 0, Config.baseTickRate - 1);
+        IntegerTextField intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRenderer,
+                xPos + 77, yPos + 27, 25, 16, 0, ConfigHandler.router.baseTickRate - 1);
         intField.setValue(tunedValue);
         intField.setGuiResponder(this);
         intField.useGuiTextBackground();
@@ -101,7 +102,7 @@ public class GuiSyncUpgrade extends GuiScreenBase implements GuiPageButtonList.G
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
             super(buttonId, x, y, width, height, renderStack, true);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, Config.baseTickRate - 1);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, ConfigHandler.router.baseTickRate - 1);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 

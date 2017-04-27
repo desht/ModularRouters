@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class GuiModFilter extends GuiFilterContainer {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/modfilter.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/modfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 252;

@@ -35,7 +35,7 @@ public class TOPCompatibility {
             probe.registerProvider(new IProbeInfoProvider() {
                 @Override
                 public String getID() {
-                    return ModularRouters.modId + ":default";
+                    return ModularRouters.MODID + ":default";
                 }
 
                 @Override

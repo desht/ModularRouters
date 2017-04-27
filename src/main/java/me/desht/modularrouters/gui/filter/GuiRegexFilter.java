@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class GuiRegexFilter extends GuiFilterScreen {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/regexfilter.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/regexfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 186;

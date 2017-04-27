@@ -2,7 +2,7 @@ package me.desht.modularrouters.gui;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.gui.widgets.button.TexturedToggleButton;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GuiItemRouter extends GuiContainerBase {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/router.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/router.png");
     public static final int LABEL_XPOS = 5;
     public static final int LABEL_YPOS = 5;
     public static final int MODULE_LABEL_YPOS = 60;
@@ -95,7 +95,7 @@ public class GuiItemRouter extends GuiContainerBase {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (typedChar != Config.configKey || !handleModuleConfig()) {
+        if (typedChar != ConfigHandler.getConfigKey() || !handleModuleConfig()) {
             super.keyTyped(typedChar, keyCode);
         }
     }
@@ -135,7 +135,8 @@ public class GuiItemRouter extends GuiContainerBase {
 
         @Override
         public List<String> getTooltip() {
-            String s = I18n.format("guiText.tooltip.eco." + isToggled(), Config.ecoTimeout / 20.f, Config.lowPowerTickRate / 20.f);
+            String s = I18n.format("guiText.tooltip.eco." + isToggled(),
+                    ConfigHandler.router.ecoTimeout / 20.f, ConfigHandler.router.lowPowerTickRate / 20.f);
             return Arrays.asList(s.split("\\\\n"));
         }
     }

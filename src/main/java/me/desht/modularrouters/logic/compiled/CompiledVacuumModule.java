@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.VacuumModule;
@@ -91,7 +91,7 @@ public class CompiledVacuumModule extends CompiledModule {
                 if (stackOnGround.isEmpty()) {
                     item.setDead();
                 }
-                if (inserted > 0 && Config.vacuumParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
+                if (inserted > 0 && ConfigHandler.module.vacuumParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
                     ((WorldServer) router.getWorld()).spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, false, item.posX, item.posY + 0.25, item.posZ, 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {

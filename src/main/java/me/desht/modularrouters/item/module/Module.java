@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
@@ -116,7 +116,7 @@ public abstract class Module {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
             Slot slot = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
-                list.add(MiscUtil.translate("itemText.misc.configureHint", String.valueOf(Config.configKey)));
+                list.add(MiscUtil.translate("itemText.misc.configureHint", String.valueOf(ConfigHandler.getConfigKey())));
             }
         }
     }

@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public class GuiBulkItemFilter extends GuiFilterContainer {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/bulkitemfilter.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 233;

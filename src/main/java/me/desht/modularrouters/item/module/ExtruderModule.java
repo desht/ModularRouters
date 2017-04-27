@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -26,7 +26,7 @@ public class ExtruderModule extends Module {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[]{Config.extruderBaseRange, Config.extruderMaxRange};
+        return new Object[]{ConfigHandler.module.extruderBaseRange, ConfigHandler.module.extruderMaxRange};
     }
 
     @Override
@@ -53,6 +53,8 @@ public class ExtruderModule extends Module {
     }
 
     public static int maxDistance(TileEntityItemRouter router) {
-        return router == null ? Config.extruderBaseRange : router.getEffectiveRange(Config.extruderBaseRange, 1, Config.extruderMaxRange);
+        return router == null ?
+                ConfigHandler.module.extruderBaseRange :
+                router.getEffectiveRange(ConfigHandler.module.extruderBaseRange, 1, ConfigHandler.module.extruderMaxRange);
     }
 }

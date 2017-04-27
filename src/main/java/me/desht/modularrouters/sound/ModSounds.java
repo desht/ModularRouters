@@ -16,7 +16,7 @@ public class ModSounds {
         };
 
         for (String s : sounds) {
-            ResourceLocation loc = new ResourceLocation(ModularRouters.modId + ":" + s);
+            ResourceLocation loc = new ResourceLocation(ModularRouters.MODID + ":" + s);
             GameRegistry.register(new SoundEvent(loc), loc);
         }
     }

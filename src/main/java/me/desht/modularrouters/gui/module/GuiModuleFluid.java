@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.RenderHelper;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.button.TexturedCyclerButton;
@@ -56,7 +56,7 @@ public class GuiModuleFluid extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        int max = Config.baseTickRate * Config.fluidMaxTransferRate;
+        int max = ConfigHandler.router.baseTickRate * ConfigHandler.router.fluidMaxTransferRate;
         IntegerTextField intField = new IntegerTextField(manager, TRANSFER_TEXTFIELD_ID, fontRenderer, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
         intField.setValue(maxTransfer);
         intField.setGuiResponder(this);

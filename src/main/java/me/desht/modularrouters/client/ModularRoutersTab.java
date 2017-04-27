@@ -10,7 +10,7 @@ public class ModularRoutersTab extends CreativeTabs {
     public static final ModularRoutersTab creativeTab = new ModularRoutersTab();
 
     public ModularRoutersTab() {
-        super(ModularRouters.modId);
+        super(ModularRouters.MODID);
     }
 
     @Override

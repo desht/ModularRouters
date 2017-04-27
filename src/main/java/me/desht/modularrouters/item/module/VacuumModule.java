@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
@@ -36,7 +36,7 @@ public class VacuumModule extends Module {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[] { Config.vacuumBaseRange, Config.vacuumMaxRange };
+        return new Object[] { ConfigHandler.module.vacuumBaseRange, ConfigHandler.module.vacuumMaxRange };
     }
 
     @Override
@@ -46,6 +46,8 @@ public class VacuumModule extends Module {
     }
 
     public static int getVacuumRange(TileEntityItemRouter router) {
-        return router == null ? Config.vacuumBaseRange : router.getEffectiveRange(Config.vacuumBaseRange, 1, Config.vacuumMaxRange);
+        return router == null ?
+                ConfigHandler.module.vacuumBaseRange :
+                router.getEffectiveRange(ConfigHandler.module.vacuumBaseRange, 1, ConfigHandler.module.vacuumMaxRange);
     }
 }

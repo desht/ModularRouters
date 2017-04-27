@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule2;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -24,7 +24,7 @@ public class PullerModule2 extends TargetedModule {
 
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[]{Config.puller2BaseRange, Config.puller2MaxRange};
+        return new Object[]{ConfigHandler.module.puller2BaseRange, ConfigHandler.module.puller2MaxRange};
     }
 
     @Override
@@ -34,7 +34,9 @@ public class PullerModule2 extends TargetedModule {
 
     @Override
     public int maxDistanceSq(TileEntityItemRouter router) {
-        int r = router == null ? Config.puller2BaseRange : router.getEffectiveRange(Config.puller2BaseRange, 1, Config.puller2MaxRange);
+        int r = router == null ?
+                ConfigHandler.module.puller2BaseRange :
+                router.getEffectiveRange(ConfigHandler.module.puller2BaseRange, 1, ConfigHandler.module.puller2MaxRange);
         return r * r;
     }
 }

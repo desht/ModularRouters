@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.module.ExtruderModule;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
@@ -40,7 +40,7 @@ public class CompiledExtruderModule extends CompiledModule {
             if (state != null) {
                 router.extractBuffer(1);
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), ++distance);
-                if (Config.extruderSound) {
+                if (ConfigHandler.module.extruderSound) {
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
@@ -61,7 +61,7 @@ public class CompiledExtruderModule extends CompiledModule {
             if (dropResult.isBlockBroken()) {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());
-                if (Config.extruderSound) {
+                if (ConfigHandler.module.extruderSound) {
                     router.playSound(null, breakPos,
                             oldBlock.getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);

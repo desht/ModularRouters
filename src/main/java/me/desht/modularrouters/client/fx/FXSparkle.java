@@ -19,7 +19,7 @@ import java.util.Queue;
 
 public class FXSparkle extends Particle {
 
-    public static final ResourceLocation particles = new ResourceLocation(ModularRouters.modId + ":textures/misc/particleblob.png");
+    public static final ResourceLocation particles = new ResourceLocation(ModularRouters.MODID + ":textures/misc/particleblob.png");
 
     private static final Queue<FXSparkle> queuedRenders = new ArrayDeque<>();
     private static final Queue<FXSparkle> queuedCorruptRenders = new ArrayDeque<>();

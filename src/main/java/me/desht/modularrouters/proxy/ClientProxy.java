@@ -8,7 +8,6 @@ import me.desht.modularrouters.client.ModelBakeEventHandler;
 import me.desht.modularrouters.client.TemplateFrameModel;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.fx.RenderListener;
-import me.desht.modularrouters.config.Config;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -25,8 +24,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
-
-        MinecraftForge.EVENT_BUS.register(Config.ConfigEventHandler.class);
 
         // the can_emit property has no effect on block rendering, so let's not create unnecessary variants
         ModelLoader.setCustomStateMapper(ModBlocks.itemRouter, new StateMap.Builder().ignore(BlockItemRouter.CAN_EMIT).build());
@@ -52,7 +49,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerItemRenderer(Item item, int meta, String id) {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ModularRouters.modId + ":" + id, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ModularRouters.MODID + ":" + id, "inventory"));
     }
 
     private static boolean noclipEnabled = false;

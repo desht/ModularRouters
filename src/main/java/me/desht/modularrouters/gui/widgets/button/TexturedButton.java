@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TexturedButton extends GuiButton implements ITooltipButton {
-    protected static final ResourceLocation resourceLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/widgets.png");
+    protected static final ResourceLocation resourceLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/widgets.png");
     protected final List<String> tooltip1;
 
     public TexturedButton(int buttonId, int x, int y, int width, int height) {

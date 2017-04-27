@@ -10,6 +10,6 @@ public class MRSoundEvents {
     public static final SoundEvent thud = getRegisteredSoundEvent("thud");
 
     private static SoundEvent getRegisteredSoundEvent(String name) {
-        return SoundEvent.REGISTRY.getObject(new ResourceLocation(ModularRouters.modId + ":" + name));
+        return SoundEvent.REGISTRY.getObject(new ResourceLocation(ModularRouters.MODID + ":" + name));
     }
 }

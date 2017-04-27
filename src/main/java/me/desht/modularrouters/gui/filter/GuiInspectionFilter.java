@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public class GuiInspectionFilter extends GuiFilterScreen {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.modId, "textures/gui/inspectionfilter.png");
+    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 191;

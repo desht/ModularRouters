@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.resources.I18n;
@@ -76,7 +76,7 @@ public class SyncUpgrade extends Upgrade {
             playerIn.openGui(ModularRouters.instance, ModularRouters.GUI_SYNC_UPGRADE, worldIn, pos.getX(), pos.getY(), pos.getZ());
         } else if (playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
-                setTunedValue(itemStackIn, new Random().nextInt(Config.baseTickRate));
+                setTunedValue(itemStackIn, new Random().nextInt(ConfigHandler.router.baseTickRate));
                 playerIn.sendStatusMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(itemStackIn)), false);
             } else {
                 playerIn.playSound(MRSoundEvents.success, 1.0f, 1.5f);

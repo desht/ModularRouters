@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.Config;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.ModItems;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +17,7 @@ import java.util.List;
 public class FluidUpgrade extends Upgrade {
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[] { Config.mBperFluidUpgrade };
+        return new Object[] { ConfigHandler.router.mBperFluidUpgrade };
     }
 
     @Override
