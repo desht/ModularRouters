@@ -42,7 +42,7 @@ public class CompiledVacuumModule extends CompiledModule {
         super(router, stack);
         fastPickup = ModuleHelper.hasFastPickup(stack);
         xpMode = ModuleHelper.hasXPVacuum(stack);
-        if (IntegrationHandler.fluidXpJuice != null) {
+        if (xpMode && IntegrationHandler.fluidXpJuice != null) {
             xpJuiceStack = new FluidStack(IntegrationHandler.fluidXpJuice, 1000);
         } else {
             xpJuiceStack = null;
@@ -153,7 +153,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     FluidStack xpStack = new FluidStack(IntegrationHandler.fluidXpJuice, orb.getXpValue() * XP_FLUID_RATIO + xpBuffered);
                     int filled = xpHandler.fill(xpStack, true);
                     if (filled < xpStack.amount) {
-                        // tank is full, can't put the entire amount in
+                        // tank is too full to store entire amount...
                         spaceForXp = 0;
                         xpBuffered = xpStack.amount - filled;
                     } else {
