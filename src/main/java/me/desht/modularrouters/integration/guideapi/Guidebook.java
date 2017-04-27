@@ -12,6 +12,7 @@ import amerifrance.guideapi.category.CategoryItemStack;
 import amerifrance.guideapi.entry.EntryItemStack;
 import amerifrance.guideapi.page.PageIRecipe;
 import amerifrance.guideapi.page.PageText;
+import amerifrance.guideapi.page.reciperenderer.ShapedOreRecipeRenderer;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
@@ -24,10 +25,12 @@ import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter.FilterType;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
+import me.desht.modularrouters.recipe.enhancement.*;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -54,7 +57,7 @@ public class Guidebook implements IGuideBook {
         // Intro category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.introText"), 250));
-        entries.put(new ResourceLocation(ModularRouters.MODID, "intro"),
+        entries.put(rl("intro"),
                 new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(ModBlocks.itemRouter)));
         categories.add(new CategoryItemStack(entries, translate("guidebook.categories.introduction"), new ItemStack(Items.WRITABLE_BOOK)));
 
@@ -66,31 +69,17 @@ public class Guidebook implements IGuideBook {
                                 "ibi", "bmb", "ibi", 'b', Blocks.IRON_BARS, 'i', Items.IRON_INGOT, 'm', ModItems.blankModule)
                 )
         );
-        entries.put(new ResourceLocation(ModularRouters.MODID, "router"),
+        entries.put(rl("router"),
                 new EntryItemStack(pages, translate("tile.item_router.name"), new ItemStack(ModBlocks.itemRouter)));
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerEcoMode", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), 250));
-        entries.put(new ResourceLocation(ModularRouters.MODID, "routerEcoMode"),
+        entries.put(rl("routerEcoMode"),
                 new EntryItemStack(pages, translate("guidebook.words.ecoMode"), new ItemStack(Blocks.SAPLING)));
         categories.add(new CategoryItemStack(entries, translate("guidebook.categories.routers"), new ItemStack(ModBlocks.itemRouter)));
 
         // Modules category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleOverview", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), 250));
-        entries.put(new ResourceLocation(ModularRouters.MODID, "moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleRedstone", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), 250));
-        pages.add(new PageIRecipe(
-                new ShapedOreRecipe(new ItemStack(ModItems.blankModule),
-                        " r ", "tmt", " r ", 'r', Items.REDSTONE, 'm', ModItems.blankModule, 't', Blocks.REDSTONE_TORCH)
-        ));
-
-        entries.put(new ResourceLocation(ModularRouters.MODID, "moduleRedstone"), new EntryItemStack(pages, translate("guidebook.words.redstone"), new ItemStack(Items.REDSTONE)));
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleRegulator", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), 250));
-        pages.add(new PageIRecipe(
-                new ShapedOreRecipe(new ItemStack(ModItems.blankModule),
-                        " q ", "cmc", " q ",
-                        'q', Items.QUARTZ, 'm', ModItems.blankModule, 'c', Items.COMPARATOR)
-        ));
-        entries.put(new ResourceLocation(ModularRouters.MODID, "moduleRegulator"), new EntryItemStack(pages, translate("guidebook.words.regulator"), new ItemStack(Items.QUARTZ)));
+        entries.put(rl("moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Arrays.asList(
                 new PageText(translate("guidebook.para.blankModule")),
                 new PageIRecipe(new ShapedOreRecipe(new ItemStack(ModItems.blankModule, 6),
@@ -98,14 +87,14 @@ public class Guidebook implements IGuideBook {
                 )
         );
         ItemStack bm = new ItemStack(ModItems.blankModule);
-        entries.put(new ResourceLocation(ModularRouters.MODID, "blankModule"), new EntryItemStack(pages, translate(bm.getUnlocalizedName() + ".name"), bm));
+        entries.put(rl("blankModule"), new EntryItemStack(pages, translate(bm.getUnlocalizedName() + ".name"), bm));
         buildModulePages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.modules"), new ItemStack(ModItems.blankModule)));
 
         // Upgrades category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, TileEntityItemRouter.N_UPGRADE_SLOTS), 250));
-        entries.put(new ResourceLocation(ModularRouters.MODID, "upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
+        entries.put(rl("upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Arrays.asList(
                 new PageText(translate("guidebook.para.blankUpgrade")),
                 new PageIRecipe(new ShapedOreRecipe(new ItemStack(ModItems.blankUpgrade, 6),
@@ -113,14 +102,21 @@ public class Guidebook implements IGuideBook {
 
         );
         ItemStack bu = new ItemStack(ModItems.blankUpgrade);
-        entries.put(new ResourceLocation(ModularRouters.MODID, "blankUpgrade"), new EntryItemStack(pages, translate(bu.getUnlocalizedName() + ".name"), bu));
+        entries.put(rl("blankUpgrade"), new EntryItemStack(pages, translate(bu.getUnlocalizedName() + ".name"), bu));
         buildUpgradePages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.upgrades"), new ItemStack(ModItems.blankUpgrade)));
+
+        // Enhancements category
+        entries = new LinkedHashMap<>();
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.enhancementsOverview"), 250));
+        entries.put(rl("enhancementsOverview"), new EntryItemStack(pages, translate("guidebook.words.enhancements"), new ItemStack(Items.BOOK)));
+        buildEnhancementPages(entries);
+        categories.add(new CategoryItemStack(entries, translate("guidebook.words.enhancements"), new ItemStack(Blocks.CRAFTING_TABLE)));
 
         // Filters category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.filterOverview", FilterType.values().length), 250));
-        entries.put(new ResourceLocation(ModularRouters.MODID, "filterOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
+        entries.put(rl("filterOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         buildFilterPages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.filters"), ItemSmartFilter.makeItemStack(FilterType.BULKITEM)));
 
@@ -131,10 +127,42 @@ public class Guidebook implements IGuideBook {
         guideBook.setDisplayName("Modular Routers Guide");
         guideBook.setColor(Color.CYAN);
         guideBook.setCategoryList(categories);
-        guideBook.setRegistryName(new ResourceLocation(ModularRouters.MODID, "guidebook"));
+        guideBook.setRegistryName(rl("guidebook"));
         guideBook.setSpawnWithBook(ConfigHandler.misc.startWithGuide);
 
         return guideBook;
+    }
+
+    private static ResourceLocation rl(String res) {
+        return new ResourceLocation(ModularRouters.MODID, res);
+    }
+
+    private static void buildEnhancementPages(Map<ResourceLocation, EntryAbstract> entries) {
+        List<IPage> pages;
+
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.fastPickupEnhancement"), 250));
+        addEnhancementRecipePage(pages, new FastPickupEnhancementRecipe(ModuleType.VACUUM));
+        entries.put(rl("moduleFastPickup"), new EntryItemStack(pages, translate("guidebook.words.fastPickup"), new ItemStack(Items.FISHING_ROD)));
+
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.pickupDelayEnhancement"), 250));
+        addEnhancementRecipePage(pages, new PickupDelayEnhancementRecipe(ModuleType.DROPPER));
+        entries.put(rl("modulePickupDelay"), new EntryItemStack(pages, translate("guidebook.words.pickupDelay"), new ItemStack(Items.SLIME_BALL)));
+
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.regulatorEnhancement"), 250));
+        addEnhancementRecipePage(pages, new RegulatorEnhancementRecipe(ModuleType.PULLER));
+        entries.put(rl("moduleRegulator"), new EntryItemStack(pages, translate("guidebook.words.regulator"), new ItemStack(Items.COMPARATOR)));
+
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.redstoneEnhancement"), 250));
+        addEnhancementRecipePage(pages, new RedstoneEnhancementRecipe(ModuleType.SENDER1));
+        entries.put(rl("moduleRedstone"), new EntryItemStack(pages, translate("guidebook.words.redstone"), new ItemStack(Items.REDSTONE)));
+
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.xpVacuumEnhancement"), 250));
+        addEnhancementRecipePage(pages, new XPVacuumEnhancementRecipe(ModuleType.VACUUM));
+        entries.put(rl("moduleXPVacuum"), new EntryItemStack(pages, translate("guidebook.words.xpVacuum"), new ItemStack(Items.EXPERIENCE_BOTTLE)));
+    }
+
+    private static void addEnhancementRecipePage(List<IPage> pages, ShapedOreRecipe recipe) {
+        pages.add(new PageIRecipe(recipe, new ShapedOreRecipeRenderer(recipe)));
     }
 
     private static void buildFilterPages(Map<ResourceLocation, EntryAbstract> entries) {
@@ -150,8 +178,7 @@ public class Guidebook implements IGuideBook {
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
             pages1.add(new PageIRecipe(ItemSmartFilter.getFilter(type).getRecipe()));
             String localizedName = translate(unlocalizedName + ".name");
-            entries.put(new ResourceLocation(ModularRouters.MODID, unlocalizedName),
-                    new EntryItemStack(pages1, localizedName, module));
+            entries.put(rl(unlocalizedName), new EntryItemStack(pages1, localizedName, module));
         }
     }
 
@@ -170,8 +197,7 @@ public class Guidebook implements IGuideBook {
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName, ItemModule.getModule(type).getExtraUsageParams())));
             pages1.add(new PageIRecipe(ItemModule.getModule(type).getRecipe()));
             String localizedName = translate(unlocalizedName + ".name");
-            entries.put(new ResourceLocation(ModularRouters.MODID, unlocalizedName),
-                    new EntryItemStack(pages1, localizedName, module));
+            entries.put(rl(unlocalizedName), new EntryItemStack(pages1, localizedName, module));
         }
     }
 
@@ -190,8 +216,7 @@ public class Guidebook implements IGuideBook {
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName, ItemUpgrade.getUpgrade(type).getExtraUsageParams())));
             pages1.add(new PageIRecipe(ItemUpgrade.getUpgrade(type).getRecipe()));
             String localizedName = translate(unlocalizedName + ".name");
-            entries.put(new ResourceLocation(ModularRouters.MODID, unlocalizedName),
-                    new EntryItemStack(pages1, localizedName, upgrade));
+            entries.put(rl(unlocalizedName), new EntryItemStack(pages1, localizedName, upgrade));
         }
     }
     @Override
