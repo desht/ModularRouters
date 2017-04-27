@@ -298,7 +298,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
                 modulesHandler.deserializeNBT(compound.getCompoundTag(NBT_MODULES));
                 for (int i = 0; i < modulesHandler.getSlots(); i++) {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
-                    if (moduleStack != null) {
+                    if (!moduleStack.isEmpty()) {
                         list.add(TextFormatting.AQUA + "\u2022 " + I18n.format(moduleStack.getUnlocalizedName() + ".name"));
                     }
                 }
