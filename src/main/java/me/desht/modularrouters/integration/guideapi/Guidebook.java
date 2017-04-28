@@ -30,9 +30,10 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import javax.annotation.Nullable;
@@ -45,6 +46,8 @@ import static me.desht.modularrouters.util.MiscUtil.translate;
 
 @GuideBook
 public class Guidebook implements IGuideBook {
+    private static final int MAX_PAGE_LENGTH = 270;
+
     private static Book guideBook;
 
     @Nullable
@@ -56,14 +59,14 @@ public class Guidebook implements IGuideBook {
 
         // Intro category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.introText"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.introText"), MAX_PAGE_LENGTH));
         entries.put(rl("intro"),
                 new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(ModBlocks.itemRouter)));
         categories.add(new CategoryItemStack(entries, translate("guidebook.categories.introduction"), new ItemStack(Items.WRITABLE_BOOK)));
 
         // Routers category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerText"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerText"), MAX_PAGE_LENGTH));
         pages.add(new PageIRecipe(
                         new ShapedOreRecipe(new ItemStack(ModBlocks.itemRouter, 4),
                                 "ibi", "bmb", "ibi", 'b', Blocks.IRON_BARS, 'i', Items.IRON_INGOT, 'm', ModItems.blankModule)
@@ -71,14 +74,14 @@ public class Guidebook implements IGuideBook {
         );
         entries.put(rl("router"),
                 new EntryItemStack(pages, translate("tile.item_router.name"), new ItemStack(ModBlocks.itemRouter)));
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerEcoMode", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerEcoMode", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), MAX_PAGE_LENGTH));
         entries.put(rl("routerEcoMode"),
                 new EntryItemStack(pages, translate("guidebook.words.ecoMode"), new ItemStack(Blocks.SAPLING)));
         categories.add(new CategoryItemStack(entries, translate("guidebook.categories.routers"), new ItemStack(ModBlocks.itemRouter)));
 
         // Modules category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleOverview", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleOverview", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), MAX_PAGE_LENGTH));
         entries.put(rl("moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Arrays.asList(
                 new PageText(translate("guidebook.para.blankModule")),
@@ -93,7 +96,7 @@ public class Guidebook implements IGuideBook {
 
         // Upgrades category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, TileEntityItemRouter.N_UPGRADE_SLOTS), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, TileEntityItemRouter.N_UPGRADE_SLOTS), MAX_PAGE_LENGTH));
         entries.put(rl("upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Arrays.asList(
                 new PageText(translate("guidebook.para.blankUpgrade")),
@@ -108,14 +111,14 @@ public class Guidebook implements IGuideBook {
 
         // Enhancements category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.enhancementsOverview"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.enhancementsOverview"), MAX_PAGE_LENGTH));
         entries.put(rl("enhancementsOverview"), new EntryItemStack(pages, translate("guidebook.words.enhancements"), new ItemStack(Items.BOOK)));
         buildEnhancementPages(entries);
         categories.add(new CategoryItemStack(entries, translate("guidebook.words.enhancements"), new ItemStack(Blocks.CRAFTING_TABLE)));
 
         // Filters category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.filterOverview", FilterType.values().length), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.filterOverview", FilterType.values().length), MAX_PAGE_LENGTH));
         entries.put(rl("filterOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         buildFilterPages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.filters"), ItemSmartFilter.makeItemStack(FilterType.BULKITEM)));
@@ -140,23 +143,23 @@ public class Guidebook implements IGuideBook {
     private static void buildEnhancementPages(Map<ResourceLocation, EntryAbstract> entries) {
         List<IPage> pages;
 
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.fastPickupEnhancement"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.fastPickupEnhancement"), MAX_PAGE_LENGTH));
         addEnhancementRecipePage(pages, new FastPickupEnhancementRecipe(ModuleType.VACUUM));
         entries.put(rl("moduleFastPickup"), new EntryItemStack(pages, translate("guidebook.words.fastPickup"), new ItemStack(Items.FISHING_ROD)));
 
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.pickupDelayEnhancement"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.pickupDelayEnhancement"), MAX_PAGE_LENGTH));
         addEnhancementRecipePage(pages, new PickupDelayEnhancementRecipe(ModuleType.DROPPER));
         entries.put(rl("modulePickupDelay"), new EntryItemStack(pages, translate("guidebook.words.pickupDelay"), new ItemStack(Items.SLIME_BALL)));
 
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.regulatorEnhancement"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.regulatorEnhancement"), MAX_PAGE_LENGTH));
         addEnhancementRecipePage(pages, new RegulatorEnhancementRecipe(ModuleType.PULLER));
         entries.put(rl("moduleRegulator"), new EntryItemStack(pages, translate("guidebook.words.regulator"), new ItemStack(Items.COMPARATOR)));
 
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.redstoneEnhancement"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.redstoneEnhancement"), MAX_PAGE_LENGTH));
         addEnhancementRecipePage(pages, new RedstoneEnhancementRecipe(ModuleType.SENDER1));
         entries.put(rl("moduleRedstone"), new EntryItemStack(pages, translate("guidebook.words.redstone"), new ItemStack(Items.REDSTONE)));
 
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.xpVacuumEnhancement"), 250));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.xpVacuumEnhancement"), MAX_PAGE_LENGTH));
         addEnhancementRecipePage(pages, new XPVacuumEnhancementRecipe(ModuleType.VACUUM));
         entries.put(rl("moduleXPVacuum"), new EntryItemStack(pages, translate("guidebook.words.xpVacuum"), new ItemStack(Items.EXPERIENCE_BOTTLE)));
     }
@@ -219,7 +222,9 @@ public class Guidebook implements IGuideBook {
             entries.put(rl(unlocalizedName), new EntryItemStack(pages1, localizedName, upgrade));
         }
     }
+
     @Override
+    @SideOnly(Side.CLIENT)
     public void handleModel(ItemStack bookStack) {
         GuideAPI.setModel(guideBook);
     }
