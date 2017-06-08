@@ -31,7 +31,7 @@ public class GuiModFilter extends GuiFilterContainer {
 
     private final List<String> mods = Lists.newArrayList();
 
-    private ItemStack prevInSlot = null;
+    private ItemStack prevInSlot = ItemStack.EMPTY;
     private String modId = "";
     private String modName = "";
 
