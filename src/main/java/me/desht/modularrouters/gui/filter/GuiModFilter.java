@@ -106,7 +106,7 @@ public class GuiModFilter extends GuiFilterContainer {
                 ModularRouters.network.sendToServer(new FilterSettingsMessage(
                         FilterSettingsMessage.Operation.ADD_STRING, hand, filterSlotIndex, ext));
             }
-            inventorySlots.inventorySlots.get(0).putStack(null);
+            inventorySlots.inventorySlots.get(0).putStack(ItemStack.EMPTY);
         } else if (button.id >= BASE_REMOVE_ID && button.id < BASE_REMOVE_ID + mods.size()) {
             NBTTagCompound ext = new NBTTagCompound();
             ext.setInteger("Pos", button.id - BASE_REMOVE_ID);
