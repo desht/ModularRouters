@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -41,7 +42,7 @@ public class SyncUpgrade extends Upgrade {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         list.add(I18n.format("itemText.sync.tuning", getTunedValue(itemstack)));
     }
 

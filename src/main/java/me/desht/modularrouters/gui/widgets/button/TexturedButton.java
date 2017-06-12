@@ -18,19 +18,20 @@ public abstract class TexturedButton extends GuiButton implements ITooltipButton
         this.tooltip1 = new ArrayList<>();
     }
 
+    // TODO: drawButton()
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void func_191745_a(Minecraft mc, int mouseX, int mouseY, float p3) {
         mc.getTextureManager().bindTexture(resourceLocation);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+        this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
         int i = this.getHoverState(this.hovered);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         if (drawStandardBackground()) {
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, i * 16, 0, this.width, this.height);
+            this.drawTexturedModalRect(this.x, this.y, i * 16, 0, this.width, this.height);
         }
-        this.drawTexturedModalRect(this.xPosition, this.yPosition, getTextureX(), getTextureY(), this.width, this.height);
+        this.drawTexturedModalRect(this.x, this.y, getTextureX(), getTextureY(), this.width, this.height);
         this.mouseDragged(mc, mouseX, mouseY);
     }
 

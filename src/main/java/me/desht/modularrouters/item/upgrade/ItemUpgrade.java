@@ -4,6 +4,7 @@ import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ModItems;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -56,21 +57,21 @@ public class ItemUpgrade extends ItemBase {
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         for (int i = 0; i < SUBTYPES; i++) {
-            subItems.add(new ItemStack(itemIn, 1, i));
+            subItems.add(new ItemStack(this, 1, i));
         }
     }
 
     @Override
-    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         Upgrade upgrade = getUpgrade(itemstack);
         if (upgrade != null) {
-            upgrade.addBasicInformation(itemstack, player, list, par4);
+            upgrade.addBasicInformation(itemstack, player, list, advanced);
             if (GuiScreen.isShiftKeyDown()) {
-                upgrade.addExtraInformation(itemstack, player, list, par4);
+                upgrade.addExtraInformation(itemstack, player, list, advanced);
             } else if (GuiScreen.isCtrlKeyDown()) {
-                upgrade.addUsageInformation(itemstack, player, list, par4);
+                upgrade.addUsageInformation(itemstack, player, list, advanced);
             } else {
                 list.add(I18n.format(upgrade.hasExtraInformation() ? "itemText.misc.holdShiftCtrl" : "itemText.misc.holdCtrl"));
             }

@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public abstract class Upgrade {
     @SideOnly(Side.CLIENT)
-    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addBasicInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
     }
 
     boolean hasExtraInformation() {
@@ -29,7 +30,7 @@ public abstract class Upgrade {
      * Usage information for the upgrade, shown when Ctrl is held.
      */
     @SideOnly(Side.CLIENT)
-    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack), getExtraUsageParams());
     }
 
@@ -37,7 +38,7 @@ public abstract class Upgrade {
         return new Object[0];
     }
 
-    public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
     }
 
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {

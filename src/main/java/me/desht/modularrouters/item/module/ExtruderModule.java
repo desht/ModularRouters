@@ -7,12 +7,14 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class ExtruderModule extends Module {
     }
 
     @Override
-    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addUsageInformation(itemstack, player, list, par4);
+    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addUsageInformation(itemstack, player, list, advanced);
         Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
         if (ench.isEmpty()) {
             MiscUtil.appendMultiline(list, "itemText.misc.enchantExtruderHint");
@@ -39,9 +41,9 @@ public class ExtruderModule extends Module {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
-        list.add(I18n.format("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(stack)));
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
+        list.add(I18n.format("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
     }
 
     @Override

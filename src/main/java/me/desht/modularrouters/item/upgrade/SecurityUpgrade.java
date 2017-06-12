@@ -6,6 +6,7 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -29,7 +31,7 @@ public class SecurityUpgrade extends Upgrade {
     private static final int MAX_PLAYERS = 6;
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         list.add(I18n.format("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {

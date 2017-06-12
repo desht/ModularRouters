@@ -14,6 +14,7 @@ import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -112,7 +113,7 @@ public abstract class Module {
      * Basic information for the module, which is always shown.
      */
     @SideOnly(Side.CLIENT)
-    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addBasicInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
             Slot slot = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
@@ -125,7 +126,7 @@ public abstract class Module {
      * Usage information for the module, shown when Ctrl is held.
      */
     @SideOnly(Side.CLIENT)
-    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack), getExtraUsageParams());
     }
 
@@ -133,7 +134,7 @@ public abstract class Module {
      * Extra information for the module, shown when Shift is held.
      */
     @SideOnly(Side.CLIENT)
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         // nothing by default
     }
 

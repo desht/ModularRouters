@@ -11,10 +11,12 @@ import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -35,8 +37,8 @@ public class FluidModule extends Module {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addExtraInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(itemstack, player, list, par4);
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
         CompiledFluidModule cfm = new CompiledFluidModule(null, itemstack);
         String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
         list.add(I18n.format("itemText.fluid.direction", dir));

@@ -23,6 +23,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -287,19 +288,20 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        NBTTagCompound compound = itemstack.getTagCompound();
+//    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+        NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_MODULE_COUNT)) {
-            list.add(I18n.format("itemText.misc.routerConfigured"));
+            tooltip.add(I18n.format("itemText.misc.routerConfigured"));
             int modules = compound.getInteger(NBT_MODULE_COUNT);
-            MiscUtil.appendMultiline(list, "itemText.misc.moduleCount", modules);
+            MiscUtil.appendMultiline(tooltip, "itemText.misc.moduleCount", modules);
             if (modules > 0) {
                 ItemStackHandler modulesHandler = new ItemStackHandler(9);
                 modulesHandler.deserializeNBT(compound.getCompoundTag(NBT_MODULES));
                 for (int i = 0; i < modulesHandler.getSlots(); i++) {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
-                        list.add(TextFormatting.AQUA + "\u2022 " + I18n.format(moduleStack.getUnlocalizedName() + ".name"));
+                        tooltip.add(TextFormatting.AQUA + "\u2022 " + I18n.format(moduleStack.getUnlocalizedName() + ".name"));
                     }
                 }
             }
@@ -307,7 +309,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
                 int c = compound.getInteger(NBT_UPGRADE_COUNT + "." + type);
                 if (c > 0) {
                     String name = I18n.format("item." + type.toString().toLowerCase() + "_upgrade.name");
-                    list.add(I18n.format("itemText.misc.upgradeCount", name, c));
+                    tooltip.add(I18n.format("itemText.misc.upgradeCount", name, c));
                 }
             }
         }

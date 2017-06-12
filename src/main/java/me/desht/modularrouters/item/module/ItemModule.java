@@ -10,6 +10,7 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -107,9 +108,9 @@ public class ItemModule extends ItemBase {
     }
 
     @Override
-    public void getSubItems(@Nonnull Item item, CreativeTabs tab, NonNullList<ItemStack> stacks) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> stacks) {
         for (int i = 0; i < SUBTYPES; i++) {
-            stacks.add(new ItemStack(item, 1, i));
+            stacks.add(new ItemStack(this, 1, i));
         }
     }
 
@@ -169,19 +170,19 @@ public class ItemModule extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         Module module = getModule(itemstack);
         if (module == null) {
             return;
         }
-        module.addBasicInformation(itemstack, player, list, par4);
+        module.addBasicInformation(itemstack, player, list, advanced);
 
         if (GuiScreen.isShiftKeyDown()) {
             addSettingsInformation(itemstack, list, module);
-            module.addExtraInformation(itemstack, player, list, par4);
+            module.addExtraInformation(itemstack, player, list, advanced);
             addEnhancementInformation(itemstack, list, module);
         } else if (GuiScreen.isCtrlKeyDown()) {
-            module.addUsageInformation(itemstack, player, list, par4);
+            module.addUsageInformation(itemstack, player, list, advanced);
         } else {
             list.add(I18n.format("itemText.misc.holdShiftCtrl"));
         }

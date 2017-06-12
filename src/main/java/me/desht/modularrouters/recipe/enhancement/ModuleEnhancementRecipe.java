@@ -1,15 +1,17 @@
 package me.desht.modularrouters.recipe.enhancement;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     ModuleEnhancementRecipe(ItemStack result, Object... recipe) {
-        super(result, recipe);
+        super(new ResourceLocation(ModularRouters.MODID, "module_enhancement"), result, recipe);
 //        applyEnhancement(result);
     }
 

@@ -7,12 +7,14 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
@@ -24,12 +26,12 @@ public class VacuumModule extends Module {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
-        if (ModuleHelper.hasFastPickup(stack)) {
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
+        if (ModuleHelper.hasFastPickup(itemstack)) {
             list.add(TextFormatting.GREEN + I18n.format("itemText.misc.fastPickup"));
         }
-        if (ModuleHelper.hasXPVacuum(stack)) {
+        if (ModuleHelper.hasXPVacuum(itemstack)) {
             list.add(TextFormatting.GREEN + I18n.format("itemText.misc.xpVacuum"));
         }
     }

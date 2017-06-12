@@ -6,6 +6,7 @@ import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -71,9 +72,9 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     @Override
-    public void getSubItems(@Nonnull Item item, CreativeTabs tab, NonNullList<ItemStack> stacks) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> stacks) {
         for (int i = 0; i < SUBTYPES; i++) {
-            stacks.add(new ItemStack(item, 1, i));
+            stacks.add(new ItemStack(this, 1, i));
         }
     }
 
@@ -136,17 +137,17 @@ public class ItemSmartFilter extends ItemBase {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         SmartFilter filter = getFilter(itemstack);
         if (filter == null) {
             return;
         }
 
-        filter.addBasicInformation(itemstack, player, list, par4);
+        filter.addBasicInformation(itemstack, player, list, advanced);
         if (GuiScreen.isShiftKeyDown()) {
-            filter.addExtraInformation(itemstack, player, list, par4);
+            filter.addExtraInformation(itemstack, player, list, advanced);
         } else if (GuiScreen.isCtrlKeyDown()) {
-            filter.addUsageInformation(itemstack, player, list, par4);
+            filter.addUsageInformation(itemstack, player, list, advanced);
         } else {
             list.add(I18n.format("itemText.misc.holdShiftCtrl"));
         }

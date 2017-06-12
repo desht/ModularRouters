@@ -24,9 +24,9 @@ public class SorterModule extends Module {
 //                ItemModule.makeItemStack(ItemModule.ModuleType.DETECTOR), ItemModule.makeItemStack(ItemModule.ModuleType.SENDER1));
     }
 
-    @Override
-    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addBasicInformation(itemstack, player, list, par4);
-        MiscUtil.appendMultiline(list, "itemText.deprecated.sorter");
-    }
+//    @Override
+//    public void addBasicInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
+//        super.addBasicInformation(itemstack, player, list, par4);
+//        MiscUtil.appendMultiline(list, "itemText.deprecated.sorter");
+//    }
 }

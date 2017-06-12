@@ -52,7 +52,7 @@ public class TextFieldManager {
             int mouseY = parent.height - Mouse.getEventY() * parent.height / parent.mc.displayHeight - 1;
             for (int i = 0; i < textFields.size(); i++) {
                 TextFieldWidget field = textFields.get(i);
-                if (mouseX >= field.xPosition && mouseX < field.xPosition + field.width && mouseY >= field.yPosition && mouseY < field.yPosition + field.height) {
+                if (mouseX >= field.x && mouseX < field.x + field.width && mouseY >= field.y && mouseY < field.y + field.height) {
                     focus(i);
                     field.onMouseWheel(wheel < 0 ? -1 : 1);
                     return true;

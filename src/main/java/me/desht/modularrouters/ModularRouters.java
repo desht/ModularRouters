@@ -31,13 +31,13 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ModularRouters.MODID, version = ModularRouters.MODVERSION, name = ModularRouters.MODNAME,
         dependencies = ModularRouters.DEPENDENICES,
-        acceptedMinecraftVersions = "1.11"
+        acceptedMinecraftVersions = "1.12"
 )
 public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
     public static final String MODVERSION = "@VERSION@";
-    public static final String DEPENDENICES = "after:Waila;before:guideapi;after:theoneprobe;required-after:forge@[13.20.0.2282,);";
+    public static final String DEPENDENICES = "after:Waila;before:guideapi;after:theoneprobe;required-after:forge@[14.21.0.2321,);";
 
     public static Logger logger;
     public static SimpleNetworkWrapper network;

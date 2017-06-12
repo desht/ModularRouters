@@ -11,6 +11,7 @@ import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -36,9 +38,9 @@ public class InspectionFilter extends SmartFilter {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
-        ComparisonList comparisonList = getComparisonList(stack);
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
+        ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll()) + ":");
             for (Comparison c : comparisonList.items) {

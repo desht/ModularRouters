@@ -14,6 +14,7 @@ import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -67,16 +68,16 @@ public abstract class TargetedModule extends Module {
         }
 
     @Override
-    protected void addUsageInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addUsageInformation(itemstack, player, list, par4);
+    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addUsageInformation(itemstack, player, list, advanced);
         MiscUtil.appendMultiline(list, "itemText.targetingHint");
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
 
-        ModuleTarget target = getTarget(stack);
+        ModuleTarget target = getTarget(itemstack);
         if (target != null) {
             list.add(I18n.format("chatText.misc.target", target.toString()));
             if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {

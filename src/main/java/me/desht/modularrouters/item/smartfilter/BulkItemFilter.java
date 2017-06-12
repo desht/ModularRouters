@@ -18,6 +18,7 @@ import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -62,9 +63,9 @@ public class BulkItemFilter extends SmartFilter {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
-        list.add(I18n.format("itemText.misc.bulkItemFilter.count", getSize(stack)));
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
+        list.add(I18n.format("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
     }
 
     @Override

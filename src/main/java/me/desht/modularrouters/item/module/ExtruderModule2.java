@@ -11,11 +11,13 @@ import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
@@ -27,11 +29,11 @@ public class ExtruderModule2 extends Module {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
+    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(itemstack, player, list, advanced);
 
         list.add(TextFormatting.YELLOW + I18n.format("itemText.extruder2.template"));
-        TemplateHandler handler = new TemplateHandler(stack);
+        TemplateHandler handler = new TemplateHandler(itemstack);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);

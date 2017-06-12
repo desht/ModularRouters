@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -55,10 +55,10 @@ repositories {
 
 dependencies {
     deobfCompile "mcp.mobius.waila:Hwyla:${config.waila_version}"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe:${config.top_version}"
-    deobfCompile "info.amerifrance.guideapi:Guide-API:1.11-${config.guideapi_version}"
-    deobfCompile "mezz.jei:jei_1.11.2:${config.jei_version}"
-    compile "net.darkhax.tesla:Tesla:${config.tesla_version}"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${config.top_version}"
+//    deobfCompile "info.amerifrance.guideapi:Guide-API:1.11-${config.guideapi_version}"
+    deobfCompile "mezz.jei:jei_1.12:${config.jei_version}"
+//    compile "net.darkhax.tesla:Tesla:${config.tesla_version}"
 }
 
 processResources {
