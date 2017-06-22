@@ -9,20 +9,17 @@ import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModuleExtruder2;
 import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
-public class ExtruderModule2 extends Module {
+public class ExtruderModule2 extends Module implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledExtruder2Module(router, stack);
@@ -48,21 +45,6 @@ public class ExtruderModule2 extends Module {
     }
 
     @Override
-    public Object[] getExtraUsageParams() {
-        return new Object[]{ConfigHandler.module.extruder2BaseRange, ConfigHandler.module.extruder2MaxRange};
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER2),
-                " e ", "scp",
-                'c', "chestWood",
-                's', ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER1),
-                'e', ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER),
-                'p', ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER));
-    }
-
-    @Override
     public ContainerModule createGuiContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
         return new ContainerExtruder2Module(player, hand, moduleStack, router);
     }
@@ -77,9 +59,13 @@ public class ExtruderModule2 extends Module {
         return false;
     }
 
-    public static int maxDistance(TileEntityItemRouter router) {
-        return router == null ?
-                ConfigHandler.module.extruder2BaseRange :
-                router.getEffectiveRange(ConfigHandler.module.extruder2BaseRange, 1, ConfigHandler.module.extruder2MaxRange);
+    @Override
+    public int getBaseRange() {
+        return ConfigHandler.module.extruder2BaseRange;
+    }
+
+    @Override
+    public int getHardMaxRange() {
+        return ConfigHandler.module.extruder2MaxRange;
     }
 }

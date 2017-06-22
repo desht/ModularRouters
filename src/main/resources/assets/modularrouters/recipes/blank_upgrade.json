@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPG",
+    "PLG",
+    " PG"
+  ],
+  "key": {
+    "P": { "item": "minecraft:paper" },
+    "L": { "type": "forge:ore_dict", "ore": "gemLapis" },
+    "G": { "type": "forge:ore_dict", "ore": "nuggetGold" }
+  },
+  "result": { "item": "modularrouters:blank_upgrade", "count": 4 }
+}

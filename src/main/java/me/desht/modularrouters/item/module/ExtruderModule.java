@@ -10,25 +10,16 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 import java.util.Map;
 
-public class ExtruderModule extends Module {
+public class ExtruderModule extends Module implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledExtruderModule(router, stack);
-    }
-
-    @Override
-    public Object[] getExtraUsageParams() {
-        return new Object[]{ConfigHandler.module.extruderBaseRange, ConfigHandler.module.extruderMaxRange};
     }
 
     @Override
@@ -47,16 +38,12 @@ public class ExtruderModule extends Module {
     }
 
     @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.EXTRUDER),
-                ModuleHelper.makeItemStack(ItemModule.ModuleType.PLACER),
-                Items.REDSTONE,
-                ModuleHelper.makeItemStack(ItemModule.ModuleType.BREAKER));
+    public int getBaseRange() {
+        return ConfigHandler.module.extruderBaseRange;
     }
 
-    public static int maxDistance(TileEntityItemRouter router) {
-        return router == null ?
-                ConfigHandler.module.extruderBaseRange :
-                router.getEffectiveRange(ConfigHandler.module.extruderBaseRange, 1, ConfigHandler.module.extruderMaxRange);
+    @Override
+    public int getHardMaxRange() {
+        return ConfigHandler.module.extruderMaxRange;
     }
 }

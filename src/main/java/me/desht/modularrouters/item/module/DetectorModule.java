@@ -3,20 +3,14 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModuleDetector;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -47,12 +41,6 @@ public class DetectorModule extends Module {
     @Override
     public Class<? extends GuiModule> getGuiHandler() {
         return GuiModuleDetector.class;
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.DETECTOR),
-                ModItems.blankModule, Items.COMPARATOR);
     }
 
     @Override

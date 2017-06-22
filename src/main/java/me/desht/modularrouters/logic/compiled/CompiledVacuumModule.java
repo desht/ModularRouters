@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
+import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.VacuumModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -28,11 +29,12 @@ import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
     private static final int XP_FLUID_RATIO = 20;  // 1 xp = 20mb xp juice
-    public static final int XP_PER_BOTTLE = 7;  // average xp from a bottle o' enchanting (2d5 + 1 xp)
+    private static final int XP_PER_BOTTLE = 7;  // average xp from a bottle o' enchanting (2d5 + 1 xp)
 
     private final boolean fastPickup;
     private final boolean xpMode;
     private final FluidStack xpJuiceStack;
+    private final int range;
 
     // temporary small xp buffer (generally around an orb or less)
     // does not survive router recompilation...
@@ -42,6 +44,7 @@ public class CompiledVacuumModule extends CompiledModule {
         super(router, stack);
         fastPickup = ModuleHelper.hasFastPickup(stack);
         xpMode = ModuleHelper.hasXPVacuum(stack);
+        range = ((IRangedModule) getModule()).getCurrentRange(stack);
         if (xpMode && IntegrationHandler.fluidXpJuice != null) {
             xpJuiceStack = new FluidStack(IntegrationHandler.fluidXpJuice, 1000);
         } else {
@@ -65,7 +68,6 @@ public class CompiledVacuumModule extends CompiledModule {
 
         ItemStack bufferStack = router.getBuffer().getStackInSlot(0);
 
-        int range = VacuumModule.getVacuumRange(router);
         BlockPos centrePos = getTarget().pos;
         List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
@@ -76,7 +78,7 @@ public class CompiledVacuumModule extends CompiledModule {
             if (item.isDead || (!fastPickup && item.cannotPickup())) {
                 continue;
             }
-            ItemStack stackOnGround = item.getEntityItem();
+            ItemStack stackOnGround = item.getItem();
             if ((bufferStack.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackOnGround, bufferStack)) && getFilter().test(stackOnGround)) {
                 int inRouter = bufferStack.getCount();
                 int spaceInRouter = getRegulationAmount() > 0 ?
@@ -103,7 +105,6 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private boolean handleXpMode(TileEntityItemRouter router) {
-        int range = VacuumModule.getVacuumRange(router);
         BlockPos centrePos = getTarget().pos;
         List<EntityXPOrb> orbs = router.getWorld().getEntitiesWithinAABB(EntityXPOrb.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
@@ -174,7 +175,7 @@ public class CompiledVacuumModule extends CompiledModule {
             return null;
         }
         Module.RelativeDirection dir = getDirection();
-        int offset = dir == Module.RelativeDirection.NONE ? 0 : VacuumModule.getVacuumRange(router) + 1;
+        int offset = dir == Module.RelativeDirection.NONE ? 0 : range + 1;
         EnumFacing facing = router.getAbsoluteFacing(dir);
         return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
     }

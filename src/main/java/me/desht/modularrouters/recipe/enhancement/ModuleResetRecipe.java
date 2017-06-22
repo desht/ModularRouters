@@ -12,7 +12,7 @@ public class ModuleResetRecipe extends ModuleEnhancementRecipe {
 
     @Override
     protected boolean validateModule(ItemStack stack) {
-        return !ModuleHelper.isModuleType(stack, ModuleType.SORTER) && !ModuleHelper.isModuleType(stack , ModuleType.MODSORTER);
+        return true;
     }
 
     @Override

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#bulkfilter" },
+    { "item" : "minecraft:comparator" }
+  ],
+  "result": { "item": "modularrouters:filter", "data": 2 }
+}

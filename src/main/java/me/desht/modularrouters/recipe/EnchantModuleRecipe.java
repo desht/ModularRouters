@@ -2,6 +2,7 @@ package me.desht.modularrouters.recipe;
 
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -28,8 +29,9 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
         });
     }
 
-    EnchantModuleRecipe(ItemStack result, Object... recipe) {
-        super(result, recipe);
+    EnchantModuleRecipe(String name, ItemStack result, Object... recipe) {
+        super(MiscUtil.RL(name), result, recipe);
+        setRegistryName(MiscUtil.RL(name));
     }
 
     @Override
@@ -69,7 +71,7 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
             EnchantmentData ench = getValidEnchantment(book, module);
             if (ench != null) {
                 ItemStack result = module.copy();
-                result.addEnchantment(ench.enchantmentobj, ench.enchantmentLevel);
+                result.addEnchantment(ench.enchantment, ench.enchantmentLevel);
                 return result;
             }
         }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IBI",
+    "BMB",
+    "IBI"
+  ],
+  "key": {
+    "I": { "type": "forge:ore_dict", "ore": "ingotIron" },
+    "B": { "item": "minecraft:iron_bars" },
+    "M": { "item": "modularrouters:blank_module" }
+  },
+  "result": { "item": "modularrouters:item_router", "count": 4 }
+}

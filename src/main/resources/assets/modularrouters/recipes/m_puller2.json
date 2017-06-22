@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#puller" },
+    { "item" : "minecraft:ender_eye" }
+  ],
+  "result": { "item": "modularrouters:module", "data": 14 }
+}

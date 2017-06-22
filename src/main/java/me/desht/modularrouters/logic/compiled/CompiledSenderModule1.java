@@ -3,12 +3,13 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.module.SenderModule1;
+import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -24,8 +25,12 @@ import java.awt.*;
 public class CompiledSenderModule1 extends CompiledModule {
     private static final Color particleColor = Color.ORANGE;
 
+    private int range;
+
     public CompiledSenderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
+
+        range = ((IRangedModule) getModule()).getCurrentRange(stack);
     }
 
     @Override
@@ -61,8 +66,8 @@ public class CompiledSenderModule1 extends CompiledModule {
         if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
             Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
-            NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.xCoord, vec1.yCoord, vec1.zCoord, 32);
-            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, particleColor, 0.3f), point);
+            NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.x, vec1.y, vec1.z, 32);
+            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.x, vec1.y, vec1.z, vec2.x, vec2.y, vec2.z, particleColor, 0.3f), point);
         }
     }
 
@@ -80,8 +85,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
         EnumFacing face = getTarget().face;
         World world = router.getWorld();
-        int max = SenderModule1.maxDistance(router);
-        for (int i = 1; i < max; i++) {
+        for (int i = 1; i < range; i++) {
             if (world.getTileEntity(pos) != null) {
                 return new ModuleTarget(world.provider.getDimension(), pos.toImmutable(), face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
@@ -94,7 +98,7 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     private boolean isPassable(World w, BlockPos pos, EnumFacing face) {
         IBlockState state = w.getBlockState(pos);
-        return !state.getBlock().isBlockSolid(w, pos, face) || !state.isOpaqueCube();
+        return state.getBlockFaceShape(w, pos, face) != BlockFaceShape.SOLID || !state.isOpaqueCube();
     }
 
     static class PositionedItemHandler {

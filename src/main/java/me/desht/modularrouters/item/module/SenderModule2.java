@@ -4,27 +4,12 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
-import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-public class SenderModule2 extends TargetedModule {
+public class SenderModule2 extends TargetedModule implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledSenderModule2(router, stack);
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER2),
-                ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER1), Items.ENDER_EYE);
-    }
-
-    @Override
-    public Object[] getExtraUsageParams() {
-        return new Object[]{ConfigHandler.module.sender2BaseRange, ConfigHandler.module.sender2MaxRange};
     }
 
     @Override
@@ -33,11 +18,13 @@ public class SenderModule2 extends TargetedModule {
     }
 
     @Override
-    public int maxDistanceSq(TileEntityItemRouter router) {
-        // TODO precalculate to avoid repeated multiplications
-        int r = router == null ?
-                ConfigHandler.module.sender2BaseRange :
-                router.getEffectiveRange(ConfigHandler.module.sender2BaseRange, 1, ConfigHandler.module.sender2MaxRange);
-        return r * r;
+    public int getBaseRange() {
+        return ConfigHandler.module.sender2BaseRange;
     }
+
+    @Override
+    public int getHardMaxRange() {
+        return ConfigHandler.module.sender2MaxRange;
+    }
+
 }

@@ -83,7 +83,7 @@ public abstract class TargetedModule extends Module {
             if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
                 TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
                 ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos());
-                TargetValidation val = validateTarget(router, moduleTarget, target, false);
+                TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                 if (val != TargetValidation.OK) {
                     list.add(I18n.format("chatText.targetValidation." + val));
                 }
@@ -207,14 +207,14 @@ public abstract class TargetedModule extends Module {
     /**
      * Do some validation checks on the module's target.
      *
-     * @param router item router the module is installed in (may be null)
+     * @param stack the module's itemstack
      * @param src position and dimension of the module (could be a router or player)
      * @param dst position and dimension of the module's target
      * @param validateBlocks true if the destination block should be validated; loaded and holding an inventory
      * @return the validation result
      */
-    protected TargetValidation validateTarget(TileEntityItemRouter router, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
-        if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(router))) {
+    private TargetValidation validateTarget(ItemStack stack, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
+        if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(stack))) {
             return TargetValidation.OUT_OF_RANGE;
         }
 
@@ -233,6 +233,15 @@ public abstract class TargetedModule extends Module {
         return TargetValidation.OK;
     }
 
+    private int maxDistanceSq(ItemStack stack) {
+        Module m = ItemModule.getModule(stack);
+        if (m instanceof IRangedModule) {
+            int r =  ((IRangedModule) m).getCurrentRange(stack);
+            return r * r;
+        }
+        return 0;
+    }
+
     /**
      * Does this module have limited range?
      *
@@ -241,14 +250,6 @@ public abstract class TargetedModule extends Module {
     protected boolean isRangeLimited() {
         return true;
     }
-
-    /**
-     * Get the (square of) the maximum distance that this module can reach.
-     *
-     * @param router router the module is installed in (may be null)
-     * @return
-     */
-    public abstract int maxDistanceSq(TileEntityItemRouter router);
 
     enum TargetValidation {
         OK,

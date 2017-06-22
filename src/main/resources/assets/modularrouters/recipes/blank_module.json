@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "PPP",
+    "GGG"
+  ],
+  "key": {
+    "R": { "item": "minecraft:redstone" },
+    "P": { "item": "minecraft:paper" },
+    "G": { "type": "forge:ore_dict", "ore": "nuggetGold" }
+  },
+  "result": { "item": "modularrouters:blank_module", "count": 6 }
+}

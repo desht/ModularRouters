@@ -9,7 +9,6 @@ import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.BlankRecipeWrapper;
 import mezz.jei.api.recipe.IStackHelper;
 import mezz.jei.api.recipe.wrapper.ICustomCraftingRecipeWrapper;
 import mezz.jei.api.recipe.wrapper.IShapedCraftingRecipeWrapper;
@@ -17,10 +16,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.Arrays;
+import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
+public class ModuleEnhancementRecipeWrapper
         implements ICustomCraftingRecipeWrapper, IShapedCraftingRecipeWrapper, ITooltipCallback<ItemStack> {
     private static final int craftOutputSlot = 0;
     private static final int craftInputSlot1 = 1;
@@ -30,7 +29,7 @@ public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
     private final String name;
     private final String[] description;
 
-    public ModuleEnhancementRecipeWrapper(IJeiHelpers helpers, ModuleEnhancementRecipe recipe) {
+    ModuleEnhancementRecipeWrapper(IJeiHelpers helpers, ModuleEnhancementRecipe recipe) {
         this.helpers = helpers;
         this.recipe = recipe;
         this.name = I18n.format("jei.enhancement." + recipe.getRecipeId() + ".name");
@@ -38,16 +37,14 @@ public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
     }
 
     @Override
-    public void getIngredients(IIngredients ingredients) {
+    public void getIngredients(@Nonnull IIngredients ingredients) {
         IStackHelper stackHelper = helpers.getStackHelper();
         ItemStack recipeOutput = recipe.getRecipeOutput();
 
         try {
-            List<List<ItemStack>> inputs = stackHelper.expandRecipeItemStackInputs(Arrays.asList(recipe.getInput()));
+            List<List<ItemStack>> inputs = stackHelper.expandRecipeItemStackInputs(recipe.getIngredients());
             ingredients.setInputLists(ItemStack.class, inputs);
-            if (recipeOutput != null) {
-                ingredients.setOutput(ItemStack.class, recipeOutput);
-            }
+            ingredients.setOutput(ItemStack.class, recipeOutput);
         } catch (RuntimeException e) {
             ModularRouters.logger.warn("broken recipe: " + recipe.getClass() + " - " + e.getMessage());
             e.printStackTrace();
@@ -55,7 +52,7 @@ public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
     }
 
     @Override
-    public void onTooltip(int slotIndex, boolean input, ItemStack ingredient, List<String> tooltip) {
+    public void onTooltip(int slotIndex, boolean input, @Nonnull ItemStack ingredient, @Nonnull List<String> tooltip) {
         if (slotIndex == 0 && !input) {
             tooltip.add(TextFormatting.GREEN + TextFormatting.BOLD.toString() + name);
             for (String d : description) {
@@ -75,7 +72,7 @@ public class ModuleEnhancementRecipeWrapper extends BlankRecipeWrapper
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IIngredients ingredients) {
         IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
         guiItemStacks.addTooltipCallback(this);
 

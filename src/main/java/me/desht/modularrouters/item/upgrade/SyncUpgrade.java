@@ -3,15 +3,11 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -19,22 +15,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 import java.util.Random;
 
 public class SyncUpgrade extends Upgrade {
     private static final String NBT_TUNING = "Tuning";
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SYNC, 16),
-                "rst", "rbr",
-                'r', Items.REDSTONE, 's', new ItemStack(Blocks.STONE, 1, OreDictionary.WILDCARD_VALUE),
-                't', Blocks.REDSTONE_TORCH, 'b', ModItems.blankUpgrade);
-    }
 
     @Override
     boolean hasExtraInformation() {

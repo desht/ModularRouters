@@ -1,61 +1,34 @@
 package me.desht.modularrouters.recipe;
 
-import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.ModBlocks;
-import me.desht.modularrouters.item.ModItems;
+import com.google.common.base.Joiner;
+import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.recipe.enhancement.*;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModRecipes {
     public static void init() {
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.itemRouter, 4),
-                "ibi", "brb", "ibi",
-                'b', Blocks.IRON_BARS, 'r', ModItems.blankModule, 'i', Items.IRON_INGOT);
+        addEnchantmentRecipes();
+        addRedstoneUpgradeRecipes();
+        addRegulatorUpgradeRecipes();
+        addPickupDelayRecipes();
+        addFastPickupRecipe();
+        addXPVacuumRecipe();
+        addRangeRecipes();
+        addSelfCraftRecipes();
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.blankModule, 6),
-                " r ", "ppp", "nnn",
-                'r', Items.REDSTONE, 'p', Items.PAPER, 'n', Items.GOLD_NUGGET);
-        for (ModuleType type : ModuleType.values()) {
-            IRecipe recipe = ItemModule.getModule(type).getRecipe();
-            if (recipe != null) GameRegistry.addRecipe(recipe);
-        }
+        MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
+    }
 
-        ItemStack lapis = new ItemStack(Items.DYE, 1, 4);
-        GameRegistry.addRecipe(new ItemStack(ModItems.blankUpgrade, 6),
-                "ppn", "pdn", " pn",
-                'p', Items.PAPER, 'd', lapis, 'n', Items.GOLD_NUGGET);
-        for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-            GameRegistry.addRecipe(ItemUpgrade.getUpgrade(type).getRecipe());
-        }
-        GameRegistry.addRecipe(new ShapelessOreRecipe(
-                ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGE),
-                ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.RANGEDOWN)));
-
-        for (ItemSmartFilter.FilterType type : ItemSmartFilter.FilterType.values()) {
-            GameRegistry.addRecipe(ItemSmartFilter.getFilter(type).getRecipe());
-        }
-        // special case for deprecated sorter & mod sorter modules
-        GameRegistry.addShapelessRecipe(
-                ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
-                ModuleHelper.makeItemStack(ModuleType.SORTER));
-        GameRegistry.addShapelessRecipe(
-                ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.MOD),
-                ModuleHelper.makeItemStack(ModuleType.MODSORTER));
-
-        RecipeSorter.register(ModularRouters.MODID + ":enchantModule", EnchantModuleRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+    private static void addEnchantmentRecipes() {
         for (ModuleType type : EnchantModuleRecipe.validEnchantments.keySet()) {
             for (Enchantment ench : EnchantModuleRecipe.validEnchantments.get(type)) {
                 for (int level = ench.getMinLevel(); level <= ench.getMaxLevel(); level++) {
@@ -63,65 +36,65 @@ public class ModRecipes {
                     ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
                     resStack.addEnchantment(ench, level);
                     book.addEnchantment(ench, level);
-                    GameRegistry.addRecipe(new EnchantModuleRecipe(resStack, ModuleHelper.makeItemStack(type), book));
+                    GameRegistry.register(new EnchantModuleRecipe(
+                            Joiner.on("_").join(type.name(), ench.getName(), level),
+                            resStack, ModuleHelper.makeItemStack(type), book));
                 }
             }
         }
-
-        addSelfCraftRecipes();
-        addRedstoneUpgradeRecipes();
-        addRegulatorUpgradeRecipes();
-        addPickupDelayRecipes();
-        addFastPickupRecipe();
-        addXPVacuumRecipe();
-
-        MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
     }
 
     private static void addSelfCraftRecipes() {
         // crafting a module into itself resets all NBT on the module
-        RecipeSorter.register(ModularRouters.MODID + ":reset", ModuleResetRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
-            if (type == ModuleType.SORTER || type == ModuleType.MODSORTER)
-                continue;
             ItemStack stack = ModuleHelper.makeItemStack(type);
             ItemStack output = ModuleHelper.makeItemStack(type);
-            GameRegistry.addRecipe(new ModuleResetRecipe(output,
-                    "M",
-                    'M', stack));
+            ModuleResetRecipe recipe = new ModuleResetRecipe(output, "M", 'M', stack);
+            GameRegistry.register(recipe.setRegistryName(RL(type + "_" + "reset")));
         }
     }
 
     private static void addFastPickupRecipe() {
-        RecipeSorter.register(ModularRouters.MODID + ":fastPickup", FastPickupEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
-        GameRegistry.addRecipe(new FastPickupEnhancementRecipe(ModuleType.VACUUM));
+        FastPickupEnhancementRecipe recipe = new FastPickupEnhancementRecipe(ModuleType.VACUUM);
+        GameRegistry.register(recipe.setRegistryName(RL(ModuleType.VACUUM + "_" + "fast_pickup")));
     }
 
     private static void addRedstoneUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.MODID + ":redstoneUpgrade", RedstoneEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
-            GameRegistry.addRecipe(new RedstoneEnhancementRecipe(type));
+            RedstoneEnhancementRecipe recipe = new RedstoneEnhancementRecipe(type);
+            GameRegistry.register(recipe.setRegistryName(RL(type + "_" + "redstone")));
         }
     }
 
     private static void addRegulatorUpgradeRecipes() {
-        RecipeSorter.register(ModularRouters.MODID + ":regulatorUpgrade", RegulatorEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
         for (ModuleType type : ModuleType.values()) {
             if (RegulatorEnhancementRecipe.appliesTo(type)) {
-                GameRegistry.addRecipe(new RegulatorEnhancementRecipe(type));
+                RegulatorEnhancementRecipe recipe = new RegulatorEnhancementRecipe(type);
+                GameRegistry.register(recipe.setRegistryName(type + "_" + "regulator"));
             }
         }
     }
 
     private static void addPickupDelayRecipes() {
-        RecipeSorter.register(ModularRouters.MODID + ":pickupDelayUpgrade", PickupDelayEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
-        for (ModuleType type : new ItemModule.ModuleType[] { ModuleType.DROPPER, ModuleType.FLINGER} ) {
-            GameRegistry.addRecipe(new PickupDelayEnhancementRecipe(type));
+        for (ModuleType type : new ItemModule.ModuleType[]{ModuleType.DROPPER, ModuleType.FLINGER}) {
+            PickupDelayEnhancementRecipe recipe = new PickupDelayEnhancementRecipe(type);
+            GameRegistry.register(recipe.setRegistryName(RL(type + "_" + "pickup_delay")));
         }
     }
 
     private static void addXPVacuumRecipe() {
-        RecipeSorter.register(ModularRouters.MODID + ":xpVacuumUpgrade", XPVacuumEnhancementRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapelessore");
-        GameRegistry.addRecipe(new XPVacuumEnhancementRecipe(ModuleType.VACUUM));
+        XPVacuumEnhancementRecipe recipe = new XPVacuumEnhancementRecipe(ModuleType.VACUUM);
+        GameRegistry.register(recipe.setRegistryName(ModuleType.VACUUM + "_" + "xp_vacuum"));
+    }
+
+    private static void addRangeRecipes() {
+        for (ModuleType type : ModuleType.values()) {
+            if (ItemModule.getModule(type) instanceof IRangedModule) {
+                RangeUpRecipe recipeUp = new RangeUpRecipe(type);
+                GameRegistry.register(recipeUp.setRegistryName(RL(type + "_" + "range_up")));
+                RangeDownRecipe recipeDown = new RangeDownRecipe(type);
+                GameRegistry.register(recipeDown.setRegistryName(RL(type + "_" + "range_down")));
+            }
+        }
     }
 }

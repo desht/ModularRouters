@@ -1,5 +1,6 @@
 package me.desht.modularrouters.item.smartfilter;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.ModuleFilterSlot;
@@ -19,11 +20,14 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -67,8 +71,6 @@ public abstract class SmartFilter {
      */
     public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target);
 
-    public abstract IRecipe getRecipe();
-
     public abstract Class<? extends GuiScreen> getGuiHandler();
 
     public boolean hasGuiContainer() {
@@ -101,4 +103,12 @@ public abstract class SmartFilter {
      * @return the number of items
      */
     public abstract int getSize(ItemStack filterStack);
+
+    ShapelessOreRecipe makeShapelessOreRecipe(ItemStack result, Object... recipe) {
+        return new ShapelessOreRecipe(new ResourceLocation(ModularRouters.MODID, "filter_recipe"), result, recipe);
+    }
+
+    ShapedOreRecipe makeShapedOreRecipe(ItemStack result, Object... recipe) {
+        return new ShapedOreRecipe(new ResourceLocation(ModularRouters.MODID, "filter_recipe"), result, recipe);
+    }
 }

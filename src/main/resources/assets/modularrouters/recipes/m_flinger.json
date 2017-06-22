@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#dropper" },
+    { "item" : "minecraft:gunpowder" }
+  ],
+  "result": { "item": "modularrouters:module", "data": 10 }
+}

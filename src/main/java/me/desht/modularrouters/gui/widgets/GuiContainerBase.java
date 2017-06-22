@@ -34,11 +34,13 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
 
     @Override
     public void drawScreen(int x, int y, float partialTicks) {
+        this.drawDefaultBackground();
         super.drawScreen(x, y, partialTicks);
         if (textFieldManager != null) textFieldManager.drawTextFields();
         this.buttonList.stream()
                 .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
                 .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRenderer));
+        this.renderHoveredToolTip(x, y);
     }
 
     @Override

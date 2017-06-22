@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " W ",
+    "WBW",
+    " W "
+  ],
+  "key": {
+    "B": { "item": "#blankupgrade" },
+    "W": { "item": "minecraft:wool", "data": 32767 }
+  },
+  "result": { "item": "modularrouters:upgrade", "data": 6 }
+}

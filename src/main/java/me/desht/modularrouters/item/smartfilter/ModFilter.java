@@ -13,20 +13,18 @@ import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,15 +65,8 @@ public class ModFilter extends SmartFilter {
     }
 
     @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.MOD),
-                ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
-                Items.REPEATER, Blocks.REDSTONE_TORCH);
-    }
-
-    @Override
-    protected void addExtraInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4) {
-        super.addExtraInformation(stack, player, list, par4);
+    protected void addExtraInformation(ItemStack stack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addExtraInformation(stack, player, list, advanced);
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
             List<String> l = getModList(stack);

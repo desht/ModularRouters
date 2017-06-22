@@ -73,8 +73,10 @@ public class ItemSmartFilter extends ItemBase {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> stacks) {
-        for (int i = 0; i < SUBTYPES; i++) {
-            stacks.add(new ItemStack(this, 1, i));
+        if (isInCreativeTab(tab)) {
+            for (int i = 0; i < SUBTYPES; i++) {
+                stacks.add(new ItemStack(this, 1, i));
+            }
         }
     }
 

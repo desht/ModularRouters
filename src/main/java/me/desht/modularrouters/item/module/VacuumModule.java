@@ -2,24 +2,18 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
-public class VacuumModule extends Module {
+public class VacuumModule extends Module implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledVacuumModule(router, stack);
@@ -37,19 +31,12 @@ public class VacuumModule extends Module {
     }
 
     @Override
-    public Object[] getExtraUsageParams() {
-        return new Object[] { ConfigHandler.module.vacuumBaseRange, ConfigHandler.module.vacuumMaxRange };
+    public int getBaseRange() {
+        return ConfigHandler.module.vacuumBaseRange;
     }
 
     @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.VACUUM),
-                ModItems.blankModule, Blocks.HOPPER, Items.ENDER_EYE);
-    }
-
-    public static int getVacuumRange(TileEntityItemRouter router) {
-        return router == null ?
-                ConfigHandler.module.vacuumBaseRange :
-                router.getEffectiveRange(ConfigHandler.module.vacuumBaseRange, 1, ConfigHandler.module.vacuumMaxRange);
+    public int getHardMaxRange() {
+        return ConfigHandler.module.vacuumMaxRange;
     }
 }

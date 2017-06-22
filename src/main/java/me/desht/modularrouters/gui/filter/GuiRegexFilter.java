@@ -154,13 +154,13 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
 
         @Override
-        public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-            if (mouseX >= this.xPosition && mouseX < this.xPosition + this.width && mouseY >= this.yPosition && mouseY < this.yPosition + this.height) {
+        public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
+            if (mouseX >= this.x && mouseX < this.x + this.width && mouseY >= this.y && mouseY < this.y + this.height) {
                 if (mouseButton == 1) {
                     setText("");  // right click clears field
                 }
             }
-            super.mouseClicked(mouseX, mouseY, mouseButton);
+            return super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 }

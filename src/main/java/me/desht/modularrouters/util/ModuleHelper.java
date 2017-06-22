@@ -1,6 +1,7 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.item.module.Module;
@@ -27,10 +28,11 @@ public class ModuleHelper {
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
     private static final String NBT_OWNER = "Owner";
-    public static final String NBT_PICKUP_DELAY = "PickupDelay";
+    private static final String NBT_PICKUP_DELAY = "PickupDelay";
     private static final String NBT_FAST_PICKUP = "FastPickup";
     private static final String NBT_CONFIG_SLOT = "ConfigSlot";
     private static final String NBT_XP_VACUUM = "XPVacuum";
+    private static final String NBT_RANGE_BOOST = "RangeBoost";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
@@ -231,5 +233,20 @@ public class ModuleHelper {
     public static boolean hasXPVacuum(ItemStack stack) {
         NBTTagCompound compound = validateNBT(stack);
         return compound.getBoolean(NBT_XP_VACUUM);
+    }
+
+    public static int getRangeBoost(ItemStack stack) {
+        NBTTagCompound compound = validateNBT(stack);
+        return compound.getInteger(NBT_RANGE_BOOST);
+    }
+
+    public static void adjustRangeBoost(ItemStack stack, int delta) {
+        Module m = ItemModule.getModule(stack);
+        if (m instanceof IRangedModule) {
+            IRangedModule rm = (IRangedModule) m;
+            NBTTagCompound compound = validateNBT(stack);
+            int current = compound.getInteger(NBT_RANGE_BOOST);
+            compound.setInteger(NBT_RANGE_BOOST, Math.max(1, Math.min(rm.getHardMaxRange(), current + delta)));
+        }
     }
 }

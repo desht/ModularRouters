@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    "MDM",
+    "IGI"
+  ],
+  "key": {
+    "M": { "item": "#blankmodule" },
+    "D": { "type": "forge:ore_dict", "ore": "gemDiamond" },
+    "G": { "type": "forge:ore_dict", "ore": "blockGlass" },
+    "I": { "type": "forge:ore_dict", "ore": "ingotIron" }
+  },
+  "result": { "item": "modularrouters:filter", "data": 0 }
+}

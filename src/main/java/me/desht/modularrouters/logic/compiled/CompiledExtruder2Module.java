@@ -27,15 +27,14 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
 
         blockList = new ArrayList<>();
 
-        int maxDist = ExtruderModule2.maxDistance(router);
         TemplateHandler handler = new TemplateHandler(stack);
-        for (int i = 0; i < handler.getSlots() && blockList.size() < maxDist; i++) {
+        for (int i = 0; i < handler.getSlots() && blockList.size() < range; i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
             for (int j = 0; j < stack1.getCount(); j++) {
                 ItemStack copy = stack1.copy();
                 copy.setCount(1);
                 blockList.add(copy);
-                if (blockList.size() >= maxDist) break;
+                if (blockList.size() >= range) break;
             }
         }
     }

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " Q ",
+    "NBN",
+    " R "
+  ],
+  "key": {
+    "B": { "item": "#blankupgrade" },
+    "Q": { "item": "minecraft:quartz" },
+    "N": { "type": "forge:ore_dict", "ore": "nuggetGold" },
+    "R": { "item": "minecraft:redstone" }
+  },
+  "result": { "item": "modularrouters:upgrade", "data": 2 }
+}

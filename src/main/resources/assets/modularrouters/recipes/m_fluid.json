@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "GMG"
+  ],
+  "key": {
+    "M": { "item": "#blankmodule" },
+    "G": { "type": "forge:ore_dict", "ore": "blockGlass" },
+    "C": { "item": "minecraft:cauldron" }
+  },
+  "result": { "item": "modularrouters:module", "data": 13 }
+}

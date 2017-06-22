@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#blankupgrade" },
+    { "type": "forge:ore_dict", "ore": "dyeRed" },
+    { "type": "forge:ore_dict", "ore": "dyeBlue" },
+    { "type": "forge:ore_dict", "ore": "dyeGreen" }
+  ],
+  "result": { "item": "modularrouters:upgrade", "data": 3 }
+}

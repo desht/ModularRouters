@@ -18,9 +18,8 @@ public abstract class TexturedButton extends GuiButton implements ITooltipButton
         this.tooltip1 = new ArrayList<>();
     }
 
-    // TODO: drawButton()
     @Override
-    public void func_191745_a(Minecraft mc, int mouseX, int mouseY, float p3) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float p3) {
         mc.getTextureManager().bindTexture(resourceLocation);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;

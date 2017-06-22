@@ -9,9 +9,7 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -19,8 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
@@ -50,17 +46,6 @@ public class PlayerModule extends Module {
     @Override
     public boolean isDirectional() {
         return false;
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.PLAYER),
-                " h ", "szp", " c ",
-                'h', Items.DIAMOND_HELMET,
-                's', ModuleHelper.makeItemStack(ItemModule.ModuleType.SENDER3),
-                'z', new ItemStack(Items.SKULL, 1, OreDictionary.WILDCARD_VALUE),
-                'p', ModuleHelper.makeItemStack(ItemModule.ModuleType.PULLER),
-                'c', Items.DIAMOND_CHESTPLATE);
     }
 
     @Override

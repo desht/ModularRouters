@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IOI",
+    "OBO",
+    "IOI"
+  ],
+  "key": {
+    "B": { "item": "#blankupgrade" },
+    "I": { "item": "minecraft:iron_bars" },
+    "O": { "type": "forge:ore_dict", "ore": "obsidian" }
+  },
+  "result": { "item": "modularrouters:upgrade", "data": 7 }
+}

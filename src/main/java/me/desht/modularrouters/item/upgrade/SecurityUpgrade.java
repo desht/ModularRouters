@@ -2,22 +2,18 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -49,13 +45,6 @@ public class SecurityUpgrade extends Upgrade {
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
         router.addPermittedIds(getPlayerIDs(stack));
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.SECURITY),
-                " q ", "nbn", " r ",
-                'q', Items.QUARTZ, 'n', Items.GOLD_NUGGET, 'r', Items.REDSTONE, 'b', ModItems.blankUpgrade);
     }
 
     private static Set<UUID> getPlayerIDs(ItemStack stack) {

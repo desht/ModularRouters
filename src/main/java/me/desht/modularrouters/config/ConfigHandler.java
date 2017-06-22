@@ -166,6 +166,10 @@ public class ConfigHandler {
         @Config.LangKey("gui.config.startWithGuide")
         @Config.Comment("Should new players start with a copy of the Modular Routers guidebook?")
         public boolean startWithGuide = false;
+
+        @Config.LangKey("gui.config.alwaysShowSettings")
+        @Config.Comment("Show module/upgrade/filter settings in tooltip without needing to hold down Shift?")
+        public boolean alwaysShowSettings = true;
     }
 
     @Mod.EventBusSubscriber

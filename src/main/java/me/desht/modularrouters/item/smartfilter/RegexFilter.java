@@ -12,9 +12,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -22,7 +20,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,13 +69,6 @@ public class RegexFilter extends SmartFilter {
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
         return new RegexMatcher(getRegexList(filterStack));
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.REGEX),
-                ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
-                Items.COMPARATOR);
     }
 
     @Override

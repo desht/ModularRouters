@@ -1,22 +1,23 @@
 package me.desht.modularrouters.recipe.enhancement;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import javax.annotation.Nonnull;
+
+import static me.desht.modularrouters.util.MiscUtil.RL;
+
 public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     ModuleEnhancementRecipe(ItemStack result, Object... recipe) {
-        super(new ResourceLocation(ModularRouters.MODID, "module_enhancement"), result, recipe);
-//        applyEnhancement(result);
+        super(RL("module_enhancement"), result, recipe);
     }
 
     @Override
-    public boolean matches(InventoryCrafting inv, World world) {
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world) {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (ItemModule.getModule(stack) != null && !validateModule(stack)) {
@@ -26,6 +27,7 @@ public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
         return super.matches(inv, world);
     }
 
+    @Nonnull
     @Override
     public ItemStack getCraftingResult(InventoryCrafting var1) {
         ItemStack out = output.copy();
@@ -45,7 +47,7 @@ public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     }
 
     /**
-     * Check that the output item is OK for an enhancement to be applied.
+     * Check that the module item is OK for an enhancement to be applied.
      *
      * @param stack the item to check
      * @return true if the item is OK for enhancement

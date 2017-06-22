@@ -6,7 +6,6 @@ import me.desht.modularrouters.container.ContainerBulkItemFilter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.gui.filter.GuiBulkItemFilter;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
@@ -20,10 +19,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumActionResult;
@@ -36,7 +33,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
@@ -66,16 +62,6 @@ public class BulkItemFilter extends SmartFilter {
     protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
         list.add(I18n.format("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
-                "igi", "mdm", "igi",
-                'm', ModItems.blankModule,
-                'd', Items.DIAMOND,
-                'i', Items.IRON_INGOT,
-                'g', Items.GOLD_INGOT);
     }
 
     @Override

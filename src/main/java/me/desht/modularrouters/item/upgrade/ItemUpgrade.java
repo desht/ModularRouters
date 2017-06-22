@@ -7,7 +7,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -21,14 +20,12 @@ public class ItemUpgrade extends ItemBase {
     public enum UpgradeType {
         STACK,
         SPEED,
-        RANGE,
         SECURITY,
         CAMOUFLAGE,
         SYNC,
         FLUID,
         MUFFLER,
-        BLAST,
-        RANGEDOWN;
+        BLAST;
 
         public static UpgradeType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemUpgrade ? values()[stack.getItemDamage()] : null;
@@ -41,14 +38,12 @@ public class ItemUpgrade extends ItemBase {
     static {
         registerUpgrade(UpgradeType.STACK, new StackUpgrade());
         registerUpgrade(UpgradeType.SPEED, new SpeedUpgrade());
-        registerUpgrade(UpgradeType.RANGE, new RangeUpgrade());
         registerUpgrade(UpgradeType.SECURITY, new SecurityUpgrade());
         registerUpgrade(UpgradeType.CAMOUFLAGE, new CamouflageUpgrade());
         registerUpgrade(UpgradeType.SYNC, new SyncUpgrade());
         registerUpgrade(UpgradeType.FLUID, new FluidUpgrade());
         registerUpgrade(UpgradeType.MUFFLER, new MufflerUpgrade());
         registerUpgrade(UpgradeType.BLAST, new BlastUpgrade());
-        registerUpgrade(UpgradeType.RANGEDOWN, new RangeDowngrade());
     }
 
     public ItemUpgrade() {
@@ -58,20 +53,22 @@ public class ItemUpgrade extends ItemBase {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        for (int i = 0; i < SUBTYPES; i++) {
-            subItems.add(new ItemStack(this, 1, i));
+        if (isInCreativeTab(tab)) {
+            for (int i = 0; i < SUBTYPES; i++) {
+                subItems.add(new ItemStack(this, 1, i));
+            }
         }
     }
 
     @Override
-    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag flag) {
         Upgrade upgrade = getUpgrade(itemstack);
         if (upgrade != null) {
-            upgrade.addBasicInformation(itemstack, player, list, advanced);
+            upgrade.addBasicInformation(itemstack, player, list, flag);
             if (GuiScreen.isShiftKeyDown()) {
-                upgrade.addExtraInformation(itemstack, player, list, advanced);
+                upgrade.addExtraInformation(itemstack, player, list, flag);
             } else if (GuiScreen.isCtrlKeyDown()) {
-                upgrade.addUsageInformation(itemstack, player, list, advanced);
+                upgrade.addUsageInformation(itemstack, player, list, flag);
             } else {
                 list.add(I18n.format(upgrade.hasExtraInformation() ? "itemText.misc.holdShiftCtrl" : "itemText.misc.holdCtrl"));
             }

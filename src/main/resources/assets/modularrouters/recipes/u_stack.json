@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#blankupgrade" },
+    { "item" : "minecraft:stonebrick", "data": 0 },
+    { "item" : "minecraft:brick_block" }
+  ],
+  "result": { "item": "modularrouters:upgrade", "data": 0 }
+}

@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.module.ExtruderModule;
+import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -16,15 +16,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 
 public class CompiledExtruderModule extends CompiledModule {
-    protected static final String NBT_EXTRUDER_DIST = "ExtruderDist";
+    static final String NBT_EXTRUDER_DIST = "ExtruderDist";
 
-    protected int distance;  // marks the current extension length (0 = no extrusion)
+    int distance;  // marks the current extension length (0 = no extrusion)
     private final boolean silkTouch;
+    protected final int range;
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInteger(NBT_EXTRUDER_DIST + getFacing());
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
+        range = ((IRangedModule) getModule()).getCurrentRange(stack);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class CompiledExtruderModule extends CompiledModule {
         boolean extend = shouldExtend(router);
         World world = router.getWorld();
 
-        if (extend && !router.isBufferEmpty() && distance < ExtruderModule.maxDistance(router) && isRegulationOK(router, false)) {
+        if (extend && !router.isBufferEmpty() && distance < range && isRegulationOK(router, false)) {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
@@ -77,7 +79,7 @@ public class CompiledExtruderModule extends CompiledModule {
         return true;
     }
 
-    protected boolean shouldExtend(TileEntityItemRouter router) {
+    boolean shouldExtend(TileEntityItemRouter router) {
         switch (getRedstoneBehaviour()) {
             case ALWAYS:
                 return router.getRedstonePower() > 0;

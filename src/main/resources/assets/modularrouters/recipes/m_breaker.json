@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#blankmodule" },
+    { "item" : "minecraft:iron_pickaxe" }
+  ],
+  "result": { "item": "modularrouters:module", "data": 0 }
+}

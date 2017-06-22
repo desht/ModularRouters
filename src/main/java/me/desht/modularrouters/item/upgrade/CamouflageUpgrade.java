@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -11,7 +10,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
@@ -20,19 +18,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
 public class CamouflageUpgrade extends Upgrade {
     private static final String NBT_STATE_NAME = "BlockStateName";
     private static final String NBT_STATE_META = "BlockStateMeta";
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapelessOreRecipe(ItemUpgrade.makeItemStack(ItemUpgrade.UpgradeType.CAMOUFLAGE),
-                ModItems.blankUpgrade, "dyeRed", "dyeGreen", "dyeBlue");
-    }
 
     @Override
     public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {

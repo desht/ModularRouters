@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " U ",
+    "GBG"
+  ],
+  "key": {
+    "B": { "item": "#blankupgrade" },
+    "U": { "item": "minecraft:bucket" },
+    "G": { "type": "forge:ore_dict", "ore": "blockGlass" }
+  },
+  "result": { "item": "modularrouters:upgrade", "data": 5, "count": 3 }
+}

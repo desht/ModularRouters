@@ -39,7 +39,7 @@ public class InventoryUtils {
                     int stackSize = Math.min(itemStack.getCount(), random.nextInt(21) + 10);
                     EntityItem entityitem = new EntityItem(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize, itemStack.getMetadata()));
                     if (itemStack.hasTagCompound()) {
-                        entityitem.getEntityItem().setTagCompound(itemStack.getTagCompound().copy());
+                        entityitem.getItem().setTagCompound(itemStack.getTagCompound().copy());
                     }
                     itemStack.shrink(stackSize);
 

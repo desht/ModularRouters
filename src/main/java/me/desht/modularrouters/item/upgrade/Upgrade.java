@@ -1,25 +1,25 @@
 package me.desht.modularrouters.item.upgrade;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
 public abstract class Upgrade {
     @SideOnly(Side.CLIENT)
-    public void addBasicInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    void addBasicInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag flag) {
     }
 
     boolean hasExtraInformation() {
@@ -45,13 +45,19 @@ public abstract class Upgrade {
         // no-op by default
     }
 
-    public abstract IRecipe getRecipe();
-
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         return EnumActionResult.PASS;
     }
 
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
+    }
+
+    ShapelessOreRecipe makeShapelessOreRecipe(ItemStack result, Object... recipe) {
+        return new ShapelessOreRecipe(new ResourceLocation(ModularRouters.MODID, "upgrade_recipe"), result, recipe);
+    }
+
+    ShapedOreRecipe makeShapedOreRecipe(ItemStack result, Object... recipe) {
+        return new ShapedOreRecipe(new ResourceLocation(ModularRouters.MODID, "upgrade_recipe"), result, recipe);
     }
 }

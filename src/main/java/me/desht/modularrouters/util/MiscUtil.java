@@ -1,6 +1,8 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -31,5 +33,9 @@ public class MiscUtil {
 
     public static String translate(String key, Object... args) {
         return new TextComponentTranslation(key, args).getUnformattedText();
+    }
+
+    public static ResourceLocation RL(String name) {
+        return new ResourceLocation(ModularRouters.MODID, name);
     }
 }

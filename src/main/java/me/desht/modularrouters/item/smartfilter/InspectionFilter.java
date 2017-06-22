@@ -13,9 +13,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -23,7 +21,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
@@ -75,15 +72,6 @@ public class InspectionFilter extends SmartFilter {
         }
         compound.setBoolean(NBT_MATCH_ALL, comparisonList.isMatchAll());
         compound.setTag(NBT_ITEMS, l);
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.INSPECTION),
-                "efe", " p ",
-                'e', Items.SPIDER_EYE,
-                'f', ItemSmartFilter.makeItemStack(ItemSmartFilter.FilterType.BULKITEM),
-                'p', Items.PAPER);
     }
 
     @Override

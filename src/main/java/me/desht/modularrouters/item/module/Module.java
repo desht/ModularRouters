@@ -20,14 +20,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
@@ -127,7 +126,7 @@ public abstract class Module {
      */
     @SideOnly(Side.CLIENT)
     protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack), getExtraUsageParams());
+        MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack));
     }
 
     /**
@@ -136,10 +135,6 @@ public abstract class Module {
     @SideOnly(Side.CLIENT)
     protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         // nothing by default
-    }
-
-    public Object[] getExtraUsageParams() {
-        return new Object[0];
     }
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
@@ -174,8 +169,6 @@ public abstract class Module {
         return true;
     }
 
-    public abstract IRecipe getRecipe();
-
     public boolean isFluidModule() {
         return false;
     }
@@ -202,5 +195,13 @@ public abstract class Module {
      */
     public IItemMatcher getFilterItemMatcher(ItemStack stack) {
         return new SimpleItemMatcher(stack);
+    }
+
+    ShapelessOreRecipe makeShapelessOreRecipe(ItemStack result, Object... recipe) {
+        return new ShapelessOreRecipe(new ResourceLocation(ModularRouters.MODID, "module_recipe"), result, recipe);
+    }
+
+    ShapedOreRecipe makeShapedOreRecipe(ItemStack result, Object... recipe) {
+        return new ShapedOreRecipe(new ResourceLocation(ModularRouters.MODID, "module_recipe"), result, recipe);
     }
 }

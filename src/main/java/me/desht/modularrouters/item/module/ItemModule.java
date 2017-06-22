@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
@@ -14,7 +15,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
@@ -41,11 +41,9 @@ public class ItemModule extends ItemBase {
         SENDER1,
         SENDER2,
         SENDER3,
-        SORTER,
         VACUUM,
         VOID,
         DETECTOR,
-        MODSORTER,
         FLINGER,
         PLAYER,
         EXTRUDER,
@@ -68,11 +66,9 @@ public class ItemModule extends ItemBase {
         registerSubItem(ModuleType.SENDER1, new SenderModule1());
         registerSubItem(ModuleType.SENDER2, new SenderModule2());
         registerSubItem(ModuleType.SENDER3, new SenderModule3());
-        registerSubItem(ModuleType.SORTER, new SorterModule());
         registerSubItem(ModuleType.VACUUM, new VacuumModule());
         registerSubItem(ModuleType.VOID, new VoidModule());
         registerSubItem(ModuleType.DETECTOR, new DetectorModule());
-        registerSubItem(ModuleType.MODSORTER, new ModSorterModule());
         registerSubItem(ModuleType.FLINGER, new FlingerModule());
         registerSubItem(ModuleType.PLAYER, new PlayerModule());
         registerSubItem(ModuleType.EXTRUDER, new ExtruderModule());
@@ -109,8 +105,10 @@ public class ItemModule extends ItemBase {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> stacks) {
-        for (int i = 0; i < SUBTYPES; i++) {
-            stacks.add(new ItemStack(this, 1, i));
+        if (isInCreativeTab(tab)) {
+            for (int i = 0; i < SUBTYPES; i++) {
+                stacks.add(new ItemStack(this, 1, i));
+            }
         }
     }
 
@@ -177,13 +175,14 @@ public class ItemModule extends ItemBase {
         }
         module.addBasicInformation(itemstack, player, list, advanced);
 
-        if (GuiScreen.isShiftKeyDown()) {
+        if (GuiScreen.isCtrlKeyDown()) {
+            module.addUsageInformation(itemstack, player, list, advanced);
+        } else if (ConfigHandler.misc.alwaysShowSettings || GuiScreen.isShiftKeyDown()) {
             addSettingsInformation(itemstack, list, module);
             module.addExtraInformation(itemstack, player, list, advanced);
             addEnhancementInformation(itemstack, list, module);
-        } else if (GuiScreen.isCtrlKeyDown()) {
-            module.addUsageInformation(itemstack, player, list, advanced);
-        } else {
+            list.add(I18n.format("itemText.misc.holdCtrl"));
+        } else if (!ConfigHandler.misc.alwaysShowSettings){
             list.add(I18n.format("itemText.misc.holdShiftCtrl"));
         }
     }
@@ -212,12 +211,17 @@ public class ItemModule extends ItemBase {
             list.set(list.size() - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
         }
         list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
-                Joiner.on(" | ").join(
+                Joiner.on(" / ").join(
                         compose("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
                         compose("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
                         compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
                         compose("TERMINATE", !ModuleHelper.terminates(itemstack))
                 ));
+
+        if (module instanceof IRangedModule) {
+            IRangedModule rm = (IRangedModule) module;
+            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo", rm.getCurrentRange(itemstack), rm.getHardMaxRange()));
+        }
     }
 
     private void addEnhancementInformation(ItemStack itemstack, List<String> list, Module module) {
@@ -238,7 +242,7 @@ public class ItemModule extends ItemBase {
 
     private String compose(String key, boolean flag) {
         String text = I18n.format("itemText.misc." + key);
-        return (flag ? TextFormatting.DARK_GRAY + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
+        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
 }

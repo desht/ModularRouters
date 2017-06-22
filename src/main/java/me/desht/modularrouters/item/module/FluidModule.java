@@ -3,24 +3,18 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.gui.module.GuiModuleFluid;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
@@ -43,13 +37,6 @@ public class FluidModule extends Module {
         String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
         list.add(I18n.format("itemText.fluid.direction", dir));
         list.add(I18n.format("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
-    }
-
-    @Override
-    public IRecipe getRecipe() {
-        return new ShapedOreRecipe(ModuleHelper.makeItemStack(ItemModule.ModuleType.FLUID),
-                " c ", "gmg",
-                'm', ModItems.blankModule, 'c', Items.CAULDRON, 'g', "blockGlass");
     }
 
     @Override

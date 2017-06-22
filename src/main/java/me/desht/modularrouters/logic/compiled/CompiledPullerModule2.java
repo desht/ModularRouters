@@ -31,8 +31,8 @@ public class CompiledPullerModule2 extends CompiledPullerModule {
         if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
             Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
-            NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.xCoord, vec1.yCoord, vec1.zCoord, 32);
-            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.xCoord, vec1.yCoord, vec1.zCoord, vec2.xCoord, vec2.yCoord, vec2.zCoord, particleColor, 0.5f), point);
+            NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.x, vec1.y, vec1.z, 32);
+            ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.x, vec1.y, vec1.z, vec2.x, vec2.y, vec2.z, particleColor, 0.5f), point);
         }
     }
 }
