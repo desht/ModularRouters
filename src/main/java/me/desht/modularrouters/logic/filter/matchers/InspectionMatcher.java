@@ -91,7 +91,7 @@ public class InspectionMatcher implements IItemMatcher {
                 return false;
             }
             Optional<Integer> val = subject.getValue(stack);
-            return val.isPresent() && op.check(val.get(), target);
+            return op.check(val.orElse(0), target);
         }
 
         public static Comparison fromString(String s) {
