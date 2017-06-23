@@ -44,4 +44,8 @@ public class CommonProxy {
     public TileEntityItemRouter getOpenItemRouter() {
         return null;
     }
+
+    public void registerBlockColors() {
+
+    }
 }
