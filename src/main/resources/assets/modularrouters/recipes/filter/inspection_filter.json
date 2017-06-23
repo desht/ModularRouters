@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EBE",
+    " P "
+  ],
+  "key": {
+    "B": { "item": "#bulkfilter" },
+    "E": { "item": "minecraft:spider_eye" },
+    "P": { "type": "forge:ore_dict", "ore": "paper" }
+  },
+  "result": { "item": "modularrouters:filter", "data": 3 }
+}

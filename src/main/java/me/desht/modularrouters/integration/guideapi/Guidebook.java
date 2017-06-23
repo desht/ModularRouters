@@ -15,6 +15,7 @@ import amerifrance.guideapi.page.PageIRecipe;
 import amerifrance.guideapi.page.PageText;
 import amerifrance.guideapi.page.reciperenderer.ShapedOreRecipeRenderer;
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
@@ -30,6 +31,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,6 +53,13 @@ import static me.desht.modularrouters.util.MiscUtil.translate;
 public class Guidebook implements IGuideBook {
     private static final int MAX_PAGE_LENGTH = 270;
 
+    private static final int CAT_INTRO = 0;
+    private static final int CAT_ROUTER = 1;
+    private static final int CAT_MODULES = 2;
+    private static final int CAT_UPGRADES = 3;
+    private static final int CAT_ENHANCEMENTS = 4;
+    private static final int CAT_FILTERS = 5;
+
     private static Book guideBook;
 
     @Nullable
@@ -69,7 +79,6 @@ public class Guidebook implements IGuideBook {
         // Routers category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerText"), MAX_PAGE_LENGTH));
-//        pages.add(new PageIRecipe(CraftingManager.getRecipe(RL("item_router"))));
         entries.put(RL("router"),
                 new EntryItemStack(pages, translate("tile.item_router.name"), new ItemStack(ModBlocks.itemRouter)));
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerEcoMode", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), MAX_PAGE_LENGTH));
@@ -81,10 +90,7 @@ public class Guidebook implements IGuideBook {
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleOverview", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), MAX_PAGE_LENGTH));
         entries.put(RL("moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
-        pages = Arrays.asList(
-                new PageText(translate("guidebook.para.blankModule"))
-//                new PageIRecipe(CraftingManager.getRecipe(RL("blank_module")))
-        );
+        pages = Collections.singletonList(new PageText(translate("guidebook.para.blankModule")));
         ItemStack bm = new ItemStack(ModItems.blankModule);
         entries.put(RL("blankModule"), new EntryItemStack(pages, translate(bm.getUnlocalizedName() + ".name"), bm));
         buildModulePages(entries);
@@ -94,11 +100,7 @@ public class Guidebook implements IGuideBook {
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, TileEntityItemRouter.N_UPGRADE_SLOTS), MAX_PAGE_LENGTH));
         entries.put(RL("upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
-        pages = Arrays.asList(
-                new PageText(translate("guidebook.para.blankUpgrade"))
-//                new PageIRecipe(CraftingManager.getRecipe(RL("blank_upgrade")))
-
-        );
+        pages = Collections.singletonList(new PageText(translate("guidebook.para.blankUpgrade")));
         ItemStack bu = new ItemStack(ModItems.blankUpgrade);
         entries.put(RL("blankUpgrade"), new EntryItemStack(pages, translate(bu.getUnlocalizedName() + ".name"), bu));
         buildUpgradePages(entries);
@@ -222,7 +224,36 @@ public class Guidebook implements IGuideBook {
 
     @Override
     public void handlePost(ItemStack bookStack) {
-        ShapelessOreRecipe recipe = new ShapelessOreRecipe(RL("guidebook"), bookStack, ModItems.blankModule, Items.BOOK);
-        GameRegistry.register(recipe.setRegistryName(RL("guidebook")));
+        ShapelessOreRecipe bookRecipe = new ShapelessOreRecipe(RL("guidebook"), bookStack, ModItems.blankModule, Items.BOOK);
+        GameRegistry.register(bookRecipe.setRegistryName(new ResourceLocation("guideapi","guidebook")));
+
+        // need to do this here, because recipes aren't registered when buildBook() is called
+        addRecipePage(CAT_ROUTER, "router", "item_router");
+        addRecipePage(CAT_MODULES, "moduleOverview", "blank_module");
+        addRecipePage(CAT_UPGRADES, "upgradeOverview", "blank_upgrade");
+
+        addItemRecipes(CAT_MODULES, ModuleType.class, "module");
+        addItemRecipes(CAT_UPGRADES, UpgradeType.class, "upgrade");
+        addItemRecipes(CAT_FILTERS, FilterType.class, "filter");
+    }
+
+    private void addItemRecipes(int categoryNumber, Class <? extends Enum<?>> c, String tag) {
+        for (Enum<?> e : c.getEnumConstants()) {
+            String registeredName = e.toString().toLowerCase() + "_" + tag;
+            addRecipePage(categoryNumber, "item." + registeredName, tag + "/" + registeredName);
+        }
+    }
+
+    private void addRecipePage(int categoryNumber, String entryName, String recipeName) {
+        IRecipe recipe = CraftingManager.getRecipe(RL(recipeName));
+        // shapeless recipe rendering currently not working
+        if (recipe != null && !(recipe instanceof ShapelessRecipes)) {
+            guideBook.getCategoryList()
+                    .get(categoryNumber)
+                    .getEntry(RL(entryName))
+                    .addPage(new PageIRecipe(recipe));
+        } else {
+            ModularRouters.logger.warn("no recipe found for " + RL(recipeName));
+        }
     }
 }

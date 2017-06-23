@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#blankmodule" },
+    { "item" : "minecraft:hopper" },
+    { "item" : "minecraft:ender_eye" }
+  ],
+  "result": { "item": "modularrouters:module", "data": 7 }
+}
