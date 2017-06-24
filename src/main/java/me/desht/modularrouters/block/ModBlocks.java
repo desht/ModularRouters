@@ -2,7 +2,7 @@ package me.desht.modularrouters.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class ModBlocks {
     public static BlockItemRouter itemRouter;
@@ -14,8 +14,8 @@ public class ModBlocks {
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
-        GameRegistry.register(block);
-        GameRegistry.register(itemBlock);
+        ForgeRegistries.BLOCKS.register(block);
+        ForgeRegistries.ITEMS.register(itemBlock);
 
         if (block instanceof BlockBase) {
             ((BlockBase) block).registerItemModel(itemBlock);

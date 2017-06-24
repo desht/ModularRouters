@@ -1,6 +1,5 @@
 package me.desht.modularrouters.integration.guideapi;
 
-
 import amerifrance.guideapi.api.GuideAPI;
 import amerifrance.guideapi.api.GuideBook;
 import amerifrance.guideapi.api.IGuideBook;
@@ -34,6 +33,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -172,7 +172,6 @@ public class Guidebook implements IGuideBook {
             String unlocalizedName = module.getItem().getUnlocalizedName(module);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
-//            pages1.add(new PageIRecipe(ItemSmartFilter.getFilter(type).getRecipe()));
             String localizedName = translate(unlocalizedName + ".name");
             entries.put(RL(unlocalizedName), new EntryItemStack(pages1, localizedName, module));
         }
@@ -191,7 +190,6 @@ public class Guidebook implements IGuideBook {
             String unlocalizedName = module.getItem().getUnlocalizedName(module);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
-//            pages1.add(new PageIRecipe(ItemModule.getModule(type).getRecipe()));
             String localizedName = translate(unlocalizedName + ".name");
             entries.put(RL(unlocalizedName), new EntryItemStack(pages1, localizedName, module));
         }
@@ -210,7 +208,6 @@ public class Guidebook implements IGuideBook {
             String unlocalizedName = upgrade.getItem().getUnlocalizedName(upgrade);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName, ItemUpgrade.getUpgrade(type).getExtraUsageParams())));
-//            pages1.add(new PageIRecipe(ItemUpgrade.getUpgrade(type).getRecipe()));
             String localizedName = translate(unlocalizedName + ".name");
             entries.put(RL(unlocalizedName), new EntryItemStack(pages1, localizedName, upgrade));
         }
@@ -225,7 +222,7 @@ public class Guidebook implements IGuideBook {
     @Override
     public void handlePost(ItemStack bookStack) {
         ShapelessOreRecipe bookRecipe = new ShapelessOreRecipe(RL("guidebook"), bookStack, ModItems.blankModule, Items.BOOK);
-        GameRegistry.register(bookRecipe.setRegistryName(new ResourceLocation("guideapi","guidebook")));
+        ForgeRegistries.RECIPES.register(bookRecipe.setRegistryName(new ResourceLocation("guideapi","guidebook")));
 
         // need to do this here, because recipes aren't registered when buildBook() is called
         addRecipePage(CAT_ROUTER, "router", "item_router");
@@ -246,8 +243,7 @@ public class Guidebook implements IGuideBook {
 
     private void addRecipePage(int categoryNumber, String entryName, String recipeName) {
         IRecipe recipe = CraftingManager.getRecipe(RL(recipeName));
-        // shapeless recipe rendering currently not working
-        if (recipe != null && !(recipe instanceof ShapelessRecipes)) {
+        if (recipe != null) {
             guideBook.getCategoryList()
                     .get(categoryNumber)
                     .getEntry(RL(entryName))

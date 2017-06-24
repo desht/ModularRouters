@@ -4,7 +4,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import net.minecraft.item.Item;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class ModItems {
     public static ItemBase blankModule;
@@ -28,7 +28,7 @@ public class ModItems {
     }
 
     private static <T extends Item> T register(T item, int nSubtypes) {
-        GameRegistry.register(item);
+        ForgeRegistries.ITEMS.register(item);
 
         if (item instanceof ItemBase) {
             ((ItemBase) item).registerItemModel(nSubtypes);

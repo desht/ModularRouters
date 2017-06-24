@@ -45,7 +45,7 @@ public class BlockUtil {
             float hitY = (float) (fakePlayer.posY - pos.getY());
             float hitZ = (float) (fakePlayer.posZ - pos.getZ());
             int meta = item.getMetadata(stack.getItemDamage());
-            res = ((ItemBlock) item).block.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
+            res = ((ItemBlock) item).getBlock().getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
         } else if (item instanceof ItemBlockSpecial) {
             res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
         } else if (item instanceof ItemRedstone) {

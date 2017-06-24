@@ -1,6 +1,5 @@
 package me.desht.modularrouters.recipe.enhancement;
 
-import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

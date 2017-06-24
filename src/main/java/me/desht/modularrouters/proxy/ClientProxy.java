@@ -14,17 +14,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import scala.collection.parallel.ParIterableLike;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class ClientProxy extends CommonProxy {
     @Override
@@ -35,8 +31,9 @@ public class ClientProxy extends CommonProxy {
         ModelLoader.setCustomStateMapper(ModBlocks.itemRouter, new StateMap.Builder().ignore(BlockItemRouter.CAN_EMIT).build());
 
         StateMapperBase ignoreState = new StateMapperBase() {
+            @Nonnull
             @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
+            protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState iBlockState) {
                 return TemplateFrameModel.variantTag;
             }
         };

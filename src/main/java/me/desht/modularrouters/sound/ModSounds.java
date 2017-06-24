@@ -1,9 +1,10 @@
 package me.desht.modularrouters.sound;
 
-import me.desht.modularrouters.ModularRouters;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModSounds {
     private ModSounds() {}
@@ -16,8 +17,8 @@ public class ModSounds {
         };
 
         for (String s : sounds) {
-            ResourceLocation loc = new ResourceLocation(ModularRouters.MODID + ":" + s);
-            GameRegistry.register(new SoundEvent(loc), loc);
+            ResourceLocation loc = RL(s);
+            ForgeRegistries.SOUND_EVENTS.register(new SoundEvent(loc).setRegistryName(loc));
         }
     }
 }

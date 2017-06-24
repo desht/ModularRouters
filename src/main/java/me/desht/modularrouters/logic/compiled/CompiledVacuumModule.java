@@ -5,7 +5,6 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.item.module.VacuumModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
