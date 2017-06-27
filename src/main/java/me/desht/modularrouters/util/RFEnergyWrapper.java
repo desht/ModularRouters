@@ -1,6 +1,6 @@
 package me.desht.modularrouters.util;
 
-import cofh.api.energy.IEnergyContainerItem;
+import cofh.redstoneflux.api.IEnergyContainerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.apache.commons.lang3.Validate;

@@ -7,16 +7,12 @@ import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 import java.util.List;
 
-public class TemplateFrameModel implements IPerspectiveAwareModel {
+public class TemplateFrameModel implements IBakedModel {
     public static final ModelResourceLocation variantTag
             = new ModelResourceLocation("modularrouters:templateFrame", "normal");
 
@@ -26,28 +22,28 @@ public class TemplateFrameModel implements IPerspectiveAwareModel {
         this.existingModel = existingModel;
     }
 
-    @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        if (existingModel instanceof IPerspectiveAwareModel) {
-            Matrix4f matrix4f = ((IPerspectiveAwareModel) existingModel).handlePerspective(cameraTransformType).getRight();
-            return Pair.of(this, matrix4f);
-        } else {
-            // If the parent model isn't an IPerspectiveAware, we'll need to generate the correct matrix ourselves using the
-            //  ItemCameraTransforms.
-
-            ItemCameraTransforms itemCameraTransforms = existingModel.getItemCameraTransforms();
-            ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
-            TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
-            Matrix4f mat = null;
-            if (tr != null) { // && tr != TRSRTransformation.identity()) {
-                mat = tr.getMatrix();
-            }
-            // The TRSRTransformation for vanilla items have blockCenterToCorner() applied, however handlePerspective
-            //  reverses it back again with blockCornerToCenter().  So we don't need to apply it here.
-
-            return Pair.of(this, mat);
-        }
-    }
+//    @Override
+//    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
+//        if (existingModel instanceof IPerspectiveAwareModel) {
+//            Matrix4f matrix4f = ((IPerspectiveAwareModel) existingModel).handlePerspective(cameraTransformType).getRight();
+//            return Pair.of(this, matrix4f);
+//        } else {
+//            // If the parent model isn't an IPerspectiveAware, we'll need to generate the correct matrix ourselves using the
+//            //  ItemCameraTransforms.
+//
+//            ItemCameraTransforms itemCameraTransforms = existingModel.getItemCameraTransforms();
+//            ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
+//            TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
+//            Matrix4f mat = null;
+//            if (tr != null) { // && tr != TRSRTransformation.identity()) {
+//                mat = tr.getMatrix();
+//            }
+//            // The TRSRTransformation for vanilla items have blockCenterToCorner() applied, however handlePerspective
+//            //  reverses it back again with blockCornerToCenter().  So we don't need to apply it here.
+//
+//            return Pair.of(this, mat);
+//        }
+//    }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {

@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -51,7 +52,7 @@ public class BlockUtil {
         } else if (item instanceof ItemRedstone) {
             res = Blocks.REDSTONE_WIRE.getDefaultState();
         } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
-            res = getCocoaBeanState(fakePlayer, world, pos, facing);
+            res = getCocoaBeanState(fakePlayer, world, pos);
             if (res != null) {
                 facing = res.getValue(BlockHorizontal.FACING);
             }
@@ -72,7 +73,7 @@ public class BlockUtil {
         return res;
     }
 
-    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos, EnumFacing facing) {
+    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos) {
         // try to find a jungle log in any horizontal direction
         for (EnumFacing f : EnumFacing.HORIZONTALS) {
             IBlockState state = world.getBlockState(pos.offset(f));
@@ -154,7 +155,7 @@ public class BlockUtil {
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
-            BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, null, fakePlayer, EnumHand.MAIN_HAND);
+            BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer, EnumHand.MAIN_HAND);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState, 3)) {
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
@@ -210,17 +211,17 @@ public class BlockUtil {
 
         if (silkTouch) {
             Item item = Item.getItemFromBlock(block);
-            if (item == Items.AIR) {
+            if (item != Items.AIR) {
                 return Collections.emptyList();
             } else {
                 return Lists.newArrayList(new ItemStack(item, 1, block.getMetaFromState(state)));
             }
+        } else {
+            NonNullList<ItemStack> drops = NonNullList.create();
+            block.getDrops(drops, world, pos, state, fortune);
+            float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, 1.0F, false, player);
+            return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
         }
-
-        List<ItemStack> drops = block.getDrops(world, pos, state, fortune);
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, 1.0F, false, player);
-
-        return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
 
     public static String getBlockName(World w, BlockPos pos) {
@@ -231,7 +232,7 @@ public class BlockUtil {
         if (state.getBlock().isAir(state, w, pos)) {
             return "";
         } else {
-            ItemStack stack = state.getBlock().getItem(w, pos, state);
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1, state.getBlock().damageDropped(state));
             if (!stack.isEmpty()) {
                 return stack.getDisplayName();
             } else {

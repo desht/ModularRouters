@@ -1,11 +1,12 @@
 package me.desht.modularrouters.block.tile;
 
-import cofh.api.energy.IEnergyContainerItem;
+import cofh.redstoneflux.api.IEnergyContainerItem;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.handler.BufferHandler;
+import me.desht.modularrouters.integration.redstoneflux.RFIntegration;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
@@ -262,7 +263,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     private boolean hasForgeEnergyCap(Capability<?> cap, ItemStack stack) {
         return cap == CapabilityEnergy.ENERGY &&
-                (stack.hasCapability(CapabilityEnergy.ENERGY, null) || stack.getItem() instanceof IEnergyContainerItem);
+                (stack.hasCapability(CapabilityEnergy.ENERGY, null)
+                        || RFIntegration.enabled && stack.getItem() instanceof IEnergyContainerItem);
     }
 
     private boolean hasTeslaCap(Capability<?> cap, ItemStack stack) {
@@ -288,7 +290,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             if (cap == CapabilityEnergy.ENERGY) {
                 if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
                     return CapabilityEnergy.ENERGY.cast(stack.getCapability(CapabilityEnergy.ENERGY, null));
-                } else if (stack.getItem() instanceof IEnergyContainerItem) {
+                } else if (RFIntegration.enabled && stack.getItem() instanceof IEnergyContainerItem) {
                     return CapabilityEnergy.ENERGY.cast(new RFEnergyWrapper(stack));
                 }
                 // shouldn't get here; if we do, caller is probably in trouble

@@ -40,7 +40,7 @@ repositories {
         url = "http://maven.tterrag.com/"
     }
     maven {
-        name = "guideapi"
+        name = "guideapi/hwyla"
         url = 'http://tehnut.info/maven/'
     }
     maven {
@@ -51,6 +51,10 @@ repositories {
         name = "JEI"
         url = "http://dvs1.progwml6.com/files/maven"
     }
+    maven {
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
 }
 
 dependencies {
@@ -58,6 +62,7 @@ dependencies {
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${config.top_version}"
     deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
     deobfCompile "mezz.jei:jei_1.12:${config.jei_version}"
+    deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
     compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
 }
 

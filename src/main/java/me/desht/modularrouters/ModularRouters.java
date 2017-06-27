@@ -37,7 +37,9 @@ public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
     public static final String MODVERSION = "@VERSION@";
-    public static final String DEPENDENICES = "after:Waila;before:guideapi;after:theoneprobe;required-after:forge@[14.21.0.2321,);";
+    public static final String DEPENDENICES =
+            "after:Waila;before:guideapi@[1.12-2.1.3-55,);after:theoneprobe;"
+                    + "required-after:forge@[14.21.0.2368,);";
 
     public static Logger logger;
     public static SimpleNetworkWrapper network;
@@ -82,9 +84,7 @@ public class ModularRouters {
         MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
         MinecraftForge.EVENT_BUS.register(CamouflageUpgrade.Interacted.class);
         MinecraftForge.EVENT_BUS.register(BlockItemRouter.ExplosionHandler.class);
-        IntegrationHandler.registerWaila();
-        IntegrationHandler.registerTOP();
-        IntegrationHandler.registerTesla();
+        IntegrationHandler.registerAll();
     }
 
     @Mod.EventHandler

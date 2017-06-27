@@ -1,5 +1,6 @@
 package me.desht.modularrouters.integration;
 
+import me.desht.modularrouters.integration.redstoneflux.RFIntegration;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.integration.top.TOPCompatibility;
 import me.desht.modularrouters.integration.waila.WailaIntegration;
@@ -9,6 +10,13 @@ import net.minecraftforge.fml.common.Loader;
 
 public class IntegrationHandler {
     public static Fluid fluidXpJuice = null;
+
+    public static void registerAll() {
+        IntegrationHandler.registerWaila();
+        IntegrationHandler.registerTOP();
+        IntegrationHandler.registerTesla();
+        IntegrationHandler.registerRedstoneFlux();
+    }
 
     public static void registerTOP() {
         if (Loader.isModLoaded("theoneprobe")) {
@@ -25,6 +33,12 @@ public class IntegrationHandler {
     public static void registerTesla() {
         if (Loader.isModLoaded("tesla")) {
             TeslaIntegration.setup();
+        }
+    }
+
+    public static void registerRedstoneFlux() {
+        if (Loader.isModLoaded("redstoneflux")) {
+            RFIntegration.setup();
         }
     }
 
