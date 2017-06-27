@@ -45,9 +45,9 @@ public class BlockTemplateFrame extends BlockBase {
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(world, pos);
         if (te != null) {
-            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, te.getCamouflage());
+            state = ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, te.getCamouflage());
         }
-        return state;
+        return super.getExtendedState(state, world, pos);
     }
 
     @Override

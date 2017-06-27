@@ -98,9 +98,9 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         if (router != null) {
-            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, router.getCamouflage());
+            state = ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, router.getCamouflage());
         }
-        return state;
+        return super.getExtendedState(state, world, pos);
     }
 
     @Override
