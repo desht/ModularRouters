@@ -25,12 +25,13 @@ import java.awt.*;
 public class CompiledSenderModule1 extends CompiledModule {
     private static final Color particleColor = Color.ORANGE;
 
-    private int range;
+    protected final int range, rangeSquared;
 
     public CompiledSenderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        range = ((IRangedModule) getModule()).getCurrentRange(stack);
+        range = getSenderRange(stack);
+        rangeSquared = range * range;
     }
 
     @Override
@@ -94,6 +95,11 @@ public class CompiledSenderModule1 extends CompiledModule {
             pos.move(getFacing());
         }
         return null;
+    }
+
+    protected int getSenderRange(ItemStack stack) {
+        return getModule() instanceof IRangedModule ?
+                ((IRangedModule) getModule()).getCurrentRange(stack) : 0;
     }
 
     private boolean isPassable(World w, BlockPos pos, EnumFacing face) {

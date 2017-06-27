@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
@@ -11,12 +10,8 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.items.IItemHandler;
 
 public class CompiledSenderModule2 extends CompiledSenderModule1 {
-    private final int range;
-
     public CompiledSenderModule2(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
-
-        range = ((IRangedModule) getModule()).getCurrentRange(stack);
     }
 
     @Override
@@ -43,7 +38,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     private boolean validate(TileEntityItemRouter router, ModuleTarget target) {
         return !(isRangeLimited() &&
                 (router.getWorld().provider.getDimension() != target.dimId
-                || router.getPos().distanceSq(target.pos) > range));
+                || router.getPos().distanceSq(target.pos) > rangeSquared));
 
     }
 
