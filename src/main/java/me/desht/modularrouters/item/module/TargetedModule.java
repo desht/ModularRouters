@@ -192,7 +192,7 @@ public abstract class TargetedModule extends Module {
             return false;
         }
 
-        TargetValidation res = validateTarget(null, src, target, true);
+        TargetValidation res = validateTarget(stack, src, target, true);
         Vector3 orig = Vector3.fromEntityCenter(player);
         Vector3 end = Vector3.fromBlockPos(target.pos).add(0.5);
         if (src.dimId == target.dimId) {
@@ -234,9 +234,9 @@ public abstract class TargetedModule extends Module {
     }
 
     private int maxDistanceSq(ItemStack stack) {
-        Module m = ItemModule.getModule(stack);
-        if (m instanceof IRangedModule) {
-            int r =  ((IRangedModule) m).getCurrentRange(stack);
+        Module module = ItemModule.getModule(stack);
+        if (module instanceof IRangedModule) {
+            int r =  ((IRangedModule) module).getCurrentRange(stack);
             return r * r;
         }
         return 0;
