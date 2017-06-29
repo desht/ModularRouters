@@ -26,7 +26,7 @@ public class ExtruderModule2 extends Module implements IRangedModule {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
 
         list.add(TextFormatting.YELLOW + I18n.format("itemText.extruder2.template"));

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class PlayerModule extends Module {
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, itemstack);
         list.add(TextFormatting.YELLOW + I18n.format("itemText.security.owner", cpm.getPlayerName()));

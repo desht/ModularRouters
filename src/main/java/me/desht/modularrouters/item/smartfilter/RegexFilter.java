@@ -54,7 +54,7 @@ public class RegexFilter extends SmartFilter {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
         NBTTagCompound compound = itemstack.getTagCompound();
         if (compound != null) {

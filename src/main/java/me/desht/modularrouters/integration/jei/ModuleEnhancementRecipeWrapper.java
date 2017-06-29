@@ -32,8 +32,8 @@ public class ModuleEnhancementRecipeWrapper
     ModuleEnhancementRecipeWrapper(IJeiHelpers helpers, ModuleEnhancementRecipe recipe) {
         this.helpers = helpers;
         this.recipe = recipe;
-        this.name = I18n.format("jei.enhancement." + recipe.getRecipeId() + ".name");
-        this.description = MiscUtil.splitLong("jei.enhancement." + recipe.getRecipeId() + ".description", 40);
+        this.name = I18n.format("jei.augment." + recipe.getRecipeId() + ".name");
+        this.description = MiscUtil.splitLong("jei.augment." + recipe.getRecipeId() + ".description", 40);
     }
 
     @Override

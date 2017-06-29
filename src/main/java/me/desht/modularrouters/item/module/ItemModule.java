@@ -3,7 +3,9 @@ package me.desht.modularrouters.item.module;
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemBase;
+import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -31,7 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 @Mod.EventBusSubscriber
-public class ItemModule extends ItemBase {
+public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {
 
     // add new types at the end!
     public enum ModuleType {
@@ -56,35 +58,26 @@ public class ItemModule extends ItemBase {
             return stack.getItem() instanceof ItemModule ? values()[stack.getItemDamage()] : null;
         }
     }
-    public static final int SUBTYPES = ModuleType.values().length;
-    private static final Module[] modules = new Module[SUBTYPES];
-
-    static {
-        registerSubItem(ModuleType.BREAKER, new BreakerModule());
-        registerSubItem(ModuleType.DROPPER, new DropperModule());
-        registerSubItem(ModuleType.PLACER, new PlacerModule());
-        registerSubItem(ModuleType.PULLER, new PullerModule());
-        registerSubItem(ModuleType.SENDER1, new SenderModule1());
-        registerSubItem(ModuleType.SENDER2, new SenderModule2());
-        registerSubItem(ModuleType.SENDER3, new SenderModule3());
-        registerSubItem(ModuleType.VACUUM, new VacuumModule());
-        registerSubItem(ModuleType.VOID, new VoidModule());
-        registerSubItem(ModuleType.DETECTOR, new DetectorModule());
-        registerSubItem(ModuleType.FLINGER, new FlingerModule());
-        registerSubItem(ModuleType.PLAYER, new PlayerModule());
-        registerSubItem(ModuleType.EXTRUDER, new ExtruderModule());
-        registerSubItem(ModuleType.FLUID, new FluidModule());
-        registerSubItem(ModuleType.PULLER2, new PullerModule2());
-        registerSubItem(ModuleType.EXTRUDER2, new ExtruderModule2());
-    }
-
-    private static void registerSubItem(ModuleType type, Module handler) {
-        modules[type.ordinal()] = handler;
-    }
 
     public ItemModule() {
-        super("module");
-        setHasSubtypes(true);
+        super("module", ModuleType.class);
+
+        register(ModuleType.BREAKER, new BreakerModule());
+        register(ModuleType.DROPPER, new DropperModule());
+        register(ModuleType.PLACER, new PlacerModule());
+        register(ModuleType.PULLER, new PullerModule());
+        register(ModuleType.SENDER1, new SenderModule1());
+        register(ModuleType.SENDER2, new SenderModule2());
+        register(ModuleType.SENDER3, new SenderModule3());
+        register(ModuleType.VACUUM, new VacuumModule());
+        register(ModuleType.VOID, new VoidModule());
+        register(ModuleType.DETECTOR, new DetectorModule());
+        register(ModuleType.FLINGER, new FlingerModule());
+        register(ModuleType.PLAYER, new PlayerModule());
+        register(ModuleType.EXTRUDER, new ExtruderModule());
+        register(ModuleType.FLUID, new FluidModule());
+        register(ModuleType.PULLER2, new PullerModule2());
+        register(ModuleType.EXTRUDER2, new ExtruderModule2());
     }
 
     @SubscribeEvent
@@ -103,45 +96,15 @@ public class ItemModule extends ItemBase {
         }
     }
 
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> stacks) {
-        if (isInCreativeTab(tab)) {
-            for (int i = 0; i < SUBTYPES; i++) {
-                stacks.add(new ItemStack(this, 1, i));
-            }
-        }
-    }
-
-    @Nonnull
-    @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return "item." + getSubTypeName(stack.getItemDamage());
-    }
-
-    @Override
-    public int getSubTypes() {
-        return SUBTYPES;
-    }
-
-    @Override
-    public String getSubTypeName(int meta) {
-        return ItemModule.ModuleType.values()[meta].name().toLowerCase() + "_module";
-    }
-
     public static Module getModule(ItemStack stack) {
-        if (!(stack.getItem() instanceof ItemModule)) {
+        if (!(stack.getItem() instanceof ItemModule) || stack.getMetadata() >= ModuleType.values().length) {
             return null;
         }
-        return stack.getItemDamage() < modules.length ? modules[stack.getItemDamage()] : null;
+        return getModule(ModuleType.values()[stack.getMetadata()]);
     }
 
     public static Module getModule(ModuleType type) {
-        return modules[type.ordinal()];
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1; // return any value greater than zero
+        return (Module) RegistrarMR.MODULE.getHandler(type);
     }
 
     @Override
@@ -183,71 +146,10 @@ public class ItemModule extends ItemBase {
         if (GuiScreen.isCtrlKeyDown()) {
             module.addUsageInformation(itemstack, player, list, advanced);
         } else if (ConfigHandler.misc.alwaysShowSettings || GuiScreen.isShiftKeyDown()) {
-            addSettingsInformation(itemstack, list, module);
             module.addExtraInformation(itemstack, player, list, advanced);
-            addEnhancementInformation(itemstack, list, module);
             list.add(I18n.format("itemText.misc.holdCtrl"));
         } else if (!ConfigHandler.misc.alwaysShowSettings){
             list.add(I18n.format("itemText.misc.holdShiftCtrl"));
         }
     }
-
-    private void addSettingsInformation(ItemStack itemstack, List<String> list, Module module) {
-        if (module.isDirectional()) {
-            Module.RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
-        }
-        NBTTagList items = ModuleHelper.getFilterItems(itemstack);
-        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (ModuleHelper.isBlacklist(itemstack) ? "2" : "1")) + ":");
-        if (items.tagCount() > 0) {
-            for (int i = 0; i < items.tagCount(); i++) {
-                ItemStack s = new ItemStack(items.getCompoundTagAt(i));
-                SmartFilter f = ItemSmartFilter.getFilter(s);
-                if (f == null) {
-                    list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
-                } else {
-                    int size = f.getSize(s);
-                    String suffix = size > 0 ? " [" + f.getSize(s) + "]" : "";
-                    list.add(" \u2022 " + TextFormatting.AQUA + TextFormatting.ITALIC + s.getDisplayName() + suffix);
-                }
-            }
-        } else {
-            String s = list.get(list.size() - 1);
-            list.set(list.size() - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
-        }
-        list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
-                Joiner.on(" / ").join(
-                        compose("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
-                        compose("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
-                        compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
-                        compose("TERMINATE", !ModuleHelper.terminates(itemstack))
-                ));
-
-        if (module instanceof IRangedModule) {
-            IRangedModule rm = (IRangedModule) module;
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo", rm.getCurrentRange(itemstack), rm.getHardMaxRange()));
-        }
-    }
-
-    private void addEnhancementInformation(ItemStack itemstack, List<String> list, Module module) {
-        if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
-            RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
-            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.redstone.label")
-                    + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
-        }
-        if (ModuleHelper.isRegulatorEnabled(itemstack)) {
-            int amount = ModuleHelper.getRegulatorAmount(itemstack);
-            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.regulator.label", amount));
-        }
-        int pickupDelay = ModuleHelper.getPickupDelay(itemstack);
-        if (pickupDelay > 0) {
-            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
-        }
-    }
-
-    private String compose(String key, boolean flag) {
-        String text = I18n.format("itemText.misc." + key);
-        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
-    }
-
 }

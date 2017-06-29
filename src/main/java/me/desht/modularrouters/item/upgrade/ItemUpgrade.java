@@ -1,21 +1,17 @@
 package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.item.ItemBase;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
+import me.desht.modularrouters.item.ItemSubTypes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class ItemUpgrade extends ItemBase {
+public class ItemUpgrade extends ItemSubTypes<ItemUpgrade.UpgradeType> {
 
     public enum UpgradeType {
         STACK,
@@ -32,63 +28,17 @@ public class ItemUpgrade extends ItemBase {
         }
     }
 
-    public static final int SUBTYPES = UpgradeType.values().length;
-    private static final Upgrade[] upgrades = new Upgrade[SUBTYPES];
-
-    static {
-        registerUpgrade(UpgradeType.STACK, new StackUpgrade());
-        registerUpgrade(UpgradeType.SPEED, new SpeedUpgrade());
-        registerUpgrade(UpgradeType.SECURITY, new SecurityUpgrade());
-        registerUpgrade(UpgradeType.CAMOUFLAGE, new CamouflageUpgrade());
-        registerUpgrade(UpgradeType.SYNC, new SyncUpgrade());
-        registerUpgrade(UpgradeType.FLUID, new FluidUpgrade());
-        registerUpgrade(UpgradeType.MUFFLER, new MufflerUpgrade());
-        registerUpgrade(UpgradeType.BLAST, new BlastUpgrade());
-    }
-
     public ItemUpgrade() {
-        super("upgrade");
-        setHasSubtypes(true);
-    }
+        super("upgrade", UpgradeType.class);
 
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        if (isInCreativeTab(tab)) {
-            for (int i = 0; i < SUBTYPES; i++) {
-                subItems.add(new ItemStack(this, 1, i));
-            }
-        }
-    }
-
-    @Override
-    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag flag) {
-        Upgrade upgrade = getUpgrade(itemstack);
-        if (upgrade != null) {
-            upgrade.addBasicInformation(itemstack, player, list, flag);
-            if (GuiScreen.isShiftKeyDown()) {
-                upgrade.addExtraInformation(itemstack, player, list, flag);
-            } else if (GuiScreen.isCtrlKeyDown()) {
-                upgrade.addUsageInformation(itemstack, player, list, flag);
-            } else {
-                list.add(I18n.format(upgrade.hasExtraInformation() ? "itemText.misc.holdShiftCtrl" : "itemText.misc.holdCtrl"));
-            }
-        }
-    }
-
-    @Nonnull
-    @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return "item." + getSubTypeName(stack.getItemDamage());
-    }
-
-    @Override
-    public int getSubTypes() {
-        return SUBTYPES;
-    }
-
-    @Override
-    public String getSubTypeName(int meta) {
-        return UpgradeType.values()[meta].name().toLowerCase() + "_upgrade";
+        register(UpgradeType.STACK, new StackUpgrade());
+        register(UpgradeType.SPEED, new SpeedUpgrade());
+        register(UpgradeType.SECURITY, new SecurityUpgrade());
+        register(UpgradeType.CAMOUFLAGE, new CamouflageUpgrade());
+        register(UpgradeType.SYNC, new SyncUpgrade());
+        register(UpgradeType.FLUID, new FluidUpgrade());
+        register(UpgradeType.MUFFLER, new MufflerUpgrade());
+        register(UpgradeType.BLAST, new BlastUpgrade());
     }
 
     @Override
@@ -103,10 +53,6 @@ public class ItemUpgrade extends ItemBase {
         return getUpgrade(stack).onItemUse(stack, player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 
-    private static void registerUpgrade(UpgradeType type, Upgrade handler) {
-        upgrades[type.ordinal()] = handler;
-    }
-
     public static ItemStack makeItemStack(UpgradeType type) {
         return makeItemStack(type, 1);
     }
@@ -116,11 +62,17 @@ public class ItemUpgrade extends ItemBase {
     }
 
     public static Upgrade getUpgrade(ItemStack stack) {
-        return stack.getItem() instanceof ItemUpgrade && stack.getItemDamage() < upgrades.length ? upgrades[stack.getItemDamage()] : null;
+        if (!(stack.getItem() instanceof ItemUpgrade)) {
+            return null;
+        }
+        if (stack.getMetadata() >= UpgradeType.values().length) {
+            return null;
+        }
+        return getUpgrade(UpgradeType.values()[stack.getMetadata()]);
     }
 
     public static Upgrade getUpgrade(UpgradeType type) {
-        return upgrades[type.ordinal()];
+        return (Upgrade) RegistrarMR.UPGRADE.getHandler(type);
     }
 
     public static boolean isType(ItemStack stack, UpgradeType type) {

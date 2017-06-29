@@ -1,5 +1,6 @@
 package me.desht.modularrouters.item.module;
 
+import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -8,19 +9,27 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
+import me.desht.modularrouters.item.ItemSubTypes;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.SmartFilter;
+import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -29,7 +38,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
-public abstract class Module {
+public abstract class Module extends ItemSubTypes.SubItemHandler {
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -107,9 +116,6 @@ public abstract class Module {
 
     public abstract CompiledModule compile(TileEntityItemRouter router, ItemStack stack);
 
-    /**
-     * Basic information for the module, which is always shown.
-     */
     @SideOnly(Side.CLIENT)
     public void addBasicInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
@@ -120,20 +126,68 @@ public abstract class Module {
         }
     }
 
-    /**
-     * Usage information for the module, shown when Ctrl is held.
-     */
     @SideOnly(Side.CLIENT)
-    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack));
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+        addSettingsInformation(itemstack, list);
+        addEnhancementInformation(itemstack, list);
     }
 
-    /**
-     * Extra information for the module, shown when Shift is held.
-     */
-    @SideOnly(Side.CLIENT)
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        // nothing by default
+    private void addSettingsInformation(ItemStack itemstack, List<String> list) {
+        if (isDirectional()) {
+            Module.RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
+        }
+        NBTTagList items = ModuleHelper.getFilterItems(itemstack);
+        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (ModuleHelper.isBlacklist(itemstack) ? "2" : "1")) + ":");
+        if (items.tagCount() > 0) {
+            for (int i = 0; i < items.tagCount(); i++) {
+                ItemStack s = new ItemStack(items.getCompoundTagAt(i));
+                SmartFilter f = ItemSmartFilter.getFilter(s);
+                if (f == null) {
+                    list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
+                } else {
+                    int size = f.getSize(s);
+                    String suffix = size > 0 ? " [" + f.getSize(s) + "]" : "";
+                    list.add(" \u2022 " + TextFormatting.AQUA + TextFormatting.ITALIC + s.getDisplayName() + suffix);
+                }
+            }
+        } else {
+            String s = list.get(list.size() - 1);
+            list.set(list.size() - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
+        }
+        list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
+                Joiner.on(" / ").join(
+                        compose("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
+                        compose("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
+                        compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
+                        compose("TERMINATE", !ModuleHelper.terminates(itemstack))
+                ));
+
+        if (this instanceof IRangedModule) {
+            IRangedModule rm = (IRangedModule) this;
+            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo", rm.getCurrentRange(itemstack), rm.getHardMaxRange()));
+        }
+    }
+
+    private void addEnhancementInformation(ItemStack itemstack, List<String> list) {
+        if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
+            RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
+            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.redstone.label")
+                    + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
+        }
+        if (ModuleHelper.isRegulatorEnabled(itemstack)) {
+            int amount = ModuleHelper.getRegulatorAmount(itemstack);
+            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.regulator.label", amount));
+        }
+        int pickupDelay = ModuleHelper.getPickupDelay(itemstack);
+        if (pickupDelay > 0) {
+            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
+        }
+    }
+
+    private String compose(String key, boolean flag) {
+        String text = I18n.format("itemText.misc." + key);
+        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,

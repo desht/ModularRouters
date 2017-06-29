@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " Q ",
+    "CMC",
+    " Q "
+  ],
+  "key": {
+    "M": { "item": "#augmentcore" },
+    "T": { "item": "minecraft:comparator" },
+    "Q": { "type": "forge:ore_dict", "ore": "gemQuartz" }
+  },
+  "result": { "item": "modularrouters:augment", "data": 5 }
+}

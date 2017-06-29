@@ -10,5 +10,4 @@ public class StackUpgrade extends Upgrade {
         int itemsPerTick = router == null ? 1 : router.getItemsPerTick();
         return new Object[] { itemsPerTick, 6 };
     }
-
 }

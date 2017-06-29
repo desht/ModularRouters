@@ -1,6 +1,7 @@
 [
   { "name": "blankmodule", "ingredient": { "item": "modularrouters:blank_module" } },
   { "name": "blankupgrade", "ingredient": { "item": "modularrouters:blank_upgrade" } },
+  { "name": "augmentcore", "ingredient": { "item": "modularrouters:augment_core" } },
   { "name": "breaker", "ingredient": { "item": "modularrouters:module", "data": 0 } },
   { "name": "dropper", "ingredient": { "item": "modularrouters:module", "data": 1 } },
   { "name": "placer", "ingredient": { "item": "modularrouters:module", "data": 2 } },
@@ -10,5 +11,6 @@
   { "name": "sender3", "ingredient": { "item": "modularrouters:module", "data": 6 } },
   { "name": "extruder", "ingredient": { "item": "modularrouters:module", "data": 12 } },
   { "name": "puller2", "ingredient": { "item": "modularrouters:module", "data": 14 } },
-  { "name": "bulkfilter", "ingredient": { "item": "modularrouters:filter", "data": 0 } }
+  { "name": "bulkfilter", "ingredient": { "item": "modularrouters:filter", "data": 0 } },
+  { "name": "stackupgrade", "ingredient": { "item": "modularrouters:upgrade", "data": 0 } }
 ]

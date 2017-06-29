@@ -23,7 +23,7 @@ public class ExtruderModule extends Module implements IRangedModule {
     }
 
     @Override
-    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addUsageInformation(itemstack, player, list, advanced);
         Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
         if (ench.isEmpty()) {
@@ -32,7 +32,7 @@ public class ExtruderModule extends Module implements IRangedModule {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
         list.add(I18n.format("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
     }

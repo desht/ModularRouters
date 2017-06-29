@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " T ",
+    "RMR",
+    " T "
+  ],
+  "key": {
+    "M": { "item": "#augmentcore" },
+    "T": { "item": "minecraft:redstone_torch" },
+    "R": { "type": "forge:ore_dict", "ore": "dustRedstone" }
+  },
+  "result": { "item": "modularrouters:augment", "data": 4 }
+}

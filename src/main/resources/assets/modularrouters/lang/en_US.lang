@@ -35,6 +35,15 @@ item.bulkitem_filter.name=Bulk Item Filter
 item.mod_filter.name=Mod Filter
 item.regex_filter.name=Regex Filter
 item.inspection_filter.name=Inspection Filter
+item.augment_core.name=Augment Core
+item.pickup_delay_augment.name=Pickup Delay Augment
+item.fast_pickup_augment.name=Fast Pickup Augment
+item.range_up_augment.name=Range Up Augment
+item.range_down_augment.name=Range Down Augment
+item.redstone_augment.name=Redstone Augment
+item.regulator_augment.name=Regulator Augment
+item.stack_augment.name=Stack Augment
+item.xp_vacuum_augment.name=XP Vacuum Augment
 item.GuideBook.name=§l§nModular Routers
 
 # Blocks
@@ -228,8 +237,14 @@ itemText.usage.item.bulkitem_filter=High-capacity, high-performance filter for l
 itemText.usage.item.regex_filter=Filter items by matching their display names against one or more regular expressions.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.usage.item.mod_filter=Filter items by the mods they come from.\nInsert into a router module like any other item.\n• Right-click: view/configure.
 itemText.usage.item.inspection_filter=Filter items by inspecting various properties of the item.\nInsert into a router module like any other item.\n• Right-click: view/configure.
-itemText.deprecated.mod_sorter=§oDeprecated Module; use a Sender Module & Mod Filter instead.\n§oThis module can be crafted into a Mod Filter.
-itemText.deprecated.sorter=§oDeprecated Module; use a Sender Module & Bulk Item Filter instead.\n§oThis module can be crafted into a Bulk Item Filter.
+itemText.usage.item.fast_pickup_augment=Allow the Vacuum Module to ignore the normal pickup delays on dropped items
+itemText.usage.item.pickup_delay_augment=Increases the pickup delay time for dropped or flung items by 10 ticks per augment
+itemText.usage.item.redstone_augment=Allows a module to define its own specific redstone behaviour
+itemText.usage.item.regulator_augment=Allow precise control over how many items are kept in an inventory
+itemText.usage.item.range_up_augment=Increases range of module by 1 block per augment (up to hard maximum - see module tooltip)
+itemText.usage.item.range_down_augment=Reduces range of module by 1 block per augment
+itemText.usage.item.stack_augment=Allows the module to process multiple items per tick.\nThis overrides Stack Upgrades inserted in the router.
+itemText.usage.item.xp_vacuum_augment=Allows the Vacuum Module to collect XP orbs instead of items.\nXP is either converted into Bottles o' Enchanting in the router's buffer,\nor stored as liquid XP in a tank in the router (if liquid XP is available).
 
 # Player chat messages
 chatText.misc.inventoryMerged=Merged %d item(s) into the %s

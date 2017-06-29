@@ -90,10 +90,10 @@ public class ClientProxy extends CommonProxy {
         // this ensures camouflage properly mimics colourable blocks like grass blocks
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
             TileEntity te = MiscUtil.getTileEntitySafely(worldIn, pos);
-            if (te instanceof ICamouflageable) {
+            if (te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null) {
                 return Minecraft.getMinecraft().getBlockColors().colorMultiplier(((ICamouflageable) te).getCamouflage(), te.getWorld(), pos, tintIndex);
             } else {
-                return -1;
+                return 0xffffff;
             }
         }, RegistrarMR.ITEM_ROUTER, RegistrarMR.TEMPLATE_FRAME);
     }

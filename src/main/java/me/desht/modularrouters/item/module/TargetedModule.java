@@ -68,13 +68,13 @@ public abstract class TargetedModule extends Module {
         }
 
     @Override
-    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addUsageInformation(itemstack, player, list, advanced);
         MiscUtil.appendMultiline(list, "itemText.targetingHint");
     }
 
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
 
         ModuleTarget target = getTarget(itemstack);

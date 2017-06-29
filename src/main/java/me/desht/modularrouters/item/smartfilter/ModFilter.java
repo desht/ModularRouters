@@ -65,7 +65,7 @@ public class ModFilter extends SmartFilter {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack stack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(stack, player, list, advanced);
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {

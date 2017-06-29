@@ -3,6 +3,8 @@ package me.desht.modularrouters.item.smartfilter;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemBase;
+import me.desht.modularrouters.item.ItemSubTypes;
+import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -18,12 +20,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.http.cookie.SM;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 @Mod.EventBusSubscriber
-public class ItemSmartFilter extends ItemBase {
+public class ItemSmartFilter extends ItemSubTypes<ItemSmartFilter.FilterType> {
     public enum FilterType {
         BULKITEM,
         MOD,
@@ -35,29 +38,19 @@ public class ItemSmartFilter extends ItemBase {
         }
     }
 
-    public static final int SUBTYPES = FilterType.values().length;
-    private static final SmartFilter[] filters = new SmartFilter[SUBTYPES];
-
-    static {
-        registerSubItem(FilterType.BULKITEM, new BulkItemFilter());
-        registerSubItem(FilterType.MOD, new ModFilter());
-        registerSubItem(FilterType.REGEX, new RegexFilter());
-        registerSubItem(FilterType.INSPECTION, new InspectionFilter());
-    }
-
-    private static void registerSubItem(FilterType type, SmartFilter handler) {
-        filters[type.ordinal()] = handler;
-    }
-
     public ItemSmartFilter() {
-        super("filter");
-        setHasSubtypes(true);
+        super("filter", FilterType.class);
+
+        register(FilterType.BULKITEM, new BulkItemFilter());
+        register(FilterType.MOD, new ModFilter());
+        register(FilterType.REGEX, new RegexFilter());
+        register(FilterType.INSPECTION, new InspectionFilter());
     }
 
     @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
         if (event.getSide() == Side.CLIENT) {
-            SmartFilter filter = getFilter(event.getItemStack());
+            SubItemHandler filter = ItemSmartFilter.getFilter(event.getItemStack());
             if (filter == null) {
                 return;
             }
@@ -71,26 +64,6 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> stacks) {
-        if (isInCreativeTab(tab)) {
-            for (int i = 0; i < SUBTYPES; i++) {
-                stacks.add(new ItemStack(this, 1, i));
-            }
-        }
-    }
-
-    @Nonnull
-    @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return "item." + getSubTypeName(stack.getItemDamage());
-    }
-
-    @Override
-    public int getSubTypes() {
-        return SUBTYPES;
-    }
-
-    @Override
     public String getSubTypeName(int meta) {
         return ItemSmartFilter.FilterType.values()[meta].name().toLowerCase() + "_filter";
     }
@@ -99,20 +72,18 @@ public class ItemSmartFilter extends ItemBase {
         if (!(stack.getItem() instanceof ItemSmartFilter)) {
             return null;
         }
-        return stack.getItemDamage() < filters.length ? filters[stack.getItemDamage()] : null;
+        if (stack.getMetadata() >= FilterType.values().length) {
+            return null;
+        }
+        return getFilter(FilterType.values()[stack.getMetadata()]);
     }
 
     public static SmartFilter getFilter(FilterType type) {
-        return filters[type.ordinal()];
+        return (SmartFilter) RegistrarMR.FILTER.getHandler(type);
     }
 
     public static boolean isType(ItemStack stack, FilterType type) {
         return stack.getItem() instanceof ItemSmartFilter && stack.getItemDamage() == type.ordinal();
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1; // return any value greater than zero
     }
 
     public static ItemStack makeItemStack(FilterType type) {
@@ -138,25 +109,6 @@ public class ItemSmartFilter extends ItemBase {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos,
                                       EnumHand hand, EnumFacing face, float x, float y, float z) {
         ItemStack stack = player.getHeldItem(hand);
-        return getFilter(stack).onItemUse(stack, player, world, pos, hand, face, x, y, z);
+        return getHandler(stack).onItemUse(stack, player, world, pos, hand, face, x, y, z);
     }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        SmartFilter filter = getFilter(itemstack);
-        if (filter == null) {
-            return;
-        }
-
-        filter.addBasicInformation(itemstack, player, list, advanced);
-        if (GuiScreen.isShiftKeyDown()) {
-            filter.addExtraInformation(itemstack, player, list, advanced);
-        } else if (GuiScreen.isCtrlKeyDown()) {
-            filter.addUsageInformation(itemstack, player, list, advanced);
-        } else {
-            list.add(I18n.format("itemText.misc.holdShiftCtrl"));
-        }
-    }
-
 }

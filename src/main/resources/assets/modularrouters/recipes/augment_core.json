@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#blankmodule" },
+    { "item" : "#blankupgrade" }
+  ],
+  "result": { "item": "modularrouters:augment_core", "count" : 4 }
+}

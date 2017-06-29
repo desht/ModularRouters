@@ -5,6 +5,8 @@ import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.BlockTemplateFrame;
 import me.desht.modularrouters.client.TemplateFrameModel;
 import me.desht.modularrouters.item.ItemBase;
+import me.desht.modularrouters.item.ItemSubTypes;
+import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -51,12 +53,16 @@ public class RegistrarMR {
     public static final ItemBase BLANK_UPGRADE = null;
     @GameRegistry.ObjectHolder("override_card")
     public static final ItemBase OVERRIDE_CARD = null;
+    @GameRegistry.ObjectHolder("augment_core")
+    public static final ItemBase AUGMENT_CORE = null;
     @GameRegistry.ObjectHolder("module")
     public static final ItemModule MODULE = null;
     @GameRegistry.ObjectHolder("upgrade")
     public static final ItemUpgrade UPGRADE = null;
     @GameRegistry.ObjectHolder("filter")
     public static final ItemSmartFilter FILTER = null;
+    @GameRegistry.ObjectHolder("augment")
+    public static final ItemAugment AUGMENT = null;
 
     // Sounds
     @GameRegistry.ObjectHolder("error")
@@ -81,10 +87,12 @@ public class RegistrarMR {
         // Items
         event.getRegistry().register(new ItemBase("blank_module"));
         event.getRegistry().register(new ItemBase("blank_upgrade"));
+        event.getRegistry().register(new ItemBase("augment_core"));
         event.getRegistry().register(new ItemBase("override_card"));
         event.getRegistry().register(new ItemModule());
         event.getRegistry().register(new ItemUpgrade());
         event.getRegistry().register(new ItemSmartFilter());
+        event.getRegistry().register(new ItemAugment());
     }
 
     @SubscribeEvent
@@ -110,9 +118,10 @@ public class RegistrarMR {
         ModelLoader.setCustomStateMapper(RegistrarMR.TEMPLATE_FRAME, ignoreState);
 
         registerSimpleModels(ITEM_ROUTER_ITEM, TEMPLATE_FRAME_ITEM);
-        registerSimpleModels(BLANK_MODULE, BLANK_UPGRADE, OVERRIDE_CARD);
+        registerSimpleModels(BLANK_MODULE, BLANK_UPGRADE, AUGMENT_CORE, OVERRIDE_CARD);
 
         registerSubItemModels(MODULE, UPGRADE, FILTER);
+        registerSubItemModels(AUGMENT);
     }
 
     private static void registerSimpleModels(Item... items) {
@@ -123,6 +132,14 @@ public class RegistrarMR {
 
     private static void registerSubItemModels(ItemBase... items) {
         for (ItemBase item : items) {
+            for (int i = 0; i < item.getSubTypes(); i++) {
+                ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(RL(item.getSubTypeName(i)), "inventory"));
+            }
+        }
+    }
+
+    private static void registerSubItemModels(ItemSubTypes... items) {
+        for (ItemSubTypes item : items) {
             for (int i = 0; i < item.getSubTypes(); i++) {
                 ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(RL(item.getSubTypeName(i)), "inventory"));
             }

@@ -20,7 +20,7 @@ public class VacuumModule extends Module implements IRangedModule {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
         if (ModuleHelper.hasFastPickup(itemstack)) {
             list.add(TextFormatting.GREEN + I18n.format("itemText.misc.fastPickup"));

@@ -17,7 +17,7 @@ public class FluidUpgrade extends Upgrade {
     }
 
     @Override
-    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addUsageInformation(itemstack, player, list, advanced);
         TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
         if (router != null) {

@@ -5,6 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.ModuleFilterSlot;
 import me.desht.modularrouters.gui.module.GuiModule;
+import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -30,7 +31,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.List;
 
-public abstract class SmartFilter {
+public abstract class SmartFilter extends ItemSubTypes.SubItemHandler {
     /**
      * Basic information for the module, which is always shown.
      */
@@ -48,7 +49,7 @@ public abstract class SmartFilter {
      * Usage information for the module, shown when Ctrl is held.
      */
     @SideOnly(Side.CLIENT)
-    protected void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack));
     }
 
@@ -56,7 +57,7 @@ public abstract class SmartFilter {
      * Extra information for the module, shown when Shift is held.
      */
     @SideOnly(Side.CLIENT)
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         // nothing by default
     }
 
@@ -102,12 +103,4 @@ public abstract class SmartFilter {
      * @return the number of items
      */
     public abstract int getSize(ItemStack filterStack);
-
-    ShapelessOreRecipe makeShapelessOreRecipe(ItemStack result, Object... recipe) {
-        return new ShapelessOreRecipe(new ResourceLocation(ModularRouters.MODID, "filter_recipe"), result, recipe);
-    }
-
-    ShapedOreRecipe makeShapedOreRecipe(ItemStack result, Object... recipe) {
-        return new ShapedOreRecipe(new ResourceLocation(ModularRouters.MODID, "filter_recipe"), result, recipe);
-    }
 }

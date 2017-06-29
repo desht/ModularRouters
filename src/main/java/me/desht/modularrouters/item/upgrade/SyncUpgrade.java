@@ -23,11 +23,6 @@ public class SyncUpgrade extends Upgrade {
     private static final String NBT_TUNING = "Tuning";
 
     @Override
-    boolean hasExtraInformation() {
-        return true;
-    }
-
-    @Override
     public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         list.add(I18n.format("itemText.sync.tuning", getTunedValue(itemstack)));
     }

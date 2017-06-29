@@ -33,11 +33,6 @@ public class CamouflageUpgrade extends Upgrade {
     }
 
     @Override
-    boolean hasExtraInformation() {
-        return true;
-    }
-
-    @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
         router.setCamouflage(getCamoState(stack));

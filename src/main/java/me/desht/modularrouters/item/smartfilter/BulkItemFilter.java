@@ -59,7 +59,7 @@ public class BulkItemFilter extends SmartFilter {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
+    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
         list.add(I18n.format("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
     }

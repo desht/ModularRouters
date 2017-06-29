@@ -39,10 +39,10 @@ public class SecurityUpgrade extends Upgrade {
         }
     }
 
-    @Override
-    boolean hasExtraInformation() {
-        return true;
-    }
+//    @Override
+//    boolean hasExtraInformation() {
+//        return true;
+//    }
 
     @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {

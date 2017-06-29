@@ -47,15 +47,15 @@ public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     }
 
     /**
-     * Check that the module item is OK for an enhancement to be applied.
+     * Check that the module item is OK for an augment to be applied.
      *
      * @param stack the item to check
-     * @return true if the item is OK for enhancement
+     * @return true if the item is OK for augment
      */
     protected abstract boolean validateModule(ItemStack stack);
 
     /**
-     * Do what's necessary to the item to enable the enhancement, generally modifying the item's NBT in some way.
+     * Do what's necessary to the item to enable the augment, generally modifying the item's NBT in some way.
      * The item is guaranteed to have some NBT when this is called, i.e. getTagCompound() will not return null.
      *
      * @param stack the item to modify
