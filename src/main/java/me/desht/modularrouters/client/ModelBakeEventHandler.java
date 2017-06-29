@@ -21,17 +21,17 @@ public class ModelBakeEventHandler {
             Object object = event.getModelRegistry().getObject(entry.getValue());
             if (object != null) {
                 IBakedModel existing = (IBakedModel) object;
-                RouterModel customModel = new RouterModel(existing);
+                CamouflagingModel.RouterModel customModel = new CamouflagingModel.RouterModel(existing);
                 event.getModelRegistry().putObject(entry.getValue(), customModel);
             }
         }
 
         // template frame
-        Object object = event.getModelRegistry().getObject(TemplateFrameModel.variantTag);
+        Object object = event.getModelRegistry().getObject(CamouflagingModel.TemplateFrameModel.variantTag);
         if (object != null) {
             IBakedModel existingModel = (IBakedModel) object;
-            TemplateFrameModel customModel = new TemplateFrameModel(existingModel);
-            event.getModelRegistry().putObject(TemplateFrameModel.variantTag, customModel);
+            CamouflagingModel.TemplateFrameModel customModel = new CamouflagingModel.TemplateFrameModel(existingModel);
+            event.getModelRegistry().putObject(CamouflagingModel.TemplateFrameModel.variantTag, customModel);
         }
     }
 }

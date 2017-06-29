@@ -4,8 +4,8 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.CamouflagingModel;
 import me.desht.modularrouters.client.ModelBakeEventHandler;
-import me.desht.modularrouters.client.TemplateFrameModel;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.gui.GuiItemRouter;
@@ -14,17 +14,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import scala.collection.parallel.ParIterableLike;
-
-import javax.annotation.Nullable;
 
 public class ClientProxy extends CommonProxy {
     @Override
@@ -37,7 +31,7 @@ public class ClientProxy extends CommonProxy {
         StateMapperBase ignoreState = new StateMapperBase() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-                return TemplateFrameModel.variantTag;
+                return CamouflagingModel.TemplateFrameModel.variantTag;
             }
         };
         ModelLoader.setCustomStateMapper(ModBlocks.templateFrame, ignoreState);
