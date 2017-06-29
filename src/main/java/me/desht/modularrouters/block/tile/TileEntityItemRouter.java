@@ -24,7 +24,6 @@ import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -53,7 +52,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TileEntityItemRouter extends TileEntity implements ITickable, IInventory, ICamouflageable {
+public class TileEntityItemRouter extends TileEntity implements ITickable, ICamouflageable {
     public static final int N_MODULE_SLOTS = 9;
     public static final int N_UPGRADE_SLOTS = 5;
 
@@ -123,16 +122,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
 
     public TileEntityItemRouter() {
         super();
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return false;
     }
 
     @Override
@@ -863,85 +852,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         if (getUpgradeCount(UpgradeType.MUFFLER) == 0) {
             getWorld().playSound(player, pos, sound, category, volume, pitch);
         }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Much as I hate to implement IInventory, it's necessary for backwards compatibility...
-    // At least it's just a bunch of one-liners
-
-    @Override
-    public int getSizeInventory() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getStackInSlot(0).isEmpty();
-    }
-
-    @Nullable
-    @Override
-    public ItemStack getStackInSlot(int index) {
-        return bufferHandler.getStackInSlot(index);
-    }
-
-    @Nullable
-    @Override
-    public ItemStack decrStackSize(int index, int count) {
-        return bufferHandler.extractItem(index, count, false);
-    }
-
-    @Nullable
-    @Override
-    public ItemStack removeStackFromSlot(int index) {
-        return bufferHandler.extractItem(index, 64, false);
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-        bufferHandler.setStackInSlot(index, stack);
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
-        return true;
-    }
-
-    @Override
-    public void openInventory(EntityPlayer player) {
-    }
-
-    @Override
-    public void closeInventory(EntityPlayer player) {
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public int getField(int id) {
-        return 0;
-    }
-
-    @Override
-    public void setField(int id, int value) {
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 0;
-    }
-
-    @Override
-    public void clear() {
-        bufferHandler.setStackInSlot(0, null);
     }
 
 }

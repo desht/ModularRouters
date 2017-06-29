@@ -1,8 +1,6 @@
 package me.desht.modularrouters.util;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -13,8 +11,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.VanillaDoubleChestItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -78,15 +74,6 @@ public class InventoryUtils {
 
         if (ret == null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
             ret = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-
-        // backwards compatibility with mods which aren't using capabilities yet
-        if (ret == null) {
-            if (side != null && te instanceof ISidedInventory) {
-                ret = new SidedInvWrapper((ISidedInventory) te, side);
-            } else if (te instanceof IInventory) {
-                ret = new InvWrapper((IInventory) te);
-            }
-        }
 
         return ret;
     }
