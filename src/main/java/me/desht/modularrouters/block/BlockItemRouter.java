@@ -121,6 +121,11 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return true;
+    }
+
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         IBlockState camo = getCamoState(source, pos);
         return camo != null ? camo.getBoundingBox(source, pos) : super.getBoundingBox(state, source, pos);

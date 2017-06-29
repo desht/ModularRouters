@@ -6,8 +6,8 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.CamouflagingModel;
 import me.desht.modularrouters.client.ModelBakeEventHandler;
-import me.desht.modularrouters.client.TemplateFrameModel;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.config.Config;
@@ -36,7 +36,7 @@ public class ClientProxy extends CommonProxy {
         StateMapperBase ignoreState = new StateMapperBase() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
-                return TemplateFrameModel.variantTag;
+                return CamouflagingModel.TemplateFrameModel.variantTag;
             }
         };
         ModelLoader.setCustomStateMapper(ModBlocks.templateFrame, ignoreState);
