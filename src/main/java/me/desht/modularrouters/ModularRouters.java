@@ -39,7 +39,7 @@ public class ModularRouters {
     public static final String MODVERSION = "@VERSION@";
     public static final String DEPENDENICES =
             "after:Waila;before:guideapi@[1.12-2.1.3-55,);after:theoneprobe;"
-                    + "required-after:forge@[14.21.0.2375,);";
+                    + "required-after:forge@[14.21.1.2387,);";
 
     public static Logger logger;
     public static SimpleNetworkWrapper network;
