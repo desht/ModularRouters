@@ -4,5 +4,5 @@
     { "item" : "#augmentcore" },
     { "type" : "forge:ore_dict", "ore" : "slimeball" }
   ],
-  "result": { "item": "modularrouters:augment", "data": 0 }
+  "result": { "item": "modularrouters:augment", "data": 1 }
 }

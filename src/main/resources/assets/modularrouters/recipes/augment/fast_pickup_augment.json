@@ -4,5 +4,5 @@
     { "item" : "#augmentcore" },
     { "item" : "minecraft:fishing_rod"}
   ],
-  "result": { "item": "modularrouters:augment", "data": 1 }
+  "result": { "item": "modularrouters:augment", "data": 0 }
 }

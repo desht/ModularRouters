@@ -2,28 +2,20 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ItemSubTypes;
-import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.InventoryUtils;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.http.cookie.SM;
-
-import javax.annotation.Nonnull;
-import java.util.List;
 
 @Mod.EventBusSubscriber
 public class ItemSmartFilter extends ItemSubTypes<ItemSmartFilter.FilterType> {

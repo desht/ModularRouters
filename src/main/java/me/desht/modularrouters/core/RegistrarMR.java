@@ -40,12 +40,6 @@ public class RegistrarMR {
     @GameRegistry.ObjectHolder("template_frame")
     public static final BlockTemplateFrame TEMPLATE_FRAME = null;
 
-    // ItemBlocks
-    @GameRegistry.ObjectHolder("item_router")
-    private static final ItemBlock ITEM_ROUTER_ITEM = null;
-    @GameRegistry.ObjectHolder("template_frame")
-    private static final ItemBlock TEMPLATE_FRAME_ITEM = null;
-
     // Items
     @GameRegistry.ObjectHolder("blank_module")
     public static final ItemBase BLANK_MODULE = null;
@@ -85,21 +79,25 @@ public class RegistrarMR {
         event.getRegistry().register(new ItemBlock(TEMPLATE_FRAME).setRegistryName(TEMPLATE_FRAME.getRegistryName()));
 
         // Items
-        event.getRegistry().register(new ItemBase("blank_module"));
-        event.getRegistry().register(new ItemBase("blank_upgrade"));
-        event.getRegistry().register(new ItemBase("augment_core"));
-        event.getRegistry().register(new ItemBase("override_card"));
-        event.getRegistry().register(new ItemModule());
-        event.getRegistry().register(new ItemUpgrade());
-        event.getRegistry().register(new ItemSmartFilter());
-        event.getRegistry().register(new ItemAugment());
+        event.getRegistry().registerAll(
+                new ItemBase("blank_module"),
+                new ItemBase("blank_upgrade"),
+                new ItemBase("augment_core"),
+                new ItemBase("override_card"),
+                new ItemModule(),
+                new ItemUpgrade(),
+                new ItemSmartFilter(),
+                new ItemAugment()
+        );
     }
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-        event.getRegistry().register(new SoundEvent(RL("error")).setRegistryName("error"));
-        event.getRegistry().register(new SoundEvent(RL("success")).setRegistryName("success"));
-        event.getRegistry().register(new SoundEvent(RL("thud")).setRegistryName("thud"));
+        event.getRegistry().registerAll(
+                new SoundEvent(RL("error")).setRegistryName("error"),
+                new SoundEvent(RL("success")).setRegistryName("success"),
+                new SoundEvent(RL("thud")).setRegistryName("thud")
+        );
     }
 
     @SideOnly(Side.CLIENT)
@@ -117,24 +115,14 @@ public class RegistrarMR {
         };
         ModelLoader.setCustomStateMapper(RegistrarMR.TEMPLATE_FRAME, ignoreState);
 
-        registerSimpleModels(ITEM_ROUTER_ITEM, TEMPLATE_FRAME_ITEM);
+        registerSimpleModels(Item.getItemFromBlock(ITEM_ROUTER), Item.getItemFromBlock(TEMPLATE_FRAME));
         registerSimpleModels(BLANK_MODULE, BLANK_UPGRADE, AUGMENT_CORE, OVERRIDE_CARD);
-
-        registerSubItemModels(MODULE, UPGRADE, FILTER);
-        registerSubItemModels(AUGMENT);
+        registerSubItemModels(MODULE, UPGRADE, FILTER, AUGMENT);
     }
 
     private static void registerSimpleModels(Item... items) {
         for (Item item : items) {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
-        }
-    }
-
-    private static void registerSubItemModels(ItemBase... items) {
-        for (ItemBase item : items) {
-            for (int i = 0; i < item.getSubTypes(); i++) {
-                ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(RL(item.getSubTypeName(i)), "inventory"));
-            }
         }
     }
 

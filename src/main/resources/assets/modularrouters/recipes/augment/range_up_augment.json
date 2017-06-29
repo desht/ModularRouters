@@ -7,7 +7,7 @@
   ],
   "key": {
     "M": { "item": "#augmentcore" },
-    "S": { "type": "forge:ore_dict", "ore": "stick" },
+    "S": { "type": "forge:ore_dict", "ore": "stickWood" },
     "Q": { "type": "forge:ore_dict", "ore": "gemQuartz" }
   },
   "result": { "item": "modularrouters:augment", "data": 2 }
