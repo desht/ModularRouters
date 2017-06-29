@@ -5,12 +5,12 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.integration.top.ElementModule;
 import me.desht.modularrouters.integration.top.TOPInfoProvider;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.PropertyObject;
@@ -46,6 +46,7 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -324,7 +325,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
                     player.openGui(ModularRouters.instance, ModularRouters.GUI_ROUTER, world, pos.getX(), pos.getY(), pos.getZ());
                 } else if (!router.isPermitted(player) && world.isRemote) {
                     player.sendStatusMessage(new TextComponentTranslation("chatText.security.accessDenied"), false);
-                    player.playSound(MRSoundEvents.error, 1.0f, 1.0f);
+                    player.playSound(RegistrarMR.SOUND_ERROR, 1.0f, 1.0f);
                 }
             }
         }
@@ -408,6 +409,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         return super.canEntityDestroy(state, world, pos, entity);
     }
 
+    @Mod.EventBusSubscriber
     public static class ExplosionHandler {
         @SubscribeEvent
         public static void onExplosion(ExplosionEvent.Detonate event) {
@@ -415,7 +417,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
             while (iter.hasNext()) {
                 BlockPos pos = iter.next();
                 IBlockState state = event.getWorld().getBlockState(pos);
-                if (state.getBlock() == ModBlocks.itemRouter) {
+                if (state.getBlock() == RegistrarMR.ITEM_ROUTER) {
                     TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(event.getWorld(), pos);
                     if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
                         iter.remove();

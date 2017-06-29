@@ -1,7 +1,7 @@
 package me.desht.modularrouters.container.handler;
 
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.item.ItemStack;
@@ -33,7 +33,7 @@ public class BufferHandler extends ItemStackHandler {
             fluidHandler = newHandler;
             if (doUpdate) {
                 // in case any fluid pipes need to connect/disconnect
-                router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.itemRouter, true);
+                router.getWorld().notifyNeighborsOfStateChange(router.getPos(), RegistrarMR.ITEM_ROUTER, true);
             }
         }
 
@@ -41,7 +41,7 @@ public class BufferHandler extends ItemStackHandler {
         if (newEnergyHandler != energyHandler) {
             // in case any cables need to connect/disconnect
             energyHandler = newEnergyHandler;
-            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.itemRouter, true);
+            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), RegistrarMR.ITEM_ROUTER, true);
         }
     }
 

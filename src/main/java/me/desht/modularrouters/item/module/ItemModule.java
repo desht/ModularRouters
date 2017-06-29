@@ -21,8 +21,8 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+@Mod.EventBusSubscriber
 public class ItemModule extends ItemBase {
 
     // add new types at the end!
@@ -84,7 +85,6 @@ public class ItemModule extends ItemBase {
     public ItemModule() {
         super("module");
         setHasSubtypes(true);
-        MinecraftForge.EVENT_BUS.register(ItemModule.class);
     }
 
     @SubscribeEvent
@@ -116,6 +116,11 @@ public class ItemModule extends ItemBase {
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         return "item." + getSubTypeName(stack.getItemDamage());
+    }
+
+    @Override
+    public int getSubTypes() {
+        return SUBTYPES;
     }
 
     @Override

@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.sound.MRSoundEvents;
+import me.desht.modularrouters.core.RegistrarMR;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,7 +66,7 @@ public class SyncUpgrade extends Upgrade {
                 setTunedValue(itemStackIn, new Random().nextInt(ConfigHandler.router.baseTickRate));
                 playerIn.sendStatusMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(itemStackIn)), false);
             } else {
-                playerIn.playSound(MRSoundEvents.success, 1.0f, 1.5f);
+                playerIn.playSound(RegistrarMR.SOUND_SUCCESS, 1.0f, 1.5f);
             }
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);

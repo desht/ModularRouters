@@ -1,9 +1,9 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompiledExtruder2Module extends CompiledExtruderModule {
-    private static final ItemStack TEMPLATE_STACK = new ItemStack(ModBlocks.templateFrame);
+    private static final ItemStack TEMPLATE_STACK = new ItemStack(RegistrarMR.TEMPLATE_FRAME);
     private final List<ItemStack> blockList;
 
     public CompiledExtruder2Module(TileEntityItemRouter router, ItemStack stack) {
@@ -66,7 +66,7 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 if (breakResult.isBlockBroken()) {
                     router.playSound(null, breakPos,
-                            ModBlocks.templateFrame.getSoundType(oldState, world, breakPos, null).getBreakSound(),
+                            RegistrarMR.TEMPLATE_FRAME.getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                 }
                 return true;
@@ -78,6 +78,6 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
 
     private boolean okToBreak(IBlockState state, World world, BlockPos pos) {
         Block b = state.getBlock();
-        return b.isAir(state, world, pos) || b == ModBlocks.templateFrame || b instanceof BlockLiquid || b instanceof IFluidBlock;
+        return b.isAir(state, world, pos) || b == RegistrarMR.TEMPLATE_FRAME || b instanceof BlockLiquid || b instanceof IFluidBlock;
     }
 }

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.core.RegistrarMR;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
@@ -15,6 +15,6 @@ public class ModularRoutersTab extends CreativeTabs {
 
     @Override
     public ItemStack getTabIconItem() {
-        return new ItemStack(ModItems.blankModule);
+        return new ItemStack(RegistrarMR.ITEM_ROUTER);
     }
 }

@@ -1,20 +1,13 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.gui.GuiHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
-import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
-import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
-import me.desht.modularrouters.sound.ModSounds;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Mod;
@@ -66,9 +59,6 @@ public class ModularRouters {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        ModItems.init();
-        ModBlocks.init();
-        ModSounds.init();
         proxy.preInit();
         setupNetwork();
         GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
@@ -81,9 +71,6 @@ public class ModularRouters {
         proxy.init();
         ModRecipes.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiHandler());
-        MinecraftForge.EVENT_BUS.register(SecurityUpgrade.Interacted.class);
-        MinecraftForge.EVENT_BUS.register(CamouflageUpgrade.Interacted.class);
-        MinecraftForge.EVENT_BUS.register(BlockItemRouter.ExplosionHandler.class);
         IntegrationHandler.registerAll();
     }
 

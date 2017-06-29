@@ -1,9 +1,10 @@
 package me.desht.modularrouters.item;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.ModularRoutersTab;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+
+import javax.annotation.Nonnull;
 
 public class ItemBase extends Item {
     protected String name;
@@ -15,22 +16,28 @@ public class ItemBase extends Item {
         setCreativeTab(ModularRoutersTab.creativeTab);
     }
 
-    public void registerItemModel(int nSubtypes) {
-        if (nSubtypes == 0) {
-            ModularRouters.proxy.registerItemRenderer(this, 0, name);
-        } else {
-            for (int i = 0; i < nSubtypes; i++) {
-                ModularRouters.proxy.registerItemRenderer(this, i, getSubTypeName(i));
-            }
-        }
-    }
-
+    @Nonnull
     @Override
-    public ItemBase setCreativeTab(CreativeTabs tab) {
+    public ItemBase setCreativeTab(@Nonnull CreativeTabs tab) {
         super.setCreativeTab(tab);
         return this;
     }
 
+    /**
+     * Get the number of sub-items this item has.
+     *
+     * @return the number of sub-items, or 0 if the item doesn't use sub-items
+     */
+    public int getSubTypes() {
+        return 0;
+    }
+
+    /**
+     * Get the (unlocalized) sub-item name for the given sub-item number.  Used for items models and translations.
+     *
+     * @param meta item metadata number, in range 0 .. getSubTypes()
+     * @return the sub-item name
+     */
     public String getSubTypeName(int meta) {
         return name;
     }

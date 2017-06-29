@@ -1,6 +1,6 @@
 package me.desht.modularrouters.recipe;
 
-import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.enchantment.Enchantment;
@@ -44,7 +44,7 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
             if (!stack.isEmpty()) {
                 if (stack.getItem() == Items.ENCHANTED_BOOK) {
                     book = stack.copy();
-                } else if (stack.getItem() == ModItems.module) {
+                } else if (stack.getItem() == RegistrarMR.MODULE) {
                     module = stack.copy();
                 } else {
                     return false;
@@ -63,7 +63,7 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem() == Items.ENCHANTED_BOOK) {
                 book = stack;
-            } else if (stack.getItem() == ModItems.module) {
+            } else if (stack.getItem() == RegistrarMR.MODULE) {
                 module = stack.copy();
             }
         }

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.upgrade;
 
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemBase;
-import me.desht.modularrouters.item.ModItems;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -82,6 +82,11 @@ public class ItemUpgrade extends ItemBase {
     }
 
     @Override
+    public int getSubTypes() {
+        return SUBTYPES;
+    }
+
+    @Override
     public String getSubTypeName(int meta) {
         return UpgradeType.values()[meta].name().toLowerCase() + "_upgrade";
     }
@@ -107,7 +112,7 @@ public class ItemUpgrade extends ItemBase {
     }
 
     public static ItemStack makeItemStack(UpgradeType type, int amount) {
-        return new ItemStack(ModItems.upgrade, amount, type.ordinal());
+        return new ItemStack(RegistrarMR.UPGRADE, amount, type.ordinal());
     }
 
     public static Upgrade getUpgrade(ItemStack stack) {

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.util;
 
-import me.desht.modularrouters.item.ModItems;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
@@ -190,7 +190,7 @@ public class ModuleHelper {
     }
 
     public static ItemStack makeItemStack(ModuleType type, int amount) {
-        return new ItemStack(ModItems.module, amount, type.ordinal());
+        return new ItemStack(RegistrarMR.MODULE, amount, type.ordinal());
     }
 
     public static boolean isModuleType(ItemStack stack, ModuleType... types) {

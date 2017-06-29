@@ -1,59 +1,27 @@
 package me.desht.modularrouters.proxy;
 
-import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.ModBlocks;
+import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.ModelBakeEventHandler;
-import me.desht.modularrouters.client.TemplateFrameModel;
 import me.desht.modularrouters.client.fx.FXSparkle;
-import me.desht.modularrouters.client.fx.RenderListener;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.GuiItemRouter;
-import net.minecraft.block.state.IBlockState;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
-
-import javax.annotation.Nonnull;
 
 public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
-
-        // the can_emit property has no effect on block rendering, so let's not create unnecessary variants
-        ModelLoader.setCustomStateMapper(ModBlocks.itemRouter, new StateMap.Builder().ignore(BlockItemRouter.CAN_EMIT).build());
-
-        StateMapperBase ignoreState = new StateMapperBase() {
-            @Nonnull
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState iBlockState) {
-                return TemplateFrameModel.variantTag;
-            }
-        };
-        ModelLoader.setCustomStateMapper(ModBlocks.templateFrame, ignoreState);
-
-        MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
-
     }
 
     @Override
     public void init() {
         super.init();
 
-        MinecraftForge.EVENT_BUS.register(RenderListener.class);
         registerBlockColors();
-    }
-
-    @Override
-    public void registerItemRenderer(Item item, int meta, String id) {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ModularRouters.MODID + ":" + id, "inventory"));
     }
 
     private static boolean noclipEnabled = false;
@@ -118,16 +86,15 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @Override
-    public void registerBlockColors() {
-        // this ensures the camo upgrade properly mimics colourable blocks like grass blocks
+    private void registerBlockColors() {
+        // this ensures camouflage properly mimics colourable blocks like grass blocks
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
-            TileEntityItemRouter te = TileEntityItemRouter.getRouterAt(worldIn, pos);
-            if (te != null && te.getCamouflage() != null) {
-                return Minecraft.getMinecraft().getBlockColors().colorMultiplier(te.getCamouflage(), te.getWorld(), pos, tintIndex);
+            TileEntity te = MiscUtil.getTileEntitySafely(worldIn, pos);
+            if (te instanceof ICamouflageable) {
+                return Minecraft.getMinecraft().getBlockColors().colorMultiplier(((ICamouflageable) te).getCamouflage(), te.getWorld(), pos, tintIndex);
             } else {
                 return -1;
             }
-        }, ModBlocks.itemRouter);
+        }, RegistrarMR.ITEM_ROUTER, RegistrarMR.TEMPLATE_FRAME);
     }
 }

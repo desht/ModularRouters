@@ -6,9 +6,9 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.handler.BufferHandler;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.integration.redstoneflux.RFIntegration;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -53,7 +53,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TileEntityItemRouter extends TileEntity implements ITickable, IInventory {
+public class TileEntityItemRouter extends TileEntity implements ITickable, IInventory, ICamouflageable {
     public static final int N_MODULE_SLOTS = 9;
     public static final int N_UPGRADE_SLOTS = 5;
 
@@ -490,10 +490,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
         }
     }
 
+    @Override
     public IBlockState getCamouflage() {
         return camouflage;
     }
 
+    @Override
     public void setCamouflage(IBlockState newCamouflage) {
         if (newCamouflage != camouflage) {
             this.camouflage = newCamouflage;
@@ -796,7 +798,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, IInve
             return true;
         }
         for (EnumHand hand : EnumHand.values()) {
-            if (player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() == ModItems.overrideCard) {
+            if (player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() == RegistrarMR.OVERRIDE_CARD) {
                 return true;
             }
         }

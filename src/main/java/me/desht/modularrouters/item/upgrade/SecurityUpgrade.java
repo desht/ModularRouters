@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,6 +12,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static me.desht.modularrouters.core.RegistrarMR.SOUND_ERROR;
+import static me.desht.modularrouters.core.RegistrarMR.SOUND_SUCCESS;
 
 public class SecurityUpgrade extends Upgrade {
     private static final String NBT_PLAYERS = "Players";
@@ -127,6 +130,7 @@ public class SecurityUpgrade extends Upgrade {
         return Interacted.Result.ERROR;
     }
 
+    @Mod.EventBusSubscriber
     public static class Interacted {
         enum Result {
             ADDED, REMOVED, FULL, ALREADY_ADDED, ERROR, NOT_PRESENT;
@@ -157,7 +161,7 @@ public class SecurityUpgrade extends Upgrade {
                     String name = targetPlayer.getDisplayNameString();
                     Result res = event.getEntityPlayer().isSneaking() ? removePlayer(stack, id) : addPlayer(stack, id, name);
                     if (event.getWorld().isRemote) {
-                        event.getEntityPlayer().playSound(res.isError() ? MRSoundEvents.error : MRSoundEvents.success, 1.0f, 1.0f);
+                        event.getEntityPlayer().playSound(res.isError() ? SOUND_ERROR : SOUND_SUCCESS, 1.0f, 1.0f);
                     } else {
                         event.getEntityPlayer().sendStatusMessage(new TextComponentTranslation("chatText.security." + res.toString(), name), false);
                     }

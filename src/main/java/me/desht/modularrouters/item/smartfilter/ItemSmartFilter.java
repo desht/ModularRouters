@@ -1,8 +1,8 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemBase;
-import me.desht.modularrouters.item.ModItems;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -13,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+@Mod.EventBusSubscriber
 public class ItemSmartFilter extends ItemBase {
     public enum FilterType {
         BULKITEM,
@@ -51,7 +52,6 @@ public class ItemSmartFilter extends ItemBase {
     public ItemSmartFilter() {
         super("filter");
         setHasSubtypes(true);
-        MinecraftForge.EVENT_BUS.register(ItemSmartFilter.class);
     }
 
     @SubscribeEvent
@@ -86,6 +86,11 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     @Override
+    public int getSubTypes() {
+        return SUBTYPES;
+    }
+
+    @Override
     public String getSubTypeName(int meta) {
         return ItemSmartFilter.FilterType.values()[meta].name().toLowerCase() + "_filter";
     }
@@ -115,7 +120,7 @@ public class ItemSmartFilter extends ItemBase {
     }
 
     public static ItemStack makeItemStack(FilterType type, int amount) {
-        return new ItemStack(ModItems.smartFilter, amount, type.ordinal());
+        return new ItemStack(RegistrarMR.FILTER, amount, type.ordinal());
     }
 
     @Override

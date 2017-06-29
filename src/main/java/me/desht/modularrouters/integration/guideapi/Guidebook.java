@@ -1,54 +1,8 @@
 package me.desht.modularrouters.integration.guideapi;
 
-import amerifrance.guideapi.api.GuideAPI;
-import amerifrance.guideapi.api.GuideBook;
-import amerifrance.guideapi.api.IGuideBook;
-import amerifrance.guideapi.api.IPage;
-import amerifrance.guideapi.api.impl.Book;
-import amerifrance.guideapi.api.impl.abstraction.CategoryAbstract;
-import amerifrance.guideapi.api.impl.abstraction.EntryAbstract;
-import amerifrance.guideapi.api.util.PageHelper;
-import amerifrance.guideapi.category.CategoryItemStack;
-import amerifrance.guideapi.entry.EntryItemStack;
-import amerifrance.guideapi.page.PageIRecipe;
-import amerifrance.guideapi.page.PageText;
-import amerifrance.guideapi.page.reciperenderer.ShapedOreRecipeRenderer;
-import com.google.common.collect.Lists;
-import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.ModBlocks;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.ModItems;
-import me.desht.modularrouters.item.module.ItemModule.ModuleType;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter.FilterType;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
-import me.desht.modularrouters.recipe.enhancement.*;
-import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
+public class Guidebook {}
 
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static me.desht.modularrouters.util.MiscUtil.RL;
-import static me.desht.modularrouters.util.MiscUtil.translate;
-
+/*
 @GuideBook
 public class Guidebook implements IGuideBook {
     private static final int MAX_PAGE_LENGTH = 270;
@@ -73,38 +27,38 @@ public class Guidebook implements IGuideBook {
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.introText"), MAX_PAGE_LENGTH));
         entries.put(RL("intro"),
-                new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(ModBlocks.itemRouter)));
+                new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(RegistrarMR.ITEM_ROUTER)));
         categories.add(new CategoryItemStack(entries, translate("guidebook.categories.introduction"), new ItemStack(Items.WRITABLE_BOOK)));
 
         // Routers category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerText"), MAX_PAGE_LENGTH));
         entries.put(RL("router"),
-                new EntryItemStack(pages, translate("tile.item_router.name"), new ItemStack(ModBlocks.itemRouter)));
+                new EntryItemStack(pages, translate("tile.item_router.name"), new ItemStack(RegistrarMR.ITEM_ROUTER)));
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.routerEcoMode", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), MAX_PAGE_LENGTH));
         entries.put(RL("routerEcoMode"),
                 new EntryItemStack(pages, translate("guidebook.words.ecoMode"), new ItemStack(Blocks.SAPLING)));
-        categories.add(new CategoryItemStack(entries, translate("guidebook.categories.routers"), new ItemStack(ModBlocks.itemRouter)));
+        categories.add(new CategoryItemStack(entries, translate("guidebook.categories.routers"), new ItemStack(RegistrarMR.ITEM_ROUTER)));
 
         // Modules category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.moduleOverview", ModuleType.values().length, String.valueOf(ConfigHandler.getConfigKey())), MAX_PAGE_LENGTH));
         entries.put(RL("moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Collections.singletonList(new PageText(translate("guidebook.para.blankModule")));
-        ItemStack bm = new ItemStack(ModItems.blankModule);
+        ItemStack bm = new ItemStack(RegistrarMR.BLANK_MODULE);
         entries.put(RL("blankModule"), new EntryItemStack(pages, translate(bm.getUnlocalizedName() + ".name"), bm));
         buildModulePages(entries);
-        categories.add(new CategoryItemStack(entries, translate("guiText.label.modules"), new ItemStack(ModItems.blankModule)));
+        categories.add(new CategoryItemStack(entries, translate("guiText.label.modules"), new ItemStack(RegistrarMR.BLANK_MODULE)));
 
         // Upgrades category
         entries = new LinkedHashMap<>();
         pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, TileEntityItemRouter.N_UPGRADE_SLOTS), MAX_PAGE_LENGTH));
         entries.put(RL("upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Collections.singletonList(new PageText(translate("guidebook.para.blankUpgrade")));
-        ItemStack bu = new ItemStack(ModItems.blankUpgrade);
+        ItemStack bu = new ItemStack(RegistrarMR.BLANK_UPGRADE);
         entries.put(RL("blankUpgrade"), new EntryItemStack(pages, translate(bu.getUnlocalizedName() + ".name"), bu));
         buildUpgradePages(entries);
-        categories.add(new CategoryItemStack(entries, translate("guiText.label.upgrades"), new ItemStack(ModItems.blankUpgrade)));
+        categories.add(new CategoryItemStack(entries, translate("guiText.label.upgrades"), new ItemStack(RegistrarMR.BLANK_UPGRADE)));
 
         // Enhancements category
         entries = new LinkedHashMap<>();
@@ -221,7 +175,7 @@ public class Guidebook implements IGuideBook {
 
     @Override
     public void handlePost(ItemStack bookStack) {
-        ShapelessOreRecipe bookRecipe = new ShapelessOreRecipe(RL("guidebook"), bookStack, ModItems.blankModule, Items.BOOK);
+        ShapelessOreRecipe bookRecipe = new ShapelessOreRecipe(RL("guidebook"), bookStack, RegistrarMR.BLANK_MODULE, Items.BOOK);
         ForgeRegistries.RECIPES.register(bookRecipe.setRegistryName(new ResourceLocation("guideapi","guidebook")));
 
         // need to do this here, because recipes aren't registered when buildBook() is called
@@ -253,3 +207,4 @@ public class Guidebook implements IGuideBook {
         }
     }
 }
+*/

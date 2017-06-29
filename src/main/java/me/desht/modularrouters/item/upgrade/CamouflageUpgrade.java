@@ -1,8 +1,7 @@
 package me.desht.modularrouters.item.upgrade;
 
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.sound.MRSoundEvents;
+import me.desht.modularrouters.core.RegistrarMR;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -16,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -81,6 +81,7 @@ public class CamouflageUpgrade extends Upgrade {
         return "<?>";
     }
 
+    @Mod.EventBusSubscriber
     public static class Interacted {
         @SubscribeEvent
         public static void onInteracted(PlayerInteractEvent.RightClickBlock event) {
@@ -92,18 +93,19 @@ public class CamouflageUpgrade extends Upgrade {
                     setCamoState(stack, state);
                     if (!event.getWorld().isRemote) {
                         event.getEntityPlayer().sendStatusMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)), false);
+                        event.setCanceled(true);
                     } else {
-                        event.getEntityPlayer().playSound(MRSoundEvents.success, 1.0f, 1.5f);
+                        event.getEntityPlayer().playSound(RegistrarMR.SOUND_SUCCESS, 1.0f, 1.5f);
                     }
                 } else if (event.getWorld().isRemote) {
-                    event.getEntityPlayer().playSound(MRSoundEvents.error, 1.0f, 1.0f);
+                    event.getEntityPlayer().playSound(RegistrarMR.SOUND_ERROR, 1.0f, 1.0f);
                 }
             }
         }
 
         private static boolean isBlockOKForCamo(IBlockState state) {
             // trying to camo a router as itself = recursion hell
-            return state.getRenderType() == EnumBlockRenderType.MODEL && state.getBlock() != ModBlocks.itemRouter;
+            return state.getRenderType() == EnumBlockRenderType.MODEL && state.getBlock() != RegistrarMR.ITEM_ROUTER;
         }
     }
 }

@@ -4,10 +4,10 @@ import com.google.common.collect.Maps;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.fx.Vector3;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
-import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
@@ -50,7 +50,7 @@ public abstract class TargetedModule extends Module {
         if (player.isSneaking()) {
                 if (InventoryUtils.getInventory(world, pos, face) != null) {
                     if (world.isRemote) {
-                        player.playSound(MRSoundEvents.success, 1.0f, 1.3f);
+                        player.playSound(RegistrarMR.SOUND_SUCCESS, 1.0f, 1.3f);
                     } else {
                         setTarget(stack, world, pos, face);
                         ModuleTarget tgt = getTarget(stack, true);
@@ -95,7 +95,7 @@ public abstract class TargetedModule extends Module {
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (getTarget(stack) != null) {
             if (world.isRemote) {
-                player.playSound(MRSoundEvents.success, 1.0f, 1.3f);
+                player.playSound(RegistrarMR.SOUND_SUCCESS, 1.0f, 1.3f);
             } else {
                 setTarget(stack, world, null, null);
                 player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetCleared"), false);

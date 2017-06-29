@@ -5,13 +5,13 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ContainerBulkItemFilter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
@@ -88,7 +88,7 @@ public class BulkItemFilter extends SmartFilter {
             if (handler != null) {
                 int nAdded = mergeInventory(stack, handler);
                 player.sendStatusMessage(new TextComponentTranslation("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
-                world.playSound(null, pos, MRSoundEvents.success, SoundCategory.MASTER, 1.0f, 1.0f);
+                world.playSound(null, pos, RegistrarMR.SOUND_SUCCESS, SoundCategory.MASTER, 1.0f, 1.0f);
                 return EnumActionResult.SUCCESS;
             } else {
                 return super.onItemUse(stack, player, world, pos, hand, face, x, y, z);

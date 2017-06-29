@@ -2,10 +2,10 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.sound.MRSoundEvents;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -49,7 +49,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
                         t.pos.getX() + 0.5, t.pos.getY() + 0.5, t.pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
-            router.playSound(null, t.pos, MRSoundEvents.thud, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
+            router.playSound(null, t.pos, RegistrarMR.SOUND_THUD, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
         }
 
         return fired;

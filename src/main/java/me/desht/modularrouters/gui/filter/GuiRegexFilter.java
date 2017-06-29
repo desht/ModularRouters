@@ -2,11 +2,11 @@ package me.desht.modularrouters.gui.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.gui.widgets.textfield.TextFieldWidget;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
-import me.desht.modularrouters.sound.MRSoundEvents;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
@@ -121,7 +121,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
             getTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
-            mc.player.playSound(MRSoundEvents.error, 1.0f, 1.0f);
+            mc.player.playSound(RegistrarMR.SOUND_ERROR, 1.0f, 1.0f);
             errorMsg = I18n.format("guiText.label.regexError");
             errorTimer = 60;
         }

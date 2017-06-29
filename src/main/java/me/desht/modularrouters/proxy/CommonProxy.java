@@ -1,14 +1,10 @@
 package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 
 public class CommonProxy {
-
-    public void registerItemRenderer(Item item, int meta, String id) {
-    }
 
     public void preInit() {
     }
@@ -39,9 +35,5 @@ public class CommonProxy {
 
     public TileEntityItemRouter getOpenItemRouter() {
         return null;
-    }
-
-    public void registerBlockColors() {
-
     }
 }

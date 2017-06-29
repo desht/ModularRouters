@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
-public class TileEntityTemplateFrame extends TileEntity {
+public class TileEntityTemplateFrame extends TileEntity implements ICamouflageable {
     private static final String NBT_CAMO_NAME = "CamouflageName";
     private static final String NBT_CAMO_META = "CamouflageMeta";
 
@@ -42,8 +42,14 @@ public class TileEntityTemplateFrame extends TileEntity {
         return te instanceof TileEntityTemplateFrame ? (TileEntityTemplateFrame) te : null;
     }
 
+    @Override
     public IBlockState getCamouflage() {
         return camouflage;
+    }
+
+    @Override
+    public void setCamouflage(IBlockState camouflage) {
+        this.camouflage = camouflage;
     }
 
     @Override

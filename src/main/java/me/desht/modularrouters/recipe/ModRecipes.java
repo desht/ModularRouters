@@ -9,7 +9,6 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
@@ -24,8 +23,6 @@ public class ModRecipes {
         addXPVacuumRecipe();
         addRangeRecipes();
         addSelfCraftRecipes();
-
-        MinecraftForge.EVENT_BUS.register(ItemCraftedListener.class);
     }
 
     private static void addEnchantmentRecipes() {

@@ -1,11 +1,11 @@
 package me.desht.modularrouters.gui.module;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.block.ModBlocks;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.RenderHelper;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.gui.widgets.textfield.IntegerTextField;
@@ -28,7 +28,7 @@ import java.util.List;
 
 public class GuiModuleFluid extends GuiModule {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
-    private static final ItemStack routerStack = new ItemStack(ModBlocks.itemRouter);
+    private static final ItemStack routerStack = new ItemStack(RegistrarMR.ITEM_ROUTER);
     private static final ItemStack waterStack = new ItemStack(Items.WATER_BUCKET);
 
     private static final int TRANSFER_TEXTFIELD_ID = 1;

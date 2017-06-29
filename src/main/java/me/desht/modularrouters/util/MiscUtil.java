@@ -2,10 +2,14 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.List;
@@ -37,5 +41,11 @@ public class MiscUtil {
 
     public static ResourceLocation RL(String name) {
         return new ResourceLocation(ModularRouters.MODID, name);
+    }
+
+    public static TileEntity getTileEntitySafely(IBlockAccess world, BlockPos pos) {
+        return world instanceof ChunkCache ?
+                ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) :
+                world.getTileEntity(pos);
     }
 }
