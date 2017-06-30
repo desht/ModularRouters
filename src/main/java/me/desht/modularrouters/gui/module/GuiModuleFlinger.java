@@ -73,9 +73,9 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         // super has already bound the correct texture
-        this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, 0, 196, 35, 14);
-        this.drawTexturedModalRect(guiLeft + 148, guiTop + 34, 0, 196, 35, 14);
-        this.drawTexturedModalRect(guiLeft + 148, guiTop + 52, 0, 196, 35, 14);
+        this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.drawTexturedModalRect(guiLeft + 148, guiTop + 34, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.drawTexturedModalRect(guiLeft + 148, guiTop + 52, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
     }
 
     @Override

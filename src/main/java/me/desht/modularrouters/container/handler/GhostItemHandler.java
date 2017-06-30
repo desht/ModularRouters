@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -53,6 +54,7 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
         return items[slot];
     }
 
+    @Nonnull
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (!simulate) {

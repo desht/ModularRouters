@@ -60,8 +60,8 @@ public class GuiModuleDetector extends GuiModule {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        // super has already bound the correct texture
-        this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, 0, 182, 21, 14);  // text entry field custom background
+        // text entry field background - super has already bound the correct texture
+        this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
     }
 
     @Override

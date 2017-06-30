@@ -33,6 +33,7 @@ public class ModuleHelper {
     private static final String NBT_CONFIG_SLOT = "ConfigSlot";
     private static final String NBT_XP_VACUUM = "XPVacuum";
     private static final String NBT_RANGE_BOOST = "RangeBoost";
+    public static final String NBT_AUGMENTS = "Augments";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {

@@ -130,7 +130,7 @@ public class BulkItemFilter extends SmartFilter {
                 return compound.getTagList(NBT_ITEMS_DEPRECATED, Constants.NBT.TAG_COMPOUND).tagCount();
             } else {
                 // v1.2.0 and later
-                return BaseModuleHandler.getItemCount(filterStack, ModuleHelper.NBT_FILTER);
+                return BaseModuleHandler.getFilterSize(filterStack, ModuleHelper.NBT_FILTER);
             }
         } else {
             return 0;

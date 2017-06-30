@@ -40,7 +40,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * @param tagName name of the NBT tag the data is under
      * @return number of items in the filter
      */
-    public static int getItemCount(ItemStack holderStack, String tagName) {
+    public static int getFilterSize(ItemStack holderStack, String tagName) {
         if (holderStack.hasTagCompound()) {
             return holderStack.getTagCompound().getTagList(tagName, Constants.NBT.TAG_COMPOUND).tagCount();
         } else {

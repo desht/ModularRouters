@@ -42,6 +42,7 @@ import org.apache.commons.lang3.Range;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder {
@@ -52,16 +53,17 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private static final int REDSTONE_BUTTON_ID = BACK_BUTTON_ID + 1;
     private static final int REGULATOR_TOOLTIP_ID = BACK_BUTTON_ID + 2;
 
-    /**
-     * Base ID for extra buttons added by submodules
-     */
+    // locations of extra textures on the gui module texture sheet
+    static final Point SMALL_TEXTFIELD_XY = new Point(0, 198);
+    static final Point LARGE_TEXTFIELD_XY = new Point(0, 212);
+    static final Point BUTTON_XY = new Point(0, 226);
+
+    // Base ID for extra buttons added by module subclasses
     static final int EXTRA_BUTTON_BASE = 1000;
-    /**
-     * Base ID for extra textfields added by submodules
-     */
+    // Base ID for extra textfields added by module subclasses
     static final int EXTRA_TEXTFIELD_BASE = 1000;
 
-    private static final int GUI_HEIGHT = 182;
+    private static final int GUI_HEIGHT = 198;
     private static final int GUI_WIDTH = 192;
     static final int BUTTON_WIDTH = 16;
     static final int BUTTON_HEIGHT = 16;
@@ -103,10 +105,10 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         super.initGui();
 
         addToggleButton(ModuleFlags.BLACKLIST, 7, 75);
-        addToggleButton(ModuleFlags.IGNORE_META, 25, 75);
-        addToggleButton(ModuleFlags.IGNORE_NBT, 43, 75);
-        addToggleButton(ModuleFlags.IGNORE_OREDICT, 61, 75);
-        addToggleButton(ModuleFlags.TERMINATE, 79, 75);
+        addToggleButton(ModuleFlags.IGNORE_META, 7, 93);
+        addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
+        addToggleButton(ModuleFlags.IGNORE_OREDICT, 25, 93);
+        addToggleButton(ModuleFlags.TERMINATE, 45, 93);
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -120,7 +122,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
         if (ModuleHelper.isRedstoneBehaviourEnabled(moduleItemStack)) {
             rbb = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
-                    this.guiLeft + 97, this.guiTop + 75, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
+                    this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
             buttonList.add(rbb);
         }
 
@@ -128,11 +130,11 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             TextFieldManager manager = createTextFieldManager();
             Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
             int xOff = module.isFluidModule() ? 0 : 10;
-            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer, guiLeft + 156 + xOff, guiTop + 77,
+            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer, guiLeft + 156 + xOff, guiTop + 75,
                     20, 12, range.getMinimum(), range.getMaximum());
             field.setValue(ModuleHelper.getRegulatorAmount(moduleItemStack));
             field.setGuiResponder(this);
-            buttonList.add(new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 138 + xOff, guiTop + 74, module.isFluidModule()));
+            buttonList.add(new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule()));
         }
 
         if (routerPos != null) {

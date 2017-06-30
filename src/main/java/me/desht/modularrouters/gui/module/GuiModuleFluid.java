@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import org.apache.http.cookie.SM;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,7 +73,8 @@ public class GuiModuleFluid extends GuiModule {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        this.drawTexturedModalRect(guiLeft + 146, guiTop + 20, 0, 196, 35, 14);  // text entry field custom background
+        // text entry field custom background - super has already bound the correct texture
+        this.drawTexturedModalRect(guiLeft + 146, guiTop + 20, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
 
         RenderHelper.renderItemStack(mc, routerStack, guiLeft + 128, guiTop + 44, "");
         RenderHelper.renderItemStack(mc, waterStack, guiLeft + 168, guiTop + 44, "");

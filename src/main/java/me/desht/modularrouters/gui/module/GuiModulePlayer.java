@@ -60,7 +60,7 @@ public class GuiModulePlayer extends GuiModule {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        this.drawTexturedModalRect(guiLeft + 167, guiTop + 31, 0, 210, 18, 18);  // section "button" background
+        this.drawTexturedModalRect(guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
 
         RenderHelper.renderItemStack(mc, routerStack, guiLeft + 128, guiTop + 32, "");
     }

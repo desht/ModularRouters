@@ -1,6 +1,7 @@
 package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.gui.widgets.button.InfoButton;
 import me.desht.modularrouters.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.util.EnumHand;
@@ -21,35 +22,12 @@ public class GuiModuleExtruder2 extends GuiModule {
     public void initGui() {
         super.initGui();
 
-        buttonList.add(new InfoButton(INFO_BUTTON_ID, guiLeft + 173, guiTop + 70));
+        buttonList.add(new InfoButton(INFO_BUTTON_ID, guiLeft + 173, guiTop + 70, "extruder2.template"));
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         this.drawTexturedModalRect(guiLeft + 128, guiTop + 16, 202, 52, 54, 54);
-    }
-
-    private class InfoButton extends TexturedButton {
-        InfoButton(int buttonId, int x, int y) {
-            super(buttonId, x, y, 16, 16);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.extruder2.template");
-        }
-
-        @Override
-        protected boolean drawStandardBackground() {
-            return false;
-        }
-
-        @Override
-        protected int getTextureX() {
-            return 128;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 0;
-        }
-
     }
 }
