@@ -1,6 +1,8 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.augment.ItemAugment;
+import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -24,6 +26,7 @@ public abstract class CompiledModule {
     private final boolean termination;
     private final EnumFacing facing;
     private final int regulationAmount;
+    private final AugmentCounter augmentCounter;
 
     private int lastMatchPos = 0;
 
@@ -48,6 +51,7 @@ public abstract class CompiledModule {
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
+        augmentCounter = new AugmentCounter(stack);
     }
 
     /**
@@ -92,7 +96,11 @@ public abstract class CompiledModule {
     }
 
     public int getRegulationAmount() {
-        return regulationAmount;
+        return augmentCounter.getAugmentCount(ItemAugment.AugmentType.REGULATOR) > 0 ? regulationAmount : 0;
+    }
+
+    public int getAugmentCount(ItemAugment.AugmentType augmentType) {
+        return augmentCounter.getAugmentCount(augmentType);
     }
 
     /**
@@ -124,7 +132,7 @@ public abstract class CompiledModule {
      * @param size size of the inventory being searched
      * @return the last position including offset, and wrapped to start of inventory if necessary
      */
-    int getLastMatchPos(int offset, int size) {
+    private int getLastMatchPos(int offset, int size) {
         int pos = lastMatchPos + offset;
         if (pos >= size) pos -= size;
         return pos;
@@ -135,7 +143,7 @@ public abstract class CompiledModule {
      *
      * @param lastMatchPos last matched position
      */
-    void setLastMatchPos(int lastMatchPos) {
+    private void setLastMatchPos(int lastMatchPos) {
         this.lastMatchPos = lastMatchPos;
     }
 
@@ -158,6 +166,11 @@ public abstract class CompiledModule {
         return new ModuleTarget(dim, router.getPos().offset(facing), facing.getOpposite(), blockName);
     }
 
+    int getItemsPerTick(TileEntityItemRouter router) {
+        int n = augmentCounter.getAugmentCount(ItemAugment.AugmentType.STACK);
+        return n > 0 ? Math.min(1 << n, 64) : router.getItemsPerTick();
+    }
+
     /**
      * Try to transfer some items from the given ItemHandler to the given router.  The number of
      * items attempted depends on the router's stack upgrades.
@@ -172,7 +185,7 @@ public abstract class CompiledModule {
             count = new CountedItemStacks(handler);
         }
 
-        ItemStack wanted = findItemToPull(router, handler, router.getItemsPerTick(), count);
+        ItemStack wanted = findItemToPull(router, handler, getItemsPerTick(router), count);
         if (wanted.isEmpty()) {
             return 0;
         }
@@ -247,5 +260,9 @@ public abstract class CompiledModule {
         if (regulationAmount == 0) return true; // no regulation
         int items = router.getBufferItemStack().isEmpty() ? 0 : router.getBufferItemStack().getCount();
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
+    }
+
+    protected int getRangeModifier() {
+        return getAugmentCount(ItemAugment.AugmentType.RANGE_UP) - getAugmentCount(ItemAugment.AugmentType.RANGE_DOWN);
     }
 }

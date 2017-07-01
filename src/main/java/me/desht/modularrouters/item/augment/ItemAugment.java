@@ -1,8 +1,12 @@
 package me.desht.modularrouters.item.augment;
 
+import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemSubTypes;
+import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
 
@@ -14,7 +18,11 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
         REDSTONE,
         REGULATOR,
         STACK,
-        XP_VACUUM
+        XP_VACUUM;
+
+        public static AugmentType getType(ItemStack stack) {
+            return stack.getItem() instanceof ItemAugment ? values()[stack.getItemDamage()] : null;
+        }
     }
 
     public ItemAugment() {
@@ -22,8 +30,8 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
 
         register(AugmentType.FAST_PICKUP, new FastPickupAugment());
         register(AugmentType.PICKUP_DELAY, new PickupDelayAugment());
-        register(AugmentType.RANGE_UP, new RangeUpAugment());
-        register(AugmentType.RANGE_DOWN, new RangeDownAugment());
+        register(AugmentType.RANGE_UP, new RangeAugments.RangeUpAugment());
+        register(AugmentType.RANGE_DOWN, new RangeAugments.RangeDownAugment());
         register(AugmentType.REDSTONE, new RedstoneAugment());
         register(AugmentType.REGULATOR, new RegulatorAugment());
         register(AugmentType.STACK, new StackAugment());
@@ -37,7 +45,31 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
         return getAugment(AugmentType.values()[stack.getMetadata()]);
     }
 
+    @Nonnull
     public static Augment getAugment(AugmentType type) {
         return (Augment) RegistrarMR.AUGMENT.getHandler(type);
+    }
+
+    public static class AugmentCounter {
+        private int[] counts = new int[AugmentType.values().length];
+
+        public AugmentCounter(ItemStack moduleStack) {
+            if (!(moduleStack.getItem() instanceof ItemModule)) {
+                throw new IllegalArgumentException("item is not a ItemModule: " + moduleStack);
+            }
+
+            AugmentHandler h = new AugmentHandler(moduleStack);
+            for (int i = 0; i < h.getSlots(); i++) {
+                ItemStack augmentStack = h.getStackInSlot(i);
+                AugmentType type = AugmentType.getType(augmentStack);
+                if (type != null) {
+                    counts[type.ordinal()] += augmentStack.getCount();
+                }
+            }
+        }
+
+        public int getAugmentCount(AugmentType type) {
+            return counts[type.ordinal()];
+        }
     }
 }

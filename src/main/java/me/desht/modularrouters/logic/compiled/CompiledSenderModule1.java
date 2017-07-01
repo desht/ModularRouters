@@ -25,12 +25,13 @@ import java.awt.*;
 public class CompiledSenderModule1 extends CompiledModule {
     private static final Color particleColor = Color.ORANGE;
 
-    protected final int range, rangeSquared;
+    private final int range;
+    final int rangeSquared;
 
     public CompiledSenderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        range = getSenderRange(stack);
+        range = getSenderRange();
         rangeSquared = range * range;
     }
 
@@ -41,7 +42,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         if (getFilter().test(bufferStack)) {
             PositionedItemHandler target = findTargetInventory(router);
             if (target != null) {
-                int nToSend = router.getItemsPerTick();
+                int nToSend = getItemsPerTick(router);
                 if (getRegulationAmount() > 0) {
                     int existing = InventoryUtils.countItems(bufferStack, target.handler, getRegulationAmount(), !getFilter().getFlags().isIgnoreMeta());
                     nToSend = Math.min(nToSend, getRegulationAmount() - existing);
@@ -97,9 +98,9 @@ public class CompiledSenderModule1 extends CompiledModule {
         return null;
     }
 
-    protected int getSenderRange(ItemStack stack) {
+    private int getSenderRange() {
         return getModule() instanceof IRangedModule ?
-                ((IRangedModule) getModule()).getCurrentRange(stack) : 0;
+                ((IRangedModule) getModule()).getCurrentRange(getRangeModifier()) : 0;
     }
 
     private boolean isPassable(World w, BlockPos pos, EnumFacing face) {

@@ -21,20 +21,22 @@ public class ItemStackButton extends TexturedButton {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float p3) {
-        mc.getTextureManager().bindTexture(resourceLocation);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-        int i = this.getHoverState(this.hovered);
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        if (!flat) {
-            this.drawTexturedModalRect(this.x, this.y, i * 16, 0, this.width, this.height);
+        if (this.visible) {
+            mc.getTextureManager().bindTexture(resourceLocation);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            int i = this.getHoverState(this.hovered);
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            if (!flat) {
+                this.drawTexturedModalRect(this.x, this.y, i * 16, 0, this.width, this.height);
+            }
+            int x = this.x + (width - 18) / 2;
+            int y = this.y + (height - 18) / 2;
+            RenderHelper.renderItemStack(mc, getRenderStack(), x, y, "");
+            this.mouseDragged(mc, mouseX, mouseY);
         }
-        int x = this.x + (width - 18) / 2;
-        int y = this.y + (height - 18) / 2;
-        RenderHelper.renderItemStack(mc, getRenderStack(), x, y, "");
-        this.mouseDragged(mc, mouseX, mouseY);
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
+import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -41,9 +42,9 @@ public class CompiledVacuumModule extends CompiledModule {
 
     public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
-        fastPickup = ModuleHelper.hasFastPickup(stack);
-        xpMode = ModuleHelper.hasXPVacuum(stack);
-        range = ((IRangedModule) getModule()).getCurrentRange(stack);
+        fastPickup = getAugmentCount(ItemAugment.AugmentType.FAST_PICKUP) > 0;
+        xpMode = getAugmentCount(ItemAugment.AugmentType.XP_VACUUM) > 0;
+        range = ((IRangedModule) getModule()).getCurrentRange(getRangeModifier());
         if (xpMode && IntegrationHandler.fluidXpJuice != null) {
             xpJuiceStack = new FluidStack(IntegrationHandler.fluidXpJuice, 1000);
         } else {
@@ -71,7 +72,7 @@ public class CompiledVacuumModule extends CompiledModule {
         List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
-        int toPickUp = router.getItemsPerTick();
+        int toPickUp = getItemsPerTick(router);
 
         for (EntityItem item : items) {
             if (item.isDead || (!fastPickup && item.cannotPickup())) {
@@ -83,7 +84,7 @@ public class CompiledVacuumModule extends CompiledModule {
                 int spaceInRouter = getRegulationAmount() > 0 ?
                         Math.min(stackOnGround.getMaxStackSize(), getRegulationAmount()) - inRouter :
                         stackOnGround.getMaxStackSize() - inRouter;
-                ItemStack vacuumed = stackOnGround.splitStack(Math.min(router.getItemsPerTick(), spaceInRouter));
+                ItemStack vacuumed = stackOnGround.splitStack(Math.min(getItemsPerTick(router), spaceInRouter));
                 ItemStack excess = router.insertBuffer(vacuumed);
                 int remaining = excess == null ? 0 : excess.getCount();
                 stackOnGround.grow(remaining);
@@ -100,7 +101,7 @@ public class CompiledVacuumModule extends CompiledModule {
                 }
             }
         }
-        return toPickUp < router.getItemsPerTick();
+        return toPickUp < getItemsPerTick(router);
     }
 
     private boolean handleXpMode(TileEntityItemRouter router) {

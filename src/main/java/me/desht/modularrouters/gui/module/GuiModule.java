@@ -4,6 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.gui.BackButton;
 import me.desht.modularrouters.gui.RedstoneBehaviourButton;
 import me.desht.modularrouters.gui.widgets.GuiContainerBase;
@@ -13,6 +14,9 @@ import me.desht.modularrouters.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.gui.widgets.button.ToggleButton;
 import me.desht.modularrouters.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.item.augment.Augment;
+import me.desht.modularrouters.item.augment.ItemAugment;
+import me.desht.modularrouters.item.augment.ItemAugment.AugmentType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.ModuleFlags;
@@ -30,11 +34,13 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -44,8 +50,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Map;
 
-public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder {
+public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder, IContainerListener {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
     private static final int REGULATOR_TEXTFIELD_ID = 0;
     static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
@@ -73,11 +80,12 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private final BlockPos routerPos;
     private final int moduleSlotIndex;
     private final EnumHand hand;
-    protected final boolean regulationEnabled;
     private RelativeDirection facing;
     private int sendDelay;
-    private int regulatorAmount;
-    private RedstoneBehaviourButton rbb;
+    protected int regulatorAmount;
+    private RedstoneBehaviourButton redstoneButton;
+    protected IntegerTextField regulatorTextField;
+    private RegulatorTooltipButton regulatorTooltipButton;
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
 
@@ -93,7 +101,6 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         this.moduleSlotIndex = slotIndex;
         this.hand = hand;
         this.facing = ModuleHelper.getDirectionFromNBT(moduleItemStack);
-        this.regulationEnabled = ModuleHelper.isRegulatorEnabled(moduleItemStack);
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
@@ -120,26 +127,45 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        if (ModuleHelper.isRedstoneBehaviourEnabled(moduleItemStack)) {
-            rbb = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
-                    this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
-            buttonList.add(rbb);
-        }
+        redstoneButton = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
+                this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
+        buttonList.add(redstoneButton);
 
-        if (regulationEnabled) {
-            TextFieldManager manager = createTextFieldManager();
-            Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
-            int xOff = module.isFluidModule() ? 0 : 10;
-            IntegerTextField field = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer, guiLeft + 156 + xOff, guiTop + 75,
-                    20, 12, range.getMinimum(), range.getMaximum());
-            field.setValue(ModuleHelper.getRegulatorAmount(moduleItemStack));
-            field.setGuiResponder(this);
-            buttonList.add(new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule()));
-        }
+        TextFieldManager manager = createTextFieldManager();
+        Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
+        int xOff = module.isFluidModule() ? 0 : 10;
+        regulatorTextField = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer, guiLeft + 156 + xOff, guiTop + 75,
+                20, 12, range.getMinimum(), range.getMaximum());
+        regulatorTextField.setValue(regulatorAmount);
+        regulatorTextField.setGuiResponder(this);
+        regulatorTooltipButton = new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule());
+        buttonList.add(regulatorTooltipButton);
 
         if (routerPos != null) {
             buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop));
         }
+
+        inventorySlots.removeListener(this);
+        inventorySlots.addListener(this);
+
+        setupButtonVisibility();
+    }
+
+    private void setupButtonVisibility() {
+        boolean redstoneVis = false;
+        boolean regulatorVis = false;
+        for (int i = 0; i < Augment.SLOTS; i++) {
+            ItemStack stack = inventorySlots.getSlot(ContainerModule.AUGMENT_START + i).getStack();
+            AugmentType type = AugmentType.getType(stack);
+            if (type == null) continue;
+            switch (type) {
+                case REDSTONE: redstoneVis = true; break;
+                case REGULATOR: regulatorVis = true; break;
+            }
+        }
+        redstoneButton.visible = redstoneVis;
+        regulatorTooltipButton.visible = regulatorVis;
+        regulatorTextField.setVisible(regulatorVis);
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
@@ -173,7 +199,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
                 ModularRouters.network.sendToServer(OpenGuiMessage.openRouter(routerPos));
             }
         } else if (button.id == REDSTONE_BUTTON_ID) {
-            rbb.cycle(!isShiftKeyDown());
+            redstoneButton.cycle(!isShiftKeyDown());
             sendModuleSettingsToServer();
         }
     }
@@ -215,7 +241,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
                 flags |= setting.getMask();
             }
         }
-        RouterRedstoneBehaviour behaviour = rbb == null ? RouterRedstoneBehaviour.ALWAYS : rbb.getState();
+        RouterRedstoneBehaviour behaviour = redstoneButton == null ? RouterRedstoneBehaviour.ALWAYS : redstoneButton.getState();
         NBTTagCompound compound = new NBTTagCompound();
         compound.setByte(ModuleHelper.NBT_FLAGS, flags);
         compound.setByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
@@ -339,6 +365,25 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
         }
         return null;
+    }
+
+    @Override
+    public void sendAllContents(Container containerToSend, NonNullList<ItemStack> itemsList) {
+    }
+
+    @Override
+    public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
+        if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + Augment.SLOTS) {
+            setupButtonVisibility();
+        }
+    }
+
+    @Override
+    public void sendWindowProperty(Container containerIn, int varToUpdate, int newValue) {
+    }
+
+    @Override
+    public void sendAllWindowProperties(Container containerIn, IInventory inventory) {
     }
 
     private static class RegulatorTooltipButton extends TexturedButton {

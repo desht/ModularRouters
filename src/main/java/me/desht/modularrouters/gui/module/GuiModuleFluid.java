@@ -84,8 +84,8 @@ public class GuiModuleFluid extends GuiModule {
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
 
-        if (regulationEnabled) {
-            mc.fontRenderer.drawString("%", 179, 79, 0x404040);
+        if (regulatorTextField.getVisible()) {
+            mc.fontRenderer.drawString("%", 179, 77, 0x404040);
         }
     }
 

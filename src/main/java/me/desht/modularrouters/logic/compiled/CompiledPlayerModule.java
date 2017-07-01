@@ -90,7 +90,7 @@ public class CompiledPlayerModule extends CompiledModule {
                     if (getSection() == CompiledPlayerModule.Section.ARMOR) {
                         return insertArmor(router, itemHandler, bufferStack);
                     } else {
-                        int nToSend = router.getItemsPerTick();
+                        int nToSend = getItemsPerTick(router);
                         if (getRegulationAmount() > 0) {
                             int existing = InventoryUtils.countItems(bufferStack, itemHandler, getRegulationAmount(), !getFilter().getFlags().isIgnoreMeta());
                             nToSend = Math.min(nToSend, getRegulationAmount() - existing);

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.item.module.IRangedModule;
+import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.item.module.Module;
@@ -22,17 +22,11 @@ import java.util.UUID;
  */
 public class ModuleHelper {
     public static final String NBT_FLAGS = "Flags";
-    public static final String NBT_REDSTONE_ENABLED = "RedstoneEnabled";
     public static final String NBT_REDSTONE_MODE = "RedstoneMode";
-    public static final String NBT_REGULATOR_ENABLED = "RegulatorEnabled";
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
     private static final String NBT_OWNER = "Owner";
-    private static final String NBT_PICKUP_DELAY = "PickupDelay";
-    private static final String NBT_FAST_PICKUP = "FastPickup";
     private static final String NBT_CONFIG_SLOT = "ConfigSlot";
-    private static final String NBT_XP_VACUUM = "XPVacuum";
-    private static final String NBT_RANGE_BOOST = "RangeBoost";
     public static final String NBT_AUGMENTS = "Augments";
 
     @Nonnull
@@ -90,34 +84,17 @@ public class ModuleHelper {
         return Module.RelativeDirection.values()[(compound.getByte(NBT_FLAGS) & 0x70) >> 4];
     }
 
-    public static boolean isRedstoneBehaviourEnabled(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getBoolean(NBT_REDSTONE_ENABLED);
-    }
-
-    public static boolean isRegulatorEnabled(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getBoolean(NBT_REGULATOR_ENABLED);
-    }
-
     public static int getRegulatorAmount(ItemStack itemstack) {
         NBTTagCompound compound = validateNBT(itemstack);
         return compound.getInteger(NBT_REGULATOR_AMOUNT);
     }
 
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        if (compound.getBoolean(NBT_REDSTONE_ENABLED)) {
+        ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
+        if (counter.getAugmentCount(ItemAugment.AugmentType.REDSTONE) > 0) {
+            NBTTagCompound compound = validateNBT(stack);
             try {
-                // check for mode stored as a string (v1.0), or as a byte (v1.1+)
-                int id = compound.getTagId(NBT_REDSTONE_MODE);
-                if (id == Constants.NBT.TAG_BYTE) {
-                    return RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
-                } else if (id == Constants.NBT.TAG_STRING) {
-                    return RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-                } else {
-                    return RouterRedstoneBehaviour.ALWAYS;
-                }
+                return RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                 return RouterRedstoneBehaviour.ALWAYS;
             }
@@ -126,42 +103,9 @@ public class ModuleHelper {
         }
     }
 
-    public static void setRedstoneBehaviour(ItemStack stack, boolean enabled, RouterRedstoneBehaviour behaviour) {
-        NBTTagCompound compound = validateNBT(stack);
-        compound.setBoolean(NBT_REDSTONE_ENABLED, enabled);
-        compound.setByte(NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
-    }
-
-    public static void setRegulatorAmount(ItemStack stack, boolean enabled, int amount) {
-        NBTTagCompound compound = validateNBT(stack);
-        compound.setBoolean(NBT_REGULATOR_ENABLED, enabled);
-        compound.setInteger(NBT_REGULATOR_AMOUNT, amount);
-    }
-
     public static NBTTagList getFilterItems(ItemStack stack) {
         NBTTagCompound compound = validateNBT(stack);
         return compound.getTagList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-    }
-
-    public static void increasePickupDelay(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        int delay = compound.getInteger(NBT_PICKUP_DELAY);
-        compound.setInteger(NBT_PICKUP_DELAY, delay + 10);  // ticks
-    }
-
-    public static int getPickupDelay(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getInteger(NBT_PICKUP_DELAY);
-    }
-
-    public static void addFastPickup(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        compound.setBoolean(NBT_FAST_PICKUP, true);
-    }
-
-    public static boolean hasFastPickup(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getBoolean(NBT_FAST_PICKUP);
     }
 
     public static void setOwner(ItemStack stack, EntityPlayer player) {
@@ -226,28 +170,8 @@ public class ModuleHelper {
         }
     }
 
-    public static void enableXPVacuum(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        compound.setBoolean(NBT_XP_VACUUM, true);
-    }
-
-    public static boolean hasXPVacuum(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getBoolean(NBT_XP_VACUUM);
-    }
-
-    public static int getRangeBoost(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
-        return compound.getInteger(NBT_RANGE_BOOST);
-    }
-
-    public static void adjustRangeBoost(ItemStack stack, int delta) {
-        Module m = ItemModule.getModule(stack);
-        if (m instanceof IRangedModule) {
-            IRangedModule rm = (IRangedModule) m;
-            NBTTagCompound compound = validateNBT(stack);
-            int current = compound.getInteger(NBT_RANGE_BOOST);
-            compound.setInteger(NBT_RANGE_BOOST, Math.max(1, Math.min(rm.getHardMaxRange(), current + delta)));
-        }
+    public static int getRangeModifier(ItemStack stack) {
+        ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
+        return counter.getAugmentCount(ItemAugment.AugmentType.RANGE_UP) - counter.getAugmentCount(ItemAugment.AugmentType.RANGE_DOWN);
     }
 }

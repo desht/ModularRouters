@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -10,9 +11,11 @@ import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.item.ItemSubTypes;
+import me.desht.modularrouters.item.augment.ItemAugment;
+import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
+import me.desht.modularrouters.item.augment.ItemAugment.AugmentType;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
-import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
@@ -129,7 +132,7 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
     @SideOnly(Side.CLIENT)
     public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         addSettingsInformation(itemstack, list);
-        addEnhancementInformation(itemstack, list);
+        addAugmentInformation(itemstack, list);
     }
 
     private void addSettingsInformation(ItemStack itemstack, List<String> list) {
@@ -162,26 +165,24 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
                         compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
                         compose("TERMINATE", !ModuleHelper.terminates(itemstack))
                 ));
-
-        if (this instanceof IRangedModule) {
-            IRangedModule rm = (IRangedModule) this;
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo", rm.getCurrentRange(itemstack), rm.getHardMaxRange()));
-        }
     }
 
-    private void addEnhancementInformation(ItemStack itemstack, List<String> list) {
-        if (ModuleHelper.isRedstoneBehaviourEnabled(itemstack)) {
-            RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(itemstack);
-            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.redstone.label")
-                    + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip.redstone." + rrb.toString()));
+    private void addAugmentInformation(ItemStack itemstack, List<String> list) {
+        AugmentCounter c = new AugmentCounter(itemstack);
+
+        List<String> toAdd = Lists.newArrayList();
+        for (AugmentType type: AugmentType.values()) {
+            int n = c.getAugmentCount(type);
+            if (n > 0) {
+                String s = I18n.format("item." + type.toString().toLowerCase() + "_augment.name");
+                if (n > 1) s = n + " x " + s;
+                s += TextFormatting.AQUA + ItemAugment.getAugment(type).getExtraInfo(n, itemstack);
+                toAdd.add(" \u2022 " + TextFormatting.GREEN + s);
+            }
         }
-        if (ModuleHelper.isRegulatorEnabled(itemstack)) {
-            int amount = ModuleHelper.getRegulatorAmount(itemstack);
-            list.add(TextFormatting.GREEN + I18n.format("guiText.tooltip.regulator.label", amount));
-        }
-        int pickupDelay = ModuleHelper.getPickupDelay(itemstack);
-        if (pickupDelay > 0) {
-            list.add(TextFormatting.GREEN + I18n.format("itemText.misc.pickupDelay", pickupDelay, pickupDelay / 20.0f));
+        if (!toAdd.isEmpty()) {
+            list.add(TextFormatting.YELLOW + I18n.format("itemText.augments"));
+            list.addAll(toAdd);
         }
     }
 
@@ -248,13 +249,5 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
      */
     public IItemMatcher getFilterItemMatcher(ItemStack stack) {
         return new SimpleItemMatcher(stack);
-    }
-
-    ShapelessOreRecipe makeShapelessOreRecipe(ItemStack result, Object... recipe) {
-        return new ShapelessOreRecipe(new ResourceLocation(ModularRouters.MODID, "module_recipe"), result, recipe);
-    }
-
-    ShapedOreRecipe makeShapedOreRecipe(ItemStack result, Object... recipe) {
-        return new ShapedOreRecipe(new ResourceLocation(ModularRouters.MODID, "module_recipe"), result, recipe);
     }
 }

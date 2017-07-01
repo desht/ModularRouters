@@ -19,7 +19,7 @@ import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
 public class ContainerModule extends Container {
-    static final int AUGMENT_START = Filter.FILTER_SIZE;
+    public static final int AUGMENT_START = Filter.FILTER_SIZE;
     static final int INV_START = AUGMENT_START + Augment.SLOTS;
     static final int INV_END = INV_START + 26;
     static final int HOTBAR_START = INV_END + 1;
@@ -102,6 +102,7 @@ public class ContainerModule extends Container {
                     return ItemStack.EMPTY;
                 }
                 srcSlot.onSlotChanged();
+                detectAndSendChanges();
             } else if (index >= INV_START && index <= HOTBAR_END) {
                 // shift-clicking in player inventory
                 ItemStack stackInSlot = srcSlot.getStack();
@@ -110,6 +111,7 @@ public class ContainerModule extends Container {
                     if (!mergeItemStack(stackInSlot, AUGMENT_START, AUGMENT_START + Augment.SLOTS, false)) {
                         return ItemStack.EMPTY;
                     }
+                    detectAndSendChanges();
                 } else {
                     // copy it into the filter (if not already present)
                     // but don't remove it from player inventory
@@ -137,6 +139,7 @@ public class ContainerModule extends Container {
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
 //        System.out.println("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
+        boolean sendChanges = false;
 
         if (slot > HOTBAR_END) {
             return slotClickExtraSlot(slot, dragType, clickTypeIn, player);
@@ -149,7 +152,7 @@ public class ContainerModule extends Container {
                     // no messing with the module that triggered this container's creation
                     return ItemStack.EMPTY;
                 }
-                if (slot < Filter.FILTER_SIZE && slot >= 0) {
+                if (slot >= 0 && slot < Filter.FILTER_SIZE) {
                     Slot s = inventorySlots.get(slot);
                     ItemStack stackOnCursor = player.inventory.getItemStack();
                     if (!stackOnCursor.isEmpty()) {
@@ -160,12 +163,18 @@ public class ContainerModule extends Container {
                         s.putStack(ItemStack.EMPTY);
                     }
                     return ItemStack.EMPTY;
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS) {
+                    sendChanges = true;
                 }
             case THROW:
-                if (slot < Filter.FILTER_SIZE && slot >= 0) {
+                if (slot >= 0 && slot < Filter.FILTER_SIZE) {
                     return ItemStack.EMPTY;
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS) {
+                    sendChanges = true;
                 }
         }
-        return super.slotClick(slot, dragType, clickTypeIn, player);
+        ItemStack ret = super.slotClick(slot, dragType, clickTypeIn, player);
+        if (sendChanges) detectAndSendChanges();
+        return ret;
     }
 }

@@ -32,8 +32,8 @@ public class ModuleEnhancementRecipeWrapper
     ModuleEnhancementRecipeWrapper(IJeiHelpers helpers, ModuleEnhancementRecipe recipe) {
         this.helpers = helpers;
         this.recipe = recipe;
-        this.name = I18n.format("jei.augment." + recipe.getRecipeId() + ".name");
-        this.description = MiscUtil.splitLong("jei.augment." + recipe.getRecipeId() + ".description", 40);
+        this.name = I18n.format("jei.recipe." + recipe.getRecipeId() + ".name");
+        this.description = MiscUtil.splitLong("jei.recipe." + recipe.getRecipeId() + ".description", 40);
     }
 
     @Override
@@ -84,6 +84,5 @@ public class ModuleEnhancementRecipeWrapper
         ICraftingGridHelper craftingGridHelper =
                 helpers.getGuiHelper().createCraftingGridHelper(craftInputSlot1, craftOutputSlot);
         craftingGridHelper.setInputs(guiItemStacks, inputs, getWidth(), getHeight());
-//        craftingGridHelper.setOutput(guiItemStacks, outputs);
     }
 }
