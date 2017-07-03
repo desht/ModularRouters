@@ -110,8 +110,11 @@ public class InventoryUtils {
      * @return true if the entity was spawned, false otherwise
      */
     public static boolean dropItems(World world, BlockPos pos, ItemStack stack) {
-        EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-        return world.spawnEntity(item);
+        if (!world.isRemote) {
+            EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+            return world.spawnEntity(item);
+        }
+        return true;
     }
 
     /**

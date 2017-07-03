@@ -22,7 +22,7 @@ class ItemCraftedListener {
         }
 
         // if self-crafting a module to reset it, retrieve any augments in the module
-        if (event.crafting.getItem() instanceof ItemModule && !event.player.getEntityWorld().isRemote) {
+        if (event.crafting.getItem() instanceof ItemModule) {
             ItemStack moduleStack = ItemStack.EMPTY;
             for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
                 ItemStack s = event.craftMatrix.getStackInSlot(i);
