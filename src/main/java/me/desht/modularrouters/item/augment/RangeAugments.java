@@ -12,17 +12,6 @@ public abstract class RangeAugments extends Augment {
         return ItemModule.getModule(moduleType) instanceof IRangedModule;
     }
 
-    @Override
-    public String getExtraInfo(int c, ItemStack stack) {
-        Module m = ItemModule.getModule(stack);
-        if (m instanceof IRangedModule) {
-            IRangedModule r = (IRangedModule) m;
-            return " - " + I18n.format("itemText.augments.rangeInfo", r.getCurrentRange(stack), r.getHardMaxRange());
-        } else {
-            return "";
-        }
-    }
-
     static class RangeUpAugment extends RangeAugments {
     }
 

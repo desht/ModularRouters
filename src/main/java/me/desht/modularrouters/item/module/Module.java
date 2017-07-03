@@ -36,11 +36,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
-import org.lwjgl.opencl.CL;
 
-import java.awt.*;
 import java.util.List;
 
 public abstract class Module extends ItemSubTypes.SubItemHandler {
@@ -142,17 +138,42 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
             Module.RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
             list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
         }
-        NBTTagList items = ModuleHelper.getFilterItems(itemstack);
+        addFilterInformation(itemstack, list);
+        list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
+                String.join(" / ",
+                        formatFlag("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
+                        formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
+                        formatFlag("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
+                        formatFlag("TERMINATE", !ModuleHelper.terminates(itemstack))
+                ));
+        if (this instanceof IRangedModule) {
+            IRangedModule rm = (IRangedModule) this;
+            int curRange = rm.getCurrentRange(itemstack);
+            String col = curRange > rm.getBaseRange() ?
+                    TextFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
+                    TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
+            list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo",
+                    col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
+        }
+    }
+
+    private String formatFlag(String key, boolean flag) {
+        String text = I18n.format("itemText.misc." + key);
+        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
+    }
+
+    private void addFilterInformation(ItemStack itemstack, List<String> list) {
+        NBTTagList filterItems = ModuleHelper.getFilterItems(itemstack);
         list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (ModuleHelper.isBlacklist(itemstack) ? "2" : "1")) + ":");
-        if (items.tagCount() > 0) {
-            for (int i = 0; i < items.tagCount(); i++) {
-                ItemStack s = new ItemStack(items.getCompoundTagAt(i));
+        if (filterItems.tagCount() > 0) {
+            for (int i = 0; i < filterItems.tagCount(); i++) {
+                ItemStack s = new ItemStack(filterItems.getCompoundTagAt(i));
                 SmartFilter f = ItemSmartFilter.getFilter(s);
                 if (f == null) {
                     list.add(" \u2022 " + TextFormatting.AQUA + s.getDisplayName());
                 } else {
                     int size = f.getSize(s);
-                    String suffix = size > 0 ? " [" + f.getSize(s) + "]" : "";
+                    String suffix = size > 0 ? " [" + size + "]" : "";
                     list.add(" \u2022 " + TextFormatting.AQUA + TextFormatting.ITALIC + s.getDisplayName() + suffix);
                 }
             }
@@ -160,13 +181,6 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
             String s = list.get(list.size() - 1);
             list.set(list.size() - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
         }
-        list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
-                Joiner.on(" / ").join(
-                        compose("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
-                        compose("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
-                        compose("IGNORE_OREDICT", ModuleHelper.ignoreOreDict(itemstack)),
-                        compose("TERMINATE", !ModuleHelper.terminates(itemstack))
-                ));
     }
 
     private void addAugmentInformation(ItemStack itemstack, List<String> list) {
@@ -186,11 +200,6 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
             list.add(TextFormatting.YELLOW + I18n.format("itemText.augments"));
             list.addAll(toAdd);
         }
-    }
-
-    private String compose(String key, boolean flag) {
-        String text = I18n.format("itemText.misc." + key);
-        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
@@ -227,10 +236,6 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
 
     public boolean isFluidModule() {
         return false;
-    }
-
-    public boolean canBeRegulated() {
-        return true;
     }
 
     /**

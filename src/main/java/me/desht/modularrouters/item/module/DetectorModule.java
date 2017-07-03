@@ -45,11 +45,6 @@ public class DetectorModule extends Module {
     }
 
     @Override
-    public boolean canBeRegulated() {
-        return false;
-    }
-
-    @Override
     public Color getItemTint() {
         return new Color(255, 255, 195);
     }

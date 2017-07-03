@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 public class RegulatorAugment extends Augment {
     @Override
     public boolean isCompatible(ItemModule.ModuleType moduleType) {
-        return moduleType != ItemModule.ModuleType.DETECTOR;
+        return moduleType != ItemModule.ModuleType.DETECTOR && moduleType != ItemModule.ModuleType.EXTRUDER2;
     }
 
     @Override

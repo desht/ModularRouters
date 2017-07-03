@@ -56,11 +56,6 @@ public class ExtruderModule2 extends Module implements IRangedModule {
     }
 
     @Override
-    public boolean canBeRegulated() {
-        return false;
-    }
-
-    @Override
     public int getBaseRange() {
         return ConfigHandler.module.extruder2BaseRange;
     }
