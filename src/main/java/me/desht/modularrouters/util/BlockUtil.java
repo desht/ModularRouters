@@ -211,7 +211,7 @@ public class BlockUtil {
 
         if (silkTouch) {
             Item item = Item.getItemFromBlock(block);
-            if (item != Items.AIR) {
+            if (item == Items.AIR) {
                 return Collections.emptyList();
             } else {
                 return Lists.newArrayList(new ItemStack(item, 1, block.getMetaFromState(state)));
