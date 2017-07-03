@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.module;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
@@ -30,7 +29,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -164,7 +166,7 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
 
     private void addFilterInformation(ItemStack itemstack, List<String> list) {
         NBTTagList filterItems = ModuleHelper.getFilterItems(itemstack);
-        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.BLACKLIST." + (ModuleHelper.isBlacklist(itemstack) ? "2" : "1")) + ":");
+        list.add(TextFormatting.YELLOW + I18n.format("itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist")) + ":");
         if (filterItems.tagCount() > 0) {
             for (int i = 0; i < filterItems.tagCount(); i++) {
                 ItemStack s = new ItemStack(filterItems.getCompoundTagAt(i));

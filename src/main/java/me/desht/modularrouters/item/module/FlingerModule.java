@@ -43,6 +43,6 @@ public class FlingerModule extends DropperModule {
 
     @Override
     public Color getItemTint() {
-        return new Color(217, 191, 208);
+        return new Color(230, 204, 240);
     }
 }

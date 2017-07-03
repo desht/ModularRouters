@@ -80,6 +80,7 @@ public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
     public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         SubItemHandler handler = getHandler(itemstack);
         if (handler != null) {
+            handler.addBasicInformation(itemstack, player, list, advanced);
             if (GuiScreen.isCtrlKeyDown()) {
                 handler.addUsageInformation(itemstack, player, list, advanced);
             } else if (ConfigHandler.misc.alwaysShowSettings || GuiScreen.isShiftKeyDown()) {

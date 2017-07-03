@@ -127,23 +127,4 @@ public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {
         ItemStack stack = player.getHeldItem(hand);
         return getModule(stack).onItemUse(stack, player, world, pos, hand, face, x, y, z);
     }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        Module module = getModule(itemstack);
-        if (module == null) {
-            return;
-        }
-        module.addBasicInformation(itemstack, player, list, advanced);
-
-        if (GuiScreen.isCtrlKeyDown()) {
-            module.addUsageInformation(itemstack, player, list, advanced);
-        } else if (ConfigHandler.misc.alwaysShowSettings || GuiScreen.isShiftKeyDown()) {
-            module.addExtraInformation(itemstack, player, list, advanced);
-            list.add(I18n.format("itemText.misc.holdCtrl"));
-        } else if (!ConfigHandler.misc.alwaysShowSettings){
-            list.add(I18n.format("itemText.misc.holdShiftCtrl"));
-        }
-    }
 }
