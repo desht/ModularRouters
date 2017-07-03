@@ -38,7 +38,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import org.lwjgl.opencl.CL;
 
+import java.awt.*;
 import java.util.List;
 
 public abstract class Module extends ItemSubTypes.SubItemHandler {
@@ -57,10 +59,10 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
             this.defaultValue = defaultValue;
             this.mask = (byte) mask;
         }
+
         public boolean getDefaultValue() {
             return defaultValue;
         }
-
         public byte getMask() {
             return mask;
         }

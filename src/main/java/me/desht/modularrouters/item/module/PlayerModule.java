@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 
 public class PlayerModule extends Module {
@@ -59,5 +60,10 @@ public class PlayerModule extends Module {
         } else {
             return super.onItemUse(stack, player, world, pos, hand, face, x, y, z);
         }
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(255, 208, 144);
     }
 }

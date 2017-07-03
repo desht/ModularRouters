@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
 import java.util.List;
 
 public class DetectorModule extends Module {
@@ -46,5 +47,10 @@ public class DetectorModule extends Module {
     @Override
     public boolean canBeRegulated() {
         return false;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(255, 255, 195);
     }
 }

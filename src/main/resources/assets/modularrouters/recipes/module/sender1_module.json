@@ -5,5 +5,5 @@
     { "item" : "minecraft:bow" },
     { "item" : "minecraft:arrow" }
   ],
-  "result": { "item": "modularrouters:module", "data": 4 }
+  "result": { "item": "modularrouters:module", "data": 5 }
 }

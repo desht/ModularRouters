@@ -4,5 +4,5 @@
     { "item" : "#dropper" },
     { "item" : "minecraft:gunpowder" }
   ],
-  "result": { "item": "modularrouters:module", "data": 10 }
+  "result": { "item": "modularrouters:module", "data": 1 }
 }

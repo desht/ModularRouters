@@ -10,6 +10,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -26,5 +27,10 @@ public class BreakerModule extends Module {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledBreakerModule(router, stack);
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(217, 191, 208);
     }
 }

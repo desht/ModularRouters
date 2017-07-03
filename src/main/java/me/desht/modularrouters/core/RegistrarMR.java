@@ -129,7 +129,8 @@ public class RegistrarMR {
     private static void registerSubItemModels(ItemSubTypes... items) {
         for (ItemSubTypes item : items) {
             for (int i = 0; i < item.getSubTypes(); i++) {
-                ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(RL(item.getSubTypeName(i)), "inventory"));
+                ModelLoader.setCustomModelResourceLocation(item, i,
+                        new ModelResourceLocation(item.getRegistryName() + "/" + item.getSubTypeName(i), "inventory"));
             }
         }
     }

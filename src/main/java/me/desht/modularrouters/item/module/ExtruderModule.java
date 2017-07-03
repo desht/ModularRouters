@@ -13,6 +13,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -45,5 +46,10 @@ public class ExtruderModule extends Module implements IRangedModule {
     @Override
     public int getHardMaxRange() {
         return ConfigHandler.module.extruderMaxRange;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(227, 174, 27);
     }
 }

@@ -111,6 +111,11 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
         }
 
         @Override
+        protected boolean drawStandardBackground() {
+            return false;
+        }
+
+        @Override
         protected int getTextureX() {
             return 48 + 16 * (id - GuiModule.EXTRA_BUTTON_BASE);
         }

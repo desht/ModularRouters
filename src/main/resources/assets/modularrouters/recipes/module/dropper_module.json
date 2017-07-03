@@ -4,5 +4,5 @@
     { "item" : "#blankmodule" },
     { "item" : "minecraft:dropper" }
   ],
-  "result": { "item": "modularrouters:module", "data": 1 }
+  "result": { "item": "modularrouters:module", "data": 0 }
 }

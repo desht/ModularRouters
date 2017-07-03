@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.List;
 
 public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
@@ -141,5 +142,9 @@ public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
             return new Object[0];
         }
 
+        @SideOnly(Side.CLIENT)
+        public Color getItemTint() {
+            return Color.WHITE;
+        }
     }
 }

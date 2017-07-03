@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "modularrouters:items/blank_upgrade"
+    "layer0": "modularrouters:items/upgrade/upgrade_layer0",
+    "layer1": "modularrouters:items/upgrade/upgrade_layer1"
   }
 }

@@ -4,5 +4,5 @@
     { "item" : "#sender1" },
     { "item" : "minecraft:ender_eye" }
   ],
-  "result": { "item": "modularrouters:module", "data": 5 }
+  "result": { "item": "modularrouters:module", "data": 6 }
 }

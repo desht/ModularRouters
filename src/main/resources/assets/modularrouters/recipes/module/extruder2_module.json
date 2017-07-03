@@ -10,5 +10,5 @@
     "P": { "item": "#puller" },
     "C": { "type": "forge:ore_dict", "ore": "chestWood" }
   },
-  "result": { "item": "modularrouters:module", "data": 15 }
+  "result": { "item": "modularrouters:module", "data": 11 }
 }

@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
@@ -46,6 +47,11 @@ public class SyncUpgrade extends Upgrade {
             stack.setTagCompound(compound = new NBTTagCompound());
         }
         compound.setInteger(NBT_TUNING, newValue);
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(255, 255, 195);
     }
 
     @Override

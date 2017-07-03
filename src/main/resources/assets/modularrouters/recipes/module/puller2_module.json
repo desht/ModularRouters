@@ -4,5 +4,5 @@
     { "item" : "#puller" },
     { "item" : "minecraft:ender_eye" }
   ],
-  "result": { "item": "modularrouters:module", "data": 14 }
+  "result": { "item": "modularrouters:module", "data": 9 }
 }

@@ -5,6 +5,8 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVoidModule;
 import net.minecraft.item.ItemStack;
 
+import java.awt.*;
+
 public class VoidModule extends Module {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
@@ -16,4 +18,8 @@ public class VoidModule extends Module {
         return false;
     }
 
+    @Override
+    public Color getItemTint() {
+        return Color.RED;
+    }
 }

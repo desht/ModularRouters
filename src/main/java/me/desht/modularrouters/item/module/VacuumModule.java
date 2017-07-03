@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 
 public class VacuumModule extends Module implements IRangedModule {
@@ -27,5 +28,10 @@ public class VacuumModule extends Module implements IRangedModule {
     @Override
     public int getHardMaxRange() {
         return ConfigHandler.module.vacuumMaxRange;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(96, 0, 192);
     }
 }

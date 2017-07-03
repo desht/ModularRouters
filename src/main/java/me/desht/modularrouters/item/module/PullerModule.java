@@ -5,10 +5,16 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule;
 import net.minecraft.item.ItemStack;
 
+import java.awt.*;
+
 public class PullerModule extends Module {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledPullerModule(router, stack);
     }
 
+    @Override
+    public Color getItemTint() {
+        return new Color(201, 206, 255);
+    }
 }

@@ -6,6 +6,8 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule2;
 import net.minecraft.item.ItemStack;
 
+import java.awt.*;
+
 public class PullerModule2 extends TargetedModule implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
@@ -25,5 +27,10 @@ public class PullerModule2 extends TargetedModule implements IRangedModule {
     @Override
     public int getHardMaxRange() {
         return ConfigHandler.module.puller2MaxRange;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(128, 134, 255);
     }
 }

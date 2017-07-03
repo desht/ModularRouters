@@ -44,11 +44,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.config.ConfigManager;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.io.IOException;
 import java.util.Map;
 
@@ -142,7 +144,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         buttonList.add(regulatorTooltipButton);
 
         if (routerPos != null) {
-            buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop));
+            buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft + 2, guiTop + 1));
         }
 
         inventorySlots.removeListener(this);
@@ -263,16 +265,27 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String title = moduleItemStack.getDisplayName() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
-        this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 5, 0x404040);
+        this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Color c = getGuiBackgroundTint();
+        GL11.glColor4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         if (!module.isDirectional()) {
             drawTexturedModalRect(guiLeft + 69, guiTop + 17, 204, 0, 52, 52);
+        }
+    }
+
+    private Color getGuiBackgroundTint() {
+        if (ConfigHandler.module.backgroundTint) {
+            Color c = module.getItemTint();
+            float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+            return Color.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
+        } else {
+            return Color.WHITE;
         }
     }
 
@@ -384,6 +397,16 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     @Override
     public void sendAllWindowProperties(Container containerIn, IInventory inventory) {
+    }
+
+    private static final int THRESHOLD = 129;
+    private int getFgColor(Color c) {
+        int luminance = (int) Math.sqrt(c.getRed() * c.getRed() * 0.241 + c.getGreen() * c.getGreen() * 0.691 + c.getBlue() * c.getBlue() * 0.068);
+        if (luminance > THRESHOLD) {
+            return 0x404040;
+        } else {
+            return 0xffffff;
+        }
     }
 
     private static class RegulatorTooltipButton extends TexturedButton {

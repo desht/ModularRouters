@@ -17,6 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 
 public class ExtruderModule2 extends Module implements IRangedModule {
@@ -67,5 +68,10 @@ public class ExtruderModule2 extends Module implements IRangedModule {
     @Override
     public int getHardMaxRange() {
         return ConfigHandler.module.extruder2MaxRange;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(227, 174, 27);
     }
 }

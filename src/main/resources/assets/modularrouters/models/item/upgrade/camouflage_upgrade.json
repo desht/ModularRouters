@@ -1,0 +1,8 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "modularrouters:items/upgrade/upgrade_layer0",
+    "layer1": "modularrouters:items/upgrade/upgrade_layer1",
+    "layer2": "modularrouters:items/upgrade/camouflage_upgrade"
+  }
+}

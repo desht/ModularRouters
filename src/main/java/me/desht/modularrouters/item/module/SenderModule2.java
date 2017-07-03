@@ -6,6 +6,8 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
 import net.minecraft.item.ItemStack;
 
+import java.awt.*;
+
 public class SenderModule2 extends TargetedModule implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
@@ -27,4 +29,8 @@ public class SenderModule2 extends TargetedModule implements IRangedModule {
         return ConfigHandler.module.sender2MaxRange;
     }
 
+    @Override
+    public Color getItemTint() {
+        return new Color(149, 255, 93);
+    }
 }

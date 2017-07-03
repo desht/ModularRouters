@@ -16,6 +16,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
 import java.util.List;
 
 public class FluidModule extends Module {
@@ -60,5 +61,10 @@ public class FluidModule extends Module {
     @Override
     public boolean isFluidModule() {
         return true;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(79, 191, 255);
     }
 }

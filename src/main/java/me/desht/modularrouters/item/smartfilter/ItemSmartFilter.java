@@ -55,11 +55,6 @@ public class ItemSmartFilter extends ItemSubTypes<ItemSmartFilter.FilterType> {
         }
     }
 
-    @Override
-    public String getSubTypeName(int meta) {
-        return ItemSmartFilter.FilterType.values()[meta].name().toLowerCase() + "_filter";
-    }
-
     public static SmartFilter getFilter(ItemStack stack) {
         if (!(stack.getItem() instanceof ItemSmartFilter)) {
             return null;

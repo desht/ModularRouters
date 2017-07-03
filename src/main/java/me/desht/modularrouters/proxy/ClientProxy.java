@@ -2,6 +2,7 @@ package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.ItemColours;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.GuiItemRouter;
@@ -22,6 +23,12 @@ public class ClientProxy extends CommonProxy {
         super.init();
 
         registerBlockColors();
+    }
+
+    @Override
+    public void postInit() {
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemColours.ModuleColour(), RegistrarMR.MODULE);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemColours.UpgradeColour(), RegistrarMR.UPGRADE);
     }
 
     private static boolean noclipEnabled = false;

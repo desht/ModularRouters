@@ -114,6 +114,10 @@ public class ConfigHandler {
         @Config.LangKey("gui.config.extruderSound")
         @Config.Comment("Should Extruder (Mk1 & 2) modules play a sound when placing blocks?")
         public boolean extruderSound = true;
+
+        @Config.LangKey("gui.config.backgroundTint")
+        @Config.Comment("Should the module GUI background be tinted like the module item colour?")
+        public boolean backgroundTint = true;
     }
 
     public static class Router {

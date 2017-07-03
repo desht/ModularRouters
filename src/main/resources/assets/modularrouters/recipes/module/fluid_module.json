@@ -9,5 +9,5 @@
     "G": { "type": "forge:ore_dict", "ore": "blockGlass" },
     "C": { "item": "minecraft:cauldron" }
   },
-  "result": { "item": "modularrouters:module", "data": 13 }
+  "result": { "item": "modularrouters:module", "data": 14 }
 }

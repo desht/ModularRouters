@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
 import java.util.List;
 
 public class FlingerModule extends DropperModule {
@@ -38,5 +39,10 @@ public class FlingerModule extends DropperModule {
     @Override
     public Class<? extends GuiModule> getGuiHandler() {
         return GuiModuleFlinger.class;
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(217, 191, 208);
     }
 }

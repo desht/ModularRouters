@@ -5,5 +5,5 @@
     { "item" : "minecraft:end_stone" },
     { "item" : "minecraft:ender_chest" }
   ],
-  "result": { "item": "modularrouters:module", "data": 6 }
+  "result": { "item": "modularrouters:module", "data": 7 }
 }

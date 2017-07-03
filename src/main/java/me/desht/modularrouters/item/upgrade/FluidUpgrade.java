@@ -8,6 +8,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 
 public class FluidUpgrade extends Upgrade {
@@ -25,4 +26,8 @@ public class FluidUpgrade extends Upgrade {
         }
     }
 
+    @Override
+    public Color getItemTint() {
+        return new Color(84, 138, 255);
+    }
 }

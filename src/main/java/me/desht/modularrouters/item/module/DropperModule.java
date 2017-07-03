@@ -5,10 +5,16 @@ import me.desht.modularrouters.logic.compiled.CompiledDropperModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.item.ItemStack;
 
+import java.awt.*;
+
 public class DropperModule extends Module {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledDropperModule(router, stack);
     }
 
+    @Override
+    public Color getItemTint() {
+        return new Color(217, 191, 208);
+    }
 }

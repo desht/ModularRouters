@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -39,15 +40,15 @@ public class SecurityUpgrade extends Upgrade {
         }
     }
 
-//    @Override
-//    boolean hasExtraInformation() {
-//        return true;
-//    }
-
     @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
         router.addPermittedIds(getPlayerIDs(stack));
+    }
+
+    @Override
+    public Color getItemTint() {
+        return new Color(64, 64, 255);
     }
 
     private static Set<UUID> getPlayerIDs(ItemStack stack) {

@@ -1,6 +1,7 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"layer0": "modularrouters:items/blank_module"
+		"layer0": "modularrouters:items/module/module_layer0",
+		"layer1": "modularrouters:items/module/module_layer1"
 	}
 }

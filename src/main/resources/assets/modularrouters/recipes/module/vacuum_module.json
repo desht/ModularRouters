@@ -5,5 +5,5 @@
     { "item" : "minecraft:hopper" },
     { "item" : "minecraft:ender_eye" }
   ],
-  "result": { "item": "modularrouters:module", "data": 7 }
+  "result": { "item": "modularrouters:module", "data": 2 }
 }

@@ -5,5 +5,5 @@
     { "item" : "#placer" },
     { "item" : "#breaker" }
   ],
-  "result": { "item": "modularrouters:module", "data": 12 }
+  "result": { "item": "modularrouters:module", "data": 10 }
 }

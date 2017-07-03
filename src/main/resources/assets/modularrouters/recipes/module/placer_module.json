@@ -5,5 +5,5 @@
     { "item" : "minecraft:dispenser" },
     { "type" : "forge:ore_dict", "ore" : "dirt" }
   ],
-  "result": { "item": "modularrouters:module", "data": 2 }
+  "result": { "item": "modularrouters:module", "data": 3 }
 }

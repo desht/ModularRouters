@@ -4,5 +4,5 @@
     { "item" : "#blankmodule" },
     { "item" : "minecraft:sticky_piston" }
   ],
-  "result": { "item": "modularrouters:module", "data": 3 }
+  "result": { "item": "modularrouters:module", "data": 8 }
 }

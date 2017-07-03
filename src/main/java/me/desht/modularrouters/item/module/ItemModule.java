@@ -31,22 +31,22 @@ public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {
 
     // add new types at the end!
     public enum ModuleType {
-        BREAKER,
         DROPPER,
+        FLINGER,
+        VACUUM,
         PLACER,
-        PULLER,
+        BREAKER,
         SENDER1,
         SENDER2,
         SENDER3,
-        VACUUM,
-        VOID,
-        DETECTOR,
-        FLINGER,
-        PLAYER,
-        EXTRUDER,
-        FLUID,
+        PULLER,
         PULLER2,
-        EXTRUDER2;
+        EXTRUDER,
+        EXTRUDER2,
+        DETECTOR,
+        PLAYER,
+        FLUID,
+        VOID;
 
         public static ModuleType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemModule ? values()[stack.getItemDamage()] : null;

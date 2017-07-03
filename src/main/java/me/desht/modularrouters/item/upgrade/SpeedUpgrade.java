@@ -4,6 +4,8 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 
+import java.awt.*;
+
 public class SpeedUpgrade extends Upgrade {
     @Override
     public Object[] getExtraUsageParams() {
@@ -13,4 +15,8 @@ public class SpeedUpgrade extends Upgrade {
         return new Object[] { tickRate / 20.0f, tickRate, maxUseful };
     }
 
+    @Override
+    public Color getItemTint() {
+        return new Color(224, 32, 32);
+    }
 }

@@ -12,5 +12,5 @@
     "P": { "item": "#puller2" },
     "Z": { "item": "minecraft:skull", "data": 32767 }
   },
-  "result": { "item": "modularrouters:module", "data": 11 }
+  "result": { "item": "modularrouters:module", "data": 13 }
 }

@@ -159,6 +159,7 @@ gui.config.flingerEffects=Play sound and smoke effect when a Flinger Module flin
 gui.config.configKey=Key to press (in the Item Router GUI) to configure installed Modules
 gui.config.ecoTimeout=If a router in eco-mode is idle for this many server ticks, it will go into low-power mode
 gui.config.lowPowerTickRate=An eco-mode router in low-power mode will only tick every this many server ticks
+gui.config.backgroundTint=Tint module GUI backgrounds with the same color as the module item
 gui.config.startWithGuide=New players start with a copy of the guide book
 
 # Item tooltips
@@ -294,4 +295,4 @@ guidebook.words.pickupDelay=Pickup Delay Enhancement
 
 # JEI text
 jei.recipe.reset.name=Module Reset
-jei.recipe.reset.description=Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings, augments and enchantments, will be lost!
+jei.recipe.reset.description=Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)
