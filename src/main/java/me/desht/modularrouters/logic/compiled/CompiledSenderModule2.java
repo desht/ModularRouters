@@ -38,7 +38,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     private boolean validate(TileEntityItemRouter router, ModuleTarget target) {
         return !(isRangeLimited() &&
                 (router.getWorld().provider.getDimension() != target.dimId
-                || router.getPos().distanceSq(target.pos) > rangeSquared));
+                || router.getPos().distanceSq(target.pos) > getRangeSquared()));
 
     }
 

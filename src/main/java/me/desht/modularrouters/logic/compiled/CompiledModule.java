@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
+import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -27,6 +28,7 @@ public abstract class CompiledModule {
     private final EnumFacing facing;
     private final int regulationAmount;
     private final AugmentCounter augmentCounter;
+    private final int range, rangeSquared;
 
     private int lastMatchPos = 0;
 
@@ -52,6 +54,9 @@ public abstract class CompiledModule {
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
         augmentCounter = new AugmentCounter(stack);
+        range = getModule() instanceof IRangedModule ?
+                ((IRangedModule) getModule()).getCurrentRange(getRangeModifier()) : 0;
+        rangeSquared = range * range;
     }
 
     /**
@@ -95,11 +100,11 @@ public abstract class CompiledModule {
         return behaviour;
     }
 
-    public int getRegulationAmount() {
+    int getRegulationAmount() {
         return augmentCounter.getAugmentCount(ItemAugment.AugmentType.REGULATOR) > 0 ? regulationAmount : 0;
     }
 
-    public int getAugmentCount(ItemAugment.AugmentType augmentType) {
+    int getAugmentCount(ItemAugment.AugmentType augmentType) {
         return augmentCounter.getAugmentCount(augmentType);
     }
 
@@ -262,7 +267,15 @@ public abstract class CompiledModule {
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
     }
 
-    protected int getRangeModifier() {
+    int getRange() {
+        return range;
+    }
+
+    public int getRangeSquared() {
+        return rangeSquared;
+    }
+
+    int getRangeModifier() {
         return getAugmentCount(ItemAugment.AugmentType.RANGE_UP) - getAugmentCount(ItemAugment.AugmentType.RANGE_DOWN);
     }
 }

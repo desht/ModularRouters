@@ -26,6 +26,12 @@ public class CompiledPullerModule2 extends CompiledPullerModule {
     }
 
     @Override
+    boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
+        return router.getWorld().provider.getDimension() == target.dimId &&
+                router.getPos().distanceSq(target.pos) <= getRangeSquared();
+    }
+
+    @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
         if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);

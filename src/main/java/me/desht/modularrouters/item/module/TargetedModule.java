@@ -207,14 +207,14 @@ public abstract class TargetedModule extends Module {
     /**
      * Do some validation checks on the module's target.
      *
-     * @param stack the module's itemstack
+     * @param moduleStack the module's itemstack
      * @param src position and dimension of the module (could be a router or player)
      * @param dst position and dimension of the module's target
      * @param validateBlocks true if the destination block should be validated; loaded and holding an inventory
      * @return the validation result
      */
-    private TargetValidation validateTarget(ItemStack stack, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
-        if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(stack))) {
+    private TargetValidation validateTarget(ItemStack moduleStack, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
+        if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(moduleStack))) {
             return TargetValidation.OUT_OF_RANGE;
         }
 

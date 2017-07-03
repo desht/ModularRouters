@@ -27,13 +27,13 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
         blockList = new ArrayList<>();
 
         TemplateHandler handler = new TemplateHandler(stack);
-        for (int i = 0; i < handler.getSlots() && blockList.size() < range; i++) {
+        for (int i = 0; i < handler.getSlots() && blockList.size() < getRange(); i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
             for (int j = 0; j < stack1.getCount(); j++) {
                 ItemStack copy = stack1.copy();
                 copy.setCount(1);
                 blockList.add(copy);
-                if (blockList.size() >= range) break;
+                if (blockList.size() >= getRange()) break;
             }
         }
     }

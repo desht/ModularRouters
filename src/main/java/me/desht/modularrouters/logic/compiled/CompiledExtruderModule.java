@@ -20,13 +20,11 @@ public class CompiledExtruderModule extends CompiledModule {
 
     int distance;  // marks the current extension length (0 = no extrusion)
     private final boolean silkTouch;
-    protected final int range;
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInteger(NBT_EXTRUDER_DIST + getFacing());
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-        range = ((IRangedModule) getModule()).getCurrentRange(getRangeModifier());
     }
 
     @Override
@@ -34,7 +32,7 @@ public class CompiledExtruderModule extends CompiledModule {
         boolean extend = shouldExtend(router);
         World world = router.getWorld();
 
-        if (extend && !router.isBufferEmpty() && distance < range && isRegulationOK(router, false)) {
+        if (extend && !router.isBufferEmpty() && distance < getRange() && isRegulationOK(router, false)) {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);

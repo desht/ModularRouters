@@ -3,7 +3,6 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ParticleBeamMessage;
@@ -25,14 +24,8 @@ import java.awt.*;
 public class CompiledSenderModule1 extends CompiledModule {
     private static final Color particleColor = Color.ORANGE;
 
-    private final int range;
-    final int rangeSquared;
-
     public CompiledSenderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
-
-        range = getSenderRange();
-        rangeSquared = range * range;
     }
 
     @Override
@@ -87,7 +80,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
         EnumFacing face = getTarget().face;
         World world = router.getWorld();
-        for (int i = 1; i < range; i++) {
+        for (int i = 1; i <= getRange(); i++) {
             if (world.getTileEntity(pos) != null) {
                 return new ModuleTarget(world.provider.getDimension(), pos.toImmutable(), face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
@@ -96,11 +89,6 @@ public class CompiledSenderModule1 extends CompiledModule {
             pos.move(getFacing());
         }
         return null;
-    }
-
-    private int getSenderRange() {
-        return getModule() instanceof IRangedModule ?
-                ((IRangedModule) getModule()).getCurrentRange(getRangeModifier()) : 0;
     }
 
     private boolean isPassable(World w, BlockPos pos, EnumFacing face) {

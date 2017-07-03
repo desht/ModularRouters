@@ -41,7 +41,6 @@ public class AugmentHandler extends ItemStackHandler {
 
     @Override
     protected void onContentsChanged(int slot) {
-        System.out.println("saving augment NBT onto " + holderStack);
         save();
     }
 

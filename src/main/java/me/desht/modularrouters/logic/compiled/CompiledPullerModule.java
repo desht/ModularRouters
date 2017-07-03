@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +16,9 @@ public class CompiledPullerModule extends CompiledModule {
     @Override
     public boolean execute(TileEntityItemRouter router) {
         if (!router.isBufferFull()) {
+            if (!validateRange(router, getTarget())) {
+                return false;
+            }
             IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
             if (handler != null) {
                 int taken = transferToRouter(handler, router);
@@ -27,6 +31,10 @@ public class CompiledPullerModule extends CompiledModule {
             }
         }
         return false;
+    }
+
+    boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
+        return true;
     }
 
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
