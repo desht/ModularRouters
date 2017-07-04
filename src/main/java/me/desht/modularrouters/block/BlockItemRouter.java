@@ -200,20 +200,6 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         return facing.getHorizontalIndex();
     }
 
-//    @Override
-//    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-//        IBlockState state = world.getBlockState(pos);
-//        if (axis.getAxis() != EnumFacing.Axis.Y) {
-//            world.setBlockState(pos, state.withProperty(FACING, state.getValue(FACING).rotateY()));
-//            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-//            if (router != null) {
-//                router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
-
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
@@ -263,9 +249,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        NonNullList<ItemStack> l = NonNullList.create();
-
+    public void getDrops(NonNullList<ItemStack> l, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
         ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
         if (router != null) {
@@ -284,12 +268,10 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
             }
             l.add(stack);
         }
-        return l;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-//    public void addInformation(ItemStack itemstack, EntityPlayer player, List<String> list, boolean par4) {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_MODULE_COUNT)) {
