@@ -3,7 +3,9 @@ package me.desht.modularrouters.proxy;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.ItemColours;
+import me.desht.modularrouters.client.ModelBakeEventHandler;
 import me.desht.modularrouters.client.fx.FXSparkle;
+import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.gui.GuiItemRouter;
 import me.desht.modularrouters.util.MiscUtil;
@@ -11,16 +13,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
+
+        MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
     }
 
     @Override
     public void init() {
         super.init();
+
+        MinecraftForge.EVENT_BUS.register(RenderListener.class);
 
         registerBlockColors();
     }

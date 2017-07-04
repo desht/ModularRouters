@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.Map;
 
-@Mod.EventBusSubscriber
 public class ModelBakeEventHandler {
     private ModelBakeEventHandler() {}
 
