@@ -1,10 +1,8 @@
 package me.desht.modularrouters.recipe;
 
 import com.google.common.base.Joiner;
-import me.desht.modularrouters.item.module.IRangedModule;
-import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleType;
-import me.desht.modularrouters.recipe.enhancement.*;
+import me.desht.modularrouters.recipe.enhancement.ModuleResetRecipe;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;

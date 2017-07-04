@@ -1,14 +1,10 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,9 +18,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.List;
 
 @Mod.EventBusSubscriber
 public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {

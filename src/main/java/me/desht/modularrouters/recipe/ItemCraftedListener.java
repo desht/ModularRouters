@@ -1,12 +1,10 @@
 package me.desht.modularrouters.recipe;
 
-import amerifrance.guideapi.page.PageIRecipe;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

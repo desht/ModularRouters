@@ -2,8 +2,6 @@ package me.desht.modularrouters.gui.module;
 
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.widgets.button.InfoButton;
-import me.desht.modularrouters.gui.widgets.button.TexturedButton;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
