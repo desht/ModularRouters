@@ -46,17 +46,17 @@ public abstract class CompiledModule {
         }
 
         module = ItemModule.getModule(stack);
+        augmentCounter = new AugmentCounter(stack);
         direction = ModuleHelper.getDirectionFromNBT(stack);
+        range = module instanceof IRangedModule ?
+                ((IRangedModule) module).getCurrentRange(getRangeModifier()) : 0;
+        rangeSquared = range * range;
         target = setupTarget(router, stack);
         filter = new Filter(target, stack);
         termination = ModuleHelper.terminates(stack);
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
-        augmentCounter = new AugmentCounter(stack);
-        range = getModule() instanceof IRangedModule ?
-                ((IRangedModule) getModule()).getCurrentRange(getRangeModifier()) : 0;
-        rangeSquared = range * range;
     }
 
     /**

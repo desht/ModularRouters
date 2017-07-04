@@ -4,12 +4,10 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Items;
@@ -34,7 +32,6 @@ public class CompiledVacuumModule extends CompiledModule {
     private final boolean fastPickup;
     private final boolean xpMode;
     private final FluidStack xpJuiceStack;
-    private final int range;
 
     // temporary small xp buffer (generally around an orb or less)
     // does not survive router recompilation...
@@ -44,7 +41,6 @@ public class CompiledVacuumModule extends CompiledModule {
         super(router, stack);
         fastPickup = getAugmentCount(ItemAugment.AugmentType.FAST_PICKUP) > 0;
         xpMode = getAugmentCount(ItemAugment.AugmentType.XP_VACUUM) > 0;
-        range = ((IRangedModule) getModule()).getCurrentRange(getRangeModifier());
         if (xpMode && IntegrationHandler.fluidXpJuice != null) {
             xpJuiceStack = new FluidStack(IntegrationHandler.fluidXpJuice, 1000);
         } else {
@@ -69,6 +65,7 @@ public class CompiledVacuumModule extends CompiledModule {
         ItemStack bufferStack = router.getBuffer().getStackInSlot(0);
 
         BlockPos centrePos = getTarget().pos;
+        int range = getRange();
         List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
@@ -106,6 +103,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
     private boolean handleXpMode(TileEntityItemRouter router) {
         BlockPos centrePos = getTarget().pos;
+        int range = getRange();
         List<EntityXPOrb> orbs = router.getWorld().getEntitiesWithinAABB(EntityXPOrb.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
@@ -175,7 +173,7 @@ public class CompiledVacuumModule extends CompiledModule {
             return null;
         }
         Module.RelativeDirection dir = getDirection();
-        int offset = dir == Module.RelativeDirection.NONE ? 0 : range + 1;
+        int offset = dir == Module.RelativeDirection.NONE ? 0 : getRange() + 1;
         EnumFacing facing = router.getAbsoluteFacing(dir);
         return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
     }
