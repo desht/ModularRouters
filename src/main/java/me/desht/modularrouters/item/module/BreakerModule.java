@@ -31,6 +31,6 @@ public class BreakerModule extends Module {
 
     @Override
     public Color getItemTint() {
-        return new Color(217, 191, 208);
+        return new Color(240, 208, 208);
     }
 }

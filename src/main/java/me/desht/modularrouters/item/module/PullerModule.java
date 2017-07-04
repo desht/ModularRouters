@@ -15,6 +15,6 @@ public class PullerModule extends Module {
 
     @Override
     public Color getItemTint() {
-        return new Color(201, 206, 255);
+        return new Color(192, 192, 255);
     }
 }

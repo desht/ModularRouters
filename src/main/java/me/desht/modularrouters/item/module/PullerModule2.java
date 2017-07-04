@@ -31,6 +31,6 @@ public class PullerModule2 extends TargetedModule implements IRangedModule {
 
     @Override
     public Color getItemTint() {
-        return new Color(128, 134, 255);
+        return new Color(128, 128, 255);
     }
 }

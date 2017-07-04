@@ -45,7 +45,13 @@ public class DetectorModule extends Module {
     }
 
     @Override
+    public boolean isOmniDirectional() {
+        return true;
+    }
+
+    @Override
     public Color getItemTint() {
         return new Color(255, 255, 195);
     }
+
 }

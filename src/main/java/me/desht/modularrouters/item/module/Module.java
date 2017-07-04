@@ -138,7 +138,8 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
     private void addSettingsInformation(ItemStack itemstack, List<String> list) {
         if (isDirectional()) {
             Module.RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + I18n.format("guiText.tooltip." + dir.name()));
+            String dirStr = getDirectionString(dir);
+            list.add(TextFormatting.YELLOW + I18n.format("guiText.label.direction") + ": " + TextFormatting.AQUA + dirStr);
         }
         addFilterInformation(itemstack, list);
         list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
@@ -157,6 +158,12 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
             list.add(TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo",
                     col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
         }
+    }
+
+    public String getDirectionString(RelativeDirection dir) {
+        return isOmniDirectional() && dir == RelativeDirection.NONE ?
+                I18n.format("guiText.tooltip.allDirections") :
+                I18n.format("guiText.tooltip." + dir.toString());
     }
 
     private String formatFlag(String key, boolean flag) {
@@ -235,6 +242,8 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
     public boolean isDirectional() {
         return true;
     }
+
+    public boolean isOmniDirectional() { return false; }
 
     public boolean isFluidModule() {
         return false;

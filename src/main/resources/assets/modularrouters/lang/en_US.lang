@@ -71,6 +71,7 @@ guiText.tooltip.LEFT=Left
 guiText.tooltip.RIGHT=Right
 guiText.tooltip.FRONT=Front
 guiText.tooltip.BACK=Back
+guiText.tooltip.allDirections=All
 guiText.tooltip.redstone.label=Redstone Mode
 guiText.tooltip.redstone.ALWAYS=Always
 guiText.tooltip.redstone.LOW=Low

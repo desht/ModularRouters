@@ -177,7 +177,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
-        directionButtons[dir.ordinal()] = new DirectionButton(dir, this.guiLeft + x, this.guiTop + y);
+        directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.guiLeft + x, this.guiTop + y);
         directionButtons[dir.ordinal()].setToggled(dir == facing);
         buttonList.add(directionButtons[dir.ordinal()]);
     }
@@ -459,11 +459,12 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         private static final int DIRECTION_GROUP = 1;
         private final RelativeDirection direction;
 
-        public DirectionButton(RelativeDirection dir, int x, int y) {
+        public DirectionButton(RelativeDirection dir, Module module, int x, int y) {
             super(dir.ordinal() + DIRECTION_BASE_ID, DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
             this.direction = dir;
-            tooltip1.add(TextFormatting.GRAY + I18n.format("guiText.tooltip." + dir));
-            tooltip2.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip." + dir));
+            String dirStr = module.getDirectionString(dir);
+            tooltip1.add(TextFormatting.GRAY + dirStr);
+            tooltip2.add(TextFormatting.YELLOW + dirStr);
         }
 
         @Override

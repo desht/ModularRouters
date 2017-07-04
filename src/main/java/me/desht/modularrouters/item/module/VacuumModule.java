@@ -31,7 +31,12 @@ public class VacuumModule extends Module implements IRangedModule {
     }
 
     @Override
+    public boolean isOmniDirectional() {
+        return true;
+    }
+
+    @Override
     public Color getItemTint() {
-        return new Color(96, 0, 192);
+        return new Color(120, 48, 191);
     }
 }
