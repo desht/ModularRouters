@@ -1,8 +1,52 @@
 package me.desht.modularrouters.integration.guideapi;
 
-public class Guidebook {}
 
-/*
+import amerifrance.guideapi.api.GuideAPI;
+import amerifrance.guideapi.api.GuideBook;
+import amerifrance.guideapi.api.IGuideBook;
+import amerifrance.guideapi.api.IPage;
+import amerifrance.guideapi.api.impl.Book;
+import amerifrance.guideapi.api.impl.abstraction.CategoryAbstract;
+import amerifrance.guideapi.api.impl.abstraction.EntryAbstract;
+import amerifrance.guideapi.api.util.PageHelper;
+import amerifrance.guideapi.category.CategoryItemStack;
+import amerifrance.guideapi.entry.EntryItemStack;
+import amerifrance.guideapi.page.PageIRecipe;
+import amerifrance.guideapi.page.PageText;
+import com.google.common.collect.Lists;
+import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.item.augment.ItemAugment;
+import me.desht.modularrouters.item.augment.ItemAugment.AugmentType;
+import me.desht.modularrouters.item.module.ItemModule.ModuleType;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter.FilterType;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
+import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static me.desht.modularrouters.util.MiscUtil.RL;
+import static me.desht.modularrouters.util.MiscUtil.translate;
+
+
 @GuideBook
 public class Guidebook implements IGuideBook {
     private static final int MAX_PAGE_LENGTH = 270;
@@ -60,12 +104,15 @@ public class Guidebook implements IGuideBook {
         buildUpgradePages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.upgrades"), new ItemStack(RegistrarMR.BLANK_UPGRADE)));
 
-        // Enhancements category
+        // Augments category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.enhancementsOverview"), MAX_PAGE_LENGTH));
-        entries.put(RL("enhancementsOverview"), new EntryItemStack(pages, translate("guidebook.words.enhancements"), new ItemStack(Items.BOOK)));
-        buildEnhancementPages(entries);
-        categories.add(new CategoryItemStack(entries, translate("guidebook.words.enhancements"), new ItemStack(Blocks.CRAFTING_TABLE)));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.augmentOverview"), MAX_PAGE_LENGTH));
+        entries.put(RL("augmentOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
+        pages = Collections.singletonList(new PageText(translate("guidebook.para.augmentCore")));
+        ItemStack ba = new ItemStack(RegistrarMR.AUGMENT_CORE);
+        entries.put(RL("augmentCore"), new EntryItemStack(pages, translate(ba.getUnlocalizedName() + ".name"), ba));
+        buildAugmentPages(entries);
+        categories.add(new CategoryItemStack(entries, translate("guidebook.words.augments"), new ItemStack(RegistrarMR.AUGMENT_CORE)));
 
         // Filters category
         entries = new LinkedHashMap<>();
@@ -87,32 +134,20 @@ public class Guidebook implements IGuideBook {
         return guideBook;
     }
 
-    private static void buildEnhancementPages(Map<ResourceLocation, EntryAbstract> entries) {
-        List<IPage> pages;
-
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.fastPickupEnhancement"), MAX_PAGE_LENGTH));
-        addEnhancementRecipePage(pages, new FastPickupEnhancementRecipe(ModuleType.VACUUM));
-        entries.put(RL("moduleFastPickup"), new EntryItemStack(pages, translate("guidebook.words.fastPickup"), new ItemStack(Items.FISHING_ROD)));
-
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.pickupDelayEnhancement"), MAX_PAGE_LENGTH));
-        addEnhancementRecipePage(pages, new PickupDelayEnhancementRecipe(ModuleType.DROPPER));
-        entries.put(RL("modulePickupDelay"), new EntryItemStack(pages, translate("guidebook.words.pickupDelay"), new ItemStack(Items.SLIME_BALL)));
-
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.regulatorEnhancement"), MAX_PAGE_LENGTH));
-        addEnhancementRecipePage(pages, new RegulatorEnhancementRecipe(ModuleType.PULLER));
-        entries.put(RL("moduleRegulator"), new EntryItemStack(pages, translate("guidebook.words.regulator"), new ItemStack(Items.COMPARATOR)));
-
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.redstoneEnhancement"), MAX_PAGE_LENGTH));
-        addEnhancementRecipePage(pages, new RedstoneEnhancementRecipe(ModuleType.SENDER1));
-        entries.put(RL("moduleRedstone"), new EntryItemStack(pages, translate("guidebook.words.redstone"), new ItemStack(Items.REDSTONE)));
-
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.xpVacuumEnhancement"), MAX_PAGE_LENGTH));
-        addEnhancementRecipePage(pages, new XPVacuumEnhancementRecipe(ModuleType.VACUUM));
-        entries.put(RL("moduleXPVacuum"), new EntryItemStack(pages, translate("guidebook.words.xpVacuum"), new ItemStack(Items.EXPERIENCE_BOTTLE)));
-    }
-
-    private static void addEnhancementRecipePage(List<IPage> pages, ShapedOreRecipe recipe) {
-        pages.add(new PageIRecipe(recipe, new ShapedOreRecipeRenderer(recipe)));
+    private static void buildAugmentPages(Map<ResourceLocation, EntryAbstract> entries) {
+        List<AugmentType> types = Lists.newArrayList(AugmentType.values()).stream()
+                .map(ItemAugment::makeItemStack)
+                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
+                .map(AugmentType::getType)
+                .collect(Collectors.toList());
+        for (AugmentType type : types) {
+            ItemStack module = ItemAugment.makeItemStack(type);
+            String unlocalizedName = module.getItem().getUnlocalizedName(module);
+            List<IPage> pages1 = Lists.newArrayList();
+            pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
+            String localizedName = translate(unlocalizedName + ".name");
+            entries.put(RL(unlocalizedName), new EntryItemStack(pages1, localizedName, module));
+        }
     }
 
     private static void buildFilterPages(Map<ResourceLocation, EntryAbstract> entries) {
@@ -207,4 +242,4 @@ public class Guidebook implements IGuideBook {
         }
     }
 }
-*/
+

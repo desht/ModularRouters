@@ -4,6 +4,7 @@ import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -43,6 +44,14 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
             return null;
         }
         return getAugment(AugmentType.values()[stack.getMetadata()]);
+    }
+
+    public static ItemStack makeItemStack(AugmentType type) {
+        return makeItemStack(type, 1);
+    }
+
+    public static ItemStack makeItemStack(AugmentType type, int amount) {
+        return new ItemStack(RegistrarMR.AUGMENT, amount, type.ordinal());
     }
 
     @Nonnull
