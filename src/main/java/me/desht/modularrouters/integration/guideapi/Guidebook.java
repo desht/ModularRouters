@@ -55,7 +55,7 @@ public class Guidebook implements IGuideBook {
     private static final int CAT_ROUTER = 1;
     private static final int CAT_MODULES = 2;
     private static final int CAT_UPGRADES = 3;
-    private static final int CAT_ENHANCEMENTS = 4;
+    private static final int CAT_AUGMENTS = 4;
     private static final int CAT_FILTERS = 5;
 
     private static Book guideBook;
@@ -217,9 +217,11 @@ public class Guidebook implements IGuideBook {
         addRecipePage(CAT_ROUTER, "router", "item_router");
         addRecipePage(CAT_MODULES, "moduleOverview", "blank_module");
         addRecipePage(CAT_UPGRADES, "upgradeOverview", "blank_upgrade");
+        addRecipePage(CAT_AUGMENTS, "augmentOverview", "augment_core");
 
         addItemRecipes(CAT_MODULES, ModuleType.class, "module");
         addItemRecipes(CAT_UPGRADES, UpgradeType.class, "upgrade");
+        addItemRecipes(CAT_AUGMENTS, AugmentType.class, "augment");
         addItemRecipes(CAT_FILTERS, FilterType.class, "filter");
     }
 
