@@ -12,6 +12,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -198,11 +200,42 @@ public class BlockUtil {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
+                if (block instanceof BlockShulkerBox) {
+                    ItemStack stack = specialShulkerBoxHandling(world, pos);
+                    groups = new HashMap<>();
+                    groups.put(true, Lists.newArrayList(stack));
+                }
                 world.setBlockToAir(pos);
                 return new BreakResult(true, groups);
             }
         }
         return BreakResult.NOT_BROKEN;
+    }
+
+    /**
+     * Work around extra logic in BlockShulkerBox#breakBlock
+     * Shulker box breakBlock() method appears to be unique among all Minecraft classes
+     * in that will drop an item directly.  Sigh.
+     */
+    private static ItemStack specialShulkerBoxHandling(World world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityShulkerBox) {
+            TileEntityShulkerBox tesb = (TileEntityShulkerBox) te;
+            if (!tesb.isCleared() && tesb.shouldDrop()) {
+                ItemStack itemstack = new ItemStack(Item.getItemFromBlock(world.getBlockState(pos).getBlock()));
+                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound.setTag("BlockEntityTag", tesb.saveToNbt(nbttagcompound1));
+                itemstack.setTagCompound(nbttagcompound);
+                if (tesb.hasCustomName()) {
+                    itemstack.setStackDisplayName(tesb.getName());
+                    tesb.setCustomName("");
+                }
+                tesb.clear();  // stops BlockShulkerBox#breakBlock dropping it as an item
+                return itemstack;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     private static List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player, boolean silkTouch, int fortune) {
@@ -260,6 +293,14 @@ public class BlockUtil {
             return drops.getOrDefault(passed, Collections.emptyList());
         }
 
+        /**
+         * Process dropped items.  Items which matched the filter are inserted into the given item handler if possible.
+         * Items which didn't match the filter, or which matched but could not be inserted, are dropped on the ground.
+         *
+         * @param world the world
+         * @param pos the position to drop any items at
+         * @param handler item handler to insert into
+         */
         public void processDrops(World world, BlockPos pos, IItemHandler handler) {
             for (ItemStack drop : getFilteredDrops(true)) {
                 ItemStack excess = handler.insertItem(0, drop, false);
