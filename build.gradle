@@ -25,6 +25,8 @@ ext.config = parseConfig(configFile)
 
 version = config.mc_version + "-" + config.mod_version
 
+archivesBaseName = 'modular-routers'
+
 minecraft {
     version = config.mc_version + "-" + config.forge_version
     mappings = config.mcp_mappings
