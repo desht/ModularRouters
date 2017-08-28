@@ -119,6 +119,7 @@ public class ClientProxy extends CommonProxy {
     public void registerBlockColors() {
         // this ensures the camo upgrade properly mimics colourable blocks like grass blocks
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
+            if (pos == null) return -1;
             TileEntityItemRouter te = TileEntityItemRouter.getRouterAt(worldIn, pos);
             if (te != null && te.getCamouflage() != null) {
                 return Minecraft.getMinecraft().getBlockColors().colorMultiplier(te.getCamouflage(), te.getWorld(), pos, tintIndex);
