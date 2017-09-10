@@ -10,11 +10,13 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public abstract class ValidatingSlot extends SlotItemHandler {
     private final Class<? extends ItemBase> clazz;
+    private final int recompile;
     protected final TileEntityItemRouter router;
 
-    private ValidatingSlot(Class<? extends ItemBase> clazz, TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+    private ValidatingSlot(Class<? extends ItemBase> clazz, int recompile, TileEntityItemRouter router, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.clazz = clazz;
+        this.recompile = recompile;
         this.router = router;
     }
 
@@ -23,27 +25,21 @@ public abstract class ValidatingSlot extends SlotItemHandler {
         return clazz.isInstance(itemstack.getItem()) && super.isItemValid(itemstack);
     }
 
+    @Override
+    public void onSlotChanged() {
+        super.onSlotChanged();
+        router.recompileNeeded(recompile);
+    }
+
     public static class Module extends ValidatingSlot {
         public Module(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
-            super(ItemModule.class, router, router.getModules(), index, xPosition, yPosition);
-        }
-
-        @Override
-        public void onSlotChanged() {
-            super.onSlotChanged();
-            router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            super(ItemModule.class, TileEntityItemRouter.COMPILE_MODULES, router, router.getModules(), index, xPosition, yPosition);
         }
     }
 
     public static class Upgrade extends ValidatingSlot {
         public Upgrade(TileEntityItemRouter router, int index, int xPosition, int yPosition) {
-            super(ItemUpgrade.class, router, router.getUpgrades(), index, xPosition, yPosition);
-        }
-
-        @Override
-        public void onSlotChanged() {
-            super.onSlotChanged();
-            router.recompileNeeded(TileEntityItemRouter.COMPILE_UPGRADES);
+            super(ItemUpgrade.class, TileEntityItemRouter.COMPILE_UPGRADES, router, router.getUpgrades(), index, xPosition, yPosition);
         }
     }
 }
