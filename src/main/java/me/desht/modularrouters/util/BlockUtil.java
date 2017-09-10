@@ -41,38 +41,47 @@ public class BlockUtil {
 
     private static IBlockState getPlaceableState(EntityPlayer fakePlayer, ItemStack stack, World world, BlockPos pos, EnumFacing facing) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code, although it's changed a lot since...
-        Item item = stack.getItem();
-        IBlockState res = null;
-        if (item instanceof ItemBlock) {
-            float hitX = (float) (fakePlayer.posX - pos.getX());
-            float hitY = (float) (fakePlayer.posY - pos.getY());
-            float hitZ = (float) (fakePlayer.posZ - pos.getZ());
-            int meta = item.getMetadata(stack.getItemDamage());
-            res = ((ItemBlock) item).getBlock().getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
-        } else if (item instanceof ItemBlockSpecial) {
-            res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
-        } else if (item instanceof ItemRedstone) {
-            res = Blocks.REDSTONE_WIRE.getDefaultState();
-        } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
-            res = getCocoaBeanState(fakePlayer, world, pos);
-            if (res != null) {
-                facing = res.getValue(BlockHorizontal.FACING);
+        try {
+            Item item = stack.getItem();
+            IBlockState res = null;
+            if (item instanceof ItemBlock) {
+                float hitX = (float) (fakePlayer.posX - pos.getX());
+                float hitY = (float) (fakePlayer.posY - pos.getY());
+                float hitZ = (float) (fakePlayer.posZ - pos.getZ());
+                int meta = item.getMetadata(stack.getItemDamage());
+                res = ((ItemBlock) item).getBlock().getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
+            } else if (item instanceof ItemBlockSpecial) {
+                res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
+            } else if (item instanceof ItemRedstone) {
+                res = Blocks.REDSTONE_WIRE.getDefaultState();
+            } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
+                res = getCocoaBeanState(fakePlayer, world, pos);
+                if (res != null) {
+                    facing = res.getValue(BlockHorizontal.FACING);
+                }
+            } else if (item instanceof IPlantable) {
+                IBlockState state = ((IPlantable) item).getPlant(world, pos);
+                res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
+            } else if (item instanceof ItemSkull) {
+                res = Blocks.SKULL.getDefaultState();
+                // try to place skull on horizontal surface below if possible
+                BlockPos pos2 = pos.down();
+                if (world.getBlockState(pos2).isSideSolid(world, pos2, EnumFacing.UP)) {
+                    facing = EnumFacing.UP;
+                }
             }
-        } else if (item instanceof IPlantable) {
-            IBlockState state = ((IPlantable) item).getPlant(world, pos);
-            res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
-        } else if (item instanceof ItemSkull) {
-            res = Blocks.SKULL.getDefaultState();
-            // try to place skull on horizontal surface below if possible
-            BlockPos pos2 = pos.down();
-            if (world.getBlockState(pos2).isSideSolid(world, pos2, EnumFacing.UP)) {
-                facing = EnumFacing.UP;
+            if (res != null && res.getProperties().containsKey(BlockDirectional.FACING)) {
+                res = res.withProperty(BlockDirectional.FACING, facing);
             }
+            return res;
+        } catch (IllegalArgumentException e) {
+            // See https://github.com/desht/ModularRouters/issues/25
+            // Not sure how a double slab got into the router's buffer, but it will cause a server crash
+            // if this isn't handled here.
+            // Best not to log this, because it will likely result in log spam if a router tries repeatedly
+            // to place the bad block.
+            return null;
         }
-        if (res != null && res.getProperties().containsKey(BlockDirectional.FACING)) {
-            res = res.withProperty(BlockDirectional.FACING, facing);
-        }
-        return res;
     }
 
     private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos) {
