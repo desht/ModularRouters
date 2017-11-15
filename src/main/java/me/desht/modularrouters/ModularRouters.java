@@ -31,8 +31,8 @@ public class ModularRouters {
     public static final String MODNAME = "Modular Routers";
     public static final String MODVERSION = "@VERSION@";
     public static final String DEPENDENICES =
-            "after:Waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
-                    + "required-after:forge@[14.21.1.2387,);";
+            "after:waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
+                    + "required-after:forge@[14.23.0.2491,);";
 
     public static Logger logger;
     public static SimpleNetworkWrapper network;

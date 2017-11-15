@@ -12,7 +12,7 @@ import java.awt.*;
 public class ItemColours {
     public static class ModuleColour implements IItemColor {
         @Override
-        public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+        public int colorMultiplier(ItemStack stack, int tintIndex) {
             switch (tintIndex) {
                 case 0: case 2: return Color.WHITE.getRGB();
                 case 1:
@@ -27,7 +27,7 @@ public class ItemColours {
 
     public static class UpgradeColour implements IItemColor {
         @Override
-        public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+        public int colorMultiplier(ItemStack stack, int tintIndex) {
             switch (tintIndex) {
                 case 0: case 2: return Color.WHITE.getRGB();
                 case 1:
