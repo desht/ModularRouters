@@ -207,6 +207,12 @@ public abstract class CompiledModule {
         for (int i = 0; i < handler.getSlots(); i++) {
             int pos = getLastMatchPos(i, handler.getSlots());
             ItemStack toPull = handler.extractItem(pos, wanted.getCount(), true);
+            if (toPull.isEmpty()) {
+                // we'd found an item to pull but it looks like this handler doesn't allow us to extract it
+                // give up, but advance the last match pos so we don't get stuck trying this slot forever
+                setLastMatchPos((pos + 1) % handler.getSlots());
+                return 0;
+            }
             if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
                 // this item is suitable for pulling
                 ItemStack notInserted = router.insertBuffer(toPull);
