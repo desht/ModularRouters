@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
@@ -115,7 +116,10 @@ public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
          */
         @SideOnly(Side.CLIENT)
         public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-            MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack), getExtraUsageParams());
+            String s = I18n.format("itemText.usage." + itemstack.getUnlocalizedName(), getExtraUsageParams());
+            for (String s1 : s.split("\\\\n")) {
+                list.addAll(MiscUtil.wrapString(s1, 45));
+            }
         }
 
         /**

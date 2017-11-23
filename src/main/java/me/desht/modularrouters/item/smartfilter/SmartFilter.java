@@ -28,9 +28,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public abstract class SmartFilter extends ItemSubTypes.SubItemHandler {
-    /**
-     * Basic information for the module, which is always shown.
-     */
     @SideOnly(Side.CLIENT)
     public void addBasicInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiModule) {
@@ -39,22 +36,6 @@ public abstract class SmartFilter extends ItemSubTypes.SubItemHandler {
                 list.add(MiscUtil.translate("itemText.misc.configureHint", String.valueOf(ConfigHandler.getConfigKey())));
             }
         }
-    }
-
-    /**
-     * Usage information for the module, shown when Ctrl is held.
-     */
-    @SideOnly(Side.CLIENT)
-    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        MiscUtil.appendMultiline(list, "itemText.usage." + itemstack.getItem().getUnlocalizedName(itemstack));
-    }
-
-    /**
-     * Extra information for the module, shown when Shift is held.
-     */
-    @SideOnly(Side.CLIENT)
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        // nothing by default
     }
 
     /**
