@@ -39,7 +39,8 @@ public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {
         DETECTOR,
         PLAYER,
         FLUID,
-        VOID;
+        VOID,
+        ACTIVATOR;
 
         public static ModuleType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemModule ? values()[stack.getItemDamage()] : null;
@@ -65,6 +66,7 @@ public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {
         register(ModuleType.FLUID, new FluidModule());
         register(ModuleType.PULLER2, new PullerModule2());
         register(ModuleType.EXTRUDER2, new ExtruderModule2());
+        register(ModuleType.ACTIVATOR, new ActivatorModule());
     }
 
     @SubscribeEvent

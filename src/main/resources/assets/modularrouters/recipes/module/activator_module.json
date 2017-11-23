@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RLR",
+    "DMD",
+    "RQR"
+  ],
+  "key": {
+    "L": { "item": "minecraft:lever" },
+    "R": { "type": "forge:ore_dict", "ore": "dustRedstone" },
+    "D": { "item": "minecraft:dispenser" },
+    "Q": { "type": "forge:ore_dict", "ore": "blockQuartz" },
+    "M": { "item": "#blankmodule" }
+  },
+  "result": { "item": "modularrouters:module", "data": 16 }
+}
