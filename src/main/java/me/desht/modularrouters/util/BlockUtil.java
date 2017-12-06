@@ -25,6 +25,7 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -156,7 +157,7 @@ public class BlockUtil {
             return null;
         }
 
-        EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
         if (fakePlayer == null) {
             return null;
         }
@@ -201,7 +202,7 @@ public class BlockUtil {
             return BreakResult.NOT_BROKEN;
         }
 
-        EntityPlayer fakePlayer = FakePlayer.getFakePlayer((WorldServer) world, pos).get();
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
         List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, silkTouch, fortune);
 
         Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));

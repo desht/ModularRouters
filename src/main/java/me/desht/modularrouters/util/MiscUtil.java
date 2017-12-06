@@ -3,6 +3,7 @@ package me.desht.modularrouters.util;
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -82,5 +83,20 @@ public class MiscUtil {
         return world instanceof ChunkCache ?
                 ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) :
                 world.getTileEntity(pos);
+    }
+
+    public static int getYawFromFacing(EnumFacing facing) {
+        switch (facing) {
+            case NORTH:
+                return 180;
+            case SOUTH:
+                return 0;
+            case WEST:
+                return 90;
+            case EAST:
+                return -90;
+            default:
+                return 0;
+        }
     }
 }

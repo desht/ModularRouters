@@ -98,6 +98,8 @@ guiText.tooltip.tunedValue=§bTuned Value (%d → %d)
 guiText.tooltip.fluidTransferTooltip=§bMax Fluid Transfer\nMaximum (in mB) that will be attempted in one operation.  This is still limited by the router's overall transfer rate (Fluid and Speed Upgrades)
 guiText.tooltip.maxFluidPerOp=• Transfer Rate: %d mB every %d ticks (%d mB / tick)
 guiText.tooltip.extruder2.template=§bTemplate\nPlace copies of block items here to be used as the extruder template.\n• §eLeft-Click:§7 reduce stack size\n• §eRight-Click:§7 increase stack size\n• §eShift + Left-Click:§7 clear stack
+guiText.tooltip.activator.action=Action
+guiText.tooltip.activator.lookDirection=Look
 
 guiText.label.direction=Direction
 guiText.label.modules=Modules
@@ -208,6 +210,12 @@ itemText.targetingHint=• Sneak + Right-Click an inventory to set target,\n  or
 itemText.augments=Augments:
 itemText.augments.stackInfo=%d items/tick
 itemText.augments.pickupDelay=%d ticks (%f sec)
+itemText.activator.action.ACTIVATE_BLOCK=Activate Block
+itemText.activator.action.USE_ITEM=Right-click item in buffer
+itemText.activator.action.USE_ITEM_ON_ENTITY=Right-click item in buffer on nearest entity
+itemText.activator.direction.LEVEL=Look Level
+itemText.activator.direction.ABOVE=Look Above
+itemText.activator.direction.BELOW=Look Below
 
 # Usage tooltips
 itemText.usage.item.breaker_module=Breaks a block adjacent to the router in the module's configured direction, pulling it as an item into the router's buffer.
