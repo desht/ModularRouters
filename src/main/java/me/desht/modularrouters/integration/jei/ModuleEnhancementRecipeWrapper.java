@@ -27,13 +27,13 @@ public class ModuleEnhancementRecipeWrapper
     private final IJeiHelpers helpers;
     private final ModuleEnhancementRecipe recipe;
     private final String name;
-    private final String[] description;
+    private final List<String> description;
 
     ModuleEnhancementRecipeWrapper(IJeiHelpers helpers, ModuleEnhancementRecipe recipe) {
         this.helpers = helpers;
         this.recipe = recipe;
         this.name = I18n.format("jei.recipe." + recipe.getRecipeId() + ".name");
-        this.description = MiscUtil.splitLong("jei.recipe." + recipe.getRecipeId() + ".description", 40);
+        this.description = MiscUtil.wrapString(I18n.format("jei.recipe." + recipe.getRecipeId() + ".description"), 40);
     }
 
     @Override
