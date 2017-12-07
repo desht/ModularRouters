@@ -2,7 +2,7 @@ package me.desht.modularrouters;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
-import me.desht.modularrouters.gui.GuiHandler;
+import me.desht.modularrouters.client.gui.GuiHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;

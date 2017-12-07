@@ -19,7 +19,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {

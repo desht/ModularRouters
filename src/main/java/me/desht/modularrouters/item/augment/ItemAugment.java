@@ -4,7 +4,6 @@ import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;

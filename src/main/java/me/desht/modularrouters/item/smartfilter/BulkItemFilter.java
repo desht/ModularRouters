@@ -2,11 +2,11 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.container.ContainerBulkItemFilter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;

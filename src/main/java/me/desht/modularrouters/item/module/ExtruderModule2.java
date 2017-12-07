@@ -1,12 +1,12 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.gui.module.GuiModule;
+import me.desht.modularrouters.client.gui.module.GuiModuleExtruder2;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerExtruder2Module;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.gui.module.GuiModule;
-import me.desht.modularrouters.gui.module.GuiModuleExtruder2;
 import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;

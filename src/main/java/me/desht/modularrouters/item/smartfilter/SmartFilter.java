@@ -1,9 +1,9 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.gui.module.GuiModule;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.ModuleFilterSlot;
-import me.desht.modularrouters.gui.module.GuiModule;
 import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;

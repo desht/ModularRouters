@@ -1,8 +1,8 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.gui.module.GuiModuleActivator;
-import me.desht.modularrouters.gui.module.GuiModule;
+import me.desht.modularrouters.client.gui.module.GuiModule;
+import me.desht.modularrouters.client.gui.module.GuiModuleActivator;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
@@ -11,9 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-import javax.xml.soap.Text;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
 
 public class ActivatorModule extends Module {
