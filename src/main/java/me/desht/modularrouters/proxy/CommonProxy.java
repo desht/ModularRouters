@@ -1,6 +1,7 @@
 package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 
@@ -36,4 +37,9 @@ public class CommonProxy {
     public TileEntityItemRouter getOpenItemRouter() {
         return null;
     }
+
+    public EntityPlayer getPlayer() {
+        return null;
+    }
+
 }

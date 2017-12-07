@@ -29,6 +29,17 @@ public class RenderHelper {
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableLighting();
         }
+    }
 
+    public static void glColorHex(int color) {
+        float alpha = (color >> 24 & 255) / 255F;
+        float red = (color >> 16 & 255) / 255F;
+        float green = (color >> 8 & 255) / 255F;
+        float blue = (color & 255) / 255F;
+        GlStateManager.color(red, green, blue, alpha);
+    }
+
+    public static void glColorHex(int color, int alpha) {
+        glColorHex(color | alpha << 24);
     }
 }

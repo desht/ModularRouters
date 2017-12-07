@@ -2,6 +2,7 @@ package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.AreaShowManager;
 import me.desht.modularrouters.client.ItemColours;
 import me.desht.modularrouters.client.ModelBakeEventHandler;
 import me.desht.modularrouters.client.fx.FXSparkle;
@@ -10,6 +11,7 @@ import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
@@ -21,6 +23,7 @@ public class ClientProxy extends CommonProxy {
         super.preInit();
 
         MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
+        MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
     }
 
     @Override
@@ -111,5 +114,10 @@ public class ClientProxy extends CommonProxy {
                 return 0xffffff;
             }
         }, RegistrarMR.ITEM_ROUTER, RegistrarMR.TEMPLATE_FRAME);
+    }
+
+    @Override
+    public EntityPlayer getPlayer() {
+        return Minecraft.getMinecraft().player;
     }
 }
