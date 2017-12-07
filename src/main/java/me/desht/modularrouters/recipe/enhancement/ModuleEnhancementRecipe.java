@@ -17,7 +17,7 @@ public abstract class ModuleEnhancementRecipe extends ShapedOreRecipe {
     }
 
     @Override
-    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world) {
+    public boolean matches(@Nonnull InventoryCrafting inv, World world) {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (ItemModule.getModule(stack) != null && !validateModule(stack)) {
