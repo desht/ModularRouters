@@ -23,6 +23,8 @@ public class ActivatorModule extends Module {
         CompiledActivatorModule cam = new CompiledActivatorModule(null, itemstack);
         list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.action") + ": "
                 + TextFormatting.AQUA + I18n.format("itemText.activator.action." + cam.getActionType()));
+        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.sneak") + ": "
+                + (cam.isSneaking() ? TextFormatting.GREEN  + "\u2714" : TextFormatting.RED + "\u2718"));
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
             list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.lookDirection") + ": "
                     + TextFormatting.AQUA + I18n.format("itemText.activator.direction." + cam.getLookDirection()));
@@ -41,6 +43,6 @@ public class ActivatorModule extends Module {
 
     @Override
     public Color getItemTint() {
-        return new Color(224, 224, 224);
+        return new Color(255, 255, 195);
     }
 }

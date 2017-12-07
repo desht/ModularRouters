@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.gui.widgets.button.TexturedCyclerButton;
+import me.desht.modularrouters.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
@@ -27,10 +28,12 @@ public class GuiModuleActivator extends GuiModule {
 
     private static final int ACTION_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
     private static final int LOOK_DIRECTION_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
+    private static final int SNEAK_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 2;
 
     private ActionType actionType;
     private LookDirection lookDirection;
     private LookDirectionButton lookDirectionButton;
+    private boolean isSneaking;
 
     public GuiModuleActivator(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -42,6 +45,7 @@ public class GuiModuleActivator extends GuiModule {
         CompiledActivatorModule cam = new CompiledActivatorModule(null, moduleItemStack);
         actionType = cam.getActionType();
         lookDirection = cam.getLookDirection();
+        isSneaking = cam.isSneaking();
     }
 
     @Override
@@ -50,7 +54,8 @@ public class GuiModuleActivator extends GuiModule {
 
         ItemStack[] stacks = new ItemStack[] { BLOCK_STACK, ITEM_STACK, ENTITY_STACK };
         buttonList.add(new ActionTypeButton(ACTION_BUTTON_ID, guiLeft + 167, guiTop + 20, 16, 16, true, stacks, actionType));
-        lookDirectionButton = new LookDirectionButton(LOOK_DIRECTION_ID, guiLeft + 167, guiTop + 45, 16, 16, lookDirection);
+        buttonList.add(new SneakButton(SNEAK_BUTTON_ID, guiLeft + 167, guiTop + 40, isSneaking));
+        lookDirectionButton = new LookDirectionButton(LOOK_DIRECTION_ID, guiLeft + 167, guiTop + 60, 16, 16, lookDirection);
         buttonList.add(lookDirectionButton);
         lookDirectionButton.visible = actionType != ActionType.USE_ITEM_ON_ENTITY;
     }
@@ -67,8 +72,9 @@ public class GuiModuleActivator extends GuiModule {
         super.drawGuiContainerForegroundLayer(par1, par2);
 
         fontRenderer.drawString(I18n.format("guiText.tooltip.activator.action"), 132, 23, 0x404040);
+        fontRenderer.drawString(I18n.format("guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
         if (actionType != ActionType.USE_ITEM_ON_ENTITY) {
-            fontRenderer.drawString(I18n.format("guiText.tooltip.activator.lookDirection"), 132, 48, 0x404040);
+            fontRenderer.drawString(I18n.format("guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
         }
     }
 
@@ -85,6 +91,12 @@ public class GuiModuleActivator extends GuiModule {
                 lookDirection = ldb.cycle(!GuiScreen.isShiftKeyDown());
                 sendModuleSettingsToServer();
                 break;
+            case SNEAK_BUTTON_ID:
+                SneakButton sb = (SneakButton) button;
+                sb.toggle();
+                isSneaking = sb.isToggled();
+                sendModuleSettingsToServer();
+                break;
             default:
                 super.actionPerformed(button);
                 break;
@@ -97,6 +109,7 @@ public class GuiModuleActivator extends GuiModule {
         NBTTagCompound compound = super.buildMessageData();
         compound.setInteger(CompiledActivatorModule.NBT_ACTION_TYPE, actionType.ordinal());
         compound.setInteger(CompiledActivatorModule.NBT_LOOK_DIRECTION, lookDirection.ordinal());
+        compound.setBoolean(CompiledActivatorModule.NBT_SNEAKING, isSneaking);
         return compound;
     }
 
@@ -140,6 +153,24 @@ public class GuiModuleActivator extends GuiModule {
         @Override
         public List<String> getTooltip() {
             return tooltips.get(getState().ordinal());
+        }
+    }
+
+    private static class SneakButton extends TexturedToggleButton {
+
+        SneakButton(int buttonId, int x, int y, boolean initialVal) {
+            super(buttonId, x, y, 16, 16);
+            setToggled(initialVal);
+        }
+
+        @Override
+        protected int getTextureX() {
+            return isToggled() ? 192 : 112;
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 16;
         }
     }
 }

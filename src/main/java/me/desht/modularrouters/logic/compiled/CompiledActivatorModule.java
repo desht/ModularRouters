@@ -31,9 +31,11 @@ import java.util.List;
 public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_ACTION_TYPE = "ActionType";
     public static final String NBT_LOOK_DIRECTION = "LookDirection";
+    public static final String NBT_SNEAKING = "Sneaking";
 
     private final ActionType actionType;
     private final LookDirection lookDirection;
+    private final boolean sneaking;
 
     public enum ActionType {
         ACTIVATE_BLOCK,
@@ -54,9 +56,11 @@ public class CompiledActivatorModule extends CompiledModule {
         if (compound != null) {
             actionType = ActionType.values()[compound.getInteger(NBT_ACTION_TYPE)];
             lookDirection = LookDirection.values()[compound.getInteger(NBT_LOOK_DIRECTION)];
+            sneaking = compound.getBoolean(NBT_SNEAKING);
         } else {
             actionType = ActionType.ACTIVATE_BLOCK;
             lookDirection = LookDirection.LEVEL;
+            sneaking = false;
         }
     }
 
@@ -72,6 +76,7 @@ public class CompiledActivatorModule extends CompiledModule {
         fakePlayer.setPosition(pos.getX() + 0.5, pos.getY() + 0.5 - fakePlayer.eyeHeight, pos.getZ() + 0.5);
         fakePlayer.rotationPitch = getFacing().getFrontOffsetY() * -90;
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
+        fakePlayer.setSneaking(sneaking);
         float hitX = (float)(fakePlayer.posX - pos.getX());
         float hitY = (float)(fakePlayer.posY - pos.getY());
         float hitZ = (float)(fakePlayer.posZ - pos.getZ());
@@ -231,4 +236,9 @@ public class CompiledActivatorModule extends CompiledModule {
     public LookDirection getLookDirection() {
         return lookDirection;
     }
+
+    public boolean isSneaking() {
+        return sneaking;
+    }
+
 }
