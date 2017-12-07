@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -46,7 +47,7 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
         if (extend && distance < blockList.size()) {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
-            IBlockState state = BlockUtil.tryPlaceAsBlock(TEMPLATE_STACK, world, placePos, getFacing());
+            IBlockState state = BlockUtil.tryPlaceAsBlock(TEMPLATE_STACK, world, placePos, getFacing(), getRouterFacing());
             if (state != null) {
                 TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(world, placePos);
                 if (te != null) {

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class BlockUtil {
     private static final String[] REED_ITEM = new String[]{"block", "field_150935_a", "a"};
 
-    private static IBlockState getPlaceableState(EntityPlayer fakePlayer, ItemStack stack, World world, BlockPos pos, EnumFacing facing) {
+    private static IBlockState getPlaceableState(EntityPlayer fakePlayer, ItemStack stack, World world, BlockPos pos, EnumFacing facing, EnumFacing horizFacing) {
         // With thanks to Vazkii for inspiration from the Rannuncarpus code, although it's changed a lot since...
         try {
             Item item = stack.getItem();
@@ -71,16 +71,17 @@ public class BlockUtil {
                     facing = EnumFacing.UP;
                 }
             }
-            if (res != null && res.getProperties().containsKey(BlockDirectional.FACING)) {
-                res = res.withProperty(BlockDirectional.FACING, facing);
+            if (res != null) {
+                if (res.getProperties().containsKey(BlockDirectional.FACING)) {
+                    res = res.withProperty(BlockDirectional.FACING, facing);
+                } else if (res.getProperties().containsKey(BlockHorizontal.FACING)) {
+                    res = res.withProperty(BlockHorizontal.FACING, facing.getHorizontalIndex() >= 0 ? facing : horizFacing);
+                }
             }
             return res;
         } catch (IllegalArgumentException e) {
             // See https://github.com/desht/ModularRouters/issues/25
-            // Not sure how a double slab got into the router's buffer, but it will cause a server crash
-            // if this isn't handled here.
-            // Best not to log this, because it will likely result in log spam if a router tries repeatedly
-            // to place the bad block.
+            // Thanks Actually Additions for generating unplaceable random blocks, like double slabs :)
             return null;
         }
     }
@@ -149,9 +150,10 @@ public class BlockUtil {
      * @param world   the world
      * @param pos     position in the world to place at
      * @param facing direction the placer is facing
+     * @param horizFacing fallback direction if the block to be placed only supports horizontal rotations
      * @return the new block state if successful, null otherwise
      */
-    public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, EnumFacing facing) {
+    public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, EnumFacing facing, EnumFacing horizFacing) {
         IBlockState currentState = world.getBlockState(pos);
         if (!currentState.getBlock().isReplaceable(world, pos)) {
             return null;
@@ -163,7 +165,7 @@ public class BlockUtil {
         }
         fakePlayer.rotationYaw = getYawFromFacing(facing);
 
-        IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing);
+        IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing, horizFacing);
         if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
@@ -186,7 +188,7 @@ public class BlockUtil {
     /**
      * Try to break the block at the given position. If the block has any drops, but no drops pass the filter, then the
      * block will not be broken. Liquid, air & unbreakable blocks (bedrock etc.) will never be broken.  Drops will be
-     * available via the DropResult object, organised by whether or not they passed the filter.
+     * available via the BreakResult object, organised by whether or not they passed the filter.
      *
      * @param world     the world
      * @param pos       the block position

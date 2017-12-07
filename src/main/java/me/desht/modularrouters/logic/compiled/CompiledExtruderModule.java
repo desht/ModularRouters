@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -35,7 +36,7 @@ public class CompiledExtruderModule extends CompiledModule {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
-            IBlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos, getFacing());
+            IBlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos, getFacing(), getRouterFacing());
             if (state != null) {
                 router.extractBuffer(1);
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), ++distance);

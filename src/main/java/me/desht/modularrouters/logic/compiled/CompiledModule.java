@@ -26,6 +26,7 @@ public abstract class CompiledModule {
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
     private final EnumFacing facing;
+    private final EnumFacing routerFacing;
     private final int regulationAmount;
     private final AugmentCounter augmentCounter;
     private final int range, rangeSquared;
@@ -57,6 +58,7 @@ public abstract class CompiledModule {
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
+        routerFacing = router == null ? null : router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
     }
 
     /**
@@ -283,5 +285,9 @@ public abstract class CompiledModule {
 
     int getRangeModifier() {
         return getAugmentCount(ItemAugment.AugmentType.RANGE_UP) - getAugmentCount(ItemAugment.AugmentType.RANGE_DOWN);
+    }
+
+    public EnumFacing getRouterFacing() {
+        return routerFacing;
     }
 }
