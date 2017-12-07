@@ -12,7 +12,7 @@ public abstract class TexturedToggleButton extends TexturedButton implements Tog
     }
 
     public void toggle() {
-        toggled = !toggled;
+        setToggled(!isToggled());
     }
 
     public void setToggled(boolean toggled) {

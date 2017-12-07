@@ -3,6 +3,8 @@ package me.desht.modularrouters.client.gui.module;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.BackButton;
+import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
+import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.RedstoneBehaviourButton;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.button.RadioButton;
@@ -51,13 +53,14 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder, IContainerListener {
+public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder, IContainerListener, IMouseOverHelpProvider {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
     private static final int REGULATOR_TEXTFIELD_ID = 0;
     static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
     private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
     private static final int REDSTONE_BUTTON_ID = BACK_BUTTON_ID + 1;
     private static final int REGULATOR_TOOLTIP_ID = BACK_BUTTON_ID + 2;
+    private static final int MOUSEOVER_BUTTON_ID = BACK_BUTTON_ID + 3;
 
     // locations of extra textures on the gui module texture sheet
     static final Point SMALL_TEXTFIELD_XY = new Point(0, 198);
@@ -87,6 +90,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private RegulatorTooltipButton regulatorTooltipButton;
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
+    private final MouseOverHelp mouseOverHelp;
 
     public GuiModule(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -94,6 +98,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     public GuiModule(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
         super(containerItem);
+        this.mouseOverHelp = new MouseOverHelp(this);
         this.moduleItemStack = containerItem.filterHandler.getHolderStack();
         this.module = ItemModule.getModule(moduleItemStack);
         this.routerPos = routerPos;
@@ -126,6 +131,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
+        buttonList.add(new MouseOverHelp.Button(MOUSEOVER_BUTTON_ID, guiLeft + 175, guiTop + 1, mouseOverHelp));
+
         redstoneButton = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
                 this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
         buttonList.add(redstoneButton);
@@ -148,6 +155,11 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         inventorySlots.addListener(this);
 
         setupButtonVisibility();
+
+        mouseOverHelp.addHelpRegion(guiLeft + 7, guiTop + 16, guiLeft + 60, guiTop + 69, "guiText.popup.filter");
+        mouseOverHelp.addHelpRegion(guiLeft + 5, guiTop + 73, guiLeft + 62, guiTop + 110, "guiText.popup.filterControl");
+        mouseOverHelp.addHelpRegion(guiLeft + 68, guiTop + 16, guiLeft + 121, guiTop + 69, module.isDirectional() ? "guiText.popup.direction" : "guiText.popup.noDirection");
+        mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "guiText.popup.augments");
     }
 
     private void setupButtonVisibility() {
@@ -192,7 +204,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             sendModuleSettingsToServer();
         } else if (button instanceof ToggleButton) {
             ((ToggleButton) button).toggle();
-            sendModuleSettingsToServer();
+            if (((ToggleButton) button).sendToServer())
+                sendModuleSettingsToServer();
         } else if (button.id == BACK_BUTTON_ID) {
             if (routerPos != null) {
                 ModularRouters.network.sendToServer(OpenGuiMessage.openRouter(routerPos));
@@ -404,6 +417,11 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         } else {
             return 0xffffff;
         }
+    }
+
+    @Override
+    public MouseOverHelp getMouseOverHelp() {
+        return mouseOverHelp;
     }
 
     private static class RegulatorTooltipButton extends TexturedButton {

@@ -67,6 +67,10 @@ public class GuiModuleFlinger extends GuiModule implements GuiPageButtonList.Gui
         t3.useGuiTextBackground();
 
         manager.focus(0);
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 13, guiLeft + 186, guiTop + 32, "guiText.popup.flinger.speed");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 31, guiLeft + 186, guiTop + 50, "guiText.popup.flinger.pitch");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 49, guiLeft + 186, guiTop + 68, "guiText.popup.flinger.yaw");
     }
 
     @Override

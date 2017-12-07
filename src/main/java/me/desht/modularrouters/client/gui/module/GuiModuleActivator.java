@@ -58,6 +58,10 @@ public class GuiModuleActivator extends GuiModule {
         lookDirectionButton = new LookDirectionButton(LOOK_DIRECTION_ID, guiLeft + 167, guiTop + 60, 16, 16, lookDirection);
         buttonList.add(lookDirectionButton);
         lookDirectionButton.visible = actionType != ActionType.USE_ITEM_ON_ENTITY;
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 18, guiLeft + 183, guiTop + 37, "guiText.popup.activator.action");
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 39, guiLeft + 183, guiTop + 56, "guiText.popup.activator.sneak");
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 59, guiLeft + 183, guiTop + 76, "guiText.popup.activator.look", guiContainer -> lookDirectionButton.visible);
     }
 
     @Override

@@ -54,6 +54,8 @@ public class GuiModulePlayer extends GuiModule {
         ItemStack[] stacks = new ItemStack[] { mainInvStack, armourStack, shieldStack, enderStack };
         buttonList.add(new SectionButton(SECT_BUTTON_ID, guiLeft + 169, guiTop + 32, 16, 16, true, stacks, section));
         buttonList.add(new OperationButton(OP_BUTTON_ID, guiLeft + 148, guiTop + 32, operation));
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "guiText.popup.player.control");
     }
 
     @Override

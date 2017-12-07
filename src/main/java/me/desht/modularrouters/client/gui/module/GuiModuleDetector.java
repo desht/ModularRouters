@@ -55,6 +55,9 @@ public class GuiModuleDetector extends GuiModule {
         buttonList.add(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label));
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 129, guiTop + 14, guiLeft + 172, guiTop + 31, "guiText.popup.detector.signalLevel");
+        getMouseOverHelp().addHelpRegion(guiLeft + 135, guiTop + 31, guiLeft + 180, guiTop + 54, "guiText.popup.detector.weakStrong");
     }
 
     @Override

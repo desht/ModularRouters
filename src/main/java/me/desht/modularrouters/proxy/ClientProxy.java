@@ -8,6 +8,7 @@ import me.desht.modularrouters.client.ModelBakeEventHandler;
 import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
+import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.core.RegistrarMR;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ public class ClientProxy extends CommonProxy {
 
         MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
         MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
+        MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
     }
 
     @Override

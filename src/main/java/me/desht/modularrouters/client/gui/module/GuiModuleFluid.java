@@ -66,6 +66,9 @@ public class GuiModuleFluid extends GuiModule {
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 19, 16, 16, bucketStack));
         buttonList.add(new FluidDirectionButton(FLUID_DIRECTION_BUTTON_ID, guiLeft + 148, guiTop + 44, fluidDirection));
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 17, guiLeft + 183, guiTop + 35, "guiText.popup.fluid.maxTransfer");
+        getMouseOverHelp().addHelpRegion(guiLeft + 126, guiTop + 42, guiLeft + 185, guiTop + 61, "guiText.popup.fluid.direction");
     }
 
     @Override
@@ -126,6 +129,7 @@ public class GuiModuleFluid extends GuiModule {
         TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
             super(buttonId, x, y, width, height, renderStack, true);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.fluidTransferTooltip");
+            tooltip1.add("");
             TileEntityItemRouter router = getItemRouterTE();
             if (router != null) {
                 int ftRate = router.getFluidTransferRate();
