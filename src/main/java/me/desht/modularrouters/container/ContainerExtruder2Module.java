@@ -75,7 +75,7 @@ public class ContainerExtruder2Module extends ContainerModule {
             return true;  //  null is ok, clears the slot
         }
         if (!(stack.getItem() instanceof ItemBlock)) {
-            return false;
+            return true;  // non-block items are allowed - they act as spacers
         }
         Block b = ((ItemBlock) stack.getItem()).getBlock();
         return b.getDefaultState().getRenderType() == EnumBlockRenderType.MODEL;
