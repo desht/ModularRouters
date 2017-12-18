@@ -106,7 +106,7 @@ public abstract class CompiledModule {
         return augmentCounter.getAugmentCount(ItemAugment.AugmentType.REGULATOR) > 0 ? regulationAmount : 0;
     }
 
-    int getAugmentCount(ItemAugment.AugmentType augmentType) {
+    public int getAugmentCount(ItemAugment.AugmentType augmentType) {
         return augmentCounter.getAugmentCount(augmentType);
     }
 

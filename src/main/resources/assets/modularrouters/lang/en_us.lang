@@ -132,6 +132,11 @@ guiText.label.inspectionOp.EQ==
 guiText.label.inspectionOp.NE=!=
 guiText.label.matchAll.false=Match Any
 guiText.label.matchAll.true=Match All
+guiText.label.xpVacuum=XP Type
+guiText.label.xpVacuum.BOTTLE_O_ENCHANTING=Bottle O' Enchanting
+guiText.label.xpVacuum.XPJUICE=XP Juice
+guiText.label.xpVacuum.KNOWLEDGE=Essence Of Knowledge
+guiText.label.xpVacuum.ESSENCE=Essence
 
 guiText.popup.filter=§a§nFilter \n \n§rPlace ghost copies of items here to filter what this module works on.  If the item in the router's buffer doesn't match the filter item(s) here, then the module will not run.  See also the filter control buttons below.
 guiText.popup.filterControl=§a§nFilter Control \n \n§rThese buttons control how the filter is applied to the item in the router's buffer. See individual tooltips on each button for more information.
@@ -150,6 +155,7 @@ guiText.popup.flinger.yaw=§a§nFlinger Speed \n \n§rThis is the horizontal off
 guiText.popup.fluid.maxTransfer=§a§nMax Transfer \n \n§rThis is the maximum amount of fluid that the router will attempt to transfer in one operation. \n \nNote that the transfer rate is still limited by the number of Fluid Transfer Upgrades in the router, as well as the transfer rate of the external tank (if there is one). So this number should be considered a limit rather than a target.
 guiText.popup.fluid.direction=§a§nTransfer Direction \n \n§rHere you can control whether the router pushes fluid out to the world or tank, or pulls fluid from the world or tank.
 guiText.popup.extruder2.template=§a§nTemplate \n \n§rHere you can define a template of blocks to extrude; note that real blocks are not placed, but rather special uncraftable & unlootable template blocks. \n \nPut ghost copies of blocks in the template to define what is extruded; blocks will be extruded from left to right and top to bottom in order. You can extrude more than one of each block if you want (left- or right-click blocks in the template to adjust). \n \nNote you can also place non-block items (e.g. a stick) in the template; while they obviously can't be placed, they are used as spacers to "place" one or more air blocks in the pattern.
+guiText.popup.xpVacuum=§a§nXP Collection Type \n \n§rHere you can define how XP orbs are collected. The options available depend on what other mods are installed and what experience fluids are available; however vanilla Bottles o' Enchanting are always available. \n \nIf collecting experience in fluid form, you must place a fluid-containing tank in the router's buffer capable of storing fluid by the mB (so not a bucket).
 
 # Config GUI
 gui.config.mainTitle=Modular Routers Configuration

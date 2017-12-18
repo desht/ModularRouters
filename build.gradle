@@ -64,7 +64,7 @@ dependencies {
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${config.top_version}"
     deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
     deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"
-    deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
+    deobfCompile "cofh:RedstoneFlux:1.12-2.0.1.2:universal"
     compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
 }
 

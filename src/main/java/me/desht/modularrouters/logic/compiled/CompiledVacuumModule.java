@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.integration.IntegrationHandler;
+import me.desht.modularrouters.integration.XPFluids.XPCollectionType;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -12,11 +12,14 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -26,8 +29,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
-    private static final int XP_FLUID_RATIO = 20;  // 1 xp = 20mb xp juice
     private static final int XP_PER_BOTTLE = 7;  // average xp from a bottle o' enchanting (2d5 + 1 xp)
+    public static final String NBT_XP_FLUID_TYPE = "XPFluidType";
 
     private final boolean fastPickup;
     private final boolean xpMode;
@@ -37,12 +40,20 @@ public class CompiledVacuumModule extends CompiledModule {
     // does not survive router recompilation...
     private int xpBuffered = 0;
 
+    // form in which to collect XP orbs
+    private XPCollectionType xpCollectionType;
+
     public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         fastPickup = getAugmentCount(ItemAugment.AugmentType.FAST_PICKUP) > 0;
         xpMode = getAugmentCount(ItemAugment.AugmentType.XP_VACUUM) > 0;
-        if (xpMode && IntegrationHandler.fluidXpJuice != null) {
-            xpJuiceStack = new FluidStack(IntegrationHandler.fluidXpJuice, 1000);
+
+        NBTTagCompound compound = stack.getTagCompound();
+        xpCollectionType = XPCollectionType.values()[compound.getInteger(NBT_XP_FLUID_TYPE)];
+
+        if (xpMode && !xpCollectionType.getRegistryName().isEmpty()) {
+            Fluid xpFluid = FluidRegistry.getFluid(xpCollectionType.getRegistryName());
+            xpJuiceStack = new FluidStack(xpFluid, 1000);
         } else {
             xpJuiceStack = null;
         }
@@ -106,28 +117,33 @@ public class CompiledVacuumModule extends CompiledModule {
         int range = getRange();
         List<EntityXPOrb> orbs = router.getWorld().getEntitiesWithinAABB(EntityXPOrb.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
+        if (orbs.isEmpty()) {
+            return false;
+        }
 
         ItemStack inRouterStack = router.getBufferItemStack();
 
-        XPMethod xpMethod = XPMethod.NONE;
         int spaceForXp = 0;
-
         IFluidHandler xpHandler = null;
-        if (inRouterStack.isEmpty() || inRouterStack.getItem() == Items.EXPERIENCE_BOTTLE && inRouterStack.getCount() < inRouterStack.getMaxStackSize()) {
-            xpMethod = XPMethod.BOTTLES;
+        if (xpCollectionType == XPCollectionType.BOTTLE_O_ENCHANTING) {
+            if (!inRouterStack.isEmpty() && inRouterStack.getItem() != Items.EXPERIENCE_BOTTLE) {
+                return false;
+            }
             spaceForXp = (inRouterStack.getMaxStackSize() - inRouterStack.getCount()) * XP_PER_BOTTLE;
-        } else if (xpJuiceStack != null && inRouterStack.getCount() == 1) {
+        } else {
             xpHandler = FluidUtil.getFluidHandler(inRouterStack);
-            if (xpHandler != null) {
-                for (IFluidTankProperties tank : xpHandler.getTankProperties()) {
-                    if (tank.canFillFluidType(xpJuiceStack)) {
-                        spaceForXp += (tank.getCapacity() - (tank.getContents() == null ? 0 : tank.getContents().amount)) / XP_FLUID_RATIO;
-                    }
+            if (xpHandler == null) {
+                return false;
+            }
+            for (IFluidTankProperties tank : xpHandler.getTankProperties()) {
+                if (tank.canFillFluidType(xpJuiceStack)) {
+                    if (tank.getContents() == null || tank.getContents().amount == 0
+                            || tank.getContents().getFluid().getName().equals(xpCollectionType.getRegistryName()))
+                    spaceForXp += (tank.getCapacity() - (tank.getContents() == null ? 0 : tank.getContents().amount)) / xpCollectionType.getXpRatio();
                 }
-                xpMethod = XPMethod.XPJUICE;
             }
         }
-        if (xpMethod == XPMethod.NONE) {
+        if (spaceForXp == 0) {
             return false;
         }
 
@@ -136,8 +152,8 @@ public class CompiledVacuumModule extends CompiledModule {
             if (orb.getXpValue() > spaceForXp) {
                 break;
             }
-            switch (xpMethod) {
-                case BOTTLES:
+            switch (xpCollectionType) {
+                case BOTTLE_O_ENCHANTING:
                     xpBuffered += orb.getXpValue();
                     if (xpBuffered > XP_PER_BOTTLE) {
                         ItemStack bottleStack = new ItemStack(Items.EXPERIENCE_BOTTLE, xpBuffered / XP_PER_BOTTLE);
@@ -148,8 +164,8 @@ public class CompiledVacuumModule extends CompiledModule {
                         }
                     }
                     break;
-                case XPJUICE:
-                    FluidStack xpStack = new FluidStack(IntegrationHandler.fluidXpJuice, orb.getXpValue() * XP_FLUID_RATIO + xpBuffered);
+                default:
+                    FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getXpValue() * xpCollectionType.getXpRatio() + xpBuffered);
                     int filled = xpHandler.fill(xpStack, true);
                     if (filled < xpStack.amount) {
                         // tank is too full to store entire amount...
@@ -178,9 +194,7 @@ public class CompiledVacuumModule extends CompiledModule {
         return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
     }
 
-    private enum XPMethod {
-        NONE,     // no action
-        BOTTLES,  // convert to bottles o' enchanting
-        XPJUICE   // convert to xp juice (EnderIO)
+    public XPCollectionType getXPCollectionType() {
+        return xpCollectionType;
     }
 }

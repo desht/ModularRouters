@@ -16,6 +16,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.item.augment.Augment;
+import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
@@ -91,6 +92,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
     private final MouseOverHelp mouseOverHelp;
+    protected ItemAugment.AugmentCounter augmentCounter;
 
     public GuiModule(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -108,6 +110,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
+        this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
     }
 
     @Override
@@ -162,21 +165,10 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "guiText.popup.augments");
     }
 
-    private void setupButtonVisibility() {
-        boolean redstoneVis = false;
-        boolean regulatorVis = false;
-        for (int i = 0; i < Augment.SLOTS; i++) {
-            ItemStack stack = inventorySlots.getSlot(ContainerModule.AUGMENT_START + i).getStack();
-            AugmentType type = AugmentType.getType(stack);
-            if (type == null) continue;
-            switch (type) {
-                case REDSTONE: redstoneVis = true; break;
-                case REGULATOR: regulatorVis = true; break;
-            }
-        }
-        redstoneButton.visible = redstoneVis;
-        regulatorTooltipButton.visible = regulatorVis;
-        regulatorTextField.setVisible(regulatorVis);
+    protected void setupButtonVisibility() {
+        redstoneButton.visible = augmentCounter.getAugmentCount(AugmentType.REDSTONE) > 0;
+        regulatorTooltipButton.visible = augmentCounter.getAugmentCount(AugmentType.REGULATOR) > 0;
+        regulatorTextField.setVisible(augmentCounter.getAugmentCount(AugmentType.REGULATOR) > 0);
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
@@ -397,6 +389,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     @Override
     public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
         if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + Augment.SLOTS) {
+            augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
             setupButtonVisibility();
         }
     }
