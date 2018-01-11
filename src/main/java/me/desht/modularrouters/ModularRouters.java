@@ -25,7 +25,8 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ModularRouters.MODID, version = ModularRouters.MODVERSION, name = ModularRouters.MODNAME,
         dependencies = ModularRouters.DEPENDENICES,
-        acceptedMinecraftVersions = "1.12"
+        acceptedMinecraftVersions = "1.12",
+        updateJSON = "https://raw.github.com/desht/ModularRouters/MC1.12-master/release_info.json"
 )
 public class ModularRouters {
     public static final String MODID = "modularrouters";
