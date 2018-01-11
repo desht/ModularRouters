@@ -21,7 +21,7 @@ public class BreakerModule extends Module {
         super.addUsageInformation(itemstack, player, list, advanced);
         Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
         if (ench.isEmpty()) {
-            list.addAll(MiscUtil.wrapString(I18n.format("itemText.misc.enchantBreakerHint"), 45));
+            list.addAll(MiscUtil.wrapString(I18n.format("itemText.misc.enchantBreakerHint")));
         }
     }
 

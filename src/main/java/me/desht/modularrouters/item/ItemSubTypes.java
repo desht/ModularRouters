@@ -117,7 +117,7 @@ public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
         public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
             String s = I18n.format("itemText.usage." + itemstack.getUnlocalizedName(), getExtraUsageParams());
             for (String s1 : s.split("\\\\n")) {
-                list.addAll(MiscUtil.wrapString(s1, 45));
+                list.addAll(MiscUtil.wrapString(s1));
             }
         }
 

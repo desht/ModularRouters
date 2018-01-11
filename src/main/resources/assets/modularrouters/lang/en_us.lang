@@ -56,13 +56,13 @@ itemGroup.modularrouters=Modular Routers
 
 # GUI Labels & tooltips
 guiText.tooltip.BLACKLIST.1=Whitelist\nAn empty whitelist will match nothing.
-guiText.tooltip.IGNORE_META.1=Match Metadata
-guiText.tooltip.IGNORE_NBT.1=Match NBT
-guiText.tooltip.IGNORE_OREDICT.1=Use Oredict
+guiText.tooltip.IGNORE_META.1=Match Metadata\ne.g. distinguish between different colors of wool
+guiText.tooltip.IGNORE_NBT.1=Match NBT\ne.g. take the enchantments on an item into account when matching
+guiText.tooltip.IGNORE_OREDICT.1=Use Oredict\nItems with the same ore dictionary tag (e.g. "oreIron") as any item in the filter will match
 guiText.tooltip.TERMINATE.1=Continue Execution on Match\nThe item router will continue executing subsequent modules, even if this module processes an item.
 guiText.tooltip.BLACKLIST.2=Blacklist\nAn empty blacklist will match everything.
-guiText.tooltip.IGNORE_META.2=Ignore Metadata
-guiText.tooltip.IGNORE_NBT.2=Ignore NBT
+guiText.tooltip.IGNORE_META.2=Ignore Metadata\ne.g. adding a wool to the filter will match any color of wool
+guiText.tooltip.IGNORE_NBT.2=Ignore NBT\ne.g. ignore the enchantments on an item when matching
 guiText.tooltip.IGNORE_OREDICT.2=Don't use Oredict
 guiText.tooltip.TERMINATE.2=Terminate Execution on Match\nIf this module processes an item, the item router won't execute any subsequent modules on this tick.
 guiText.tooltip.NONE=None
@@ -81,8 +81,8 @@ guiText.tooltip.redstone.NEVER=Never
 guiText.tooltip.redstone.PULSE=Pulsed
 guiText.tooltip.regulator.label=%d Item(s)
 guiText.tooltip.regulator.labelFluid=%d%%
-guiText.tooltip.eco.false=Eco Mode §edisabled\n§7Router will always run at full speed.
-guiText.tooltip.eco.true=Eco Mode §aenabled\n§7If router is idle >%f seconds, it will enter low-power mode and will only run every %f seconds.  It will leave low-power mode upon processing any item.
+guiText.tooltip.eco.false=Eco Mode §edisabled\n§7Router will always run at normal speed.
+guiText.tooltip.eco.true=Eco Mode §aenabled\n§7If router is idle for >%f seconds, it will enter low-power mode and will only run every %f seconds.  It will leave low-power mode upon processing any item and return to running at normal speed.
 guiText.tooltip.numberFieldTooltip=• §e§oCursor Up/Down§7 or mouse wheel: adjust\n• Hold §e§oShift§7: coarse adjust\n• Hold §e§oCtrl§7: fine adjust\n• §e§oPage Up/Down§7: set to max/min
 guiText.tooltip.flinger.speed=§bSpeed (%f → %f)
 guiText.tooltip.flinger.pitch=§bPitch (%f → %f)
@@ -155,7 +155,7 @@ guiText.popup.flinger.yaw=§a§nFlinger Speed \n \n§rThis is the horizontal off
 guiText.popup.fluid.maxTransfer=§a§nMax Transfer \n \n§rThis is the maximum amount of fluid that the router will attempt to transfer in one operation. \n \nNote that the transfer rate is still limited by the number of Fluid Transfer Upgrades in the router, as well as the transfer rate of the external tank (if there is one). So this number should be considered a limit rather than a target.
 guiText.popup.fluid.direction=§a§nTransfer Direction \n \n§rHere you can control whether the router pushes fluid out to the world or tank, or pulls fluid from the world or tank.
 guiText.popup.extruder2.template=§a§nTemplate \n \n§rHere you can define a template of blocks to extrude; note that real blocks are not placed, but rather special uncraftable & unlootable template blocks. \n \nPut ghost copies of blocks in the template to define what is extruded; blocks will be extruded from left to right and top to bottom in order. You can extrude more than one of each block if you want (left- or right-click blocks in the template to adjust). \n \nNote you can also place non-block items (e.g. a stick) in the template; while they obviously can't be placed, they are used as spacers to "place" one or more air blocks in the pattern.
-guiText.popup.xpVacuum=§a§nXP Collection Type \n \n§rHere you can define how XP orbs are collected. The options available depend on what other mods are installed and what experience fluids are available; however vanilla Bottles o' Enchanting are always available. \n \nIf collecting experience in fluid form, you must place a fluid-containing tank in the router's buffer capable of storing fluid by the mB (so not a bucket).
+guiText.popup.xpVacuum=§a§nXP Collection Type \n \n§rHere you can define how XP orbs are collected. The options available depend on what other mods are installed and what experience fluids are available; however vanilla Bottles o' Enchanting are always available. \n \nIf collecting experience in fluid form, you must place a fluid-containing tank in the router's buffer capable of storing fluid by the mB (i.e. not a vanilla bucket).
 
 # Config GUI
 gui.config.mainTitle=Modular Routers Configuration
@@ -254,7 +254,7 @@ itemText.usage.item.sender1_module=Sends items from the router's buffer to any i
 itemText.usage.item.sender2_module=Sends items from the router's buffer to any nearby inventory.\nClear line of sight NOT required.
 itemText.usage.item.sender3_module=Sends items from the router's buffer to any inventory in any dimension.
 itemText.usage.item.sorter_module=Places items from the router's buffer into an adjacent inventory, IF there are already matching items in that inventory
-itemText.usage.item.vacuum_module=Absorbs mearby items in the world into the router's buffer. Only collects items in the configured direction, or any direction if the direction is NONE.
+itemText.usage.item.vacuum_module=Absorbs nearby items in the world into the router's buffer. Operates in all directions by default, but can be configured to operate in one direction only.
 itemText.usage.item.void_module=§c*** CAUTION ***\nPermanently destroys items in the buffer!
 itemText.usage.item.detector_module=Emits a redstone signal from the router in the module's configured direction IF the item in the router's buffer passes the module's filter.
 itemText.usage.item.modsorter_module=Places items from the router's buffer into an adjacent inventory, IF there are already items from the same mod in that inventory.
@@ -262,7 +262,7 @@ itemText.usage.item.flinger_module=Throws items from the router's buffer potenti
 itemText.usage.item.player_module=Remotely transfers items between a player's main or armor inventory and the router's buffer.
 itemText.usage.item.extruder_module=Places or removes blocks in a line along the module's direction, depending on the router's redstone signal level.\nDefault is to place with a signal and remove with no signal; add Redstone Augment to the module for custom behaviour.
 itemText.usage.item.extruder2_module=Operates like the Extruder Mk1, but places template blocks from an internal pattern buffer instead of real blocks from the router's buffer.
-itemText.usage.item.fluid_module=Transfers fluids to or from the router in the module's direction.\nRouter's buffer must have a fluid container item in it.\nCan transfer to/from tanks or the world.
+itemText.usage.item.fluid_module=Transfers fluids to or from the router in the module's direction.\n• Router's buffer must have a fluid container item in it.\n• Can transfer to/from tanks or the world.
 itemText.usage.item.activator_module=Simulates right-clicking blocks and entities using the item(s) in the router's buffer.\nActs as if the router is a fake player.
 itemText.usage.item.security_upgrade=Protects router; only listed players can access the router.\n• Right-click a player to add them to this upgrade\n• Sneak + Right-click player to remove them
 itemText.usage.item.stack_upgrade=Increases the number of items processed per router tick.\n• Max. items processed per operation: %d\n• Max. useful upgrades: %d
@@ -284,7 +284,7 @@ itemText.usage.item.regulator_augment=Allow precise control over how many items 
 itemText.usage.item.range_up_augment=Increases range of modules by 1 block per augment (up to hard maximum - see module tooltip)
 itemText.usage.item.range_down_augment=Reduces range of modules by 1 block per augment.
 itemText.usage.item.stack_augment=Allows the module to process multiple items per tick.\nThis overrides Stack Upgrades inserted in the router.
-itemText.usage.item.xp_vacuum_augment=Allows the Vacuum Module to collect XP orbs instead of items.\nXP is either converted into Bottles o' Enchanting in the router's buffer,\nor stored as liquid XP in a tank in the router (if liquid XP is available)
+itemText.usage.item.xp_vacuum_augment=Allows the Vacuum Module to collect XP orbs instead of items.\nXP is either converted into Bottles o' Enchanting in the router's buffer,\nor stored as liquid XP in a tank in the router (if liquid XP is available via some other mod)
 
 # Player chat messages
 chatText.misc.inventoryMerged=Merged %d item(s) into the %s

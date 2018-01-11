@@ -33,7 +33,7 @@ public class ModuleEnhancementRecipeWrapper
         this.helpers = helpers;
         this.recipe = recipe;
         this.name = I18n.format("jei.recipe." + recipe.getRecipeId() + ".name");
-        this.description = MiscUtil.wrapString(I18n.format("jei.recipe." + recipe.getRecipeId() + ".description"), 40);
+        this.description = MiscUtil.wrapString(I18n.format("jei.recipe." + recipe.getRecipeId() + ".description"));
     }
 
     @Override

@@ -18,16 +18,25 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class MiscUtil {
+
+    public static final int WRAP_LENGTH = 45;
+
     public static void appendMultiline(List<String> result, String key, Object... args) {
         String raw = translate(key, args);
         int n = 0;
         for (String s : raw.split("\\\\n")) {
-            result.add((n++ > 0 ? "\u00a77" : "") + s);
+            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
+                result.add((n++ > 0 ? "\u00a77" : "") + s1);
+            }
         }
     }
 
     public static String[] splitLong(String key, int len, Object... args) {
         return WordUtils.wrap(I18n.format(key, args), len, "=CUT", false, "\\n").split("=CUT");
+    }
+
+    public static List<String> wrapString(String text) {
+        return wrapString(text, WRAP_LENGTH);
     }
 
     public static List<String> wrapString(String text, int maxCharPerLine) {

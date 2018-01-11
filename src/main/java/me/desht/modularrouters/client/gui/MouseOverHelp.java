@@ -41,7 +41,7 @@ public class MouseOverHelp {
     }
 
     public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<GuiContainer> showPredicate) {
-        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key), 40), showPredicate));
+        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key)), showPredicate));
     }
 
     private void onMouseOver(int mouseX, int mouseY) {
@@ -164,7 +164,7 @@ public class MouseOverHelp {
 
         @Override
         public List<String> getTooltip() {
-            return MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp." + isToggled()), 40);
+            return MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp." + isToggled()));
         }
     }
 }
