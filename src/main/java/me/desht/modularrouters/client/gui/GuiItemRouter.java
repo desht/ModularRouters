@@ -9,6 +9,7 @@ import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.RouterSettingsMessage;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -18,7 +19,6 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class GuiItemRouter extends GuiContainerBase {
@@ -135,9 +135,8 @@ public class GuiItemRouter extends GuiContainerBase {
 
         @Override
         public List<String> getTooltip() {
-            String s = I18n.format("guiText.tooltip.eco." + isToggled(),
-                    ConfigHandler.router.ecoTimeout / 20.f, ConfigHandler.router.lowPowerTickRate / 20.f);
-            return Arrays.asList(s.split("\\\\n"));
+            return MiscUtil.wrapString(I18n.format("guiText.tooltip.eco." + isToggled(),
+                    ConfigHandler.router.ecoTimeout / 20.f, ConfigHandler.router.lowPowerTickRate / 20.f));
         }
     }
 }
