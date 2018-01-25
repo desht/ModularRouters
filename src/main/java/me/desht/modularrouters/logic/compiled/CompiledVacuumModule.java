@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.integration.XPFluids.XPCollectionType;
+import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
@@ -10,9 +10,9 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,6 +21,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -28,12 +29,16 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
-    private static final int XP_PER_BOTTLE = 7;  // average xp from a bottle o' enchanting (2d5 + 1 xp)
     public static final String NBT_XP_FLUID_TYPE = "XPFluidType";
+    public static final String NBT_AUTO_EJECT = "AutoEject";
 
     private final boolean fastPickup;
     private final boolean xpMode;
+    private final boolean autoEjecting;
     private final FluidStack xpJuiceStack;
+
+    private TileEntity fluidReceiver = null;
+    private EnumFacing fluidReceiverFace = null;
 
     // temporary small xp buffer (generally around an orb or less)
     // does not survive router recompilation...
@@ -49,10 +54,14 @@ public class CompiledVacuumModule extends CompiledModule {
 
         NBTTagCompound compound = stack.getTagCompound();
         xpCollectionType = XPCollectionType.values()[compound.getInteger(NBT_XP_FLUID_TYPE)];
+        autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
 
         if (xpMode) {
             Fluid xpFluid = xpCollectionType.getFluid();
             xpJuiceStack = xpFluid == null ? null : new FluidStack(xpFluid, 1000);
+            if (router != null) {
+                findFluidReceiver(router);
+            }
         } else {
             xpJuiceStack = null;
         }
@@ -64,6 +73,28 @@ public class CompiledVacuumModule extends CompiledModule {
             return handleXpMode(router);
         } else {
             return handleItemMode(router);
+        }
+    }
+
+    @Override
+    public void onNeighbourChange(TileEntityItemRouter router) {
+        findFluidReceiver(router);
+    }
+
+    private void findFluidReceiver(TileEntityItemRouter router) {
+        if (!xpMode || xpJuiceStack == null) return;
+
+        fluidReceiver = null;
+        for (EnumFacing face : EnumFacing.values()) {
+            TileEntity te = router.getWorld().getTileEntity(router.getPos().offset(face));
+            if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite())) {
+                IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
+                if (handler.fill(xpJuiceStack, false) > 0) {
+                    fluidReceiver = te;
+                    fluidReceiverFace = face.getOpposite();
+                    return;
+                }
+            }
         }
     }
 
@@ -124,16 +155,23 @@ public class CompiledVacuumModule extends CompiledModule {
 
         int spaceForXp = 0;
         IFluidHandler xpHandler = null;
-        if (xpCollectionType == XPCollectionType.BOTTLE_O_ENCHANTING) {
-            if (!inRouterStack.isEmpty() && inRouterStack.getItem() != Items.EXPERIENCE_BOTTLE) {
+        if (xpCollectionType.isSolid()) {
+            if (!inRouterStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(inRouterStack, xpCollectionType.getIcon())) {
                 return false;
             }
-            spaceForXp = (inRouterStack.getMaxStackSize() - inRouterStack.getCount()) * XP_PER_BOTTLE;
+            spaceForXp = (inRouterStack.getMaxStackSize() - inRouterStack.getCount()) * xpCollectionType.getXpRatio();
         } else {
-            xpHandler = FluidUtil.getFluidHandler(inRouterStack);
+            if (fluidReceiver != null && fluidReceiver.isInvalid()) {
+                findFluidReceiver(router);
+            }
+
+            xpHandler = fluidReceiver == null || !fluidReceiver.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fluidReceiverFace) ?
+                    FluidUtil.getFluidHandler(inRouterStack) :
+                    fluidReceiver.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fluidReceiverFace);
             if (xpHandler == null) {
                 return false;
             }
+
             for (IFluidTankProperties tank : xpHandler.getTankProperties()) {
                 if (tank.canFillFluidType(xpJuiceStack)) {
                     if (tank.getContents() == null || tank.getContents().amount == 0
@@ -151,29 +189,27 @@ public class CompiledVacuumModule extends CompiledModule {
             if (orb.getXpValue() > spaceForXp) {
                 break;
             }
-            switch (xpCollectionType) {
-                case BOTTLE_O_ENCHANTING:
-                    xpBuffered += orb.getXpValue();
-                    if (xpBuffered > XP_PER_BOTTLE) {
-                        ItemStack bottleStack = new ItemStack(Items.EXPERIENCE_BOTTLE, xpBuffered / XP_PER_BOTTLE);
-                        ItemStack excess = router.insertBuffer(bottleStack);
-                        xpBuffered -= bottleStack.getCount() * XP_PER_BOTTLE;
-                        if (!excess.isEmpty()) {
-                            InventoryUtils.dropItems(router.getWorld(), router.getPos(), excess);
-                        }
+            if (xpCollectionType.isSolid()) {
+                xpBuffered += orb.getXpValue();
+                if (xpBuffered > xpCollectionType.getXpRatio()) {
+                    ItemStack stack = xpCollectionType.getIcon().copy();
+                    stack.setCount(xpBuffered / xpCollectionType.getXpRatio());
+                    ItemStack excess = router.insertBuffer(stack);
+                    xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
+                    if (!excess.isEmpty()) {
+                        InventoryUtils.dropItems(router.getWorld(), router.getPos(), excess);
                     }
-                    break;
-                default:
-                    FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getXpValue() * xpCollectionType.getXpRatio() + xpBuffered);
-                    int filled = xpHandler.fill(xpStack, true);
-                    if (filled < xpStack.amount) {
-                        // tank is too full to store entire amount...
-                        spaceForXp = 0;
-                        xpBuffered = xpStack.amount - filled;
-                    } else {
-                        xpBuffered = 0;
-                    }
-                    break;
+                }
+            } else {
+                FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getXpValue() * xpCollectionType.getXpRatio() + xpBuffered);
+                int filled = xpHandler.fill(xpStack, true);
+                if (filled < xpStack.amount) {
+                    // tank is too full to store entire amount...
+                    spaceForXp = 0;
+                    xpBuffered = xpStack.amount - filled;
+                } else {
+                    xpBuffered = 0;
+                }
             }
             spaceForXp -= orb.getXpValue();
             orb.setDead();
@@ -195,5 +231,9 @@ public class CompiledVacuumModule extends CompiledModule {
 
     public XPCollectionType getXPCollectionType() {
         return xpCollectionType;
+    }
+
+    public boolean isAutoEjecting() {
+        return autoEjecting;
     }
 }

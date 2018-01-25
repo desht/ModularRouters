@@ -11,13 +11,18 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.Arrays;
 
-public class XPFluids {
-    private static final boolean[] AVAILABLE_XP_COLLECTION_TYPES = new boolean[XPCollectionType.values().length];
+public class XPCollection {
+    private static final boolean[] AVAILABLE = new boolean[XPCollectionType.values().length];
     private static final ItemStack[] ICONS = new ItemStack[XPCollectionType.values().length];
+    private static final boolean[] SOLID = new boolean[XPCollectionType.values().length];
 
     public static void detectXPFluids() {
         Arrays.stream(XPCollectionType.values())
-                .forEach(type -> AVAILABLE_XP_COLLECTION_TYPES[type.ordinal()] = !getIconForResource(type.registryName).isEmpty());
+                .forEach(type -> AVAILABLE[type.ordinal()] = !getIconForResource(type.registryName).isEmpty());
+        for (XPCollectionType type : XPCollectionType.values()) {
+            AVAILABLE[type.ordinal()] = !getIconForResource(type.registryName).isEmpty();
+            SOLID[type.ordinal()] = type.registryName.indexOf(':') >= 0;
+        }
         Arrays.fill(ICONS, null);
     }
 
@@ -34,7 +39,8 @@ public class XPFluids {
     }
 
     public enum XPCollectionType {
-        BOTTLE_O_ENCHANTING(0, "minecraft:experience_bottle"),  // special case: vanilla bottles o' enchanting
+        BOTTLE_O_ENCHANTING(7, "minecraft:experience_bottle"),  // vanilla bottles o' enchanting
+        SOLIDIFIED_EXPERIENCE(8, "actuallyadditions:item_solidified_experience"),  // AA solidified experience
         XPJUICE(20, "xpjuice"),  // Enderio/Openblocks/Cyclic/Reliquary
         KNOWLEDGE(20, "experience"), // CoFH Essence of Knowledge
         ESSENCE(20, "essence"); // Industrial Foregoing essence - TODO: respect IF config "essenceMultiplier"
@@ -55,6 +61,10 @@ public class XPFluids {
             return registryName;
         }
 
+        public boolean isSolid() {
+            return SOLID[this.ordinal()];
+        }
+
         public Fluid getFluid() {
             return FluidRegistry.getFluid(registryName);
         }
@@ -67,7 +77,7 @@ public class XPFluids {
         }
 
         public boolean isAvailable() {
-            return AVAILABLE_XP_COLLECTION_TYPES[this.ordinal()];
+            return AVAILABLE[this.ordinal()];
         }
 
         public ItemStack getIcon() {

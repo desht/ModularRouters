@@ -384,6 +384,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(worldIn, pos);
         if (router != null) {
             router.checkForRedstonePulse();
+            router.notifyModules();
         }
     }
 

@@ -37,7 +37,7 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
             newState = (T) state.getClass().getEnumConstants()[b];
         } while (!isApplicable(newState) && b != state.ordinal());
 
-        state = newState;
+        setState(newState);
         return state;
     }
 

@@ -290,4 +290,7 @@ public abstract class CompiledModule {
     public EnumFacing getRouterFacing() {
         return routerFacing;
     }
+
+    public void onNeighbourChange(TileEntityItemRouter router) {
+    }
 }

@@ -854,4 +854,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         }
     }
 
+    public void notifyModules() {
+        for (CompiledModule cm : compiledModules) {
+            cm.onNeighbourChange(this);
+        }
+    }
 }

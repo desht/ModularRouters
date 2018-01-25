@@ -202,11 +202,11 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
                 String s = I18n.format("item." + type.toString().toLowerCase() + "_augment.name");
                 if (n > 1) s = n + " x " + s;
                 s += TextFormatting.AQUA + ItemAugment.getAugment(type).getExtraInfo(n, itemstack);
-                toAdd.add(" \u2022 " + TextFormatting.GREEN + s);
+                toAdd.add(" \u2022 " + TextFormatting.DARK_GREEN + s);
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(TextFormatting.YELLOW + I18n.format("itemText.augments"));
+            list.add(TextFormatting.GREEN + I18n.format("itemText.augments"));
             list.addAll(toAdd);
         }
     }

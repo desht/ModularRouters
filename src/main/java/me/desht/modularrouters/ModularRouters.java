@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.client.gui.GuiHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
-import me.desht.modularrouters.integration.XPFluids;
+import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
@@ -79,7 +79,7 @@ public class ModularRouters {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
-        XPFluids.detectXPFluids();
+        XPCollection.detectXPFluids();
         ModNameCache.init();
     }
 

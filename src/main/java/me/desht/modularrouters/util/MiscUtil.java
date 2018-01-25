@@ -2,6 +2,7 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +12,8 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
@@ -107,5 +110,10 @@ public class MiscUtil {
             default:
                 return 0;
         }
+    }
+
+    public static String getFluidName(ItemStack stack) {
+        FluidStack f = FluidUtil.getFluidContained(stack);
+        return f == null ? stack.getDisplayName() : f.getFluid().getLocalizedName(f);
     }
 }
