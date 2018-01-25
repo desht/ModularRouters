@@ -47,6 +47,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -111,6 +114,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
         this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
+
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -154,15 +159,17 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft + 2, guiTop + 1));
         }
 
-        inventorySlots.removeListener(this);
-        inventorySlots.addListener(this);
-
-        setupButtonVisibility();
-
         mouseOverHelp.addHelpRegion(guiLeft + 7, guiTop + 16, guiLeft + 60, guiTop + 69, "guiText.popup.filter");
         mouseOverHelp.addHelpRegion(guiLeft + 5, guiTop + 73, guiLeft + 62, guiTop + 110, "guiText.popup.filterControl");
         mouseOverHelp.addHelpRegion(guiLeft + 68, guiTop + 16, guiLeft + 121, guiTop + 69, module.isDirectional() ? "guiText.popup.direction" : "guiText.popup.noDirection");
         mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "guiText.popup.augments");
+    }
+
+    @SubscribeEvent
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+        inventorySlots.removeListener(this);
+        inventorySlots.addListener(this);
+        setupButtonVisibility();
     }
 
     protected void setupButtonVisibility() {

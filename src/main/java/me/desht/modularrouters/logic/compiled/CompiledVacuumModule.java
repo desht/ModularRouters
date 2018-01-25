@@ -19,7 +19,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -51,9 +50,9 @@ public class CompiledVacuumModule extends CompiledModule {
         NBTTagCompound compound = stack.getTagCompound();
         xpCollectionType = XPCollectionType.values()[compound.getInteger(NBT_XP_FLUID_TYPE)];
 
-        if (xpMode && !xpCollectionType.getRegistryName().isEmpty()) {
-            Fluid xpFluid = FluidRegistry.getFluid(xpCollectionType.getRegistryName());
-            xpJuiceStack = new FluidStack(xpFluid, 1000);
+        if (xpMode) {
+            Fluid xpFluid = xpCollectionType.getFluid();
+            xpJuiceStack = xpFluid == null ? null : new FluidStack(xpFluid, 1000);
         } else {
             xpJuiceStack = null;
         }

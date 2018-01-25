@@ -25,16 +25,24 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
 
     public T cycle(boolean forward) {
         int b = state.ordinal();
-        b += forward ? 1 : -1;
 
-        if (b >= len) {
-            b = 0;
-        } else if (b < 0) {
-            b = len - 1;
-        }
+        T newState;
+        do {
+            b += forward ? 1 : -1;
+            if (b >= len) {
+                b = 0;
+            } else if (b < 0) {
+                b = len - 1;
+            }
+            newState = (T) state.getClass().getEnumConstants()[b];
+        } while (!isApplicable(newState) && b != state.ordinal());
 
-        state = (T) state.getClass().getEnumConstants()[b];
+        state = newState;
         return state;
+    }
+
+    public boolean isApplicable(T state) {
+        return true;
     }
 
     @Override
