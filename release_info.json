@@ -9,13 +9,13 @@
     "1.12.2-latest" : "3.1.2"
   },
   "1.12.2" : {
-    "3.1.2" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#312-26-jan-2018",
-    "3.1.1" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#311-11-jan-2018",
-    "3.1.0" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#310-9-dec-2017",
-    "3.0.2" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#302-28-aug-2017",
-    "3.0.1" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#301-11-aug-2017",
-    "3.0.0" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#300-4-jul-2017",
-    "3.0.3" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#303-10-sep-2017"
+    "3.1.2" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#312-26-jan-2018",
+    "3.1.1" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#311-11-jan-2018",
+    "3.1.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#310-9-dec-2017",
+    "3.0.2" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#302-28-aug-2017",
+    "3.0.1" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#301-11-aug-2017",
+    "3.0.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#300-4-jul-2017",
+    "3.0.3" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#303-10-sep-2017"
   },
   "1.11.2" : {
     "2.2.2" : "https://github.com/desht/ModularRouters/blob/master/Changelog.md#222-28-aug-2017",
