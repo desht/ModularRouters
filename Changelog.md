@@ -6,6 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
+### 3.1.2 (26 Jan 2018)
+
+* Fixed Vacuum Module GUI crashes (https://github.com/desht/ModularRouters/issues/32)
+* Vacuum Module XP mode: Actually Additions Solidified Experience is now an option when choosing XP type
+* Vacuum Module XP mode: it's now possible to auto-eject XP fluids to a tank adjacent to the router; this may be useful if you don't have a mod which provides a tank that can be filled while in item form in the router's buffer
+
 ### 3.1.1 (11 Jan 2018)
 
 * Vacuum Module XP augment enhancements: more XP fluids are now supported (Cyclic, Industrial Foregoing, Thermal Expansion), and the Vacuum Module GUI now allows selection of the desired XP fluid type (as well as vanilla Bottles o' Enchanting).
