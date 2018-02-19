@@ -3,7 +3,7 @@ package me.desht.modularrouters.core;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.BlockTemplateFrame;
-import me.desht.modularrouters.client.TemplateFrameModel;
+import me.desht.modularrouters.client.CamouflagingModel.TemplateFrameModel;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.ItemSubTypes;
 import me.desht.modularrouters.item.augment.ItemAugment;
@@ -110,7 +110,7 @@ public class RegistrarMR {
             @Nonnull
             @Override
             protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState iBlockState) {
-                return TemplateFrameModel.variantTag;
+                return TemplateFrameModel.VARIANT_TAG;
             }
         };
         ModelLoader.setCustomStateMapper(RegistrarMR.TEMPLATE_FRAME, ignoreState);

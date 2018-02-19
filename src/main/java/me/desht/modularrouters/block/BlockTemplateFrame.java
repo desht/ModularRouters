@@ -101,12 +101,6 @@ public class BlockTemplateFrame extends BlockBase {
         return te != null ? te.getCamouflage() : null;
     }
 
-//    private IBlockState getCamoState(IBlockState state) {
-//        return state instanceof IExtendedBlockState ?
-//                ((IExtendedBlockState) state).getValue(CAMOUFLAGE_STATE) :
-//                null;
-//    }
-
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;

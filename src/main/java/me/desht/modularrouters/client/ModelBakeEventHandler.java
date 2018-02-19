@@ -1,5 +1,7 @@
 package me.desht.modularrouters.client;
 
+import me.desht.modularrouters.client.CamouflagingModel.RouterModel;
+import me.desht.modularrouters.client.CamouflagingModel.TemplateFrameModel;
 import me.desht.modularrouters.core.RegistrarMR;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -27,11 +29,11 @@ public class ModelBakeEventHandler {
         }
 
         // template frame
-        Object object = event.getModelRegistry().getObject(TemplateFrameModel.variantTag);
+        Object object = event.getModelRegistry().getObject(TemplateFrameModel.VARIANT_TAG);
         if (object != null) {
             IBakedModel existingModel = (IBakedModel) object;
             TemplateFrameModel customModel = new TemplateFrameModel(existingModel);
-            event.getModelRegistry().putObject(TemplateFrameModel.variantTag, customModel);
+            event.getModelRegistry().putObject(TemplateFrameModel.VARIANT_TAG, customModel);
         }
     }
 }
