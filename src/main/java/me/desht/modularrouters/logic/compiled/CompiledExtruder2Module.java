@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -56,6 +57,11 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
                     TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(world, placePos);
                     if (te != null) {
                         te.setCamouflage(blockList.get(distance));
+                        te.setExtendedMimic(getAugmentCount(ItemAugment.AugmentType.MIMIC) > 0);
+                        if (te.extendedMimic()) {
+                            // in case we're mimicking a redstone emitter
+                            world.notifyNeighborsOfStateChange(placePos, state.getBlock(), true);
+                        }
                     }
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),

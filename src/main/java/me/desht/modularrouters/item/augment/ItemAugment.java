@@ -18,7 +18,8 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
         REDSTONE,
         REGULATOR,
         STACK,
-        XP_VACUUM;
+        XP_VACUUM,
+        MIMIC;
 
         public static AugmentType getType(ItemStack stack) {
             return stack.getItem() instanceof ItemAugment ? values()[stack.getItemDamage()] : null;
@@ -36,6 +37,7 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
         register(AugmentType.REGULATOR, new RegulatorAugment());
         register(AugmentType.STACK, new StackAugment());
         register(AugmentType.XP_VACUUM, new XPVacuumAugment());
+        register(AugmentType.MIMIC, new MimicAugment());
     }
 
     public static Augment getAugment(ItemStack stack) {

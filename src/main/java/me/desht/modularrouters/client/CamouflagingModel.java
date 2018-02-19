@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client;
 
-import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.BlockTemplateFrame;
+import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.util.PropertyObject;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -42,7 +41,7 @@ public abstract class CamouflagingModel implements IBakedModel {
             IBlockState camoState = ext.getValue(camoProp);
             if (camoState != null) {
                 BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
-                if (camoState.getBlock().canRenderInLayer(camoState, layer)) {
+                if (layer != null && camoState.getBlock().canRenderInLayer(camoState, layer)) {
                     BlockModelShapes blockModelShapes = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes();
                     return blockModelShapes.getModelForState(camoState);
                 } else {
@@ -86,7 +85,7 @@ public abstract class CamouflagingModel implements IBakedModel {
 
     public static class RouterModel extends CamouflagingModel {
         public RouterModel(IBakedModel baseModel) {
-            super(baseModel, BlockItemRouter.CAMOUFLAGE_STATE);
+            super(baseModel, BlockCamo.CAMOUFLAGE_STATE);
         }
     }
 
@@ -95,7 +94,7 @@ public abstract class CamouflagingModel implements IBakedModel {
                 = new ModelResourceLocation("modularrouters:templateFrame", "normal");
 
         public TemplateFrameModel(IBakedModel baseModel) {
-            super(baseModel, BlockTemplateFrame.CAMOUFLAGE_STATE);
+            super(baseModel, BlockCamo.CAMOUFLAGE_STATE);
         }
     }
 }

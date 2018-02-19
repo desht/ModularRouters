@@ -12,5 +12,6 @@
   { "name": "puller2", "ingredient": { "item": "modularrouters:module", "data": 9 } },
   { "name": "extruder", "ingredient": { "item": "modularrouters:module", "data": 10 } },
   { "name": "bulkfilter", "ingredient": { "item": "modularrouters:filter", "data": 0 } },
-  { "name": "stackupgrade", "ingredient": { "item": "modularrouters:upgrade", "data": 0 } }
+  { "name": "stackupgrade", "ingredient": { "item": "modularrouters:upgrade", "data": 0 } },
+  { "name": "blastupgrade", "ingredient": { "item": "modularrouters:upgrade", "data": 7 } }
 ]

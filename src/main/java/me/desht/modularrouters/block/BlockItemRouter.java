@@ -13,7 +13,6 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.PropertyObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -31,35 +30,30 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
 import java.util.List;
 
-public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
-    public static final String BLOCK_NAME = "item_router";
+public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
+    private static final String BLOCK_NAME = "item_router";
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
@@ -70,7 +64,6 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     public static final PropertyBool OPEN_L = PropertyBool.create("open_l");
     public static final PropertyBool OPEN_R = PropertyBool.create("open_r");
     public static final PropertyBool CAN_EMIT = PropertyBool.create("can_emit");
-    public static final PropertyObject<IBlockState> CAMOUFLAGE_STATE = new PropertyObject<>("held_state", IBlockState.class);
 
     public static final String NBT_MODULES = "Modules";
     public static final String NBT_UPGRADES = "Upgrades";
@@ -93,16 +86,7 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     protected BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[] { FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT },
-                new IUnlistedProperty[] {CAMOUFLAGE_STATE});
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        if (router != null) {
-            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, router.getCamouflage());
-        }
-        return state;
+                new IUnlistedProperty[] { BlockCamo.CAMOUFLAGE_STATE});
     }
 
     @Override
@@ -115,61 +99,6 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
             }
         }
         return state;
-    }
-
-    @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
-    }
-
-    @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return true;
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        IBlockState camo = getCamoState(source, pos);
-        return camo != null ? camo.getBoundingBox(source, pos) : super.getBoundingBox(state, source, pos);
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        IBlockState camo = getCamoState(worldIn, pos);
-        return camo != null ? camo.getCollisionBoundingBox(worldIn, pos) : super.getCollisionBoundingBox(blockState, worldIn, pos);
-    }
-
-    @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-        IBlockState camo = getCamoState(worldIn, pos);
-        if (camo != null) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, camo.getBoundingBox(worldIn, pos));
-        } else {
-            super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, p_185477_7_);
-        }
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
-        IBlockState camo = getCamoState(world, pos);
-        if (camo != null) {
-            return camo.doesSideBlockRendering(world, pos, face);
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        // ensure levers etc. can be attached to the block even though it can possibly emit redstone
-        IBlockState camo = getCamoState(world, pos);
-        return camo == null ? true : camo.isSideSolid(world, pos, side);
-    }
-
-    private IBlockState getCamoState(IBlockAccess blockAccess, BlockPos pos) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
-        return router != null ? router.getCamouflage() : null;
     }
 
     @Override
@@ -203,11 +132,6 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     public int getMetaFromState(IBlockState state) {
         EnumFacing facing = state.getValue(FACING);
         return facing.getHorizontalIndex();
-    }
-
-    @Override
-    public boolean hasTileEntity(IBlockState state) {
-        return true;
     }
 
     @Override
@@ -391,27 +315,16 @@ public class BlockItemRouter extends BlockBase implements TOPInfoProvider {
     @Override
     public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
-            return false;
-        }
-        return super.canEntityDestroy(state, world, pos, entity);
+        return (router == null || router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) <= 0) && super.canEntityDestroy(state, world, pos, entity);
     }
 
-    @Mod.EventBusSubscriber
-    public static class ExplosionHandler {
-        @SubscribeEvent
-        public static void onExplosion(ExplosionEvent.Detonate event) {
-            Iterator<BlockPos> iter = event.getAffectedBlocks().iterator();
-            while (iter.hasNext()) {
-                BlockPos pos = iter.next();
-                IBlockState state = event.getWorld().getBlockState(pos);
-                if (state.getBlock() == RegistrarMR.ITEM_ROUTER) {
-                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(event.getWorld(), pos);
-                    if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
-                        iter.remove();
-                    }
-                }
-            }
+    @Override
+    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
+            return 20000f;
+        } else {
+            return super.getExplosionResistance(world, pos, exploder, explosion);
         }
     }
 }
