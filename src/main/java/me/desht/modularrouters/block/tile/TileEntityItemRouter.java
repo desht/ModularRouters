@@ -18,6 +18,7 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade.UpgradeType;
 import me.desht.modularrouters.item.upgrade.Upgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.RFEnergyWrapper;
 import net.darkhax.tesla.capability.TeslaCapabilities;
@@ -692,7 +693,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     public void checkForRedstonePulse() {
-        redstonePower = getWorld().isBlockIndirectlyGettingPowered(pos);
+        redstonePower = calculateIncomingRedstonePower(pos);
         if (executing) {
             return;  // avoid recursion from executing module triggering more block updates
         }
@@ -829,9 +830,28 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 
     public int getRedstonePower() {
         if (redstonePower < 0) {
-            redstonePower = getWorld().isBlockIndirectlyGettingPowered(pos);
+            redstonePower = calculateIncomingRedstonePower(pos);
         }
         return redstonePower;
+    }
+
+    private int calculateIncomingRedstonePower(BlockPos pos) {
+        // like World#isBlockIndirectlyGettingPowered() but will ignore redstone from any sides
+        // currently being extruded on
+        int power = 0;
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (getExtData().getInteger(CompiledExtruderModule.NBT_EXTRUDER_DIST + facing) > 0) {
+                // ignore signal from any side we're extruding on (don't let placed redstone emitters lock up the router)
+                continue;
+            }
+            int p = getWorld().getRedstonePower(pos.offset(facing), facing);
+            if (p >= 15) {
+                return p;
+            } else if (p > power) {
+                power = p;
+            }
+        }
+        return power;
     }
 
     public NBTTagCompound getExtData() {

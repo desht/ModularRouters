@@ -285,7 +285,7 @@ itemText.usage.item.range_up_augment=Increases range of modules by 1 block per a
 itemText.usage.item.range_down_augment=Reduces range of modules by 1 block per augment.
 itemText.usage.item.stack_augment=Allows the module to process multiple items per tick.\nThis overrides Stack Upgrades inserted in the router.
 itemText.usage.item.xp_vacuum_augment=Allows the Vacuum Module to collect XP orbs instead of items.\nXP can be converted into a variety of solid & liquid forms, depending on what other mods are installed, but vanilla Bottles o' Enchanting are always available. Liquid XP conversion requires a tank capable of storing liquids by the mB either in the router's buffer as an item, or placed adjacent to the router as a block (with Eject mode enabled in the module GUI).
-itemText.usage.item.mimic_augment=Allows the fake blocks placed by the Extruder Mk2 to also mimic lighting, hardness and blast resistance of the blocks whose appearance is being mimicked.
+itemText.usage.item.mimic_augment=Allows the fake blocks placed by the Extruder Mk2 to also mimic lighting, redstone emission, hardness and blast resistance of the blocks whose appearance is being mimicked.
 
 # Player chat messages
 chatText.misc.inventoryMerged=Merged %d item(s) into the %s

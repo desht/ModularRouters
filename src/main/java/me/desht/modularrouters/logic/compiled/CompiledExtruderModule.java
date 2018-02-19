@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 
 public class CompiledExtruderModule extends CompiledModule {
-    static final String NBT_EXTRUDER_DIST = "ExtruderDist";
+    public static final String NBT_EXTRUDER_DIST = "ExtruderDist";
 
     int distance;  // marks the current extension length (0 = no extrusion)
     private final boolean silkTouch;
