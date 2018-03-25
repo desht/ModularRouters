@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.theoneprobe.api.IElement;
 import mcjty.theoneprobe.api.IItemStyle;
 import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
-import mcjty.theoneprobe.rendering.RenderHelper;
+import me.desht.modularrouters.client.RenderHelper;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -34,7 +34,7 @@ public class ElementModule implements IElement {
         ItemStack stack = ModuleHelper.makeItemStack(type);
         IItemStyle style = new ItemStyle().width(getWidth()).height(getHeight());
         String dirStr = String.valueOf(ARROWS.charAt(dir.ordinal()));
-        RenderHelper.renderItemStack(Minecraft.getMinecraft(), itemRender, stack, x + (style.getWidth() - 18) / 2, y + (style.getHeight() - 18) / 2, dirStr);
+        RenderHelper.renderItemStack(Minecraft.getMinecraft(), stack, x + (style.getWidth() - 18) / 2, y + (style.getHeight() - 18) / 2, dirStr);
     }
 
     @Override
@@ -57,4 +57,5 @@ public class ElementModule implements IElement {
     public int getID() {
         return TOPCompatibility.ELEMENT_MODULE_ITEM;
     }
+
 }

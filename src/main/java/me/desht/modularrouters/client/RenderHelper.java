@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 public class RenderHelper {
     public static void renderItemStack(Minecraft mc, ItemStack stack, int x, int y, String txt) {
         RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-//        GlStateManager.color(1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F);
 
         if (stack != null) {
             GlStateManager.pushMatrix();
@@ -25,6 +25,7 @@ public class RenderHelper {
             net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
             itemRender.renderItemAndEffectIntoGUI(stack, x, y);
+            itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, txt);
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableLighting();
