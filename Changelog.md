@@ -6,8 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
-### 3.1.3 (unreleased)
+### 3.1.3 (25 Mar 2018)
 
+* Fixed crash when running with TheOneProbe 1.4.21+
 * Added the Mimic Augment, to be added to the Extruder Mk2 module.  With this augment, extruded fake blocks also mimic block hardness, blast resistance, redstone emission and light emission of the mimicked block.
 * Routers now ignore redstone signals from sides currently extruding blocks (from Extruder Mk1 or Extruder Mk2) - e.g. extruding a redstone block will no longer lock the router and prevent the extruded block from being retracted again.
 
