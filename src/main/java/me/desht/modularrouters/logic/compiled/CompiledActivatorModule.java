@@ -7,7 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockCommandBlock;
 import net.minecraft.block.BlockStructure;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -97,7 +97,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doUseItemOnEntity(TileEntityItemRouter router, FakePlayer fakePlayer) {
-        EntityLivingBase entity = findNearestEntity(router);
+        Entity entity = findNearestEntity(router);
         if (entity == null) {
             return false;
         }
@@ -109,13 +109,13 @@ public class CompiledActivatorModule extends CompiledModule {
         return false;
     }
 
-    private EntityLivingBase findNearestEntity(TileEntityItemRouter router) {
+    private Entity findNearestEntity(TileEntityItemRouter router) {
         EnumFacing face = getFacing();
         final BlockPos pos = router.getPos();
         AxisAlignedBB box = new AxisAlignedBB(pos.offset(face))
                 .expand(face.getFrontOffsetX() * 3, face.getFrontOffsetY() * 3, face.getFrontOffsetZ() * 3);
 
-        List<EntityLivingBase> l = router.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, box);
+        List<Entity> l = router.getWorld().getEntitiesWithinAABB(Entity.class, box);
         if (l.isEmpty()) {
             return null;
         }
