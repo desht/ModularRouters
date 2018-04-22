@@ -83,7 +83,6 @@ public class CompiledActivatorModule extends CompiledModule {
         float hitY = (float)(fakePlayer.posY - pos.getY());
         float hitZ = (float)(fakePlayer.posZ - pos.getZ());
 
-        boolean ret;
         switch (actionType) {
             case ACTIVATE_BLOCK:
                 return doActivateBlock(router, world, pos, fakePlayer, hitX, hitY, hitZ);

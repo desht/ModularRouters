@@ -13,9 +13,8 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
-
-import static me.desht.modularrouters.client.EmptyQuadsModel.NO_QUADS;
 
 public abstract class CamouflagingModel implements IBakedModel {
     private final IBakedModel baseModel;
@@ -29,13 +28,13 @@ public abstract class CamouflagingModel implements IBakedModel {
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         try {
-            return handleBlockState(state).getQuads(state, side, rand);
+            return handleBlockState(state, side, rand);
         } catch (IllegalArgumentException e) {
             return baseModel.getQuads(state, side, rand);
         }
     }
 
-    private IBakedModel handleBlockState(IBlockState state) {
+    private List<BakedQuad> handleBlockState(IBlockState state, EnumFacing side, long rand) {
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState ext = (IExtendedBlockState) state;
             IBlockState camoState = ext.getValue(camoProp);
@@ -43,14 +42,14 @@ public abstract class CamouflagingModel implements IBakedModel {
                 BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
                 if (layer != null && camoState.getBlock().canRenderInLayer(camoState, layer)) {
                     BlockModelShapes blockModelShapes = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes();
-                    return blockModelShapes.getModelForState(camoState);
+                    return blockModelShapes.getModelForState(camoState).getQuads(camoState, side, rand);
                 } else {
-                    return NO_QUADS;
+                    return Collections.emptyList();
                 }
             }
         }
 
-        return baseModel;
+        return baseModel.getQuads(state, side, rand);
     }
 
     @Override
