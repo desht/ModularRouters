@@ -77,10 +77,13 @@ public class CompiledActivatorModule extends CompiledModule {
         fakePlayer.rotationPitch = getFacing().getFrontOffsetY() * -90;
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
         fakePlayer.setSneaking(sneaking);
+        ItemStack stack = router.getBufferItemStack();
+        fakePlayer.setHeldItem(EnumHand.MAIN_HAND, stack);
         float hitX = (float)(fakePlayer.posX - pos.getX());
         float hitY = (float)(fakePlayer.posY - pos.getY());
         float hitZ = (float)(fakePlayer.posZ - pos.getZ());
 
+        boolean ret;
         switch (actionType) {
             case ACTIVATE_BLOCK:
                 return doActivateBlock(router, world, pos, fakePlayer, hitX, hitY, hitZ);
@@ -98,10 +101,9 @@ public class CompiledActivatorModule extends CompiledModule {
         if (entity == null) {
             return false;
         }
-        fakePlayer.setHeldItem(EnumHand.MAIN_HAND, router.getBufferItemStack());
         EnumActionResult result = fakePlayer.interactOn(entity, EnumHand.MAIN_HAND);
         if (result == EnumActionResult.SUCCESS) {
-            router.setBufferItemStack(fakePlayer.getHeldItem(EnumHand.MAIN_HAND));
+            router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
             return true;
         }
         return false;
@@ -137,10 +139,8 @@ public class CompiledActivatorModule extends CompiledModule {
                 targetPos = targetPos.down();
                 break;
         }
-        ItemStack stack = router.getBufferItemStack();
 
-        fakePlayer.setHeldItem(EnumHand.MAIN_HAND, stack);
-
+        ItemStack stack = fakePlayer.getHeldItemMainhand();
         PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, EnumHand.MAIN_HAND, targetPos, hitFace,  ForgeHooks.rayTraceEyeHitVec(fakePlayer, 2.0D));
         if (event.isCanceled() || event.getUseItem() == Event.Result.DENY) {
             return false;
@@ -173,7 +173,7 @@ public class CompiledActivatorModule extends CompiledModule {
                 net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(fakePlayer, copyBeforeUse, EnumHand.MAIN_HAND);
             }
 
-            router.setBufferItemStack(fakePlayer.getHeldItem(EnumHand.MAIN_HAND));
+            router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
             return true;
         } else {
             return false;
@@ -194,6 +194,7 @@ public class CompiledActivatorModule extends CompiledModule {
         if (event.getUseBlock() != Event.Result.DENY) {
             IBlockState iblockstate = world.getBlockState(targetPos);
             if (iblockstate.getBlock().onBlockActivated(world, targetPos, iblockstate, fakePlayer, EnumHand.MAIN_HAND, hitFace, hitX, hitY, hitZ)) {
+                router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;
             }
         }
