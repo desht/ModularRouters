@@ -67,6 +67,7 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                     router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), ++distance);
+                    tryPushEntities(router.getWorld(), placePos, getFacing());
                     return true;
                 }
             }

@@ -93,5 +93,6 @@ public class ModularRouters {
         network.registerMessage(ParticleBeamMessage.Handler.class, ParticleBeamMessage.class, d++, Side.CLIENT);
         network.registerMessage(GuiSyncMessage.Handler.class, GuiSyncMessage.class, d++, Side.CLIENT);
         network.registerMessage(SyncUpgradeSettingsMessage.Handler.class, SyncUpgradeSettingsMessage.class, d++, Side.SERVER);
+        network.registerMessage(PushEntityMessage.Handler.class, PushEntityMessage.class, d++, Side.CLIENT);
     }
 }

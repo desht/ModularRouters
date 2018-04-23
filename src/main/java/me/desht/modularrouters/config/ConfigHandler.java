@@ -118,6 +118,10 @@ public class ConfigHandler {
         @Config.LangKey("gui.config.backgroundTint")
         @Config.Comment("Should the module GUI background be tinted like the module item colour?")
         public boolean backgroundTint = true;
+
+        @Config.LangKey("gui.config.extruderPushEnties")
+        @Config.Comment("Should the Extruder Mk1/2 push entities along when extruding blocks?")
+        public boolean extruderPushEntities = true;
     }
 
     public static class Router {

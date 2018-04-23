@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PMP"
+  ],
+  "key": {
+    "M": { "item": "#augmentcore" },
+    "P": { "item": "minecraft:piston" }
+  },
+  "result": { "item": "modularrouters:augment", "data": 9 }
+}
