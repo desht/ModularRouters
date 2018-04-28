@@ -7,6 +7,7 @@ import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.handler.BufferHandler;
 import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.event.TickEventHandler;
 import me.desht.modularrouters.integration.redstoneflux.RFIntegration;
 import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
@@ -585,9 +586,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     private int calculateSyncCounter() {
-        // use the current (total) world time and router's tick rate to determine a value
-        // for the tick counter that ensures the router always executes at a certain time
-        int compileTime = (int) (getWorld().getTotalWorldTime() % tickRate);
+        // use our global tick counter and router's tick rate to determine a value
+        // for the sync counter that ensures the router always executes at a certain time
+        int compileTime = (int) TickEventHandler.TickCounter % tickRate;
         int tuning = tunedSyncValue % tickRate;
         int delta = tuning - compileTime;
         if (delta <= 0) delta += tickRate;
