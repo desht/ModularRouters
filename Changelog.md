@@ -6,6 +6,15 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
+### 3.1.4 (28 Apr 2018)
+
+* Blocks extruded by Extruder Mk1/2 now push entities along the direction of extrusion.
+* Added Pushing Augment for Extruder Mk1/2 to increase the push force of extruding blocks.  Pushing Augments can stack, and large numbers of augments can push entities a long way...
+* Fixed Activator Module behaviour when clicking items into/out of holder blocks, e.g. Astral Sorcery Starlight Infuser, or Tinker's Construct Casting Basin.
+* Activator Module entity mode now works on all entities, not just living entities.
+* Improved rendering for certain blocks extruded by Extruder Mk2 (in particular blocks which connect to each other, like iron bars or glass panes)
+* Now using a mod-local tick counter for router synchronisation instead of world tick time; should resolve router sync issues when used in conjunction with mods which modify day length or otherwise tweak server times.
+
 ### 3.1.3 (25 Mar 2018)
 
 * Fixed crash when running with TheOneProbe 1.4.21+
