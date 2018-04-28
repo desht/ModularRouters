@@ -92,7 +92,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        if (router != null) {
+        if (router != null && router.getCamouflage() == null) {
             state = state.withProperty(ACTIVE, router.isActive() && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 3);
             for (Module.RelativeDirection side : Module.RelativeDirection.realSides()) {
                 state = state.withProperty(side.getProperty(), router.isSideOpen(side));

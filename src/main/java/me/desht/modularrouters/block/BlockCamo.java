@@ -19,11 +19,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.common.Optional;
+import team.chisel.ctm.api.IFacade;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BlockCamo extends BlockBase {
+@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
+public abstract class BlockCamo extends BlockBase implements IFacade {
     public static final PropertyObject<IBlockState> CAMOUFLAGE_STATE = new PropertyObject<>("held_state", IBlockState.class);
 
     public BlockCamo(Material materialIn, String blockName) {
@@ -39,11 +43,11 @@ public abstract class BlockCamo extends BlockBase {
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = MiscUtil.getTileEntitySafely(world, pos);
-        if (te instanceof ICamouflageable) {
-            return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, ((ICamouflageable) te).getCamouflage());
-        }
-        return state;
+        ICamouflageable camo = getCamoState(world, pos);
+        if (camo == null) return state;
+
+        IBlockState camoState = camo.getCamouflage().getActualState(world, pos);
+        return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, camoState);
     }
 
     @Override
@@ -147,5 +151,17 @@ public abstract class BlockCamo extends BlockBase {
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
+    }
+
+
+    @Nonnull
+    @Override
+    @Optional.Method(modid = "ctm-api")
+    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null) {
+            return ((ICamouflageable) te).getCamouflage();
+        }
+        return world.getBlockState(pos);
     }
 }
