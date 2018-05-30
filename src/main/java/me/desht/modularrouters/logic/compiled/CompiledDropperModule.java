@@ -35,12 +35,8 @@ public class CompiledDropperModule extends CompiledModule {
                     toDrop);
             item.setPickupDelay(pickupDelay);
             setupItemVelocity(router, item);
-            if (router.getWorld().spawnEntity(item)) {
-                router.extractBuffer(toDrop.getCount());
-                return true;
-            } else {
-                return false;
-            }
+            router.extractBuffer(toDrop.getCount());
+            return true;
         } else {
             return false;
         }
