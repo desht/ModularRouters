@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
+### 3.1.5 (30 May 2018)
+
+* Fix item dupe with Dropper/Flinger in some circumstances (cross-mod incompatibilty which shows up in Sevtech Ages)
+
 ### 3.1.4 (28 Apr 2018)
 
 * Blocks extruded by Extruder Mk1/2 now push entities along the direction of extrusion.
