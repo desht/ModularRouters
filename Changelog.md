@@ -8,7 +8,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ### 3.1.5 (30 May 2018)
 
-* Fix item dupe with Dropper/Flinger in some circumstances (cross-mod incompatibilty which shows up in Sevtech Ages)
+* Fix item dupe with Dropper/Flinger in some circumstances; cross-mod incompatibility with Realistic Item Drops and its "Dupe Workaround" disabled, which is the case in Sevtech Ages at this time (https://github.com/DarkPacks/SevTech-Ages/issues/2649)
 
 ### 3.1.4 (28 Apr 2018)
 
