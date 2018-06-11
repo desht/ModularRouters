@@ -8,6 +8,7 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.Comparator;
@@ -70,14 +71,22 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     @Override
     public ModuleTarget getActualTarget(TileEntityItemRouter router) {
         if (getTargets() == null || getTargets().isEmpty()) return null;
+        int nTargets = getTargets().size();
+        if (nTargets == 1) return getTargets().get(0); // degenerate case
 
         ModuleTarget res = null;
+        ItemStack stack = router.peekBuffer(getItemsPerTick(router));
         switch (distributionStrategy) {
             case ROUND_ROBIN:
-                res = getTargets().get(nextTarget);
-                nextTarget++;
-                if (nextTarget >= getTargets().size()) {
-                    nextTarget = 0;
+                for (int i = 1; i <= nTargets; i++) {
+                    nextTarget++;
+                    if (nextTarget >= nTargets) nextTarget -= nTargets;
+                    ModuleTarget tgt = getTargets().get(nextTarget);
+                    IItemHandler handler = tgt.getItemHandler();
+                    if (handler != null && ItemHandlerHelper.insertItem(handler, stack, true).isEmpty()) {
+                        res = tgt;
+                        break;
+                    }
                 }
                 break;
             case RANDOM:
@@ -85,7 +94,6 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 res = getTargets().get(r);
                 break;
             case NEAREST_FIRST:
-                ItemStack stack = router.peekBuffer(getItemsPerTick(router));
                 for (ModuleTarget tgt : getTargets()) {
                     if (ItemHandlerHelper.insertItem(tgt.getItemHandler(), stack, true).isEmpty()) {
                         res = tgt;
@@ -94,9 +102,9 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 }
                 break;
             case FURTHEST_FIRST:
-                ItemStack stack1 = router.peekBuffer(getItemsPerTick(router));
                 for (int i = getTargets().size() - 1; i >= 0; i--) {
-                    if (ItemHandlerHelper.insertItem(getTargets().get(i).getItemHandler(), stack1, true).isEmpty()) {
+                    IItemHandler handler = getTargets().get(i).getItemHandler();
+                    if (handler != null && ItemHandlerHelper.insertItem(handler, stack, true).isEmpty()) {
                         res = getTargets().get(i);
                         break;
                     }

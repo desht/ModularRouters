@@ -41,6 +41,8 @@ public class GuiModuleDistributor extends GuiModule {
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 23));
         buttonList.add(new StrategyButton(STRATEGY_BUTTON_ID, guiLeft + 147, guiTop + 23, 16, 16, strategy));
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 21, guiLeft + 165, guiTop + 41, "guiText.popup.distributor.strategy");
     }
 
     @Override
