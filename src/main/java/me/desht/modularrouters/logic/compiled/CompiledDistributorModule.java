@@ -82,8 +82,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                     nextTarget++;
                     if (nextTarget >= nTargets) nextTarget -= nTargets;
                     ModuleTarget tgt = getTargets().get(nextTarget);
-                    IItemHandler handler = tgt.getItemHandler();
-                    if (handler != null && ItemHandlerHelper.insertItem(handler, stack, true).isEmpty()) {
+                    if (okToInsert(tgt, stack)) {
                         res = tgt;
                         break;
                     }
@@ -95,7 +94,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
             case NEAREST_FIRST:
                 for (ModuleTarget tgt : getTargets()) {
-                    if (ItemHandlerHelper.insertItem(tgt.getItemHandler(), stack, true).isEmpty()) {
+                    if (okToInsert(tgt, stack)) {
                         res = tgt;
                         break;
                     }
@@ -103,8 +102,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
             case FURTHEST_FIRST:
                 for (int i = getTargets().size() - 1; i >= 0; i--) {
-                    IItemHandler handler = getTargets().get(i).getItemHandler();
-                    if (handler != null && ItemHandlerHelper.insertItem(handler, stack, true).isEmpty()) {
+                    if (okToInsert(getTargets().get(i), stack)) {
                         res = getTargets().get(i);
                         break;
                     }
@@ -113,5 +111,10 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         }
 
         return res;
+    }
+
+    private boolean okToInsert(ModuleTarget target, ItemStack stack) {
+        IItemHandler handler = target.getItemHandler();
+        return handler != null && ItemHandlerHelper.insertItem(handler, stack, true).isEmpty();
     }
 }
