@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "modularrouters:augment", "data": 2 }
+  ],
+  "result": { "item": "modularrouters:augment", "data": 3 }
+}

@@ -1,14 +1,8 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " E ",
-    "SCP"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "#blankmodule" },
+    { "type": "forge:ore_dict", "ore": "chestWood" }
   ],
-  "key": {
-    "E": { "item": "#extruder" },
-    "S": { "item": "#sender1" },
-    "P": { "item": "#puller" },
-    "C": { "type": "forge:ore_dict", "ore": "chestWood" }
-  },
   "result": { "item": "modularrouters:module", "data": 11 }
 }
