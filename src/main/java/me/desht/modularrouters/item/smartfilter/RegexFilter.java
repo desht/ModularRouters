@@ -3,7 +3,6 @@ package me.desht.modularrouters.item.smartfilter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.GuiRegexFilter;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -67,7 +66,7 @@ public class RegexFilter extends SmartFilter {
     }
 
     @Override
-    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new RegexMatcher(getRegexList(filterStack));
     }
 

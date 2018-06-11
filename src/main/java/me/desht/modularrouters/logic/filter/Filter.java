@@ -6,7 +6,6 @@ import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.item.module.Module.ModuleFlags;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.item.smartfilter.SmartFilter;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -30,14 +29,14 @@ public class Filter implements Predicate<ItemStack> {
         flags = Flags.DEFAULT_FLAGS;
     }
 
-    public Filter(ModuleTarget target, ItemStack moduleStack) {
+    public Filter(ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTagCompound()) {
             flags = new Flags(moduleStack);
             NBTTagList tagList = moduleStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
                 ItemStack filterStack = new ItemStack(tagCompound);
-                IItemMatcher matcher = createMatcher(filterStack, moduleStack, target);
+                IItemMatcher matcher = createMatcher(filterStack, moduleStack);
                 if (matcher != null) {
                     matchers.add(matcher);
                 }
@@ -47,10 +46,10 @@ public class Filter implements Predicate<ItemStack> {
         }
     }
 
-    private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
+    private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack) {
         SmartFilter f = ItemSmartFilter.getFilter(filterStack);
         if (f != null) {
-            return f.compile(filterStack, moduleStack, target);
+            return f.compile(filterStack, moduleStack);
         } else {
             Module module = ItemModule.getModule(moduleStack);
             return module == null ? null : module.getFilterItemMatcher(filterStack);

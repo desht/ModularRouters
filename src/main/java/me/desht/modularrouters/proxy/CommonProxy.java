@@ -38,7 +38,7 @@ public class CommonProxy {
         return null;
     }
 
-    public EntityPlayer getPlayer() {
+    public EntityPlayer getClientPlayer() {
         return null;
     }
 

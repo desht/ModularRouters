@@ -18,11 +18,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class CompiledModule {
     private final Filter filter;
     private final Module module;
     private final Module.RelativeDirection direction;
-    private final ModuleTarget target;
+    private final List<ModuleTarget> targets;
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
     private final EnumFacing facing;
@@ -52,8 +55,8 @@ public abstract class CompiledModule {
         range = module instanceof IRangedModule ?
                 ((IRangedModule) module).getCurrentRange(getRangeModifier()) : 0;
         rangeSquared = range * range;
-        target = setupTarget(router, stack);
-        filter = new Filter(target, stack);
+        targets = setupTarget(router, stack);
+        filter = new Filter(stack);
         termination = ModuleHelper.terminates(stack);
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
@@ -89,10 +92,14 @@ public abstract class CompiledModule {
      * @return the static target set up when the router was compiled
      */
     public ModuleTarget getTarget() {
-        return target;
+        return targets == null || targets.isEmpty() ? null : targets.get(0);
     }
 
-    public boolean hasTarget() { return target != null; }
+    public List<ModuleTarget> getTargets() {
+        return targets;
+    }
+
+    public boolean hasTarget() { return targets != null && !targets.isEmpty(); }
 
     public boolean termination() {
         return termination;
@@ -162,7 +169,7 @@ public abstract class CompiledModule {
      * @param stack the module itemstack
      * @return a router target object
      */
-    protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
         if (router == null || (module.isDirectional() && direction == Module.RelativeDirection.NONE)) {
             return null;
         }
@@ -170,7 +177,7 @@ public abstract class CompiledModule {
         BlockPos pos = router.getPos().offset(facing);
         String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
         int dim = router.getWorld().provider.getDimension();
-        return new ModuleTarget(dim, router.getPos().offset(facing), facing.getOpposite(), blockName);
+        return Collections.singletonList(new ModuleTarget(dim, router.getPos().offset(facing), facing.getOpposite(), blockName));
     }
 
     int getItemsPerTick(TileEntityItemRouter router) {

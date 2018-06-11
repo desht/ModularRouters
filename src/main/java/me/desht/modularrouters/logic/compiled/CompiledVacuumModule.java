@@ -26,6 +26,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import java.util.Collections;
 import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
@@ -219,14 +220,14 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    public List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
         if (router == null) {
             return null;
         }
         Module.RelativeDirection dir = getDirection();
         int offset = dir == Module.RelativeDirection.NONE ? 0 : getRange() + 1;
         EnumFacing facing = router.getAbsoluteFacing(dir);
-        return new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing);
+        return Collections.singletonList(new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos().offset(facing, offset), facing));
     }
 
     public XPCollectionType getXPCollectionType() {

@@ -80,7 +80,7 @@ public class MiscUtil {
     }
 
     public static String locToString(int dim, BlockPos pos) {
-        return String.format("DIM:%d X:%d Y:%d Z:%d", dim, pos.getX(), pos.getY(), pos.getZ());
+        return String.format("DIM:%d [%d,%d,%d]", dim, pos.getX(), pos.getY(), pos.getZ());
     }
 
     public static String translate(String key, Object... args) {

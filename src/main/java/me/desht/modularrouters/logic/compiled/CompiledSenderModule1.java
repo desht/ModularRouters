@@ -15,7 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.IItemHandler;
 
@@ -69,7 +68,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
         ModuleTarget target = getActualTarget(router);
         if (target != null) {
-            IItemHandler handler = InventoryUtils.getInventory(DimensionManager.getWorld(target.dimId), target.pos, target.face);
+            IItemHandler handler = target.getItemHandler();
             return handler == null ? null : new PositionedItemHandler(target.pos, handler);
         }
         return null;

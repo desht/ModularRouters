@@ -119,7 +119,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public EntityPlayer getPlayer() {
+    public EntityPlayer getClientPlayer() {
         return Minecraft.getMinecraft().player;
     }
 }

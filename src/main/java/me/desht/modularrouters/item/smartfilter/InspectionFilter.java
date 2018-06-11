@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.filter.GuiInspectionFilter;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Comparison;
@@ -30,7 +29,7 @@ public class InspectionFilter extends SmartFilter {
     private static final int MAX_SIZE = 6;
 
     @Override
-    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new InspectionMatcher(getComparisonList(filterStack));
     }
 

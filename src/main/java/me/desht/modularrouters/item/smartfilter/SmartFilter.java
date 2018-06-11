@@ -5,7 +5,6 @@ import me.desht.modularrouters.client.gui.module.GuiModule;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.ModuleFilterSlot;
 import me.desht.modularrouters.item.ItemSubTypes;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
@@ -43,10 +42,9 @@ public abstract class SmartFilter extends ItemSubTypes.SubItemHandler {
      *
      * @param filterStack the filter item
      * @param moduleStack the module that the filter is in - may be null
-     * @param target target of the module when in a router - may be null
      * @return a new IItemMatcher implementation
      */
-    public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target);
+    public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack);
 
     public abstract Class<? extends GuiScreen> getGuiHandler();
 

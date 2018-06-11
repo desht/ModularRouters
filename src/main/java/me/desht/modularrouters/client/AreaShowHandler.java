@@ -3,26 +3,20 @@ package me.desht.modularrouters.client;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
-import java.util.Set;
-
 public class AreaShowHandler {
-    private final Set<BlockPos> showingPositions;
-    private final int color;
     private final double size;
+    private final AreaShowManager.CompiledPosition cp;
     private int renderList;
 
-    AreaShowHandler(Set<BlockPos> area, int color, double size) {
-        showingPositions = area;
-        this.color = color;
-        this.size = size;
-        compileRenderList();
-    }
 
-    AreaShowHandler(Set<BlockPos> area, int color) {
-        this(area, color, 0.5);
+    AreaShowHandler(AreaShowManager.CompiledPosition cp) {
+        this.cp = cp;
+        this.size = 0.5;
+        compileRenderList();
     }
 
     private void compileRenderList() {
@@ -30,43 +24,53 @@ public class AreaShowHandler {
         GL11.glNewList(renderList, GL11.GL_COMPILE);
 
         BufferBuilder wr = Tessellator.getInstance().getBuffer();
-        RenderHelper.glColorHex(color);
-        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
         double start = (1 - size) / 2.0;
 
-        for (BlockPos pos : showingPositions) {
+        for (BlockPos pos : cp.getPositions()) {
             wr.setTranslation(pos.getX() + start, pos.getY() + start, pos.getZ() + start);
+            int color = cp.getColour(pos);
+            int r = (color & 0xFF0000) >> 16;
+            int g = (color & 0xFF00) >> 8;
+            int b = color & 0xFF;
+            int alpha;
 
-            wr.pos(0, 0, 0).endVertex();
-            wr.pos(0, size, 0).endVertex();
-            wr.pos(size, size, 0).endVertex();
-            wr.pos(size, 0, 0).endVertex();
+            alpha = getFaceAlpha(cp, pos, EnumFacing.NORTH);
+            wr.pos(0, 0, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(0, size, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(size, size, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(size, 0, 0).color(r, g, b, alpha).endVertex();
 
-            wr.pos(size, 0, size).endVertex();
-            wr.pos(size, size, size).endVertex();
-            wr.pos(0, size, size).endVertex();
-            wr.pos(0, 0, size).endVertex();
+            alpha = getFaceAlpha(cp, pos, EnumFacing.SOUTH);
+            wr.pos(size, 0, size).color(r, g, b, alpha).endVertex();
+            wr.pos(size, size, size).color(r, g, b, alpha).endVertex();
+            wr.pos(0, size, size).color(r, g, b, alpha).endVertex();
+            wr.pos(0, 0, size).color(r, g, b, alpha).endVertex();
 
-            wr.pos(0, 0, 0).endVertex();
-            wr.pos(0, 0, size).endVertex();
-            wr.pos(0, size, size).endVertex();
-            wr.pos(0, size, 0).endVertex();
+            alpha = getFaceAlpha(cp, pos, EnumFacing.WEST);
+            wr.pos(0, 0, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(0, 0, size).color(r, g, b, alpha).endVertex();
+            wr.pos(0, size, size).color(r, g, b, alpha).endVertex();
+            wr.pos(0, size, 0).color(r, g, b, alpha).endVertex();
 
-            wr.pos(size, size, 0).endVertex();
-            wr.pos(size, size, size).endVertex();
-            wr.pos(size, 0, size).endVertex();
-            wr.pos(size, 0, 0).endVertex();
+            alpha = getFaceAlpha(cp, pos, EnumFacing.EAST);
+            wr.pos(size, size, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(size, size, size).color(r, g, b, alpha).endVertex();
+            wr.pos(size, 0, size).color(r, g, b, alpha).endVertex();
+            wr.pos(size, 0, 0).color(r, g, b, alpha).endVertex();
 
-            wr.pos(0, 0, 0).endVertex();
-            wr.pos(size, 0, 0).endVertex();
-            wr.pos(size, 0, size).endVertex();
-            wr.pos(0, 0, size).endVertex();
+            alpha = getFaceAlpha(cp, pos, EnumFacing.DOWN);
+            wr.pos(0, 0, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(size, 0, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(size, 0, size).color(r, g, b, alpha).endVertex();
+            wr.pos(0, 0, size).color(r, g, b, alpha).endVertex();
 
-            wr.pos(0, size, size).endVertex();
-            wr.pos(size, size, size).endVertex();
-            wr.pos(size, size, 0).endVertex();
-            wr.pos(0, size, 0).endVertex();
+            alpha = getFaceAlpha(cp, pos, EnumFacing.UP);
+            wr.pos(0, size, size).color(r, g, b, alpha).endVertex();
+            wr.pos(size, size, size).color(r, g, b, alpha).endVertex();
+            wr.pos(size, size, 0).color(r, g, b, alpha).endVertex();
+            wr.pos(0, size, 0).color(r, g, b, alpha).endVertex();
         }
 
         Tessellator.getInstance().draw();
@@ -74,7 +78,7 @@ public class AreaShowHandler {
         wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
         RenderHelper.glColorHex(0X404040, 128);
 
-        for (BlockPos pos : showingPositions) {
+        for (BlockPos pos : cp.getPositions()) {
             wr.setTranslation(pos.getX() + start, pos.getY() + start, pos.getZ() + start);
 
             wr.pos(0, 0, 0).endVertex();
@@ -113,7 +117,11 @@ public class AreaShowHandler {
         GL11.glEndList();
     }
 
-    public void render() {
+    private int getFaceAlpha(AreaShowManager.CompiledPosition cp, BlockPos pos, EnumFacing face) {
+        return cp.checkFace(pos, face) ? 224 : 64;
+    }
+
+    void render() {
         GL11.glCallList(renderList);
     }
 }

@@ -7,7 +7,6 @@ import me.desht.modularrouters.container.ContainerBulkItemFilter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -42,7 +41,7 @@ public class BulkItemFilter extends SmartFilter {
     private static final Flags DEF_FLAGS = new Flags((byte) 0x00);
 
     @Override
-    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         Flags flags = moduleStack.isEmpty() ? DEF_FLAGS : new Flags(moduleStack);
         SetofItemStack stacks = getFilterItems(filterStack, flags);
         return new BulkItemMatcher(stacks, flags);

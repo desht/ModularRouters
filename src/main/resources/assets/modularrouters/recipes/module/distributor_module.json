@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SMS"
+  ],
+  "key": {
+    "S": { "item": "#sender2" },
+    "M": { "item": "#blankmodule" }
+  },
+  "result": { "item": "modularrouters:module", "data": 17 }
+}

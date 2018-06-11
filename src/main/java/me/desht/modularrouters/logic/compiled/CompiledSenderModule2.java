@@ -9,19 +9,22 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.Collections;
+import java.util.List;
+
 public class CompiledSenderModule2 extends CompiledSenderModule1 {
     public CompiledSenderModule2(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
-        return TargetedModule.getTarget(stack, !router.getWorld().isRemote);
+    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
     }
 
     @Override
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
-        ModuleTarget target = getTarget();
+        ModuleTarget target = getActualTarget(router);
         if (target == null || !validate(router, target)) {
             return null;
         }

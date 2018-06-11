@@ -12,6 +12,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
 public class CompiledPullerModule2 extends CompiledPullerModule {
     private static final Color particleColor = Color.BLUE;
@@ -21,8 +23,8 @@ public class CompiledPullerModule2 extends CompiledPullerModule {
     }
 
     @Override
-    protected ModuleTarget setupTarget(TileEntityItemRouter router, ItemStack stack) {
-        return TargetedModule.getTarget(stack, !router.getWorld().isRemote);
+    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
     }
 
     @Override

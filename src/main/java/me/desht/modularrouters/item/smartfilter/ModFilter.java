@@ -5,7 +5,6 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.filter.GuiModFilter;
 import me.desht.modularrouters.container.ContainerModFilter;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.ModMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -34,7 +33,7 @@ public class ModFilter extends SmartFilter {
     private static final int MAX_SIZE = 6;
 
     @Override
-    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack, ModuleTarget target) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new ModMatcher(getModList(filterStack));
     }
 

@@ -23,6 +23,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Random;
+
 @Mod(modid = ModularRouters.MODID, version = ModularRouters.MODVERSION, name = ModularRouters.MODNAME,
         dependencies = ModularRouters.DEPENDENICES,
         acceptedMinecraftVersions = "1.12",
@@ -38,6 +40,7 @@ public class ModularRouters {
 
     public static Logger logger;
     public static SimpleNetworkWrapper network;
+    public static Random random = new Random();
 
     private static int modGuiIndex = 0; // track GUI IDs
     public static final int GUI_MODULE_HELD_MAIN = modGuiIndex++;
@@ -94,5 +97,6 @@ public class ModularRouters {
         network.registerMessage(GuiSyncMessage.Handler.class, GuiSyncMessage.class, d++, Side.CLIENT);
         network.registerMessage(SyncUpgradeSettingsMessage.Handler.class, SyncUpgradeSettingsMessage.class, d++, Side.SERVER);
         network.registerMessage(PushEntityMessage.Handler.class, PushEntityMessage.class, d++, Side.CLIENT);
+        network.registerMessage(PlaySoundMessage.Handler.class, PlaySoundMessage.class, d++, Side.CLIENT);
     }
 }

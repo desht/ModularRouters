@@ -7,11 +7,10 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule2;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.*;
+import java.util.Collections;
 import java.util.List;
 
 public class PullerModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
@@ -41,9 +40,9 @@ public class PullerModule2 extends TargetedModule implements IRangedModule, IPos
     }
 
     @Override
-    public List<BlockPos> getStoredPositions(@Nonnull ItemStack stack) {
+    public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
         ModuleTarget target = TargetedModule.getTarget(stack);
-        return target == null ? Collections.emptyList() : Collections.singletonList(target.pos);
+        return target == null ? Collections.emptyList() : Collections.singletonList(target);
     }
 
     @Override

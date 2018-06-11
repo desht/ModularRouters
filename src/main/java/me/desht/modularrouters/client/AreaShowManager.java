@@ -1,14 +1,13 @@
 package me.desht.modularrouters.client;
 
-import com.google.common.collect.ImmutableSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -17,9 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public enum AreaShowManager {
     INSTANCE;
@@ -53,16 +50,10 @@ public enum AreaShowManager {
         ItemStack curItem = player.getHeldItemMainhand();
         IPositionProvider positionProvider = getPositionProvider(curItem);
         if (positionProvider != null) {
-            List<BlockPos> posList = positionProvider.getStoredPositions(curItem);
-            if (posList != null) {
-                for (int i = 0; i < posList.size(); i++) {
-                    if (posList.get(i) != null && positionProvider.getRenderColor(i) != 0) {
-                        GlStateManager.disableDepth();
-                        new AreaShowHandler(ImmutableSet.of(posList.get(i)), positionProvider.getRenderColor(i)).render();
-                        GlStateManager.enableDepth();
-                    }
-                }
-            }
+            CompiledPosition cp = new CompiledPosition(curItem, positionProvider);
+            GlStateManager.disableDepth();
+            new AreaShowHandler(cp).render();
+            GlStateManager.enableDepth();
         }
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -81,7 +72,7 @@ public enum AreaShowManager {
 
     @SubscribeEvent
     public void tickEnd(TickEvent.ClientTickEvent event) {
-        EntityPlayer player = ModularRouters.proxy.getPlayer();
+        EntityPlayer player = ModularRouters.proxy.getClientPlayer();
         if (player != null) {
             if (player.world != world) {
                 world = player.world;
@@ -101,4 +92,48 @@ public enum AreaShowManager {
     public static double distBetweenSq(BlockPos pos1, double x1, double y1, double z1) {
         return distBetweenSq(pos1.getX(), pos1.getY(), pos1.getZ(), x1, y1, z1);
     }
+
+    static class CompiledPosition {
+        Map<BlockPos, FaceAndColour> positions = new HashMap<>();
+
+        CompiledPosition(ItemStack stack, IPositionProvider provider) {
+            List<ModuleTarget> targets = provider.getStoredPositions(stack);
+            for (int i = 0; i < targets.size(); i++) {
+                ModuleTarget target = targets.get(i);
+                if (target.dimId != Minecraft.getMinecraft().world.provider.getDimension()) {
+                    continue;
+                }
+                if (positions.containsKey(target.pos)) {
+                    positions.get(target.pos).faces.set(target.face.ordinal());
+                } else {
+                    FaceAndColour fc = new FaceAndColour(new BitSet(6), provider.getRenderColor(i));
+                    fc.faces.set(target.face.ordinal());
+                    positions.put(target.pos, fc);
+                }
+            }
+        }
+
+        Set<BlockPos> getPositions() {
+            return positions.keySet();
+        }
+
+        boolean checkFace(BlockPos pos, EnumFacing face) {
+            return positions.containsKey(pos) && positions.get(pos).faces.get(face.getIndex());
+        }
+
+        int getColour(BlockPos pos) {
+            return positions.containsKey(pos) ? positions.get(pos).colour : 0;
+        }
+
+        static class FaceAndColour {
+            final BitSet faces;
+            final int colour;
+
+            FaceAndColour(BitSet faces, int colour) {
+                this.faces = faces;
+                this.colour = colour;
+            }
+        }
+    }
+
 }

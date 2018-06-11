@@ -1,14 +1,13 @@
 package me.desht.modularrouters.client;
 
+import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * Represents an item which can store & provide one or more block positions.  An example would be the GPS tool (one
- * position) or the Amadron Tablet (two positions).
+ * Represents an item which can store & provide one or more block positions.
  */
 public interface IPositionProvider {
     /**
@@ -18,7 +17,7 @@ public interface IPositionProvider {
      * @param stack the itemstack
      * @return a list of block positions that has been retrieved from the itemstack
      */
-    List<BlockPos> getStoredPositions(@Nonnull ItemStack stack);
+    List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack);
 
     /**
      * Color that should be used to highlight the stored block positions if & when they are rendered on-screen.
