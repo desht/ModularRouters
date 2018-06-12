@@ -56,11 +56,11 @@ public class ContainerItemRouter extends Container {
         addSlotToContainer(new BufferSlot(router, BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS));
 
         // item router modules
-        for (int slot = 0; slot < TileEntityItemRouter.N_MODULE_SLOTS; slot++) {
+        for (int slot = 0; slot < router.getModuleSlotCount(); slot++) {
             addSlotToContainer(new ValidatingSlot.Module(router, slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
         }
         // item router upgrades
-        for (int slot = 0; slot < TileEntityItemRouter.N_UPGRADE_SLOTS; slot++) {
+        for (int slot = 0; slot < router.getUpgradeSlotCount(); slot++) {
             addSlotToContainer(new ValidatingSlot.Upgrade(router, slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
     }

@@ -96,7 +96,7 @@ public class Guidebook implements IGuideBook {
 
         // Upgrades category
         entries = new LinkedHashMap<>();
-        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, TileEntityItemRouter.N_UPGRADE_SLOTS), MAX_PAGE_LENGTH));
+        pages = new ArrayList<>(PageHelper.pagesForLongText(translate("guidebook.para.upgradeOverview", UpgradeType.values().length, new TileEntityItemRouter().getUpgradeSlotCount()), MAX_PAGE_LENGTH));
         entries.put(RL("upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Collections.singletonList(new PageText(translate("guidebook.para.blankUpgrade")));
         ItemStack bu = new ItemStack(RegistrarMR.BLANK_UPGRADE);

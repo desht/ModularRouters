@@ -17,7 +17,7 @@ public class BufferHandler extends ItemStackHandler {
     private boolean energyHandler;
 
     public BufferHandler(TileEntityItemRouter router) {
-        super(1);
+        super(router.getBufferSlotCount());
         this.router = router;
     }
 
@@ -25,7 +25,7 @@ public class BufferHandler extends ItemStackHandler {
     public void onContentsChanged(int slot) {
         router.markDirty();  // will also update comparator output
 
-        ItemStack stack = getStackInSlot(0);
+        ItemStack stack = getStackInSlot(slot);
 
         IFluidHandler newHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : null;
         if (newHandler != fluidHandler) {

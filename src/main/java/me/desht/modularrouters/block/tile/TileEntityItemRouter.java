@@ -55,22 +55,23 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class TileEntityItemRouter extends TileEntity implements ITickable, ICamouflageable {
-    public static final int N_MODULE_SLOTS = 9;
-    public static final int N_UPGRADE_SLOTS = 5;
+    private static final int N_MODULE_SLOTS = 9;
+    private static final int N_UPGRADE_SLOTS = 5;
+    private static final int N_BUFFER_SLOTS = 1;
 
     public static final int COMPILE_MODULES = 0x01;
     public static final int COMPILE_UPGRADES = 0x02;
 
-    public static final String NBT_ACTIVE = "Active";
-    public static final String NBT_ACTIVE_TIMER = "ActiveTimer";
-    public static final String NBT_ECO_MODE = "EcoMode";
-    public static final String NBT_SIDES = "Sides";
-    public static final String NBT_PERMITTED = "Permitted";
-    public static final String NBT_BUFFER = "Buffer";
-    public static final String NBT_MODULES = "Modules";
-    public static final String NBT_UPGRADES = "Upgrades";
-    public static final String NBT_EXTRA = "Extra";
-    public static final String NBT_REDSTONE_MODE = "Redstone";
+    private static final String NBT_ACTIVE = "Active";
+    private static final String NBT_ACTIVE_TIMER = "ActiveTimer";
+    private static final String NBT_ECO_MODE = "EcoMode";
+    private static final String NBT_SIDES = "Sides";
+    private static final String NBT_PERMITTED = "Permitted";
+    private static final String NBT_BUFFER = "Buffer";
+    private static final String NBT_MODULES = "Modules";
+    private static final String NBT_UPGRADES = "Upgrades";
+    private static final String NBT_EXTRA = "Extra";
+    private static final String NBT_REDSTONE_MODE = "Redstone";
     private static final String NBT_TICK_RATE = "TickRate";
     private static final String NBT_FLUID_TRANSFER_RATE = "FluidTransfer";
     private static final String NBT_ITEMS_PER_TICK = "ItemsPerTick";
@@ -81,6 +82,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private RouterRedstoneBehaviour redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
 
     private final BufferHandler bufferHandler = new BufferHandler(this);
+
+
     private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
     private final ItemStackHandler upgradesHandler = new RouterItemHandler.UpgradeHandler(this);
 
@@ -104,8 +107,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private final SignalType[] newSignalType = new SignalType[SIDES];
     private boolean canEmit, prevCanEmit; // used if 1 or more detector modules are installed
 
-    // when a player wants to configure an installed module, this tracks the slot
-    // number received from the client-side GUI for that player
+    // when a player wants to configure an installed module, this tracks the module & filter slot
+    // numbers received from the client-side GUI for that player
     private final Map<UUID, Pair<Integer, Integer>> playerToSlot = new HashMap<>();
 
     private int redstonePower = -1;  // current redstone power (updated via onNeighborChange())
@@ -299,22 +302,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         return super.getCapability(cap, side);
     }
 
-    private void checkUpgradeSlotCount(NBTTagCompound c) {
-        // handle upgrades size change from 4->5 (v1.2.0)
-        if (c.getTagId("Size") == Constants.NBT.TAG_INT) {
-            int size = c.getInteger("Size");
-            if (size < N_UPGRADE_SLOTS) {
-                c.setInteger("Size", N_UPGRADE_SLOTS);
-            }
-        }
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         bufferHandler.deserializeNBT(nbt.getCompoundTag(NBT_BUFFER));
         modulesHandler.deserializeNBT(nbt.getCompoundTag(NBT_MODULES));
-        checkUpgradeSlotCount(nbt.getCompoundTag(NBT_UPGRADES));
         upgradesHandler.deserializeNBT(nbt.getCompoundTag(NBT_UPGRADES));
         try {
             redstoneBehaviour = RouterRedstoneBehaviour.valueOf(nbt.getString(NBT_REDSTONE_MODE));
@@ -328,10 +320,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 
         NBTTagCompound ext = nbt.getCompoundTag(NBT_EXTRA);
         NBTTagCompound ext1 = getExtData();
-        if (ext != null) {
-            for (String key : ext.getKeySet()) {
-                ext1.setTag(key, ext.getTag(key));
-            }
+        for (String key : ext.getKeySet()) {
+            ext1.setTag(key, ext.getTag(key));
         }
 
         // When restoring, give the counter a random initial value to avoid all saved routers
@@ -406,7 +396,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 
         boolean newActive = false;
 
-        boolean powered = pulsed ? true : getRedstonePower() > 0;
+        boolean powered = pulsed || getRedstonePower() > 0;
 
         if (redstoneBehaviour.shouldRun(powered, pulsed)) {
             if (prevCanEmit || canEmit) {
@@ -789,7 +779,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
             return true;
         }
         for (EnumHand hand : EnumHand.values()) {
-            if (player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() == RegistrarMR.OVERRIDE_CARD) {
+            if (player.getHeldItem(hand).getItem() == RegistrarMR.OVERRIDE_CARD) {
                 return true;
             }
         }
@@ -879,5 +869,17 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         for (CompiledModule cm : compiledModules) {
             cm.onNeighbourChange(this);
         }
+    }
+
+    public int getModuleSlotCount() {
+        return N_MODULE_SLOTS;
+    }
+
+    public int getUpgradeSlotCount() {
+        return N_UPGRADE_SLOTS;
+    }
+
+    public int getBufferSlotCount() {
+        return N_BUFFER_SLOTS;
     }
 }

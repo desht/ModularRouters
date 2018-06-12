@@ -39,13 +39,13 @@ abstract class RouterItemHandler extends ItemStackHandler {
 
     static class ModuleHandler extends RouterItemHandler {
         ModuleHandler(TileEntityItemRouter router) {
-            super(ItemModule.class, router, TileEntityItemRouter.COMPILE_MODULES, TileEntityItemRouter.N_MODULE_SLOTS);
+            super(ItemModule.class, router, TileEntityItemRouter.COMPILE_MODULES, router.getModuleSlotCount());
         }
     }
 
     static class UpgradeHandler extends RouterItemHandler {
         UpgradeHandler(TileEntityItemRouter router) {
-            super(ItemUpgrade.class, router, TileEntityItemRouter.COMPILE_UPGRADES, TileEntityItemRouter.N_UPGRADE_SLOTS);
+            super(ItemUpgrade.class, router, TileEntityItemRouter.COMPILE_UPGRADES, router.getUpgradeSlotCount());
         }
     }
 }
