@@ -109,7 +109,7 @@ public class GuiItemRouter extends GuiContainerBase {
 
     private boolean handleModuleConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || ItemModule.getModule(slot.getStack()) == null || slot.slotNumber < MODULE_START || slot.slotNumber >= MODULE_END) {
+        if (slot == null || ItemModule.getModule(slot.getStack()) == null || slot.slotNumber < MODULE_START || slot.slotNumber > MODULE_END) {
             return false;
         }
         router.playerConfiguringModule(mc.player, slot.slotNumber - MODULE_START);
