@@ -79,7 +79,7 @@ public class ContainerModule extends Container {
 
     protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         // does nothing by default, to be overridden
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ContainerModule extends Container {
             } else if (index >= INV_START && index <= HOTBAR_END) {
                 // shift-clicking in player inventory
                 ItemStack stackInSlot = srcSlot.getStack();
-                if (stackInSlot.getItem() instanceof ItemAugment) {
+                if (stackInSlot.getItem() instanceof ItemAugment && augmentHandler.getHolderStack().getCount() == 1) {
                     // copy augment items into one of the augment slots if possible
                     if (!mergeItemStack(stackInSlot, AUGMENT_START, AUGMENT_START + Augment.SLOTS, false)) {
                         return ItemStack.EMPTY;
@@ -144,6 +144,10 @@ public class ContainerModule extends Container {
         if (slot > HOTBAR_END) {
             return slotClickExtraSlot(slot, dragType, clickTypeIn, player);
         }
+        if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS && augmentHandler.getHolderStack().getCount() > 1) {
+            // prevent augment dupe
+            return ItemStack.EMPTY;
+        }
 
         switch (clickTypeIn) {
             case PICKUP:
@@ -163,13 +167,13 @@ public class ContainerModule extends Container {
                         s.putStack(ItemStack.EMPTY);
                     }
                     return ItemStack.EMPTY;
-                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS) {
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     sendChanges = true;
                 }
             case THROW:
                 if (slot >= 0 && slot < Filter.FILTER_SIZE) {
                     return ItemStack.EMPTY;
-                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS) {
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     sendChanges = true;
                 }
         }
