@@ -70,7 +70,12 @@ public class FloatTextField extends TextFieldWidget {
         } else if (GuiScreen.isShiftKeyDown()) {
             adj *= coarse;
         }
-        float val = Float.parseFloat(getText());
+        float val;
+        try {
+            val = Float.parseFloat(getText());
+        } catch (NumberFormatException e) {
+            val = min;
+        }
         float newVal = Math.max(min, Math.min(max, val + adj));
         if (newVal != val) {
             setText("");
