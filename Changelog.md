@@ -6,13 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
-### 3.1.6 (23 Aug 2018)
+### 3.2.0 (23 Aug 2018)
 
 * Added the Distributor Module, a way to distribute items across multiple target inventories.  Can do round-robin, random, nearest-first or furthest-first.
 * Extruder Mk2 Module is now cheaper to craft (just needs an Extruder Mk1 and a chest).
 * Range Up & Range Down augments can now be crafted into each other.
 * Fix dupe bug with Augments when a stack of more than one module is configured at once
 * Fix last module in router slot (slot 9) not being configurable
+* Fix possible client disconnect in conjunction with TheOneProbe
 
 ### 3.1.5 (30 May 2018)
 
