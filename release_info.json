@@ -9,6 +9,7 @@
     "1.12.2-latest" : "3.1.5"
   },
   "1.12.2" : {
+    "3.1.6" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#316-23-aug-2018",
     "3.1.5" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#315-30-apr-2018",
     "3.1.4" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#314-28-apr-2018",
     "3.1.3" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#313-25-mar-2018",
