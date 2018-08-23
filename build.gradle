@@ -47,7 +47,7 @@ repositories {
     }
     maven {
         name = "tesla"
-        url = "http://maven.epoxide.xyz"
+        url = "http://maven.mcmoddev.com"
     }
     maven {
         name = "JEI"
@@ -56,6 +56,10 @@ repositories {
     maven {
         name = "CoFH Maven"
         url = "http://maven.covers1624.net"
+    }
+    maven {
+        name = "K-4u Mod maven"
+        url = "https://modmaven.k-4u.nl/"
     }
 }
 
