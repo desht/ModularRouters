@@ -71,6 +71,7 @@ dependencies {
     deobfCompile "cofh:RedstoneFlux:1.12-2.0.1.2:universal"
     provided "com.google.errorprone:error_prone_annotations:2.1.0"
     compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
+    compile "team.chisel.ctm:CTM:MC1.12.2-0.3.2.18:api"
 }
 
 processResources {
