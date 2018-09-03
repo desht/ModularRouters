@@ -29,7 +29,8 @@ public class CompiledPullerModule2 extends CompiledPullerModule {
 
     @Override
     boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
-        return router.getWorld().provider.getDimension() == target.dimId &&
+        return target != null &&
+                router.getWorld().provider.getDimension() == target.dimId &&
                 router.getPos().distanceSq(target.pos) <= getRangeSquared();
     }
 
