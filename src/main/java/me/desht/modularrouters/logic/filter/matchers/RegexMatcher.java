@@ -31,7 +31,7 @@ public class RegexMatcher implements IItemMatcher {
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (stack.isEmpty()) return false;
         String name = TextFormatting.getTextWithoutFormattingCodes(stack.getDisplayName());
-        if (name == null) name = stack.getUnlocalizedName();
+        if (name == null) name = stack.getTranslationKey();
         for (Pattern pat : patterns) {
             if (pat.matcher(name).find()) {
                 return true;

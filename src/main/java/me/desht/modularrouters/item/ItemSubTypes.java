@@ -36,7 +36,7 @@ public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
 
     @Nonnull
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getTranslationKey(ItemStack stack) {
         return "item." + getSubTypeName(stack.getMetadata());
     }
 
@@ -115,7 +115,7 @@ public abstract class ItemSubTypes<T extends Enum<T>> extends ItemBase {
          */
         @SideOnly(Side.CLIENT)
         public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-            String s = I18n.format("itemText.usage." + itemstack.getUnlocalizedName(), getExtraUsageParams());
+            String s = I18n.format("itemText.usage." + itemstack.getTranslationKey(), getExtraUsageParams());
             for (String s1 : s.split("\\\\n")) {
                 list.addAll(MiscUtil.wrapString(s1));
             }

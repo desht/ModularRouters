@@ -90,7 +90,7 @@ public class Guidebook implements IGuideBook {
         entries.put(RL("moduleOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Collections.singletonList(new PageText(translate("guidebook.para.blankModule")));
         ItemStack bm = new ItemStack(RegistrarMR.BLANK_MODULE);
-        entries.put(RL("blankModule"), new EntryItemStack(pages, translate(bm.getUnlocalizedName() + ".name"), bm));
+        entries.put(RL("blankModule"), new EntryItemStack(pages, translate(bm.getTranslationKey() + ".name"), bm));
         buildModulePages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.modules"), new ItemStack(RegistrarMR.BLANK_MODULE)));
 
@@ -100,7 +100,7 @@ public class Guidebook implements IGuideBook {
         entries.put(RL("upgradeOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Collections.singletonList(new PageText(translate("guidebook.para.blankUpgrade")));
         ItemStack bu = new ItemStack(RegistrarMR.BLANK_UPGRADE);
-        entries.put(RL("blankUpgrade"), new EntryItemStack(pages, translate(bu.getUnlocalizedName() + ".name"), bu));
+        entries.put(RL("blankUpgrade"), new EntryItemStack(pages, translate(bu.getTranslationKey() + ".name"), bu));
         buildUpgradePages(entries);
         categories.add(new CategoryItemStack(entries, translate("guiText.label.upgrades"), new ItemStack(RegistrarMR.BLANK_UPGRADE)));
 
@@ -110,7 +110,7 @@ public class Guidebook implements IGuideBook {
         entries.put(RL("augmentOverview"), new EntryItemStack(pages, translate("guidebook.words.overview"), new ItemStack(Items.BOOK)));
         pages = Collections.singletonList(new PageText(translate("guidebook.para.augmentCore")));
         ItemStack ba = new ItemStack(RegistrarMR.AUGMENT_CORE);
-        entries.put(RL("augmentCore"), new EntryItemStack(pages, translate(ba.getUnlocalizedName() + ".name"), ba));
+        entries.put(RL("augmentCore"), new EntryItemStack(pages, translate(ba.getTranslationKey() + ".name"), ba));
         buildAugmentPages(entries);
         categories.add(new CategoryItemStack(entries, translate("guidebook.words.augments"), new ItemStack(RegistrarMR.AUGMENT_CORE)));
 
@@ -137,12 +137,12 @@ public class Guidebook implements IGuideBook {
     private static void buildAugmentPages(Map<ResourceLocation, EntryAbstract> entries) {
         List<AugmentType> types = Lists.newArrayList(AugmentType.values()).stream()
                 .map(ItemAugment::makeItemStack)
-                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getTranslationKey())))
                 .map(AugmentType::getType)
                 .collect(Collectors.toList());
         for (AugmentType type : types) {
             ItemStack module = ItemAugment.makeItemStack(type);
-            String unlocalizedName = module.getItem().getUnlocalizedName(module);
+            String unlocalizedName = module.getItem().getTranslationKey(module);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
             String localizedName = translate(unlocalizedName + ".name");
@@ -153,12 +153,12 @@ public class Guidebook implements IGuideBook {
     private static void buildFilterPages(Map<ResourceLocation, EntryAbstract> entries) {
         List<FilterType> types = Lists.newArrayList(FilterType.values()).stream()
                 .map(ItemSmartFilter::makeItemStack)
-                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getTranslationKey())))
                 .map(FilterType::getType)
                 .collect(Collectors.toList());
         for (FilterType type : types) {
             ItemStack module = ItemSmartFilter.makeItemStack(type);
-            String unlocalizedName = module.getItem().getUnlocalizedName(module);
+            String unlocalizedName = module.getItem().getTranslationKey(module);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
             String localizedName = translate(unlocalizedName + ".name");
@@ -170,13 +170,13 @@ public class Guidebook implements IGuideBook {
         // get a items of modules, sorted by their localized names
         List<ModuleType> types = Lists.newArrayList(ModuleType.values()).stream()
                 .map(ModuleHelper::makeItemStack)
-                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getTranslationKey())))
                 .map(ModuleType::getType)
                 .collect(Collectors.toList());
 
         for (ModuleType type : types) {
             ItemStack module = ModuleHelper.makeItemStack(type);
-            String unlocalizedName = module.getItem().getUnlocalizedName(module);
+            String unlocalizedName = module.getItem().getTranslationKey(module);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName)));
             String localizedName = translate(unlocalizedName + ".name");
@@ -188,13 +188,13 @@ public class Guidebook implements IGuideBook {
         // get a items of upgrades, sorted by their localized names
         List<UpgradeType> types = Lists.newArrayList(UpgradeType.values()).stream()
                 .map(ItemUpgrade::makeItemStack)
-                .sorted(Comparator.comparing(s -> translate(s.getUnlocalizedName())))
+                .sorted(Comparator.comparing(s -> translate(s.getTranslationKey())))
                 .map(UpgradeType::getType)
                 .collect(Collectors.toList());
 
         for (UpgradeType type : types) {
             ItemStack upgrade = ItemUpgrade.makeItemStack(type);
-            String unlocalizedName = upgrade.getItem().getUnlocalizedName(upgrade);
+            String unlocalizedName = upgrade.getItem().getTranslationKey(upgrade);
             List<IPage> pages1 = Lists.newArrayList();
             pages1.add(new PageText(translate("itemText.usage." + unlocalizedName, ItemUpgrade.getUpgrade(type).getExtraUsageParams())));
             String localizedName = translate(unlocalizedName + ".name");

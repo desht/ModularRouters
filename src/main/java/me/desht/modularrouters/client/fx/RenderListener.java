@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class RenderListener {
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        Profiler profiler = Minecraft.getMinecraft().profiler;
         profiler.startSection("modularrouters-particles");
         ParticleRenderDispatcher.dispatch();
         profiler.endSection();

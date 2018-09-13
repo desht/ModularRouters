@@ -72,7 +72,7 @@ public class SetofItemStack extends TCustomHashSet<ItemStack> {
 
     private static final Comparator<? super ItemStack> compareStacks = (Comparator<ItemStack>) (o1, o2) -> {
         // matches by mod, then by display name
-        int c = o1.getItem().getRegistryName().getResourceDomain().compareTo(o2.getItem().getRegistryName().getResourceDomain());
+        int c = o1.getItem().getRegistryName().getNamespace().compareTo(o2.getItem().getRegistryName().getNamespace());
         if (c != 0) return c;
         return o1.getDisplayName().compareTo(o2.getDisplayName());
     };

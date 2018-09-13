@@ -81,7 +81,7 @@ public class GuiModFilter extends GuiFilterContainer {
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             modId = modName = "";
         } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !inSlot.isItemEqualIgnoreDurability(prevInSlot))) {
-            modId = inSlot.getItem().getRegistryName().getResourceDomain();
+            modId = inSlot.getItem().getRegistryName().getNamespace();
             modName = ModNameCache.getModName(modId);
         }
         prevInSlot = inSlot;

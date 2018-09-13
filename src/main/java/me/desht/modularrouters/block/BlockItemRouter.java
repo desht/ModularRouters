@@ -124,7 +124,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        EnumFacing facing = EnumFacing.getHorizontal(meta);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta);
         return this.getDefaultState().withProperty(FACING, facing);
     }
 
@@ -213,7 +213,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
                 for (int i = 0; i < modulesHandler.getSlots(); i++) {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
-                        tooltip.add(TextFormatting.AQUA + "\u2022 " + I18n.format(moduleStack.getUnlocalizedName() + ".name"));
+                        tooltip.add(TextFormatting.AQUA + "\u2022 " + I18n.format(moduleStack.getTranslationKey() + ".name"));
                     }
                 }
             }

@@ -9,8 +9,6 @@ import me.desht.modularrouters.network.*;
 import me.desht.modularrouters.proxy.CommonProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -20,10 +18,11 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
+
+import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @Mod(modid = ModularRouters.MODID, version = ModularRouters.MODVERSION, name = ModularRouters.MODNAME,
         dependencies = ModularRouters.DEPENDENICES,
@@ -33,8 +32,8 @@ import java.util.Random;
 public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
-    public static final String MODVERSION = "@VERSION@";
-    public static final String DEPENDENICES =
+    static final String MODVERSION = "@VERSION@";
+    static final String DEPENDENICES =
             "after:waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
                     + "required-after:forge@[14.23.1.2555,);";
 
@@ -52,8 +51,8 @@ public class ModularRouters {
     public static final int GUI_FILTER_INSTALLED = modGuiIndex++;
     public static final int GUI_SYNC_UPGRADE = modGuiIndex++;
 
-    @CapabilityInject(IItemHandler.class)
-    public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
+//    @CapabilityInject(IItemHandler.class)
+//    public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
 
     @SidedProxy(serverSide = "me.desht.modularrouters.proxy.CommonProxy", clientSide = "me.desht.modularrouters.proxy.ClientProxy")
     public static CommonProxy proxy;
@@ -66,8 +65,8 @@ public class ModularRouters {
         logger = event.getModLog();
         proxy.preInit();
         setupNetwork();
-        GameRegistry.registerTileEntity(TileEntityItemRouter.class, "item_router");
-        GameRegistry.registerTileEntity(TileEntityTemplateFrame.class, "template_frame");
+        GameRegistry.registerTileEntity(TileEntityItemRouter.class, RL("item_router"));
+        GameRegistry.registerTileEntity(TileEntityTemplateFrame.class, RL("template_frame"));
         logger.info(MODNAME + " is loading!");
     }
 

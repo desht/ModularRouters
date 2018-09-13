@@ -51,7 +51,7 @@ public abstract class BlockCamo extends BlockBase implements IFacade {
     }
 
     @Override
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 

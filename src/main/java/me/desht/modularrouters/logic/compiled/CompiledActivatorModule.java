@@ -74,7 +74,7 @@ public class CompiledActivatorModule extends CompiledModule {
             return false;
         }
         fakePlayer.setPosition(pos.getX() + 0.5, pos.getY() + 0.5 - fakePlayer.eyeHeight, pos.getZ() + 0.5);
-        fakePlayer.rotationPitch = getFacing().getFrontOffsetY() * -90;
+        fakePlayer.rotationPitch = getFacing().getYOffset() * -90;
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
         fakePlayer.setSneaking(sneaking);
         ItemStack stack = router.getBufferItemStack();
@@ -112,7 +112,7 @@ public class CompiledActivatorModule extends CompiledModule {
         EnumFacing face = getFacing();
         final BlockPos pos = router.getPos();
         AxisAlignedBB box = new AxisAlignedBB(pos.offset(face))
-                .expand(face.getFrontOffsetX() * 3, face.getFrontOffsetY() * 3, face.getFrontOffsetZ() * 3);
+                .expand(face.getXOffset() * 3, face.getYOffset() * 3, face.getZOffset() * 3);
 
         List<Entity> l = router.getWorld().getEntitiesWithinAABB(Entity.class, box);
         if (l.isEmpty()) {

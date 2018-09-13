@@ -34,9 +34,9 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
             double y = router.getPos().getY() + 0.5;
             double z = router.getPos().getZ() + 0.5;
             EnumFacing facing = router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
-            double x2 = x + facing.getFrontOffsetX() * 1.2;
+            double x2 = x + facing.getXOffset() * 1.2;
             y2 = (y2 < y - 2 || y2 > y + 2) ? y : y2 + (r.nextDouble() - 0.5) / 5.0;
-            double z2 = z + facing.getFrontOffsetZ() * 1.2;
+            double z2 = z + facing.getZOffset() * 1.2;
             NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), x, y, z, 32);
             ModularRouters.network.sendToAllAround(new ParticleBeamMessage(x, y, z, x2, y2, z2, particleColor, 0.7f), point);
         }

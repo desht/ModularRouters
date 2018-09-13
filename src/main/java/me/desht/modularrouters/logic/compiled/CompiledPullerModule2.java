@@ -37,8 +37,8 @@ public class CompiledPullerModule2 extends CompiledPullerModule {
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
         if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
-            Vec3d vec1 = new Vec3d(router.getPos()).addVector(0.5, 0.5, 0.5);
-            Vec3d vec2 = new Vec3d(targetPos).addVector(0.5, 0.5, 0.5);
+            Vec3d vec1 = new Vec3d(router.getPos()).add(0.5, 0.5, 0.5);
+            Vec3d vec2 = new Vec3d(targetPos).add(0.5, 0.5, 0.5);
             NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(router.getWorld().provider.getDimension(), vec1.x, vec1.y, vec1.z, 32);
             ModularRouters.network.sendToAllAround(new ParticleBeamMessage(vec1.x, vec1.y, vec1.z, vec2.x, vec2.y, vec2.z, particleColor, 0.5f), point);
         }

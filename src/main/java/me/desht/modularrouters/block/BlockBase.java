@@ -8,7 +8,7 @@ class BlockBase extends Block {
     BlockBase(Material material, String name) {
         super(material);
 
-        setUnlocalizedName(name);
+        setTranslationKey(name);
         setRegistryName(name);
         setCreativeTab(ModularRoutersTab.creativeTab);
     }

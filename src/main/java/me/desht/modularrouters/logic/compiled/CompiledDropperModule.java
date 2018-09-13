@@ -29,9 +29,9 @@ public class CompiledDropperModule extends CompiledModule {
             BlockPos pos = getTarget().pos;
             EnumFacing face = getTarget().face;
             EntityItem item = new EntityItem(router.getWorld(),
-                    pos.getX() + 0.5 + 0.2 * face.getFrontOffsetX(),
-                    pos.getY() + 0.5 + 0.2 * face.getFrontOffsetY(),
-                    pos.getZ() + 0.5 + 0.2 * face.getFrontOffsetZ(),
+                    pos.getX() + 0.5 + 0.2 * face.getXOffset(),
+                    pos.getY() + 0.5 + 0.2 * face.getYOffset(),
+                    pos.getZ() + 0.5 + 0.2 * face.getZOffset(),
                     toDrop);
             item.setPickupDelay(pickupDelay);
             setupItemVelocity(router, item);
