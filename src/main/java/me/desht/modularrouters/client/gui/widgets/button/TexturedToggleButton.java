@@ -7,8 +7,9 @@ public abstract class TexturedToggleButton extends TexturedButton implements Tog
     protected final List<String> tooltip2 = new ArrayList<>();
     private boolean toggled;
 
-    public TexturedToggleButton(int buttonId, int x, int y, int width, int height) {
+    public TexturedToggleButton(int buttonId, int x, int y, int width, int height, boolean toggled) {
         super(buttonId, x, y, width, height);
+        this.toggled = toggled;
     }
 
     public void toggle() {

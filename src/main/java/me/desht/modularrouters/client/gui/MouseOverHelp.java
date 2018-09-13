@@ -132,8 +132,10 @@ public class MouseOverHelp {
         private final MouseOverHelp mouseOverHelp;
 
         public Button(int buttonId, int x, int y, MouseOverHelp mouseOverHelp) {
-            super(buttonId, x, y, 16, 16);
+            super(buttonId, x, y, 16, 16, false);
             this.mouseOverHelp = mouseOverHelp;
+            tooltip1.addAll(MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp.false")));
+            tooltip2.addAll(MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp.true")));
         }
 
         @Override
@@ -147,12 +149,6 @@ public class MouseOverHelp {
         }
 
         @Override
-        public void setToggled(boolean toggled) {
-            super.setToggled(toggled);
-            mouseOverHelp.setActive(toggled);
-        }
-
-        @Override
         protected int getTextureX() {
             return isToggled() ? 208 : 192;
         }
@@ -160,11 +156,6 @@ public class MouseOverHelp {
         @Override
         protected int getTextureY() {
             return 0;
-        }
-
-        @Override
-        public List<String> getTooltip() {
-            return MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp." + isToggled()));
         }
     }
 }

@@ -161,10 +161,8 @@ public class GuiModuleActivator extends GuiModule {
     }
 
     private static class SneakButton extends TexturedToggleButton {
-
         SneakButton(int buttonId, int x, int y, boolean initialVal) {
-            super(buttonId, x, y, 16, 16);
-            setToggled(initialVal);
+            super(buttonId, x, y, 16, 16, initialVal);
         }
 
         @Override

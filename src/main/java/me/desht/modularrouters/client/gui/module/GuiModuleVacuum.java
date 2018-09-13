@@ -150,8 +150,7 @@ public class GuiModuleVacuum extends GuiModule {
 
     private class EjectButton extends TexturedToggleButton {
         EjectButton(int buttonId, int x, int y, boolean initialVal) {
-            super(buttonId, x, y, 16, 16);
-            setToggled(initialVal);
+            super(buttonId, x, y, 16, 16, initialVal);
         }
 
         @Override

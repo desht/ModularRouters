@@ -119,8 +119,7 @@ public class GuiItemRouter extends GuiContainerBase {
 
     private static class RouterEcoButton extends TexturedToggleButton {
         RouterEcoButton(int buttonId, int x, int y, int width, int height, boolean initialVal) {
-            super(buttonId, x, y, width, height);
-            setToggled(initialVal);
+            super(buttonId, x, y, width, height, initialVal);
         }
 
         @Override

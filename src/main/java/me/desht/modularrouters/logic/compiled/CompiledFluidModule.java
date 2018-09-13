@@ -19,11 +19,13 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 
 public class CompiledFluidModule extends CompiledModule {
-    public static String NBT_MAX_TRANSFER = "MaxTransfer";
-    public static String NBT_FLUID_DIRECTION = "FluidDir";
+    public static final String NBT_FORCE_EMPTY = "ForceEmpty";
+    public static final String NBT_MAX_TRANSFER = "MaxTransfer";
+    public static final String NBT_FLUID_DIRECTION = "FluidDir";
 
     private final int maxTransfer;
     private final FluidDirection fluidDirection;
+    private final boolean forceEmpty;  // force emptying even if there's a fluid module in the way
 
     private static final InfiniteWaterHandler infiniteWater = new InfiniteWaterHandler();
 
@@ -33,6 +35,7 @@ public class CompiledFluidModule extends CompiledModule {
         NBTTagCompound compound = setupNBT(stack);
         maxTransfer = compound.getInteger(NBT_MAX_TRANSFER);
         fluidDirection = FluidDirection.values()[compound.getByte(NBT_FLUID_DIRECTION)];
+        forceEmpty = compound.getBoolean(NBT_FORCE_EMPTY);
     }
 
     @Override
@@ -48,7 +51,8 @@ public class CompiledFluidModule extends CompiledModule {
             return false;
         }
 
-        if (fluidDirection == FluidDirection.OUT && !getFilter().test(containerStack)) {
+        if (fluidDirection == FluidDirection.OUT && (!getFilter().test(containerStack))
+                || fluidDirection == FluidDirection.OUT && !forceEmpty && !router.getWorld().isAirBlock(getTarget().pos)) {
             return false;
         }
 
@@ -108,6 +112,9 @@ public class CompiledFluidModule extends CompiledModule {
     }
 
     private boolean tryPourOutFluid(IFluidHandler routerFluidHandler, World world, BlockPos pos, ItemStack containerStack) {
+        if (!forceEmpty && !world.isAirBlock(pos)) {
+            return false;
+        }
         FluidStack toPlace = routerFluidHandler.drain(1000, false);
         if (toPlace == null || toPlace.amount < 1000) {
             return false;  // must be a full bucket's worth to place in the world
@@ -169,6 +176,10 @@ public class CompiledFluidModule extends CompiledModule {
 
     public int getMaxTransfer() {
         return maxTransfer;
+    }
+
+    public boolean isForceEmpty() {
+        return forceEmpty;
     }
 
     private static class InfiniteWaterHandler implements IFluidHandler {

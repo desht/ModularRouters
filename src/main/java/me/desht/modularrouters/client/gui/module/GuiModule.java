@@ -96,6 +96,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
     private final MouseOverHelp mouseOverHelp;
     protected ItemAugment.AugmentCounter augmentCounter;
+    private MouseOverHelp.Button mouseOverHelpButton;
 
     public GuiModule(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -139,7 +140,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        buttonList.add(new MouseOverHelp.Button(MOUSEOVER_BUTTON_ID, guiLeft + 175, guiTop + 1, mouseOverHelp));
+        mouseOverHelpButton = new MouseOverHelp.Button(MOUSEOVER_BUTTON_ID, guiLeft + 175, guiTop + 1, mouseOverHelp);
+        buttonList.add(mouseOverHelpButton);
 
         redstoneButton = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
                 this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
@@ -179,14 +181,12 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
-        toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.guiLeft + x, this.guiTop + y);
-        toggleButtons[flag.ordinal()].setToggled(ModuleHelper.checkFlag(moduleItemStack, flag));
+        toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.guiLeft + x, this.guiTop + y, ModuleHelper.checkFlag(moduleItemStack, flag));
         buttonList.add(toggleButtons[flag.ordinal()]);
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
-        directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.guiLeft + x, this.guiTop + y);
-        directionButtons[dir.ordinal()].setToggled(dir == facing);
+        directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.guiLeft + x, this.guiTop + y, dir == facing);
         buttonList.add(directionButtons[dir.ordinal()]);
     }
 
@@ -218,6 +218,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     @Override
     public void updateScreen() {
         super.updateScreen();
+        mouseOverHelp.setActive(mouseOverHelpButton.isToggled());
         if (sendDelay > 0) {
             if (--sendDelay <= 0) {
                 sendModuleSettingsToServer();
@@ -453,8 +454,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     private static class ModuleToggleButton extends TexturedToggleButton {
-        ModuleToggleButton(ModuleFlags setting, int x, int y) {
-            super(setting.ordinal(), x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        ModuleToggleButton(ModuleFlags setting, int x, int y, boolean toggled) {
+            super(setting.ordinal(), x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + ModuleFlags.values()[id] + ".1");
             MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + ModuleFlags.values()[id] + ".2");
         }
@@ -474,8 +475,8 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         private static final int DIRECTION_GROUP = 1;
         private final RelativeDirection direction;
 
-        public DirectionButton(RelativeDirection dir, Module module, int x, int y) {
-            super(dir.ordinal() + DIRECTION_BASE_ID, DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        DirectionButton(RelativeDirection dir, Module module, int x, int y, boolean toggled) {
+            super(dir.ordinal() + DIRECTION_BASE_ID, DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled);
             this.direction = dir;
             String dirStr = module.getDirectionString(dir);
             tooltip1.add(TextFormatting.GRAY + dirStr);

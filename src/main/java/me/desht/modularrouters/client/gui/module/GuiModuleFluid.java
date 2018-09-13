@@ -5,6 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.RenderHelper;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
+import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.config.ConfigHandler;
@@ -34,9 +35,13 @@ public class GuiModuleFluid extends GuiModule {
     private static final int TRANSFER_TEXTFIELD_ID = 1;
     private static final int TOOLTIP_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
     private static final int FLUID_DIRECTION_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
+    private static final int FORCE_EMPTY_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 2;
+
+    private ForceEmptyButton forceEmptyButton;
 
     private FluidDirection fluidDirection;
     private int maxTransfer;
+    private boolean forceEmpty;
 
     public GuiModuleFluid(ContainerModule containerItem, EnumHand hand) {
         this(containerItem, null, -1, hand);
@@ -48,6 +53,7 @@ public class GuiModuleFluid extends GuiModule {
         CompiledFluidModule cfm = new CompiledFluidModule(null, moduleItemStack);
         fluidDirection = cfm.getFluidDirection();
         maxTransfer = cfm.getMaxTransfer();
+        forceEmpty = cfm.isForceEmpty();
     }
 
     @Override
@@ -66,9 +72,12 @@ public class GuiModuleFluid extends GuiModule {
 
         buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 19, 16, 16, bucketStack));
         buttonList.add(new FluidDirectionButton(FLUID_DIRECTION_BUTTON_ID, guiLeft + 148, guiTop + 44, fluidDirection));
+        forceEmptyButton = new ForceEmptyButton(FORCE_EMPTY_BUTTON_ID, guiLeft + 168, guiTop + 69, forceEmpty);
+        buttonList.add(forceEmptyButton);
 
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 17, guiLeft + 183, guiTop + 35, "guiText.popup.fluid.maxTransfer");
         getMouseOverHelp().addHelpRegion(guiLeft + 126, guiTop + 42, guiLeft + 185, guiTop + 61, "guiText.popup.fluid.direction");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 67, guiLeft + 185, guiTop + 86, "guiText.popup.fluid.forceEmpty");
     }
 
     @Override
@@ -89,6 +98,16 @@ public class GuiModuleFluid extends GuiModule {
         if (regulatorTextField.getVisible()) {
             mc.fontRenderer.drawString("%", 179, 77, 0x404040);
         }
+        if (fluidDirection == FluidDirection.OUT) {
+            String s = I18n.format("guiText.label.fluidForceEmpty");
+            mc.fontRenderer.drawString(s, 165 - mc.fontRenderer.getStringWidth(s), 73, 0x202040);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        forceEmptyButton.visible = fluidDirection == FluidDirection.OUT;
     }
 
     @Override
@@ -98,6 +117,12 @@ public class GuiModuleFluid extends GuiModule {
                 FluidDirectionButton fb = (FluidDirectionButton) button;
                 fb.cycle(true);
                 fluidDirection = fb.getState();
+                sendModuleSettingsToServer();
+                break;
+            case FORCE_EMPTY_BUTTON_ID:
+                ForceEmptyButton forceButton = (ForceEmptyButton) button;
+                forceButton.toggle();
+                forceEmpty = forceButton.isToggled();
                 sendModuleSettingsToServer();
                 break;
             default:
@@ -122,6 +147,7 @@ public class GuiModuleFluid extends GuiModule {
         NBTTagCompound compound = super.buildMessageData();
         compound.setInteger(CompiledFluidModule.NBT_MAX_TRANSFER, maxTransfer);
         compound.setByte(CompiledFluidModule.NBT_FLUID_DIRECTION, (byte) fluidDirection.ordinal());
+        compound.setBoolean(CompiledFluidModule.NBT_FORCE_EMPTY, forceEmpty);
         return compound;
     }
 
@@ -169,6 +195,23 @@ public class GuiModuleFluid extends GuiModule {
         public java.util.List<String> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
+    }
 
+    private static class ForceEmptyButton extends TexturedToggleButton {
+        ForceEmptyButton(int buttonId, int x, int y, boolean initialVal) {
+            super(buttonId, x, y, 16, 16, initialVal);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.fluidForceEmpty.false");
+            MiscUtil.appendMultiline(tooltip2, "guiText.tooltip.fluidForceEmpty.true");
+        }
+
+        @Override
+        protected int getTextureX() {
+            return isToggled() ? 192 : 112;
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 16;
+        }
     }
 }
