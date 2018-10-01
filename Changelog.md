@@ -6,11 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
-### 3.2.1 (???)
+### 3.2.1 (1 Oct 2018)
 
 * Camouflage: connected textures are now supported for router camo and Extruder Mk2 blocks!
 * Added checkbox to Fluid Module: control whether fluid should be poured out of the router when there is already a fluid of the same type present. https://github.com/desht/ModularRouters/issues/49
 * Fixed NPE when inserting an unconfigure Puller Mk2 module into a router. https://github.com/desht/ModularRouters/issues/46
+* Forge build 2705 or newer required
 
 ### 3.2.0 (23 Aug 2018)
 
