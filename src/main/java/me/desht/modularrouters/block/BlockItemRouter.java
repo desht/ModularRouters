@@ -86,7 +86,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     protected BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[] { FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT },
-                new IUnlistedProperty[] { BlockCamo.CAMOUFLAGE_STATE});
+                new IUnlistedProperty[] { CAMOUFLAGE_STATE, BLOCK_ACCESS, BLOCK_POS});
     }
 
     @Override

@@ -29,8 +29,10 @@ import java.util.List;
 @Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 public abstract class BlockCamo extends BlockBase implements IFacade {
     public static final PropertyObject<IBlockState> CAMOUFLAGE_STATE = new PropertyObject<>("held_state", IBlockState.class);
+    public static final PropertyObject<IBlockAccess> BLOCK_ACCESS = new PropertyObject<>("held_access", IBlockAccess.class);
+    public static final PropertyObject<BlockPos> BLOCK_POS = new PropertyObject<>("held_pos", BlockPos.class);
 
-    public BlockCamo(Material materialIn, String blockName) {
+    BlockCamo(Material materialIn, String blockName) {
         super(materialIn, blockName);
     }
 
@@ -38,7 +40,7 @@ public abstract class BlockCamo extends BlockBase implements IFacade {
     protected BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[] { },
-                new IUnlistedProperty[] { CAMOUFLAGE_STATE });
+                new IUnlistedProperty[] { CAMOUFLAGE_STATE, BLOCK_ACCESS, BLOCK_POS });
     }
 
     @Override
@@ -46,8 +48,11 @@ public abstract class BlockCamo extends BlockBase implements IFacade {
         ICamouflageable camo = getCamoState(world, pos);
         if (camo == null) return state;
 
-        IBlockState camoState = camo.getCamouflage().getActualState(world, pos);
-        return ((IExtendedBlockState) state).withProperty(CAMOUFLAGE_STATE, camoState);
+        IBlockState camoState = camo.getCamouflage()/*.getActualState(world, pos)*/;
+        return ((IExtendedBlockState) state)
+                .withProperty(CAMOUFLAGE_STATE, camoState)
+                .withProperty(BLOCK_ACCESS, world)
+                .withProperty(BLOCK_POS, pos);
     }
 
     @Override
