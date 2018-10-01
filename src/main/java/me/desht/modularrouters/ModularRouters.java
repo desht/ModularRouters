@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.gui.GuiHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.*;
-import me.desht.modularrouters.proxy.CommonProxy;
+import me.desht.modularrouters.proxy.IProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraftforge.fml.common.Mod;
@@ -35,7 +35,7 @@ public class ModularRouters {
     static final String MODVERSION = "@VERSION@";
     static final String DEPENDENICES =
             "after:waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
-                    + "required-after:forge@[14.23.1.2555,);";
+                    + "required-after:forge@[14.23.4.2705,);";
 
     public static Logger logger;
     public static SimpleNetworkWrapper network;
@@ -51,11 +51,8 @@ public class ModularRouters {
     public static final int GUI_FILTER_INSTALLED = modGuiIndex++;
     public static final int GUI_SYNC_UPGRADE = modGuiIndex++;
 
-//    @CapabilityInject(IItemHandler.class)
-//    public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
-
-    @SidedProxy(serverSide = "me.desht.modularrouters.proxy.CommonProxy", clientSide = "me.desht.modularrouters.proxy.ClientProxy")
-    public static CommonProxy proxy;
+    @SidedProxy(serverSide = "me.desht.modularrouters.proxy.ServerProxy", clientSide = "me.desht.modularrouters.proxy.ClientProxy")
+    public static IProxy proxy;
 
     @Mod.Instance(MODID)
     public static ModularRouters instance;

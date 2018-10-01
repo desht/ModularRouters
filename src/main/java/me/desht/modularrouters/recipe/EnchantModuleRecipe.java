@@ -76,7 +76,7 @@ class EnchantModuleRecipe extends ShapelessOreRecipe {
             }
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     private EnchantmentData getValidEnchantment(ItemStack bookStack, ItemStack moduleStack) {

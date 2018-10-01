@@ -18,11 +18,9 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy implements IProxy {
     @Override
     public void preInit() {
-        super.preInit();
-
         MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
         MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
         MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
@@ -30,8 +28,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init() {
-        super.init();
-
         MinecraftForge.EVENT_BUS.register(RenderListener.class);
 
         registerBlockColors();
