@@ -23,7 +23,7 @@ public class CompiledPullerModule extends CompiledModule {
             if (handler != null) {
                 int taken = transferToRouter(handler, router);
                 if (taken > 0) {
-                    if (ConfigHandler.module.pullerParticles) {
+                    if (ConfigHandler.MODULE.pullerParticles.get()) {
                         playParticles(router, getTarget().pos);
                     }
                     return true;

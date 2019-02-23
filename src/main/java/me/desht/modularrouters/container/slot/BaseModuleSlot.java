@@ -41,14 +41,14 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
     @Override
     public void putStack(ItemStack stack) {
         // bit of a hack, but ensures bulk item filter NBT is properly init'd
-         if (ItemSmartFilter.isType(stack, ItemSmartFilter.FilterType.BULKITEM)) {
-             NBTTagCompound compound = stack.getTagCompound();
-             if (compound == null || !compound.hasKey(ModuleHelper.NBT_FILTER)) {
-                 compound = new NBTTagCompound();
-                 compound.setTag(ModuleHelper.NBT_FILTER, new NBTTagList());
-                 stack.setTagCompound(compound);
-             }
-         }
+        if (stack.getItem() instanceof ItemSmartFilter) {
+            NBTTagCompound compound = stack.getTag();
+            if (compound == null || !compound.contains(ModuleHelper.NBT_FILTER)) {
+                compound = new NBTTagCompound();
+                compound.put(ModuleHelper.NBT_FILTER, new NBTTagList());
+                stack.setTag(compound);
+            }
+        }
 
         // avoid saving the filter handler unnecessarily
         T handler = (T) getItemHandler();

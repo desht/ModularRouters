@@ -2,10 +2,21 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 
 import java.awt.*;
+import java.util.List;
 
-public class StackUpgrade extends Upgrade {
+public class StackUpgrade extends ItemUpgrade {
+    public StackUpgrade(Properties props) {
+        super(props);
+    }
+
+    @Override
+    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    }
+
     @Override
     public Object[] getExtraUsageParams() {
         TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();

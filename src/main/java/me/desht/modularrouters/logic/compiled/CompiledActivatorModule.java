@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -23,7 +24,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 import java.util.Comparator;
 import java.util.List;
@@ -52,10 +53,10 @@ public class CompiledActivatorModule extends CompiledModule {
     public CompiledActivatorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = stack.getTagCompound();
+        NBTTagCompound compound = stack.getTag();
         if (compound != null) {
-            actionType = ActionType.values()[compound.getInteger(NBT_ACTION_TYPE)];
-            lookDirection = LookDirection.values()[compound.getInteger(NBT_LOOK_DIRECTION)];
+            actionType = ActionType.values()[compound.getInt(NBT_ACTION_TYPE)];
+            lookDirection = LookDirection.values()[compound.getInt(NBT_LOOK_DIRECTION)];
             sneaking = compound.getBoolean(NBT_SNEAKING);
         } else {
             actionType = ActionType.ACTIVATE_BLOCK;
@@ -73,7 +74,7 @@ public class CompiledActivatorModule extends CompiledModule {
         if (fakePlayer == null) {
             return false;
         }
-        fakePlayer.setPosition(pos.getX() + 0.5, pos.getY() + 0.5 - fakePlayer.eyeHeight, pos.getZ() + 0.5);
+        fakePlayer.setPosition(pos.getX() + 0.5, pos.getY() + 0.5 - fakePlayer.getEyeHeight(), pos.getZ() + 0.5);
         fakePlayer.rotationPitch = getFacing().getYOffset() * -90;
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
         fakePlayer.setSneaking(sneaking);
@@ -145,7 +146,7 @@ public class CompiledActivatorModule extends CompiledModule {
             return false;
         }
 
-        EnumActionResult ret = stack.onItemUseFirst(fakePlayer, world, targetPos, EnumHand.MAIN_HAND, hitFace, hitX, hitY, hitZ);
+        EnumActionResult ret = stack.onItemUseFirst(new ItemUseContext(fakePlayer, stack, targetPos, hitFace, hitX, hitY, hitZ));
         if (ret != EnumActionResult.PASS) return false;
 
         if (stack.isEmpty() || fakePlayer.getCooldownTracker().hasCooldown(stack.getItem())) {
@@ -163,7 +164,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
         if (event.getUseItem() != Event.Result.DENY) {
             ItemStack copyBeforeUse = stack.copy();
-            result = stack.onItemUse(fakePlayer, world, targetPos, EnumHand.MAIN_HAND, hitFace, hitX, hitY, hitZ);
+            result = stack.onItemUse(new ItemUseContext(fakePlayer, stack, targetPos, hitFace, hitX, hitY, hitZ));
             if (result == EnumActionResult.PASS) {
                 ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(world, fakePlayer, EnumHand.MAIN_HAND);
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, rightClickResult.getResult());
@@ -192,7 +193,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
         if (event.getUseBlock() != Event.Result.DENY) {
             IBlockState iblockstate = world.getBlockState(targetPos);
-            if (iblockstate.getBlock().onBlockActivated(world, targetPos, iblockstate, fakePlayer, EnumHand.MAIN_HAND, hitFace, hitX, hitY, hitZ)) {
+            if (iblockstate.onBlockActivated(world, targetPos, fakePlayer, EnumHand.MAIN_HAND, hitFace, hitX, hitY, hitZ)) {
                 router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;
             }

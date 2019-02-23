@@ -9,7 +9,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiContainerEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,8 +48,8 @@ public class MouseOverHelp {
         if (active) {
             HelpRegion region = getRegionAt(mouseX, mouseY);
             if (region != null) {
-                showPopupBox(screen, Minecraft.getMinecraft().fontRenderer, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
-                showPopupBox(screen, Minecraft.getMinecraft().fontRenderer, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
+                showPopupBox(screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
+                showPopupBox(screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
             }
         }
     }
@@ -85,7 +85,7 @@ public class MouseOverHelp {
         int x2 = x1 + rect2.width;
         int y2 = y1 + rect2.height;
 
-        GlStateManager.translate(0, 0, 300);
+        GlStateManager.translatef(0f, 0f, 300f);
         Gui.drawRect(x1, y1, x2, y2, bgColor);
         Gui.drawRect(x1, y1, x2, y1 + 1, borderColor);
         Gui.drawRect(x1, y2, x2, y2 + 1, borderColor);
@@ -99,7 +99,7 @@ public class MouseOverHelp {
             }
         }
 
-        GlStateManager.translate(0, 0, -300);
+        GlStateManager.translatef(0f, 0f, -300f);
     }
 
     public static class HelpRegion {

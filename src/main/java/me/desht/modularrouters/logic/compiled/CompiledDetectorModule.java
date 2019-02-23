@@ -41,11 +41,11 @@ public class CompiledDetectorModule extends CompiledModule {
 
     private NBTTagCompound setupNBT(ItemStack stack) {
         NBTTagCompound compound = ModuleHelper.validateNBT(stack);
-        if (!compound.hasKey(NBT_SIGNAL_LEVEL)) {
-            compound.setInteger(NBT_SIGNAL_LEVEL, 15);
+        if (!compound.contains(NBT_SIGNAL_LEVEL)) {
+            compound.putInt(NBT_SIGNAL_LEVEL, 15);
         }
-        if (!compound.hasKey(NBT_STRONG_SIGNAL)) {
-            compound.setBoolean(NBT_STRONG_SIGNAL, false);
+        if (!compound.contains(NBT_STRONG_SIGNAL)) {
+            compound.putBoolean(NBT_STRONG_SIGNAL, false);
         }
         return compound;
     }

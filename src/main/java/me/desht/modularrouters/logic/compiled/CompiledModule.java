@@ -1,17 +1,20 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.augment.ItemAugment;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
 import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.BlockUtil;
-import me.desht.modularrouters.util.CountedItemStacks;
+import me.desht.modularrouters.util.HashableItemStackWrapper;
+import me.desht.modularrouters.util.HashableItemStackWrapper.CountedItemStacks;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -23,8 +26,8 @@ import java.util.List;
 
 public abstract class CompiledModule {
     private final Filter filter;
-    private final Module module;
-    private final Module.RelativeDirection direction;
+    private final ItemModule module;
+    private final RelativeDirection direction;
     private final List<ModuleTarget> targets;
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
@@ -49,7 +52,7 @@ public abstract class CompiledModule {
             throw new IllegalArgumentException("expected module router module, got " + stack);
         }
 
-        module = ItemModule.getModule(stack);
+        module = (ItemModule) stack.getItem();
         augmentCounter = new AugmentCounter(stack);
         direction = ModuleHelper.getDirectionFromNBT(stack);
         range = module instanceof IRangedModule ?
@@ -61,7 +64,7 @@ public abstract class CompiledModule {
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
-        routerFacing = router == null ? null : router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
+        routerFacing = router == null ? null : router.getAbsoluteFacing(RelativeDirection.FRONT);
     }
 
     /**
@@ -73,7 +76,7 @@ public abstract class CompiledModule {
      */
     public abstract boolean execute(TileEntityItemRouter router);
 
-    public Module getModule() {
+    public ItemModule getModule() {
         return module;
     }
 
@@ -81,7 +84,7 @@ public abstract class CompiledModule {
         return filter;
     }
 
-    public Module.RelativeDirection getDirection() {
+    public RelativeDirection getDirection() {
         return direction;
     }
 
@@ -110,10 +113,10 @@ public abstract class CompiledModule {
     }
 
     int getRegulationAmount() {
-        return augmentCounter.getAugmentCount(ItemAugment.AugmentType.REGULATOR) > 0 ? regulationAmount : 0;
+        return augmentCounter.getAugmentCount(ObjectRegistry.REGULATOR_AUGMENT) > 0 ? regulationAmount : 0;
     }
 
-    public int getAugmentCount(ItemAugment.AugmentType augmentType) {
+    public int getAugmentCount(Item augmentType) {
         return augmentCounter.getAugmentCount(augmentType);
     }
 
@@ -170,18 +173,18 @@ public abstract class CompiledModule {
      * @return a router target object
      */
     protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
-        if (router == null || (module.isDirectional() && direction == Module.RelativeDirection.NONE)) {
+        if (router == null || (module.isDirectional() && direction == RelativeDirection.NONE)) {
             return null;
         }
         EnumFacing facing = router.getAbsoluteFacing(direction);
         BlockPos pos = router.getPos().offset(facing);
         String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
-        int dim = router.getWorld().provider.getDimension();
+        int dim = MiscUtil.getDimensionForWorld(router.getWorld());
         return Collections.singletonList(new ModuleTarget(dim, router.getPos().offset(facing), facing.getOpposite(), blockName));
     }
 
     int getItemsPerTick(TileEntityItemRouter router) {
-        int n = augmentCounter.getAugmentCount(ItemAugment.AugmentType.STACK);
+        int n = augmentCounter.getAugmentCount(ObjectRegistry.STACK_AUGMENT);
         return n > 0 ? Math.min(1 << n, 64) : router.getItemsPerTick();
     }
 
@@ -194,10 +197,7 @@ public abstract class CompiledModule {
      * @return number of items actually transferred
      */
     int transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
-        CountedItemStacks count = null;
-        if (getRegulationAmount() > 0) {
-            count = new CountedItemStacks(handler);
-        }
+        CountedItemStacks count = getRegulationAmount() > 0 ? CountedItemStacks.fromItemHandler(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, getItemsPerTick(router), count);
         if (wanted.isEmpty()) {
@@ -206,7 +206,8 @@ public abstract class CompiledModule {
 
         if (count != null) {
             // item regulation in force
-            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
+            HashableItemStackWrapper wrapper = new HashableItemStackWrapper(wanted);
+            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wrapper, 0) - getRegulationAmount()));
             if (wanted.isEmpty()) {
                 return 0;
             }
@@ -250,7 +251,8 @@ public abstract class CompiledModule {
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (!stack.isEmpty() && getFilter().test(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
+                if (!stack.isEmpty() && getFilter().test(stack)
+                        && (count == null || count.get(new HashableItemStackWrapper(stack)) > getRegulationAmount())) {
                     setLastMatchPos(pos);
                     result = stack.copy();
                     result.setCount(nToTake);
@@ -291,7 +293,7 @@ public abstract class CompiledModule {
     }
 
     int getRangeModifier() {
-        return getAugmentCount(ItemAugment.AugmentType.RANGE_UP) - getAugmentCount(ItemAugment.AugmentType.RANGE_DOWN);
+        return getAugmentCount(ObjectRegistry.RANGE_UP_AUGMENT) - getAugmentCount(ObjectRegistry.RANGE_DOWN_AUGMENT);
     }
 
     public EnumFacing getRouterFacing() {

@@ -13,6 +13,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class SenderModule3 extends TargetedModule implements IPositionProvider {
+    public SenderModule3(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledSenderModule3(router, stack);

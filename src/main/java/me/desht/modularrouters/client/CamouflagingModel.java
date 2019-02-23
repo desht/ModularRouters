@@ -5,22 +5,22 @@ import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * With credit to Botania for showing me how this can be made to work with connected textures (trick being
@@ -36,13 +36,13 @@ public abstract class CamouflagingModel implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand) {
         if (state == null || !(state.getBlock() instanceof BlockCamo)) {
             return baseModel.getQuads(state, side, rand);
         }
         IExtendedBlockState ext = (IExtendedBlockState) state;
         IBlockState camoState = ext.getValue(BlockCamo.CAMOUFLAGE_STATE);
-        IBlockAccess blockAccess = ext.getValue(BlockCamo.BLOCK_ACCESS);
+        IBlockReader blockAccess = ext.getValue(BlockCamo.BLOCK_ACCESS);
         BlockPos pos = ext.getValue(BlockCamo.BLOCK_POS);
         if (blockAccess == null || pos == null) {
             return baseModel.getQuads(state, side, rand);
@@ -56,13 +56,13 @@ public abstract class CamouflagingModel implements IBakedModel {
             // No camo
             return baseModel.getQuads(state, side, rand);
         } else if (camoState != null && camoState.getBlock().canRenderInLayer(camoState, layer)) {
-            IBlockState actual = camoState.getBlock().getActualState(camoState, new FakeBlockAccess(blockAccess), pos);
+//            IBlockState actual = camoState.getBlock().getActualState(camoState, new FakeBlockAccess(blockAccess), pos);
 
             // Steal camo's model
-            IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(actual);
+            IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(camoState);
 
             // Their model can be smart too
-            IBlockState extended = camoState.getBlock().getExtendedState(actual, new FakeBlockAccess(blockAccess), pos);
+            IBlockState extended = camoState.getBlock().getExtendedState(camoState, new FakeBlockAccess(blockAccess), pos);
             return model.getQuads(extended, side, rand);
         }
 
@@ -99,10 +99,10 @@ public abstract class CamouflagingModel implements IBakedModel {
         return baseModel.getOverrides();
     }
 
-    private static class FakeBlockAccess implements IBlockAccess {
-        private final IBlockAccess compose;
+    private static class FakeBlockAccess implements IBlockReader {
+        private final IBlockReader compose;
 
-        private FakeBlockAccess(IBlockAccess compose) {
+        private FakeBlockAccess(IBlockReader compose) {
             this.compose = compose;
         }
 
@@ -112,10 +112,10 @@ public abstract class CamouflagingModel implements IBakedModel {
             return compose.getTileEntity(pos);
         }
 
-        @Override
-        public int getCombinedLight(@Nonnull BlockPos pos, int lightValue) {
-            return 15 << 20 | 15 << 4;
-        }
+//        @Override
+//        public int getCombinedLight(@Nonnull BlockPos pos, int lightValue) {
+//            return 15 << 20 | 15 << 4;
+//        }
 
         @Nonnull
         @Override
@@ -131,30 +131,37 @@ public abstract class CamouflagingModel implements IBakedModel {
         }
 
         @Override
-        public boolean isAirBlock(@Nonnull BlockPos pos) {
-            return compose.isAirBlock(pos);
+        public IFluidState getFluidState(BlockPos blockPos) {
+            IFluidState state = compose.getFluidState(blockPos);
+            // todo test for 1.13
+            return state;
         }
 
-        @Nonnull
-        @Override
-        public Biome getBiome(@Nonnull BlockPos pos) {
-            return compose.getBiome(pos);
-        }
-
-        @Override
-        public int getStrongPower(@Nonnull BlockPos pos, @Nonnull EnumFacing direction) {
-            return compose.getStrongPower(pos, direction);
-        }
-
-        @Override
-        public WorldType getWorldType() {
-            return compose.getWorldType();
-        }
-
-        @Override
-        public boolean isSideSolid(@Nonnull BlockPos pos, @Nonnull EnumFacing side, boolean _default) {
-            return compose.isSideSolid(pos, side, _default);
-        }
+//        @Override
+//        public boolean isAirBlock(@Nonnull BlockPos pos) {
+//            return compose.isAirBlock(pos);
+//        }
+//
+//        @Nonnull
+//        @Override
+//        public Biome getBiome(@Nonnull BlockPos pos) {
+//            return compose.getBiome(pos);
+//        }
+//
+//        @Override
+//        public int getStrongPower(@Nonnull BlockPos pos, @Nonnull EnumFacing direction) {
+//            return compose.getStrongPower(pos, direction);
+//        }
+//
+//        @Override
+//        public WorldType getWorldType() {
+//            return compose.getWorldType();
+//        }
+//
+//        @Override
+//        public boolean isSideSolid(@Nonnull BlockPos pos, @Nonnull EnumFacing side, boolean _default) {
+//            return compose.isSideSolid(pos, side, _default);
+//        }
     }
 
     public static class RouterModel extends CamouflagingModel {

@@ -40,7 +40,7 @@ public class ContainerItemRouter extends Container {
 
         // player's hotbar
         for (int x = 0; x < 9; x++) {
-            addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+            addSlot(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
         }
         // player's main inventory
         for (int y = 0; y < 3; y++) {
@@ -48,20 +48,20 @@ public class ContainerItemRouter extends Container {
                 int slotNumber = 9 + y * 9 + x;
                 int xpos = PLAYER_INVENTORY_XPOS + x * SLOT_X_SPACING;
                 int ypos = PLAYER_INVENTORY_YPOS + y * SLOT_Y_SPACING;
-                addSlotToContainer(new Slot(invPlayer, slotNumber, xpos, ypos));
+                addSlot(new Slot(invPlayer, slotNumber, xpos, ypos));
             }
         }
 
         // item router buffer
-        addSlotToContainer(new BufferSlot(router, BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS));
+        addSlot(new BufferSlot(router, BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS));
 
         // item router modules
         for (int slot = 0; slot < router.getModuleSlotCount(); slot++) {
-            addSlotToContainer(new ValidatingSlot.Module(router, slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
+            addSlot(new ValidatingSlot.Module(router, slot, MODULE_XPOS + slot * SLOT_X_SPACING, MODULE_YPOS));
         }
         // item router upgrades
         for (int slot = 0; slot < router.getUpgradeSlotCount(); slot++) {
-            addSlotToContainer(new ValidatingSlot.Upgrade(router, slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
+            addSlot(new ValidatingSlot.Upgrade(router, slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
     }
 

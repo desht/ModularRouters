@@ -5,6 +5,7 @@ import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemBlock;
@@ -17,21 +18,17 @@ import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 public class ContainerExtruder2Module extends ContainerModule {
     private static final int TEMPLATE_SLOTS = 9;
 
-    public ContainerExtruder2Module(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
-        this(player, hand, moduleStack, null);
-    }
-
-    public ContainerExtruder2Module(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
-        super(player, hand, moduleStack, router);
+    public ContainerExtruder2Module(InventoryPlayer inv, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
+        super(inv, hand, moduleStack, router);
 
         TemplateHandler handler = new TemplateHandler(moduleStack);
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {
             int x = 129 + SLOT_X_SPACING * (i % 3);
             int y = 17 + SLOT_X_SPACING * (i / 3);
             TemplateSlot slot = router == null ?
-                    new TemplateSlot(handler, player, hand, i, x, y) :
+                    new TemplateSlot(handler, inv.player, hand, i, x, y) :
                     new TemplateSlot(handler, router, i, x, y);
-            addSlotToContainer(slot);
+            addSlot(slot);
         }
     }
 
@@ -70,7 +67,7 @@ public class ContainerExtruder2Module extends ContainerModule {
         return ItemStack.EMPTY;
     }
 
-    public static boolean isItemOKForTemplate(ItemStack stack) {
+    private static boolean isItemOKForTemplate(ItemStack stack) {
         if (stack.isEmpty()) {
             return true;  //  null is ok, clears the slot
         }
@@ -82,11 +79,11 @@ public class ContainerExtruder2Module extends ContainerModule {
     }
 
     private static class TemplateSlot extends BaseModuleSlot<TemplateHandler> {
-        public TemplateSlot(TemplateHandler itemHandler, TileEntityItemRouter router, int index, int xPosition, int yPosition) {
+        TemplateSlot(TemplateHandler itemHandler, TileEntityItemRouter router, int index, int xPosition, int yPosition) {
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        public TemplateSlot(TemplateHandler itemHandler, EntityPlayer player, EnumHand hand, int index, int xPosition, int yPosition) {
+        TemplateSlot(TemplateHandler itemHandler, EntityPlayer player, EnumHand hand, int index, int xPosition, int yPosition) {
             super(itemHandler, player, hand, index, xPosition, yPosition);
         }
     }

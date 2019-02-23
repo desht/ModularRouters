@@ -4,8 +4,8 @@ import me.desht.modularrouters.block.BlockTemplateFrame;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class MiscEventHandler {

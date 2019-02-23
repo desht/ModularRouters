@@ -1,12 +1,7 @@
 package me.desht.modularrouters.integration;
 
-import me.desht.modularrouters.integration.redstoneflux.RFIntegration;
-import me.desht.modularrouters.integration.tesla.TeslaIntegration;
-import me.desht.modularrouters.integration.top.TOPCompatibility;
-import me.desht.modularrouters.integration.waila.WailaIntegration;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.ModList;
 
 public class IntegrationHandler {
     public static Fluid fluidXpJuice = null;
@@ -14,35 +9,24 @@ public class IntegrationHandler {
     public static void registerAll() {
         IntegrationHandler.registerWaila();
         IntegrationHandler.registerTOP();
-        IntegrationHandler.registerTesla();
-        IntegrationHandler.registerRedstoneFlux();
     }
 
     public static void registerTOP() {
-        if (Loader.isModLoaded("theoneprobe")) {
-            TOPCompatibility.register();
+        if (ModList.get().isLoaded("theoneprobe")) {
+            // todo 1.13
+//            TOPCompatibility.register();
         }
     }
 
     public static void registerWaila() {
-        if (Loader.isModLoaded("waila")) {
-            WailaIntegration.setup();
-        }
-    }
-
-    public static void registerTesla() {
-        if (Loader.isModLoaded("tesla")) {
-            TeslaIntegration.setup();
-        }
-    }
-
-    public static void registerRedstoneFlux() {
-        if (Loader.isModLoaded("redstoneflux")) {
-            RFIntegration.setup();
+        if (ModList.get().isLoaded("waila")) {
+            // todo 1.13
+//            WailaIntegration.setup();
         }
     }
 
     public static void checkForXpJuice() {
-        fluidXpJuice = FluidRegistry.getFluid("xpjuice");
+        // todo 1.13
+//        fluidXpJuice = FluidRegistry.getFluid("xpjuice");
     }
 }

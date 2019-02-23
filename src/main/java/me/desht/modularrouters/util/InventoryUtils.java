@@ -3,14 +3,12 @@ package me.desht.modularrouters.util;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.VanillaDoubleChestItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -33,9 +31,9 @@ public class InventoryUtils {
                 float offsetZ = random.nextFloat() * 0.8f + 0.1f;
                 while (!itemStack.isEmpty()) {
                     int stackSize = Math.min(itemStack.getCount(), random.nextInt(21) + 10);
-                    EntityItem entityitem = new EntityItem(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize, itemStack.getMetadata()));
-                    if (itemStack.hasTagCompound()) {
-                        entityitem.getItem().setTagCompound(itemStack.getTagCompound().copy());
+                    EntityItem entityitem = new EntityItem(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize));
+                    if (itemStack.hasTag()) {
+                        entityitem.getItem().setTag(itemStack.getTag().copy());
                     }
                     itemStack.shrink(stackSize);
 
@@ -63,19 +61,22 @@ public class InventoryUtils {
             return null;
         }
 
-        if (te instanceof TileEntityChest) {
-            IItemHandler doubleChest = VanillaDoubleChestItemHandler.get(((TileEntityChest) te));
-            if (doubleChest != VanillaDoubleChestItemHandler.NO_ADJACENT_CHESTS_INSTANCE)
-                return doubleChest;
-        }
+        // todo 1.13
+//        if (te instanceof TileEntityChest) {
+//            IItemHandler doubleChest = VanillaDoubleChestItemHandler.get(((TileEntityChest) te));
+//            if (doubleChest != VanillaDoubleChestItemHandler.NO_ADJACENT_CHESTS_INSTANCE)
+//                return doubleChest;
+//        }
 
-        IItemHandler ret = te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) ?
-                te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) : null;
+        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side).orElseGet(null);
 
-        if (ret == null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
-            ret = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+//        IItemHandler ret = te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) ?
+//                te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) : null;
+//
+//        if (ret == null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
+//            ret = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
-        return ret;
+//        return ret;
     }
 
     /**

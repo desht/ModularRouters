@@ -3,8 +3,7 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,15 +20,15 @@ public class TextFieldManager {
         this.parent = parent;
     }
 
-    public void drawTextFields() {
+    public void drawTextFields(int mouseX, int mouseY, float partialTicks) {
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
-        textFields.forEach(TextFieldWidget::drawTextBox);
+        textFields.forEach(tf -> tf.drawTextField(mouseX, mouseY, partialTicks));
     }
 
-    public void updateTextFields() {
+    public void tick() {
         if (focusedField >= 0) {
-            textFields.get(focusedField).updateCursorCounter();
+            textFields.get(focusedField).tick();
         }
     }
 
@@ -40,25 +39,26 @@ public class TextFieldManager {
      * @throws IOException
      */
     public boolean handleMouseInput() throws IOException {
-        int wheel = Mouse.getEventDWheel();
-        if (wheel == 0) {
-            return false;
-        } else if (focusedField >= 0) {
-            textFields.get(focusedField).onMouseWheel(wheel < 0 ? -1 : 1);
-            return true;
-        } else {
-            // check if mouse is over an unfocused field, if so focus on it
-            int mouseX = Mouse.getEventX() * parent.width / parent.mc.displayWidth;
-            int mouseY = parent.height - Mouse.getEventY() * parent.height / parent.mc.displayHeight - 1;
-            for (int i = 0; i < textFields.size(); i++) {
-                TextFieldWidget field = textFields.get(i);
-                if (mouseX >= field.x && mouseX < field.x + field.width && mouseY >= field.y && mouseY < field.y + field.height) {
-                    focus(i);
-                    field.onMouseWheel(wheel < 0 ? -1 : 1);
-                    return true;
-                }
-            }
-        }
+        // todo 1.13
+//        int wheel = Mouse.getEventDWheel();
+//        if (wheel == 0) {
+//            return false;
+//        } else if (focusedField >= 0) {
+//            textFields.get(focusedField).onMouseWheel(wheel < 0 ? -1 : 1);
+//            return true;
+//        } else {
+//            // check if mouse is over an unfocused field, if so focus on it
+//            int mouseX = Mouse.getEventX() * parent.width / parent.mc.displayWidth;
+//            int mouseY = parent.height - Mouse.getEventY() * parent.height / parent.mc.displayHeight - 1;
+//            for (int i = 0; i < textFields.size(); i++) {
+//                TextFieldWidget field = textFields.get(i);
+//                if (mouseX >= field.x && mouseX < field.x + field.width && mouseY >= field.y && mouseY < field.y + field.height) {
+//                    focus(i);
+//                    field.onMouseWheel(wheel < 0 ? -1 : 1);
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
 
@@ -69,15 +69,16 @@ public class TextFieldManager {
     }
 
     public boolean keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == Keyboard.KEY_TAB) {
+        if (keyCode == GLFW.GLFW_KEY_TAB) {
             if (GuiScreen.isShiftKeyDown()) {
                 focusPrev();
             } else {
                 focusNext();
             }
         } else if (isFocused()) {
-            textFields.get(focusedField).textboxKeyTyped(typedChar, keyCode);
-            if (keyCode == Keyboard.KEY_E) return true;  // avoid closing window while text field focused
+            textFields.get(focusedField).charTyped(typedChar, keyCode);
+            // avoid closing window while text field focused
+            return keyCode == GLFW.GLFW_KEY_E;
         }
         return false;
     }

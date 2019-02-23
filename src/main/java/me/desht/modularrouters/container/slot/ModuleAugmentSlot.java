@@ -2,7 +2,6 @@ package me.desht.modularrouters.container.slot;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.AugmentHandler;
-import me.desht.modularrouters.item.augment.Augment;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,9 +49,8 @@ public class ModuleAugmentSlot extends SlotItemHandler {
     private boolean isValidAugment(ItemStack stack) {
         ItemStack holderStack = ((AugmentHandler)getItemHandler()).getHolderStack();
         if (!(holderStack.getItem() instanceof ItemModule)) return false;
-        Augment augment = ItemAugment.getAugment(stack);
-        ItemModule.ModuleType moduleType = ItemModule.ModuleType.values()[holderStack.getMetadata()];
-        return augment != null && moduleType != null && augment.isCompatible(moduleType);
+        ItemAugment augment = (ItemAugment) stack.getItem();
+        return augment.isCompatible((ItemModule)holderStack.getItem());
     }
 }
 

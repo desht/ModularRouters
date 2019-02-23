@@ -1,58 +1,50 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.client.gui.widgets.IResyncableGui;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
+import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Keyboard;
-
-import java.io.IOException;
+import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncableGui {
-    protected final BlockPos routerPos;
-    protected final Integer moduleSlotIndex;  // slot of the module in the router
-    protected final Integer filterSlotIndex;  // slot of the filter item in the module
+    protected final TileEntityItemRouter router;
     protected final EnumHand hand;
     protected final String title;
 
-    GuiFilterScreen(ItemStack filterStack, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
-        this.routerPos = routerPos;
-        this.moduleSlotIndex = moduleSlotIndex;
-        this.filterSlotIndex = filterSlotIndex;
+    GuiFilterScreen(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
+        this.router = router;
         this.hand = hand;
-        this.title = filterStack.getDisplayName();
+        this.title = filterStack.getDisplayName().getString();
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == Keyboard.KEY_ESCAPE || (keyCode == Keyboard.KEY_E) && (!hasTextFieldManager() || !getTextFieldManager().isFocused())) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE || (keyCode == GLFW.GLFW_KEY_E) && (!hasTextFieldManager() || !getTextFieldManager().isFocused())) {
             // Intercept ESC/E and immediately reopen the previous GUI, if any
-            if (closeGUI()) return;
+            return closeGUI();
         }
-        super.keyTyped(typedChar, keyCode);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     boolean closeGUI() {
-        if (routerPos != null) {
+        SlotTracker.getInstance(mc.player).clearFilterSlot();
+        if (router != null) {
             // need to re-open module GUI for module in router slot <moduleSlotIndex>
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(mc.world, routerPos);
-            if (router != null) {
-                router.playerConfiguringModule(mc.player, moduleSlotIndex);
-                ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(routerPos, moduleSlotIndex));
-                return true;
-            }
+//          router.playerConfiguringModule(mc.player, moduleSlotIndex);
+            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), SlotTracker.getInstance(mc.player).getModuleSlot()));
+            return true;
         } else if (hand != null) {
             ItemStack stack = mc.player.getHeldItem(hand);
-            if (ItemModule.getModule(stack) != null) {
+            if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
-                ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInHand(hand));
+                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(hand));
                 return true;
             }
         }
@@ -61,25 +53,25 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
 
     void sendAddStringMessage(String key, String s) {
         NBTTagCompound ext = new NBTTagCompound();
-        ext.setString(key, s);
-        if (routerPos != null) {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.ADD_STRING, routerPos, moduleSlotIndex, filterSlotIndex, ext));
+        ext.putString(key, s);
+        if (router != null) {
+            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.ADD_STRING, router.getPos(), ext));
         } else {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.ADD_STRING, hand, filterSlotIndex, ext));
+            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.ADD_STRING, hand, ext));
         }
     }
 
     void sendRemovePosMessage(int pos) {
         NBTTagCompound ext = new NBTTagCompound();
-        ext.setInteger("Pos", pos);
-        if (routerPos != null) {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.REMOVE_AT, routerPos, moduleSlotIndex, filterSlotIndex, ext));
+        ext.putInt("Pos", pos);
+        if (router != null) {
+            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.REMOVE_AT, router.getPos(), ext));
         } else {
-            ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.REMOVE_AT, hand, filterSlotIndex, ext));
+            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                    FilterSettingsMessage.Operation.REMOVE_AT, hand, ext));
         }
     }
 }

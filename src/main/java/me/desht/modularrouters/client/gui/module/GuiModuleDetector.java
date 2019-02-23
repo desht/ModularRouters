@@ -12,8 +12,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 
 public class GuiModuleDetector extends GuiModule {
     private static final int STRENGTH_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
@@ -25,12 +23,8 @@ public class GuiModuleDetector extends GuiModule {
     private int signalStrength;
     private boolean isStrong;
 
-    public GuiModuleDetector(ContainerModule containerItem, EnumHand hand) {
-        this(containerItem, null, -1, hand);
-    }
-
-    public GuiModuleDetector(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
-        super(containerItem, routerPos, slotIndex, hand);
+    public GuiModuleDetector(ContainerModule container) {
+        super(container);
 
         CompiledDetectorModule settings = new CompiledDetectorModule(null, moduleItemStack);
         signalStrength = settings.getSignalLevel();
@@ -45,16 +39,23 @@ public class GuiModuleDetector extends GuiModule {
 
         IntegerTextField intField = new IntegerTextField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRenderer, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
         intField.setValue(signalStrength);
-        intField.setGuiResponder(this);
+        intField.setTextAcceptHandler((id, s) -> signalStrength = intField.getValue());
         intField.setIncr(1, 4);
         intField.useGuiTextBackground();
 
         manager.focus(0);
 
         String label = I18n.format("itemText.misc.strongSignal." + isStrong);
-        buttonList.add(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label));
+        addButton(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                isStrong = !isStrong;
+                displayString = I18n.format("itemText.misc.strongSignal." + isStrong);
+                sendModuleSettingsToServer();
+            }
+        });
 
-        buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
+        addButton(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 129, guiTop + 14, guiLeft + 172, guiTop + 31, "guiText.popup.detector.signalLevel");
         getMouseOverHelp().addHelpRegion(guiLeft + 135, guiTop + 31, guiLeft + 180, guiTop + 54, "guiText.popup.detector.weakStrong");
@@ -68,31 +69,10 @@ public class GuiModuleDetector extends GuiModule {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        if (button.id == STRENGTH_BUTTON_ID) {
-            isStrong = !isStrong;
-            button.displayString = I18n.format("itemText.misc.strongSignal." + isStrong);
-            sendModuleSettingsToServer();
-        } else {
-            super.actionPerformed(button);
-        }
-    }
-
-    @Override
-    public void setEntryValue(int id, String value) {
-        if (id == SIGNAL_LEVEL_TEXTFIELD_ID) {
-            signalStrength = value.isEmpty() ? 0 : Integer.parseInt(value);
-            sendModuleSettingsDelayed(5);
-        } else {
-            super.setEntryValue(id, value);
-        }
-    }
-
-    @Override
     protected NBTTagCompound buildMessageData() {
         NBTTagCompound compound = super.buildMessageData();
-        compound.setByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) signalStrength);
-        compound.setBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
+        compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) signalStrength);
+        compound.putBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
         return compound;
     }
 

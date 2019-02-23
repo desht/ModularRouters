@@ -8,9 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
@@ -44,15 +44,15 @@ public class CompiledPlayerModule extends CompiledModule {
     public CompiledPlayerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = stack.getTagCompound();
+        NBTTagCompound compound = stack.getTag();
         if (compound != null) {
             Pair<String,UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
             playerName = owner.getLeft();
             playerId = owner.getRight();
-            operation = Operation.values()[compound.getInteger(NBT_OPERATION)];
-            section = Section.values()[compound.getInteger(NBT_SECTION)];
+            operation = Operation.values()[compound.getInt(NBT_OPERATION)];
+            section = Section.values()[compound.getInt(NBT_SECTION)];
             if (router != null && !router.getWorld().isRemote) {
-                EntityPlayer player = playerId == null ? null : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(playerId);
+                EntityPlayer player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerId);
                 playerRef = new WeakReference<>(player);
             } else {
                 playerRef = new WeakReference<>(null);
@@ -114,14 +114,14 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.player.getUniqueID().equals(playerId)) {
-            playerRef = new WeakReference<>(event.player);
+        if (event.getPlayer().getUniqueID().equals(playerId)) {
+            playerRef = new WeakReference<>(event.getPlayer());
         }
     }
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.player.getUniqueID().equals(playerId)) {
+        if (event.getPlayer().getUniqueID().equals(playerId)) {
             playerRef = new WeakReference<>(null);
         }
     }

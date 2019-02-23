@@ -2,7 +2,7 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 public class FloatTextField extends TextFieldWidget {
     private final float min;
@@ -38,14 +38,14 @@ public class FloatTextField extends TextFieldWidget {
     }
 
     @Override
-    public boolean textboxKeyTyped(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         switch (keyCode) {
-            case Keyboard.KEY_UP:
+            case GLFW.GLFW_KEY_UP:
                 return adjustField(incr);
-            case Keyboard.KEY_DOWN:
+            case GLFW.GLFW_KEY_DOWN:
                 return adjustField(-incr);
             default:
-                return super.textboxKeyTyped(typedChar, keyCode);
+                return super.charTyped(typedChar, keyCode);
         }
     }
 

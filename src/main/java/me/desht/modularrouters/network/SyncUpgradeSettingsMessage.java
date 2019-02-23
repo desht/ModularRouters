@@ -1,50 +1,45 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IThreadListener;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class SyncUpgradeSettingsMessage implements IMessage {
+import java.util.function.Supplier;
+
+public class SyncUpgradeSettingsMessage {
     private int tunedValue;
+    private EnumHand hand; // TODO offhand not supported yet
 
     public SyncUpgradeSettingsMessage() {
     }
 
     public SyncUpgradeSettingsMessage(int tunedValue) {
         this.tunedValue = tunedValue;
+        this.hand = EnumHand.MAIN_HAND;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    public SyncUpgradeSettingsMessage(ByteBuf buf) {
         tunedValue = buf.readInt();
+        hand = buf.readBoolean() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(tunedValue);
+        buf.writeBoolean(hand == EnumHand.MAIN_HAND);
     }
 
-    public static class Handler implements IMessageHandler<SyncUpgradeSettingsMessage, IMessage> {
-        @Override
-        public IMessage onMessage(SyncUpgradeSettingsMessage message, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
-            mainThread.addScheduledTask(() -> {
-                // TODO only works for player main hand right now
-                EntityPlayer player = ctx.getServerHandler().player;
-                ItemStack held = player.getHeldItem(EnumHand.MAIN_HAND);
-                if (ItemUpgrade.isType(held, ItemUpgrade.UpgradeType.SYNC)) {
-                    SyncUpgrade.setTunedValue(held, message.tunedValue);
-                }
-            });
-            return null;
-        }
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            EntityPlayer player = ctx.get().getSender();
+            ItemStack held = player.getHeldItem(hand);
+            if (held.getItem() instanceof SyncUpgrade) {
+                SyncUpgrade.setTunedValue(held, tunedValue);
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
+
 }

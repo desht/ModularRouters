@@ -1,10 +1,8 @@
 package me.desht.modularrouters.container.handler;
 
-import me.desht.modularrouters.item.augment.Augment;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -13,13 +11,10 @@ public class AugmentHandler extends ItemStackHandler {
     private final ItemStack holderStack;
 
     public AugmentHandler(ItemStack holderStack) {
-        super(Augment.SLOTS);
+        super(ItemAugment.SLOTS);
 
         this.holderStack = holderStack;
-        if (!holderStack.hasTagCompound()) {
-            holderStack.setTagCompound(new NBTTagCompound());
-        }
-        deserializeNBT(holderStack.getTagCompound().getCompoundTag(ModuleHelper.NBT_AUGMENTS));
+        deserializeNBT(holderStack.getOrCreateTag().getCompound(ModuleHelper.NBT_AUGMENTS));
     }
 
     public ItemStack getHolderStack() {
@@ -45,6 +40,6 @@ public class AugmentHandler extends ItemStackHandler {
     }
 
     public void save() {
-        holderStack.getTagCompound().setTag(ModuleHelper.NBT_AUGMENTS, serializeNBT());
+        holderStack.getTag().put(ModuleHelper.NBT_AUGMENTS, serializeNBT());
     }
 }

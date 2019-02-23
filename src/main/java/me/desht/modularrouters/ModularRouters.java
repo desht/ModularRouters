@@ -1,34 +1,36 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
+import me.desht.modularrouters.client.AreaShowManager;
+import me.desht.modularrouters.client.Keybindings;
+import me.desht.modularrouters.client.ModelBakeEventHandler;
+import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.client.gui.GuiHandler;
+import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
-import me.desht.modularrouters.network.*;
+import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.proxy.ClientProxy;
 import me.desht.modularrouters.proxy.IProxy;
+import me.desht.modularrouters.proxy.ServerProxy;
 import me.desht.modularrouters.recipe.ModRecipes;
 import me.desht.modularrouters.util.ModNameCache;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
-import static me.desht.modularrouters.util.MiscUtil.RL;
-
-@Mod(modid = ModularRouters.MODID, version = ModularRouters.MODVERSION, name = ModularRouters.MODNAME,
-        dependencies = ModularRouters.DEPENDENICES,
-        acceptedMinecraftVersions = "1.12",
-        updateJSON = "https://raw.github.com/desht/ModularRouters/MC1.12-master/release_info.json"
-)
+@Mod("modularrouters")
 public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
@@ -37,8 +39,8 @@ public class ModularRouters {
             "after:waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
                     + "required-after:forge@[14.23.4.2705,);";
 
-    public static Logger logger;
-    public static SimpleNetworkWrapper network;
+    public static final Logger LOGGER = LogManager.getLogger();
+
     public static Random random = new Random();
 
     private static int modGuiIndex = 0; // track GUI IDs
@@ -51,48 +53,42 @@ public class ModularRouters {
     public static final int GUI_FILTER_INSTALLED = modGuiIndex++;
     public static final int GUI_SYNC_UPGRADE = modGuiIndex++;
 
-    @SidedProxy(serverSide = "me.desht.modularrouters.proxy.ServerProxy", clientSide = "me.desht.modularrouters.proxy.ClientProxy")
-    public static IProxy proxy;
+    public static IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
-    @Mod.Instance(MODID)
-    public static ModularRouters instance;
-
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-        proxy.preInit();
-        setupNetwork();
-        GameRegistry.registerTileEntity(TileEntityItemRouter.class, RL("item_router"));
-        GameRegistry.registerTileEntity(TileEntityTemplateFrame.class, RL("template_frame"));
-        logger.info(MODNAME + " is loading!");
+    public ModularRouters() {
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.GUIFACTORY, () -> GuiHandler::openGui);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::clientSetup);
+            MinecraftForge.EVENT_BUS.addListener(ClientHandler::registerRenders);
+        });
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        proxy.init();
-        ModRecipes.init();
-        NetworkRegistry.INSTANCE.registerGuiHandler(ModularRouters.instance, new GuiHandler());
-        IntegrationHandler.registerAll();
+    private void commonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info(MODNAME + " is loading!");
+
+        PacketHandler.setupNetwork();
+
+        DeferredWorkQueue.runLater(() -> {
+            ModRecipes.init(); // todo 1.13 should be unnecessary...
+            IntegrationHandler.registerAll();
+            XPCollection.detectXPFluids();
+            ModNameCache.init();
+        });
     }
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit();
-        XPCollection.detectXPFluids();
-        ModNameCache.init();
-    }
+    static class ClientHandler {
+        static void clientSetup(FMLClientSetupEvent event) {
+            MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
+            MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
+            MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
+            MinecraftForge.EVENT_BUS.register(RenderListener.class);
 
-    private void setupNetwork() {
-        int d = 0;
-        network = NetworkRegistry.INSTANCE.newSimpleChannel(ModularRouters.MODID);
-        network.registerMessage(RouterSettingsMessage.Handler.class, RouterSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(ModuleSettingsMessage.Handler.class, ModuleSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(FilterSettingsMessage.Handler.class, FilterSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(OpenGuiMessage.Handler.class, OpenGuiMessage.class, d++, Side.SERVER);
-        network.registerMessage(ParticleBeamMessage.Handler.class, ParticleBeamMessage.class, d++, Side.CLIENT);
-        network.registerMessage(GuiSyncMessage.Handler.class, GuiSyncMessage.class, d++, Side.CLIENT);
-        network.registerMessage(SyncUpgradeSettingsMessage.Handler.class, SyncUpgradeSettingsMessage.class, d++, Side.SERVER);
-        network.registerMessage(PushEntityMessage.Handler.class, PushEntityMessage.class, d++, Side.CLIENT);
-        network.registerMessage(PlaySoundMessage.Handler.class, PlaySoundMessage.class, d++, Side.CLIENT);
+            Keybindings.registerKeyBindings();
+        }
+
+        static void registerRenders(ModelRegistryEvent event) {
+            // todo 1.13 what do we need here?
+        }
     }
 }

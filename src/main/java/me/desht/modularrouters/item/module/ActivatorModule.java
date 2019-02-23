@@ -8,25 +8,39 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class ActivatorModule extends Module {
+public class ActivatorModule extends ItemModule {
+    public ActivatorModule(Properties props) {
+        super(props);
+    }
+
     @Override
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
-        CompiledActivatorModule cam = new CompiledActivatorModule(null, itemstack);
-        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.action") + ": "
-                + TextFormatting.AQUA + I18n.format("itemText.activator.action." + cam.getActionType()));
+    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(stack, world, list, flag);
+
+        CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
+        list.add(new TextComponentString(
+                TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.action") + ": "
+                + TextFormatting.AQUA + I18n.format("itemText.activator.action." + cam.getActionType()))
+        );
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.lookDirection") + ": "
-                    + TextFormatting.AQUA + I18n.format("itemText.activator.direction." + cam.getLookDirection()));
+            list.add(new TextComponentString(
+                    TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.lookDirection") + ": "
+                    + TextFormatting.AQUA + I18n.format("itemText.activator.direction." + cam.getLookDirection()))
+            );
         }
         if (cam.isSneaking()) {
-            list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.sneak"));
+            list.add(new TextComponentString(
+                    TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.sneak"))
+            );
         }
     }
 
@@ -36,7 +50,7 @@ public class ActivatorModule extends Module {
     }
 
     @Override
-    public Class<? extends GuiModule> getGuiHandler() {
+    public Class<? extends GuiModule> getGuiClass() {
         return GuiModuleActivator.class;
     }
 

@@ -5,33 +5,39 @@ import me.desht.modularrouters.client.gui.module.GuiModule;
 import me.desht.modularrouters.client.gui.module.GuiModulePlayer;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.List;
 
-public class PlayerModule extends Module {
+public class PlayerModule extends ItemModule {
+    public PlayerModule(Properties props) {
+        super(props);
+    }
+
     @Override
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
+    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
+
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, itemstack);
-        list.add(TextFormatting.YELLOW + I18n.format("itemText.security.owner", cpm.getPlayerName()));
-        list.add(TextFormatting.YELLOW + String.format(TextFormatting.YELLOW + "%s: " + TextFormatting.AQUA + "%s %s %s",
+        list.add(MiscUtil.settingsStr(TextFormatting.YELLOW.toString(),
+                new TextComponentTranslation("itemText.security.owner", cpm.getPlayerName())));
+
+        String s = String.format(TextFormatting.YELLOW + "%s: " + TextFormatting.AQUA + "%s %s %s",
                 I18n.format("itemText.misc.operation"),
                 I18n.format("tile.item_router.name"),
                 cpm.getOperation().getSymbol(),
-                I18n.format("guiText.label.playerSect." + cpm.getSection())));
+                I18n.format("guiText.label.playerSect." + cpm.getSection()));
+        list.add(new TextComponentString(s));
     }
 
     @Override
@@ -40,7 +46,7 @@ public class PlayerModule extends Module {
     }
 
     @Override
-    public Class<? extends GuiModule> getGuiHandler() {
+    public Class<? extends GuiModule> getGuiClass() {
         return GuiModulePlayer.class;
     }
 
@@ -50,15 +56,15 @@ public class PlayerModule extends Module {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing face, float x, float y, float z) {
-        if (world.isRemote) {
+    public EnumActionResult onItemUse(ItemUseContext ctx) {
+        if (ctx.getWorld().isRemote) {
             return EnumActionResult.SUCCESS;
-        } else if (player.isSneaking()) {
-            ModuleHelper.setOwner(stack, player);
-            player.sendStatusMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayNameString()), false);
+        } else if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
+            ModuleHelper.setOwner(ctx.getItem(), ctx.getPlayer());
+            ctx.getPlayer().sendStatusMessage(new TextComponentTranslation("itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
             return EnumActionResult.SUCCESS;
         } else {
-            return super.onItemUse(stack, player, world, pos, hand, face, x, y, z);
+            return super.onItemUse(ctx);
         }
     }
 

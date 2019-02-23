@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
-import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.PlaySoundMessage;
 import me.desht.modularrouters.util.BlockUtil;
@@ -13,12 +13,11 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
@@ -26,10 +25,10 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -41,36 +40,40 @@ import java.util.UUID;
  * Represents a module with a specific target block or blocks (blockpos stored in itemstack NBT).
  * Used by Mk2 & Mk3 senders, for example.
  */
-public abstract class   TargetedModule extends Module {
+public abstract class TargetedModule extends ItemModule {
     private static final String NBT_TARGET = "Target";
     private static final String NBT_MULTI_TARGET = "MultiTarget";
 
     private static final Map<UUID,Long> lastSwing = Maps.newHashMap();
 
+    public TargetedModule(Properties props) {
+        super(props);
+    }
+
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
-                                      EnumHand hand, EnumFacing face, float x, float y, float z) {
-        if (player.isSneaking()) {
-            if (InventoryUtils.getInventory(world, pos, face) != null) {
+    public EnumActionResult onItemUse(ItemUseContext ctx) {
+        if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
+            if (InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()) != null) {
                 if (getMaxTargets() == 1) {
-                    handleSingleTarget(stack, player, world, pos, face);
+                    handleSingleTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 } else {
-                    handleMultiTarget(stack, player, world, pos, face);
+                    handleMultiTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 }
                 return EnumActionResult.SUCCESS;
             } else {
-                return super.onItemUse(stack, player, world, pos, hand, face, x, y, z);
+                return super.onItemUse(ctx);
             }
         } else {
-                return EnumActionResult.PASS;
-            }
+            return EnumActionResult.PASS;
         }
+    }
 
     private void handleMultiTarget(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing face) {
         if (!world.isRemote) {
             boolean removing = false;
             String invName = BlockUtil.getBlockName(world, pos);
-            ModuleTarget tgt = new ModuleTarget(world.provider.getDimension(), pos, face, invName);
+            world.getDimension().getType().getId();
+            ModuleTarget tgt = new ModuleTarget(world.getDimension().getType().getId(), pos, face, invName);
             Set<ModuleTarget> targets = getTargets(stack, true);
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
@@ -82,11 +85,11 @@ public abstract class   TargetedModule extends Module {
             } else {
                 // too many targets already
                 player.sendStatusMessage(new TextComponentTranslation("chatText.misc.tooManyTargets", getMaxTargets()), true);
-                PlaySoundMessage.playSound(player, RegistrarMR.SOUND_ERROR, 1.0f, 1.3f);
+                PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_ERROR, 1.0f, 1.3f);
                 return;
             }
 
-            PlaySoundMessage.playSound(player, RegistrarMR.SOUND_SUCCESS, 1.0f, removing ? 1.1f : 1.3f);
+            PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_SUCCESS, 1.0f, removing ? 1.1f : 1.3f);
             setTargets(stack, targets);
         }
     }
@@ -97,20 +100,21 @@ public abstract class   TargetedModule extends Module {
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
                 player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetSet", tgt.toString()), true);
-                PlaySoundMessage.playSound(player, RegistrarMR.SOUND_SUCCESS, 1.0f, 1.3f);
+                PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.3f);
             }
         }
     }
 
+
     @Override
-    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addUsageInformation(itemstack, player, list, advanced);
-        MiscUtil.appendMultiline(list, getMaxTargets() > 1 ? "itemText.targetingHintMulti" : "itemText.targetingHint");
+    public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addUsageInformation(itemstack, list);
+        list.add(new TextComponentTranslation(getMaxTargets() > 1 ? "itemText.targetingHintMulti" : "itemText.targetingHint"));
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
+    protected void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
 
         Set<ModuleTarget> targets;
 
@@ -122,13 +126,13 @@ public abstract class   TargetedModule extends Module {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                list.add(I18n.format("chatText.misc.target", target.toString()));
-                if (Minecraft.getMinecraft().currentScreen instanceof GuiItemRouter) {
-                    TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getMinecraft().currentScreen).router;
-                    ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().provider.getDimension(), router.getPos());
+                list.add(new TextComponentTranslation("chatText.misc.target", target.toString()));
+                if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
+                    TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getInstance().currentScreen).router;
+                    ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().dimension.getType().getId(), router.getPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(I18n.format("chatText.targetValidation." + val));
+                        list.add(new TextComponentTranslation("chatText.targetValidation." + val));
                     }
                 }
             }
@@ -139,7 +143,7 @@ public abstract class   TargetedModule extends Module {
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            PlaySoundMessage.playSound(player, RegistrarMR.SOUND_SUCCESS, 1.0f, 1.1f);
+            PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.1f);
             player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetCleared"), true);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -155,18 +159,18 @@ public abstract class   TargetedModule extends Module {
      */
     private static void setTarget(ItemStack stack, World world, BlockPos pos, EnumFacing face) {
         if (world.isRemote) {
-            ModularRouters.logger.warn("TargetModule.setTarget() should not be called client-side!");
+            ModularRouters.LOGGER.warn("TargetModule.setTarget() should not be called client-side!");
             return;
         }
         NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         if (pos == null) {
-            compound.removeTag(NBT_TARGET);
+            compound.remove(NBT_TARGET);
         } else {
             String invName = BlockUtil.getBlockName(world, pos);
-            ModuleTarget mt = new ModuleTarget(world.provider.getDimension(), pos, face, invName == null ? "?" : invName);
-            compound.setTag(NBT_TARGET, mt.toNBT());
+            ModuleTarget mt = new ModuleTarget(world.dimension.getType().getId(), pos, face, invName == null ? "?" : invName);
+            compound.put(NBT_TARGET, mt.toNBT());
         }
-        stack.setTagCompound(compound);
+        stack.setTag(compound);
     }
 
     /**
@@ -188,9 +192,9 @@ public abstract class   TargetedModule extends Module {
      * @return targeting data
      */
     public static ModuleTarget getTarget(ItemStack stack, boolean checkBlockName) {
-        NBTTagCompound compound = stack.getTagCompound();
+        NBTTagCompound compound = stack.getTag();
         if (compound != null && compound.getTagId(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
-            ModuleTarget target = ModuleTarget.fromNBT(compound.getCompoundTag(NBT_TARGET));
+            ModuleTarget target = ModuleTarget.fromNBT(compound.getCompound(NBT_TARGET));
             if (checkBlockName) {
                 ModuleTarget newTarget = updateTargetBlockName(stack, target);
                 if (newTarget != null) return newTarget;
@@ -210,11 +214,11 @@ public abstract class   TargetedModule extends Module {
     public static Set<ModuleTarget> getTargets(ItemStack stack, boolean checkBlockName) {
         Set<ModuleTarget> result = Sets.newHashSet();
 
-        NBTTagCompound compound = stack.getTagCompound();
+        NBTTagCompound compound = stack.getTag();
         if (compound != null && compound.getTagId(NBT_MULTI_TARGET) == Constants.NBT.TAG_LIST) {
-            NBTTagList list = compound.getTagList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.tagCount(); i++) {
-                ModuleTarget target = ModuleTarget.fromNBT(list.getCompoundTagAt(i));
+            NBTTagList list = compound.getList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                ModuleTarget target = ModuleTarget.fromNBT(list.getCompound(i));
                 if (checkBlockName) {
                     ModuleTarget newTarget = updateTargetBlockName(stack, target);
                     result.add(newTarget != null ? newTarget : target);
@@ -230,14 +234,14 @@ public abstract class   TargetedModule extends Module {
         NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         NBTTagList list = new NBTTagList();
         for (ModuleTarget target : targets) {
-            list.appendTag(target.toNBT());
+            list.add(target.toNBT());
         }
-        compound.setTag(NBT_MULTI_TARGET, list);
-        stack.setTagCompound(compound);
+        compound.put(NBT_MULTI_TARGET, list);
+        stack.setTag(compound);
     }
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {
-        WorldServer w = DimensionManager.getWorld(target.dimId);
+        WorldServer w = MiscUtil.getWorldForDimensionId(target.dimId);
         if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
             String invName = BlockUtil.getBlockName(w, target.pos);
             if (!target.invName.equals(invName)) {
@@ -249,7 +253,7 @@ public abstract class   TargetedModule extends Module {
     }
 
     @Override
-    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+    public boolean onEntitySwing(ItemStack stack, EntityLivingBase entityLiving) {
         if (!(entityLiving instanceof EntityPlayerMP)) {
             return false;
         }
@@ -269,7 +273,7 @@ public abstract class   TargetedModule extends Module {
         }
         lastSwing.put(player.getUniqueID(), now);
 
-        ModuleTarget src = new ModuleTarget(world.provider.getDimension(), player.getPosition());
+        ModuleTarget src = new ModuleTarget(MiscUtil.getDimensionForWorld(world), player.getPosition());
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
                 getTargets(stack, true) :
                 Sets.newHashSet(getTarget(stack, true));
@@ -302,7 +306,7 @@ public abstract class   TargetedModule extends Module {
         // or when the router is actually executing the module;
         // we can't reliably validate chunk loading or inventory presence on the client (for tooltip generation)
         if (validateBlocks) {
-            WorldServer w = DimensionManager.getWorld(dst.dimId);
+            WorldServer w = MiscUtil.getWorldForDimensionId(dst.dimId);
             if (w == null || !w.getChunkProvider().chunkExists(dst.pos.getX() >> 4, dst.pos.getZ() >> 4)) {
                 return TargetValidation.NOT_LOADED;
             }
@@ -314,9 +318,8 @@ public abstract class   TargetedModule extends Module {
     }
 
     private int maxDistanceSq(ItemStack stack) {
-        Module module = ItemModule.getModule(stack);
-        if (module instanceof IRangedModule) {
-            int r =  ((IRangedModule) module).getCurrentRange(stack);
+        if (stack.getItem() instanceof IRangedModule) {
+            int r =  ((IRangedModule) stack.getItem()).getCurrentRange(stack);
             return r * r;
         }
         return 0;

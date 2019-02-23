@@ -7,13 +7,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
@@ -24,10 +27,20 @@ public class MiscUtil {
 
     public static final int WRAP_LENGTH = 45;
 
+    public static WorldServer getWorldForDimensionId(int dimId) {
+        DimensionType dt = DimensionType.getById(dimId);
+        if (dt == null) return null;
+        return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
+    }
+
+    public static int getDimensionForWorld(World w) {
+        return w.getDimension().getType().getId();
+    }
+
     public static void appendMultiline(List<String> result, String key, Object... args) {
-        String raw = translate(key, args);
+        ITextComponent raw = translate(key, args);
         int n = 0;
-        for (String s : raw.split("\\\\n")) {
+        for (String s : raw.getString().split("\\\\n")) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
                 result.add((n++ > 0 ? "\u00a77" : "") + s1);
             }
@@ -76,25 +89,26 @@ public class MiscUtil {
     }
 
     public static String locToString(World world, BlockPos pos) {
-        return locToString(world.provider.getDimension(), pos);
+        return locToString(getDimensionForWorld(world), pos);
     }
 
     public static String locToString(int dim, BlockPos pos) {
         return String.format("DIM:%d [%d,%d,%d]", dim, pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static String translate(String key, Object... args) {
-        return new TextComponentTranslation(key, args).getUnformattedText();
+    public static ITextComponent translate(String key, Object... args) {
+        return new TextComponentTranslation(key, args);
     }
 
     public static ResourceLocation RL(String name) {
         return new ResourceLocation(ModularRouters.MODID, name);
     }
 
-    public static TileEntity getTileEntitySafely(IBlockAccess world, BlockPos pos) {
-        return world instanceof ChunkCache ?
-                ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) :
-                world.getTileEntity(pos);
+    public static TileEntity getTileEntitySafely(IBlockReader world, BlockPos pos) {
+        return world.getTileEntity(pos);
+//        return world instanceof ChunkCache ?
+//                ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) :
+//                world.getTileEntity(pos);
     }
 
     public static int getYawFromFacing(EnumFacing facing) {
@@ -113,7 +127,12 @@ public class MiscUtil {
     }
 
     public static String getFluidName(ItemStack stack) {
-        FluidStack f = FluidUtil.getFluidContained(stack);
-        return f == null ? stack.getDisplayName() : f.getFluid().getLocalizedName(f);
+        return FluidUtil.getFluidContained(stack)
+                .map(fluidStack -> fluidStack.getFluid().getLocalizedName(fluidStack))
+                .orElse(stack.getDisplayName().getString());
+    }
+
+    public static ITextComponent settingsStr(String prefix, ITextComponent c) {
+        return new TextComponentString(prefix).appendSibling(c);
     }
 }

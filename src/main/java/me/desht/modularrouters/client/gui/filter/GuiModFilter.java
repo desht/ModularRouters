@@ -6,17 +6,15 @@ import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.FilterSettingsMessage;
+import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.client.gui.GuiButton;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.List;
 
 public class GuiModFilter extends GuiFilterContainer {
@@ -35,8 +33,8 @@ public class GuiModFilter extends GuiFilterContainer {
     private String modId = "";
     private String modName = "";
 
-    public GuiModFilter(ContainerSmartFilter container, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
-        super(container, routerPos, moduleSlotIndex, filterSlotIndex, hand);
+    public GuiModFilter(ContainerSmartFilter container) {
+        super(container);
 
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
@@ -48,20 +46,56 @@ public class GuiModFilter extends GuiFilterContainer {
     public void initGui() {
         super.initGui();
 
-        buttonList.clear();
-        if (filterSlotIndex >= 0) {
-            buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop));
+//        buttonList.clear();
+        if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
+            addButton(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    closeGUI();
+                }
+            });
         }
-        buttonList.add(new Buttons.AddButton(ADD_BUTTON_ID, guiLeft + 154, guiTop + 19));
+        addButton(new Buttons.AddButton(ADD_BUTTON_ID, guiLeft + 154, guiTop + 19) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                if (!modId.isEmpty()) {
+                    NBTTagCompound ext = new NBTTagCompound();
+                    ext.putString("ModId", modId);
+                    if (router != null) {
+                        PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                                FilterSettingsMessage.Operation.ADD_STRING, router.getPos(), ext));
+                    } else {
+                        PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                                FilterSettingsMessage.Operation.ADD_STRING, hand, ext));
+                    }
+                    inventorySlots.inventorySlots.get(0).putStack(ItemStack.EMPTY);
+                }
+            }
+        });
         for (int i = 0; i < mods.size(); i++) {
-            buttonList.add(new Buttons.DeleteButton(BASE_REMOVE_ID + i, guiLeft + 8, guiTop + 44 + i * 19));
+            addButton(new Buttons.DeleteButton(BASE_REMOVE_ID + i, guiLeft + 8, guiTop + 44 + i * 19) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + mods.size()) {
+                        NBTTagCompound ext = new NBTTagCompound();
+                        ext.putInt("Pos", id - BASE_REMOVE_ID);
+                        if (router != null) {
+                            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                                    FilterSettingsMessage.Operation.REMOVE_AT, router.getPos(), ext));
+                        } else {
+                            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                                    FilterSettingsMessage.Operation.REMOVE_AT, hand, ext));
+                        }
+                    }
+                }
+            });
         }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = filterStack.getDisplayName() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
-        fontRenderer.drawString(title, this.xSize / 2 - fontRenderer.getStringWidth(title) / 2, 8, 0x404040);
+        String title = filterStack.getDisplayName() + (router != null ? I18n.format("guiText.label.installed") : "");
+        fontRenderer.drawString(title, this.xSize / 2f - fontRenderer.getStringWidth(title) / 2f, 8, 0x404040);
 
         if (!modName.isEmpty()) {
             fontRenderer.drawString(modName, 29, 23, 0x404040);
@@ -74,8 +108,8 @@ public class GuiModFilter extends GuiFilterContainer {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void tick() {
+        super.tick();
 
         ItemStack inSlot = inventorySlots.getInventory().get(0);
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
@@ -92,36 +126,6 @@ public class GuiModFilter extends GuiFilterContainer {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == ADD_BUTTON_ID && !modId.isEmpty()) {
-            NBTTagCompound ext = new NBTTagCompound();
-            ext.setString("ModId", modId);
-            if (routerPos != null) {
-                ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                        FilterSettingsMessage.Operation.ADD_STRING, routerPos, moduleSlotIndex, filterSlotIndex, ext));
-            } else {
-                ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                        FilterSettingsMessage.Operation.ADD_STRING, hand, filterSlotIndex, ext));
-            }
-            inventorySlots.inventorySlots.get(0).putStack(ItemStack.EMPTY);
-        } else if (button.id >= BASE_REMOVE_ID && button.id < BASE_REMOVE_ID + mods.size()) {
-            NBTTagCompound ext = new NBTTagCompound();
-            ext.setInteger("Pos", button.id - BASE_REMOVE_ID);
-            if (routerPos != null) {
-                ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                        FilterSettingsMessage.Operation.REMOVE_AT, routerPos, moduleSlotIndex, filterSlotIndex, ext));
-            } else {
-                ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                        FilterSettingsMessage.Operation.REMOVE_AT, hand, filterSlotIndex, ext));
-            }
-        } else if (button.id == BACK_BUTTON_ID) {
-            closeGUI();
-        } else {
-            super.actionPerformed(button);
-        }
     }
 
     @Override

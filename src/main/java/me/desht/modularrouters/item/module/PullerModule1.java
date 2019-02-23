@@ -7,7 +7,11 @@ import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
-public class PullerModule extends Module {
+public class PullerModule1 extends ItemModule {
+    public PullerModule1(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledPullerModule(router, stack);

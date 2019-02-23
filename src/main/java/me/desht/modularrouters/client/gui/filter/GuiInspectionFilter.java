@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -11,6 +12,8 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Compariso
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.InspectionOp;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.InspectionSubject;
 import me.desht.modularrouters.network.FilterSettingsMessage;
+import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -18,10 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
 
 public class GuiInspectionFilter extends GuiFilterScreen {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
@@ -42,8 +42,8 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     private InspectionSubject currentSubject = InspectionSubject.NONE;
     private InspectionOp currentOp = InspectionOp.NONE;
 
-    public GuiInspectionFilter(ItemStack filterStack, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
-        super(filterStack, routerPos, moduleSlotIndex, filterSlotIndex, hand);
+    public GuiInspectionFilter(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
+        super(filterStack, router, hand);
 
         comparisonList = InspectionFilter.getComparisonList(filterStack);
     }
@@ -55,20 +55,65 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-        buttonList.clear();
+//        buttonList.clear();
 
-        if (filterSlotIndex >= 0) {
-            buttonList.add(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos));
+        if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
+            addButton(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    closeGUI();
+                }
+            });
         }
 
-        buttonList.add(new GuiButton(SUBJECT_BUTTON_ID, xPos + 8, yPos + 23, 90, 20, I18n.format("guiText.label.inspectionSubject." + currentSubject)));
-        buttonList.add(new GuiButton(OP_BUTTON_ID, xPos + 95, yPos + 23, 20, 20, I18n.format("guiText.label.inspectionOp." + currentOp)));
-        buttonList.add(new Buttons.AddButton(ADD_BUTTON_ID, xPos + 152, yPos + 23));
+        addButton(new GuiButton(SUBJECT_BUTTON_ID, xPos + 8, yPos + 23, 90, 20, I18n.format("guiText.label.inspectionSubject." + currentSubject)) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                currentSubject = currentSubject.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
+                displayString = I18n.format("guiText.label.inspectionSubject." + currentSubject);
+            }
+        });
+        addButton(new GuiButton(OP_BUTTON_ID, xPos + 95, yPos + 23, 20, 20, I18n.format("guiText.label.inspectionOp." + currentOp)) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                currentOp = currentOp.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
+                displayString = I18n.format("guiText.label.inspectionOp." + currentOp);
+            }
+        });
+        addButton(new Buttons.AddButton(ADD_BUTTON_ID, xPos + 152, yPos + 23) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                int val = valueTextField.getValue();
+                String s = Joiner.on(" ").join(currentSubject, currentOp, val);
+                sendAddStringMessage("Comparison", s);
+                valueTextField.setText("");
+            }
+        });
 
-        buttonList.add(new GuiButton(MATCH_BUTTON_ID, xPos + 8, yPos + 167, 60, 20, I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll())));
+        addButton(new GuiButton(MATCH_BUTTON_ID, xPos + 8, yPos + 167, 60, 20, I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll())) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                NBTTagCompound ext = new NBTTagCompound();
+                ext.putBoolean("MatchAll", !comparisonList.isMatchAll());
+                if (router != null) {
+                    PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                            FilterSettingsMessage.Operation.ANY_ALL_FLAG, router.getPos(), ext));
+                } else {
+                    PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                            FilterSettingsMessage.Operation.ANY_ALL_FLAG, hand, ext));
+                }
+            }
+        });
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
-            buttonList.add(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19));
+            addButton(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + comparisonList.items.size()) {
+                        sendRemovePosMessage(id - BASE_REMOVE_ID);
+                    }
+                }
+            });
         }
 
         TextFieldManager manager = getTextFieldManager().clear();
@@ -77,57 +122,21 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2 - this.fontRenderer.getStringWidth(title) / 2, yPos + 6, 0x404040);
+        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2f - this.fontRenderer.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
             fontRenderer.drawString(comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
 
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        switch (button.id) {
-            case SUBJECT_BUTTON_ID:
-                currentSubject = currentSubject.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
-                button.displayString = I18n.format("guiText.label.inspectionSubject." + currentSubject);
-                break;
-            case OP_BUTTON_ID:
-                currentOp = currentOp.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
-                button.displayString = I18n.format("guiText.label.inspectionOp." + currentOp);
-                break;
-            case ADD_BUTTON_ID:
-                int val = valueTextField.getValue();
-                String s = Joiner.on(" ").join(currentSubject, currentOp, val);
-                sendAddStringMessage("Comparison", s);
-                valueTextField.setText("");
-                break;
-            case MATCH_BUTTON_ID:
-                NBTTagCompound ext = new NBTTagCompound();
-                ext.setBoolean("MatchAll", !comparisonList.isMatchAll());
-                if (routerPos != null) {
-                    ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                            FilterSettingsMessage.Operation.ANY_ALL_FLAG, routerPos, moduleSlotIndex, filterSlotIndex, ext));
-                } else {
-                    ModularRouters.network.sendToServer(new FilterSettingsMessage(
-                            FilterSettingsMessage.Operation.ANY_ALL_FLAG, hand, filterSlotIndex, ext));
-                }
-            default:
-                if (button.id >= BASE_REMOVE_ID && button.id < BASE_REMOVE_ID + comparisonList.items.size()) {
-                    sendRemovePosMessage(button.id - BASE_REMOVE_ID);
-                } else {
-                    super.actionPerformed(button);
-                }
-        }
     }
 
     @Override

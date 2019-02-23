@@ -8,15 +8,12 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +21,7 @@ import java.util.List;
 public class GuiModuleActivator extends GuiModule {
     private static final ItemStack BLOCK_STACK = new ItemStack(Blocks.DISPENSER);
     private static final ItemStack ITEM_STACK = new ItemStack(Items.BOW);
-    private static final ItemStack ENTITY_STACK = new ItemStack(Items.SKULL, 1, 3);
+    private static final ItemStack ENTITY_STACK = new ItemStack(Items.PLAYER_HEAD);
 
     private static final int ACTION_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
     private static final int LOOK_DIRECTION_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
@@ -35,12 +32,8 @@ public class GuiModuleActivator extends GuiModule {
     private LookDirectionButton lookDirectionButton;
     private boolean isSneaking;
 
-    public GuiModuleActivator(ContainerModule containerItem, EnumHand hand) {
-        this(containerItem, null, -1, hand);
-    }
-
-    public GuiModuleActivator(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
-        super(containerItem, routerPos, slotIndex, hand);
+    public GuiModuleActivator(ContainerModule container) {
+        super(container);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, moduleItemStack);
         actionType = cam.getActionType();
@@ -53,10 +46,28 @@ public class GuiModuleActivator extends GuiModule {
         super.initGui();
 
         ItemStack[] stacks = new ItemStack[] { BLOCK_STACK, ITEM_STACK, ENTITY_STACK };
-        buttonList.add(new ActionTypeButton(ACTION_BUTTON_ID, guiLeft + 167, guiTop + 20, 16, 16, true, stacks, actionType));
-        buttonList.add(new SneakButton(SNEAK_BUTTON_ID, guiLeft + 167, guiTop + 40, isSneaking));
-        lookDirectionButton = new LookDirectionButton(LOOK_DIRECTION_ID, guiLeft + 167, guiTop + 60, 16, 16, lookDirection);
-        buttonList.add(lookDirectionButton);
+        addButton(new ActionTypeButton(ACTION_BUTTON_ID, guiLeft + 167, guiTop + 20, 16, 16, true, stacks, actionType) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                actionType = cycle(!GuiScreen.isShiftKeyDown());
+                sendModuleSettingsToServer();            }
+        });
+        addButton(new SneakButton(SNEAK_BUTTON_ID, guiLeft + 167, guiTop + 40, isSneaking) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                toggle();
+                isSneaking = isToggled();
+                sendModuleSettingsToServer();
+            }
+        });
+        lookDirectionButton = new LookDirectionButton(LOOK_DIRECTION_ID, guiLeft + 167, guiTop + 60, 16, 16, lookDirection) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                lookDirection = cycle(!GuiScreen.isShiftKeyDown());
+                sendModuleSettingsToServer();
+            }
+        };
+        addButton(lookDirectionButton);
         lookDirectionButton.visible = actionType != ActionType.USE_ITEM_ON_ENTITY;
 
         getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 18, guiLeft + 183, guiTop + 37, "guiText.popup.activator.action");
@@ -83,37 +94,18 @@ public class GuiModuleActivator extends GuiModule {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case ACTION_BUTTON_ID:
-                ActionTypeButton atb = (ActionTypeButton) button;
-                actionType = atb.cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-                break;
-            case LOOK_DIRECTION_ID:
-                LookDirectionButton ldb = (LookDirectionButton) button;
-                lookDirection = ldb.cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-                break;
-            case SNEAK_BUTTON_ID:
-                SneakButton sb = (SneakButton) button;
-                sb.toggle();
-                isSneaking = sb.isToggled();
-                sendModuleSettingsToServer();
-                break;
-            default:
-                super.actionPerformed(button);
-                break;
-        }
+    public void tick() {
+        super.tick();
+
         lookDirectionButton.visible = actionType != ActionType.USE_ITEM_ON_ENTITY;
     }
 
     @Override
     protected NBTTagCompound buildMessageData() {
         NBTTagCompound compound = super.buildMessageData();
-        compound.setInteger(CompiledActivatorModule.NBT_ACTION_TYPE, actionType.ordinal());
-        compound.setInteger(CompiledActivatorModule.NBT_LOOK_DIRECTION, lookDirection.ordinal());
-        compound.setBoolean(CompiledActivatorModule.NBT_SNEAKING, isSneaking);
+        compound.putInt(CompiledActivatorModule.NBT_ACTION_TYPE, actionType.ordinal());
+        compound.putInt(CompiledActivatorModule.NBT_LOOK_DIRECTION, lookDirection.ordinal());
+        compound.putBoolean(CompiledActivatorModule.NBT_SNEAKING, isSneaking);
         return compound;
     }
 

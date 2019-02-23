@@ -22,7 +22,7 @@ public class RegexMatcher implements IItemMatcher {
                 Pattern pat = Pattern.compile(r, Pattern.CASE_INSENSITIVE);
                 patterns.add(pat);
             } catch (PatternSyntaxException e) {
-                ModularRouters.logger.warn("can't compile '" + r + "' - " + e.getMessage());
+                ModularRouters.LOGGER.warn("can't compile '" + r + "' - " + e.getMessage());
             }
         }
     }
@@ -30,7 +30,7 @@ public class RegexMatcher implements IItemMatcher {
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (stack.isEmpty()) return false;
-        String name = TextFormatting.getTextWithoutFormattingCodes(stack.getDisplayName());
+        String name = TextFormatting.getTextWithoutFormattingCodes(stack.getDisplayName().getFormattedText());
         if (name == null) name = stack.getTranslationKey();
         for (Pattern pat : patterns) {
             if (pat.matcher(name).find()) {

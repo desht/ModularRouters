@@ -1,10 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets;
 
-import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.GuiScreen;
-
-import java.io.IOException;
 
 public abstract class GuiScreenBase extends GuiScreen {
     private TextFieldManager textFieldManager;
@@ -22,45 +19,47 @@ public abstract class GuiScreenBase extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        if (textFieldManager != null) textFieldManager.drawTextFields();
-        this.buttonList.stream()
-                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRenderer));
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        super.render(mouseX, mouseY, partialTicks);
+        if (textFieldManager != null) textFieldManager.drawTextFields(mouseX, mouseY, partialTicks);
+        // todo 1.13
+//        this.buttonList.stream()
+//                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
+//                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRenderer));
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void tick() {
+        super.tick();
         if (delayTicks > 0) {
             delayTicks--;
             if (delayTicks == 0) {
                 sendSettingsToServer();
             }
         }
-        if (textFieldManager != null) textFieldManager.updateTextFields();
+        if (textFieldManager != null) textFieldManager.tick();
     }
 
-    @Override
-    public void handleMouseInput() throws IOException {
-        if (textFieldManager == null || !textFieldManager.handleMouseInput()) {
-            super.handleMouseInput();
-        }
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (textFieldManager != null) textFieldManager.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (textFieldManager == null || !textFieldManager.keyTyped(typedChar, keyCode)) {
-            super.keyTyped(typedChar, keyCode);
-        }
-    }
+    // todo 1.13
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        if (textFieldManager == null || !textFieldManager.handleMouseInput()) {
+//            super.handleMouseInput();
+//        }
+//    }
+//
+//    @Override
+//    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+//        super.mouseClicked(mouseX, mouseY, mouseButton);
+//        if (textFieldManager != null) textFieldManager.mouseClicked(mouseX, mouseY, mouseButton);
+//    }
+//
+//    @Override
+//    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+//        if (textFieldManager == null || !textFieldManager.keyTyped(typedChar, keyCode)) {
+//            super.keyTyped(typedChar, keyCode);
+//        }
+//    }
 
     @Override
     public void onGuiClosed() {

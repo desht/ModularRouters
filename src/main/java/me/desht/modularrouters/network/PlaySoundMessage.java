@@ -6,15 +6,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.lang.reflect.Field;
+import java.util.function.Supplier;
 
-public class PlaySoundMessage implements IMessage {
+/**
+ * Received on: CLIENT
+ *
+ * Sent by server to play a sound on the client.
+ */
+public class PlaySoundMessage {
     private static Field soundNameField;
     private ResourceLocation soundName;
     private float volume;
@@ -22,49 +26,38 @@ public class PlaySoundMessage implements IMessage {
 
     public static void playSound(EntityPlayer player, SoundEvent soundEvent, float volume, float pitch) {
         if (player instanceof EntityPlayerMP) {
-            ModularRouters.network.sendTo(new PlaySoundMessage(soundEvent, volume, pitch), (EntityPlayerMP) player);
+            PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (EntityPlayerMP) player), new PlaySoundMessage(soundEvent, volume, pitch));
         }
     }
 
     public PlaySoundMessage() {
     }
 
-    public PlaySoundMessage(SoundEvent soundEvent, float volume, float pitch) {
-        if (soundNameField == null) {
-            soundNameField = ReflectionHelper.findField(SoundEvent.class, "soundName", "field_187506_b", "b");
-        }
-
-        try {
-            this.soundName = (ResourceLocation) soundNameField.get(soundEvent);
-        } catch (IllegalAccessException e) {
-            this.soundName = new ResourceLocation("");
-        }
+    private PlaySoundMessage(SoundEvent soundEvent, float volume, float pitch) {
+        this.soundName = soundEvent.getRegistryName();
         this.volume = volume;
         this.pitch = pitch;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        soundName = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+    public PlaySoundMessage(ByteBuf buf) {
+        soundName = new ResourceLocation(PacketUtil.readUTF8String(buf));
         volume = buf.readFloat();
         pitch = buf.readFloat();
     }
 
-    @Override
     public void toBytes(ByteBuf buffer) {
-        ByteBufUtils.writeUTF8String(buffer, soundName.toString());
+        PacketUtil.writeUTF8String(buffer, soundName.toString());
         buffer.writeFloat(volume);
         buffer.writeFloat(pitch);
     }
 
-    public static class Handler implements IMessageHandler<PlaySoundMessage, IMessage> {
-        @Override
-        public IMessage onMessage(PlaySoundMessage message, MessageContext ctx) {
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
             EntityPlayer player = ModularRouters.proxy.getClientPlayer();
             if (player != null) {
-                player.playSound(new SoundEvent(message.soundName), message.volume, message.pitch);
+                player.playSound(ForgeRegistries.SOUND_EVENTS.getValue(soundName), volume, pitch);
             }
-            return null;
-        }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }

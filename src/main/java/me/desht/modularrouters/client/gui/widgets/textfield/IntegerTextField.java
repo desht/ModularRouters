@@ -2,7 +2,7 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.regex.Pattern;
 
@@ -35,18 +35,18 @@ public class IntegerTextField extends TextFieldWidget {
     }
 
     @Override
-    public boolean textboxKeyTyped(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         switch (keyCode) {
-            case Keyboard.KEY_UP:
+            case GLFW.GLFW_KEY_UP:
                 return adjustField(getAdjustment());
-            case Keyboard.KEY_DOWN:
+            case GLFW.GLFW_KEY_DOWN:
                 return adjustField(-getAdjustment());
-            case Keyboard.KEY_PRIOR:
+            case GLFW.GLFW_KEY_PAGE_UP:
                 return adjustField(max);
-            case Keyboard.KEY_NEXT:
+            case GLFW.GLFW_KEY_PAGE_DOWN:
                 return adjustField(-max);
             default:
-                return super.textboxKeyTyped(typedChar, keyCode);
+                return super.charTyped(typedChar, keyCode);
         }
     }
 

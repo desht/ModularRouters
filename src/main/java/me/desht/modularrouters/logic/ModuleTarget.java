@@ -6,7 +6,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -39,30 +41,38 @@ public class ModuleTarget {
 
     public NBTTagCompound toNBT() {
         NBTTagCompound ext = new NBTTagCompound();
-        ext.setInteger("Dimension", dimId);
-        ext.setInteger("X", pos.getX());
-        ext.setInteger("Y", pos.getY());
-        ext.setInteger("Z", pos.getZ());
-        ext.setByte("Face", (byte) face.ordinal());
-        ext.setString("InvName", invName);
+        ext.putInt("Dimension", dimId);
+        ext.putInt("X", pos.getX());
+        ext.putInt("Y", pos.getY());
+        ext.putInt("Z", pos.getZ());
+        ext.putByte("Face", (byte) face.ordinal());
+        ext.putString("InvName", invName);
         return ext;
     }
 
     public static ModuleTarget fromNBT(NBTTagCompound nbt) {
-        BlockPos pos = new BlockPos(nbt.getInteger("X"), nbt.getInteger("Y"), nbt.getInteger("Z"));
+        BlockPos pos = new BlockPos(nbt.getInt("X"), nbt.getInt("Y"), nbt.getInt("Z"));
         EnumFacing face = EnumFacing.values()[nbt.getByte("Face")];
-        return new ModuleTarget(nbt.getInteger("Dimension"), pos, face, nbt.getString("InvName"));
+        return new ModuleTarget(nbt.getInt("Dimension"), pos, face, nbt.getString("InvName"));
     }
 
     public IItemHandler getItemHandler() {
-        WorldServer w = DimensionManager.getWorld(dimId);
+        DimensionType dt = DimensionType.getById(dimId);
+        if (dt == null) {
+            return null;
+        }
+        WorldServer w = DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
         if (w == null || !w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4))
             return null;
         TileEntity te = w.getTileEntity(pos);
-        if (te == null || !te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)) {
+        if (te == null) {
             return null;
         }
-        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face).orElse(null);
+//        if (te == null || !te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)) {
+//            return null;
+//        }
+//        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
     }
     
     @Override

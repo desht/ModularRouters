@@ -2,15 +2,17 @@ package me.desht.modularrouters.client.gui;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
+import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.gui.GuiButton;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -18,7 +20,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 
 public class GuiItemRouter extends GuiContainerBase {
@@ -47,36 +48,31 @@ public class GuiItemRouter extends GuiContainerBase {
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.clear();
-        buttonList.add(new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
-                this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour()));
-        buttonList.add(new RouterEcoButton(ECO_BUTTON_ID,
-                this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case REDSTONE_BUTTON_ID:
-                RedstoneBehaviourButton rrb = (RedstoneBehaviourButton) button;
-                rrb.cycle(!isShiftKeyDown());
-                router.setRedstoneBehaviour(rrb.getState());
-                ModularRouters.network.sendToServer(new RouterSettingsMessage(router));
-                break;
-            case ECO_BUTTON_ID:
-                RouterEcoButton reb = (RouterEcoButton) button;
-                reb.toggle();
-                router.setEcoMode(reb.isToggled());
-                ModularRouters.network.sendToServer(new RouterSettingsMessage(router));
-            default:
-                break;
-        }
+//        buttonList.clear();
+        addButton(new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
+                this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour()) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                cycle(!isShiftKeyDown());
+                router.setRedstoneBehaviour(getState());
+                PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
+            }
+        });
+        addButton(new RouterEcoButton(ECO_BUTTON_ID,
+                this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                toggle();
+                router.setEcoMode(isToggled());
+                PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
+            }
+        });
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = router.getDisplayName().getUnformattedText();
-        fontRenderer.drawString(title, this.xSize / 2 - fontRenderer.getStringWidth(title) / 2, LABEL_YPOS, Color.darkGray.getRGB());
+        String title = router.getDisplayName().getString();
+        fontRenderer.drawString(title, this.xSize / 2f - fontRenderer.getStringWidth(title) / 2f, LABEL_YPOS, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
@@ -86,7 +82,7 @@ public class GuiItemRouter extends GuiContainerBase {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i1) {
         mc.getTextureManager().bindTexture(textureLocation);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
@@ -94,26 +90,22 @@ public class GuiItemRouter extends GuiContainerBase {
     private static final int MODULE_END = ContainerItemRouter.TE_FIRST_SLOT + ContainerItemRouter.MODULE_SLOT_END;
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (typedChar != ConfigHandler.getConfigKey() || !handleModuleConfig()) {
-            super.keyTyped(typedChar, keyCode);
-        }
+    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+         return Keybindings.keybindConfigure.isKeyDown() ? handleModuleConfig() : super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int btn) throws IOException {
-        if (btn != 2 || !handleModuleConfig()) {
-            super.mouseClicked(x, y, btn);
-        }
+    public boolean mouseClicked(double x, double y, int btn) {
+        return btn == 2 ? handleModuleConfig() : super.mouseClicked(x, y, btn);
     }
 
     private boolean handleModuleConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || ItemModule.getModule(slot.getStack()) == null || slot.slotNumber < MODULE_START || slot.slotNumber > MODULE_END) {
+        if (slot == null || !(slot.getStack().getItem() instanceof ItemModule) || slot.slotNumber < MODULE_START || slot.slotNumber > MODULE_END) {
             return false;
         }
-        router.playerConfiguringModule(mc.player, slot.slotNumber - MODULE_START);
-        ModularRouters.network.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), slot.getSlotIndex()));
+        SlotTracker.getInstance(mc.player).setModuleSlot(slot.slotNumber - MODULE_START);
+        PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), slot.slotNumber - MODULE_START));
         return true;
     }
 
@@ -135,7 +127,7 @@ public class GuiItemRouter extends GuiContainerBase {
         @Override
         public List<String> getTooltip() {
             return MiscUtil.wrapString(I18n.format("guiText.tooltip.eco." + isToggled(),
-                    ConfigHandler.router.ecoTimeout / 20.f, ConfigHandler.router.lowPowerTickRate / 20.f));
+                    ConfigHandler.ROUTER.ecoTimeout.get() / 20.f, ConfigHandler.ROUTER.lowPowerTickRate.get() / 20.f));
         }
     }
 }

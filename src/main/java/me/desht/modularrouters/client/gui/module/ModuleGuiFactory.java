@@ -3,69 +3,50 @@ package me.desht.modularrouters.client.gui.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.Module;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class ModuleGuiFactory {
+    /**
+     * Create a module GUI for a held item module.  This is called via ItemModule when the player right-clicks a
+     * module item in hand.
+     *
+     * @param player the player
+     * @param hand the hand the module item is in
+     * @return the gui
+     */
     public static GuiModule createGui(EntityPlayer player, EnumHand hand) {
-        return createGui(player, player.getHeldItem(hand), null, -1, hand);
+        return createGui(player, player.getHeldItem(hand), null, hand);
     }
 
-    public static GuiModule createGui(EntityPlayer player, ItemStack moduleStack, BlockPos routerPos, int slotIndex) {
-        return createGui(player, moduleStack, routerPos, slotIndex, null);
+    /**
+     * Create a module GUI for a module which is installed in an item router. This is called via the OpenGuiMessage
+     * packet when the player presses 'C' or middle-clicks a module in a router GUI.
+     *
+     * @param player the player
+     * @param router the item router
+     * @return the gui
+     */
+    public static GuiModule createGui(EntityPlayer player, TileEntityItemRouter router) {
+//        ItemStack moduleStack = router.getConfiguringModule(player);
+        ItemStack moduleStack = SlotTracker.getInstance(player).getConfiguringModule(router);
+        return createGui(player, moduleStack, router, null);
     }
 
-    public static GuiModule createGui(EntityPlayer player, World world, int x, int y, int z) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, new BlockPos(x, y, z));
-        if (router != null) {
-            int moduleSlotIndex = router.getModuleConfigSlot(player);
-            if (moduleSlotIndex >= 0) {
-                router.clearConfigSlot(player);
-                ItemStack installedModuleStack = router.getModules().getStackInSlot(moduleSlotIndex);
-                return installedModuleStack.isEmpty() ? null : ModuleGuiFactory.createGui(player, installedModuleStack, router.getPos(), moduleSlotIndex);
-            }
-        }
-        return null;
-    }
-
-    public static Container createContainer(EntityPlayer player, EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        Module module = ItemModule.getModule(stack);
-        return module == null ? null : module.createGuiContainer(player, hand, stack, null);
-    }
-
-    public static Container createContainer(EntityPlayer player, World world, int x, int y, int z) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, new BlockPos(x, y, z));
-        if (router != null) {
-            int slotIndex = router.getModuleConfigSlot(player);
-            if (slotIndex >= 0) {
-                router.clearConfigSlot(player);
-                ItemStack installedModuleStack = router.getModules().getStackInSlot(slotIndex);
-                Module module = ItemModule.getModule(installedModuleStack);
-                return module == null ? null : module.createGuiContainer(player, null, installedModuleStack, router);
-            }
-        }
-        return null;
-    }
-
-    private static GuiModule createGui(EntityPlayer player, ItemStack moduleStack, BlockPos routerPos, int slotIndex, EnumHand hand) {
-        Module module = ItemModule.getModule(moduleStack);
-        if (module == null) {
+    private static GuiModule createGui(EntityPlayer player, ItemStack moduleStack, TileEntityItemRouter router, EnumHand hand) {
+        if (!(moduleStack.getItem() instanceof ItemModule))
             return null;
-        }
-        Class<? extends GuiModule> clazz = module.getGuiHandler();
+
+        Class<? extends GuiModule> clazz = ((ItemModule) moduleStack.getItem()).getGuiClass();
         try {
-            Constructor<? extends GuiModule> ctor = clazz.getConstructor(ContainerModule.class, BlockPos.class, Integer.class, EnumHand.class);
-            TileEntityItemRouter router = routerPos == null ? null : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos);
-            return ctor.newInstance(module.createGuiContainer(player, hand, moduleStack, router), routerPos, slotIndex, hand);
+            Constructor<? extends GuiModule> ctor = clazz.getConstructor(ContainerModule.class);
+            ContainerModule container = ((ItemModule) moduleStack.getItem()).createContainer(player, hand, moduleStack, router);
+            return ctor.newInstance(container);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return null;

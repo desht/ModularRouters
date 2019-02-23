@@ -5,19 +5,16 @@ import me.desht.modularrouters.client.RenderHelper;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +24,7 @@ public class GuiModulePlayer extends GuiModule {
     private static final ItemStack armourStack = new ItemStack(Items.DIAMOND_CHESTPLATE);
     private static final ItemStack shieldStack = new ItemStack(Items.SHIELD);
     private static final ItemStack enderStack = new ItemStack(Blocks.ENDER_CHEST);
-    private static final ItemStack routerStack = new ItemStack(RegistrarMR.ITEM_ROUTER);
+    private static final ItemStack routerStack = new ItemStack(ObjectRegistry.ITEM_ROUTER);
 
     private static final int OP_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
     private static final int SECT_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
@@ -35,12 +32,8 @@ public class GuiModulePlayer extends GuiModule {
     private Operation operation;
     private Section section;
 
-    public GuiModulePlayer(ContainerModule containerItem, EnumHand hand) {
-        this(containerItem, null, -1, hand);
-    }
-
-    public GuiModulePlayer(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
-        super(containerItem, routerPos, slotIndex, hand);
+    public GuiModulePlayer(ContainerModule container) {
+        super(container);
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
         operation = cpm.getOperation();
@@ -52,8 +45,20 @@ public class GuiModulePlayer extends GuiModule {
         super.initGui();
 
         ItemStack[] stacks = new ItemStack[] { mainInvStack, armourStack, shieldStack, enderStack };
-        buttonList.add(new SectionButton(SECT_BUTTON_ID, guiLeft + 169, guiTop + 32, 16, 16, true, stacks, section));
-        buttonList.add(new OperationButton(OP_BUTTON_ID, guiLeft + 148, guiTop + 32, operation));
+        addButton(new SectionButton(SECT_BUTTON_ID, guiLeft + 169, guiTop + 32, 16, 16, true, stacks, section) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                section = cycle(!GuiScreen.isShiftKeyDown());
+                sendModuleSettingsToServer();
+            }
+        });
+        addButton(new OperationButton(OP_BUTTON_ID, guiLeft + 148, guiTop + 32, operation) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                operation = cycle(!GuiScreen.isShiftKeyDown());
+                sendModuleSettingsToServer();
+            }
+        });
 
         getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "guiText.popup.player.control");
     }
@@ -68,29 +73,10 @@ public class GuiModulePlayer extends GuiModule {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case OP_BUTTON_ID:
-                OperationButton opb = (OperationButton) button;
-                operation = opb.cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-                break;
-            case SECT_BUTTON_ID:
-                SectionButton sectb = (SectionButton) button;
-                section = sectb.cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-                break;
-            default:
-                super.actionPerformed(button);
-                break;
-        }
-    }
-
-    @Override
     protected NBTTagCompound buildMessageData() {
         NBTTagCompound compound = super.buildMessageData();
-        compound.setInteger(CompiledPlayerModule.NBT_OPERATION, operation.ordinal());
-        compound.setInteger(CompiledPlayerModule.NBT_SECTION, section.ordinal());
+        compound.putInt(CompiledPlayerModule.NBT_OPERATION, operation.ordinal());
+        compound.putInt(CompiledPlayerModule.NBT_SECTION, section.ordinal());
         return compound;
     }
 

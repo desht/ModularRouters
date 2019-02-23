@@ -1,69 +1,39 @@
 package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.container.handler.AugmentHandler;
-import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.item.ItemSubTypes;
+import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.module.ItemModule;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
+public abstract class ItemAugment extends ItemBase {
+    public static final int SLOTS = 4;
 
-    public enum AugmentType {
-        FAST_PICKUP,
-        PICKUP_DELAY,
-        RANGE_UP,
-        RANGE_DOWN,
-        REDSTONE,
-        REGULATOR,
-        STACK,
-        XP_VACUUM,
-        MIMIC,
-        PUSHING;
-
-        public static AugmentType getType(ItemStack stack) {
-            return stack.getItem() instanceof ItemAugment ? values()[stack.getItemDamage()] : null;
-        }
+    public ItemAugment(Properties props) {
+        super(props);
     }
 
-    public ItemAugment() {
-        super("augment", AugmentType.class);
-
-        register(AugmentType.FAST_PICKUP, new FastPickupAugment());
-        register(AugmentType.PICKUP_DELAY, new PickupDelayAugment());
-        register(AugmentType.RANGE_UP, new RangeAugments.RangeUpAugment());
-        register(AugmentType.RANGE_DOWN, new RangeAugments.RangeDownAugment());
-        register(AugmentType.REDSTONE, new RedstoneAugment());
-        register(AugmentType.REGULATOR, new RegulatorAugment());
-        register(AugmentType.STACK, new StackAugment());
-        register(AugmentType.XP_VACUUM, new XPVacuumAugment());
-        register(AugmentType.MIMIC, new MimicAugment());
-        register(AugmentType.PUSHING, new PushingAugment());
+    @Override
+    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
     }
 
-    public static Augment getAugment(ItemStack stack) {
-        if (!(stack.getItem() instanceof ItemAugment) || stack.getMetadata() >= AugmentType.values().length) {
-            return null;
-        }
-        return getAugment(AugmentType.values()[stack.getMetadata()]);
-    }
+    public abstract boolean isCompatible(ItemModule moduleType);
 
-    public static ItemStack makeItemStack(AugmentType type) {
-        return makeItemStack(type, 1);
-    }
-
-    public static ItemStack makeItemStack(AugmentType type, int amount) {
-        return new ItemStack(RegistrarMR.AUGMENT, amount, type.ordinal());
-    }
-
-    @Nonnull
-    public static Augment getAugment(AugmentType type) {
-        return (Augment) RegistrarMR.AUGMENT.getHandler(type);
+    public String getExtraInfo(int c, ItemStack moduleStack) {
+        return "";
     }
 
     public static class AugmentCounter {
-        private int[] counts = new int[AugmentType.values().length];
+        private final Map<ResourceLocation, Integer> counts = new HashMap<>();
 
         public AugmentCounter(ItemStack moduleStack) {
             if (!(moduleStack.getItem() instanceof ItemModule)) {
@@ -73,15 +43,19 @@ public class ItemAugment extends ItemSubTypes<ItemAugment.AugmentType> {
             AugmentHandler h = new AugmentHandler(moduleStack);
             for (int i = 0; i < h.getSlots(); i++) {
                 ItemStack augmentStack = h.getStackInSlot(i);
-                AugmentType type = AugmentType.getType(augmentStack);
-                if (type != null) {
-                    counts[type.ordinal()] += augmentStack.getCount();
+                if (augmentStack.getItem() instanceof ItemAugment) {
+                    ResourceLocation k = augmentStack.getItem().getRegistryName();
+                    counts.put(k, counts.getOrDefault(k, 0) + augmentStack.getCount());
                 }
             }
         }
 
-        public int getAugmentCount(AugmentType type) {
-            return counts[type.ordinal()];
+        public Collection<ItemAugment> getAugments() {
+            return counts.keySet().stream().map(ForgeRegistries.ITEMS::getValue).map(i -> (ItemAugment)i).collect(Collectors.toList());
+        }
+
+        public int getAugmentCount(Item type) {
+            return counts.getOrDefault(type.getRegistryName(), 0);
         }
     }
 }

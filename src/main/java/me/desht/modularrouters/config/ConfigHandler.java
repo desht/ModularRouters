@@ -1,195 +1,166 @@
 package me.desht.modularrouters.config;
 
-import me.desht.modularrouters.ModularRouters;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 
-@Config(modid = ModularRouters.MODID)
-@Config.LangKey(value = "gui.config.mainTitle")
 public class ConfigHandler {
-    @Config.Name("module")
-    @Config.LangKey("gui.config.ctgy.module")
-    public static Module module = new Module();
-
-    @Config.Name("router")
-    @Config.LangKey("gui.config.ctgy.router")
-    public static Router router = new Router();
-
-    @Config.Name("misc")
-    @Config.LangKey("gui.config.ctgy.misc")
-    public static Misc misc = new Misc();
-
-    public static char getConfigKey() {
-        return router.configKey.isEmpty() ? 'c' : router.configKey.charAt(0);
-    }
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    public static final Module MODULE = new Module(BUILDER);
+    public static final Router ROUTER = new Router(BUILDER);
+    public static final Misc MISC = new Misc(BUILDER);
+    public static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static class Module {
-        @Config.LangKey("gui.config.sender1BaseRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base range for Sender Mk1 (no range upgrades)")
-        public int sender1BaseRange = 8;
+        public final ForgeConfigSpec.ConfigValue<Integer> sender1BaseRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> sender1MaxRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> sender2BaseRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> sender2MaxRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> vacuumBaseRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> vacuumMaxRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> extruder1BaseRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> extruder1MaxRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> extruder2BaseRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> extruder2MaxRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> puller2BaseRange;
+        public final ForgeConfigSpec.ConfigValue<Integer> puller2MaxRange;
+        public final ForgeConfigSpec.ConfigValue<Boolean> senderParticles;
+        public final ForgeConfigSpec.ConfigValue<Boolean> pullerParticles;
+        public final ForgeConfigSpec.ConfigValue<Boolean> placerParticles;
+        public final ForgeConfigSpec.ConfigValue<Boolean> breakerParticles;
+        public final ForgeConfigSpec.ConfigValue<Boolean> vacuumParticles;
+        public final ForgeConfigSpec.ConfigValue<Boolean> flingerEffects;
+        public final ForgeConfigSpec.ConfigValue<Boolean> extruderSound;
+        public final ForgeConfigSpec.ConfigValue<Boolean> guiBackgroundTint;
+        public final ForgeConfigSpec.ConfigValue<Boolean> extruderPushEntities;
 
-        @Config.LangKey("gui.config.sender1MaxRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max range for Sender Mk1")
-        public int sender1MaxRange = 16;
+        public Module(ForgeConfigSpec.Builder builder) {
+            builder.push("Module");
 
-        @Config.LangKey("gui.config.sender2BaseRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base range for Sender Mk2 (no range upgrades)")
-        public int sender2BaseRange = 24;
+            sender1BaseRange = builder.comment("Base range for Sender Mk1 (no range upgrades)")
+                    .translation("gui.config.sender1BaseRange")
+                    .defineInRange("sender1BaseRange", 8, 1, Integer.MAX_VALUE);
+            sender1MaxRange = builder.comment("Max range for Sender Mk1")
+                    .translation("gui.config.sender1MaxRange")
+                    .defineInRange("sender1MaxRange", 16, 1, Integer.MAX_VALUE);
+            sender2BaseRange = builder.comment("Base range for Sender Mk2 (no range upgrades)")
+                    .translation("gui.config.sender2BaseRange")
+                    .defineInRange("sender2BaseRange", 24, 1, Integer.MAX_VALUE);
+            sender2MaxRange = builder.comment("Max range for Sender Mk2")
+                    .translation("gui.config.sender2MaxRange")
+                    .defineInRange("sender2MaxRange", 48, 1, Integer.MAX_VALUE);
+            vacuumBaseRange = builder.comment("Base range for Vacuum (no range upgrades)")
+                    .translation("gui.config.vacuumBaseRange")
+                    .defineInRange("vacuumBaseRange", 6, 1, Integer.MAX_VALUE);
+            vacuumMaxRange = builder.comment("Max range for Vacuum")
+                    .translation("gui.config.vacuumMaxRange")
+                    .defineInRange("vacuumMaxRange", 12, 1, Integer.MAX_VALUE);
+            extruder1BaseRange = builder.comment("Base range for Extruder Mk1 (no range upgrades)")
+                    .translation("gui.config.extruder1BaseRange")
+                    .defineInRange("extruder1BaseRange", 16, 1, Integer.MAX_VALUE);
+            extruder1MaxRange = builder.comment("Max range for Extruder Mk1")
+                    .translation("gui.config.extruder1MaxRange")
+                    .defineInRange("extruder1MaxRange", 32, 1, Integer.MAX_VALUE);
+            extruder2BaseRange = builder.comment("Base range for Extruder Mk2 (no range upgrades)")
+                    .translation("gui.config.extruder2BaseRange")
+                    .defineInRange("extruder2BaseRange", 32, 1, Integer.MAX_VALUE);
+            extruder2MaxRange = builder.comment("Max range for Extruder Mk2")
+                    .translation("gui.config.extruder2MaxRange")
+                    .defineInRange("extruder2MaxRange", 64, 1, Integer.MAX_VALUE);
+            puller2BaseRange = builder.comment("Base range for Puller Mk2 (no range upgrades)")
+                    .translation("gui.config.puller2BaseRange")
+                    .defineInRange("puller2BaseRange", 12, 1, Integer.MAX_VALUE);
+            puller2MaxRange = builder.comment("Max range for Puller Mk2")
+                    .translation("gui.config.puller2MaxRange")
+                    .defineInRange("puller2MaxRange", 24, 1, Integer.MAX_VALUE);
+            senderParticles = builder.comment("Should Sender modules show particle effects when working?")
+                    .translation("gui.config.senderParticles")
+                    .define("senderParticles", true);
+            pullerParticles = builder.comment("Should Puller modules show particle effects when working?")
+                    .translation("gui.config.pullerParticles")
+                    .define("pullerParticles", true);
+            placerParticles = builder.comment("Should Placer modules show particle effects when working?")
+                    .translation("gui.config.placerParticles")
+                    .define("placerParticles", true);
+            breakerParticles = builder.comment("Should Breaker modules show particle effects when working?")
+                    .translation("gui.config.breakerParticles")
+                    .define("breakerParticles", true);
+            vacuumParticles = builder.comment("Should Vacuum modules show particle effects when working?")
+                    .translation("gui.config.vacuumParticles")
+                    .define("vacuumParticles", true);
+            flingerEffects = builder.comment("Should Flinger modules show smoke effects & play a sound when working?")
+                    .translation("gui.config.flingerEffects")
+                    .define("flingerEffects", true);
+            extruderSound = builder.comment("Should Extruder Mk1/2 modules play a sound when placing/removing blocks?")
+                    .translation("gui.config.extruderSound")
+                    .define("extruderSound", true);
+            extruderPushEntities = builder.comment("Should Extruder Mk1/2 modules push entities along when extruding blocks?")
+                    .translation("gui.config.extruderPushEntities")
+                    .define("extruderPushEntities", true);
+            guiBackgroundTint = builder.comment("Should module GUI's be tinted according to the module item colour?")
+                    .translation("gui.config.guiBackgroundTint")
+                    .define("guiBackgroundTint", true);
 
-        @Config.LangKey("gui.config.sender2MaxRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max range for Sender Mk2")
-        public int sender2MaxRange= 48;
-
-        @Config.LangKey("gui.config.vacuumBaseRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base range for Vacuum (no range upgrades)")
-        public int vacuumBaseRange = 6;
-
-        @Config.LangKey("gui.config.vacuumMaxRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max range for Vacuum")
-        public int vacuumMaxRange = 12;
-
-        @Config.LangKey("gui.config.extruderBaseRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base range for Extruder Mk1 (no range upgrades)")
-        public int extruderBaseRange = 12;
-
-        @Config.LangKey("gui.config.extruderMaxRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max range for Extruder Mk1")
-        public int extruderMaxRange = 24;
-
-        @Config.LangKey("gui.config.extruder2BaseRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base range for Extruder Mk2 (no range upgrades)")
-        public int extruder2BaseRange = 24;
-
-        @Config.LangKey("gui.config.extruder2MaxRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max range for Extruder Mk2")
-        public int extruder2MaxRange = 48;
-
-        @Config.LangKey("gui.config.puller2BaseRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base range for Puller Mk2 (no range upgrades)")
-        public int puller2BaseRange = 12;
-
-        @Config.LangKey("gui.config.puller2MaxRange")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max range for Puller Mk2")
-        public int puller2MaxRange = 24;
-
-        @Config.LangKey("gui.config.senderParticles")
-        @Config.Comment("Should Sender modules show particle effects when sending?")
-        public boolean senderParticles = true;
-
-        @Config.LangKey("gui.config.pullerParticles")
-        @Config.Comment("Should Puller modules show particle effects when pulling?")
-        public boolean pullerParticles = true;
-
-        @Config.LangKey("gui.config.placerParticles")
-        @Config.Comment("Should Placer modules show particle effects when placing a block?")
-        public boolean placerParticles = false;
-
-        @Config.LangKey("gui.config.breakerParticles")
-        @Config.Comment("Should Breaker modules show block particle effects when breaking a block?")
-        public boolean breakerParticles = true;
-
-        @Config.LangKey("gui.config.vacuumParticles")
-        @Config.Comment("Should Vacuum modules show particle effects when absorbing items?")
-        public boolean vacuumParticles = true;
-
-        @Config.LangKey("gui.config.flingerEffects")
-        @Config.Comment("Should Flinger modules show smoke effects & play a sound when flinging items?")
-        public boolean flingerEffects = true;
-
-        @Config.LangKey("gui.config.extruderSound")
-        @Config.Comment("Should Extruder (Mk1 & 2) modules play a sound when placing blocks?")
-        public boolean extruderSound = true;
-
-        @Config.LangKey("gui.config.backgroundTint")
-        @Config.Comment("Should the module GUI background be tinted like the module item colour?")
-        public boolean backgroundTint = true;
-
-        @Config.LangKey("gui.config.extruderPushEnties")
-        @Config.Comment("Should the Extruder Mk1/2 push entities along when extruding blocks?")
-        public boolean extruderPushEntities = true;
+            builder.pop();
+        }
     }
 
     public static class Router {
-        @Config.LangKey("gui.config.configKey")
-        @Config.Comment("Key to press while mousing over a module in the Item Router GUI to configure the module")
-        public String configKey = "c";
+        public final ForgeConfigSpec.ConfigValue<Integer> baseTickRate;
+        public final ForgeConfigSpec.ConfigValue<Integer> ticksPerUpgrade;
+        public final ForgeConfigSpec.ConfigValue<Integer> hardMinTickRate;
+        public final ForgeConfigSpec.ConfigValue<Integer> ecoTimeout;
+        public final ForgeConfigSpec.ConfigValue<Integer> lowPowerTickRate;
+        public final ForgeConfigSpec.ConfigValue<Integer> fluidBaseTransferRate;
+        public final ForgeConfigSpec.ConfigValue<Integer> fluidMaxTransferRate;
+        public final ForgeConfigSpec.ConfigValue<Integer> mBperFluidUpgade;
 
-        @Config.LangKey("gui.config.baseTickRate")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base tick interval (in server ticks) for a router; router will run this often")
-        public int baseTickRate = 20;
+        public Router(ForgeConfigSpec.Builder builder) {
+            builder.push("Router");
 
-        @Config.LangKey("gui.config.ticksPerUpgrade")
-        @Config.RangeInt(min = 1, max = 20)
-        @Config.Comment("Number of ticks by which 1 Speed Upgrade will reduce the router's tick interval")
-        public int ticksPerUpgrade = 2;
+            baseTickRate = builder.comment("Base tick interval (in server ticks) for a router; router will run this often")
+                    .translation("gui.config.baseTickRate")
+                    .defineInRange("baseTickRate", 20, 1, Integer.MAX_VALUE);
+            ticksPerUpgrade = builder.comment("Number of ticks by which 1 Speed Upgrade will reduce the router's tick interval")
+                    .translation("gui.config.ticksPerUpgrade")
+                    .defineInRange("ticksPerUpgrade", 2, 1, Integer.MAX_VALUE);
+            hardMinTickRate = builder.comment("Hard minimum tick interval for a router regardless of Speed Upgrades")
+                    .translation("gui.config.hardMinTickRate")
+                    .defineInRange("hardMinTickRate", 2, 1, Integer.MAX_VALUE);
+            ecoTimeout = builder.comment("Router with eco mode enabled will go into low-power mode if idle for this many server ticks")
+                    .translation("gui.config.ecoTimeout")
+                    .defineInRange("ecoTimeout", 100, 1, Integer.MAX_VALUE);
+            lowPowerTickRate = builder.comment("Tick interval for an eco-mode router which has gone into low-power mode")
+                    .translation("gui.config.lowPowerTickRate")
+                    .defineInRange("lowPowerTickRate", 100, 1, Integer.MAX_VALUE);
+            fluidBaseTransferRate = builder.comment("Base fluid transfer rate (mB/t in each direction) for a router")
+                    .translation("gui.config.fluidBaseTransferRate")
+                    .defineInRange("fluidBaseTransferRate", 50, 1, Integer.MAX_VALUE);
+            fluidMaxTransferRate = builder.comment("Max fluid transfer rate (mB/t in each direction) for a router")
+                    .translation("gui.config.baseTickRate")
+                    .defineInRange("fluidMaxTransferRate", 400, 1, Integer.MAX_VALUE);
+            mBperFluidUpgade = builder.comment("Fluid transfer rate increase per Fluid Transfer Upgrade")
+                    .translation("gui.config.mBperFluidUpgade")
+                    .defineInRange("mBperFluidUpgade", 10, 1, Integer.MAX_VALUE);
 
-        @Config.LangKey("gui.config.hardMinTicks")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Hard minimum tick interval for a router regardless of Speed Upgrades")
-        public int hardMinTickRate = 2;
 
-        @Config.LangKey("gui.config.ecoTimeout")
-        @Config.RangeInt(min = 20)
-        @Config.Comment("Router with eco mode enabled will go into low-power mode if idle for this many server ticks")
-        public int ecoTimeout = 100;
-
-        @Config.LangKey("gui.config.lowPowerTickRate")
-        @Config.RangeInt(min = 20)
-        @Config.Comment("Tick interval for an eco-mode router which has gone into low-power mode")
-        public int lowPowerTickRate = 100;
-
-        @Config.LangKey("gui.config.fluidBaseTransferRate")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Base fluid transfer rate (mB/t in each direction) for a router")
-        public int fluidBaseTransferRate = 50;
-
-        @Config.LangKey("gui.config.fluidMaxTransferRate")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Max fluid transfer rate (mB/t in each direction) for a router")
-        public int fluidMaxTransferRate = 400;
-
-        @Config.LangKey("gui.config.mbPerFluidUpgrade")
-        @Config.RangeInt(min = 1)
-        @Config.Comment("Fluid transfer rate increase per Fluid Transfer Upgrade")
-        public int mBperFluidUpgrade = 10;
+            builder.pop();
+        }
     }
 
     public static class Misc {
-        @Config.LangKey("gui.config.startWithGuide")
-        @Config.Comment("Should new players start with a copy of the Modular Routers guidebook?")
-        public boolean startWithGuide = false;
+        public ForgeConfigSpec.ConfigValue<Boolean> startWithGuide;
+        public ForgeConfigSpec.ConfigValue<Boolean> alwaysShowSettings;
 
-        @Config.LangKey("gui.config.alwaysShowSettings")
-        @Config.Comment("Show module/upgrade/filter settings in tooltip without needing to hold down Shift?")
-        public boolean alwaysShowSettings = true;
-    }
+        public Misc(ForgeConfigSpec.Builder builder) {
+            builder.push("Misc");
 
-    @Mod.EventBusSubscriber
-    public static class ConfigSyncHandler
-    {
-        @SubscribeEvent
-        public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event)
-        {
-            if (event.getModID().equals(ModularRouters.MODID)) {
-                ConfigManager.sync(ModularRouters.MODID, Config.Type.INSTANCE);
-                ModularRouters.logger.info("Configuration has been saved.");
-            }
+            startWithGuide = builder.comment("Should new players get a Modular Routers guidebook?")
+                    .translation("gui.config.startWithGuide")
+                    .define("startWithGuide", true);
+            alwaysShowSettings = builder.comment("Should module tooltips always show module settings (without needing to hold Shift)?")
+                    .translation("gui.config.alwaysShowSettings")
+                    .define("alwaysShowSettings", true);
+
+            builder.pop();
         }
     }
 }

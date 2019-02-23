@@ -2,8 +2,9 @@ package me.desht.modularrouters.util;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import me.desht.modularrouters.ModularRouters;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -56,8 +57,8 @@ public final class Scheduler extends AbstractListeningExecutorService {
      * @param side the side
      * @return a Scheduler for the side
      */
-    public static Scheduler forSide(Side side) {
-        return side == Side.CLIENT ? client : server;
+    public static Scheduler forSide(Dist side) {
+        return side == Dist.CLIENT ? client : server;
     }
 
     /**
@@ -81,7 +82,7 @@ public final class Scheduler extends AbstractListeningExecutorService {
     }
 
     static {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
+        if (EffectiveSide.get() == LogicalSide.CLIENT) {
             client = new Scheduler();
         } else {
             client = null;
@@ -151,7 +152,7 @@ public final class Scheduler extends AbstractListeningExecutorService {
         try {
             return task.execute();
         } catch (Throwable x) {
-            ModularRouters.logger.error(String.format("Exception thrown during execution of %s", task));
+            ModularRouters.LOGGER.error(String.format("Exception thrown during execution of %s", task));
             return false;
         }
     }

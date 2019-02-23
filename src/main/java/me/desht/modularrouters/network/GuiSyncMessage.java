@@ -4,12 +4,17 @@ import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.client.gui.widgets.IResyncableGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class GuiSyncMessage implements IMessage {
+import java.util.function.Supplier;
+
+/**
+ * Received on: CLIENT
+ *
+ * Sent when a filter is changed server-side which requires an open GUI to re-read its settings.
+ */
+public class GuiSyncMessage {
     private ItemStack newStack;
 
     public GuiSyncMessage() {
@@ -19,25 +24,20 @@ public class GuiSyncMessage implements IMessage {
         this.newStack = newStack;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        newStack = ByteBufUtils.readItemStack(buf);
+    public GuiSyncMessage(ByteBuf buf) {
+        newStack = new PacketBuffer(buf).readItemStack();
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeItemStack(buf, newStack);
+        new PacketBuffer(buf).writeItemStack(newStack);
     }
 
-    public static class Handler implements IMessageHandler<GuiSyncMessage, IMessage> {
-        @Override
-        public IMessage onMessage(GuiSyncMessage message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                if (Minecraft.getMinecraft().currentScreen instanceof IResyncableGui) {
-                    ((IResyncableGui) Minecraft.getMinecraft().currentScreen).resync(message.newStack);
-                }
-            });
-            return null;
-        }
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            if (Minecraft.getInstance().currentScreen instanceof IResyncableGui) {
+                ((IResyncableGui) Minecraft.getInstance().currentScreen).resync(newStack);
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }

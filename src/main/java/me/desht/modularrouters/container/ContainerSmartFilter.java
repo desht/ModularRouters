@@ -1,6 +1,7 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -8,13 +9,13 @@ import net.minecraft.util.EnumHand;
 
 public abstract class ContainerSmartFilter extends Container {
     private final EntityPlayer player;
-    private final ItemStack filterStack;
+    protected final ItemStack filterStack;
     private final EnumHand hand;
     private final TileEntityItemRouter router;
 
-    public ContainerSmartFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
+    public ContainerSmartFilter(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
         this.player = player;
-        this.filterStack = filterStack;
+        this.filterStack = hand == null ? SlotTracker.getInstance(player).getConfiguringFilter(router) : player.getHeldItem(hand);
         this.hand = hand;
         this.router = router;
     }

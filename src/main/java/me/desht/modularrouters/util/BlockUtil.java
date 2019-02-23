@@ -1,34 +1,31 @@
 package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
-import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityShulkerBox;
-import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
@@ -49,33 +46,38 @@ public class BlockUtil {
                 float hitX = (float) (fakePlayer.posX - pos.getX());
                 float hitY = (float) (fakePlayer.posY - pos.getY());
                 float hitZ = (float) (fakePlayer.posZ - pos.getZ());
-                int meta = item.getMetadata(stack.getItemDamage());
-                res = ((ItemBlock) item).getBlock().getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
-            } else if (item instanceof ItemBlockSpecial) {
-                res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
-            } else if (item instanceof ItemRedstone) {
-                res = Blocks.REDSTONE_WIRE.getDefaultState();
-            } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
-                res = getCocoaBeanState(fakePlayer, world, pos);
-                if (res != null) {
-                    facing = res.getValue(BlockHorizontal.FACING);
-                }
+                res = ((ItemBlock) item).getBlock().getDefaultState().updatePostPlacement(facing, world.getBlockState(pos), world, pos, pos.offset(facing));
+                // todo 1.13
+//                int meta = item.getMetadata(stack.getItemDamage());
+//                res = ((ItemBlock) item).getBlock().getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
+//            } else if (item instanceof ItemBlockSpecial) {
+//                res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
+//            } else if (item instanceof ItemRedstone) {
+//                res = Blocks.REDSTONE_WIRE.getDefaultState();
+//            } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
+//                res = getCocoaBeanState(fakePlayer, world, pos);
+//                if (res != null) {
+//                    facing = res.getValue(BlockHorizontal.FACING);
+//                }
             } else if (item instanceof IPlantable) {
                 IBlockState state = ((IPlantable) item).getPlant(world, pos);
-                res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
-            } else if (item instanceof ItemSkull) {
-                res = Blocks.SKULL.getDefaultState();
-                // try to place skull on horizontal surface below if possible
-                BlockPos pos2 = pos.down();
-                if (world.getBlockState(pos2).isSideSolid(world, pos2, EnumFacing.UP)) {
-                    facing = EnumFacing.UP;
-                }
+                res = ((state.getBlock() instanceof BlockCrops) && state.isValidPosition(world, pos)) ? state : null;
+//                res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
             }
+            // todo 1.13
+//            else if (item instanceof ItemSkull) {
+//                res = Blocks.SKULL.getDefaultState();
+//                // try to place skull on horizontal surface below if possible
+//                BlockPos pos2 = pos.down();
+//                if (world.getBlockState(pos2).isSideSolid(world, pos2, EnumFacing.UP)) {
+//                    facing = EnumFacing.UP;
+//                }
+//            }
             if (res != null) {
-                if (res.getProperties().containsKey(BlockDirectional.FACING)) {
-                    res = res.withProperty(BlockDirectional.FACING, facing);
-                } else if (res.getProperties().containsKey(BlockHorizontal.FACING)) {
-                    res = res.withProperty(BlockHorizontal.FACING, facing.getHorizontalIndex() >= 0 ? facing : horizFacing);
+                if (res.getProperties().contains(BlockDirectional.FACING)) {
+                    res = res.with(BlockDirectional.FACING, facing);
+                } else if (res.getProperties().contains(BlockHorizontal.HORIZONTAL_FACING)) {
+                    res = res.with(BlockHorizontal.HORIZONTAL_FACING, facing.getHorizontalIndex() >= 0 ? facing : horizFacing);
                 }
             }
             return res;
@@ -86,20 +88,20 @@ public class BlockUtil {
         }
     }
 
-    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos) {
-        // try to find a jungle log in any horizontal direction
-        for (EnumFacing f : EnumFacing.HORIZONTALS) {
-            IBlockState state = world.getBlockState(pos.offset(f));
-            if (state.getBlock() == Blocks.LOG && state.getValue(BlockOldLog.VARIANT) == BlockPlanks.EnumType.JUNGLE) {
-                float hitX = (float) (fakePlayer.posX - pos.getX());
-                float hitY = (float) (fakePlayer.posY - pos.getY());
-                float hitZ = (float) (fakePlayer.posZ - pos.getZ());
-                fakePlayer.rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
-                return Blocks.COCOA.getStateForPlacement(world, pos, f.getOpposite(), hitX, hitY, hitZ, 0, fakePlayer, EnumHand.MAIN_HAND);
-            }
-        }
-        return null;
-    }
+//    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos) {
+//        // try to find a jungle log in any horizontal direction
+//        for (EnumFacing f : EnumFacing.HORIZONTALS) {
+//            IBlockState state = world.getBlockState(pos.offset(f));
+//            if (state.getBlock() == Blocks.LOG && state.getValue(BlockOldLog.VARIANT) == BlockPlanks.EnumType.JUNGLE) {
+//                float hitX = (float) (fakePlayer.posX - pos.getX());
+//                float hitY = (float) (fakePlayer.posY - pos.getY());
+//                float hitZ = (float) (fakePlayer.posZ - pos.getZ());
+//                fakePlayer.rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
+//                return Blocks.COCOA.getStateForPlacement(world, pos, f.getOpposite(), hitX, hitY, hitZ, 0, fakePlayer, EnumHand.MAIN_HAND);
+//            }
+//        }
+//        return null;
+//    }
 
     private static float getYawFromFacing(EnumFacing facing) {
         switch (facing) {
@@ -111,36 +113,37 @@ public class BlockUtil {
         }
     }
 
-    private static void handleSkullPlacement(World worldIn, BlockPos pos, ItemStack stack, EnumFacing facing) {
-        // adapted from ItemSkull#onItemUse()
-
-        int i = 0;
-        if (worldIn.getBlockState(pos).getValue(BlockDirectional.FACING) == EnumFacing.UP) {
-            i = MathHelper.floor((double) (facing.getHorizontalAngle() * 16.0F / 360.0F) + 0.5D) & 15;
-        }
-
-        TileEntity tileentity = worldIn.getTileEntity(pos);
-        if (tileentity instanceof TileEntitySkull) {
-            TileEntitySkull tileentityskull = (TileEntitySkull) tileentity;
-            if (stack.getMetadata() == 3) {   // player head
-                GameProfile gameprofile = null;
-                if (stack.hasTagCompound()) {
-                    NBTTagCompound nbttagcompound = stack.getTagCompound();
-                    if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_COMPOUND)) {
-                        gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
-                    } else if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_STRING) && !nbttagcompound.getString("SkullOwner").isEmpty()) {
-                        gameprofile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
-                    }
-                }
-                tileentityskull.setPlayerProfile(gameprofile);
-            } else {
-                tileentityskull.setType(stack.getMetadata());
-            }
-
-            tileentityskull.setSkullRotation(i);  // skull will face the router fake-player
-            Blocks.SKULL.checkWitherSpawn(worldIn, pos, tileentityskull);
-        }
-    }
+    // todo 1.13 may no longer be needed
+//    private static void handleSkullPlacement(World worldIn, BlockPos pos, ItemStack stack, EnumFacing facing) {
+//        // adapted from ItemSkull#onItemUse()
+//
+//        int i = 0;
+//        if (worldIn.getBlockState(pos).getValue(BlockDirectional.FACING) == EnumFacing.UP) {
+//            i = MathHelper.floor((double) (facing.getHorizontalAngle() * 16.0F / 360.0F) + 0.5D) & 15;
+//        }
+//
+//        TileEntity tileentity = worldIn.getTileEntity(pos);
+//        if (tileentity instanceof TileEntitySkull) {
+//            TileEntitySkull tileentityskull = (TileEntitySkull) tileentity;
+//            if (stack.getMetadata() == 3) {   // player head
+//                GameProfile gameprofile = null;
+//                if (stack.hasTagCompound()) {
+//                    NBTTagCompound nbttagcompound = stack.getTagCompound();
+//                    if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_COMPOUND)) {
+//                        gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
+//                    } else if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_STRING) && !nbttagcompound.getString("SkullOwner").isEmpty()) {
+//                        gameprofile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
+//                    }
+//                }
+//                tileentityskull.setPlayerProfile(gameprofile);
+//            } else {
+//                tileentityskull.setType(stack.getMetadata());
+//            }
+//
+//            tileentityskull.setSkullRotation(i);  // skull will face the router fake-player
+//            Blocks.SKULL.checkWitherSpawn(worldIn, pos, tileentityskull);
+//        }
+//    }
 
     /**
      * Try to place the given item as a block in the world.  This will fail if the block currently at the
@@ -155,18 +158,21 @@ public class BlockUtil {
      */
     public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, EnumFacing facing, EnumFacing horizFacing) {
         IBlockState currentState = world.getBlockState(pos);
-        if (!currentState.getBlock().isReplaceable(world, pos)) {
-            return null;
-        }
 
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
         if (fakePlayer == null) {
             return null;
         }
+
+        BlockItemUseContext ctx = new BlockItemUseContext(world, fakePlayer, toPlace, pos, facing, pos.getX(), pos.getY(), pos.getZ());
+        if (!currentState.isReplaceable(ctx)) {
+            return null;
+        }
+
         fakePlayer.rotationYaw = getYawFromFacing(facing);
 
         IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing, horizFacing);
-        if (newState != null && newState.getBlock().canPlaceBlockAt(world, pos)) {
+        if (newState != null && newState.isValidPosition(world, pos)) {
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
             BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer, EnumHand.MAIN_HAND);
@@ -175,9 +181,9 @@ public class BlockUtil {
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
                 ItemBlock.setTileEntityNBT(world, fakePlayer, pos, toPlace);
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
-                if (newState.getBlock() == Blocks.SKULL) {
-                    handleSkullPlacement(world, pos, toPlace, facing);
-                }
+//                if (newState.getBlock() == Blocks.SKULL) {
+//                    handleSkullPlacement(world, pos, toPlace, facing);
+//                }
                 return newState;
             }
         }
@@ -200,7 +206,8 @@ public class BlockUtil {
     public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof BlockLiquid) {
+        // todo 1.13 how do liquids work?
+        if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 /*|| block instanceof BlockLiquid*/) {
             return BreakResult.NOT_BROKEN;
         }
 
@@ -217,7 +224,7 @@ public class BlockUtil {
                     groups = new HashMap<>();
                     groups.put(true, Lists.newArrayList(stack));
                 }
-                world.setBlockToAir(pos);
+                world.removeBlock(pos);
                 return new BreakResult(true, groups);
             }
         }
@@ -237,11 +244,11 @@ public class BlockUtil {
                 ItemStack itemstack = new ItemStack(Item.getItemFromBlock(world.getBlockState(pos).getBlock()));
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound.setTag("BlockEntityTag", tesb.saveToNbt(nbttagcompound1));
-                itemstack.setTagCompound(nbttagcompound);
+                nbttagcompound.put("BlockEntityTag", tesb.saveToNbt(nbttagcompound1));
+                itemstack.setTag(nbttagcompound);
                 if (tesb.hasCustomName()) {
-                    itemstack.setStackDisplayName(tesb.getName());
-                    tesb.setCustomName("");
+                    itemstack.setDisplayName(tesb.getName());
+                    tesb.setCustomName(new TextComponentString(""));
                 }
                 tesb.clear();  // stops BlockShulkerBox#breakBlock dropping it as an item
                 return itemstack;
@@ -255,15 +262,10 @@ public class BlockUtil {
         Block block = state.getBlock();
 
         if (silkTouch) {
-            Item item = Item.getItemFromBlock(block);
-            if (item == Items.AIR) {
-                return Collections.emptyList();
-            } else {
-                return Lists.newArrayList(new ItemStack(item, 1, block.getMetaFromState(state)));
-            }
+            return state.isAir(world, pos) ? Collections.emptyList() : Lists.newArrayList(new ItemStack(block));
         } else {
             NonNullList<ItemStack> drops = NonNullList.create();
-            block.getDrops(drops, world, pos, state, fortune);
+            block.getDrops(state, drops, world, pos, fortune);
             float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, 1.0F, false, player);
             return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
         }
@@ -277,11 +279,11 @@ public class BlockUtil {
         if (state.getBlock().isAir(state, w, pos)) {
             return "";
         } else {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1, state.getBlock().damageDropped(state));
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1);
             if (!stack.isEmpty()) {
-                return stack.getDisplayName();
+                return stack.getDisplayName().getString();
             } else {
-                return state.getBlock().getLocalizedName();
+                return state.getBlock().getTranslationKey();
             }
         }
     }

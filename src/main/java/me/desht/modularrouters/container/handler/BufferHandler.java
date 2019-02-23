@@ -1,20 +1,20 @@
 package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.integration.tesla.TeslaIntegration;
-import net.darkhax.tesla.lib.TeslaUtils;
+import me.desht.modularrouters.core.ObjectRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class BufferHandler extends ItemStackHandler {
     private final TileEntityItemRouter router;
-    private IFluidHandler fluidHandler;
-    private boolean energyHandler;
+    private LazyOptional<IFluidHandlerItem> fluidCap = LazyOptional.empty();
+    private LazyOptional<IEnergyStorage> energyCap = LazyOptional.empty();
 
     public BufferHandler(TileEntityItemRouter router) {
         super(router.getBufferSlotCount());
@@ -27,27 +27,18 @@ public class BufferHandler extends ItemStackHandler {
 
         ItemStack stack = getStackInSlot(slot);
 
-        IFluidHandler newHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : null;
-        if (newHandler != fluidHandler) {
-            boolean doUpdate = newHandler == null || fluidHandler == null;
-            fluidHandler = newHandler;
-            if (doUpdate) {
-                // in case any fluid pipes need to connect/disconnect
-                router.getWorld().notifyNeighborsOfStateChange(router.getPos(), RegistrarMR.ITEM_ROUTER, true);
-            }
-        }
+        LazyOptional<IFluidHandlerItem> newHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
+        boolean updateFluid = newHandler.isPresent() && !fluidCap.isPresent() || !newHandler.isPresent() && fluidCap.isPresent();
+        fluidCap = newHandler;
 
-        boolean newEnergyHandler = canHandleEnergy(stack);
-        if (newEnergyHandler != energyHandler) {
-            // in case any cables need to connect/disconnect
-            energyHandler = newEnergyHandler;
-            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), RegistrarMR.ITEM_ROUTER, true);
-        }
-    }
+        LazyOptional<IEnergyStorage> newEnergyStorage = stack.getCount() == 1 ? stack.getCapability(CapabilityEnergy.ENERGY) : LazyOptional.empty();
+        boolean updateEnergy = newEnergyStorage.isPresent() && !energyCap.isPresent() || !newEnergyStorage.isPresent() && energyCap.isPresent();
+        energyCap = newEnergyStorage;
 
-    private boolean canHandleEnergy(ItemStack stack) {
-        return (stack.hasCapability(CapabilityEnergy.ENERGY, null) ||
-                (TeslaIntegration.enabled && TeslaUtils.hasTeslaSupport(stack, null)));
+        if (updateFluid || updateEnergy) {
+            // in case any pipes/cables need to connect/disconnect
+            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ObjectRegistry.ITEM_ROUTER);
+        }
     }
 
     @Override
@@ -55,10 +46,15 @@ public class BufferHandler extends ItemStackHandler {
         super.deserializeNBT(nbt);
 
         ItemStack stack = getStackInSlot(0);
-        fluidHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : null;
+        fluidCap = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
+        energyCap = stack.getCount() == 1 ? stack.getCapability(CapabilityEnergy.ENERGY) : LazyOptional.empty();
     }
 
-    public IFluidHandler getFluidHandler() {
-        return fluidHandler;
+    public LazyOptional<IFluidHandlerItem> getFluidCapability() {
+        return fluidCap;
+    }
+
+    public LazyOptional<IEnergyStorage> getEnergyCapability() {
+        return energyCap;
     }
 }

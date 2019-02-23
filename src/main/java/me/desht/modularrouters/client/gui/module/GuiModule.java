@@ -2,38 +2,36 @@ package me.desht.modularrouters.client.gui.module;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.RedstoneBehaviourButton;
+import me.desht.modularrouters.client.gui.filter.FilterGuiFactory;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.button.RadioButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
-import me.desht.modularrouters.client.gui.widgets.button.ToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.item.augment.Augment;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.augment.ItemAugment.AugmentType;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.item.module.Module.ModuleFlags;
-import me.desht.modularrouters.item.module.Module.RelativeDirection;
+import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
+import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
+import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -49,18 +47,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.IOException;
 
-public class GuiModule extends GuiContainerBase implements GuiPageButtonList.GuiResponder, IContainerListener, IMouseOverHelpProvider {
+public class GuiModule extends GuiContainerBase implements IContainerListener, IMouseOverHelpProvider {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
     private static final int REGULATOR_TEXTFIELD_ID = 0;
-    static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
+    private static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
     private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
     private static final int REDSTONE_BUTTON_ID = BACK_BUTTON_ID + 1;
     private static final int REGULATOR_TOOLTIP_ID = BACK_BUTTON_ID + 2;
@@ -78,17 +75,17 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     private static final int GUI_HEIGHT = 198;
     private static final int GUI_WIDTH = 192;
-    static final int BUTTON_WIDTH = 16;
-    static final int BUTTON_HEIGHT = 16;
+    private static final int BUTTON_WIDTH = 16;
+    private static final int BUTTON_HEIGHT = 16;
 
     final ItemStack moduleItemStack;
-    private final Module module;
+    private final ItemModule module;
     private final BlockPos routerPos;
     private final int moduleSlotIndex;
     private final EnumHand hand;
     private RelativeDirection facing;
     private int sendDelay;
-    protected int regulatorAmount;
+    private int regulatorAmount;
     private RedstoneBehaviourButton redstoneButton;
     protected IntegerTextField regulatorTextField;
     private RegulatorTooltipButton regulatorTooltipButton;
@@ -98,30 +95,35 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     protected ItemAugment.AugmentCounter augmentCounter;
     private MouseOverHelp.Button mouseOverHelpButton;
 
-    public GuiModule(ContainerModule containerItem, EnumHand hand) {
-        this(containerItem, null, -1, hand);
-    }
+    public GuiModule(ContainerModule container) {
+        super(container);
 
-    public GuiModule(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
-        super(containerItem);
-        this.mouseOverHelp = new MouseOverHelp(this);
-        this.moduleItemStack = containerItem.filterHandler.getHolderStack();
-        this.module = ItemModule.getModule(moduleItemStack);
-        this.routerPos = routerPos;
-        this.moduleSlotIndex = slotIndex;
-        this.hand = hand;
+        TileEntityItemRouter router = container.getRouter();
+        this.hand = container.getHand();
+        if (router == null) {
+            this.moduleItemStack = mc.player.getHeldItem(hand);
+            this.moduleSlotIndex = -1;
+            this.routerPos = null;
+        } else {
+            SlotTracker tracker = SlotTracker.getInstance(mc.player);
+            this.moduleItemStack = tracker.getConfiguringModule(router);
+            this.moduleSlotIndex = tracker.getModuleSlot();
+            this.routerPos = router.getPos();
+        }
+        this.module = (ItemModule) moduleItemStack.getItem();
         this.facing = ModuleHelper.getDirectionFromNBT(moduleItemStack);
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
+        this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
-        this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
+        this.mouseOverHelp = new MouseOverHelp(this);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
     public void initGui() {
-        buttonList.clear();
+//        buttonList.clear();
         super.initGui();
 
         addToggleButton(ModuleFlags.BLACKLIST, 7, 75);
@@ -141,24 +143,43 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
 
         mouseOverHelpButton = new MouseOverHelp.Button(MOUSEOVER_BUTTON_ID, guiLeft + 175, guiTop + 1, mouseOverHelp);
-        buttonList.add(mouseOverHelpButton);
+        addButton(mouseOverHelpButton);
 
         redstoneButton = new RedstoneBehaviourButton(REDSTONE_BUTTON_ID,
-                this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT, ModuleHelper.getRedstoneBehaviour(moduleItemStack));
-        buttonList.add(redstoneButton);
+                this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
+                ModuleHelper.getRedstoneBehaviour(moduleItemStack))
+        {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                super.onClick(p_194829_1_, p_194829_3_);
+                sendModuleSettingsToServer();
+            }
+        };
+        addButton(redstoneButton);
 
         TextFieldManager manager = createTextFieldManager();
         Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
         int xOff = module.isFluidModule() ? 0 : 10;
-        regulatorTextField = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer, guiLeft + 156 + xOff, guiTop + 75,
-                20, 12, range.getMinimum(), range.getMaximum());
+        regulatorTextField = new IntegerTextField(manager, REGULATOR_TEXTFIELD_ID, fontRenderer,
+                guiLeft + 156 + xOff, guiTop + 75, 20, 12, range.getMinimum(), range.getMaximum());
         regulatorTextField.setValue(regulatorAmount);
-        regulatorTextField.setGuiResponder(this);
+        regulatorTextField.setTextAcceptHandler((id, s) -> {
+            if (id == REGULATOR_TEXTFIELD_ID) {
+                regulatorAmount = s.isEmpty() ? 0 : Integer.parseInt(s);
+                sendModuleSettingsDelayed(5);
+            }
+        });
         regulatorTooltipButton = new RegulatorTooltipButton(REGULATOR_TOOLTIP_ID, guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule());
-        buttonList.add(regulatorTooltipButton);
+        addButton(regulatorTooltipButton);
 
         if (routerPos != null) {
-            buttonList.add(new BackButton(BACK_BUTTON_ID, guiLeft + 2, guiTop + 1));
+            addButton(new BackButton(BACK_BUTTON_ID, guiLeft + 2, guiTop + 1) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    super.onClick(p_194829_1_, p_194829_3_);
+                    PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(routerPos));
+                }
+            });
         }
 
         mouseOverHelp.addHelpRegion(guiLeft + 7, guiTop + 16, guiLeft + 60, guiTop + 69, "guiText.popup.filter");
@@ -175,49 +196,24 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     protected void setupButtonVisibility() {
-        redstoneButton.visible = augmentCounter.getAugmentCount(AugmentType.REDSTONE) > 0;
-        regulatorTooltipButton.visible = augmentCounter.getAugmentCount(AugmentType.REGULATOR) > 0;
-        regulatorTextField.setVisible(augmentCounter.getAugmentCount(AugmentType.REGULATOR) > 0);
+        redstoneButton.visible = augmentCounter.getAugmentCount(ObjectRegistry.REDSTONE_AUGMENT) > 0;
+        regulatorTooltipButton.visible = augmentCounter.getAugmentCount(ObjectRegistry.REGULATOR_AUGMENT) > 0;
+        regulatorTextField.setVisible(augmentCounter.getAugmentCount(ObjectRegistry.REGULATOR_AUGMENT) > 0);
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
         toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.guiLeft + x, this.guiTop + y, ModuleHelper.checkFlag(moduleItemStack, flag));
-        buttonList.add(toggleButtons[flag.ordinal()]);
+        addButton(toggleButtons[flag.ordinal()]);
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
         directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.guiLeft + x, this.guiTop + y, dir == facing);
-        buttonList.add(directionButtons[dir.ordinal()]);
+        addButton(directionButtons[dir.ordinal()]);
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        if (button instanceof DirectionButton) {
-            for (RelativeDirection dir : RelativeDirection.values()) {
-                DirectionButton db = getDirectionButton(dir);
-                db.setToggled(db.id == button.id);
-                if (db.isToggled()) {
-                    facing = db.getDirection();
-                }
-            }
-            sendModuleSettingsToServer();
-        } else if (button instanceof ToggleButton) {
-            ((ToggleButton) button).toggle();
-            if (((ToggleButton) button).sendToServer())
-                sendModuleSettingsToServer();
-        } else if (button.id == BACK_BUTTON_ID) {
-            if (routerPos != null) {
-                ModularRouters.network.sendToServer(OpenGuiMessage.openRouter(routerPos));
-            }
-        } else if (button.id == REDSTONE_BUTTON_ID) {
-            redstoneButton.cycle(!isShiftKeyDown());
-            sendModuleSettingsToServer();
-        }
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void tick() {
+        super.tick();
         mouseOverHelp.setActive(mouseOverHelpButton.isToggled());
         if (sendDelay > 0) {
             if (--sendDelay <= 0) {
@@ -236,7 +232,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     void sendModuleSettingsToServer() {
-        ModularRouters.network.sendToServer(new ModuleSettingsMessage(routerPos, moduleSlotIndex, hand, buildMessageData()));
+        PacketHandler.NETWORK.sendToServer(new ModuleSettingsMessage(routerPos, hand, buildMessageData()));
     }
 
     /**
@@ -255,9 +251,9 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
         RouterRedstoneBehaviour behaviour = redstoneButton == null ? RouterRedstoneBehaviour.ALWAYS : redstoneButton.getState();
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setByte(ModuleHelper.NBT_FLAGS, flags);
-        compound.setByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
-        compound.setInteger(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
+        compound.putByte(ModuleHelper.NBT_FLAGS, flags);
+        compound.putByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
+        compound.putInt(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
         return compound;
     }
 
@@ -275,7 +271,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String title = moduleItemStack.getDisplayName() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
-        this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 5, getFgColor(module.getItemTint()));
+        this.fontRenderer.drawString(title, this.xSize / 2f - this.fontRenderer.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
@@ -290,7 +286,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     private Color getGuiBackgroundTint() {
-        if (ConfigHandler.module.backgroundTint) {
+        if (ConfigHandler.MODULE.guiBackgroundTint.get()) {
             Color c = module.getItemTint();
             float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
             return Color.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
@@ -300,56 +296,62 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if ((keyCode == Keyboard.KEY_ESCAPE || (keyCode == Keyboard.KEY_E && !isFocused())) && routerPos != null) {
+    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (keyCode == GLFW.GLFW_KEY_E && !isFocused())) && routerPos != null) {
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
-            ModularRouters.network.sendToServer(OpenGuiMessage.openRouter(routerPos));
-            return;
-        } else if (typedChar == ConfigHandler.getConfigKey() && handleFilterConfig()) {
+            SlotTracker.getInstance(mc.player).clearSlots();
+            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(routerPos));
+            return true;
+        } else if (Keybindings.keybindConfigure.isKeyDown()) {
             // trying to configure an installed smart filter, we're done
+            return handleFilterConfig();
         } else {
-            super.keyTyped(typedChar, keyCode);
+            return super.keyPressed(keyCode, scanCode, modifiers);
         }
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int btn) throws IOException {
-        if (btn != 2 || !handleFilterConfig()) {
-            super.mouseClicked(x, y, btn);
-        }
+    public boolean mouseClicked(double x, double y, int button) {
+        return button == 2 ? handleFilterConfig() : super.mouseClicked(x, y, button);
     }
 
     private boolean handleFilterConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || ItemSmartFilter.getFilter(slot.getStack()) == null || slot.slotNumber < 0 || slot.slotNumber >= Filter.FILTER_SIZE) {
+        if (slot == null || !(slot.getStack().getItem() instanceof ItemSmartFilter) || slot.slotNumber < 0 || slot.slotNumber >= Filter.FILTER_SIZE) {
             return false;
         }
         int filterSlotIndex = slot.slotNumber;
-        SmartFilter filter = ItemSmartFilter.getFilter(slot.getStack());
+        ItemSmartFilter filter = (ItemSmartFilter) slot.getStack().getItem();
         TileEntityItemRouter router = getItemRouterTE();
+        SlotTracker tracker = SlotTracker.getInstance(Minecraft.getInstance().player);
         if (router != null) {
             // module is installed in a router
-            router.playerConfiguringModule(mc.player, moduleSlotIndex, slot.getSlotIndex());
-            if (filter.hasGuiContainer()) {
-                ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
+            tracker.setModuleSlot(moduleSlotIndex);
+            tracker.setFilterSlot(slot.getSlotIndex());
+//            router.playerConfiguringModule(mc.player, moduleSlotIndex, slot.getSlotIndex());
+            if (filter.hasContainer()) {
+                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
             } else {
                 // no container, just open the client-side GUI directly
-                mc.player.openGui(ModularRouters.instance, ModularRouters.GUI_FILTER_INSTALLED, mc.world,
-                        routerPos.getX(), routerPos.getY(), routerPos.getZ());
+                mc.displayGuiScreen(FilterGuiFactory.createGui(mc.player, router));
             }
         } else if (hand != null) {
             // module is in player's hand
             // record the filter slot in the module itemstack's NBT - we'll need this when opening the GUI later
-            ModuleHelper.setFilterConfigSlot(mc.player.getHeldItem(hand), filterSlotIndex);
-            if (filter.hasGuiContainer()) {
-                ModularRouters.network.sendToServer(OpenGuiMessage.openFilterInModule(hand, filterSlotIndex));
+            tracker.setFilterSlot(filterSlotIndex);
+//            ModuleHelper.setFilterConfigSlot(mc.player.getHeldItem(hand), filterSlotIndex);
+            if (filter.hasContainer()) {
+                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInHeldModule(hand, filterSlotIndex));
             } else {
                 // no container, just open the client-side GUI directly
-                mc.player.openGui(ModularRouters.instance,
-                        hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF,
-                        mc.world, 0, 0, 0);
+                mc.displayGuiScreen(FilterGuiFactory.createGui(mc.player, hand));
             }
         }
         return true;
@@ -364,27 +366,9 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
     }
 
-    @Override
-    public void setEntryValue(int id, boolean value) {
-        // nothing
-    }
-
-    @Override
-    public void setEntryValue(int id, float value) {
-        // nothing
-    }
-
-    @Override
-    public void setEntryValue(int id, String value) {
-        if (id == REGULATOR_TEXTFIELD_ID) {
-            regulatorAmount = value.isEmpty() ? 0 : Integer.parseInt(value);
-            sendModuleSettingsDelayed(5);
-        }
-    }
-
-    protected TileEntityItemRouter getItemRouterTE() {
+    TileEntityItemRouter getItemRouterTE() {
         if (routerPos != null) {
-            TileEntity te = Minecraft.getMinecraft().world.getTileEntity(routerPos);
+            TileEntity te = Minecraft.getInstance().world.getTileEntity(routerPos);
             return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
         }
         return null;
@@ -396,7 +380,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
     @Override
     public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
-        if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + Augment.SLOTS) {
+        if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + ItemAugment.SLOTS) {
             augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
             setupButtonVisibility();
         }
@@ -453,7 +437,7 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         }
     }
 
-    private static class ModuleToggleButton extends TexturedToggleButton {
+    private class ModuleToggleButton extends TexturedToggleButton {
         ModuleToggleButton(ModuleFlags setting, int x, int y, boolean toggled) {
             super(setting.ordinal(), x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + ModuleFlags.values()[id] + ".1");
@@ -469,13 +453,20 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
         protected int getTextureY() {
             return 32;
         }
+
+        @Override
+        public void onClick(double p_194829_1_, double p_194829_3_) {
+            super.onClick(p_194829_1_, p_194829_3_);
+            toggle();
+            if (sendToServer()) sendModuleSettingsToServer();
+        }
     }
 
-    private static class DirectionButton extends RadioButton {
+    private class DirectionButton extends RadioButton {
         private static final int DIRECTION_GROUP = 1;
         private final RelativeDirection direction;
 
-        DirectionButton(RelativeDirection dir, Module module, int x, int y, boolean toggled) {
+        DirectionButton(RelativeDirection dir, ItemModule module, int x, int y, boolean toggled) {
             super(dir.ordinal() + DIRECTION_BASE_ID, DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled);
             this.direction = dir;
             String dirStr = module.getDirectionString(dir);
@@ -495,6 +486,20 @@ public class GuiModule extends GuiContainerBase implements GuiPageButtonList.Gui
 
         public RelativeDirection getDirection() {
             return direction;
+        }
+
+        @Override
+        public void onClick(double p_194829_1_, double p_194829_3_) {
+            super.onClick(p_194829_1_, p_194829_3_);
+
+            for (RelativeDirection dir : RelativeDirection.values()) {
+                DirectionButton db = getDirectionButton(dir);
+                db.setToggled(db.id == this.id);
+                if (db.isToggled()) {
+                    facing = db.getDirection();
+                }
+            }
+            sendModuleSettingsToServer();
         }
     }
 }

@@ -2,44 +2,41 @@ package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
-import me.desht.modularrouters.util.SetofItemStack;
+import me.desht.modularrouters.util.HashableItemStackWrapper;
+import me.desht.modularrouters.util.TagOwnerTracker;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class BulkItemMatcher implements IItemMatcher {
-    private final SetofItemStack stacks;
-    private final Set<Integer> oreDictIds;
+    private final Set<HashableItemStackWrapper> stacks;
+    private final Set<ResourceLocation> tags;
 
-    public BulkItemMatcher(SetofItemStack stacks, Flags flags) {
+    public BulkItemMatcher(Set<HashableItemStackWrapper> stacks, Flags flags) {
         this.stacks = stacks;
-        this.oreDictIds = Sets.newHashSet();
-        if (!flags.isIgnoreOredict()) {
-            for (ItemStack stack : stacks) {
-                for (int id : OreDictionary.getOreIDs(stack)) {
-                    oreDictIds.add(id);
-                }
+        this.tags = Sets.newHashSet();
+        if (!flags.isIgnoreTags()) {
+            for (HashableItemStackWrapper hStack : stacks) {
+                tags.addAll(TagOwnerTracker.getInstance().getOwningTags(ItemTags.getCollection(), hStack.getStack().getItem()));
             }
         }
     }
 
     @Override
     public boolean matchItem(ItemStack stack, Flags flags) {
-        if (stacks.contains(stack)) {
+        if (stacks.contains(new HashableItemStackWrapper(stack, flags))) {
             return true;
-        } else if (!flags.isIgnoreOredict() && matchOreDict(stack)) {
-            return true;
+        } else {
+            return !flags.isIgnoreTags() && matchTags(stack);
         }
-        return false;
     }
 
-    private boolean matchOreDict(ItemStack stack) {
-        for (int id : OreDictionary.getOreIDs(stack)) {
-            if (oreDictIds.contains(id)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean matchTags(ItemStack stack) {
+        Set<ResourceLocation> s = new HashSet<>(tags);
+        s.retainAll(TagOwnerTracker.getInstance().getOwningTags(ItemTags.getCollection(), stack.getItem()));
+        return !s.isEmpty();
     }
 }

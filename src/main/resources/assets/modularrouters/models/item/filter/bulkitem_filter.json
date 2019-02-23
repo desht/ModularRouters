@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "modularrouters:items/filter/bulkitem_filter"
+    "layer0": "modularrouters:item/filter/bulkitem_filter"
   }
 }

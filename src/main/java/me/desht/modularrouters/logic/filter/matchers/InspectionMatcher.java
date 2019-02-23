@@ -1,24 +1,17 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
-import cofh.redstoneflux.api.IEnergyContainerItem;
 import com.google.common.base.Joiner;
-import me.desht.modularrouters.integration.redstoneflux.RFIntegration;
-import me.desht.modularrouters.integration.tesla.TeslaIntegration;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.darkhax.tesla.api.ITeslaHolder;
-import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -113,7 +106,7 @@ public class InspectionMatcher implements IItemMatcher {
             return Joiner.on(" ").join(subject, op, target);
         }
 
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         public String asLocalizedText() {
             if (subject == null || op == null) return "<?>";
             return Joiner.on(" ").join(
@@ -138,7 +131,7 @@ public class InspectionMatcher implements IItemMatcher {
                     return Optional.empty();
                 case DURABILITY:
                     return stack.getMaxDamage() > 0 ?
-                            Optional.of(asPercentage(stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage())) :
+                            Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage())) :
                             Optional.empty();
                 case FLUID:
                     return getFluidPercent(stack);
@@ -166,33 +159,36 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private Optional<Integer> getEnergyPercent(ItemStack stack) {
-            if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-                IEnergyStorage s = stack.getCapability(CapabilityEnergy.ENERGY, null);
-                return Optional.of(asPercentage(s.getEnergyStored(), s.getMaxEnergyStored()));
-            } else if (TeslaIntegration.enabled && TeslaUtils.isTeslaHolder(stack, null)) {
-                ITeslaHolder h = TeslaUtils.getTeslaHolder(stack, null);
-                return Optional.of(asPercentage(h.getStoredPower(), h.getCapacity()));
-            } else if (RFIntegration.enabled && stack.getItem() instanceof IEnergyContainerItem) {
-                IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();
-                return Optional.of(asPercentage(containerItem.getEnergyStored(stack), containerItem.getMaxEnergyStored(stack)));
-            }
-            return Optional.empty();
+            return stack.getCapability(CapabilityEnergy.ENERGY, null)
+                    .map(handler -> Optional.of(asPercentage(handler.getEnergyStored(), handler.getMaxEnergyStored())))
+                    .orElse(Optional.empty());
+
+//            if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+//                IEnergyStorage s = stack.getCapability(CapabilityEnergy.ENERGY, null);
+//                return Optional.of(asPercentage(s.getEnergyStored(), s.getMaxEnergyStored()));
+//            } else if (TeslaIntegration.enabled && TeslaUtils.isTeslaHolder(stack, null)) {
+//                ITeslaHolder h = TeslaUtils.getTeslaHolder(stack, null);
+//                return Optional.of(asPercentage(h.getStoredPower(), h.getCapacity()));
+//            } else if (RFIntegration.enabled && stack.getItem() instanceof IEnergyContainerItem) {
+//                IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();
+//                return Optional.of(asPercentage(containerItem.getEnergyStored(stack), containerItem.getMaxEnergyStored(stack)));
+//            }
+//            return Optional.empty();
         }
 
         private Optional<Integer> getFluidPercent(ItemStack stack) {
-            IFluidHandler h = FluidUtil.getFluidHandler(stack);
-            if (h != null) {
-                int total = 0;
-                int max = 0;
-                for (IFluidTankProperties p : h.getTankProperties()) {
-                    FluidStack fluidStack = p.getContents();
-                    max += p.getCapacity();
-                    if (fluidStack != null) total += fluidStack.amount;
-                }
-                return Optional.of(asPercentage(total, max));
-            } else {
-                return Optional.empty();
-            }
+            return FluidUtil.getFluidHandler(stack)
+                    .map(handler -> {
+                        int total = 0;
+                        int max = 0;
+                        for (IFluidTankProperties p : handler.getTankProperties()) {
+                            FluidStack fluidStack = p.getContents();
+                            max += p.getCapacity();
+                            if (fluidStack != null) total += fluidStack.amount;
+                        }
+                        return Optional.of(asPercentage(total, max));
+                    })
+                    .orElse(Optional.empty());
         }
 
         public String getDisplaySuffix() {

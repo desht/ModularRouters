@@ -14,7 +14,7 @@ public class ParticleRenderDispatcher {
     public static void dispatch() {
         Tessellator tessellator = Tessellator.getInstance();
 
-        Profiler profiler = Minecraft.getMinecraft().profiler;
+        Profiler profiler = Minecraft.getInstance().profiler;
 
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
         GlStateManager.depthMask(false);

@@ -9,60 +9,68 @@ import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandle
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.List;
 
-public class ExtruderModule2 extends Module implements IRangedModule {
+public class ExtruderModule2 extends ItemModule implements IRangedModule {
+    public ExtruderModule2(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledExtruder2Module(router, stack);
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
+    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
 
-        list.add(TextFormatting.YELLOW + I18n.format("itemText.extruder2.template"));
+        list.add(new TextComponentString(TextFormatting.YELLOW.toString()).appendSibling(new TextComponentTranslation("itemText.extruder2.template")));
         TemplateHandler handler = new TemplateHandler(itemstack);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);
             if (!blockStack.isEmpty()) {
-                list.add(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x " + blockStack.getDisplayName());
+                list.add(new TextComponentString(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x " + blockStack.getDisplayName()));
             }
         }
         if (list.size() == size) {
-            String s = list.get(size - 1);
-            list.set(size - 1, s + " " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"));
+            ITextComponent tc = list.get(size - 1);
+            list.set(list.size() - 1,
+                    tc.appendSibling(new TextComponentString(" " + TextFormatting.AQUA + TextFormatting.ITALIC))
+                    .appendSibling(new TextComponentTranslation("itemText.misc.noItems"))
+            );
+
         }
     }
 
     @Override
-    public ContainerModule createGuiContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
-        return new ContainerExtruder2Module(player, hand, moduleStack, router);
+    public ContainerModule createContainer(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
+        return new ContainerExtruder2Module(player.inventory, hand, moduleStack, router);
     }
 
     @Override
-    public Class<? extends GuiModule> getGuiHandler() {
+    public Class<? extends GuiModule> getGuiClass() {
         return GuiModuleExtruder2.class;
     }
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.module.extruder2BaseRange;
+        return ConfigHandler.MODULE.extruder2BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.module.extruder2MaxRange;
+        return ConfigHandler.MODULE.extruder2MaxRange.get();
     }
 
     @Override

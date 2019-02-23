@@ -7,25 +7,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IExtendedBlockState;
+
+import javax.annotation.Nullable;
 
 public class BlockTemplateFrame extends BlockCamo {
     private static final String BLOCK_NAME = "template_frame";
 
     public BlockTemplateFrame() {
-        super(Material.CRAFTED_SNOW, BLOCK_NAME);
-        setDefaultState(((IExtendedBlockState) blockState.getBaseState()).withProperty(CAMOUFLAGE_STATE, null));
+        super(Properties.create(Material.CRAFTED_SNOW));
+//        setDefaultState(((IExtendedBlockState) blockState.getBaseState()).withProperty(CAMOUFLAGE_STATE, null));
     }
 
+    @Nullable
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
         return new TileEntityTemplateFrame();
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
         // drops nothing
     }
 }

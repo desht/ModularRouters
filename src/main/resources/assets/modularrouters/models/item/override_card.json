@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "modularrouters:items/override_card"
+    "layer0": "modularrouters:item/override_card"
   }
 }

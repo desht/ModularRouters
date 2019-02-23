@@ -10,18 +10,15 @@ import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.Collections;
@@ -29,7 +26,7 @@ import java.util.List;
 
 public class GuiModuleFluid extends GuiModule {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
-    private static final ItemStack routerStack = new ItemStack(RegistrarMR.ITEM_ROUTER);
+    private static final ItemStack routerStack = new ItemStack(ObjectRegistry.ITEM_ROUTER);
     private static final ItemStack waterStack = new ItemStack(Items.WATER_BUCKET);
 
     private static final int TRANSFER_TEXTFIELD_ID = 1;
@@ -43,12 +40,8 @@ public class GuiModuleFluid extends GuiModule {
     private int maxTransfer;
     private boolean forceEmpty;
 
-    public GuiModuleFluid(ContainerModule containerItem, EnumHand hand) {
-        this(containerItem, null, -1, hand);
-    }
-
-    public GuiModuleFluid(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
-        super(containerItem, routerPos, slotIndex, hand);
+    public GuiModuleFluid(ContainerModule container) {
+        super(container);
 
         CompiledFluidModule cfm = new CompiledFluidModule(null, moduleItemStack);
         fluidDirection = cfm.getFluidDirection();
@@ -62,18 +55,37 @@ public class GuiModuleFluid extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        int max = ConfigHandler.router.baseTickRate * ConfigHandler.router.fluidMaxTransferRate;
+        int max = ConfigHandler.ROUTER.baseTickRate.get() * ConfigHandler.ROUTER.fluidMaxTransferRate.get();
         IntegerTextField intField = new IntegerTextField(manager, TRANSFER_TEXTFIELD_ID, fontRenderer, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
         intField.setValue(maxTransfer);
-        intField.setGuiResponder(this);
+        intField.setTextAcceptHandler((id, s) -> {
+            if (id == TRANSFER_TEXTFIELD_ID) {
+                maxTransfer = s.isEmpty() ? 0 : Integer.parseInt(s);
+                sendModuleSettingsDelayed(5);
+            }
+        });
         intField.setIncr(100, 10, 10);
         intField.useGuiTextBackground();
         manager.focus(0);
 
-        buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 19, 16, 16, bucketStack));
-        buttonList.add(new FluidDirectionButton(FLUID_DIRECTION_BUTTON_ID, guiLeft + 148, guiTop + 44, fluidDirection));
-        forceEmptyButton = new ForceEmptyButton(FORCE_EMPTY_BUTTON_ID, guiLeft + 168, guiTop + 69, forceEmpty);
-        buttonList.add(forceEmptyButton);
+        addButton(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 19, 16, 16, bucketStack));
+        addButton(new FluidDirectionButton(FLUID_DIRECTION_BUTTON_ID, guiLeft + 148, guiTop + 44, fluidDirection) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                cycle(true);
+                fluidDirection = getState();
+                sendModuleSettingsToServer();
+            }
+        });
+        forceEmptyButton = new ForceEmptyButton(FORCE_EMPTY_BUTTON_ID, guiLeft + 168, guiTop + 69, forceEmpty) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                toggle();
+                forceEmpty = isToggled();
+                sendModuleSettingsToServer();
+            }
+        };
+        addButton(forceEmptyButton);
 
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 17, guiLeft + 183, guiTop + 35, "guiText.popup.fluid.maxTransfer");
         getMouseOverHelp().addHelpRegion(guiLeft + 126, guiTop + 42, guiLeft + 185, guiTop + 61, "guiText.popup.fluid.direction");
@@ -105,49 +117,17 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void tick() {
+        super.tick();
         forceEmptyButton.visible = fluidDirection == FluidDirection.OUT;
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case FLUID_DIRECTION_BUTTON_ID:
-                FluidDirectionButton fb = (FluidDirectionButton) button;
-                fb.cycle(true);
-                fluidDirection = fb.getState();
-                sendModuleSettingsToServer();
-                break;
-            case FORCE_EMPTY_BUTTON_ID:
-                ForceEmptyButton forceButton = (ForceEmptyButton) button;
-                forceButton.toggle();
-                forceEmpty = forceButton.isToggled();
-                sendModuleSettingsToServer();
-                break;
-            default:
-                super.actionPerformed(button);
-        }
-    }
-
-    @Override
-    public void setEntryValue(int id, String value) {
-        switch (id) {
-            case TRANSFER_TEXTFIELD_ID:
-                maxTransfer = value.isEmpty() ? 0 : Integer.parseInt(value);
-                sendModuleSettingsDelayed(5);
-                break;
-            default:
-                super.setEntryValue(id, value);
-        }
     }
 
     @Override
     protected NBTTagCompound buildMessageData() {
         NBTTagCompound compound = super.buildMessageData();
-        compound.setInteger(CompiledFluidModule.NBT_MAX_TRANSFER, maxTransfer);
-        compound.setByte(CompiledFluidModule.NBT_FLUID_DIRECTION, (byte) fluidDirection.ordinal());
-        compound.setBoolean(CompiledFluidModule.NBT_FORCE_EMPTY, forceEmpty);
+        compound.putInt(CompiledFluidModule.NBT_MAX_TRANSFER, maxTransfer);
+        compound.putByte(CompiledFluidModule.NBT_FLUID_DIRECTION, (byte) fluidDirection.ordinal());
+        compound.putBoolean(CompiledFluidModule.NBT_FORCE_EMPTY, forceEmpty);
         return compound;
     }
 

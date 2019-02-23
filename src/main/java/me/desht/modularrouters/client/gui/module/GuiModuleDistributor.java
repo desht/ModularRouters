@@ -7,12 +7,9 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,12 +20,8 @@ public class GuiModuleDistributor extends GuiModule {
 
     private DistributionStrategy strategy;
 
-    public GuiModuleDistributor(ContainerModule containerItem, EnumHand hand) {
-        this(containerItem, null, -1, hand);
-    }
-
-    public GuiModuleDistributor(ContainerModule containerItem, BlockPos routerPos, Integer slotIndex, EnumHand hand) {
-        super(containerItem, routerPos, slotIndex, hand);
+    public GuiModuleDistributor(ContainerModule container) {
+        super(container);
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, moduleItemStack);
 
@@ -39,29 +32,22 @@ public class GuiModuleDistributor extends GuiModule {
     public void initGui() {
         super.initGui();
 
-        buttonList.add(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 23));
-        buttonList.add(new StrategyButton(STRATEGY_BUTTON_ID, guiLeft + 147, guiTop + 23, 16, 16, strategy));
+        addButton(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 23));
+        addButton(new StrategyButton(STRATEGY_BUTTON_ID, guiLeft + 147, guiTop + 23, 16, 16, strategy) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                strategy = cycle(!GuiScreen.isShiftKeyDown());
+                sendModuleSettingsToServer();
+            }
+        });
 
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 21, guiLeft + 165, guiTop + 41, "guiText.popup.distributor.strategy");
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case STRATEGY_BUTTON_ID:
-                StrategyButton sb = (StrategyButton) button;
-                strategy = sb.cycle(!(GuiScreen.isShiftKeyDown()));
-                sendModuleSettingsToServer();
-                break;
-            default:
-                super.actionPerformed(button);
-        }
-    }
-
-    @Override
     protected NBTTagCompound buildMessageData() {
         NBTTagCompound tag = super.buildMessageData();
-        tag.setInteger(CompiledDistributorModule.NBT_STRATEGY, strategy.ordinal());
+        tag.putInt(CompiledDistributorModule.NBT_STRATEGY, strategy.ordinal());
         return tag;
     }
 

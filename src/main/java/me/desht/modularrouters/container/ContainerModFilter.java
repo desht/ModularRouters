@@ -22,24 +22,24 @@ public class ContainerModFilter extends ContainerSmartFilter {
 
     public final IItemHandlerModifiable handler;
 
-    public ContainerModFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
-        super(player, filterStack, hand, router);
+    public ContainerModFilter(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
+        super(player, hand, router);
 
         handler = new GhostItemHandler(1);
 
         // slot for the ghost item
-        addSlotToContainer(new SlotItemHandler(handler, 0, 7, 19));
+        addSlot(new SlotItemHandler(handler, 0, 7, 19));
 
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
+                this.addSlot(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
             }
         }
 
         // player's hotbar - uses default locations for standard action bar texture file
         for (int i = 0; i < 9; i++) {
-            this.addSlotToContainer(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
+            this.addSlot(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
         }
     }
 

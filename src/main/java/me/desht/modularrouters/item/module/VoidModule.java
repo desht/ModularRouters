@@ -7,7 +7,11 @@ import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
-public class VoidModule extends Module {
+public class VoidModule extends ItemModule {
+    public VoidModule(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledVoidModule(router, stack);

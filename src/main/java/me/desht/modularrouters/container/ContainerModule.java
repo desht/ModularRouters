@@ -5,10 +5,10 @@ import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.ModuleFilterSlot;
 import me.desht.modularrouters.container.slot.ModuleAugmentSlot;
-import me.desht.modularrouters.item.augment.Augment;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -20,7 +20,7 @@ import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
 public class ContainerModule extends Container {
     public static final int AUGMENT_START = Filter.FILTER_SIZE;
-    static final int INV_START = AUGMENT_START + Augment.SLOTS;
+    static final int INV_START = AUGMENT_START + ItemAugment.SLOTS;
     static final int INV_END = INV_START + 26;
     static final int HOTBAR_START = INV_END + 1;
     static final int HOTBAR_END = HOTBAR_START + 8;
@@ -29,48 +29,58 @@ public class ContainerModule extends Container {
     private static final int PLAYER_INV_X = 16;
     private static final int PLAYER_HOTBAR_Y = PLAYER_INV_Y + 58;
 
+    private final EnumHand hand;
     public final ModuleFilterHandler filterHandler;
     private final AugmentHandler augmentHandler;
     private final int currentSlot;  // currently-selected slot for player
     private final TileEntityItemRouter router;
 
-    public ContainerModule(EntityPlayer player, EnumHand hand, ItemStack moduleStack) {
-        this(player, hand, moduleStack, null);
+    public ContainerModule(InventoryPlayer inv, EnumHand hand, ItemStack moduleStack) {
+        this(inv, hand, moduleStack, null);
     }
 
-    public ContainerModule(EntityPlayer player, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
+    public ContainerModule(InventoryPlayer inv, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
         this.filterHandler = new ModuleFilterHandler(moduleStack);
         this.augmentHandler = new AugmentHandler(moduleStack);
-        this.currentSlot = player.inventory.currentItem + HOTBAR_START;
+        this.currentSlot = inv.currentItem + HOTBAR_START;
+        this.hand = hand;  // null if module is in a router
         this.router = router;  // null if module is in player's hand
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
             ModuleFilterSlot slot = router == null ?
-                    new ModuleFilterSlot(filterHandler, player, hand, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
+                    new ModuleFilterSlot(filterHandler, inv.player, hand, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
                     new ModuleFilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3));
-            addSlotToContainer(slot);
+            addSlot(slot);
         }
 
         // slots for the augments
-        for (int i = 0; i < Augment.SLOTS; i++) {
+        for (int i = 0; i < ItemAugment.SLOTS; i++) {
             ModuleAugmentSlot slot = router == null ?
-                    new ModuleAugmentSlot(augmentHandler, player, hand, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)) :
+                    new ModuleAugmentSlot(augmentHandler, inv.player, hand, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)) :
                     new ModuleAugmentSlot(augmentHandler, router, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2));
-            addSlotToContainer(slot);
+            addSlot(slot);
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
+                addSlot(new Slot(inv, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
             }
         }
 
         // player's hotbar - uses default locations for standard action bar texture file
         for (int i = 0; i < 9; i++) {
-            addSlotToContainer(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
+            addSlot(new Slot(inv, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
         }
+    }
+
+    public EnumHand getHand() {
+        return hand;
+    }
+
+    public TileEntityItemRouter getRouter() {
+        return router;
     }
 
     protected void transferStackInExtraSlot(EntityPlayer player, int index) {
@@ -108,7 +118,7 @@ public class ContainerModule extends Container {
                 ItemStack stackInSlot = srcSlot.getStack();
                 if (stackInSlot.getItem() instanceof ItemAugment && augmentHandler.getHolderStack().getCount() == 1) {
                     // copy augment items into one of the augment slots if possible
-                    if (!mergeItemStack(stackInSlot, AUGMENT_START, AUGMENT_START + Augment.SLOTS, false)) {
+                    if (!mergeItemStack(stackInSlot, AUGMENT_START, AUGMENT_START + ItemAugment.SLOTS, false)) {
                         return ItemStack.EMPTY;
                     }
                     detectAndSendChanges();
@@ -144,7 +154,7 @@ public class ContainerModule extends Container {
         if (slot > HOTBAR_END) {
             return slotClickExtraSlot(slot, dragType, clickTypeIn, player);
         }
-        if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS && augmentHandler.getHolderStack().getCount() > 1) {
+        if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() > 1) {
             // prevent augment dupe
             return ItemStack.EMPTY;
         }
@@ -167,13 +177,13 @@ public class ContainerModule extends Container {
                         s.putStack(ItemStack.EMPTY);
                     }
                     return ItemStack.EMPTY;
-                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     sendChanges = true;
                 }
             case THROW:
                 if (slot >= 0 && slot < Filter.FILTER_SIZE) {
                     return ItemStack.EMPTY;
-                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + Augment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     sendChanges = true;
                 }
         }

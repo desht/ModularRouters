@@ -7,7 +7,11 @@ import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
-public class DropperModule extends Module {
+public class DropperModule extends ItemModule {
+    public DropperModule(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledDropperModule(router, stack);

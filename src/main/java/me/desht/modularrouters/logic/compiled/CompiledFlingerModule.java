@@ -2,16 +2,15 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.RegistrarMR;
-import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Particles;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.WorldServer;
 
@@ -27,8 +26,8 @@ public class CompiledFlingerModule extends CompiledDropperModule {
 
         NBTTagCompound compound = ModuleHelper.validateNBT(stack);
         for (String key : new String[] { NBT_SPEED, NBT_PITCH, NBT_YAW }) {
-            if (!compound.hasKey(key)) {
-                compound.setFloat(key, 0.0f);
+            if (!compound.contains(key)) {
+                compound.putFloat(key, 0.0f);
             }
         }
 
@@ -41,15 +40,15 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     public boolean execute(TileEntityItemRouter router) {
         boolean fired = super.execute(router);
 
-        if (fired && ConfigHandler.module.flingerEffects) {
+        if (fired && ConfigHandler.MODULE.flingerEffects.get()) {
             ModuleTarget t = getTarget();
             int n = Math.round(speed * 5);
-            if (router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 2) {
-                ((WorldServer) router.getWorld()).spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, false,
+            if (router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
+                ((WorldServer) router.getWorld()).spawnParticle(Particles.LARGE_SMOKE,
                         t.pos.getX() + 0.5, t.pos.getY() + 0.5, t.pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
-            router.playSound(null, t.pos, RegistrarMR.SOUND_THUD, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
+            router.playSound(null, t.pos, ObjectRegistry.SOUND_THUD, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
         }
 
         return fired;
@@ -69,7 +68,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
 
     @Override
     protected void setupItemVelocity(TileEntityItemRouter router, EntityItem item) {
-        EnumFacing routerFacing = router.getAbsoluteFacing(Module.RelativeDirection.FRONT);
+        EnumFacing routerFacing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
         float basePitch = 0.0f;
         float baseYaw;
         switch (getDirection()) {

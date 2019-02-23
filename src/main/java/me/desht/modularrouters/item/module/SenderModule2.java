@@ -14,6 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class SenderModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
+    public SenderModule2(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledSenderModule2(router, stack);
@@ -26,12 +30,12 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.module.sender2BaseRange;
+        return ConfigHandler.MODULE.sender2BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.module.sender2MaxRange;
+        return ConfigHandler.MODULE.sender2MaxRange.get();
     }
 
     @Override

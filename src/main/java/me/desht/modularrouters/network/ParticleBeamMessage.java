@@ -5,13 +5,17 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.fx.ParticleBeam;
 import me.desht.modularrouters.client.fx.Vector3;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
-public class ParticleBeamMessage implements IMessage {
+/**
+ * Received on: CLIENT
+ *
+ * Sent by server to play a particle beam when some modules run.
+ */
+public class ParticleBeamMessage {
     private int rgb;
     private float size;
     private boolean flat;
@@ -23,6 +27,18 @@ public class ParticleBeamMessage implements IMessage {
     private double z2;
 
     public ParticleBeamMessage() {
+    }
+
+    public ParticleBeamMessage(ByteBuf buf) {
+        x = buf.readDouble();
+        y = buf.readDouble();
+        z = buf.readDouble();
+        x2 = buf.readDouble();
+        y2 = buf.readDouble();
+        z2 = buf.readDouble();
+        flat = buf.readBoolean();
+        rgb = buf.readInt();
+        size = buf.readByte() / 255.0f;
     }
 
     public ParticleBeamMessage(double x, double y, double z, double x2, double y2, double z2, Color color, float size) {
@@ -37,20 +53,6 @@ public class ParticleBeamMessage implements IMessage {
         this.size = size;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        x = buf.readDouble();
-        y = buf.readDouble();
-        z = buf.readDouble();
-        x2 = buf.readDouble();
-        y2 = buf.readDouble();
-        z2 = buf.readDouble();
-        flat = buf.readBoolean();
-        rgb = buf.readInt();
-        size = buf.readByte() / 255.0f;
-    }
-
-    @Override
     public void toBytes(ByteBuf buf) {
         buf.writeDouble(x);
         buf.writeDouble(y);
@@ -63,18 +65,14 @@ public class ParticleBeamMessage implements IMessage {
         buf.writeByte((byte)(size * 255));
     }
 
-    public static class Handler implements IMessageHandler<ParticleBeamMessage, IMessage> {
-        @Override
-        public IMessage onMessage(ParticleBeamMessage msg, MessageContext ctx) {
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
             World w = ModularRouters.proxy.theClientWorld();
             if (w != null) {
-                ParticleBeam.doParticleBeam(w,
-                        new Vector3(msg.x, msg.y, msg.z),
-                        new Vector3(msg.x2, msg.y2, msg.z2),
-                        msg.flat ? new Color(msg.rgb) : null,
-                        msg.size);
+                ParticleBeam.doParticleBeam(w, new Vector3(x, y, z), new Vector3(x2, y2, z2),
+                        flat ? new Color(rgb) : null, size);
             }
-            return null;
-        }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }

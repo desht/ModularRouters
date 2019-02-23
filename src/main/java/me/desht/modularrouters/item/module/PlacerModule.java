@@ -7,7 +7,11 @@ import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
-public class PlacerModule extends Module {
+public class PlacerModule extends ItemModule {
+    public PlacerModule(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledPlacerModule(router, stack);

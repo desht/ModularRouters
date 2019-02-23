@@ -8,7 +8,11 @@ import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
-public class SenderModule1 extends Module implements IRangedModule {
+public class SenderModule1 extends ItemModule implements IRangedModule {
+    public SenderModule1(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledSenderModule1(router, stack);
@@ -16,12 +20,12 @@ public class SenderModule1 extends Module implements IRangedModule {
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.module.sender1BaseRange;
+        return ConfigHandler.MODULE.sender1BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.module.sender1MaxRange;
+        return ConfigHandler.MODULE.sender1MaxRange.get();
     }
 
     @Override

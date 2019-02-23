@@ -7,10 +7,10 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -19,12 +19,19 @@ import java.util.List;
 import java.util.Set;
 
 public class DistributorModule extends SenderModule2 {
+    public DistributorModule(Properties props) {
+        super(props);
+    }
+
     @Override
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
+    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
-        list.add(TextFormatting.YELLOW + I18n.format("guiText.tooltip.distributor.strategy") + ": "
-                + TextFormatting.AQUA + I18n.format("itemText.distributor.strategy." + cdm.getDistributionStrategy()));
+
+        list.add(new TextComponentString(
+                TextFormatting.YELLOW + I18n.format("guiText.tooltip.distributor.strategy") + ": "
+                + TextFormatting.AQUA + I18n.format("itemText.distributor.strategy." + cdm.getDistributionStrategy()))
+        );
     }
 
     @Override
@@ -44,7 +51,7 @@ public class DistributorModule extends SenderModule2 {
     }
 
     @Override
-    public Class<? extends GuiModule> getGuiHandler() {
+    public Class<? extends GuiModule> getGuiClass() {
         return GuiModuleDistributor.class;
     }
 

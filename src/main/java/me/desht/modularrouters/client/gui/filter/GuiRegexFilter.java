@@ -2,22 +2,21 @@ package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidget;
-import me.desht.modularrouters.core.RegistrarMR;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -39,8 +38,8 @@ public class GuiRegexFilter extends GuiFilterScreen {
 
     private final List<String> regexList = Lists.newArrayList();
 
-    public GuiRegexFilter(ItemStack filterStack, BlockPos routerPos, Integer moduleSlotIndex, Integer filterSlotIndex, EnumHand hand) {
-        super(filterStack, routerPos, moduleSlotIndex, filterSlotIndex, hand);
+    public GuiRegexFilter(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
+        super(filterStack, router, hand);
 
         regexList.addAll(RegexFilter.getRegexList(filterStack));
     }
@@ -56,25 +55,42 @@ public class GuiRegexFilter extends GuiFilterScreen {
 
         manager.focus(0);
 
-        buttonList.clear();
+//        buttonList.clear();
 
-        if (filterSlotIndex >= 0) {
-            buttonList.add(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos));
+        if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
+            addButton(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    closeGUI();
+                }
+            });
         }
-        buttonList.add(new Buttons.AddButton(ADD_REGEX_ID, xPos + 155, yPos + 23));
+        addButton(new Buttons.AddButton(ADD_REGEX_ID, xPos + 155, yPos + 23) {
+            @Override
+            public void onClick(double p_194829_1_, double p_194829_3_) {
+                if (!regexTextField.getText().isEmpty()) addRegex();
+            }
+        });
         for (int i = 0; i < regexList.size(); i++) {
-            buttonList.add(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19));
+            addButton(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
+                @Override
+                public void onClick(double p_194829_1_, double p_194829_3_) {
+                    if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + regexList.size()) {
+                        sendRemovePosMessage(id - BASE_REMOVE_ID);
+                    }
+                }
+            });
         }
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(textureLocation);
         drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2 - fontRenderer.getStringWidth(title) / 2, yPos + 6, 0x404040);
+        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2f - fontRenderer.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
@@ -85,43 +101,29 @@ public class GuiRegexFilter extends GuiFilterScreen {
             fontRenderer.drawString(errorMsg, xPos + 8, yPos + 170, 0x804040);
         }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void updateScreen() {
+    public void tick() {
         if (errorTimer > 0) {
             if (--errorTimer == 0) {
                 errorMsg = "";
             }
         }
-        super.updateScreen();
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == ADD_REGEX_ID && !regexTextField.getText().isEmpty()) {
-            addRegex();
-        } else if (button.id >= BASE_REMOVE_ID && button.id < BASE_REMOVE_ID + regexList.size()) {
-            sendRemovePosMessage(button.id - BASE_REMOVE_ID);
-        } else if (button.id == BACK_BUTTON_ID) {
-            closeGUI();
-        } else {
-            super.actionPerformed(button);
-        }
+        super.tick();
     }
 
     private void addRegex() {
         try {
             String regex = regexTextField.getText();
-            //noinspection ResultOfMethodCallIgnored
             Pattern.compile(regex);
             sendAddStringMessage("String", regex);
             regexTextField.setText("");
             getTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
-            mc.player.playSound(RegistrarMR.SOUND_ERROR, 1.0f, 1.0f);
+            mc.player.playSound(ObjectRegistry.SOUND_ERROR, 1.0f, 1.0f);
             errorMsg = I18n.format("guiText.label.regexError");
             errorTimer = 60;
         }
@@ -144,17 +146,17 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
 
         @Override
-        public boolean textboxKeyTyped(char typedChar, int keyCode) {
-            if (keyCode == Keyboard.KEY_RETURN) {
+        public boolean charTyped(char typedChar, int keyCode) {
+            if (keyCode == GLFW.GLFW_KEY_ENTER) {
                 parent.addRegex();
                 return true;
             } else {
-                return super.textboxKeyTyped(typedChar, keyCode);
+                return super.charTyped(typedChar, keyCode);
             }
         }
 
         @Override
-        public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
             if (mouseX >= this.x && mouseX < this.x + this.width && mouseY >= this.y && mouseY < this.y + this.height) {
                 if (mouseButton == 1) {
                     setText("");  // right click clears field

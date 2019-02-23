@@ -5,12 +5,9 @@ import me.desht.modularrouters.client.gui.module.GuiModule;
 import me.desht.modularrouters.client.gui.module.GuiModuleFlinger;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.awt.*;
 import java.util.List;
@@ -23,12 +20,15 @@ public class FlingerModule extends DropperModule {
     public static final float MIN_YAW = -60.0f;
     public static final float MAX_YAW = 60.0f;
 
+    public FlingerModule(Properties props) {
+        super(props);
+    }
+
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
+    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
         CompiledFlingerModule fs = new CompiledFlingerModule(null, itemstack);
-        list.add(I18n.format("itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
+        list.add(new TextComponentTranslation("itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class FlingerModule extends DropperModule {
     }
 
     @Override
-    public Class<? extends GuiModule> getGuiHandler() {
+    public Class<? extends GuiModule> getGuiClass() {
         return GuiModuleFlinger.class;
     }
 

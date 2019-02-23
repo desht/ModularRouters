@@ -9,10 +9,10 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -33,7 +33,7 @@ public class FakePlayerManager {
         RouterFakePlayer fakePlayer = theFakePlayer.get();
         if (fakePlayer == null) {
             fakePlayer = new RouterFakePlayer(world, gameProfile);
-            fakePlayer.connection = new NetHandlerPlayServer(FMLCommonHandler.instance().getMinecraftServerInstance(), new NetworkManager(EnumPacketDirection.SERVERBOUND), fakePlayer);
+            fakePlayer.connection = new NetHandlerPlayServer(ServerLifecycleHooks.getCurrentServer(), new NetworkManager(EnumPacketDirection.SERVERBOUND), fakePlayer);
             theFakePlayer = new WeakReference<>(fakePlayer);
         }
         fakePlayer.world = world;

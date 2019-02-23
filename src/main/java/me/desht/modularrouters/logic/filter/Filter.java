@@ -2,10 +2,8 @@ package me.desht.modularrouters.logic.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.Module;
-import me.desht.modularrouters.item.module.Module.ModuleFlags;
+import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.item.smartfilter.SmartFilter;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -30,12 +28,12 @@ public class Filter implements Predicate<ItemStack> {
     }
 
     public Filter(ItemStack moduleStack) {
-        if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTagCompound()) {
+        if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
-            NBTTagList tagList = moduleStack.getTagCompound().getTagList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < tagList.tagCount(); ++i) {
-                NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-                ItemStack filterStack = new ItemStack(tagCompound);
+            NBTTagList tagList = moduleStack.getTag().getList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < tagList.size(); ++i) {
+                NBTTagCompound tagCompound = tagList.getCompound(i);
+                ItemStack filterStack = ItemStack.read(tagCompound);
                 IItemMatcher matcher = createMatcher(filterStack, moduleStack);
                 if (matcher != null) {
                     matchers.add(matcher);
@@ -47,12 +45,11 @@ public class Filter implements Predicate<ItemStack> {
     }
 
     private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack) {
-        SmartFilter f = ItemSmartFilter.getFilter(filterStack);
-        if (f != null) {
-            return f.compile(filterStack, moduleStack);
+        if (filterStack.getItem() instanceof ItemSmartFilter) {
+            return ((ItemSmartFilter) filterStack.getItem()).compile(filterStack, moduleStack);
         } else {
-            Module module = ItemModule.getModule(moduleStack);
-            return module == null ? null : module.getFilterItemMatcher(filterStack);
+            return moduleStack.getItem() instanceof ItemModule ?
+                    ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(moduleStack) : null;
         }
     }
 
@@ -92,33 +89,33 @@ public class Filter implements Predicate<ItemStack> {
     }
 
     public static class Flags {
-        static final Flags DEFAULT_FLAGS = new Flags();
+        public static final Flags DEFAULT_FLAGS = new Flags();
 
         private final boolean blacklist;
         private final boolean ignoreMeta;
         private final boolean ignoreNBT;
-        private final boolean ignoreOredict;
+        private final boolean ignoreTags;
 
         public Flags(ItemStack moduleStack) {
             Validate.isTrue(moduleStack.getItem() instanceof ItemModule);
             blacklist = ModuleHelper.isBlacklist(moduleStack);
             ignoreMeta = ModuleHelper.ignoreMeta(moduleStack);
             ignoreNBT = ModuleHelper.ignoreNBT(moduleStack);
-            ignoreOredict = ModuleHelper.ignoreOreDict(moduleStack);
+            ignoreTags = ModuleHelper.ignoreTags(moduleStack);
         }
 
         public Flags() {
             blacklist = ModuleFlags.BLACKLIST.getDefaultValue();
             ignoreMeta = ModuleFlags.IGNORE_META.getDefaultValue();
             ignoreNBT = ModuleFlags.IGNORE_NBT.getDefaultValue();
-            ignoreOredict = ModuleFlags.IGNORE_OREDICT.getDefaultValue();
+            ignoreTags = ModuleFlags.IGNORE_OREDICT.getDefaultValue();
         }
 
         public Flags(byte mask) {
             blacklist = (mask & ModuleFlags.BLACKLIST.getMask()) != 0;
             ignoreMeta = (mask & ModuleFlags.IGNORE_META.getMask()) != 0;
             ignoreNBT = (mask & ModuleFlags.IGNORE_NBT.getMask()) != 0;
-            ignoreOredict = (mask & ModuleFlags.IGNORE_OREDICT.getMask()) != 0;
+            ignoreTags = (mask & ModuleFlags.IGNORE_OREDICT.getMask()) != 0;
         }
 
         public boolean isBlacklist() {
@@ -133,11 +130,11 @@ public class Filter implements Predicate<ItemStack> {
             return ignoreNBT;
         }
 
-        public boolean isIgnoreOredict() {
-            return ignoreOredict;
+        public boolean isIgnoreTags() {
+            return ignoreTags;
         }
 
-        public static Flags with(Module.ModuleFlags... flags) {
+        public static Flags with(ModuleFlags... flags) {
             byte mask = 0;
             for (ModuleFlags flag : flags) {
                 mask |= flag.getMask();

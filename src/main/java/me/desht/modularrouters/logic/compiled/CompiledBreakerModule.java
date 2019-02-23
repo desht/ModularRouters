@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -35,7 +35,7 @@ public class CompiledBreakerModule extends CompiledModule {
             BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
-                if (ConfigHandler.module.breakerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {
+                if (ConfigHandler.MODULE.breakerParticles.get() && router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) == 0) {
                     world.playEvent(2001, pos, oldId);
                 }
                 return true;

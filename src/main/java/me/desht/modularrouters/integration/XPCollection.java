@@ -1,13 +1,7 @@
 package me.desht.modularrouters.integration;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.Arrays;
 
@@ -27,15 +21,17 @@ public class XPCollection {
     }
 
     private static ItemStack getIconForResource(String resource) {
-        ItemStack stack;
-        if (resource.contains(":")) {
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource));
-            stack = item == null ? ItemStack.EMPTY : new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource)));
-        } else {
-            Fluid fluid = FluidRegistry.getFluid(resource);
-            stack = fluid == null ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
-        }
-        return stack;
+        // todo 1.13
+        return ItemStack.EMPTY;
+//        ItemStack stack;
+//        if (resource.contains(":")) {
+//            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource));
+//            stack = item == null ? ItemStack.EMPTY : new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource)));
+//        } else {
+//            Fluid fluid = FluidRegistry.getFluid(resource);
+//            stack = fluid == null ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
+//        }
+//        return stack;
     }
 
     public enum XPCollectionType {
@@ -66,14 +62,17 @@ public class XPCollection {
         }
 
         public Fluid getFluid() {
-            return FluidRegistry.getFluid(registryName);
+            // todo 1.13
+            return null;
+//            return FluidRegistry.getFluid(registryName);
         }
 
         public String getModId() {
             int idx = registryName.indexOf(':');
             return idx >= 0 ?
                     registryName.substring(0, idx) :
-                    FluidRegistry.getModId(FluidRegistry.getFluidStack(registryName, 1000));
+                    // todo 1.13
+                    "???"; // FluidRegistry.getModId(FluidRegistry.getFluidStack(registryName, 1000));
         }
 
         public boolean isAvailable() {

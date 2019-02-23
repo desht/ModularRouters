@@ -2,39 +2,33 @@ package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public abstract class BaseSettingsMessage implements IMessage {
-    protected BlockPos routerPos;
-    protected EnumHand hand;
-    protected int moduleSlotIndex;
-    protected NBTTagCompound nbtData;
+public abstract class BaseSettingsMessage {
+    BlockPos routerPos;
+    EnumHand hand;
+    NBTTagCompound nbtData;
 
-    public BaseSettingsMessage() {
+    BaseSettingsMessage() {
     }
 
-    public BaseSettingsMessage(BlockPos routerPos, EnumHand hand, int moduleSlotIndex, NBTTagCompound nbtData) {
+    BaseSettingsMessage(BlockPos routerPos, EnumHand hand, NBTTagCompound nbtData) {
         this.routerPos = routerPos;
-        this.moduleSlotIndex = moduleSlotIndex;
         this.hand = hand;
         this.nbtData = nbtData;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    BaseSettingsMessage(ByteBuf buf) {
         if (buf.readBoolean()) {
             routerPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-            moduleSlotIndex = buf.readByte();
         } else {
             hand = EnumHand.values()[buf.readByte()];
         }
-        nbtData = ByteBufUtils.readTag(buf);
+        nbtData = new PacketBuffer(buf).readCompoundTag();
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
         if (routerPos == null) {
             buf.writeBoolean(false);
@@ -42,18 +36,17 @@ public abstract class BaseSettingsMessage implements IMessage {
         } else {
             buf.writeBoolean(true);
             writePos(buf, routerPos);
-            buf.writeByte(moduleSlotIndex);
         }
-        ByteBufUtils.writeTag(buf, nbtData);
+        new PacketBuffer(buf).writeCompoundTag(nbtData);
     }
 
-    protected void writePos(ByteBuf buf, BlockPos pos) {
+    void writePos(ByteBuf buf, BlockPos pos) {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
     }
 
-    protected BlockPos readPos(ByteBuf buf) {
+    BlockPos readPos(ByteBuf buf) {
         return new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 

@@ -6,16 +6,18 @@ import me.desht.modularrouters.client.gui.module.GuiModuleDetector;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.awt.*;
 import java.util.List;
 
-public class DetectorModule extends Module {
+public class DetectorModule extends ItemModule {
+    public DetectorModule(Properties props) {
+        super(props);
+    }
+
     public enum SignalType {
         NONE, WEAK, STRONG;
 
@@ -31,16 +33,15 @@ public class DetectorModule extends Module {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
+    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
-        list.add(I18n.format("itemText.misc.redstoneLevel",
+        list.add(new TextComponentTranslation("itemText.misc.redstoneLevel",
                 ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal." + ds.isStrongSignal())));
     }
 
     @Override
-    public Class<? extends GuiModule> getGuiHandler() {
+    public Class<? extends GuiModule> getGuiClass() {
         return GuiModuleDetector.class;
     }
 

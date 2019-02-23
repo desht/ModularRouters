@@ -1,38 +1,62 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-// For those who want the bleeding edge
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-
-apply plugin: 'net.minecraftforge.gradle.forge'
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
 
 ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' 
 
 version = config.mc_version + "-" + config.mod_version
 
 archivesBaseName = 'modular-routers'
 
 minecraft {
-    version = config.mc_version + "-" + config.forge_version
-    mappings = config.mcp_mappings
-    runDir = "run"
-    replace '@VERSION@', project.version
-	replaceIn 'ModularRouters.java'
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: 'snapshot', version: config.mcp_mappings
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    //accessTransformer = file('my_at.cfg')
+
+    // default run configurations.
+    // these can be tweaked, removed, or duplicated as needed.
+    runs {
+        client = {
+            // recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+            workingDirectory project.file('run').canonicalPath
+            source sourceSets.main
+        }
+        server = {
+            // recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+            workingDirectory project.file('run').canonicalPath
+            source sourceSets.main
+        }
+    }
+
+    //replace '@VERSION@', project.version
+        //replaceIn 'ModularRouters.java'
 }
 
 repositories {
@@ -64,41 +88,55 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "mcp.mobius.waila:Hwyla:${config.waila_version}"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${config.top_version}"
-    deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
-    deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"
-    deobfCompile "cofh:RedstoneFlux:1.12-${config.redstone_flux_version}:universal"
-    provided "com.google.errorprone:error_prone_annotations:2.1.0"
-    compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
-    compile "team.chisel.ctm:CTM:MC1.12.2-0.3.2.18:api"
+    minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
+    //deobfCompile "mcp.mobius.waila:Hwyla:${config.waila_version}"
+    //deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${config.top_version}"
+    //deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
+    //deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"
+    //deobfCompile "cofh:RedstoneFlux:1.12-${config.redstone_flux_version}:universal"
+    //provided "com.google.errorprone:error_prone_annotations:2.1.0"
+    //compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
+    //compile "team.chisel.ctm:CTM:MC1.12.2-0.3.2.18:api"
 }
 
-processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+//processResources {
+//    // this will ensure that this task is redone when the versions change.
+//    inputs.property "version", project.version
+//    inputs.property "mcversion", project.minecraft.version
+//
+//    // replace stuff in mcmod.info, nothing else
+//    from(sourceSets.main.resources.srcDirs) {
+//        include 'mcmod.info'
+//
+//        // replace version and mcversion
+//        expand 'version':project.version, 'mcversion':project.minecraft.version
+//    }
+//
+//    // copy everything else, thats not the mcmod.info
+//    from(sourceSets.main.resources.srcDirs) {
+//        exclude 'mcmod.info'
+//    }
+//}
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+//idea { module { inheritOutputDirs = true } }
 
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
-
-idea { module { inheritOutputDirs = true } }
-
-def parseConfig(File config) {
+static def parseConfig(File config) {
     config.withReader {
         def prop = new Properties()
         prop.load(it)
         return (new ConfigSlurper().parse(prop))
     }
 }
+
+jar {
+    manifest {
+        attributes(["Specification-Title": "modularrouters",
+                    "Specification-Vendor": "desht",
+                    "Specification-Version": "24.0", // We are version 1 of the modlauncher specification
+                    "Implementation-Title": project.name,
+                    "Implementation-Version": "${version}",
+                    "Implementation-Vendor" :"desht",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+    }
+}
+

@@ -1,17 +1,20 @@
 package me.desht.modularrouters.container;
 
+import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.BulkFilterSlot;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
-import me.desht.modularrouters.util.SetofItemStack;
+import me.desht.modularrouters.util.HashableItemStackWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.IItemHandler;
+
+import java.util.Set;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -30,10 +33,8 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     private final TileEntityItemRouter router;
     private final BulkFilterHandler handler;
 
-    public ContainerBulkItemFilter(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
-        super(player, filterStack, hand, router);
-
-        BulkItemFilter.checkAndMigrateOldNBT(filterStack);
+    public ContainerBulkItemFilter(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
+        super(player, hand, router);
 
         this.handler = new BulkFilterHandler(filterStack);
         this.currentSlot = player.inventory.currentItem + HOTBAR_START;
@@ -44,19 +45,19 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
             BulkFilterSlot slot = router == null ?
                     new BulkFilterSlot(handler, player, hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
                     new BulkFilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
-            addSlotToContainer(slot);
+            addSlot(slot);
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
+                this.addSlot(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
             }
         }
 
         // player's hotbar - uses default locations for standard action bar texture file
         for (int i = 0; i < 9; i++) {
-            this.addSlotToContainer(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
+            this.addSlot(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
         }
     }
 
@@ -75,7 +76,8 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         if (srcInv == null) {
             return 0;
         }
-        SetofItemStack stacks = clearFirst ? new SetofItemStack(flags) : SetofItemStack.fromItemHandler(handler, flags);
+        Set<HashableItemStackWrapper> stacks = clearFirst ? Sets.newHashSet() : HashableItemStackWrapper.makeSet(handler, flags);
+//        SetofItemStack stacks = clearFirst ? new SetofItemStack(flags) : SetofItemStack.fromItemHandler(handler, flags);
         int origSize = stacks.size();
 
         for (int i = 0; i < srcInv.getSlots() && stacks.size() < handler.getSlots(); i++) {
@@ -83,12 +85,12 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
             if (!stack.isEmpty()) {
                 ItemStack stack1 = stack.copy();
                 stack1.setCount(1);
-                stacks.add(stack1);
+                stacks.add(new HashableItemStackWrapper(stack1, flags));
             }
         }
 
         int slot = 0;
-        for (ItemStack stack : stacks.sortedList()) {
+        for (ItemStack stack : HashableItemStackWrapper.sortedList(stacks)) {
             handler.setStackInSlot(slot++, stack);
         }
         while (slot < handler.getSlots()) {

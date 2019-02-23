@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.item.augment.ItemAugment;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.item.augment.PickupDelayAugment;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -14,7 +14,7 @@ public class CompiledDropperModule extends CompiledModule {
     public CompiledDropperModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        pickupDelay = getAugmentCount(ItemAugment.AugmentType.PICKUP_DELAY) * PickupDelayAugment.TICKS_PER_AUGMENT;
+        pickupDelay = getAugmentCount(ObjectRegistry.PICKUP_DELAY_AUGMENT) * PickupDelayAugment.TICKS_PER_AUGMENT;
     }
 
     @Override

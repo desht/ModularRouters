@@ -14,6 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class PullerModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
+    public PullerModule2(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledPullerModule2(router, stack);
@@ -26,12 +30,12 @@ public class PullerModule2 extends TargetedModule implements IRangedModule, IPos
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.module.puller2BaseRange;
+        return ConfigHandler.MODULE.puller2BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.module.puller2MaxRange;
+        return ConfigHandler.MODULE.puller2MaxRange.get();
     }
 
     @Override

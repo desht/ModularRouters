@@ -5,31 +5,31 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 /**
+ * Received on: SERVER
+ *
  * Used when a player updates the flags on a router module via its GUI.
  */
 public class ModuleSettingsMessage extends BaseSettingsMessage {
     public ModuleSettingsMessage() {
     }
 
-    public ModuleSettingsMessage(BlockPos routerPos, int moduleSlotIndex, EnumHand hand, NBTTagCompound data) {
-        super(routerPos, hand, moduleSlotIndex, data);
+    public ModuleSettingsMessage(BlockPos routerPos, EnumHand hand, NBTTagCompound data) {
+        super(routerPos, hand, data);
     }
 
-    @Override
-    public void fromBytes(ByteBuf byteBuf) {
-        super.fromBytes(byteBuf);
+    public ModuleSettingsMessage(ByteBuf byteBuf) {
+        super(byteBuf);
     }
 
     @Override
@@ -37,37 +37,31 @@ public class ModuleSettingsMessage extends BaseSettingsMessage {
         super.toBytes(byteBuf);
     }
 
-    public static class Handler implements IMessageHandler<ModuleSettingsMessage, IMessage> {
-        @Override
-        public IMessage onMessage(ModuleSettingsMessage msg, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
-            mainThread.addScheduledTask(() -> {
-                // Get the new settings into the module item, which could either be held by the player
-                // or installed in an item router
-                EntityPlayer player = ctx.getServerHandler().player;
-                ItemStack moduleStack = ItemStack.EMPTY;
-                if (msg.routerPos != null) {
-                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), msg.routerPos);
-                    if (router != null) {
-                        moduleStack = router.getModules().getStackInSlot(msg.moduleSlotIndex);
-                        router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
-                    }
-                } else if (msg.hand != null) {
-                    moduleStack = player.getHeldItem(msg.hand);
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            EntityPlayer player = ctx.get().getSender();
+            ItemStack moduleStack = ItemStack.EMPTY;
+            SlotTracker tracker = SlotTracker.getInstance(player);
+            if (routerPos != null) {
+                TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos);
+                if (router != null) {
+                    moduleStack = tracker.getConfiguringModule(router);
+                    router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
                 }
-                // All settings for the module are encoded in NBT data
-                if (ItemModule.getModule(moduleStack) != null) {
-                    NBTTagCompound compound = ModuleHelper.validateNBT(moduleStack);
-                    for (String key : msg.nbtData.getKeySet()) {
-                        compound.setTag(key, msg.nbtData.getTag(key));
-                    }
-                } else {
-                    ModularRouters.logger.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName() + " - expected module not found");
+            } else if (hand != null) {
+                moduleStack = player.getHeldItem(hand);
+            }
+            // All settings for the module are encoded in NBT data
+            if (moduleStack.getItem() instanceof ItemModule) {
+                NBTTagCompound compound = ModuleHelper.validateNBT(moduleStack);
+                for (String key : nbtData.keySet()) {
+                    compound.put(key, nbtData.get(key));
                 }
-
-            });
-            return null;
-        }
+            } else {
+                ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found");
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
 
 }

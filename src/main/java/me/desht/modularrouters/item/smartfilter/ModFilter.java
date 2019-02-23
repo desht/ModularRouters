@@ -5,32 +5,35 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.filter.GuiModFilter;
 import me.desht.modularrouters.container.ContainerModFilter;
+import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.ModMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ModFilter extends SmartFilter {
+public class ModFilter extends ItemSmartFilter {
     private static final String NBT_MODS = "Mods";
     private static final int MAX_SIZE = 6;
+
+    public ModFilter(Properties props) {
+        super(props);
+    }
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
@@ -38,11 +41,11 @@ public class ModFilter extends SmartFilter {
     }
 
     public static List<String> getModList(ItemStack filterStack) {
-        if (filterStack.hasTagCompound()) {
-            NBTTagList items = filterStack.getTagCompound().getTagList(NBT_MODS, Constants.NBT.TAG_STRING);
-            List<String> res = Lists.newArrayListWithExpectedSize(items.tagCount());
-            for (int i = 0; i < items.tagCount(); i++) {
-                res.add(items.getStringTagAt(i));
+        if (filterStack.hasTag()) {
+            NBTTagList items = filterStack.getTag().getList(NBT_MODS, Constants.NBT.TAG_STRING);
+            List<String> res = Lists.newArrayListWithExpectedSize(items.size());
+            for (int i = 0; i < items.size(); i++) {
+                res.add(items.getString(i));
             }
             return res;
         } else {
@@ -51,48 +54,44 @@ public class ModFilter extends SmartFilter {
     }
 
     private static void setModList(ItemStack filterStack, List<String> mods) {
-        if (!filterStack.hasTagCompound()) {
-            filterStack.setTagCompound(new NBTTagCompound());
-        }
-        NBTTagList list = new NBTTagList();
-        for (String m : mods) {
-            list.appendTag(new NBTTagString(m));
-        }
-        NBTTagCompound compound = filterStack.getTagCompound();
-        compound.setTag(NBT_MODS, list);
-
+        NBTTagList list = mods.stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new));
+        filterStack.getOrCreateTag().put(NBT_MODS, list);
     }
 
     @Override
-    public void addExtraInformation(ItemStack stack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(stack, player, list, advanced);
-        NBTTagCompound compound = stack.getTagCompound();
+    public void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+        super.addExtraInformation(stack, list);
+        NBTTagCompound compound = stack.getTag();
         if (compound != null) {
             List<String> l = getModList(stack);
-            list.add(I18n.format("itemText.misc.modFilter.count", l.size()));
-            list.addAll(l.stream().map(ModNameCache::getModName).map(s -> " \u2022 " + TextFormatting.AQUA + s).collect(Collectors.toList()));
+            list.add(new TextComponentTranslation("itemText.misc.modFilter.count", l.size()));
+            list.addAll(l.stream()
+                    .map(ModNameCache::getModName)
+                    .map(s -> " \u2022 " + TextFormatting.AQUA + s)
+                    .map(TextComponentString::new)
+                    .collect(Collectors.toList()));
         } else {
-            list.add(I18n.format("itemText.misc.modFilter.count", 0));
+            list.add(new TextComponentTranslation("itemText.misc.modFilter.count", 0));
         }
     }
 
     @Override
-    public Class<? extends GuiScreen> getGuiHandler() {
+    public Class<? extends GuiScreen> getGuiClass() {
         return GuiModFilter.class;
     }
 
     @Override
-    public boolean hasGuiContainer() {
+    public boolean hasContainer() {
         return true;
     }
 
     @Override
-    public Container createContainer(EntityPlayer player, ItemStack filterStack, EnumHand hand, TileEntityItemRouter router) {
-        return new ContainerModFilter(player, filterStack, hand, router);
+    public ContainerSmartFilter createContainer(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
+        return new ContainerModFilter(player, hand, router);
     }
 
     @Override
-    public IMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
         switch (message.getOp()) {
             case ADD_STRING:
@@ -105,7 +104,7 @@ public class ModFilter extends SmartFilter {
                 }
                 break;
             case REMOVE_AT:
-                int pos = message.getNbtData().getInteger("Pos");
+                int pos = message.getNbtData().getInt("Pos");
                 l = getModList(filterStack);
                 if (pos >= 0 && pos < l.size()) {
                     l.remove(pos);
@@ -114,7 +113,7 @@ public class ModFilter extends SmartFilter {
                 }
                 break;
             default:
-                ModularRouters.logger.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
+                ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
                 break;
         }
         return null;
@@ -122,6 +121,6 @@ public class ModFilter extends SmartFilter {
 
     @Override
     public int getSize(ItemStack filterStack) {
-        return filterStack.hasTagCompound() ? filterStack.getTagCompound().getTagList(NBT_MODS, Constants.NBT.TAG_STRING).tagCount() : 0;
+        return filterStack.hasTag() ? filterStack.getTag().getList(NBT_MODS, Constants.NBT.TAG_STRING).size() : 0;
     }
 }

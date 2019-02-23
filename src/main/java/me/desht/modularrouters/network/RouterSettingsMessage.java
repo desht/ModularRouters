@@ -3,18 +3,20 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.util.IThreadListener;
+import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 /**
+ * Received on: SERVER
+ *
  * Used when a player updates settings on an item router via its GUI.
  */
-public class RouterSettingsMessage implements IMessage {
+public class RouterSettingsMessage {
     private boolean eco;
     private TileEntityItemRouter router;
     private RouterRedstoneBehaviour rrb;
@@ -28,38 +30,32 @@ public class RouterSettingsMessage implements IMessage {
         this.eco = router.getEcoMode();
     }
 
-    @Override
-    public void fromBytes(ByteBuf byteBuf) {
-        BlockPos pos = new BlockPos(byteBuf.readInt(), byteBuf.readInt(), byteBuf.readInt());
-        WorldServer world = DimensionManager.getWorld(byteBuf.readInt());
+    public RouterSettingsMessage(PacketBuffer buffer) {
+        BlockPos pos = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
+        WorldServer world = MiscUtil.getWorldForDimensionId(buffer.readInt());
         if (world != null) {
             router = TileEntityItemRouter.getRouterAt(world, pos);
         }
-        rrb = RouterRedstoneBehaviour.values()[byteBuf.readByte()];
-        eco = byteBuf.readBoolean();
+        rrb = RouterRedstoneBehaviour.values()[buffer.readByte()];
+        eco = buffer.readBoolean();
     }
 
-    @Override
     public void toBytes(ByteBuf byteBuf) {
         byteBuf.writeInt(router.getPos().getX());
         byteBuf.writeInt(router.getPos().getY());
         byteBuf.writeInt(router.getPos().getZ());
-        byteBuf.writeInt(router.getWorld().provider.getDimension());
+        byteBuf.writeInt(MiscUtil.getDimensionForWorld(router.getWorld()));
         byteBuf.writeByte(rrb.ordinal());
         byteBuf.writeBoolean(eco);
     }
 
-    public static class Handler implements IMessageHandler<RouterSettingsMessage, IMessage> {
-        @Override
-        public IMessage onMessage(RouterSettingsMessage msg, MessageContext ctx) {
-            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.getEntityWorld();
-            mainThread.addScheduledTask(() -> {
-                if (msg.router != null) {
-                    msg.router.setRedstoneBehaviour(msg.rrb);
-                    msg.router.setEcoMode(msg.eco);
-                }
-            });
-            return null;
-        }
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            if (router != null) {
+                router.setRedstoneBehaviour(rrb);
+                router.setEcoMode(eco);
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }

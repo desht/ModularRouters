@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -24,12 +24,12 @@ public class CompiledPlacerModule extends CompiledModule {
         if (!getFilter().test(toPlace)) {
             return false;
         }
-        World w = router.getWorld();
+        World world = router.getWorld();
         BlockPos pos = getTarget().pos;
-        IBlockState newState = BlockUtil.tryPlaceAsBlock(toPlace, w, pos, getFacing(), getRouterFacing());
+        IBlockState newState = BlockUtil.tryPlaceAsBlock(toPlace, world, pos, getFacing(), getRouterFacing());
         if (newState != null) {
-            if (ConfigHandler.module.placerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {
-                w.playEvent(2001, pos, Block.getStateId(newState));
+            if (ConfigHandler.MODULE.placerParticles.get() && router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) == 0) {
+                world.playEvent(2001, pos, Block.getStateId(newState));
             }
             router.extractBuffer(1);
             return true;

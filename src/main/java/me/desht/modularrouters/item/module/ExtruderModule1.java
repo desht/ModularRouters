@@ -4,48 +4,50 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-public class ExtruderModule extends Module implements IRangedModule {
+public class ExtruderModule1 extends ItemModule implements IRangedModule {
+    public ExtruderModule1(Properties props) {
+        super(props);
+    }
+
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledExtruderModule(router, stack);
     }
 
     @Override
-    public void addUsageInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addUsageInformation(itemstack, player, list, advanced);
+    public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addUsageInformation(itemstack, list);
         Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
         if (ench.isEmpty()) {
-            list.addAll(MiscUtil.wrapString(I18n.format("itemText.misc.enchantBreakerHint")));
+            list.add(new TextComponentTranslation("itemText.misc.enchantBreakerHint"));
         }
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addExtraInformation(itemstack, player, list, advanced);
-        list.add(I18n.format("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
+    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+        super.addSettingsInformation(itemstack, list);
+        list.add(new TextComponentTranslation("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
     }
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.module.extruderBaseRange;
+        return ConfigHandler.MODULE.extruder1BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.module.extruderMaxRange;
+        return ConfigHandler.MODULE.extruder1MaxRange.get();
     }
 
     @Override

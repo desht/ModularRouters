@@ -15,6 +15,6 @@ public class BufferSlot extends SlotItemHandler {
     public void onSlotChanged() {
         // unfortunately we can't leave this entirely to BufferHandler#onSlotChanged()
         // seems like that doesn't always get called at the right time
-        router.getWorld().updateComparatorOutputLevel(router.getPos(), router.getBlockType());
+        router.getWorld().updateComparatorOutputLevel(router.getPos(), router.getBlockState().getBlock());
     }
 }

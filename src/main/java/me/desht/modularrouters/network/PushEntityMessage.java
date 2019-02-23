@@ -5,19 +5,21 @@ import me.desht.modularrouters.ModularRouters;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.util.function.Supplier;
 
-public class PushEntityMessage implements IMessage {
+/**
+ * Received on: CLIENT
+ * Sent by server so clients promptly update an entity's velocity when it gets shoved by an extruded block.
+ */
+public class PushEntityMessage {
     private int id;
     private double x;
     private double y;
     private double z;
 
     public PushEntityMessage() {
-        x = y = z = 0;
     }
 
     public PushEntityMessage(Entity entity, double x, double y, double z) {
@@ -27,15 +29,13 @@ public class PushEntityMessage implements IMessage {
         this.z = z;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    public PushEntityMessage(ByteBuf buf) {
         id = buf.readInt();
         x = buf.readDouble();
         y = buf.readDouble();
         z = buf.readDouble();
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
         buf.writeDouble(x);
@@ -43,18 +43,15 @@ public class PushEntityMessage implements IMessage {
         buf.writeDouble(z);
     }
 
-    public static class Handler implements IMessageHandler<PushEntityMessage, IMessage> {
-
-        @Override
-        public IMessage onMessage(PushEntityMessage message, MessageContext ctx) {
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
             World w = ModularRouters.proxy.theClientWorld();
             if (w != null) {
-                Entity entity = w.getEntityByID(message.id);
+                Entity entity = w.getEntityByID(id);
                 if (entity != null) {
-                    entity.motionX = message.x;
-                    entity.motionY = message.y;
-                    entity.motionZ = message.z;
-
+                    entity.motionX = x;
+                    entity.motionY = y;
+                    entity.motionZ = z;
                     entity.onGround = false;
                     entity.collided = false;
                     entity.collidedHorizontally = false;
@@ -62,7 +59,7 @@ public class PushEntityMessage implements IMessage {
                     if (entity instanceof EntityLivingBase) ((EntityLivingBase) entity).setJumping(true);
                 }
             }
-            return null;
-        }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }
