@@ -285,7 +285,6 @@ public abstract class ItemModule extends ItemBase implements ITintable {
         ModuleHelper.validateNBT(stack);
         if (!player.isSneaking()) {
             if (!world.isRemote) {
-                int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_MODULE_HELD_MAIN : ModularRouters.GUI_MODULE_HELD_OFF;
                 NetworkHooks.openGui((EntityPlayerMP)player, new ContainerProvider(hand),
                         buf -> buf.writeBoolean(hand == EnumHand.MAIN_HAND));
             }

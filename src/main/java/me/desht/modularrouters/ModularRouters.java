@@ -35,23 +35,11 @@ public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
     static final String MODVERSION = "@VERSION@";
-    static final String DEPENDENICES =
-            "after:waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
-                    + "required-after:forge@[14.23.4.2705,);";
+//    static final String DEPENDENICES =
+//            "after:waila;before:guideapi@[1.12-2.1.4-56,);after:theoneprobe;"
+//                    + "required-after:forge@[14.23.4.2705,);";
 
     public static final Logger LOGGER = LogManager.getLogger();
-
-    public static Random random = new Random();
-
-    private static int modGuiIndex = 0; // track GUI IDs
-    public static final int GUI_MODULE_HELD_MAIN = modGuiIndex++;
-    public static final int GUI_MODULE_HELD_OFF = modGuiIndex++;
-    public static final int GUI_ROUTER = modGuiIndex++;
-    public static final int GUI_MODULE_INSTALLED = modGuiIndex++;
-    public static final int GUI_FILTER_HELD_MAIN = modGuiIndex++;
-    public static final int GUI_FILTER_HELD_OFF = modGuiIndex++;
-    public static final int GUI_FILTER_INSTALLED = modGuiIndex++;
-    public static final int GUI_SYNC_UPGRADE = modGuiIndex++;
 
     public static IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 

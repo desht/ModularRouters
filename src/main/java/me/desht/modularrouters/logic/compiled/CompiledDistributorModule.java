@@ -90,7 +90,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 }
                 break;
             case RANDOM:
-                int r = ModularRouters.random.nextInt(getTargets().size());
+                int r = router.getWorld().rand.nextInt(getTargets().size());
                 res = getTargets().get(r);
                 break;
             case NEAREST_FIRST:

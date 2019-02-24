@@ -91,7 +91,6 @@ public abstract class ItemSmartFilter extends ItemBase {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        int guiId = hand == EnumHand.MAIN_HAND ? ModularRouters.GUI_FILTER_HELD_MAIN : ModularRouters.GUI_FILTER_HELD_OFF;
         if (!world.isRemote && hasContainer()) {
             NetworkHooks.openGui((EntityPlayerMP) player, new ContainerProvider(hand),
                     buf -> buf.writeBoolean(hand == EnumHand.MAIN_HAND));
