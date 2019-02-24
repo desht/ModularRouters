@@ -8,7 +8,7 @@
   "key": {
     "R": { "item": "minecraft:redstone" },
     "P": { "item": "minecraft:paper" },
-    "G": { "type": "forge:ore_dict", "ore": "nuggetGold" }
+    "G": { "item": "minecraft:gold_nugget" }
   },
   "result": { "item": "modularrouters:blank_module", "count": 6 }
 }

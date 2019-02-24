@@ -7,10 +7,10 @@
   ],
   "key": {
     "L": { "item": "minecraft:lever" },
-    "R": { "type": "forge:ore_dict", "ore": "dustRedstone" },
+    "R": { "item": "minecraft:redstone" },
     "D": { "item": "minecraft:dispenser" },
-    "Q": { "type": "forge:ore_dict", "ore": "blockQuartz" },
-    "M": { "item": "#blankmodule" }
+    "Q": { "item": "minecraft:quartz" },
+    "M": { "item": "modularrouters:blank_module" }
   },
-  "result": { "item": "modularrouters:module", "data": 16 }
+  "result": { "item": "modularrouters:activator_module" }
 }

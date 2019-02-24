@@ -6,9 +6,9 @@
     " S "
   ],
   "key": {
-    "M": { "item": "#augmentcore" },
-    "S": { "type": "forge:ore_dict", "ore": "stickWood" },
-    "Q": { "type": "forge:ore_dict", "ore": "gemQuartz" }
+    "M": { "item": "modularrouters:augment_core" },
+    "S": { "item": "minecraft:stick" },
+    "Q": { "item": "minecraft:quartz" }
   },
-  "result": { "item": "modularrouters:augment", "data": 2 }
+  "result": { "item": "modularrouters:range_up_augment" }
 }

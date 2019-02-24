@@ -4,8 +4,8 @@
     "PMP"
   ],
   "key": {
-    "M": { "item": "#augmentcore" },
+    "M": { "item": "modularrouters:augment_core" },
     "P": { "item": "minecraft:piston" }
   },
-  "result": { "item": "modularrouters:augment", "data": 9 }
+  "result": { "item": "modularrouters:pushing_augment" }
 }

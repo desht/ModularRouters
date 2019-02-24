@@ -5,10 +5,10 @@
     "RBR"
   ],
   "key": {
-    "B": { "item": "#blankupgrade" },
+    "B": { "item": "modularrouters:blank_upgrade" },
     "R": { "item": "minecraft:redstone" },
-    "S": { "type": "forge:ore_dict", "ore": "stone" },
+    "S": { "item": "minecraft:stone" },
     "T": { "item": "minecraft:redstone_torch" }
   },
-  "result": { "item": "modularrouters:upgrade", "data": 4, "count": 16 }
+  "result": { "item": "modularrouters:sync_upgrade", "count": 16 }
 }

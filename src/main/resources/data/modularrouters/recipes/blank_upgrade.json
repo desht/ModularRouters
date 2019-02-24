@@ -7,8 +7,8 @@
   ],
   "key": {
     "P": { "item": "minecraft:paper" },
-    "L": { "type": "forge:ore_dict", "ore": "gemLapis" },
-    "G": { "type": "forge:ore_dict", "ore": "nuggetGold" }
+    "L": { "item": "minecraft:lapis_lazuli" },
+    "G": { "item": "minecraft:gold_nugget" }
   },
   "result": { "item": "modularrouters:blank_upgrade", "count": 4 }
 }

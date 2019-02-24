@@ -6,9 +6,9 @@
     " T "
   ],
   "key": {
-    "M": { "item": "#augmentcore" },
+    "M": { "item": "modularrouters:augment_core" },
     "T": { "item": "minecraft:redstone_torch" },
-    "R": { "type": "forge:ore_dict", "ore": "dustRedstone" }
+    "R": { "item": "minecraft:redstone" }
   },
-  "result": { "item": "modularrouters:augment", "data": 4 }
+  "result": { "item": "modularrouters:redstone_augment" }
 }

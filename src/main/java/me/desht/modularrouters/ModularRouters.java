@@ -6,6 +6,7 @@ import me.desht.modularrouters.client.ModelBakeEventHandler;
 import me.desht.modularrouters.client.fx.RenderListener;
 import me.desht.modularrouters.client.gui.GuiHandler;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.PacketHandler;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -50,6 +52,7 @@ public class ModularRouters {
             MinecraftForge.EVENT_BUS.addListener(ClientHandler::registerRenders);
         });
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

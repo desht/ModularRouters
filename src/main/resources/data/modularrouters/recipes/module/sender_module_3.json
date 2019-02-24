@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#sender2" },
+    { "item" : "modularrouters:sender_module_2" },
     { "item" : "minecraft:end_stone" },
     { "item" : "minecraft:ender_chest" }
   ],
-  "result": { "item": "modularrouters:module", "data": 7 }
+  "result": { "item": "modularrouters:sender_module_3" }
 }

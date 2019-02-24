@@ -6,7 +6,7 @@
     "IBI"
   ],
   "key": {
-    "I": { "type": "forge:ore_dict", "ore": "ingotIron" },
+    "I": { "item": "minecraft:iron_ingot" },
     "B": { "item": "minecraft:iron_bars" },
     "M": { "item": "modularrouters:blank_module" }
   },

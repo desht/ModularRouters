@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#blankmodule" },
+    { "item" : "modularrouters:blank_module" },
     { "item" : "minecraft:bow" },
     { "item" : "minecraft:arrow" }
   ],
-  "result": { "item": "modularrouters:module", "data": 5 }
+  "result": { "item": "modularrouters:sender_module_1" }
 }

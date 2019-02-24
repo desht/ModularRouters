@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#dropper" },
+    { "item" : "modularrouters:dropper_module" },
     { "item" : "minecraft:gunpowder" }
   ],
-  "result": { "item": "modularrouters:module", "data": 1 }
+  "result": { "item": "modularrouters:flinger_module" }
 }

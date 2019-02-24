@@ -5,9 +5,9 @@
     "GMG"
   ],
   "key": {
-    "M": { "item": "#blankmodule" },
-    "G": { "type": "forge:ore_dict", "ore": "blockGlass" },
+    "M": { "item": "modularrouters:blank_module" },
+    "G": { "item": "minecraft:glass" },
     "C": { "item": "minecraft:cauldron" }
   },
-  "result": { "item": "modularrouters:module", "data": 14 }
+  "result": { "item": "modularrouters:fluid_module" }
 }

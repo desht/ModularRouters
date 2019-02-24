@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#augmentcore" },
-    { "item" : "#stackupgrade" }
+    { "item" : "modularrouters:augment_core" },
+    { "item" : "modularrouters:stack_upgrade" }
   ],
-  "result": { "item": "modularrouters:augment", "data": 6 }
+  "result": { "item": "modularrouters:stack_augment" }
 }

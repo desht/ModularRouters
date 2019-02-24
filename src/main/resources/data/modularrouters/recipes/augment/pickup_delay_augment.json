@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#augmentcore" },
-    { "type" : "forge:ore_dict", "ore" : "slimeball" }
+    { "item" : "modularrouters:augment_core" },
+    { "item": "minecraft:slime_ball" }
   ],
-  "result": { "item": "modularrouters:augment", "data": 1 }
+  "result": { "item": "modularrouters:pickup_delay_augment" }
 }

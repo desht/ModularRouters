@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item" : "#blankmodule" },
-    { "type": "forge:ore_dict", "ore": "chestWood" }
-  ],
-  "result": { "item": "modularrouters:module", "data": 11 }
-}

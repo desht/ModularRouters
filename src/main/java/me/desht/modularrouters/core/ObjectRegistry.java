@@ -7,6 +7,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.item.augment.*;
 import me.desht.modularrouters.item.module.*;
+import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.item.upgrade.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -55,78 +56,87 @@ public class ObjectRegistry {
     @ObjectHolder("modularrouters:augment_core")
     public static final Item AUGMENT_CORE = null;
 
-    @ObjectHolder("modularouters:activator_module")
+    @ObjectHolder("modularrouters:activator_module")
     public static final Item ACTIVATOR_MODULE = null;
-    @ObjectHolder("modularouters:breaker_module")
+    @ObjectHolder("modularrouters:breaker_module")
     public static final Item BREAKER_MODULE = null;
-    @ObjectHolder("modularouters:detector_module")
+    @ObjectHolder("modularrouters:detector_module")
     public static final Item DETECTOR_MODULE = null;
-    @ObjectHolder("modularouters:distributor_module")
+    @ObjectHolder("modularrouters:distributor_module")
     public static final Item DISTRIBUTOR_MODULE = null;
-    @ObjectHolder("modularouters:dropper_module")
+    @ObjectHolder("modularrouters:dropper_module")
     public static final Item DROPPER_MODULE = null;
-    @ObjectHolder("modularouters:extruder_module_1")
+    @ObjectHolder("modularrouters:extruder_module_1")
     public static final Item EXTRUDER_MODULE_1 = null;
-    @ObjectHolder("modularouters:extruder_module_2")
+    @ObjectHolder("modularrouters:extruder_module_2")
     public static final Item EXTRUDER_MODULE_2 = null;
-    @ObjectHolder("modularouters:flinger_module")
+    @ObjectHolder("modularrouters:flinger_module")
     public static final Item FLINGER_MODULE = null;
-    @ObjectHolder("modularouters:fluid_module")
+    @ObjectHolder("modularrouters:fluid_module")
     public static final Item FLUID_MODULE = null;
-    @ObjectHolder("modularouters:placer_module")
+    @ObjectHolder("modularrouters:placer_module")
     public static final Item PLACER_MODULE = null;
-    @ObjectHolder("modularouters:puller_module_1")
+    @ObjectHolder("modularrouters:puller_module_1")
     public static final Item PULLER_MODULE_1 = null;
-    @ObjectHolder("modularouters:puller_module_2")
+    @ObjectHolder("modularrouters:puller_module_2")
     public static final Item PULLER_MODULE_2 = null;
-    @ObjectHolder("modularouters:sender_module_1")
+    @ObjectHolder("modularrouters:sender_module_1")
     public static final Item SENDER_MODULE_1 = null;
-    @ObjectHolder("modularouters:sender_module_2")
+    @ObjectHolder("modularrouters:sender_module_2")
     public static final Item SENDER_MODULE_2 = null;
-    @ObjectHolder("modularouters:sender_module_3")
+    @ObjectHolder("modularrouters:sender_module_3")
     public static final Item SENDER_MODULE_3 = null;
-    @ObjectHolder("modularouters:vacuum_module")
+    @ObjectHolder("modularrouters:vacuum_module")
     public static final Item VACUUM_MODULE = null;
-    @ObjectHolder("modularouters:void_module")
+    @ObjectHolder("modularrouters:void_module")
     public static final Item VOID_MODULE = null;
 
-    @ObjectHolder("modularouters:blast_upgrade")
+    @ObjectHolder("modularrouters:blast_upgrade")
     public static final Item BLAST_UPGRADE = null;
-    @ObjectHolder("modularouters:camouflage_upgrade")
+    @ObjectHolder("modularrouters:camouflage_upgrade")
     public static final Item CAMOUFLAGE_UPGRADE = null;
-    @ObjectHolder("modularouters:fluid_upgrade")
+    @ObjectHolder("modularrouters:fluid_upgrade")
     public static final Item FLUID_UPGRADE = null;
-    @ObjectHolder("modularouters:muffler_upgrade")
+    @ObjectHolder("modularrouters:muffler_upgrade")
     public static final Item MUFFLER_UPGRADE = null;
-    @ObjectHolder("modularouters:security_upgrade")
+    @ObjectHolder("modularrouters:security_upgrade")
     public static final Item SECURITY_UPGRADE = null;
-    @ObjectHolder("modularouters:speed_upgrade")
+    @ObjectHolder("modularrouters:speed_upgrade")
     public static final Item SPEED_UPGRADE = null;
-    @ObjectHolder("modularouters:stack_upgrade")
+    @ObjectHolder("modularrouters:stack_upgrade")
     public static final Item STACK_UPGRADE = null;
-    @ObjectHolder("modularouters:sync_upgrade")
+    @ObjectHolder("modularrouters:sync_upgrade")
     public static final Item SYNC_UPGRADE = null;
 
-    @ObjectHolder("modularouters:fast_pickup_augment")
+    @ObjectHolder("modularrouters:fast_pickup_augment")
     public static final Item FAST_PICKUP_AUGMENT = null;
-    @ObjectHolder("modularouters:mimic_augment")
+    @ObjectHolder("modularrouters:mimic_augment")
     public static final Item MIMIC_AUGMENT = null;
-    @ObjectHolder("modularouters:pickup_delay_augment")
+    @ObjectHolder("modularrouters:pickup_delay_augment")
     public static final Item PICKUP_DELAY_AUGMENT = null;
-    @ObjectHolder("modularouters:pushing_augment")
+    @ObjectHolder("modularrouters:pushing_augment")
     public static final Item PUSHING_AUGMENT = null;
-    @ObjectHolder("modularouters:range_up_augment")
+    @ObjectHolder("modularrouters:range_up_augment")
     public static final Item RANGE_UP_AUGMENT = null;
-    @ObjectHolder("modularouters:range_down_augment")
+    @ObjectHolder("modularrouters:range_down_augment")
     public static final Item RANGE_DOWN_AUGMENT = null;
-    @ObjectHolder("modularouters:redstone_augment")
+    @ObjectHolder("modularrouters:redstone_augment")
     public static final Item REDSTONE_AUGMENT = null;
-    @ObjectHolder("modularouters:regulator_augment")
+    @ObjectHolder("modularrouters:regulator_augment")
     public static final Item REGULATOR_AUGMENT = null;
-    @ObjectHolder("modularouters:stack_augment")
+    @ObjectHolder("modularrouters:stack_augment")
     public static final Item STACK_AUGMENT = null;
-    @ObjectHolder("modularouters:xp_vacuum_augment")
+    @ObjectHolder("modularrouters:xp_vacuum_augment")
     public static final Item XP_VACUUM_AUGMENT = null;
+
+    @ObjectHolder("modularrouters:bulk_item_filter")
+    public static final Item BULK_ITEM_FILTER = null;
+    @ObjectHolder("modularrouters:inspection_filter")
+    public static final Item INSPECTION_FILTER = null;
+    @ObjectHolder("modularrouters:mod_filter")
+    public static final Item MOD_FILTER = null;
+    @ObjectHolder("modularrouters:regex_filter")
+    public static final Item REGEX_FILTER = null;
 
     // Sounds
     @ObjectHolder("modularrrouters:error")
@@ -148,8 +158,8 @@ public class ObjectRegistry {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(new BlockItemRouter());
-        event.getRegistry().register(new BlockTemplateFrame());
+        event.getRegistry().register(new BlockItemRouter().setRegistryName(RL("item_router")));
+        event.getRegistry().register(new BlockTemplateFrame().setRegistryName(RL("template_frame")));
     }
 
     @SubscribeEvent
@@ -203,6 +213,11 @@ public class ObjectRegistry {
         registerObj(r, new RegulatorAugment(ib()), RL("regulator_augment"));
         registerObj(r, new StackAugment(ib()), RL("stack_augment"));
         registerObj(r, new XPVacuumAugment(ib()), RL("xp_vacuum_augment"));
+
+        registerObj(r, new BulkItemFilter(ib()), RL("bulk_item_filter"));
+        registerObj(r, new BulkItemFilter(ib()), RL("inspection_filter"));
+        registerObj(r, new BulkItemFilter(ib()), RL("mod_filter"));
+        registerObj(r, new BulkItemFilter(ib()), RL("regex_filter"));
     }
 
     @SubscribeEvent

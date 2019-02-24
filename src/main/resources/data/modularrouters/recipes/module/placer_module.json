@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#blankmodule" },
+    { "item" : "modularrouters:blank_module" },
     { "item" : "minecraft:dispenser" },
-    { "type" : "forge:ore_dict", "ore" : "dirt" }
+    { "item" : "minecraft:dirt" }
   ],
-  "result": { "item": "modularrouters:module", "data": 3 }
+  "result": { "item": "modularrouters:placer_module" }
 }

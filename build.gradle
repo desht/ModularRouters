@@ -1,5 +1,3 @@
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
 
 buildscript {
     repositories {
@@ -12,7 +10,7 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
+//apply plugin: 'eclipse'
 
 ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
@@ -60,31 +58,31 @@ minecraft {
 }
 
 repositories {
-    jcenter { }
-    maven { // TOP
-        name = "tterrag maven"
-        url = "http://maven.tterrag.com/"
-    }
-    maven {
-        name = "guideapi/hwyla"
-        url = 'http://tehnut.info/maven/'
-    }
-    maven {
-        name = "tesla"
-        url = "http://maven.mcmoddev.com"
-    }
-    maven {
-        name = "JEI"
-        url = "http://dvs1.progwml6.com/files/maven"
-    }
-    maven {
-        name = "CoFH Maven"
-        url = "http://maven.covers1624.net"
-    }
-    maven {
-        name = "K-4u Mod maven"
-        url = "https://modmaven.k-4u.nl/"
-    }
+//    jcenter { }
+//    maven { // TOP
+//        name = "tterrag maven"
+//        url = "http://maven.tterrag.com/"
+//    }
+//    maven {
+//        name = "guideapi/hwyla"
+//        url = 'http://tehnut.info/maven/'
+//    }
+//    maven {
+//        name = "tesla"
+//        url = "http://maven.mcmoddev.com"
+//    }
+//    maven {
+//        name = "JEI"
+//        url = "http://dvs1.progwml6.com/files/maven"
+//    }
+//    maven {
+//        name = "CoFH Maven"
+//        url = "http://maven.covers1624.net"
+//    }
+//    maven {
+//        name = "K-4u Mod maven"
+//        url = "https://modmaven.k-4u.nl/"
+//    }
 }
 
 dependencies {
@@ -97,6 +95,7 @@ dependencies {
     //provided "com.google.errorprone:error_prone_annotations:2.1.0"
     //compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
     //compile "team.chisel.ctm:CTM:MC1.12.2-0.3.2.18:api"
+    compile "com.google.errorprone:error_prone_annotations:2.0.15"
 }
 
 //processResources {
@@ -128,15 +127,15 @@ static def parseConfig(File config) {
     }
 }
 
-jar {
-    manifest {
-        attributes(["Specification-Title": "modularrouters",
-                    "Specification-Vendor": "desht",
-                    "Specification-Version": "24.0", // We are version 1 of the modlauncher specification
-                    "Implementation-Title": project.name,
-                    "Implementation-Version": "${version}",
-                    "Implementation-Vendor" :"desht",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
-    }
-}
+//jar {
+//    manifest {
+//        attributes(["Specification-Title": "modularrouters",
+//                    "Specification-Vendor": "desht",
+//                    "Specification-Version": "24.0", // We are version 1 of the modlauncher specification
+//                    "Implementation-Title": project.name,
+//                    "Implementation-Version": "${version}",
+//                    "Implementation-Vendor" :"desht",
+//                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+//    }
+//}
 

@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#blankmodule" },
+    { "item" : "modularrouters:blank_module" },
     { "item" : "minecraft:dropper" }
   ],
-  "result": { "item": "modularrouters:module", "data": 0 }
+  "result": { "item": "modularrouters:dropper_module" }
 }

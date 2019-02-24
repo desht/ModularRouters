@@ -8,9 +8,9 @@
   "key": {
     "H": { "item": "minecraft:diamond_helmet" },
     "C": { "item": "minecraft:diamond_chestplate" },
-    "S": { "item": "#sender3" },
-    "P": { "item": "#puller2" },
-    "Z": { "item": "minecraft:skull", "data": 32767 }
+    "S": { "item": "modularrouters:sender_module_3" },
+    "P": { "item": "modularrouters:puller_module_2" },
+    "Z": { "item": "minecraft:skull" }
   },
-  "result": { "item": "modularrouters:module", "data": 13 }
+  "result": { "item": "modularrouters:player_module" }
 }

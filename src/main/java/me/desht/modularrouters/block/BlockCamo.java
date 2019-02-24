@@ -62,7 +62,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     @Override
     public VoxelShape getShape(IBlockState state, IBlockReader reader, BlockPos pos) {
         ICamouflageable camo = getCamoState(reader, pos);
-        return camo != null ? camo.getCamouflage().getShape(reader, pos) : super.getCollisionShape(state, reader, pos);
+        return camo != null ? camo.getCamouflage().getShape(reader, pos) : super.getShape(state, reader, pos);
     }
 
 

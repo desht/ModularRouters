@@ -6,8 +6,8 @@
     " W "
   ],
   "key": {
-    "B": { "item": "#blankupgrade" },
+    "B": { "item": "modularrouters:blank_upgrade" },
     "W": { "item": "minecraft:wool", "data": 32767 }
   },
-  "result": { "item": "modularrouters:upgrade", "data": 6 }
+  "result": { "item": "modularrouters:muffler_upgrade" }
 }

@@ -6,10 +6,10 @@
     " R "
   ],
   "key": {
-    "B": { "item": "#blankupgrade" },
+    "B": { "item": "modularrouters:blank_upgrade" },
     "Q": { "item": "minecraft:quartz" },
-    "N": { "type": "forge:ore_dict", "ore": "nuggetGold" },
+    "N": { "item": "minecraft:gold_nugget" },
     "R": { "item": "minecraft:redstone" }
   },
-  "result": { "item": "modularrouters:upgrade", "data": 2 }
+  "result": { "item": "modularrouters:security_upgrade" }
 }

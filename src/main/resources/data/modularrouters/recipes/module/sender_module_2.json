@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#sender1" },
+    { "item" : "modularrouters:sender_module_1" },
     { "item" : "minecraft:ender_eye" }
   ],
-  "result": { "item": "modularrouters:module", "data": 6 }
+  "result": { "item": "modularrouters:sender_module_2" }
 }

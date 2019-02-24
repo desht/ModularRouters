@@ -5,9 +5,9 @@
     "GBG"
   ],
   "key": {
-    "B": { "item": "#blankupgrade" },
+    "B": { "item": "modularrouters:blank_upgrade" },
     "U": { "item": "minecraft:bucket" },
-    "G": { "type": "forge:ore_dict", "ore": "blockGlass" }
+    "G": { "item": "minecraft:glass" }
   },
-  "result": { "item": "modularrouters:upgrade", "data": 5, "count": 3 }
+  "result": { "item": "modularrouters:fluid_upgrade", "count": 3 }
 }

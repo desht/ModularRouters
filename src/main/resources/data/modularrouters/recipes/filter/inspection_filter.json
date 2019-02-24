@@ -5,9 +5,9 @@
     " P "
   ],
   "key": {
-    "B": { "item": "#bulkfilter" },
+    "B": { "item": "modularrouters:blank_filter" },
     "E": { "item": "minecraft:spider_eye" },
-    "P": { "type": "forge:ore_dict", "ore": "paper" }
+    "P": { "item": "minecraft:paper" }
   },
-  "result": { "item": "modularrouters:filter", "data": 3 }
+  "result": { "item": "modularrouters:inspection_filter" }
 }

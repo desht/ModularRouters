@@ -6,9 +6,9 @@
     " Q "
   ],
   "key": {
-    "M": { "item": "#augmentcore" },
+    "M": { "item": "modularrouters:augment_core" },
     "C": { "item": "minecraft:comparator" },
-    "Q": { "type": "forge:ore_dict", "ore": "gemQuartz" }
+    "Q": { "item": "minecraft:quartz" }
   },
-  "result": { "item": "modularrouters:augment", "data": 5 }
+  "result": { "item": "modularrouters:regulator_augment" }
 }

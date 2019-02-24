@@ -1,10 +1,10 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "#blankupgrade" },
-    { "type": "forge:ore_dict", "ore": "dyeRed" },
-    { "type": "forge:ore_dict", "ore": "dyeBlue" },
-    { "type": "forge:ore_dict", "ore": "dyeGreen" }
+    { "item" : "modularrouters:blank_upgrade" },
+    { "item": "minecraft:rose_red" },
+    { "item": "minecraft:lapis_lazuli" },
+    { "item": "minecraft:cactus_green" }
   ],
-  "result": { "item": "modularrouters:upgrade", "data": 3 }
+  "result": { "item": "modularrouters:camouflage_upgrade" }
 }

@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item" : "#blankmodule" },
-    { "item" : "#placer" },
-    { "item" : "#breaker" }
-  ],
-  "result": { "item": "modularrouters:module", "data": 10 }
-}

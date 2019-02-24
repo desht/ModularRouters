@@ -7,10 +7,10 @@
   ],
   "key": {
     "R": { "item": "minecraft:redstone" },
-    "B": { "item": "#blankupgrade" },
-    "N": { "type": "forge:ore_dict", "ore": "nuggetGold" },
+    "B": { "item": "modularrouters:blank_upgrade" },
+    "N": { "item": "minecraft:gold_nugget" },
     "G": { "item": "minecraft:gunpowder" },
     "Z": { "item": "minecraft:blaze_rod" }
   },
-  "result": { "item": "modularrouters:upgrade", "data": 1 }
+  "result": { "item": "modularrouters:speed_upgrade" }
 }

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    "MDM",
+    "IGI"
+  ],
+  "key": {
+    "M": { "item": "modularrouters:blank_module" },
+    "D": { "item": "minecraft:diamond" },
+    "G": { "item": "minecraft:glass" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": { "item": "modularrouters:bulk_item_filter" }
+}

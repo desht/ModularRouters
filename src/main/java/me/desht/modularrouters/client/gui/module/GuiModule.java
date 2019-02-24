@@ -101,11 +101,11 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
         TileEntityItemRouter router = container.getRouter();
         this.hand = container.getHand();
         if (router == null) {
-            this.moduleItemStack = mc.player.getHeldItem(hand);
+            this.moduleItemStack = Minecraft.getInstance().player.getHeldItem(hand);
             this.moduleSlotIndex = -1;
             this.routerPos = null;
         } else {
-            SlotTracker tracker = SlotTracker.getInstance(mc.player);
+            SlotTracker tracker = SlotTracker.getInstance(Minecraft.getInstance().player);
             this.moduleItemStack = tracker.getConfiguringModule(router);
             this.moduleSlotIndex = tracker.getModuleSlot();
             this.routerPos = router.getPos();
@@ -270,7 +270,7 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = moduleItemStack.getDisplayName() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
+        String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
         this.fontRenderer.drawString(title, this.xSize / 2f - this.fontRenderer.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 

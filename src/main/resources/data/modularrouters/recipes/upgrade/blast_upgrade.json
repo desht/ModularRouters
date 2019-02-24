@@ -6,9 +6,9 @@
     "IOI"
   ],
   "key": {
-    "B": { "item": "#blankupgrade" },
+    "B": { "item": "modularrouters:blank_upgrade" },
     "I": { "item": "minecraft:iron_bars" },
-    "O": { "type": "forge:ore_dict", "ore": "obsidian" }
+    "O": { "item": "minecraft:obsidian" }
   },
-  "result": { "item": "modularrouters:upgrade", "data": 7 }
+  "result": { "item": "modularrouters:blast_upgrade" }
 }
