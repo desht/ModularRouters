@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class InspectionFilter extends ItemSmartFilter {
     private static final String NBT_MATCH_ALL = "MatchAll";
     private static final String NBT_ITEMS = "Items";
-    private static final int MAX_SIZE = 6;
+    public static final int MAX_SIZE = 6;
 
     public InspectionFilter(Properties props) {
         super(props);

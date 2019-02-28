@@ -20,7 +20,7 @@ public class SimpleItemMatcher implements IItemMatcher {
         if (Item.getIdFromItem(filterStack.getItem()) != Item.getIdFromItem(stack.getItem())) {
             return !flags.isIgnoreTags() && tagMatcher.match(stack);
         }
-        if (!flags.isIgnoreMeta() && filterStack.getDamage() != stack.getDamage()) {
+        if (!flags.isIgnoreDamage() && filterStack.getDamage() != stack.getDamage()) {
             return !flags.isIgnoreTags() && tagMatcher.match(stack);
         }
         if (!flags.isIgnoreNBT()) {

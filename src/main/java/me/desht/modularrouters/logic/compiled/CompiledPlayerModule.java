@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.EntityLiving;
@@ -46,9 +47,8 @@ public class CompiledPlayerModule extends CompiledModule {
 
         NBTTagCompound compound = stack.getTag();
         if (compound != null) {
-            Pair<String,UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
-            playerName = owner.getLeft();
-            playerId = owner.getRight();
+            playerName = ((PlayerModule) stack.getItem()).getOwnerName(stack);
+            playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);
             operation = Operation.values()[compound.getInt(NBT_OPERATION)];
             section = Section.values()[compound.getInt(NBT_SECTION)];
             if (router != null && !router.getWorld().isRemote) {
@@ -92,7 +92,7 @@ public class CompiledPlayerModule extends CompiledModule {
                     } else {
                         int nToSend = getItemsPerTick(router);
                         if (getRegulationAmount() > 0) {
-                            int existing = InventoryUtils.countItems(bufferStack, itemHandler, getRegulationAmount(), !getFilter().getFlags().isIgnoreMeta());
+                            int existing = InventoryUtils.countItems(bufferStack, itemHandler, getRegulationAmount(), !getFilter().getFlags().isIgnoreDamage());
                             nToSend = Math.min(nToSend, getRegulationAmount() - existing);
                             if (nToSend <= 0) {
                                 return false;

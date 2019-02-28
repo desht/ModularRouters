@@ -1,6 +1,9 @@
 package me.desht.modularrouters.logic.filter;
 
 import com.google.common.collect.Lists;
+import jdk.nashorn.internal.ir.Flags;
+import me.desht.modularrouters.container.handler.BaseModuleHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
@@ -30,13 +33,14 @@ public class Filter implements Predicate<ItemStack> {
     public Filter(ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
-            NBTTagList tagList = moduleStack.getTag().getList(ModuleHelper.NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < tagList.size(); ++i) {
-                NBTTagCompound tagCompound = tagList.getCompound(i);
-                ItemStack filterStack = ItemStack.read(tagCompound);
-                IItemMatcher matcher = createMatcher(filterStack, moduleStack);
-                if (matcher != null) {
-                    matchers.add(matcher);
+            ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack);
+            for (int i = 0; i < filterHandler.getSlots(); i++) {
+                ItemStack filterStack = filterHandler.getStackInSlot(i);
+                if (!filterStack.isEmpty()) {
+                    IItemMatcher matcher = createMatcher(filterStack, moduleStack);
+                    if (matcher != null) {
+                        matchers.add(matcher);
+                    }
                 }
             }
         } else {
@@ -49,7 +53,7 @@ public class Filter implements Predicate<ItemStack> {
             return ((ItemSmartFilter) filterStack.getItem()).compile(filterStack, moduleStack);
         } else {
             return moduleStack.getItem() instanceof ItemModule ?
-                    ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(moduleStack) : null;
+                    ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(filterStack) : null;
         }
     }
 
@@ -92,38 +96,38 @@ public class Filter implements Predicate<ItemStack> {
         public static final Flags DEFAULT_FLAGS = new Flags();
 
         private final boolean blacklist;
-        private final boolean ignoreMeta;
+        private final boolean ignoreDamage;
         private final boolean ignoreNBT;
         private final boolean ignoreTags;
 
         public Flags(ItemStack moduleStack) {
             Validate.isTrue(moduleStack.getItem() instanceof ItemModule);
             blacklist = ModuleHelper.isBlacklist(moduleStack);
-            ignoreMeta = ModuleHelper.ignoreMeta(moduleStack);
+            ignoreDamage = ModuleHelper.ignoreDamage(moduleStack);
             ignoreNBT = ModuleHelper.ignoreNBT(moduleStack);
             ignoreTags = ModuleHelper.ignoreTags(moduleStack);
         }
 
         public Flags() {
             blacklist = ModuleFlags.BLACKLIST.getDefaultValue();
-            ignoreMeta = ModuleFlags.IGNORE_META.getDefaultValue();
+            ignoreDamage = ModuleFlags.IGNORE_DAMAGE.getDefaultValue();
             ignoreNBT = ModuleFlags.IGNORE_NBT.getDefaultValue();
-            ignoreTags = ModuleFlags.IGNORE_OREDICT.getDefaultValue();
+            ignoreTags = ModuleFlags.IGNORE_TAGS.getDefaultValue();
         }
 
         public Flags(byte mask) {
             blacklist = (mask & ModuleFlags.BLACKLIST.getMask()) != 0;
-            ignoreMeta = (mask & ModuleFlags.IGNORE_META.getMask()) != 0;
+            ignoreDamage = (mask & ModuleFlags.IGNORE_DAMAGE.getMask()) != 0;
             ignoreNBT = (mask & ModuleFlags.IGNORE_NBT.getMask()) != 0;
-            ignoreTags = (mask & ModuleFlags.IGNORE_OREDICT.getMask()) != 0;
+            ignoreTags = (mask & ModuleFlags.IGNORE_TAGS.getMask()) != 0;
         }
 
         public boolean isBlacklist() {
             return blacklist;
         }
 
-        public boolean isIgnoreMeta() {
-            return ignoreMeta;
+        public boolean isIgnoreDamage() {
+            return ignoreDamage;
         }
 
         public boolean isIgnoreNBT() {

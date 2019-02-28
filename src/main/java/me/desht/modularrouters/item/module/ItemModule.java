@@ -9,6 +9,8 @@ import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.gui.module.GuiModule;
 import me.desht.modularrouters.container.BaseContainerProvider;
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.handler.BaseModuleHandler;
+import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.core.ITintable;
 import me.desht.modularrouters.item.ItemBase;
@@ -49,15 +51,16 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber
 public abstract class ItemModule extends ItemBase implements ITintable {
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
-        IGNORE_META(false, 0x2),
+        IGNORE_DAMAGE(false, 0x2),
         IGNORE_NBT(true, 0x4),
-        IGNORE_OREDICT(true, 0x8),
+        IGNORE_TAGS(true, 0x8),
         TERMINATE(false, 0x80);
 
         private final boolean defaultValue;
@@ -80,24 +83,19 @@ public abstract class ItemModule extends ItemBase implements ITintable {
 
     // Direction relative to the facing of the router this module is installed in
     public enum RelativeDirection {
-        NONE(0x00, null),
-        DOWN(0x01, BlockItemRouter.OPEN_D),
-        UP(0x02, BlockItemRouter.OPEN_U),
-        LEFT(0x04, BlockItemRouter.OPEN_L),
-        RIGHT(0x08, BlockItemRouter.OPEN_R),
-        FRONT(0x10, BlockItemRouter.OPEN_F),
-        BACK(0x20, BlockItemRouter.OPEN_B);
+        NONE(0x00),
+        DOWN(0x01),
+        UP(0x02),
+        LEFT(0x04),
+        RIGHT(0x08),
+        FRONT(0x10),
+        BACK(0x20);
+
         private static RelativeDirection[] realSides = new RelativeDirection[] { FRONT, BACK, UP, DOWN, LEFT, RIGHT };
 
         private final int mask;
-        private final BooleanProperty property;
-        RelativeDirection(int mask, BooleanProperty property) {
+        RelativeDirection(int mask) {
             this.mask = mask;
-            this.property = property;
-        }
-
-        public static RelativeDirection[] realSides() {
-            return realSides;
         }
 
         public EnumFacing toEnumFacing(EnumFacing current) {
@@ -123,9 +121,6 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             return mask;
         }
 
-        public BooleanProperty getProperty() {
-            return property;
-        }
     }
 
     public ItemModule(Properties props) {
@@ -181,7 +176,7 @@ public abstract class ItemModule extends ItemBase implements ITintable {
         if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
-                list.add(MiscUtil.translate("itemText.misc.configureHint", Keybindings.keybindConfigure.getKeyDescription()));
+                list.add(MiscUtil.translate("itemText.misc.configureHint", Keybindings.keybindConfigure.getKey().getName()).applyTextStyles(TextFormatting.GRAY));
             }
         }
     }
@@ -196,20 +191,22 @@ public abstract class ItemModule extends ItemBase implements ITintable {
         if (isDirectional()) {
             RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
             ITextComponent itc = new TextComponentTranslation(isDirectional() && dir == RelativeDirection.NONE ?
-                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString());
-            String dirStr = getDirectionString(dir);
-            list.add(new TextComponentString(TextFormatting.YELLOW.toString()).appendSibling(itc));
+                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString()).applyTextStyle(TextFormatting.AQUA);
+            list.add(new TextComponentTranslation("guiText.label.direction")
+                    .appendSibling(new TextComponentString(": "))
+                    .appendSibling(itc)
+                    .applyTextStyle(TextFormatting.YELLOW));
         }
         addFilterInformation(itemstack, list);
         list.add(new TextComponentString(
-                        TextFormatting.YELLOW + I18n.format("itemText.misc.flags") + ": " +
-                                String.join(" / ",
-                                        formatFlag("IGNORE_META", ModuleHelper.ignoreMeta(itemstack)),
+                        I18n.format("itemText.misc.flags") + ": " +
+                                String.join(" | ",
+                                        formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
                                         formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
-                                        formatFlag("IGNORE_OREDICT", ModuleHelper.ignoreTags(itemstack)),
+                                        formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack)),
                                         formatFlag("TERMINATE", !ModuleHelper.terminates(itemstack))
                                 )
-                )
+                ).applyTextStyles(TextFormatting.YELLOW)
         );
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
@@ -217,10 +214,9 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             String col = curRange > rm.getBaseRange() ?
                     TextFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
                     TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
-            list.add(new TextComponentString(
-                    TextFormatting.YELLOW + I18n.format("itemText.misc.rangeInfo",
-                            col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()))
-            );
+            list.add(new TextComponentTranslation("itemText.misc.rangeInfo",
+                            col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange())
+                    .applyTextStyle(TextFormatting.YELLOW));
         }
     }
 
@@ -241,8 +237,6 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             list.add(new TextComponentString(TextFormatting.GREEN.toString()).appendSibling(new TextComponentTranslation("itemText.augments")));
             list.addAll(toAdd);
         }
-
-        // TODO
     }
 
     public String getDirectionString(RelativeDirection dir) {
@@ -253,28 +247,35 @@ public abstract class ItemModule extends ItemBase implements ITintable {
 
     private String formatFlag(String key, boolean flag) {
         String text = I18n.format("itemText.misc." + key);
-        return (flag ? TextFormatting.DARK_AQUA + TextFormatting.STRIKETHROUGH.toString() : TextFormatting.AQUA) + text + TextFormatting.RESET;
+        return (flag ? TextFormatting.DARK_GRAY : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
     private void addFilterInformation(ItemStack itemstack, List<ITextComponent> list) {
-        NBTTagList filterItems = ModuleHelper.getFilterItems(itemstack);
-        list.add(new TextComponentString(
-                TextFormatting.YELLOW + I18n.format("itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist")) + ":")
-        );
-        if (!filterItems.isEmpty()) {
-            for (int i = 0; i < filterItems.size(); i++) {
-                ItemStack s = ItemStack.read(filterItems.getCompound(i));
-                if (s.getItem() instanceof ItemSmartFilter) {
-                    int size = ((ItemSmartFilter) s.getItem()).getSize(s);
-                    String suffix = size > 0 ? " [" + size + "]" : "";
-                    list.add(new TextComponentString(" \u2022 " + TextFormatting.AQUA + TextFormatting.ITALIC + s.getDisplayName() + suffix));
-                } else {
-                    list.add(new TextComponentString(" \u2022 " + TextFormatting.AQUA + s.getDisplayName()));
-                }
+        List<ITextComponent> l2 = new ArrayList<>();
+        ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack);
+        for (int i = 0; i < filterHandler.getSlots(); i++) {
+            ItemStack s = filterHandler.getStackInSlot(i);
+            if (s.getItem() instanceof ItemSmartFilter) {
+                int size = ((ItemSmartFilter) s.getItem()).getSize(s);
+                String suffix = size > 0 ? " [" + size + "]" : "";
+                l2.add(new TextComponentString(" \u2022 ").appendSibling(s.getDisplayName().appendText(suffix))
+                        .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC));
+            } else if (!s.isEmpty()) {
+                l2.add(new TextComponentString(" \u2022 ").appendSibling(s.getDisplayName()
+                        .applyTextStyle(TextFormatting.AQUA)));
             }
+        }
+        String key = "itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
+        if (l2.isEmpty()) {
+            list.add(new TextComponentTranslation(key).applyTextStyles(TextFormatting.YELLOW)
+                    .appendText(": ")
+                    .appendSibling(new TextComponentTranslation("itemText.misc.noItems")
+                            .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC))
+            );
         } else {
-            ITextComponent c = list.get(list.size() - 1);
-            list.set(list.size() - 1, c.appendSibling(new TextComponentString(" " + TextFormatting.AQUA + TextFormatting.ITALIC + I18n.format("itemText.misc.noItems"))));
+            list.add(new TextComponentTranslation(key).applyTextStyles(TextFormatting.YELLOW)
+                            .appendText(": "));
+            list.addAll(l2);
         }
     }
 
@@ -297,24 +298,6 @@ public abstract class ItemModule extends ItemBase implements ITintable {
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         return new ActionResult<>(EnumActionResult.PASS, stack);
     }
-
-//    @Override
-//    public EnumActionResult onItemUse(ItemUseContext ctx) {
-//        ItemStack stack = ctx.getItem();
-//        EntityPlayer player = ctx.getPlayer();
-//
-//        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(ctx.getWorld(), ctx.getPos());
-//        if (router != null) {
-//            if (!player.isSneaking()) {
-//                PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-//                buf.writeBoolean(player.getActiveHand() == EnumHand.MAIN_HAND);
-//                NetworkHooks.openGui((EntityPlayerMP) player, new ContainerProvider(player.getActiveHand()), buf);
-//                return EnumActionResult.SUCCESS;
-//            }
-//        }
-//        return EnumActionResult.PASS;
-//    }
-
 
     @Override
     public boolean onEntitySwing(ItemStack stack, EntityLivingBase entity) {
@@ -351,10 +334,7 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             } else if (routerPos != null) {
                 TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(entityPlayer.getEntityWorld(), routerPos);
                 int slotIndex = SlotTracker.getInstance(entityPlayer).getModuleSlot();
-//                int slotIndex = router.getModuleConfigSlot(entityPlayer);
                 if (slotIndex >= 0) {
-                    SlotTracker.getInstance(entityPlayer).clearModuleSlot();
-//                    router.clearConfigSlot(entityPlayer);
                     ItemStack installedModuleStack = router.getModules().getStackInSlot(slotIndex);
                     if (installedModuleStack.getItem() instanceof ItemModule) {
                         return ((ItemModule) installedModuleStack.getItem()).createContainer(entityPlayer, null, installedModuleStack, router);

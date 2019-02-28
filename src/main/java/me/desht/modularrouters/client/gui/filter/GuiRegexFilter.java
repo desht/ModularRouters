@@ -37,6 +37,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
     private int errorTimer = 60;  // 3 seconds
 
     private final List<String> regexList = Lists.newArrayList();
+    private final List<Buttons.DeleteButton> deleteButtons = Lists.newArrayList();
 
     public GuiRegexFilter(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
         super(filterStack, router, hand);
@@ -55,8 +56,6 @@ public class GuiRegexFilter extends GuiFilterScreen {
 
         manager.focus(0);
 
-//        buttonList.clear();
-
         if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
             addButton(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos) {
                 @Override
@@ -71,16 +70,19 @@ public class GuiRegexFilter extends GuiFilterScreen {
                 if (!regexTextField.getText().isEmpty()) addRegex();
             }
         });
-        for (int i = 0; i < regexList.size(); i++) {
-            addButton(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
+        for (int i = 0; i < RegexFilter.MAX_SIZE; i++) {
+            Buttons.DeleteButton b = new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
                 @Override
                 public void onClick(double p_194829_1_, double p_194829_3_) {
                     if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + regexList.size()) {
                         sendRemovePosMessage(id - BASE_REMOVE_ID);
                     }
                 }
-            });
+            };
+            addButton(b);
+            deleteButtons.add(b);
         }
+        updateDeleteButtonVisibility();
     }
 
     @Override
@@ -133,7 +135,13 @@ public class GuiRegexFilter extends GuiFilterScreen {
     public void resync(ItemStack stack) {
         regexList.clear();
         regexList.addAll(RegexFilter.getRegexList(stack));
-        initGui();
+        updateDeleteButtonVisibility();
+    }
+
+    private void updateDeleteButtonVisibility() {
+        for (int i = 0; i < deleteButtons.size(); i++) {
+            deleteButtons.get(i).visible = i < regexList.size();
+        }
     }
 
     private static class RegexTextField extends TextFieldWidget {
@@ -146,12 +154,12 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
 
         @Override
-        public boolean charTyped(char typedChar, int keyCode) {
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
             if (keyCode == GLFW.GLFW_KEY_ENTER) {
                 parent.addRegex();
                 return true;
             } else {
-                return super.charTyped(typedChar, keyCode);
+                return super.keyPressed(keyCode, scanCode, modifiers);
             }
         }
 

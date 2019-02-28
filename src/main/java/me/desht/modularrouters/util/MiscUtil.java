@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -25,7 +26,7 @@ import java.util.StringTokenizer;
 
 public class MiscUtil {
 
-    public static final int WRAP_LENGTH = 45;
+    private static final int WRAP_LENGTH = 45;
 
     public static WorldServer getWorldForDimensionId(int dimId) {
         DimensionType dt = DimensionType.getById(dimId);
@@ -43,6 +44,16 @@ public class MiscUtil {
         for (String s : raw.getString().split("\\\\n")) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
                 result.add((n++ > 0 ? "\u00a77" : "") + s1);
+            }
+        }
+    }
+
+    public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
+//        ITextComponent raw = translate(key, args);
+        for (String s : I18n.format(key, args).split("\\\\n")) {
+            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
+                ITextComponent textComponent = new TextComponentString(s1);
+                result.add(textComponent.applyTextStyle(formatting));
             }
         }
     }

@@ -1,0 +1,40 @@
+ # Thenam the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion="[25,)" #mandatory (24 is current forge version)
+# A URL to refer people to when problems occur with this mod
+issueTrackerURL="https://github.com/desht/ModularRouters/issues"
+# A URL for the "homepage" for this mod, displayed in the mod UI
+displayURL="https://minecraft.curseforge.com/projects/modular-routers"
+# A file name (in the root of the mod JAR) containing a logo for display
+#logoFile=""
+# A text field displayed in the mod UI
+#credits=""
+# A text field displayed in the mod UI
+authors="desht"
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+# The modid of the mod
+modId="modularrouters" #mandatory
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="${file.jarVersion}" #mandatory
+ # A display name for the mod
+displayName="Modular Routers"
+# A URL to query for updates for this mod. See the JSON update specification <here>
+updateJSONURL="http://myurl.me/" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+Modular Routers is a highly flexible mod for moving items around the world in various ways.
+'''
+
+[[dependencies.examplemod]]
+    # the modid of the dependency
+    modId="forge" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=true #mandatory
+    # The version range of the dependency
+    versionRange="[25,)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"

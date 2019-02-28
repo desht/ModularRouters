@@ -3,6 +3,7 @@ package me.desht.modularrouters.client.gui.filter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.BackButton;
+import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -28,6 +29,7 @@ public class GuiModFilter extends GuiFilterContainer {
     private static final int BASE_REMOVE_ID = 100;
 
     private final List<String> mods = Lists.newArrayList();
+    private final List<DeleteButton> deleteButtons = Lists.newArrayList();
 
     private ItemStack prevInSlot = ItemStack.EMPTY;
     private String modId = "";
@@ -46,7 +48,6 @@ public class GuiModFilter extends GuiFilterContainer {
     public void initGui() {
         super.initGui();
 
-//        buttonList.clear();
         if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
             addButton(new BackButton(BACK_BUTTON_ID, guiLeft - 12, guiTop) {
                 @Override
@@ -72,8 +73,8 @@ public class GuiModFilter extends GuiFilterContainer {
                 }
             }
         });
-        for (int i = 0; i < mods.size(); i++) {
-            addButton(new Buttons.DeleteButton(BASE_REMOVE_ID + i, guiLeft + 8, guiTop + 44 + i * 19) {
+        for (int i = 0; i < ModFilter.MAX_SIZE; i++) {
+            DeleteButton b = new DeleteButton(BASE_REMOVE_ID + i, guiLeft + 8, guiTop + 44 + i * 19) {
                 @Override
                 public void onClick(double p_194829_1_, double p_194829_3_) {
                     if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + mods.size()) {
@@ -88,13 +89,22 @@ public class GuiModFilter extends GuiFilterContainer {
                         }
                     }
                 }
-            });
+            };
+            addButton(b);
+            deleteButtons.add(b);
+        }
+        updateDeleteButtonVisibility();
+    }
+
+    private void updateDeleteButtonVisibility() {
+        for (int i = 0; i < deleteButtons.size(); i++) {
+            deleteButtons.get(i).visible = i < mods.size();
         }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = filterStack.getDisplayName() + (router != null ? I18n.format("guiText.label.installed") : "");
+        String title = filterStack.getDisplayName().getString() + (router != null ? I18n.format("guiText.label.installed") : "");
         fontRenderer.drawString(title, this.xSize / 2f - fontRenderer.getStringWidth(title) / 2f, 8, 0x404040);
 
         if (!modName.isEmpty()) {
@@ -132,6 +142,6 @@ public class GuiModFilter extends GuiFilterContainer {
     public void resync(ItemStack filterStack) {
         mods.clear();
         mods.addAll(ModFilter.getModList(filterStack));
-        initGui();
+        updateDeleteButtonVisibility();
     }
 }

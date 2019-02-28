@@ -1,7 +1,10 @@
 package me.desht.modularrouters.integration;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 
@@ -10,30 +13,30 @@ public class XPCollection {
     private static final ItemStack[] ICONS = new ItemStack[XPCollectionType.values().length];
     private static final boolean[] SOLID = new boolean[XPCollectionType.values().length];
 
-    public static void detectXPFluids() {
-        Arrays.stream(XPCollectionType.values())
-                .forEach(type -> AVAILABLE[type.ordinal()] = !getIconForResource(type.registryName).isEmpty());
+    public static void detectXPTypes() {
         for (XPCollectionType type : XPCollectionType.values()) {
             AVAILABLE[type.ordinal()] = !getIconForResource(type.registryName).isEmpty();
             SOLID[type.ordinal()] = type.registryName.indexOf(':') >= 0;
         }
-        Arrays.fill(ICONS, null);
+        Arrays.fill(ICONS, null);  // null is OK here; it means "not queried yet"
     }
 
     private static ItemStack getIconForResource(String resource) {
-        // todo 1.13
-        return ItemStack.EMPTY;
-//        ItemStack stack;
-//        if (resource.contains(":")) {
-//            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource));
-//            stack = item == null ? ItemStack.EMPTY : new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource)));
+        ItemStack stack = ItemStack.EMPTY;
+        if (resource.contains(":")) {
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(resource));
+            stack = item == null ? ItemStack.EMPTY : new ItemStack(item);
+        }
+        // TODO 1.13 no support for XP fluids yet
 //        } else {
 //            Fluid fluid = FluidRegistry.getFluid(resource);
 //            stack = fluid == null ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
 //        }
-//        return stack;
+
+        return stack;
     }
 
+    // note: bottles o' enchanting are worth 3-11 experience, with an average of 7
     public enum XPCollectionType {
         BOTTLE_O_ENCHANTING(7, "minecraft:experience_bottle"),  // vanilla bottles o' enchanting
         SOLIDIFIED_EXPERIENCE(8, "actuallyadditions:item_solidified_experience"),  // AA solidified experience
@@ -62,7 +65,7 @@ public class XPCollection {
         }
 
         public Fluid getFluid() {
-            // todo 1.13
+            // todo 1.13 no support for XP fluids yet
             return null;
 //            return FluidRegistry.getFluid(registryName);
         }
@@ -71,7 +74,7 @@ public class XPCollection {
             int idx = registryName.indexOf(':');
             return idx >= 0 ?
                     registryName.substring(0, idx) :
-                    // todo 1.13
+                    // todo 1.13 no support for XP fluids yet
                     "???"; // FluidRegistry.getModId(FluidRegistry.getFluidStack(registryName, 1000));
         }
 

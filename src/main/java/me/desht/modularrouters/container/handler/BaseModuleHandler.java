@@ -6,6 +6,10 @@ import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.Validate;
+
+import javax.annotation.Nonnull;
 
 public abstract class BaseModuleHandler extends GhostItemHandler {
     private final ItemStack holderStack;
@@ -36,7 +40,24 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * @return number of items in the filter
      */
     public static int getFilterSize(ItemStack holderStack, String tagName) {
-        return holderStack.getOrCreateTag().getList(tagName, Constants.NBT.TAG_COMPOUND).size();
+        if (holderStack.hasTag() && holderStack.getTag().contains(ModuleHelper.NBT_FILTER)) {
+            ModuleFilterHandler handler = new ModuleFilterHandler(holderStack);
+            int n = 0;
+            for (int i = 0; i < handler.getSlots(); i++) {
+                if (!handler.getStackInSlot(i).isEmpty()) {
+                    n++;
+                }
+            }
+            return n;
+        } else {
+            return 0;
+        }
+//        return holderStack.getOrCreateTag().getList(tagName, Constants.NBT.TAG_COMPOUND).size();
+    }
+
+    @Override
+    protected void onContentsChanged(int slot) {
+        save();
     }
 
     /**
@@ -59,18 +80,20 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isItemValidForFilter(stack)) {
-                return super.insertItem(slot, stack, simulate);
-            } else {
-                return stack;
-            }
+            return ((ItemModule) getHolderStack().getItem()).isItemValidForFilter(stack) ?
+                    super.insertItem(slot, stack, simulate) : stack;
         }
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isItemValidForFilter(stack)) {
+//            if (((ItemModule) getHolderStack().getItem()).isItemValidForFilter(stack)) {
                 super.setStackInSlot(slot, stack);
-            }
+//            }
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            return ((ItemModule) getHolderStack().getItem()).isItemValidForFilter(stack);
         }
     }
 }

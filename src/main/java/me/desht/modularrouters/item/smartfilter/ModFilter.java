@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 public class ModFilter extends ItemSmartFilter {
     private static final String NBT_MODS = "Mods";
-    private static final int MAX_SIZE = 6;
+    public static final int MAX_SIZE = 6;
 
     public ModFilter(Properties props) {
         super(props);

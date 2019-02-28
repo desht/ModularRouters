@@ -10,7 +10,7 @@
     "C": { "item": "minecraft:diamond_chestplate" },
     "S": { "item": "modularrouters:sender_module_3" },
     "P": { "item": "modularrouters:puller_module_2" },
-    "Z": { "item": "minecraft:skull" }
+    "Z": { "item": "minecraft:wither_skeleton_skull" }
   },
   "result": { "item": "modularrouters:player_module" }
 }

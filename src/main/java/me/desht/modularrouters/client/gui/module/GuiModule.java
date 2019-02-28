@@ -55,7 +55,8 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class GuiModule extends GuiContainerBase implements IContainerListener, IMouseOverHelpProvider {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
+    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
+
     private static final int REGULATOR_TEXTFIELD_ID = 0;
     private static final int DIRECTION_BASE_ID = ModuleFlags.values().length;
     private static final int BACK_BUTTON_ID = DIRECTION_BASE_ID + RelativeDirection.values().length;
@@ -127,9 +128,9 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
         super.initGui();
 
         addToggleButton(ModuleFlags.BLACKLIST, 7, 75);
-        addToggleButton(ModuleFlags.IGNORE_META, 7, 93);
+        addToggleButton(ModuleFlags.IGNORE_DAMAGE, 7, 93);
         addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
-        addToggleButton(ModuleFlags.IGNORE_OREDICT, 25, 93);
+        addToggleButton(ModuleFlags.IGNORE_TAGS, 25, 93);
         addToggleButton(ModuleFlags.TERMINATE, 45, 93);
 
         if (module.isDirectional()) {
@@ -270,7 +271,7 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? I18n.format("guiText.label.installed") : "");
+        String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? " " + I18n.format("guiText.label.installed") : "");
         this.fontRenderer.drawString(title, this.xSize / 2f - this.fontRenderer.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
@@ -278,7 +279,7 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Color c = getGuiBackgroundTint();
         GL11.glColor4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
-        mc.getTextureManager().bindTexture(textureLocation);
+        mc.getTextureManager().bindTexture(GUI_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         if (!module.isDirectional()) {
             drawTexturedModalRect(guiLeft + 69, guiTop + 17, 204, 0, 52, 52);
@@ -286,18 +287,13 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
     }
 
     private Color getGuiBackgroundTint() {
-        if (ConfigHandler.MODULE.guiBackgroundTint.get()) {
+        if (ConfigHandler.CLIENT_MISC.moduleGuiBackgroundTint.get()) {
             Color c = module.getItemTint();
             float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
             return Color.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
         } else {
             return Color.WHITE;
         }
-    }
-
-    @Override
-    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
-        return false;
     }
 
     @Override
@@ -309,7 +305,7 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
             SlotTracker.getInstance(mc.player).clearSlots();
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(routerPos));
             return true;
-        } else if (Keybindings.keybindConfigure.isKeyDown()) {
+        } else if (Keybindings.keybindConfigure.getKey().getKeyCode() == keyCode) {
             // trying to configure an installed smart filter, we're done
             return handleFilterConfig();
         } else {
@@ -335,7 +331,6 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
             // module is installed in a router
             tracker.setModuleSlot(moduleSlotIndex);
             tracker.setFilterSlot(slot.getSlotIndex());
-//            router.playerConfiguringModule(mc.player, moduleSlotIndex, slot.getSlotIndex());
             if (filter.hasContainer()) {
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex));
             } else {
@@ -346,7 +341,6 @@ public class GuiModule extends GuiContainerBase implements IContainerListener, I
             // module is in player's hand
             // record the filter slot in the module itemstack's NBT - we'll need this when opening the GUI later
             tracker.setFilterSlot(filterSlotIndex);
-//            ModuleHelper.setFilterConfigSlot(mc.player.getHeldItem(hand), filterSlotIndex);
             if (filter.hasContainer()) {
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInHeldModule(hand, filterSlotIndex));
             } else {

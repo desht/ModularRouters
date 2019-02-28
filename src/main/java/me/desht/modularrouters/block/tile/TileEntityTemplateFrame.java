@@ -116,7 +116,9 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     private static NBTTagCompound getNBTFromCamoState(NBTTagCompound compound, IBlockState camouflage) {
-        compound.put(NBT_CAMO_NAME, NBTUtil.writeBlockState(camouflage));
+        if (camouflage != null) {
+            compound.put(NBT_CAMO_NAME, NBTUtil.writeBlockState(camouflage));
+        }
         return compound;
     }
 

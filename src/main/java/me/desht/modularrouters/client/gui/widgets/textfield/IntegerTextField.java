@@ -35,7 +35,7 @@ public class IntegerTextField extends TextFieldWidget {
     }
 
     @Override
-    public boolean charTyped(char typedChar, int keyCode) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         switch (keyCode) {
             case GLFW.GLFW_KEY_UP:
                 return adjustField(getAdjustment());
@@ -46,7 +46,7 @@ public class IntegerTextField extends TextFieldWidget {
             case GLFW.GLFW_KEY_PAGE_DOWN:
                 return adjustField(-max);
             default:
-                return super.charTyped(typedChar, keyCode);
+                return super.keyPressed(keyCode, scanCode, modifiers);
         }
     }
 

@@ -27,6 +27,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
@@ -109,7 +110,7 @@ public abstract class TargetedModule extends ItemModule {
     @Override
     public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addUsageInformation(itemstack, list);
-        list.add(new TextComponentTranslation(getMaxTargets() > 1 ? "itemText.targetingHintMulti" : "itemText.targetingHint"));
+        MiscUtil.appendMultilineText(list, TextFormatting.YELLOW, getMaxTargets() > 1 ? "itemText.targetingHintMulti" : "itemText.targetingHint");
     }
 
     @Override

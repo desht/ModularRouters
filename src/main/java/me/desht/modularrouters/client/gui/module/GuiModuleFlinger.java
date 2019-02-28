@@ -43,23 +43,23 @@ public class GuiModuleFlinger extends GuiModule {
                 FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED);
         t1.setPrecision(2);
         t1.setValue(speed);
-        t1.setTextAcceptHandler((id, s) -> speed = parse(s));
+        t1.setTextAcceptHandler(this::textFieldResponder);
         t1.setIncr(0.1f, 0.5f, 10.0f);
         t1.useGuiTextBackground();
 
         FloatTextField t2 = new FloatTextField(manager, FIELD_PITCH, fontRenderer, guiLeft + 152, guiTop + 37, 35, 12,
                 FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH);
         t2.setValue(pitch);
-        t2.setTextAcceptHandler((id, s) -> pitch = parse(s));
+        t2.setTextAcceptHandler(this::textFieldResponder);
         t2.useGuiTextBackground();
 
         FloatTextField t3 = new FloatTextField(manager, FIELD_YAW, fontRenderer, guiLeft + 152, guiTop + 55, 35, 12,
                 FlingerModule.MIN_YAW, FlingerModule.MAX_YAW);
         t3.setValue(yaw);
-        t3.setTextAcceptHandler((id, s) -> yaw = parse(s));
+        t3.setTextAcceptHandler(this::textFieldResponder);
         t3.useGuiTextBackground();
 
-        manager.focus(0);
+        manager.focus(1);  // field 0 is the regulator amount textfield
 
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 13, guiLeft + 186, guiTop + 32, "guiText.popup.flinger.speed");
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 31, guiLeft + 186, guiTop + 50, "guiText.popup.flinger.pitch");
@@ -73,6 +73,15 @@ public class GuiModuleFlinger extends GuiModule {
         this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
         this.drawTexturedModalRect(guiLeft + 148, guiTop + 34, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
         this.drawTexturedModalRect(guiLeft + 148, guiTop + 52, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+    }
+
+    private void textFieldResponder(int id, String val) {
+        switch (id) {
+            case FIELD_SPEED: speed = parse(val); break;
+            case FIELD_PITCH: pitch = parse(val); break;
+            case FIELD_YAW: yaw = parse(val); break;
+        }
+        sendModuleSettingsDelayed(5);
     }
 
     private float parse(String s) {

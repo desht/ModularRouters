@@ -3,6 +3,7 @@ package me.desht.modularrouters.client.gui.filter;
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.fx.Vector3;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -21,7 +22,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiInspectionFilter extends GuiFilterScreen {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
@@ -41,6 +46,8 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     private IntegerTextField valueTextField;
     private InspectionSubject currentSubject = InspectionSubject.NONE;
     private InspectionOp currentOp = InspectionOp.NONE;
+    private List<Buttons.DeleteButton> deleteButtons = new ArrayList<>();
+    private GuiButton matchButton;
 
     public GuiInspectionFilter(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
         super(filterStack, router, hand);
@@ -55,8 +62,6 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-//        buttonList.clear();
-
         if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
             addButton(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos) {
                 @Override
@@ -66,14 +71,14 @@ public class GuiInspectionFilter extends GuiFilterScreen {
             });
         }
 
-        addButton(new GuiButton(SUBJECT_BUTTON_ID, xPos + 8, yPos + 23, 90, 20, I18n.format("guiText.label.inspectionSubject." + currentSubject)) {
+        addButton(new GuiButton(SUBJECT_BUTTON_ID, xPos + 8, yPos + 22, 90, 20, I18n.format("guiText.label.inspectionSubject." + currentSubject)) {
             @Override
             public void onClick(double p_194829_1_, double p_194829_3_) {
                 currentSubject = currentSubject.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
                 displayString = I18n.format("guiText.label.inspectionSubject." + currentSubject);
             }
         });
-        addButton(new GuiButton(OP_BUTTON_ID, xPos + 95, yPos + 23, 20, 20, I18n.format("guiText.label.inspectionOp." + currentOp)) {
+        addButton(new GuiButton(OP_BUTTON_ID, xPos + 95, yPos + 22, 20, 20, I18n.format("guiText.label.inspectionOp." + currentOp)) {
             @Override
             public void onClick(double p_194829_1_, double p_194829_3_) {
                 currentOp = currentOp.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
@@ -83,14 +88,11 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         addButton(new Buttons.AddButton(ADD_BUTTON_ID, xPos + 152, yPos + 23) {
             @Override
             public void onClick(double p_194829_1_, double p_194829_3_) {
-                int val = valueTextField.getValue();
-                String s = Joiner.on(" ").join(currentSubject, currentOp, val);
-                sendAddStringMessage("Comparison", s);
-                valueTextField.setText("");
+                addEntry();
             }
         });
 
-        addButton(new GuiButton(MATCH_BUTTON_ID, xPos + 8, yPos + 167, 60, 20, I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll())) {
+        matchButton = new GuiButton(MATCH_BUTTON_ID, xPos + 8, yPos + 167, 60, 20, I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll())) {
             @Override
             public void onClick(double p_194829_1_, double p_194829_3_) {
                 NBTTagCompound ext = new NBTTagCompound();
@@ -103,22 +105,48 @@ public class GuiInspectionFilter extends GuiFilterScreen {
                             FilterSettingsMessage.Operation.ANY_ALL_FLAG, hand, ext));
                 }
             }
-        });
+        };
+        addButton(matchButton);
 
-        for (int i = 0; i < comparisonList.items.size(); i++) {
-            addButton(new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
+        for (int i = 0; i < InspectionFilter.MAX_SIZE; i++) {
+            Buttons.DeleteButton b = new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
                 @Override
                 public void onClick(double p_194829_1_, double p_194829_3_) {
                     if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + comparisonList.items.size()) {
                         sendRemovePosMessage(id - BASE_REMOVE_ID);
                     }
                 }
-            });
+            };
+            addButton(b);
+            deleteButtons.add(b);
         }
+        updateDeleteButtonVisibility();
 
         TextFieldManager manager = getTextFieldManager().clear();
-        valueTextField = new IntegerTextField(manager, 1, fontRenderer, xPos + 120, yPos + 28, 20, 14, 0, 100);
+        valueTextField = new IntegerTextField(manager, 1, fontRenderer, xPos + 120, yPos + 28, 20, 14, 0, 100) {
+            @Override
+            public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+                if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                    addEntry();
+                    return true;
+                }
+                return super.keyPressed(keyCode, scanCode, modifiers);
+            }
+        };
         valueTextField.useGuiTextBackground();
+    }
+
+    private void updateDeleteButtonVisibility() {
+        for (int i = 0; i < deleteButtons.size(); i++) {
+            deleteButtons.get(i).visible = i < comparisonList.items.size();
+        }
+    }
+
+    private void addEntry() {
+        int val = valueTextField.getValue();
+        String s = Joiner.on(" ").join(currentSubject, currentOp, val);
+        sendAddStringMessage("Comparison", s);
+        valueTextField.setText("");
     }
 
     @Override
@@ -142,6 +170,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     @Override
     public void resync(ItemStack stack) {
         comparisonList = InspectionFilter.getComparisonList(stack);
-        initGui();
+        matchButton.displayString = I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll());
+        updateDeleteButtonVisibility();
     }
 }

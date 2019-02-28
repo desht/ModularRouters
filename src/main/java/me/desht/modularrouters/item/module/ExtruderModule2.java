@@ -7,7 +7,7 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerExtruder2Module;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.logic.compiled.CompiledExtruder2Module;
+import me.desht.modularrouters.logic.compiled.CompiledExtruderModule2;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,7 +27,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
 
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledExtruder2Module(router, stack);
+        return new CompiledExtruderModule2(router, stack);
     }
 
     @Override

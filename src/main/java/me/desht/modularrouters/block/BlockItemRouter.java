@@ -3,6 +3,8 @@ package me.desht.modularrouters.block;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.integration.top.TOPInfoProvider;
+import me.desht.modularrouters.item.upgrade.BlastUpgrade;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.Block;
@@ -16,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.state.BooleanProperty;
@@ -32,7 +33,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemStackHandler;
@@ -41,26 +44,22 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
-    private static final String BLOCK_NAME = "item_router";
-
     public static final DirectionProperty FACING = DirectionProperty.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-    public static final BooleanProperty OPEN_F = BooleanProperty.create("open_f");
-    public static final BooleanProperty OPEN_B = BooleanProperty.create("open_b");
-    public static final BooleanProperty OPEN_U = BooleanProperty.create("open_u");
-    public static final BooleanProperty OPEN_D = BooleanProperty.create("open_d");
-    public static final BooleanProperty OPEN_L = BooleanProperty.create("open_l");
-    public static final BooleanProperty OPEN_R = BooleanProperty.create("open_r");
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");
 
-    public static final String NBT_MODULES = "Modules";
-    public static final String NBT_UPGRADES = "Upgrades";
-    public static final String NBT_MODULE_COUNT = "ModuleCount";
-    public static final String NBT_UPGRADE_COUNT = "UpgradeCount";
-    public static final String NBT_REDSTONE_BEHAVIOUR = "RedstoneBehaviour";
+    private static final String NBT_MODULES = "Modules";
+    private static final String NBT_UPGRADES = "Upgrades";
+    private static final String NBT_MODULE_COUNT = "ModuleCount";
+    private static final String NBT_REDSTONE_BEHAVIOUR = "RedstoneBehaviour";
 
     public BlockItemRouter() {
-        super(Block.Properties.create(Material.IRON).hardnessAndResistance(5.0f).sound(SoundType.METAL));
+        super(Block.Properties.create(Material.IRON)
+                .hardnessAndResistance(5.0f)
+                .sound(SoundType.METAL));
+        setDefaultState(this.getStateContainer().getBaseState()
+                .with(FACING, EnumFacing.NORTH).with(ACTIVE, false).with(CAN_EMIT, false));
+
         // todo 1.13 extended blockstates not working yet
 //        setDefaultState(((IExtendedBlockState) blockState.getBaseState())
 //                .withProperty(CAMOUFLAGE_STATE, null)
@@ -71,28 +70,8 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
-        builder.add(FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT);
+        builder.add(FACING, ACTIVE, CAN_EMIT);
     }
-
-//    @Override
-//    protected BlockStateContainer createBlockState() {
-//        return new ExtendedBlockState(this,
-//                new IProperty[] { FACING, ACTIVE, OPEN_F, OPEN_B, OPEN_U, OPEN_D, OPEN_L, OPEN_R, CAN_EMIT },
-//                new IUnlistedProperty[] { CAMOUFLAGE_STATE, BLOCK_ACCESS, BLOCK_POS});
-//    }
-
-//    @Override
-//    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-//        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-//        if (router != null && router.getCamouflage() == null) {
-//            state = state.withProperty(ACTIVE, router.isActive() && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) < 3);
-//            for (Module.RelativeDirection side : Module.RelativeDirection.realSides()) {
-//                state = state.withProperty(side.getProperty(), router.isSideOpen(side));
-//            }
-//        }
-//        return state;
-//    }
-
 
     @Nullable
     @Override
@@ -116,6 +95,11 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
         }
     }
 
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
+
     @Nullable
     @Override
     public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
@@ -131,8 +115,8 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
                 InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
                 world.updateComparatorOutputLevel(pos, this);
             }
+            super.onReplaced(state, world, pos, newState, isMoving);
         }
-        super.onReplaced(state, world, pos, newState, isMoving);
     }
 
     @Override
@@ -154,6 +138,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest, IFluidState fluid) {
         // If it will harvest, delay deletion of the block until after getDrops
+        // TODO 1.13 willHarvest is always false - https://github.com/MinecraftForge/MinecraftForge/issues/5570
         return willHarvest || super.removedByPlayer(state, world, pos, player, false, fluid);
     }
 
@@ -166,7 +151,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     @Override
     public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
+        ItemStack stack = new ItemStack(this);
         if (router != null) {
             if (router.getModuleCount() > 0 || router.getUpgradeCount() > 0 || router.getRedstoneBehaviour() != RouterRedstoneBehaviour.ALWAYS) {
                 NBTTagCompound compound = stack.getOrCreateTag();
@@ -175,8 +160,8 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
                 compound.putString(NBT_REDSTONE_BEHAVIOUR, router.getRedstoneBehaviour().toString());
                 compound.putInt(NBT_MODULE_COUNT, router.getModuleCount());
             }
-            drops.add(stack);
         }
+        drops.add(stack);
     }
 
     @Override
@@ -226,6 +211,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
         }
         return true;
     }
+
 
     // todo 1.13 when The One Probe is available
 //    @Override
@@ -300,17 +286,17 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     @Override
     public boolean canEntityDestroy(IBlockState state, IBlockReader world, BlockPos pos, Entity entity) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        return (router == null || router.getUpgradeCount(ObjectRegistry.BLAST_UPGRADE) <= 0) && super.canEntityDestroy(state, world, pos, entity);
+        return (router == null || router.getUpgradeCount(ObjectRegistry.BLAST_UPGRADE) <= 0)
+                && super.canEntityDestroy(state, world, pos, entity);
     }
 
-    // todo 1.13 no getExplosionResistance() which takes a state/pos
-//    @Override
-//    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
-//        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-//        if (router != null && router.getUpgradeCount(ItemUpgrade.UpgradeType.BLAST) > 0) {
-//            return 20000f;
-//        } else {
-//            return super.getExplosionResistance(world, pos, exploder, explosion);
-//        }
-//    }
+    @Override
+    public float getExplosionResistance(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
+        if (router != null && router.getUpgradeCount(ObjectRegistry.BLAST_UPGRADE) > 0) {
+            return 20000f;
+        } else {
+            return super.getExplosionResistance(state, world, pos, exploder, explosion);
+        }
+    }
 }

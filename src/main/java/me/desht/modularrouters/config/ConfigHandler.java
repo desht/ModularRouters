@@ -3,11 +3,15 @@ package me.desht.modularrouters.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigHandler {
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    public static final Module MODULE = new Module(BUILDER);
-    public static final Router ROUTER = new Router(BUILDER);
-    public static final Misc MISC = new Misc(BUILDER);
-    public static final ForgeConfigSpec SPEC = BUILDER.build();
+    private static final ForgeConfigSpec.Builder S_BUILDER = new ForgeConfigSpec.Builder();
+    public static final Module MODULE = new Module(S_BUILDER);
+    public static final Router ROUTER = new Router(S_BUILDER);
+    public static final Misc MISC = new Misc(S_BUILDER);
+    public static final ForgeConfigSpec SERVER_SPEC = S_BUILDER.build();
+
+    private static final ForgeConfigSpec.Builder C_BUILDER = new ForgeConfigSpec.Builder();
+    public static final ClientMisc CLIENT_MISC = new ClientMisc(C_BUILDER);
+    public static final ForgeConfigSpec CLIENT_SPEC = C_BUILDER.build();
 
     public static class Module {
         public final ForgeConfigSpec.ConfigValue<Integer> sender1BaseRange;
@@ -29,10 +33,9 @@ public class ConfigHandler {
         public final ForgeConfigSpec.ConfigValue<Boolean> vacuumParticles;
         public final ForgeConfigSpec.ConfigValue<Boolean> flingerEffects;
         public final ForgeConfigSpec.ConfigValue<Boolean> extruderSound;
-        public final ForgeConfigSpec.ConfigValue<Boolean> guiBackgroundTint;
         public final ForgeConfigSpec.ConfigValue<Boolean> extruderPushEntities;
 
-        public Module(ForgeConfigSpec.Builder builder) {
+        Module(ForgeConfigSpec.Builder builder) {
             builder.push("Module");
 
             sender1BaseRange = builder.comment("Base range for Sender Mk1 (no range upgrades)")
@@ -95,9 +98,6 @@ public class ConfigHandler {
             extruderPushEntities = builder.comment("Should Extruder Mk1/2 modules push entities along when extruding blocks?")
                     .translation("gui.config.extruderPushEntities")
                     .define("extruderPushEntities", true);
-            guiBackgroundTint = builder.comment("Should module GUI's be tinted according to the module item colour?")
-                    .translation("gui.config.guiBackgroundTint")
-                    .define("guiBackgroundTint", true);
 
             builder.pop();
         }
@@ -113,7 +113,7 @@ public class ConfigHandler {
         public final ForgeConfigSpec.ConfigValue<Integer> fluidMaxTransferRate;
         public final ForgeConfigSpec.ConfigValue<Integer> mBperFluidUpgade;
 
-        public Router(ForgeConfigSpec.Builder builder) {
+        Router(ForgeConfigSpec.Builder builder) {
             builder.push("Router");
 
             baseTickRate = builder.comment("Base tick interval (in server ticks) for a router; router will run this often")
@@ -148,19 +148,34 @@ public class ConfigHandler {
 
     public static class Misc {
         public ForgeConfigSpec.ConfigValue<Boolean> startWithGuide;
-        public ForgeConfigSpec.ConfigValue<Boolean> alwaysShowSettings;
 
-        public Misc(ForgeConfigSpec.Builder builder) {
+        Misc(ForgeConfigSpec.Builder builder) {
             builder.push("Misc");
 
             startWithGuide = builder.comment("Should new players get a Modular Routers guidebook?")
                     .translation("gui.config.startWithGuide")
                     .define("startWithGuide", true);
-            alwaysShowSettings = builder.comment("Should module tooltips always show module settings (without needing to hold Shift)?")
-                    .translation("gui.config.alwaysShowSettings")
-                    .define("alwaysShowSettings", true);
 
             builder.pop();
+        }
+    }
+
+    public static class ClientMisc {
+        public ForgeConfigSpec.ConfigValue<Boolean> alwaysShowModuleSettings;
+        public final ForgeConfigSpec.ConfigValue<Boolean> moduleGuiBackgroundTint;
+
+        ClientMisc(ForgeConfigSpec.Builder builder) {
+            builder.push("Misc");
+
+            alwaysShowModuleSettings = builder.comment("Should module tooltips always show module settings (without needing to hold Shift)?")
+                    .translation("gui.config.alwaysShowSettings")
+                    .define("alwaysShowSettings", true);
+            moduleGuiBackgroundTint = builder.comment("Should module GUI's be tinted according to the module item colour?")
+                    .translation("gui.config.moduleGuiBackgroundTint")
+                    .define("moduleGuiBackgroundTint", true);
+
+            builder.pop();
+
         }
     }
 }

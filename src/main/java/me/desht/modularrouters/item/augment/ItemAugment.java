@@ -55,6 +55,7 @@ public abstract class ItemAugment extends ItemBase {
         }
 
         public int getAugmentCount(Item type) {
+            if (type == null) return 0;
             return counts.getOrDefault(type.getRegistryName(), 0);
         }
     }

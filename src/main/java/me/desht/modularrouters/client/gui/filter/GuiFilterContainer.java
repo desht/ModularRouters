@@ -13,8 +13,6 @@ import org.lwjgl.glfw.GLFW;
 
 abstract class GuiFilterContainer extends GuiContainerBase {
     protected final TileEntityItemRouter router;
-//    protected final Integer moduleSlotIndex;  // slot of the module in the router
-//    protected final Integer filterSlotIndex;  // slot of the filter item in the module
     protected final EnumHand hand;
     protected final String title;
     protected final ItemStack filterStack;
@@ -31,7 +29,6 @@ abstract class GuiFilterContainer extends GuiContainerBase {
         SlotTracker.getInstance(mc.player).clearFilterSlot();
         // need to re-open module GUI for module in router slot <moduleSlotIndex>
         if (router != null) {
-//           router.playerConfiguringModule(mc.player, moduleSlotIndex);
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), SlotTracker.getInstance(mc.player).getModuleSlot()));
             return true;
         } else if (hand != null) {
@@ -49,9 +46,8 @@ abstract class GuiFilterContainer extends GuiContainerBase {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if ((keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == GLFW.GLFW_KEY_E)) {
             // Intercept ESC/E and immediately reopen the previous GUI, if any
-            return closeGUI();
-        } else {
-            return super.keyPressed(keyCode, scanCode, modifiers);
+            if (closeGUI()) return true;
         }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }

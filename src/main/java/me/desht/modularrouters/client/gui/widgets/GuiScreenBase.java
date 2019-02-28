@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets;
 
+import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -22,10 +23,9 @@ public abstract class GuiScreenBase extends GuiScreen {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
         if (textFieldManager != null) textFieldManager.drawTextFields(mouseX, mouseY, partialTicks);
-        // todo 1.13
-//        this.buttonList.stream()
-//                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-//                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRenderer));
+        this.buttons.stream()
+                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
+                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRenderer));
     }
 
     @Override
@@ -40,26 +40,39 @@ public abstract class GuiScreenBase extends GuiScreen {
         if (textFieldManager != null) textFieldManager.tick();
     }
 
-    // todo 1.13
-//    @Override
-//    public void handleMouseInput() throws IOException {
-//        if (textFieldManager == null || !textFieldManager.handleMouseInput()) {
-//            super.handleMouseInput();
-//        }
-//    }
-//
-//    @Override
-//    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-//        super.mouseClicked(mouseX, mouseY, mouseButton);
-//        if (textFieldManager != null) textFieldManager.mouseClicked(mouseX, mouseY, mouseButton);
-//    }
-//
-//    @Override
-//    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-//        if (textFieldManager == null || !textFieldManager.keyTyped(typedChar, keyCode)) {
-//            super.keyTyped(typedChar, keyCode);
-//        }
-//    }
+    @Override
+    public boolean mouseScrolled(double dir) {
+        return textFieldManager != null ?
+                textFieldManager.mouseScrolled(dir) :
+                super.mouseScrolled(dir);
+    }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        if (textFieldManager != null && textFieldManager.mouseClicked(x, y, button)) {
+            return true;
+        } else {
+            return super.mouseClicked(x, y, button);
+        }
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (textFieldManager != null && textFieldManager.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        } else {
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+    }
+
+    @Override
+    public boolean charTyped(char c, int modifiers) {
+        if (textFieldManager != null && textFieldManager.charTyped(c, modifiers)) {
+            return true;
+        } else {
+            return super.charTyped(c, modifiers);
+        }
+    }
 
     @Override
     public void onGuiClosed() {

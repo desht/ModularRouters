@@ -139,6 +139,11 @@ public class MouseOverHelp {
         }
 
         @Override
+        public void onClick(double mouseX, double mouseY) {
+            toggle();
+        }
+
+        @Override
         protected boolean drawStandardBackground() {
             return false;
         }

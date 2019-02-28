@@ -14,6 +14,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -170,9 +171,7 @@ public class ContainerModule extends Container {
                     Slot s = inventorySlots.get(slot);
                     ItemStack stackOnCursor = player.inventory.getItemStack();
                     if (!stackOnCursor.isEmpty()) {
-                        ItemStack stack1 = stackOnCursor.copy();
-                        stack1.setCount(1);
-                        s.putStack(stack1);
+                        s.putStack(ItemHandlerHelper.copyStackWithSize(stackOnCursor, 1));
                     } else {
                         s.putStack(ItemStack.EMPTY);
                     }

@@ -6,6 +6,8 @@ import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.network.PushEntityMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.item.EntityItem;
@@ -24,6 +26,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.Collections;
@@ -134,7 +137,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     item.remove();
                 }
                 if (inserted > 0 && ConfigHandler.MODULE.vacuumParticles.get() && router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
-                    ((WorldServer) router.getWorld()).spawnParticle(Particles.SMOKE, item.posX, item.posY + 0.25, item.posZ, 2, 0.0, 0.0, 0.0, 0.0);
+                    ((WorldServer) router.getWorld()).spawnParticle(Particles.CLOUD, item.posX, item.posY + 0.25, item.posZ, 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {
                     break;
@@ -183,8 +186,8 @@ public class CompiledVacuumModule extends CompiledModule {
             if (xpCollectionType.isSolid()) {
                 xpBuffered += orb.getXpValue();
                 if (xpBuffered > xpCollectionType.getXpRatio()) {
-                    ItemStack stack = xpCollectionType.getIcon().copy();
-                    stack.setCount(xpBuffered / xpCollectionType.getXpRatio());
+                    int count = xpBuffered / xpCollectionType.getXpRatio();
+                    ItemStack stack = ItemHandlerHelper.copyStackWithSize(xpCollectionType.getIcon(), count);
                     ItemStack excess = router.insertBuffer(stack);
                     xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
                     if (!excess.isEmpty()) {

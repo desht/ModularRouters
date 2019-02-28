@@ -39,62 +39,64 @@ public class CompiledFluidModule extends CompiledModule {
 
     @Override
     public boolean execute(TileEntityItemRouter router) {
-        ItemStack containerStack = router.getBufferItemStack();
-        World world = router.getWorld();
-        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
-
-        if (!routerCap.isPresent()) {
-            return false;
-        }
-
-        if (fluidDirection == FluidDirection.OUT
-                && (!getFilter().test(containerStack) || !forceEmpty && !world.isAirBlock(getTarget().pos))) {
-            return false;
-        }
-
-        LazyOptional<IFluidHandler> worldFluidCap;
-        // @todo 1.13
-//        if (fluidDirection == FluidDirection.IN && isInfiniteWaterSource(world, getTarget().pos)) {
-//            // allows router to pull from infinite water source without block updates
-//            worldFluidCap = LazyOptional.of(() -> infiniteWater);
-//        } else {
-//            worldFluidCap = FluidUtil.getFluidHandler(world, getTarget().pos, getFacing().getOpposite());
+        // TODO 1.13 fluid handler isn't ready yet
+        return false;
+//        ItemStack containerStack = router.getBufferItemStack();
+//        World world = router.getWorld();
+//        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+//
+//        if (!routerCap.isPresent()) {
+//            return false;
 //        }
-        worldFluidCap = FluidUtil.getFluidHandler(world, getTarget().pos, getFacing().getOpposite());
-
-        if (worldFluidCap == null) {
-            // no fluid handler at the target blockpos - try to pour fluid out into the world?
-            if (fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerCap, router.getWorld(), getTarget().pos, containerStack)) {
-                routerCap.ifPresent(handler -> router.setBufferItemStack(handler.getContainer()));
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        if (fluidDirection == FluidDirection.IN) {
-            boolean ok = worldFluidCap.map(handler -> {
-                FluidStack fluidStack = handler.getTankProperties()[0].getContents();
-                Fluid fluid = fluidStack == null ? null : fluidStack.getFluid();
-                return getFilter().testFluid(fluid);
-            }).orElse(false);
-            if (!ok) return false;
-        }
-
-        boolean transferDone;
-        switch (fluidDirection) {
-            case IN:
-                transferDone = worldFluidCap.map(srcHandler -> routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false)).orElse(false);
-                break;
-            case OUT:
-                transferDone = routerCap.map(srcHandler -> worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false)).orElse(false);
-                break;
-            default: return false;
-        }
-        if (transferDone) {
-            routerCap.ifPresent(handler -> router.setBufferItemStack(handler.getContainer()));
-        }
-        return transferDone;
+//
+//        if (fluidDirection == FluidDirection.OUT
+//                && (!getFilter().test(containerStack) || !forceEmpty && !world.isAirBlock(getTarget().pos))) {
+//            return false;
+//        }
+//
+//        LazyOptional<IFluidHandler> worldFluidCap;
+//        // @todo 1.13
+////        if (fluidDirection == FluidDirection.IN && isInfiniteWaterSource(world, getTarget().pos)) {
+////            // allows router to pull from infinite water source without block updates
+////            worldFluidCap = LazyOptional.of(() -> infiniteWater);
+////        } else {
+////            worldFluidCap = FluidUtil.getFluidHandler(world, getTarget().pos, getFacing().getOpposite());
+////        }
+//        worldFluidCap = FluidUtil.getFluidHandler(world, getTarget().pos, getFacing().getOpposite());
+//
+//        if (!worldFluidCap.isPresent()) {
+//            // no fluid handler at the target blockpos - try to pour fluid out into the world?
+//            if (fluidDirection == FluidDirection.OUT && tryPourOutFluid(routerCap, router.getWorld(), getTarget().pos, containerStack)) {
+//                routerCap.ifPresent(handler -> router.setBufferItemStack(handler.getContainer()));
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
+//
+//        if (fluidDirection == FluidDirection.IN) {
+//            boolean ok = worldFluidCap.map(handler -> {
+//                FluidStack fluidStack = handler.getTankProperties()[0].getContents();
+//                Fluid fluid = fluidStack == null ? null : fluidStack.getFluid();
+//                return getFilter().testFluid(fluid);
+//            }).orElse(false);
+//            if (!ok) return false;
+//        }
+//
+//        boolean transferDone;
+//        switch (fluidDirection) {
+//            case IN:
+//                transferDone = worldFluidCap.map(srcHandler -> routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false)).orElse(false);
+//                break;
+//            case OUT:
+//                transferDone = routerCap.map(srcHandler -> worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false)).orElse(false);
+//                break;
+//            default: return false;
+//        }
+//        if (transferDone) {
+//            routerCap.ifPresent(handler -> router.setBufferItemStack(handler.getContainer()));
+//        }
+//        return transferDone;
     }
 
     private boolean isInfiniteWaterSource(World world, BlockPos pos) {

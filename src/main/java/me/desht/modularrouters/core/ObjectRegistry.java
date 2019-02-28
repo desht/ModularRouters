@@ -8,6 +8,9 @@ import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.item.augment.*;
 import me.desht.modularrouters.item.module.*;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
+import me.desht.modularrouters.item.smartfilter.InspectionFilter;
+import me.desht.modularrouters.item.smartfilter.ModFilter;
+import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.item.upgrade.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -139,11 +142,11 @@ public class ObjectRegistry {
     public static final Item REGEX_FILTER = null;
 
     // Sounds
-    @ObjectHolder("modularrrouters:error")
+    @ObjectHolder("modularrouters:error")
     public static final SoundEvent SOUND_ERROR = null;
-    @ObjectHolder("modularrrouters:success")
+    @ObjectHolder("modularrouters:success")
     public static final SoundEvent SOUND_SUCCESS = null;
-    @ObjectHolder("modularrrouters:thud")
+    @ObjectHolder("modularrouters:thud")
     public static final SoundEvent SOUND_THUD = null;
 
     // Tile Entities
@@ -186,6 +189,7 @@ public class ObjectRegistry {
         registerObj(r, new FlingerModule(ib()), RL("flinger_module"));
         registerObj(r, new FluidModule(ib()), RL("fluid_module"));
         registerObj(r, new PlacerModule(ib()), RL("placer_module"));
+        registerObj(r, new PlayerModule(ib()), RL("player_module"));
         registerObj(r, new PullerModule1(ib()), RL("puller_module_1"));
         registerObj(r, new PullerModule2(ib()), RL("puller_module_2"));
         registerObj(r, new SenderModule1(ib()), RL("sender_module_1"));
@@ -215,9 +219,9 @@ public class ObjectRegistry {
         registerObj(r, new XPVacuumAugment(ib()), RL("xp_vacuum_augment"));
 
         registerObj(r, new BulkItemFilter(ib()), RL("bulk_item_filter"));
-        registerObj(r, new BulkItemFilter(ib()), RL("inspection_filter"));
-        registerObj(r, new BulkItemFilter(ib()), RL("mod_filter"));
-        registerObj(r, new BulkItemFilter(ib()), RL("regex_filter"));
+        registerObj(r, new InspectionFilter(ib()), RL("inspection_filter"));
+        registerObj(r, new ModFilter(ib()), RL("mod_filter"));
+        registerObj(r, new RegexFilter(ib()), RL("regex_filter"));
     }
 
     @SubscribeEvent
@@ -226,6 +230,14 @@ public class ObjectRegistry {
         registerObj(event.getRegistry(), new SoundEvent(RL("success")), RL("success"));
         registerObj(event.getRegistry(), new SoundEvent(RL("thud")), RL("thud"));
     }
+//    @SubscribeEvent
+//    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+//        event.getRegistry().registerAll(
+//                new SoundEvent(RL("error")).setRegistryName("error"),
+//                new SoundEvent(RL("success")).setRegistryName("success"),
+//                new SoundEvent(RL("thud")).setRegistryName("thud")
+//        );
+//    }
 
     @SubscribeEvent
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {

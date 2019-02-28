@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 import static me.desht.modularrouters.core.ObjectRegistry.SOUND_ERROR;
 import static me.desht.modularrouters.core.ObjectRegistry.SOUND_SUCCESS;
 
-public class SecurityUpgrade extends ItemUpgrade {
+public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     private static final String NBT_PLAYERS = "Players";
     private static final int MAX_PLAYERS = 6;
 
@@ -37,6 +38,8 @@ public class SecurityUpgrade extends ItemUpgrade {
 
     @Override
     public void addExtraInformation(ItemStack itemstack,  List<ITextComponent> list) {
+        String owner = getOwnerName(itemstack);
+        if (owner == null) owner = "(none)";
         list.add(new TextComponentTranslation("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
@@ -60,32 +63,22 @@ public class SecurityUpgrade extends ItemUpgrade {
         return new Color(64, 64, 255);
     }
 
-    private static Set<UUID> getPlayerIDs(ItemStack stack) {
+    private Set<UUID> getPlayerIDs(ItemStack stack) {
         NBTTagCompound compound = stack.getTag();
         if (compound == null) {
             return Collections.emptySet();
         }
 
         Set<UUID> res = Sets.newHashSet();
-        Pair<String, UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
-        res.add(owner.getRight());
+        UUID ownerID = getOwnerID(stack);
+        if (ownerID == null) return Collections.emptySet();
+        res.add(ownerID);
 
         if (compound.contains(NBT_PLAYERS)) {
             NBTTagCompound p = compound.getCompound(NBT_PLAYERS);
             res.addAll(p.keySet().stream().map(UUID::fromString).collect(Collectors.toList()));
         }
         return res;
-    }
-
-    /**
-     * Get this security upgrade's owner.
-     *
-     * @param stack the upgrade itemstack
-     * @return (displayable) owner name
-     */
-    private static String getOwnerName(ItemStack stack) {
-        Pair<String, UUID> owner = ModuleHelper.getOwnerNameAndId(stack);
-        return owner.getLeft().isEmpty() ? "???" : owner.getLeft();
     }
 
     /**
@@ -144,8 +137,8 @@ public class SecurityUpgrade extends ItemUpgrade {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.getEntityWorld().isRemote && player.isSneaking()) {
-            ModuleHelper.setOwner(stack, player);
-            player.sendStatusMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayName().toString()), false);
+            setOwner(stack, player);
+            player.sendStatusMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayName().getString()), false);
             return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
         }
         return ActionResult.newResult(EnumActionResult.PASS, stack);

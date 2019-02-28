@@ -66,7 +66,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
         handler.save();
 
         if (player != null && hand != null) {
-            player.setHeldItem(hand, handler.getHolderStack());
+//            player.setHeldItem(hand, handler.getHolderStack());
         } else if (router != null && serverSide) {
             router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
         }

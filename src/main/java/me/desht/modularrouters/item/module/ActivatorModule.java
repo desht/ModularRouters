@@ -6,14 +6,11 @@ import me.desht.modularrouters.client.gui.module.GuiModuleActivator;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
@@ -23,8 +20,8 @@ public class ActivatorModule extends ItemModule {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
-        super.addInformation(stack, world, list, flag);
+    public void addSettingsInformation(ItemStack stack, List<ITextComponent> list) {
+        super.addSettingsInformation(stack, list);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
         list.add(new TextComponentString(

@@ -71,7 +71,7 @@ public class GuiItemRouter extends GuiContainerBase {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String title = router.getDisplayName().getString();
+        String title = I18n.format("block.modularrouters.item_router");
         fontRenderer.drawString(title, this.xSize / 2f - fontRenderer.getStringWidth(title) / 2f, LABEL_YPOS, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
@@ -90,8 +90,8 @@ public class GuiItemRouter extends GuiContainerBase {
     private static final int MODULE_END = ContainerItemRouter.TE_FIRST_SLOT + ContainerItemRouter.MODULE_SLOT_END;
 
     @Override
-    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-         return Keybindings.keybindConfigure.isKeyDown() ? handleModuleConfig() : super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+         return Keybindings.keybindConfigure.getKey().getKeyCode() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

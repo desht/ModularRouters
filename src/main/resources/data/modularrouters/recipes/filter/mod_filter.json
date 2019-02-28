@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item" : "modularrouters:blank_filter" },
+    { "item" : "modularrouters:bulk_item_filter" },
     { "item" : "minecraft:repeater" },
     { "item" : "minecraft:redstone_torch" }
   ],

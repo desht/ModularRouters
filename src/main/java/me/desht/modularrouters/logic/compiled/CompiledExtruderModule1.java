@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class CompiledExtruderModule extends CompiledModule {
+public class CompiledExtruderModule1 extends CompiledModule {
     public static final String NBT_EXTRUDER_DIST = "ExtruderDist";
     private static final double BASE_PUSH_STRENGTH = 0.55;
     private static final double AUGMENT_BOOST = 0.15;
@@ -32,7 +32,7 @@ public class CompiledExtruderModule extends CompiledModule {
     private final boolean silkTouch;
     private final int pushingAugments;
 
-    public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledExtruderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInt(NBT_EXTRUDER_DIST + getFacing());
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;

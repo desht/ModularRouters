@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-public class CompiledPullerModule2 extends CompiledPullerModule {
+public class CompiledPullerModule2 extends CompiledPullerModule1 {
     private static final Color particleColor = Color.BLUE;
 
     public CompiledPullerModule2(TileEntityItemRouter router, ItemStack stack) {

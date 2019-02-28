@@ -5,7 +5,7 @@
     " P "
   ],
   "key": {
-    "B": { "item": "modularrouters:blank_filter" },
+    "B": { "item": "modularrouters:bulk_item_filter" },
     "E": { "item": "minecraft:spider_eye" },
     "P": { "item": "minecraft:paper" }
   },

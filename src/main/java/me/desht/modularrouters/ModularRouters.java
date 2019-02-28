@@ -30,8 +30,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Random;
-
 @Mod("modularrouters")
 public class ModularRouters {
     public static final String MODID = "modularrouters";
@@ -46,13 +44,16 @@ public class ModularRouters {
     public static IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public ModularRouters() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.SERVER_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.CLIENT_SPEC);
+
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.GUIFACTORY, () -> GuiHandler::openGui);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::clientSetup);
             MinecraftForge.EVENT_BUS.addListener(ClientHandler::registerRenders);
         });
+
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -61,9 +62,9 @@ public class ModularRouters {
         PacketHandler.setupNetwork();
 
         DeferredWorkQueue.runLater(() -> {
-            ModRecipes.init(); // todo 1.13 should be unnecessary...
+            ModRecipes.init();
             IntegrationHandler.registerAll();
-            XPCollection.detectXPFluids();
+            XPCollection.detectXPTypes();
             ModNameCache.init();
         });
     }

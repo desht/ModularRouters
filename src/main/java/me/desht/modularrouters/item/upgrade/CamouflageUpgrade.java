@@ -2,8 +2,10 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ObjectRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,22 +46,17 @@ public class CamouflageUpgrade extends ItemUpgrade {
     }
 
     private static IBlockState getCamoState(ItemStack stack) {
-        return stack.hasTag() ? readFromNBT(stack.getTag()) : null;
+        return stack.hasTag() ? readFromNBT(stack.getTag().getCompound(NBT_STATE_NAME)) : null;
     }
 
     private static String getCamoStateDisplayName(ItemStack stack) {
         IBlockState state = getCamoState(stack);
-        // TODO
-        return "<CAMO TODO>";
-//        if (state != null) {
-//            state.
-//            Block b = state.getBlock();
-//            Item item = Item.getItemFromBlock(b);
-//            if (item != null) {
-//                return new ItemStack(item, 1, b.getMetaFromState(state)).getDisplayName();
-//            }
-//        }
-//        return "<?>";
+        if (state != null) {
+            Block b = state.getBlock();
+            Item item = b.asItem();
+            return new ItemStack(item).getDisplayName().getString();
+        }
+        return "<?>";
     }
 
     @Override

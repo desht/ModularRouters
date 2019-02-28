@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
+import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.enchantment.Enchantment;
@@ -22,7 +22,7 @@ public class ExtruderModule1 extends ItemModule implements IRangedModule {
 
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledExtruderModule(router, stack);
+        return new CompiledExtruderModule1(router, stack);
     }
 
     @Override

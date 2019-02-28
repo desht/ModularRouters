@@ -1,35 +1,16 @@
 package me.desht.modularrouters.recipe;
 
-public class ModRecipes {
-    // todo 1.13
-    public static void init() {
-//        addEnchantmentRecipes();
-//        addSelfCraftRecipes();
-    }
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.RecipeSerializers;
 
-//    private static void addEnchantmentRecipes() {
-//        for (ModuleType type : EnchantModuleRecipe.validEnchantments.keySet()) {
-//            for (Enchantment ench : EnchantModuleRecipe.validEnchantments.get(type)) {
-//                for (int level = ench.getMinLevel(); level <= ench.getMaxLevel(); level++) {
-//                    ItemStack resStack = ModuleHelper.makeItemStack(type);
-//                    ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-//                    resStack.addEnchantment(ench, level);
-//                    book.addEnchantment(ench, level);
-//                    ForgeRegistries.RECIPES.register(new EnchantModuleRecipe(
-//                            Joiner.on("_").join(type.name(), ench.getName(), level),
-//                            resStack, ModuleHelper.makeItemStack(type), book));
-//                }
-//            }
-//        }
-//    }
-//
-//    private static void addSelfCraftRecipes() {
-//        // crafting a module into itself resets all NBT on the module
-//        for (ModuleType type : ModuleType.values()) {
-//            ItemStack stack = ModuleHelper.makeItemStack(type);
-//            ItemStack output = ModuleHelper.makeItemStack(type);
-//            ModuleResetRecipe recipe = new ModuleResetRecipe(output, "M", 'M', stack);
-//            ForgeRegistries.RECIPES.register(recipe.setRegistryName(RL(type + "_" + "reset")));
-//        }
-//    }
+public class ModRecipes {
+    static final IRecipeSerializer<EnchantModuleRecipe> ENCHANT_MODULE = RecipeSerializers.register(
+            new RecipeSerializers.SimpleSerializer<>("modularrouters:module_enchant", EnchantModuleRecipe::new)
+    );
+    static final IRecipeSerializer<ResetModuleRecipe> RESET_MODULE = RecipeSerializers.register(
+            new RecipeSerializers.SimpleSerializer<>("modularrouters:module_reset", ResetModuleRecipe::new)
+    );
+
+    public static void init() {
+    }
 }

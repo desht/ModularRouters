@@ -28,7 +28,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE || (keyCode == GLFW.GLFW_KEY_E) && (!hasTextFieldManager() || !getTextFieldManager().isFocused())) {
             // Intercept ESC/E and immediately reopen the previous GUI, if any
-            return closeGUI();
+            if (closeGUI()) return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }

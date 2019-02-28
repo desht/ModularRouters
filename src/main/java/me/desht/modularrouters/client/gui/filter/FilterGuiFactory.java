@@ -39,10 +39,7 @@ public class FilterGuiFactory {
      */
     public static GuiScreen createGui(EntityPlayer player, TileEntityItemRouter router) {
         ItemStack filterStack = SlotTracker.getInstance(player).getConfiguringFilter(router);
-//        ItemStack filterStack = router.getConfiguringFilter(player);
         if (filterStack.getItem() instanceof ItemSmartFilter) {
-            SlotTracker.getInstance(player).clearSlots();
-//            router.clearConfigSlot(player);
             return createGui(player, filterStack, router, null);
         }
         return null;
@@ -53,9 +50,6 @@ public class FilterGuiFactory {
         if (heldStack.getItem() instanceof ItemModule) {
             filterStack = SlotTracker.getInstance(player).getConfiguringFilter(heldStack);
             SlotTracker.getInstance(player).clearFilterSlot();
-//            filterSlotIndex = ModuleHelper.getFilterConfigSlot(heldStack);
-//            filterStack = getFilterStackInUninstalledModule(heldStack, filterSlotIndex);
-//            ModuleHelper.setFilterConfigSlot(heldStack, -1);
         } else if (heldStack.getItem() instanceof ItemSmartFilter) {
             filterStack = heldStack;
         } else {
@@ -74,8 +68,8 @@ public class FilterGuiFactory {
                 ContainerSmartFilter container = filter.createContainer(player, hand, router);
                 return ctor.newInstance(container);
             } else {
-                Constructor<? extends GuiScreen> ctor = clazz.getConstructor(ItemStack.class, BlockPos.class, EnumHand.class);
-                return ctor.newInstance(filterStack, router.getPos(), hand);
+                Constructor<? extends GuiScreen> ctor = clazz.getConstructor(ItemStack.class, TileEntityItemRouter.class, EnumHand.class);
+                return ctor.newInstance(filterStack, router, hand);
             }
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();

@@ -24,8 +24,8 @@ public class ModuleHelper {
     public static final String NBT_REDSTONE_MODE = "RedstoneMode";
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
-    private static final String NBT_OWNER = "Owner";
-    private static final String NBT_CONFIG_SLOT = "ConfigSlot";
+//    private static final String NBT_OWNER = "Owner";
+//    private static final String NBT_CONFIG_SLOT = "ConfigSlot";
     public static final String NBT_AUGMENTS = "Augments";
 
     @Nonnull
@@ -40,8 +40,8 @@ public class ModuleHelper {
             }
             compound.putByte(NBT_FLAGS, flags);
         }
-        if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_LIST) {
-            compound.put(NBT_FILTER, new NBTTagList());
+        if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
+            compound.put(NBT_FILTER, new NBTTagCompound());
         }
         return compound;
     }
@@ -50,8 +50,8 @@ public class ModuleHelper {
         return checkFlag(stack, ModuleFlags.BLACKLIST);
     }
 
-    public static boolean ignoreMeta(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.IGNORE_META);
+    public static boolean ignoreDamage(ItemStack stack) {
+        return checkFlag(stack, ModuleFlags.IGNORE_DAMAGE);
     }
 
     public static boolean ignoreNBT(ItemStack stack) {
@@ -59,7 +59,7 @@ public class ModuleHelper {
     }
 
     public static boolean ignoreTags(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.IGNORE_OREDICT);
+        return checkFlag(stack, ModuleFlags.IGNORE_TAGS);
     }
 
     public static boolean terminates(ItemStack stack) {
@@ -105,25 +105,25 @@ public class ModuleHelper {
         return compound.getList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
     }
 
-    public static void setOwner(ItemStack stack, EntityPlayer player) {
-        NBTTagCompound compound = stack.getOrCreateTag();
-        NBTTagList owner = new NBTTagList();
-        owner.add(new NBTTagString(player.getDisplayName().getString()));
-        owner.add(new NBTTagString(player.getUniqueID().toString()));
-        compound.put(NBT_OWNER, owner);
-        stack.setTag(compound);
-    }
-
-    private static final Pair<String,UUID> NO_OWNER = Pair.of("", null);
-
-    public static Pair<String, UUID> getOwnerNameAndId(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains(NBT_OWNER)) {
-            NBTTagList l = stack.getTag().getList(NBT_OWNER, Constants.NBT.TAG_STRING);
-            return Pair.of(l.getString(0), UUID.fromString(l.getString(1)));
-        } else {
-            return NO_OWNER;
-        }
-    }
+//    public static void setOwner(ItemStack stack, EntityPlayer player) {
+//        NBTTagCompound compound = stack.getOrCreateTag();
+//        NBTTagList owner = new NBTTagList();
+//        owner.add(new NBTTagString(player.getDisplayName().getString()));
+//        owner.add(new NBTTagString(player.getUniqueID().toString()));
+//        compound.put(NBT_OWNER, owner);
+//        stack.setTag(compound);
+//    }
+//
+//    private static final Pair<String,UUID> NO_OWNER = Pair.of("", null);
+//
+//    public static Pair<String, UUID> getOwnerNameAndId(ItemStack stack) {
+//        if (stack.hasTag() && stack.getTag().contains(NBT_OWNER)) {
+//            NBTTagList l = stack.getTag().getList(NBT_OWNER, Constants.NBT.TAG_STRING);
+//            return Pair.of(l.getString(0), UUID.fromString(l.getString(1)));
+//        } else {
+//            return NO_OWNER;
+//        }
+//    }
 
 //    public static void setFilterConfigSlot(ItemStack stack, int slot) {
 //        NBTTagCompound compound = stack.getOrCreateTag();

@@ -1,8 +1,11 @@
 package me.desht.modularrouters.client.gui.widgets;
 
+import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public abstract class GuiContainerBase extends GuiContainer implements IResyncableGui {
@@ -33,11 +36,13 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
     public void render(int x, int y, float partialTicks) {
         this.drawDefaultBackground();
         super.render(x, y, partialTicks);
-        if (textFieldManager != null) textFieldManager.drawTextFields(x, y, partialTicks);
-        // @todo 1.13
-//        this.buttonList.stream()
-//                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-//                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRenderer));
+        if (textFieldManager != null) {
+            textFieldManager.drawTextFields(x, y, partialTicks);
+        }
+        this.buttons.stream()
+                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
+                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRenderer));
+
         this.renderHoveredToolTip(x, y);
     }
 
@@ -47,26 +52,39 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
         if (textFieldManager != null) textFieldManager.tick();
     }
 
-    // todo 1.13
-//    @Override
-//    public void handleMouseInput() throws IOException {
-//        if (textFieldManager == null || !textFieldManager.handleMouseInput()) {
-//            super.handleMouseInput();
-//        }
-//    }
-//
-//    @Override
-//    protected void mouseClicked(int x, int y, int btn) throws IOException {
-//        super.mouseClicked(x, y, btn);
-//        if (textFieldManager != null) textFieldManager.mouseClicked(x, y, btn);
-//    }
-//
-//    @Override
-//    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-//        if (textFieldManager == null || !textFieldManager.keyTyped(typedChar, keyCode)) {
-//            super.keyTyped(typedChar, keyCode);
-//        }
-//    }
+    @Override
+    public boolean mouseScrolled(double dir) {
+        return textFieldManager != null ?
+                textFieldManager.mouseScrolled(dir) :
+                super.mouseScrolled(dir);
+    }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        if (textFieldManager != null && textFieldManager.mouseClicked(x, y, button)) {
+            return true;
+        } else {
+            return super.mouseClicked(x, y, button);
+        }
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (textFieldManager != null && textFieldManager.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        } else {
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+    }
+
+    @Override
+    public boolean charTyped(char c, int modifiers) {
+        if (textFieldManager != null && textFieldManager.charTyped(c, modifiers)) {
+            return true;
+        } else {
+            return super.charTyped(c, modifiers);
+        }
+    }
 
     public boolean isFocused() {
         return textFieldManager != null && textFieldManager.isFocused();

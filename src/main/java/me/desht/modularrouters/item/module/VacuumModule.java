@@ -39,7 +39,7 @@ public class VacuumModule extends ItemModule implements IRangedModule {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
             String modName = ModNameCache.getModName(type.getModId());
             String title = type.getIcon().getItem() instanceof UniversalBucket ?
-                    MiscUtil.getFluidName(type.getIcon()) : type.getIcon().getDisplayName().toString();
+                    MiscUtil.getFluidName(type.getIcon()) : type.getIcon().getDisplayName().getString();
 
             String s = I18n.format("guiText.label.xpVacuum") + ": "
                     + TextFormatting.AQUA + title + TextFormatting.BLUE + TextFormatting.ITALIC + " (" + modName + ")";

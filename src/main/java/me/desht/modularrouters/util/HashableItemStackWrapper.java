@@ -40,14 +40,14 @@ public class HashableItemStackWrapper {
         if (!(o instanceof HashableItemStackWrapper)) return false;
         HashableItemStackWrapper that = (HashableItemStackWrapper) o;
         return this.stack.getItem() == that.stack.getItem()
-                && (filterFlags.isIgnoreMeta() || this.stack.getDamage() == that.stack.getDamage())
+                && (filterFlags.isIgnoreDamage() || this.stack.getDamage() == that.stack.getDamage())
                 && (filterFlags.isIgnoreNBT() || !this.stack.hasTag() || this.stack.getTag().equals(that.stack.getTag()));
     }
 
     @Override
     public int hashCode() {
         int hashCode = Item.getIdFromItem(stack.getItem());
-        if (!filterFlags.isIgnoreMeta()) hashCode += 37 * stack.getDamage();
+        if (!filterFlags.isIgnoreDamage()) hashCode += 37 * stack.getDamage();
         if (!filterFlags.isIgnoreNBT() && stack.hasTag()) hashCode += 37 * stack.getTag().hashCode();
         return hashCode;
     }

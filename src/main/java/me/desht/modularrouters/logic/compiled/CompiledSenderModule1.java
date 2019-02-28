@@ -37,7 +37,7 @@ public class CompiledSenderModule1 extends CompiledModule {
             if (target != null) {
                 int nToSend = getItemsPerTick(router);
                 if (getRegulationAmount() > 0) {
-                    int existing = InventoryUtils.countItems(bufferStack, target.handler, getRegulationAmount(), !getFilter().getFlags().isIgnoreMeta());
+                    int existing = InventoryUtils.countItems(bufferStack, target.handler, getRegulationAmount(), !getFilter().getFlags().isIgnoreDamage());
                     nToSend = Math.min(nToSend, getRegulationAmount() - existing);
                     if (nToSend <= 0) {
                         return false;

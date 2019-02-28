@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class RegexFilter extends ItemSmartFilter {
     private static final String NBT_REGEX = "Regex";
-    private static final int MAX_SIZE = 6;
+    public static final int MAX_SIZE = 6;
 
     public RegexFilter(Properties props) {
         super(props);

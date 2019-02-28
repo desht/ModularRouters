@@ -17,12 +17,12 @@ import net.minecraftforge.fluids.IFluidBlock;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompiledExtruder2Module extends CompiledExtruderModule {
+public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
     private static final ItemStack TEMPLATE_STACK = new ItemStack(ObjectRegistry.TEMPLATE_FRAME);
     private final List<ItemStack> blockList;
     private final boolean mimic;
 
-    public CompiledExtruder2Module(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledExtruderModule2(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
         blockList = new ArrayList<>();

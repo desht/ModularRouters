@@ -3,9 +3,9 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,55 +32,41 @@ public class TextFieldManager {
         }
     }
 
-    /**
-     * See if any textfields are interested in a mouse event
-     *
-     * @return true if a text field handled the mouse event, false if not
-     * @throws IOException
-     */
-    public boolean handleMouseInput() throws IOException {
-        // todo 1.13
-//        int wheel = Mouse.getEventDWheel();
-//        if (wheel == 0) {
-//            return false;
-//        } else if (focusedField >= 0) {
-//            textFields.get(focusedField).onMouseWheel(wheel < 0 ? -1 : 1);
-//            return true;
-//        } else {
-//            // check if mouse is over an unfocused field, if so focus on it
-//            int mouseX = Mouse.getEventX() * parent.width / parent.mc.displayWidth;
-//            int mouseY = parent.height - Mouse.getEventY() * parent.height / parent.mc.displayHeight - 1;
-//            for (int i = 0; i < textFields.size(); i++) {
-//                TextFieldWidget field = textFields.get(i);
-//                if (mouseX >= field.x && mouseX < field.x + field.width && mouseY >= field.y && mouseY < field.y + field.height) {
-//                    focus(i);
-//                    field.onMouseWheel(wheel < 0 ? -1 : 1);
-//                    return true;
-//                }
-//            }
-//        }
-        return false;
-    }
-
-    public void mouseClicked(int x, int y, int btn) throws IOException {
-        for (TextFieldWidget field : textFields) {
-            field.mouseClicked(x, y, btn);
-        }
-    }
-
-    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == GLFW.GLFW_KEY_TAB) {
-            if (GuiScreen.isShiftKeyDown()) {
-                focusPrev();
-            } else {
-                focusNext();
+    public boolean mouseClicked(double x, double y, int btn) {
+        for (int i = 0; i < textFields.size(); i++) {
+            if (textFields.get(i).mouseClicked(x, y, btn)) {
+                focus(i);
+                return true;
             }
-        } else if (isFocused()) {
-            textFields.get(focusedField).charTyped(typedChar, keyCode);
-            // avoid closing window while text field focused
-            return keyCode == GLFW.GLFW_KEY_E;
         }
         return false;
+    }
+
+    public boolean mouseScrolled(double wheel) {
+        if (wheel == 0) {
+            return false;
+        } else if (isFocused() && textFields.get(focusedField).getVisible()) {
+            textFields.get(focusedField).onMouseWheel(wheel < 0 ? -1 : 1);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+         if (keyCode == GLFW.GLFW_KEY_TAB) {
+             cycleFocus(GuiScreen.isShiftKeyDown() ? -1 : 1);
+        } else if (isFocused() && textFields.get(focusedField).getVisible()) {
+            return textFields.get(focusedField).keyPressed(keyCode, scanCode, modifiers);
+            // avoid closing window while text field focused
+//            return keyCode == GLFW.GLFW_KEY_E;
+        }
+        return false;
+    }
+
+
+    public boolean charTyped(char c, int modifiers) {
+        return isFocused() && textFields.get(focusedField).getVisible()
+                && textFields.get(focusedField).charTyped(c, modifiers);
     }
 
     int addTextField(TextFieldWidget textField) {
@@ -100,16 +86,27 @@ public class TextFieldManager {
         }
     }
 
-    private void focusNext() {
-        int field = focusedField + 1;
-        if (field >= textFields.size()) field = 0;
-        focus(field);
-    }
+    private void cycleFocus(int dir) {
+        int f = focusedField;
+        int oldF = f;
 
-    private void focusPrev() {
-        int field = focusedField - 1;
-        if (field < 0) field = textFields.size() - 1;
-        focus(field);
+        do {
+            f += dir;
+            if (f < 0) {
+                f = textFields.size() - 1;
+            } else if (f >= textFields.size()) {
+                f = 0;
+            }
+        } while (!textFields.get(f).getVisible() && f != focusedField);
+
+        if (f != oldF) {
+            focus(f);
+            textFields.get(f).setCursorPositionEnd();
+            textFields.get(f).setSelectionPos(0);
+            if (oldF >= 0 && oldF < textFields.size()) {
+                textFields.get(oldF).setSelectionPos(textFields.get(oldF).getCursorPosition());
+            }
+        }
     }
 
     public boolean isFocused() {
@@ -133,4 +130,5 @@ public class TextFieldManager {
         focusedField = -1;
         return this;
     }
+
 }

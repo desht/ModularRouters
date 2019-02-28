@@ -8,8 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
-public class CompiledPullerModule extends CompiledModule {
-    public CompiledPullerModule(TileEntityItemRouter router, ItemStack stack) {
+public class CompiledPullerModule1 extends CompiledModule {
+    public CompiledPullerModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
     }
 

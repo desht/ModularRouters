@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.logic.compiled.CompiledPullerModule;
+import me.desht.modularrouters.logic.compiled.CompiledPullerModule1;
 import net.minecraft.item.ItemStack;
 
 import java.awt.*;
@@ -14,7 +14,7 @@ public class PullerModule1 extends ItemModule {
 
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledPullerModule(router, stack);
+        return new CompiledPullerModule1(router, stack);
     }
 
     @Override

@@ -3,10 +3,10 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.module.GuiModule;
 import me.desht.modularrouters.client.gui.module.GuiModulePlayer;
+import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -19,7 +19,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.awt.*;
 import java.util.List;
 
-public class PlayerModule extends ItemModule {
+public class PlayerModule extends ItemModule implements IPlayerOwned {
     public PlayerModule(Properties props) {
         super(props);
     }
@@ -60,7 +60,7 @@ public class PlayerModule extends ItemModule {
         if (ctx.getWorld().isRemote) {
             return EnumActionResult.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
-            ModuleHelper.setOwner(ctx.getItem(), ctx.getPlayer());
+            setOwner(ctx.getItem(), ctx.getPlayer());
             ctx.getPlayer().sendStatusMessage(new TextComponentTranslation("itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
             return EnumActionResult.SUCCESS;
         } else {

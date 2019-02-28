@@ -15,7 +15,7 @@ import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.logic.compiled.CompiledExtruderModule;
+import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -182,11 +182,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         boolean newActive = compound.getBoolean(NBT_ACTIVE);
         byte newSidesOpen = compound.getByte(NBT_SIDES);
         boolean newEco = compound.getBoolean(NBT_ECO_MODE);
-        IBlockState camo = CamouflageUpgrade.readFromNBT(compound);
         setActive(newActive);
         setSidesOpen(newSidesOpen);
         setEcoMode(newEco);
-        setCamouflage(camo);
+        if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
+            setCamouflage(CamouflageUpgrade.readFromNBT(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
+        } else {
+            setCamouflage(null);
+        }
     }
 
     @Nonnull
@@ -348,7 +351,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
-            handleSync(true);
+//            handleSync(true);
+            world.setBlockState(getPos(), getBlockState().with(BlockItemRouter.ACTIVE, newActive), 2);
         }
     }
 
@@ -367,7 +371,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         if (newEco != ecoMode) {
             ecoMode = newEco;
             ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
-            handleSync(false);
+//            handleSync(false);
         }
     }
 
@@ -741,7 +745,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         // currently being extruded on
         int power = 0;
         for (EnumFacing facing : EnumFacing.values()) {
-            if (getExtData().getInt(CompiledExtruderModule.NBT_EXTRUDER_DIST + facing) > 0) {
+            if (getExtData().getInt(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing) > 0) {
                 // ignore signal from any side we're extruding on (don't let placed redstone emitters lock up the router)
                 continue;
             }

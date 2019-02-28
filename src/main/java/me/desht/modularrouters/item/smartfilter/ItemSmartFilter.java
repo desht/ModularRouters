@@ -91,7 +91,8 @@ public abstract class ItemSmartFilter extends ItemBase {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (!world.isRemote && hasContainer()) {
+        ItemSmartFilter filter = (ItemSmartFilter) stack.getItem();
+        if (!world.isRemote && filter.hasContainer()) {
             NetworkHooks.openGui((EntityPlayerMP) player, new ContainerProvider(hand),
                     buf -> buf.writeBoolean(hand == EnumHand.MAIN_HAND));
         } else if (world.isRemote && !hasContainer()) {
@@ -121,7 +122,7 @@ public abstract class ItemSmartFilter extends ItemBase {
         public Container createContainer(InventoryPlayer inventoryPlayer, EntityPlayer entityPlayer) {
             if (hand != null) {
                 ItemStack stack = entityPlayer.getHeldItem(hand);
-                if (stack.getItem() instanceof ItemModule) {
+                if (stack.getItem() instanceof ItemSmartFilter) {
                     return ((ItemSmartFilter) stack.getItem()).createContainer(entityPlayer, hand, null);
                 } else {
                     return null;
