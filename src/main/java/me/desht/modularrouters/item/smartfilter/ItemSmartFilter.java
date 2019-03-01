@@ -24,6 +24,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -37,6 +39,7 @@ public abstract class ItemSmartFilter extends ItemBase {
 
     public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack);
 
+    @OnlyIn(Dist.CLIENT)
     public abstract Class<? extends GuiScreen> getGuiClass();
 
     /**

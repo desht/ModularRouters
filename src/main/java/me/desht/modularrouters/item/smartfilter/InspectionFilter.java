@@ -18,6 +18,8 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -72,6 +74,7 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public Class<? extends GuiScreen> getGuiClass() {
         return GuiInspectionFilter.class;
     }

@@ -17,6 +17,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -67,6 +69,7 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public Class<? extends GuiScreen> getGuiClass() {
         return GuiRegexFilter.class;
     }

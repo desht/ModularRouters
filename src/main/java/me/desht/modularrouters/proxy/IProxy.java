@@ -2,6 +2,7 @@ package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public interface IProxy {
@@ -21,4 +22,6 @@ public interface IProxy {
     TileEntityItemRouter getOpenItemRouter();
 
     EntityPlayer getClientPlayer();
+
+    void openSyncGui(ItemStack stack);
 }

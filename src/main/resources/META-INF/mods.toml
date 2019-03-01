@@ -1,4 +1,4 @@
- # Thenam the mod loader type to load - for regular FML @Mod mods it should be javafml
+# The mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
 loaderVersion="[25,)" #mandatory (24 is current forge version)

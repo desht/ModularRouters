@@ -2,6 +2,7 @@ package me.desht.modularrouters.proxy;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ServerProxy implements IProxy {
@@ -27,6 +28,10 @@ public class ServerProxy implements IProxy {
     @Override
     public EntityPlayer getClientPlayer() {
         return null;
+    }
+
+    @Override
+    public void openSyncGui(ItemStack stack) {
     }
 
 }

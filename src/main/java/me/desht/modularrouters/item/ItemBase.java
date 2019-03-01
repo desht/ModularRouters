@@ -12,6 +12,9 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -23,6 +26,7 @@ public abstract class ItemBase extends Item {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         if (world == null) return;
 
@@ -39,13 +43,6 @@ public abstract class ItemBase extends Item {
     protected void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
         MiscUtil.appendMultilineText(list, TextFormatting.GRAY,
                 "itemText.usage.item." + itemstack.getItem().getRegistryName().getPath(), getExtraUsageParams());
-
-//        String s = I18n.format("itemText.usage.item." + itemstack.getItem().getRegistryName().getPath(), getExtraUsageParams());
-//        for (String s1 : s.split("\\\\n")) {
-//            for (String s2 : MiscUtil.wrapString(s1)) {
-//                list.add(new TextComponentString(s2).applyTextStyles(TextFormatting.GRAY));
-//            }
-//        }
     }
 
     protected abstract void addExtraInformation(ItemStack stack, List<ITextComponent> list);

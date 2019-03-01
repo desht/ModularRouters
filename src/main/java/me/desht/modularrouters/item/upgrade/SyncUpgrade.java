@@ -1,5 +1,6 @@
 package me.desht.modularrouters.item.upgrade;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
 import me.desht.modularrouters.config.ConfigHandler;
@@ -55,12 +56,12 @@ public class SyncUpgrade extends ItemUpgrade {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
         if (world.isRemote && !player.isSneaking()) {
-            Minecraft.getInstance().displayGuiScreen(new GuiSyncUpgrade(stack));
+            ModularRouters.proxy.openSyncGui(stack);
         } else if (player.isSneaking()) {
             if (!world.isRemote) {
                 setTunedValue(stack, world.rand.nextInt(ConfigHandler.ROUTER.baseTickRate.get()));
-                player.sendStatusMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(stack)), false);
             } else {
+                player.sendStatusMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(stack)), true);
                 player.playSound(ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.5f);
             }
         }

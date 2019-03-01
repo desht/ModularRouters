@@ -1,6 +1,7 @@
 package me.desht.modularrouters;
 
 import me.desht.modularrouters.client.AreaShowManager;
+import me.desht.modularrouters.client.ColorHandlers;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.ModelBakeEventHandler;
 import me.desht.modularrouters.client.fx.RenderListener;
@@ -75,6 +76,7 @@ public class ModularRouters {
             MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
             MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
             MinecraftForge.EVENT_BUS.register(RenderListener.class);
+            MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
 
             Keybindings.registerKeyBindings();
         }

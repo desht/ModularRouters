@@ -27,6 +27,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
@@ -65,6 +67,7 @@ public class BulkItemFilter extends ItemSmartFilter {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public Class<? extends GuiScreen> getGuiClass() {
         return GuiBulkItemFilter.class;
     }
