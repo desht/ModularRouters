@@ -2,14 +2,13 @@ package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityShulkerBox;
@@ -35,50 +34,27 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
-    private static final String[] REED_ITEM = new String[]{"block", "field_150935_a", "a"};
+    private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {
+            EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST
+    };
 
-    private static IBlockState getPlaceableState(EntityPlayer fakePlayer, ItemStack stack, World world, BlockPos pos, EnumFacing facing, EnumFacing horizFacing) {
-        // With thanks to Vazkii for inspiration from the Rannuncarpus code, although it's changed a lot since...
+    private static IBlockState getPlaceableState(BlockItemUseContext ctx) {
         try {
-            Item item = stack.getItem();
             IBlockState res = null;
+            World world = ctx.getWorld();
+            BlockPos pos = ctx.getPos();
+            Item item = ctx.getItem().getItem();
             if (item instanceof ItemBlock) {
-                float hitX = (float) (fakePlayer.posX - pos.getX());
-                float hitY = (float) (fakePlayer.posY - pos.getY());
-                float hitZ = (float) (fakePlayer.posZ - pos.getZ());
-                res = ((ItemBlock) item).getBlock().getDefaultState().updatePostPlacement(facing, world.getBlockState(pos), world, pos, pos.offset(facing));
-                // todo 1.13
-//                int meta = item.getMetadata(stack.getItemDamage());
-//                res = ((ItemBlock) item).getBlock().getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, fakePlayer, EnumHand.MAIN_HAND);
-//            } else if (item instanceof ItemBlockSpecial) {
-//                res = ((Block) ReflectionHelper.getPrivateValue(ItemBlockSpecial.class, (ItemBlockSpecial) item, REED_ITEM)).getDefaultState();
-//            } else if (item instanceof ItemRedstone) {
-//                res = Blocks.REDSTONE_WIRE.getDefaultState();
-//            } else if (item instanceof ItemDye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BROWN) {
-//                res = getCocoaBeanState(fakePlayer, world, pos);
-//                if (res != null) {
-//                    facing = res.getValue(BlockHorizontal.FACING);
-//                }
+                Block block = ((ItemBlock) item).getBlock();
+                res = block.getStateForPlacement(ctx);
             } else if (item instanceof IPlantable) {
-                IBlockState state = ((IPlantable) item).getPlant(world, pos);
-                res = ((state.getBlock() instanceof BlockCrops) && state.isValidPosition(world, pos)) ? state : null;
-//                res = ((state.getBlock() instanceof BlockCrops) && ((BlockCrops) state.getBlock()).canBlockStay(world, pos, state)) ? state : null;
+                res = ((IPlantable) item).getPlant(world, pos);
+            } else if (item instanceof ItemCocoa) {
+                // special handling for cocoa bean planting
+                res = getCocoaBeanState(ctx);
             }
-            // todo 1.13
-//            else if (item instanceof ItemSkull) {
-//                res = Blocks.SKULL.getDefaultState();
-//                // try to place skull on horizontal surface below if possible
-//                BlockPos pos2 = pos.down();
-//                if (world.getBlockState(pos2).isSideSolid(world, pos2, EnumFacing.UP)) {
-//                    facing = EnumFacing.UP;
-//                }
-//            }
-            if (res != null) {
-                if (res.getProperties().contains(BlockDirectional.FACING)) {
-                    res = res.with(BlockDirectional.FACING, facing);
-                } else if (res.getProperties().contains(BlockHorizontal.HORIZONTAL_FACING)) {
-                    res = res.with(BlockHorizontal.HORIZONTAL_FACING, facing.getHorizontalIndex() >= 0 ? facing : horizFacing);
-                }
+            if (res != null && !res.isValidPosition(world, pos)) {
+                res = null;
             }
             return res;
         } catch (IllegalArgumentException e) {
@@ -88,20 +64,17 @@ public class BlockUtil {
         }
     }
 
-//    private static IBlockState getCocoaBeanState(EntityPlayer fakePlayer, World world, BlockPos pos) {
-//        // try to find a jungle log in any horizontal direction
-//        for (EnumFacing f : EnumFacing.HORIZONTALS) {
-//            IBlockState state = world.getBlockState(pos.offset(f));
-//            if (state.getBlock() == Blocks.LOG && state.getValue(BlockOldLog.VARIANT) == BlockPlanks.EnumType.JUNGLE) {
-//                float hitX = (float) (fakePlayer.posX - pos.getX());
-//                float hitY = (float) (fakePlayer.posY - pos.getY());
-//                float hitZ = (float) (fakePlayer.posZ - pos.getZ());
-//                fakePlayer.rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
-//                return Blocks.COCOA.getStateForPlacement(world, pos, f.getOpposite(), hitX, hitY, hitZ, 0, fakePlayer, EnumHand.MAIN_HAND);
-//            }
-//        }
-//        return null;
-//    }
+    private static IBlockState getCocoaBeanState(BlockItemUseContext ctx) {
+        // try to find a jungle log in any horizontal direction
+        for (EnumFacing f : HORIZONTALS) {
+            IBlockState state = ctx.getWorld().getBlockState(ctx.getPos().offset(f));
+            if (state.getBlock() == Blocks.JUNGLE_LOG) {
+                ctx.getPlayer().rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
+                return Blocks.COCOA.getStateForPlacement(ctx);
+            }
+        }
+        return null;
+    }
 
     private static float getYawFromFacing(EnumFacing facing) {
         switch (facing) {
@@ -112,38 +85,6 @@ public class BlockUtil {
             default: return 0f; // shouldn't happen
         }
     }
-
-    // todo 1.13 may no longer be needed
-//    private static void handleSkullPlacement(World worldIn, BlockPos pos, ItemStack stack, EnumFacing facing) {
-//        // adapted from ItemSkull#onItemUse()
-//
-//        int i = 0;
-//        if (worldIn.getBlockState(pos).getValue(BlockDirectional.FACING) == EnumFacing.UP) {
-//            i = MathHelper.floor((double) (facing.getHorizontalAngle() * 16.0F / 360.0F) + 0.5D) & 15;
-//        }
-//
-//        TileEntity tileentity = worldIn.getTileEntity(pos);
-//        if (tileentity instanceof TileEntitySkull) {
-//            TileEntitySkull tileentityskull = (TileEntitySkull) tileentity;
-//            if (stack.getMetadata() == 3) {   // player head
-//                GameProfile gameprofile = null;
-//                if (stack.hasTagCompound()) {
-//                    NBTTagCompound nbttagcompound = stack.getTagCompound();
-//                    if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_COMPOUND)) {
-//                        gameprofile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
-//                    } else if (nbttagcompound.hasKey("SkullOwner", Constants.NBT.TAG_STRING) && !nbttagcompound.getString("SkullOwner").isEmpty()) {
-//                        gameprofile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
-//                    }
-//                }
-//                tileentityskull.setPlayerProfile(gameprofile);
-//            } else {
-//                tileentityskull.setType(stack.getMetadata());
-//            }
-//
-//            tileentityskull.setSkullRotation(i);  // skull will face the router fake-player
-//            Blocks.SKULL.checkWitherSpawn(worldIn, pos, tileentityskull);
-//        }
-//    }
 
     /**
      * Try to place the given item as a block in the world.  This will fail if the block currently at the
@@ -163,16 +104,18 @@ public class BlockUtil {
         if (fakePlayer == null) {
             return null;
         }
+        fakePlayer.rotationYaw = getYawFromFacing(facing);
 
-        BlockItemUseContext ctx = new BlockItemUseContext(world, fakePlayer, toPlace, pos, facing, pos.getX(), pos.getY(), pos.getZ());
+        float hitX = (float) (fakePlayer.posX - pos.getX());
+        float hitY = (float) (fakePlayer.posY - pos.getY());
+        float hitZ = (float) (fakePlayer.posZ - pos.getZ());
+        BlockItemUseContext ctx = new BlockItemUseContext(world, fakePlayer, toPlace, pos, facing, hitX, hitY, hitZ);
         if (!currentState.isReplaceable(ctx)) {
             return null;
         }
 
-        fakePlayer.rotationYaw = getYawFromFacing(facing);
-
-        IBlockState newState = getPlaceableState(fakePlayer, toPlace, world, pos, facing, horizFacing);
-        if (newState != null && newState.isValidPosition(world, pos)) {
+        IBlockState newState = getPlaceableState(ctx);
+        if (newState != null) {
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
             BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer, EnumHand.MAIN_HAND);
@@ -181,9 +124,6 @@ public class BlockUtil {
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
                 ItemBlock.setTileEntityNBT(world, fakePlayer, pos, toPlace);
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
-//                if (newState.getBlock() == Blocks.SKULL) {
-//                    handleSkullPlacement(world, pos, toPlace, facing);
-//                }
                 return newState;
             }
         }
@@ -241,7 +181,7 @@ public class BlockUtil {
         if (te instanceof TileEntityShulkerBox) {
             TileEntityShulkerBox tesb = (TileEntityShulkerBox) te;
             if (!tesb.isCleared() && tesb.shouldDrop()) {
-                ItemStack itemstack = new ItemStack(Item.getItemFromBlock(world.getBlockState(pos).getBlock()));
+                ItemStack itemstack = new ItemStack(world.getBlockState(pos).getBlock().asItem());
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound.put("BlockEntityTag", tesb.saveToNbt(nbttagcompound1));
@@ -279,7 +219,7 @@ public class BlockUtil {
         if (state.getBlock().isAir(state, w, pos)) {
             return "";
         } else {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1);
+            ItemStack stack = new ItemStack(state.getBlock().asItem());
             if (!stack.isEmpty()) {
                 return stack.getDisplayName().getString();
             } else {
