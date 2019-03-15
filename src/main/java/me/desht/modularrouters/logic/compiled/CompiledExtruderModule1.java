@@ -23,6 +23,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import javax.annotation.Nonnull;
+
 public class CompiledExtruderModule1 extends CompiledModule {
     public static final String NBT_EXTRUDER_DIST = "ExtruderDist";
     private static final double BASE_PUSH_STRENGTH = 0.55;
@@ -40,7 +42,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         boolean extend = shouldExtend(router);
         World world = router.getWorld();
 

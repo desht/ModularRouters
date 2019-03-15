@@ -3,7 +3,6 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -17,8 +16,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
-import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
@@ -71,7 +70,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         EntityPlayer player = getPlayer();  // will be non-null if we get here
         IItemHandler itemHandler = getHandler(player);
         if (itemHandler == null) {
@@ -108,7 +107,7 @@ public class CompiledPlayerModule extends CompiledModule {
         return false;
     }
 
-    public EntityPlayer getPlayer() {
+    private EntityPlayer getPlayer() {
         return playerRef.get();
     }
 

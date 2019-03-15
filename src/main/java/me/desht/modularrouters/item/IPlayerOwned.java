@@ -10,7 +10,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.UUID;
 
 public interface IPlayerOwned {
-    public static final String NBT_OWNER = "Owner";
+    String NBT_OWNER = "Owner";
 
     default String getOwnerName(ItemStack stack) {
         if (!stack.hasTag() || !stack.getTag().contains(NBT_OWNER)) return null;

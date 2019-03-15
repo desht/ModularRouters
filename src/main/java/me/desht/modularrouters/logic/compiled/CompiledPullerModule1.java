@@ -8,13 +8,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
+
 public class CompiledPullerModule1 extends CompiledModule {
     public CompiledPullerModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         if (!router.isBufferFull()) {
             if (!validateRange(router, getTarget())) {
                 return false;
@@ -37,7 +39,7 @@ public class CompiledPullerModule1 extends CompiledModule {
         return true;
     }
 
-    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
+    void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
         // do nothing by default
     }
 }

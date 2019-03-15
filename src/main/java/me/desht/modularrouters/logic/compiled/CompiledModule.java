@@ -9,11 +9,7 @@ import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
-import me.desht.modularrouters.util.BlockUtil;
-import me.desht.modularrouters.util.HashableItemStackWrapper;
-import me.desht.modularrouters.util.HashableItemStackWrapper.CountedItemStacks;
-import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,13 +39,13 @@ public abstract class CompiledModule {
 
     /**
      * Base constructor for compiled modules.  This can be called for both installed and uninstalled modules;
-     * when the module is not installed in a router, null can be passed, and any subclasses must be able to handle
-     * a null router passed to the constructor.
+     * when the module is not installed in a router, null can be passed, and any subclass constructors must be able to
+     * handle a null router.
      *
-     * @param router router the module is instaled in, may be null for an unstalled module
+     * @param router router the module is installed in, may be null for an uninstalled module
      * @param stack item stack of the module item being compiled
      */
-    public CompiledModule(TileEntityItemRouter router, ItemStack stack) {
+    CompiledModule(@Nullable TileEntityItemRouter router, ItemStack stack) {
         if (!(stack.getItem() instanceof ItemModule)) {
             throw new IllegalArgumentException("expected module router module, got " + stack);
         }
@@ -71,16 +69,12 @@ public abstract class CompiledModule {
      * Execute this installed module.  When this is called, the router has already verified that the module has a
      * valid target, i.e. getTarget() will not return null.  This should only be called by the router.
      *
-     * @param router router the module is installed in, may not be null
+     * @param router router the module is installed in, may <strong>not</strong> be null
      * @return true if the module did some work, false otherwise
      */
-    public abstract boolean execute(TileEntityItemRouter router);
+    public abstract boolean execute(@Nonnull TileEntityItemRouter router);
 
-    public ItemModule getModule() {
-        return module;
-    }
-
-    public Filter getFilter() {
+    Filter getFilter() {
         return filter;
     }
 
@@ -94,11 +88,11 @@ public abstract class CompiledModule {
      *
      * @return the static target set up when the router was compiled
      */
-    public ModuleTarget getTarget() {
+    ModuleTarget getTarget() {
         return targets == null || targets.isEmpty() ? null : targets.get(0);
     }
 
-    public List<ModuleTarget> getTargets() {
+    List<ModuleTarget> getTargets() {
         return targets;
     }
 
@@ -108,7 +102,7 @@ public abstract class CompiledModule {
         return termination;
     }
 
-    public RouterRedstoneBehaviour getRedstoneBehaviour() {
+    RouterRedstoneBehaviour getRedstoneBehaviour() {
         return behaviour;
     }
 
@@ -116,7 +110,7 @@ public abstract class CompiledModule {
         return augmentCounter.getAugmentCount(ObjectRegistry.REGULATOR_AUGMENT) > 0 ? regulationAmount : 0;
     }
 
-    public int getAugmentCount(Item augmentType) {
+    int getAugmentCount(Item augmentType) {
         return augmentCounter.getAugmentCount(augmentType);
     }
 
@@ -172,7 +166,7 @@ public abstract class CompiledModule {
      * @param stack the module itemstack
      * @return a router target object
      */
-    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
         if (router == null || (module.isDirectional() && direction == RelativeDirection.NONE)) {
             return null;
         }
@@ -197,7 +191,7 @@ public abstract class CompiledModule {
      * @return number of items actually transferred
      */
     int transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
-        CountedItemStacks count = getRegulationAmount() > 0 ? CountedItemStacks.fromItemHandler(handler) : null;
+        CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, getItemsPerTick(router), count);
         if (wanted.isEmpty()) {
@@ -206,8 +200,7 @@ public abstract class CompiledModule {
 
         if (count != null) {
             // item regulation in force
-            HashableItemStackWrapper wrapper = new HashableItemStackWrapper(wanted);
-            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wrapper, 0) - getRegulationAmount()));
+            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
             if (wanted.isEmpty()) {
                 return 0;
             }
@@ -244,18 +237,16 @@ public abstract class CompiledModule {
         ItemStack result = ItemStack.EMPTY;
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
             // something in the router - try to pull more of that
-            result = stackInRouter.copy();
-            result.setCount(nToTake);
+            result = ItemHandlerHelper.copyStackWithSize(stackInRouter, nToTake);
         } else if (stackInRouter.isEmpty()) {
             // router empty - just pull the next item that passes the filter
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
                 if (!stack.isEmpty() && getFilter().test(stack)
-                        && (count == null || count.get(new HashableItemStackWrapper(stack)) > getRegulationAmount())) {
+                        && (count == null || count.getInt(stack) > getRegulationAmount())) {
                     setLastMatchPos(pos);
-                    result = stack.copy();
-                    result.setCount(nToTake);
+                    result = ItemHandlerHelper.copyStackWithSize(stack, nToTake);
                     break;
                 }
             }
@@ -288,15 +279,15 @@ public abstract class CompiledModule {
         return range;
     }
 
-    public int getRangeSquared() {
+    int getRangeSquared() {
         return rangeSquared;
     }
 
-    int getRangeModifier() {
+    private int getRangeModifier() {
         return getAugmentCount(ObjectRegistry.RANGE_UP_AUGMENT) - getAugmentCount(ObjectRegistry.RANGE_DOWN_AUGMENT);
     }
 
-    public EnumFacing getRouterFacing() {
+    EnumFacing getRouterFacing() {
         return routerFacing;
     }
 

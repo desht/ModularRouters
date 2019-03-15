@@ -17,6 +17,7 @@ public class BlockTemplateFrame extends BlockCamo {
 
     public BlockTemplateFrame() {
         super(Properties.create(Material.CRAFTED_SNOW));
+        // todo 1.13 extended block properties
 //        setDefaultState(((IExtendedBlockState) blockState.getBaseState()).withProperty(CAMOUFLAGE_STATE, null));
     }
 

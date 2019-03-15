@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -43,10 +42,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         }
     }
 
-    @Override
-    public boolean execute(TileEntityItemRouter router) {
-        return super.execute(router);
-    }
+    // execute() just uses the superclass method
 
     public DistributionStrategy getDistributionStrategy() {
         return distributionStrategy;

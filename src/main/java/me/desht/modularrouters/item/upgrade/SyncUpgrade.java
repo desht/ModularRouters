@@ -52,11 +52,8 @@ public class SyncUpgrade extends ItemUpgrade {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (hand != EnumHand.MAIN_HAND) {
-            return new ActionResult<>(EnumActionResult.PASS, stack);
-        }
         if (world.isRemote && !player.isSneaking()) {
-            ModularRouters.proxy.openSyncGui(stack);
+            ModularRouters.proxy.openSyncGui(stack, hand);
         } else if (player.isSneaking()) {
             if (!world.isRemote) {
                 setTunedValue(stack, world.rand.nextInt(ConfigHandler.ROUTER.baseTickRate.get()));

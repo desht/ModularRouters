@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
+
 public class CompiledDropperModule extends CompiledModule {
     private final int pickupDelay;  // ticks
 
@@ -18,7 +20,7 @@ public class CompiledDropperModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
         if (getFilter().test(stack) && isRegulationOK(router, false)) {
             int nItems = Math.min(getItemsPerTick(router), stack.getCount() - getRegulationAmount());
@@ -43,7 +45,7 @@ public class CompiledDropperModule extends CompiledModule {
         }
     }
 
-    protected void setupItemVelocity(TileEntityItemRouter router, EntityItem item) {
+    void setupItemVelocity(TileEntityItemRouter router, EntityItem item) {
         item.motionX = item.motionY = item.motionZ = 0.0;
     }
 }

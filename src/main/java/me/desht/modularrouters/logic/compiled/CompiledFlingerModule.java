@@ -14,6 +14,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.WorldServer;
 
+import javax.annotation.Nonnull;
+
 public class CompiledFlingerModule extends CompiledDropperModule {
     public static final String NBT_SPEED = "Speed";
     public static final String NBT_PITCH = "Pitch";
@@ -37,7 +39,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         boolean fired = super.execute(router);
 
         if (fired && ConfigHandler.MODULE.flingerEffects.get()) {

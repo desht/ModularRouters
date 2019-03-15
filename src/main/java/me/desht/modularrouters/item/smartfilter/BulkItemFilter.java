@@ -13,9 +13,9 @@ import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import me.desht.modularrouters.util.HashableItemStackWrapper;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,15 +30,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BulkItemFilter extends ItemSmartFilter {
     public static final int FILTER_SIZE = 54;
-    private static final Flags DEF_FLAGS = new Flags((byte) 0x00);
 
     public BulkItemFilter(Properties props) {
         super(props);
@@ -46,17 +44,17 @@ public class BulkItemFilter extends ItemSmartFilter {
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
-        Flags flags = moduleStack.isEmpty() ? DEF_FLAGS : new Flags(moduleStack);
-        Set<HashableItemStackWrapper> stacks = getFilterItems(filterStack, flags);
+        Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
+        SetofItemStack stacks = getFilterItems(filterStack, flags);
         return new BulkItemMatcher(stacks, flags);
     }
 
-    private static Set<HashableItemStackWrapper> getFilterItems(ItemStack filterStack, Flags flags) {
+    private static SetofItemStack getFilterItems(ItemStack filterStack, Flags flags) {
         if (filterStack.hasTag()) {
             BulkFilterHandler handler = new BulkFilterHandler(filterStack);
-            return HashableItemStackWrapper.makeSet(handler, flags);
+            return SetofItemStack.fromItemHandler(handler, flags);
         } else {
-            return Collections.emptySet();
+            return new SetofItemStack(Flags.DEFAULT_FLAGS);
         }
     }
 
@@ -106,19 +104,21 @@ public class BulkItemFilter extends ItemSmartFilter {
 
     @Override
     public GuiSyncMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
-        ContainerBulkItemFilter con = player.openContainer instanceof ContainerBulkItemFilter ?
-                (ContainerBulkItemFilter) player.openContainer : null;
-        Flags flags = moduleStack.isEmpty() ? DEF_FLAGS : new Flags(moduleStack);
+        if (!(player.openContainer instanceof ContainerBulkItemFilter)) {
+            return null;
+        }
 
+        ContainerBulkItemFilter con = (ContainerBulkItemFilter) player.openContainer;
+        Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
         switch (message.getOp()) {
             case CLEAR_ALL:
-                if (con != null) con.clearSlots();
+                con.clearSlots();
                 break;
             case MERGE:
-                if (con != null) con.mergeInventory(message.getTargetInventory(), flags, false);
+                con.mergeInventory(message.getTargetInventory(), flags, false);
                 break;
             case LOAD:
-                if (con != null) con.mergeInventory(message.getTargetInventory(), flags, true);
+                con.mergeInventory(message.getTargetInventory(), flags, true);
                 break;
             default:
                 ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
@@ -138,21 +138,19 @@ public class BulkItemFilter extends ItemSmartFilter {
     }
 
     private int mergeInventory(ItemStack filterStack, IItemHandler srcInventory) {
-        Set<HashableItemStackWrapper> stacks = getFilterItems(filterStack, DEF_FLAGS);
+        SetofItemStack stacks = getFilterItems(filterStack, Flags.DEFAULT_FLAGS);
         int origSize = stacks.size();
 
         for (int i = 0; i < srcInventory.getSlots() && stacks.size() < FILTER_SIZE; i++) {
             ItemStack stack = srcInventory.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                ItemStack stack1 = stack.copy();
-                stack1.setCount(1);
-                stacks.add(new HashableItemStackWrapper(stack1, DEF_FLAGS));
+                stacks.add(ItemHandlerHelper.copyStackWithSize(stack, 1));
             }
         }
 
         BulkFilterHandler handler = new BulkFilterHandler(filterStack);
         int slot = 0;
-        for (ItemStack stack : stacks.stream().sorted().map(HashableItemStackWrapper::getStack).collect(Collectors.toList())) {
+        for (ItemStack stack : stacks.stream().sorted().collect(Collectors.toList())) {
             handler.setStackInSlot(slot++, stack);
         }
         handler.save();

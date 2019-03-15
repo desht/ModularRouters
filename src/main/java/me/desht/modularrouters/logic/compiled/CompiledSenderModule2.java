@@ -45,7 +45,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
 
     }
 
-    public boolean isRangeLimited() {
+    boolean isRangeLimited() {
         return true;
     }
 

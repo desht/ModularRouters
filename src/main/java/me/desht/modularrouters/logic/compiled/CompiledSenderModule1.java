@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 public class CompiledSenderModule1 extends CompiledModule {
@@ -29,7 +30,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         IItemHandler buffer = router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
         if (getFilter().test(bufferStack)) {
@@ -57,7 +58,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         return false;
     }
 
-    protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
+    void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
         if (router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).add(0.5, 0.5, 0.5);
             Vec3d vec2 = new Vec3d(targetPos).add(0.5, 0.5, 0.5);
@@ -67,7 +68,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         }
     }
 
-    protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
+    PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
         ModuleTarget target = getActualTarget(router);
         if (target != null) {
             IItemHandler handler = target.getItemHandler();

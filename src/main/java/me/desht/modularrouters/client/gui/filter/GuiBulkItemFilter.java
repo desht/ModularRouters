@@ -63,9 +63,6 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
         }
         if (tracker.getModuleSlot() >= 0 && router != null) {
             ItemStack moduleStack = tracker.getConfiguringModule(router);
-//                ItemStack moduleStack = router.getModules().getStackInSlot(moduleSlotIndex);
-//                ItemModule m = (ItemModule) moduleStack.getItem();
-//                Module m = ItemModule.getModule(moduleStack);
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getActualTarget(router);
             // This should work even if the target is in another dimension, since the target name

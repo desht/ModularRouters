@@ -230,14 +230,6 @@ public class ObjectRegistry {
         registerObj(event.getRegistry(), new SoundEvent(RL("success")), RL("success"));
         registerObj(event.getRegistry(), new SoundEvent(RL("thud")), RL("thud"));
     }
-//    @SubscribeEvent
-//    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-//        event.getRegistry().registerAll(
-//                new SoundEvent(RL("error")).setRegistryName("error"),
-//                new SoundEvent(RL("success")).setRegistryName("success"),
-//                new SoundEvent(RL("thud")).setRegistryName("thud")
-//        );
-//    }
 
     @SubscribeEvent
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {

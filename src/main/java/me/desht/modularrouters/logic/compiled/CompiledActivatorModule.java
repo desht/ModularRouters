@@ -26,6 +26,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         World world = router.getWorld();
         BlockPos pos = router.getPos();
 
@@ -86,7 +87,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
         switch (actionType) {
             case ACTIVATE_BLOCK:
-                return doActivateBlock(router, world, pos, fakePlayer, hitX, hitY, hitZ);
+                return doActivateBlock(router, world, fakePlayer, hitX, hitY, hitZ);
             case USE_ITEM:
                 return doUseItem(router, world, pos, fakePlayer, hitX, hitY, hitZ);
             case USE_ITEM_ON_ENTITY:
@@ -180,7 +181,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    private boolean doActivateBlock(TileEntityItemRouter router, World world, BlockPos pos, EntityPlayer fakePlayer, float hitX, float hitY, float hitZ) {
+    private boolean doActivateBlock(TileEntityItemRouter router, World world, EntityPlayer fakePlayer, float hitX, float hitY, float hitZ) {
         BlockPos targetPos = findBlockToActivate(router);
         if (targetPos == null) {
             return false;

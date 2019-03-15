@@ -10,13 +10,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class CompiledPlacerModule extends CompiledModule {
     public CompiledPlacerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         if (!isRegulationOK(router, false)) {
             return false;
         }

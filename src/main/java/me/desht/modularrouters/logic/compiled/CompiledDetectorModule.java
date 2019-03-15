@@ -6,6 +6,8 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nonnull;
+
 public class CompiledDetectorModule extends CompiledModule {
     public static final String NBT_SIGNAL_LEVEL = "SignalLevel";
     public static final String NBT_STRONG_SIGNAL = "StrongSignal";
@@ -27,7 +29,7 @@ public class CompiledDetectorModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
 
         if (!getFilter().test(stack)) {

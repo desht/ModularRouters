@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
-import me.desht.modularrouters.util.HashableItemStackWrapper;
+import me.desht.modularrouters.util.SetofItemStack;
 import me.desht.modularrouters.util.TagOwnerTracker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
@@ -12,22 +12,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BulkItemMatcher implements IItemMatcher {
-    private final Set<HashableItemStackWrapper> stacks;
+    private final SetofItemStack stacks;
     private final Set<ResourceLocation> tags;
 
-    public BulkItemMatcher(Set<HashableItemStackWrapper> stacks, Flags flags) {
+    public BulkItemMatcher(SetofItemStack stacks, Flags flags) {
         this.stacks = stacks;
         this.tags = Sets.newHashSet();
         if (!flags.isIgnoreTags()) {
-            for (HashableItemStackWrapper hStack : stacks) {
-                tags.addAll(TagOwnerTracker.getInstance().getOwningTags(ItemTags.getCollection(), hStack.getStack().getItem()));
+            for (ItemStack stack : stacks) {
+                tags.addAll(TagOwnerTracker.getInstance().getOwningTags(ItemTags.getCollection(), stack.getItem()));
             }
         }
     }
 
     @Override
     public boolean matchItem(ItemStack stack, Flags flags) {
-        if (stacks.contains(new HashableItemStackWrapper(stack, flags))) {
+        if (stacks.contains(stack)) {
             return true;
         } else {
             return !flags.isIgnoreTags() && matchTags(stack);

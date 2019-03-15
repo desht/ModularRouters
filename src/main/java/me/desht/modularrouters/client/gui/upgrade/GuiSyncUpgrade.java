@@ -13,6 +13,7 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -28,10 +29,12 @@ public class GuiSyncUpgrade extends GuiScreenBase {
 
     private int xPos, yPos;
     private int tunedValue;
+    private final EnumHand hand;
 
-    public GuiSyncUpgrade(ItemStack upgradeStack) {
+    public GuiSyncUpgrade(ItemStack upgradeStack, EnumHand hand) {
         this.title = upgradeStack.getDisplayName().getString();
         this.tunedValue = SyncUpgrade.getTunedValue(upgradeStack);
+        this.hand = hand;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
 
     @Override
     protected void sendSettingsToServer() {
-        PacketHandler.NETWORK.sendToServer(new SyncUpgradeSettingsMessage(tunedValue));
+        PacketHandler.NETWORK.sendToServer(new SyncUpgradeSettingsMessage(tunedValue, hand));
     }
 
     private static class TooltipButton extends ItemStackButton {

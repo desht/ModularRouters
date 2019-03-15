@@ -12,6 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import javax.annotation.Nonnull;
+
 public class CompiledBreakerModule extends CompiledModule {
     private final boolean silkTouch;
     private final int fortune;
@@ -24,7 +26,7 @@ public class CompiledBreakerModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         if (isRegulationOK(router, true)) {
             World world = router.getWorld();
             if (!(world instanceof WorldServer)) {

@@ -9,16 +9,21 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+/**
+ * Received on: SERVER
+ *
+ * Sent by client when a new tuning value is entered via Sync Upgrade GUI
+ */
 public class SyncUpgradeSettingsMessage {
     private int tunedValue;
-    private EnumHand hand; // TODO offhand not supported yet
+    private EnumHand hand;
 
     public SyncUpgradeSettingsMessage() {
     }
 
-    public SyncUpgradeSettingsMessage(int tunedValue) {
+    public SyncUpgradeSettingsMessage(int tunedValue, EnumHand hand) {
         this.tunedValue = tunedValue;
-        this.hand = EnumHand.MAIN_HAND;
+        this.hand = hand;
     }
 
     public SyncUpgradeSettingsMessage(ByteBuf buf) {

@@ -49,7 +49,6 @@ public class MiscUtil {
     }
 
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
-//        ITextComponent raw = translate(key, args);
         for (String s : I18n.format(key, args).split("\\\\n")) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
                 ITextComponent textComponent = new TextComponentString(s1);

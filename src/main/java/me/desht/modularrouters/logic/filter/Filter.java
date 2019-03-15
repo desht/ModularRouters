@@ -75,7 +75,7 @@ public class Filter implements Predicate<ItemStack> {
             }
         }
 
-        // no matches: test if this is a blacklist, fail if a whitelist
+        // no matches: test succeeds if this is a blacklist, fails if a whitelist
         return flags.isBlacklist();
     }
 

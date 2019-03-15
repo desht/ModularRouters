@@ -87,7 +87,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 //    private final int[] upgradeCount = new int[UpgradeType.values().length];
     private final Map<ResourceLocation, Integer> upgradeCount = new HashMap<>();
     private int totalUpgradeCount;
-    private int moduleCount;
 
     private int fluidTransferRate;  // mB/t
     private int fluidTransferRemainingIn = 0;
@@ -444,7 +443,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
                     newSidesOpen |= cms.getDirection().getMask();
                 }
             }
-            moduleCount = compiledModules.size();
             setSidesOpen(newSidesOpen);
         }
     }
@@ -491,10 +489,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     public void setAllowRedstoneEmission(boolean allow) {
         canEmit = allow;
         getWorld().setBlockState(pos, getWorld().getBlockState(pos).with(BlockItemRouter.CAN_EMIT, canEmit));
-    }
-
-    public int getModuleCount() {
-        return moduleCount;
     }
 
     public int getUpgradeCount() {
@@ -552,50 +546,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     public ItemStack getBufferItemStack() {
         return bufferHandler.getStackInSlot(0);
     }
-
-//    public void playerConfiguringModule(EntityPlayer player, int slotIndex, int filterIndex) {
-//        if (slotIndex >= 0) {
-//            playerToSlot.put(player.getUniqueID(), Pair.of(slotIndex, filterIndex));
-//        } else {
-//            playerToSlot.remove(player.getUniqueID());
-//        }
-//    }
-//
-//    public void playerConfiguringModule(EntityPlayer player, int slotIndex) {
-//        playerConfiguringModule(player, slotIndex, -1);
-//    }
-//
-//    public void clearConfigSlot(EntityPlayer player) {
-//        playerToSlot.remove(player.getUniqueID());
-//    }
-//
-//    public int getModuleConfigSlot(EntityPlayer player) {
-//        if (playerToSlot.containsKey(player.getUniqueID())) {
-//            return playerToSlot.get(player.getUniqueID()).getLeft();
-//        } else {
-//            return -1;
-//        }
-//    }
-//
-//    public int getFilterConfigSlot(EntityPlayer player) {
-//        if (playerToSlot.containsKey(player.getUniqueID())) {
-//            return playerToSlot.get(player.getUniqueID()).getRight();
-//        } else {
-//            return -1;
-//        }
-//    }
-//
-//    public ItemStack getConfiguringModule(EntityPlayer player) {
-//        return playerToSlot.containsKey(player.getUniqueID()) ?
-//                modulesHandler.getStackInSlot(playerToSlot.get(player.getUniqueID()).getLeft()) : ItemStack.EMPTY;
-//    }
-//
-//    public ItemStack getConfiguringFilter(EntityPlayer player) {
-//        ItemStack stack = getConfiguringModule(player);
-//        if (stack.isEmpty()) return ItemStack.EMPTY;
-//        int filterIdx = getFilterConfigSlot(player);
-//        return filterIdx < 0 ? ItemStack.EMPTY : new BaseModuleHandler.ModuleFilterHandler(stack).getStackInSlot(filterIdx);
-//    }
 
     public void checkForRedstonePulse() {
         redstonePower = calculateIncomingRedstonePower(pos);
@@ -822,5 +772,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     @Override
     public ITextComponent getCustomName() {
         return null;
+    }
+
+    public int getModuleCount() {
+        return compiledModules.size();
     }
 }

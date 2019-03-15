@@ -37,7 +37,6 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
         SlotTracker.getInstance(mc.player).clearFilterSlot();
         if (router != null) {
             // need to re-open module GUI for module in router slot <moduleSlotIndex>
-//          router.playerConfiguringModule(mc.player, moduleSlotIndex);
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), SlotTracker.getInstance(mc.player).getModuleSlot()));
             return true;
         } else if (hand != null) {

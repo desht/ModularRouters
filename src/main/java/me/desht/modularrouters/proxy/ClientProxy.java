@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 public class ClientProxy implements IProxy {
@@ -73,7 +74,7 @@ public class ClientProxy implements IProxy {
     }
 
     @Override
-    public void openSyncGui(ItemStack stack) {
-        Minecraft.getInstance().displayGuiScreen(new GuiSyncUpgrade(stack));
+    public void openSyncGui(ItemStack stack, EnumHand hand) {
+        Minecraft.getInstance().displayGuiScreen(new GuiSyncUpgrade(stack, hand));
     }
 }

@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 /**
  * Received on: SERVER
  *
- * Used when a player updates the flags on a router module via its GUI.
+ * Sent by client when a player updates a module's settings via its GUI.
  */
 public class ModuleSettingsMessage extends BaseSettingsMessage {
     public ModuleSettingsMessage() {

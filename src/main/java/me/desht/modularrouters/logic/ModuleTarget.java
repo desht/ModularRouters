@@ -69,10 +69,6 @@ public class ModuleTarget {
             return null;
         }
         return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face).orElse(null);
-//        if (te == null || !te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)) {
-//            return null;
-//        }
-//        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
     }
     
     @Override

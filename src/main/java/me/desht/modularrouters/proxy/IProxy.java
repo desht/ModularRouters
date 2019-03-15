@@ -3,6 +3,7 @@ package me.desht.modularrouters.proxy;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 public interface IProxy {
@@ -23,5 +24,5 @@ public interface IProxy {
 
     EntityPlayer getClientPlayer();
 
-    void openSyncGui(ItemStack stack);
+    void openSyncGui(ItemStack stack, EnumHand hand);
 }

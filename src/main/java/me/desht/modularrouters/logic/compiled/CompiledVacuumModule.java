@@ -6,8 +6,6 @@ import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.network.PushEntityMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.item.EntityItem;
@@ -26,9 +24,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +47,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private int xpBuffered = 0;
 
     // form in which to collect XP orbs
-    private XPCollectionType xpCollectionType;
+    private final XPCollectionType xpCollectionType;
 
     public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
@@ -72,7 +70,7 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(TileEntityItemRouter router) {
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
         if (xpMode) {
             return handleXpMode(router);
         } else {

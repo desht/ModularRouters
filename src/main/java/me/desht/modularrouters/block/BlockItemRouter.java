@@ -43,6 +43,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
@@ -140,7 +142,6 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest, IFluidState fluid) {
         // If it will harvest, delay deletion of the block until after getDrops
-        // TODO 1.13 willHarvest is always false - https://github.com/MinecraftForge/MinecraftForge/issues/5570
         return willHarvest || super.removedByPlayer(state, world, pos, player, false, fluid);
     }
 
@@ -157,10 +158,9 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
         if (router != null) {
             if (router.getModuleCount() > 0 || router.getUpgradeCount() > 0 || router.getRedstoneBehaviour() != RouterRedstoneBehaviour.ALWAYS) {
                 NBTTagCompound compound = stack.getOrCreateTag();
-                compound.put(NBT_MODULES, ((ItemStackHandler) router.getModules()).serializeNBT());
-                compound.put(NBT_UPGRADES, ((ItemStackHandler) router.getUpgrades()).serializeNBT());
+                if (router.getModuleCount() > 0) compound.put(NBT_MODULES, ((ItemStackHandler) router.getModules()).serializeNBT());
+                if (router.getUpgradeCount() > 0) compound.put(NBT_UPGRADES, ((ItemStackHandler) router.getUpgrades()).serializeNBT());
                 compound.putString(NBT_REDSTONE_BEHAVIOUR, router.getRedstoneBehaviour().toString());
-                compound.putInt(NBT_MODULE_COUNT, router.getModuleCount());
             }
         }
         drops.add(stack);
@@ -172,29 +172,57 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
         NBTTagCompound compound = stack.getTag();
         if (compound == null) return;
 
+        tooltip.add(new TextComponentTranslation("itemText.misc.routerConfigured")
+                .applyTextStyles(TextFormatting.GRAY, TextFormatting.ITALIC));
         if (compound.contains(NBT_MODULES)) {
-            tooltip.add(new TextComponentTranslation("itemText.misc.routerConfigured"));
-            int modules = compound.getInt(NBT_MODULE_COUNT);
-            tooltip.add(new TextComponentTranslation("itemText.misc.moduleCount", modules));
-            if (modules > 0) {
-                ItemStackHandler modulesHandler = new ItemStackHandler(9);
-                modulesHandler.deserializeNBT(compound.getCompound(NBT_MODULES));
-                for (int i = 0; i < modulesHandler.getSlots(); i++) {
-                    ItemStack moduleStack = modulesHandler.getStackInSlot(i);
-                    if (!moduleStack.isEmpty()) {
-                        tooltip.add(new TextComponentString(TextFormatting.AQUA + "\u2022 ").appendSibling(moduleStack.getDisplayName()));
-                    }
+            List<ITextComponent> moduleText = new ArrayList<>();
+            ItemStackHandler modulesHandler = new ItemStackHandler(9);
+            modulesHandler.deserializeNBT(compound.getCompound(NBT_MODULES));
+            for (int i = 0; i < modulesHandler.getSlots(); i++) {
+                ItemStack moduleStack = modulesHandler.getStackInSlot(i);
+                if (!moduleStack.isEmpty()) {
+                    moduleText.add(new TextComponentString("\u2022 ")
+                            .appendSibling(moduleStack.getDisplayName())
+                            .applyTextStyle(TextFormatting.AQUA)
+                    );
                 }
+            }
+            if (!moduleText.isEmpty()) {
+                tooltip.add(new TextComponentTranslation("itemText.misc.moduleCount",
+                        moduleText.size()).applyTextStyles(TextFormatting.YELLOW));
+                tooltip.addAll(moduleText);
             }
         }
         if (compound.contains(NBT_UPGRADES)) {
             ItemStackHandler upgradesHandler = new ItemStackHandler();
             upgradesHandler.deserializeNBT(compound.getCompound(NBT_UPGRADES));
+            List<ITextComponent> upgradeText = new ArrayList<>();
             for (int i = 0; i < upgradesHandler.getSlots(); i++) {
                 ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
                 if (!upgradeStack.isEmpty()) {
-                    tooltip.add(new TextComponentString(TextFormatting.GOLD + "\u2022 " + upgradeStack.getCount() + " x ").appendSibling(upgradeStack.getDisplayName()));
+                    upgradeText.add(new TextComponentString("\u2022 " + upgradeStack.getCount() + " x ")
+                            .appendSibling(upgradeStack.getDisplayName())
+                            .applyTextStyle(TextFormatting.AQUA)
+                    );
                 }
+            }
+            if (!upgradeText.isEmpty()) {
+                tooltip.add(new TextComponentTranslation("itemText.misc.upgradeCount",
+                        upgradeText.size()).applyTextStyles(TextFormatting.YELLOW));
+                tooltip.addAll(upgradeText);
+            }
+        }
+        if (compound.contains(NBT_REDSTONE_BEHAVIOUR)) {
+            try {
+                RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_BEHAVIOUR));
+                tooltip.add(new TextComponentTranslation("guiText.tooltip.redstone.label")
+                        .appendText(": ")
+                        .applyTextStyle(TextFormatting.YELLOW)
+                        .appendSibling(new TextComponentTranslation("guiText.tooltip.redstone." + rrb)
+                        .applyTextStyle(TextFormatting.RED))
+                );
+            } catch (IllegalArgumentException ignored) {
+                // bad value for NBT_REDSTONE_BEHAVIOUR tag
             }
         }
     }
