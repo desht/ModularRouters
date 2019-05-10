@@ -54,7 +54,6 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
 
     private static final String NBT_MODULES = "Modules";
     private static final String NBT_UPGRADES = "Upgrades";
-    private static final String NBT_MODULE_COUNT = "ModuleCount";
     private static final String NBT_REDSTONE_BEHAVIOUR = "RedstoneBehaviour";
 
     public BlockItemRouter() {
@@ -63,13 +62,6 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
                 .sound(SoundType.METAL));
         setDefaultState(this.getStateContainer().getBaseState()
                 .with(FACING, EnumFacing.NORTH).with(ACTIVE, false).with(CAN_EMIT, false));
-
-        // todo 1.13 extended blockstates not working yet
-//        setDefaultState(((IExtendedBlockState) blockState.getBaseState())
-//                .withProperty(CAMOUFLAGE_STATE, null)
-//                .withProperty(ACTIVE, false)
-//                .withProperty(CAN_EMIT, false)
-//        );
     }
 
     @Override
@@ -110,7 +102,6 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
         return new TileEntityItemRouter();
     }
 
-
     @Override
     public void onReplaced(IBlockState state, World world, BlockPos pos, IBlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
@@ -141,14 +132,8 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
 
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest, IFluidState fluid) {
-        // If it will harvest, delay deletion of the block until after getDrops
+        // If it will harvest, delay deletion of the block until after getDrops()
         return willHarvest || super.removedByPlayer(state, world, pos, player, false, fluid);
-    }
-
-    @Override
-    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack) {
-        super.harvestBlock(world, player, pos, state, te, stack);
-        world.removeBlock(pos);
     }
 
     @Override
@@ -164,6 +149,12 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
             }
         }
         drops.add(stack);
+    }
+
+    @Override
+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack) {
+        super.harvestBlock(world, player, pos, state, te, stack);
+        world.removeBlock(pos);
     }
 
     @Override
@@ -233,7 +224,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
             TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
             if (router != null) {
                 if (router.isPermitted(player) && !world.isRemote) {
-                    NetworkHooks.openGui((EntityPlayerMP) player, router, buf -> buf.writeBlockPos(pos));
+                    NetworkHooks.openGui((EntityPlayerMP) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
                     player.sendStatusMessage(new TextComponentTranslation("chatText.security.accessDenied"), false);
                     player.playSound(ObjectRegistry.SOUND_ERROR, 1.0f, 1.0f);

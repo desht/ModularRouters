@@ -2,6 +2,7 @@ package me.desht.modularrouters.block.tile;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerItemRouter;
@@ -34,6 +35,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IInteractionObject;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -84,7 +87,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private int tickRate = ConfigHandler.ROUTER.baseTickRate.get();
     private int itemsPerTick = 1;
-//    private final int[] upgradeCount = new int[UpgradeType.values().length];
     private final Map<ResourceLocation, Integer> upgradeCount = new HashMap<>();
     private int totalUpgradeCount;
 
@@ -99,24 +101,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private final SignalType[] signalType = new SignalType[SIDES];
     private final SignalType[] newSignalType = new SignalType[SIDES];
     private boolean canEmit, prevCanEmit; // used if 1 or more detector modules are installed
-
-    // when a player wants to configure an installed module, this tracks the module & filter slot
-    // numbers received from the client-side GUI for that player
-//    private final Map<UUID, Pair<Integer, Integer>> playerToSlot = new HashMap<>();
-
     private int redstonePower = -1;  // current redstone power (updated via onNeighborChange())
-    private int lastPower;  // tracks previous redstone power level for pulse mode
-    private boolean active;  // tracks active state of router
-    private int activeTimer = 0;  // used in PULSE mode to time out the active state
+    private int lastPower;           // tracks previous redstone power level for pulse mode
+    private boolean active;          // tracks active state of router
+    private int activeTimer = 0;     // used in PULSE mode to time out the active state
     private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
-    private byte sidesOpen;   // bitmask of which of the 6 sides are currently open
+    private byte sidesOpen;          // bitmask of which of the 6 sides are currently open
     private boolean ecoMode = false;  // track eco-mode
     private int ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
     private boolean hasPulsedModules = false;
     private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
     private IBlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
-    private boolean executing;  // are we currently executing modules?
+    private boolean executing;       // are we currently executing modules?
 
     public TileEntityItemRouter() {
         super(ObjectRegistry.ITEM_ROUTER_TILE);
@@ -262,6 +259,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         }
 
         if (getWorld().isRemote) {
+            if (counter == 0) requestModelDataUpdate();
             return;
         }
 
@@ -350,7 +348,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
-//            handleSync(true);
             world.setBlockState(getPos(), getBlockState().with(BlockItemRouter.ACTIVE, newActive), 2);
         }
     }
@@ -370,7 +367,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         if (newEco != ecoMode) {
             ecoMode = newEco;
             ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
-//            handleSync(false);
         }
     }
 
@@ -393,8 +389,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         if (!getWorld().isRemote) {
             getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
         } else if (getWorld().isRemote && renderUpdate) {
+            requestModelDataUpdate();
             getWorld().markBlockRangeForRenderUpdate(pos, pos);
         }
+    }
+
+    @Nonnull
+    @Override
+    public IModelData getModelData() {
+        return new ModelDataMap.Builder()
+                .withInitial(BlockCamo.BLOCK_ACCESS, world)
+                .withInitial(BlockCamo.BLOCK_POS, pos)
+                .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
+                .build();
     }
 
     /**
@@ -717,9 +724,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     public static TileEntityItemRouter getRouterAt(IBlockReader world, BlockPos routerPos) {
-//        TileEntity te = world instanceof ChunkCache ?
-//                ((ChunkCache) world).getTileEntity(routerPos, Chunk.EnumCreateEntityType.CHECK) :
-//                world.getTileEntity(routerPos);
         TileEntity te = world.getTileEntity(routerPos);
         return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
     }

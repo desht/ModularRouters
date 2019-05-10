@@ -2,7 +2,6 @@ package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.PropertyObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -11,15 +10,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
 //@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 public abstract class BlockCamo extends Block /*implements IFacade*/ {
-    public static final PropertyObject<IBlockState> CAMOUFLAGE_STATE = new PropertyObject<>("held_state", IBlockState.class);
-    public static final PropertyObject<IBlockReader> BLOCK_ACCESS = new PropertyObject<>("held_access", IBlockReader.class);
-    public static final PropertyObject<BlockPos> BLOCK_POS = new PropertyObject<>("held_pos", BlockPos.class);
+    public static final ModelProperty<IBlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
+    public static final ModelProperty<IBlockReader> BLOCK_ACCESS = new ModelProperty<>();
+    public static final ModelProperty<BlockPos> BLOCK_POS = new ModelProperty<>();
 
 //    BlockCamo(Material materialIn, String blockName) {
 //        super(materialIn, blockName);

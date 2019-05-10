@@ -3,7 +3,6 @@ package me.desht.modularrouters.util;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -118,7 +117,7 @@ public class BlockUtil {
         if (newState != null) {
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
             fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
-            BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer, EnumHand.MAIN_HAND);
+            BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState, 3)) {
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);

@@ -14,8 +14,10 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +30,7 @@ import java.util.Random;
  *
  * https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/model/PlatformModel.java
  */
-public abstract class CamouflagingModel implements IBakedModel {
+public abstract class CamouflagingModel implements IDynamicBakedModel {
     private final IBakedModel baseModel;
 
     CamouflagingModel(IBakedModel baseModel) {
@@ -36,16 +38,15 @@ public abstract class CamouflagingModel implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand) {
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand, IModelData modelData) {
         if (state == null || !(state.getBlock() instanceof BlockCamo)) {
-            return baseModel.getQuads(state, side, rand);
+            return baseModel.getQuads(state, side, rand, modelData);
         }
-        IExtendedBlockState ext = (IExtendedBlockState) state;
-        IBlockState camoState = ext.getValue(BlockCamo.CAMOUFLAGE_STATE);
-        IBlockReader blockAccess = ext.getValue(BlockCamo.BLOCK_ACCESS);
-        BlockPos pos = ext.getValue(BlockCamo.BLOCK_POS);
+        IBlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
+        IBlockReader blockAccess = modelData.getData(BlockCamo.BLOCK_ACCESS);
+        BlockPos pos = modelData.getData(BlockCamo.BLOCK_POS);
         if (blockAccess == null || pos == null) {
-            return baseModel.getQuads(state, side, rand);
+            return baseModel.getQuads(state, side, rand, modelData);
         }
 
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
@@ -54,7 +55,7 @@ public abstract class CamouflagingModel implements IBakedModel {
         }
         if (camoState == null && layer == BlockRenderLayer.SOLID) {
             // No camo
-            return baseModel.getQuads(state, side, rand);
+            return baseModel.getQuads(state, side, rand, modelData);
         } else if (camoState != null && camoState.getBlock().canRenderInLayer(camoState, layer)) {
 //            IBlockState actual = camoState.getBlock().getActualState(camoState, new FakeBlockAccess(blockAccess), pos);
 
@@ -63,10 +64,16 @@ public abstract class CamouflagingModel implements IBakedModel {
 
             // Their model can be smart too
             IBlockState extended = camoState.getBlock().getExtendedState(camoState, new FakeBlockAccess(blockAccess), pos);
-            return model.getQuads(extended, side, rand);
+            return model.getQuads(extended, side, rand, modelData);
         }
 
         return ImmutableList.of(); // Nothing renders
+    }
+
+    @Nonnull
+    @Override
+    public IModelData getModelData(@Nonnull IWorldReader world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull IModelData tileData) {
+        return tileData;
     }
 
     @Override
@@ -112,11 +119,6 @@ public abstract class CamouflagingModel implements IBakedModel {
             return compose.getTileEntity(pos);
         }
 
-//        @Override
-//        public int getCombinedLight(@Nonnull BlockPos pos, int lightValue) {
-//            return 15 << 20 | 15 << 4;
-//        }
-
         @Nonnull
         @Override
         public IBlockState getBlockState(@Nonnull BlockPos pos) {
@@ -130,51 +132,23 @@ public abstract class CamouflagingModel implements IBakedModel {
             return state == null ? Blocks.AIR.getDefaultState() : state;
         }
 
+        @Nonnull
         @Override
-        public IFluidState getFluidState(BlockPos blockPos) {
-            IFluidState state = compose.getFluidState(blockPos);
+        public IFluidState getFluidState(@Nonnull BlockPos blockPos) {
             // todo test for 1.13
-            return state;
+            return compose.getFluidState(blockPos);
         }
 
-//        @Override
-//        public boolean isAirBlock(@Nonnull BlockPos pos) {
-//            return compose.isAirBlock(pos);
-//        }
-//
-//        @Nonnull
-//        @Override
-//        public Biome getBiome(@Nonnull BlockPos pos) {
-//            return compose.getBiome(pos);
-//        }
-//
-//        @Override
-//        public int getStrongPower(@Nonnull BlockPos pos, @Nonnull EnumFacing direction) {
-//            return compose.getStrongPower(pos, direction);
-//        }
-//
-//        @Override
-//        public WorldType getWorldType() {
-//            return compose.getWorldType();
-//        }
-//
-//        @Override
-//        public boolean isSideSolid(@Nonnull BlockPos pos, @Nonnull EnumFacing side, boolean _default) {
-//            return compose.isSideSolid(pos, side, _default);
-//        }
     }
 
-    public static class RouterModel extends CamouflagingModel {
-        public RouterModel(IBakedModel baseModel) {
+    static class RouterModel extends CamouflagingModel {
+        RouterModel(IBakedModel baseModel) {
             super(baseModel);
         }
     }
 
-    public static class TemplateFrameModel extends CamouflagingModel {
-        public static final ModelResourceLocation VARIANT_TAG
-                = new ModelResourceLocation("modularrouters:templateFrame", "normal");
-
-        public TemplateFrameModel(IBakedModel baseModel) {
+    static class TemplateFrameModel extends CamouflagingModel {
+        TemplateFrameModel(IBakedModel baseModel) {
             super(baseModel);
         }
     }

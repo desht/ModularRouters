@@ -79,6 +79,7 @@ public class ModularRouters {
             MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
 
             Keybindings.registerKeyBindings();
+
         }
 
         static void registerRenders(ModelRegistryEvent event) {
