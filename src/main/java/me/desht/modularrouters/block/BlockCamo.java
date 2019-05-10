@@ -3,13 +3,17 @@ package me.desht.modularrouters.block;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.ToolType;
 
@@ -21,26 +25,8 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public static final ModelProperty<IBlockReader> BLOCK_ACCESS = new ModelProperty<>();
     public static final ModelProperty<BlockPos> BLOCK_POS = new ModelProperty<>();
 
-//    BlockCamo(Material materialIn, String blockName) {
-//        super(materialIn, blockName);
-//    }
-
     BlockCamo(Properties props) {
         super(props);
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockReader world, BlockPos pos) {
-        ICamouflageable camo = getCamoState(world, pos);
-        if (camo == null) return state;
-
-        // todo 1.13 figure out extended states
-        return state;
-//        IBlockState camoState = camo.getCamouflage()/*.getActualState(world, pos)*/;
-//        return ((IExtendedBlockState) state)
-//                .withProperty(CAMOUFLAGE_STATE, camoState)
-//                .withProperty(BLOCK_ACCESS, world)
-//                .withProperty(BLOCK_POS, pos);
     }
 
     @Override
@@ -65,8 +51,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
         return camo != null ? camo.getCamouflage().getShape(reader, pos) : super.getShape(state, reader, pos);
     }
 
-
-    // todo 1.13 (VoxelShape has multiple bounding boxes?)
+    // todo check needed in 1.13? (VoxelShape has multiple bounding boxes?)
 //    @Override
 //    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
 //        ICamouflageable camo = getCamoState(worldIn, pos);
@@ -77,43 +62,42 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
 //        }
 //    }
 
-    // todo 1.13 figure out how all this works.  camo won't be very useful till we do
-//    @Override
-//    public boolean doesSideBlockRendering(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing face) {
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null || camo.getCamouflage().doesSideBlockRendering(world, pos, face);
-//    }
-//
-//    @Override
-//    public boolean isSideSolid(IBlockState base_state, IBlockReader world, BlockPos pos, EnumFacing side) {
-//        // ensure levers etc. can be attached to the block even though it can possibly emit redstone
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null || camo.getCamouflage().isSideSolid(world, pos, side);
-//    }
-//
-//    @Override
-//    public int getLightOpacity(IBlockState state, IBlockReader world, BlockPos pos) {
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null ? super.getLightOpacity(state, world, pos) : camo.getCamouflage().getLightOpacity(world, pos);
-//    }
-//
-//    @Override
-//    public int getLightValue(IBlockState state, IBlockReader world, BlockPos pos) {
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null || !camo.extendedMimic() ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
-//    }
-//
-//    @Override
-//    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
-//        ICamouflageable camo = getCamoState(worldIn, pos);
-//        return camo == null || !camo.extendedMimic() ? super.getBlockHardness(blockState, worldIn, pos) : camo.getCamouflage().getBlockHardness(worldIn, pos);
-//    }
-//
-//    @Override
-//    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null || !camo.extendedMimic() ? super.getExplosionResistance(world, pos, exploder, explosion) : camo.getCamouflage().getBlock().getExplosionResistance(exploder);
-//    }
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockReader world, IBlockState state, BlockPos pos, EnumFacing side) {
+        ICamouflageable camo = getCamoState(world, pos);
+        return camo == null ? super.getBlockFaceShape(world, state, pos, side) : camo.getCamouflage().getBlockFaceShape(world, pos, side);
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, IWorldReader world, BlockPos pos) {
+        ICamouflageable camo = getCamoState(world, pos);
+        return camo == null || !camo.extendedMimic() ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing face) {
+        ICamouflageable camo = getCamoState(world, pos);
+        return camo == null || camo.getCamouflage().doesSideBlockRendering(world, pos, face);
+    }
+
+    @Override
+    public int getOpacity(IBlockState state, IBlockReader world, BlockPos pos) {
+        ICamouflageable camo = getCamoState(world, pos);
+        return camo == null ? super.getOpacity(state, world, pos) : camo.getCamouflage().getOpacity(world, pos);
+    }
+    @Override
+    public float getBlockHardness(IBlockState blockState, IBlockReader worldIn, BlockPos pos) {
+        ICamouflageable camo = getCamoState(worldIn, pos);
+        return camo == null || !camo.extendedMimic() ? super.getBlockHardness(blockState, worldIn, pos) : camo.getCamouflage().getBlockHardness(worldIn, pos);
+    }
+
+    @Override
+    public float getExplosionResistance(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+        ICamouflageable camo = getCamoState(world, pos);
+        return camo == null || !camo.extendedMimic() ?
+                super.getExplosionResistance(state, world, pos, exploder, explosion) :
+                camo.getCamouflage().getBlock().getExplosionResistance(state, world, pos, exploder, explosion);
+    }
 
     private ICamouflageable getCamoState(IBlockReader blockAccess, BlockPos pos) {
         TileEntity te = MiscUtil.getTileEntitySafely(blockAccess, pos);
@@ -137,7 +121,6 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
         return camo == null || !camo.extendedMimic() ? super.getWeakPower(blockState, blockAccess, pos, side) : camo.getCamouflage().getStrongPower(blockAccess, pos, side);
     }
 
-
     @Nullable
     @Override
     public ToolType getHarvestTool(IBlockState state) {
@@ -148,7 +131,6 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public boolean hasTileEntity(IBlockState state) {
         return true;
     }
-
 
 //    @Nonnull
 //    @Override

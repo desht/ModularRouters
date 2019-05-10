@@ -20,7 +20,6 @@ public class PacketHandler {
     }
     
     public static void setupNetwork() {
-        int d = 0;
         NETWORK.registerMessage(nextId(), RouterSettingsMessage.class,
                 RouterSettingsMessage::toBytes, RouterSettingsMessage::new, RouterSettingsMessage::handle);
         NETWORK.registerMessage(nextId(), ParticleBeamMessage.class,

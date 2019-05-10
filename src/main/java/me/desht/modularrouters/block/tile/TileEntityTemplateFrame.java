@@ -1,5 +1,6 @@
 package me.desht.modularrouters.block.tile;
 
+import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.util.Scheduler;
 import net.minecraft.block.state.IBlockState;
@@ -13,7 +14,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumLightType;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityTemplateFrame extends TileEntity implements ICamouflageable {
@@ -28,9 +32,6 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     public static TileEntityTemplateFrame getTileEntitySafely(IBlockReader world, BlockPos pos) {
-//        TileEntity te = world instanceof ChunkCache ?
-//                ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) :
-//                world.getTileEntity(pos);
         TileEntity te = world.getTileEntity(pos);
         return te instanceof TileEntityTemplateFrame ? (TileEntityTemplateFrame) te : null;
     }
@@ -43,6 +44,17 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     @Override
     public void setCamouflage(IBlockState camouflage) {
         this.camouflage = camouflage;
+        requestModelDataUpdate();
+    }
+
+    @Nonnull
+    @Override
+    public IModelData getModelData() {
+        return new ModelDataMap.Builder()
+                .withInitial(BlockCamo.BLOCK_ACCESS, world)
+                .withInitial(BlockCamo.BLOCK_POS, pos)
+                .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
+                .build();
     }
 
     @Override
@@ -125,6 +137,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     public void setCamouflage(ItemStack itemStack) {
         if (itemStack.getItem() instanceof ItemBlock) {
             camouflage = ((ItemBlock) itemStack.getItem()).getBlock().getDefaultState();
+            requestModelDataUpdate();
         }
     }
 }

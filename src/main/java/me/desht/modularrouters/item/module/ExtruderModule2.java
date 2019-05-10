@@ -40,7 +40,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);
             if (!blockStack.isEmpty()) {
-                list.add(new TextComponentString(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x " + blockStack.getDisplayName()));
+                list.add(new TextComponentString(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x ").appendSibling(blockStack.getDisplayName()));
             }
         }
         if (list.size() == size) {

@@ -3,8 +3,6 @@ package me.desht.modularrouters.block;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ObjectRegistry;
 import me.desht.modularrouters.integration.top.TOPInfoProvider;
-import me.desht.modularrouters.item.upgrade.BlastUpgrade;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.Block;
@@ -43,7 +41,6 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 

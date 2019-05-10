@@ -40,6 +40,6 @@ public class ColorHandlers {
             } else {
                 return 0xffffff;
             }
-        });
+        }, ObjectRegistry.ITEM_ROUTER, ObjectRegistry.TEMPLATE_FRAME);
     }
 }
