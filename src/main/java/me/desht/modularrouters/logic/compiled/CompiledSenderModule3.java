@@ -1,12 +1,12 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -29,11 +29,11 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
 
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
-        if (router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
+        if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
             double x = router.getPos().getX() + 0.5;
             double y = router.getPos().getY() + 0.5;
             double z = router.getPos().getZ() + 0.5;
-            EnumFacing facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
+            Direction facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
             double x2 = x + facing.getXOffset() * 1.2;
             y2 = (y2 < y - 2 || y2 > y + 2) ? y : y2 + (r.nextDouble() - 0.5) / 5.0;
             double z2 = z + facing.getZOffset() * 1.2;

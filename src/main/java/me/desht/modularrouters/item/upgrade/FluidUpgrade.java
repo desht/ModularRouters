@@ -5,7 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.*;
 import java.util.List;
@@ -25,7 +25,7 @@ public class FluidUpgrade extends ItemUpgrade {
         super.addUsageInformation(itemstack, list);
         TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
         if (router != null) {
-            list.add(new TextComponentTranslation("itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
+            list.add(new TranslationTextComponent("itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
         }
     }
 

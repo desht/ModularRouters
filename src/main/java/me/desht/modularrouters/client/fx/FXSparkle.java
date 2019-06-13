@@ -1,16 +1,19 @@
 package me.desht.modularrouters.client.fx;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -25,12 +28,12 @@ public class FXSparkle extends Particle {
     private static final Queue<FXSparkle> queuedCorruptRenders = new ArrayDeque<>();
 
     // Queue values
-    private float f;
-    private float f1;
-    private float f2;
-    private float f3;
-    private float f4;
-    private float f5;
+    private float partialTicks;
+    private float rx;
+    private float rz;
+    private float ryz;
+    private float rxy;
+    private float rxz;
 
     public boolean noClip = false;
 
@@ -43,7 +46,7 @@ public class FXSparkle extends Particle {
         particleAlpha = 0.5F; // So MC renders us on the alpha layer, value not actually used
         particleGravity = 0;
         motionX = motionY = motionZ = 0;
-        particleScale *= size;
+//        particleScale *= size;
         maxAge = 3 * m;
         multiplier = m;
         noClip = false;
@@ -53,7 +56,7 @@ public class FXSparkle extends Particle {
         prevPosZ = posZ;
     }
 
-    public static void dispatchQueuedRenders(Tessellator tessellator) {
+    static void dispatchQueuedRenders(Tessellator tessellator) {
         ParticleRenderDispatcher.sparkleFxCount = 0;
         ParticleRenderDispatcher.fakeSparkleFxCount = 0;
 
@@ -85,28 +88,33 @@ public class FXSparkle extends Particle {
         float var9 = var8 + 0.0624375F*2;
         float var10 = part / 8 / 8.0F;
         float var11 = var10 + 0.0624375F*2;
-        float var12 = 0.1F * particleScale;
+        float var12 = 0.1F /** particleScale*/;
         if (shrink) var12 *= (maxAge-age+1)/(float)maxAge;
-        float var13 = (float)(prevPosX + (posX - prevPosX) * f - interpPosX);
-        float var14 = (float)(prevPosY + (posY - prevPosY) * f - interpPosY);
-        float var15 = (float)(prevPosZ + (posZ - prevPosZ) * f - interpPosZ);
+        float var13 = (float)(prevPosX + (posX - prevPosX) * partialTicks - interpPosX);
+        float var14 = (float)(prevPosY + (posY - prevPosY) * partialTicks - interpPosY);
+        float var15 = (float)(prevPosZ + (posZ - prevPosZ) * partialTicks - interpPosZ);
         float var16 = 1.0F;
 
-        tessellator.getBuffer().pos(var13 - f1 * var12 - f4 * var12, var14 - f2 * var12, var15 - f3 * var12 - f5 * var12).tex(var9, var11).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
-        tessellator.getBuffer().pos(var13 - f1 * var12 + f4 * var12, var14 + f2 * var12, var15 - f3 * var12 + f5 * var12).tex(var9, var10).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
-        tessellator.getBuffer().pos(var13 + f1 * var12 + f4 * var12, var14 + f2 * var12, var15 + f3 * var12 + f5 * var12).tex(var8, var10).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
-        tessellator.getBuffer().pos(var13 + f1 * var12 - f4 * var12, var14 - f2 * var12, var15 + f3 * var12 - f5 * var12).tex(var8, var11).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
+        tessellator.getBuffer().pos(var13 - rx * var12 - rxy * var12, var14 - rz * var12, var15 - ryz * var12 - rxz * var12).tex(var9, var11).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
+        tessellator.getBuffer().pos(var13 - rx * var12 + rxy * var12, var14 + rz * var12, var15 - ryz * var12 + rxz * var12).tex(var9, var10).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
+        tessellator.getBuffer().pos(var13 + rx * var12 + rxy * var12, var14 + rz * var12, var15 + ryz * var12 + rxz * var12).tex(var8, var10).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
+        tessellator.getBuffer().pos(var13 + rx * var12 - rxy * var12, var14 - rz * var12, var15 + ryz * var12 - rxz * var12).tex(var8, var11).color(particleRed * var16, particleGreen * var16, particleBlue * var16, 1).endVertex();
 
     }
 
     @Override
-    public void renderParticle(BufferBuilder worldRendererIn, Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        this.f = f;
-        this.f1 = f1;
-        this.f2 = f2;
-        this.f3 = f3;
-        this.f4 = f4;
-        this.f5 = f5;
+    public IParticleRenderType func_217558_b() {
+        return IParticleRenderType.field_217605_e;
+    }
+
+    @Override
+    public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        this.partialTicks = partialTicks;
+        this.rx = rotationX;
+        this.rz = rotationZ;
+        this.ryz = rotationYZ;
+        this.rxy = rotationXY;
+        this.rxz = rotationXZ;
 
         if(corrupt)
             queuedCorruptRenders.add(this);
@@ -135,12 +143,6 @@ public class FXSparkle extends Particle {
             motionX *= 0.908000001907348633D;
             motionY *= 0.908000001907348633D;
             motionZ *= 0.908000001907348633D;
-
-            // TODO: 1.11 equivalent?
-//            if (isCollided) {
-//                motionX *= 0.69999998807907104D;
-//                motionZ *= 0.69999998807907104D;
-//            }
         }
 
         if(fake && age > 1)
@@ -151,75 +153,41 @@ public class FXSparkle extends Particle {
         particleGravity = value;
     }
 
-    // Copy of Entity.pushOutOfBlocks with several important changes
-    private boolean wiggleAround(double x, double y, double z)
-    {
+    // copy of Entity#func_213282_i (pushOutOfBlocks) with a couple of changes
+    private void wiggleAround(double x, double y, double z) {
         BlockPos blockpos = new BlockPos(x, y, z);
-        double d0 = x - (double)blockpos.getX();
-        double d1 = y - (double)blockpos.getY();
-        double d2 = z - (double)blockpos.getZ();
+        Vec3d vec3d = new Vec3d(x - (double)blockpos.getX(), y - (double)blockpos.getY(), z - (double)blockpos.getZ());
+        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+        Direction direction = Direction.UP;
+        double d0 = Double.MAX_VALUE;
 
-        // Botania - change collision box items check to !airblock check
-        if (!world.isAirBlock(blockpos))
-        {
-            EnumFacing enumfacing = EnumFacing.UP;
-            double d3 = Double.MAX_VALUE;
-
-            if (!this.world.isBlockFullCube(blockpos.west()) && d0 < d3)
-            {
-                d3 = d0;
-                enumfacing = EnumFacing.WEST;
+        for(Direction direction1 : new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.UP}) {
+            blockpos$mutableblockpos.setPos(blockpos).move(direction1);
+            if (!Block.isOpaque(this.world.getBlockState(blockpos$mutableblockpos).getCollisionShape(this.world, blockpos$mutableblockpos))) {
+                double d1 = vec3d.func_216370_a(direction1.getAxis());
+                double d2 = direction1.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1.0D - d1 : d1;
+                if (d2 < d0) {
+                    d0 = d2;
+                    direction = direction1;
+                }
             }
-
-            if (!this.world.isBlockFullCube(blockpos.east()) && 1.0D - d0 < d3)
-            {
-                d3 = 1.0D - d0;
-                enumfacing = EnumFacing.EAST;
-            }
-
-
-            if (!this.world.isBlockFullCube(blockpos.north()) && d2 < d3)
-            {
-                d3 = d2;
-                enumfacing = EnumFacing.NORTH;
-            }
-
-            if (!this.world.isBlockFullCube(blockpos.south()) && 1.0D - d2 < d3)
-            {
-                d3 = 1.0D - d2;
-                enumfacing = EnumFacing.SOUTH;
-            }
-
-            if (!this.world.isBlockFullCube(blockpos.up()) && 1.0D - d1 < d3)
-            {
-                d3 = 1.0D - d1;
-                enumfacing = EnumFacing.UP;
-            }
-
-            float f = this.rand.nextFloat() * 0.05F + 0.01F; // Botania - made multiplier and add both smaller
-            float f1 = (float)enumfacing.getAxisDirection().getOffset();
-            float secondary = (rand.nextFloat() - rand.nextFloat()) * 0.1F; // Botania - Make and use a secondary movement variable below
-
-            if (enumfacing.getAxis() == EnumFacing.Axis.X)
-            {
-                this.motionX += (double)(f1 * f);
-                this.motionY = this.motionZ = secondary;
-            }
-            else if (enumfacing.getAxis() == EnumFacing.Axis.Y)
-            {
-                this.motionY += (double)(f1 * f);
-                this.motionX = this.motionZ = secondary;
-            }
-            else if (enumfacing.getAxis() == EnumFacing.Axis.Z)
-            {
-                this.motionZ += (double)(f1 * f);
-                this.motionX = this.motionY = secondary;
-            }
-
-            return true;
         }
 
-        return false;
+        float f = this.rand.nextFloat() *  0.05F + 0.01F;  // smaller multiplier & adder
+        float f1 = (float)direction.getAxisDirection().getOffset();
+        float secondary = (rand.nextFloat() - rand.nextFloat()) * 0.1F;  // extra secondary movement
+
+        if (direction.getAxis() == Direction.Axis.X) {
+            motionX += (double)(f1 * f);
+            motionY = motionZ = secondary;
+        } else if (direction.getAxis() == Direction.Axis.Y) {
+            motionY += (double)(f1 * f);
+            motionX = motionZ = secondary;
+        } else if (direction.getAxis() == Direction.Axis.Z) {
+            motionZ += (double)(f1 * f);
+            motionX = motionY = secondary;
+        }
+
     }
 
     public boolean corrupt = false;

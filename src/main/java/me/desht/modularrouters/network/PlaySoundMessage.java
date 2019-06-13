@@ -2,8 +2,8 @@ package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -19,17 +19,17 @@ import java.util.function.Supplier;
  * Sent by server to play a sound on the client.
  */
 public class PlaySoundMessage {
-    private static Field soundNameField;
     private ResourceLocation soundName;
     private float volume;
     private float pitch;
 
-    public static void playSound(EntityPlayer player, SoundEvent soundEvent, float volume, float pitch) {
-        if (player instanceof EntityPlayerMP) {
-            PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (EntityPlayerMP) player), new PlaySoundMessage(soundEvent, volume, pitch));
+    public static void playSound(PlayerEntity player, SoundEvent soundEvent, float volume, float pitch) {
+        if (player instanceof ServerPlayerEntity) {
+            PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new PlaySoundMessage(soundEvent, volume, pitch));
         }
     }
 
+    @SuppressWarnings("unused")
     public PlaySoundMessage() {
     }
 
@@ -53,7 +53,7 @@ public class PlaySoundMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            EntityPlayer player = ModularRouters.proxy.getClientPlayer();
+            PlayerEntity player = ModularRouters.proxy.getClientPlayer();
             if (player != null) {
                 player.playSound(ForgeRegistries.SOUND_EVENTS.getValue(soundName), volume, pitch);
             }

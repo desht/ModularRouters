@@ -1,11 +1,11 @@
 package me.desht.modularrouters.logic;
 
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -21,17 +21,17 @@ import java.util.Objects;
 public class ModuleTarget {
     public final int dimId;
     public final BlockPos pos;
-    public final EnumFacing face;
+    public final Direction face;
     public final String invName;
 
-    public ModuleTarget(int dimId, BlockPos pos, EnumFacing face, String invName) {
+    public ModuleTarget(int dimId, BlockPos pos, Direction face, String invName) {
         this.dimId = dimId;
         this.pos = pos;
         this.face = face;
         this.invName = invName;
     }
 
-    public ModuleTarget(int dimId, BlockPos pos, EnumFacing face) {
+    public ModuleTarget(int dimId, BlockPos pos, Direction face) {
         this(dimId, pos, face, "");
     }
 
@@ -39,8 +39,8 @@ public class ModuleTarget {
         this(dimId, pos, null);
     }
 
-    public NBTTagCompound toNBT() {
-        NBTTagCompound ext = new NBTTagCompound();
+    public CompoundNBT toNBT() {
+        CompoundNBT ext = new CompoundNBT();
         ext.putInt("Dimension", dimId);
         ext.putInt("X", pos.getX());
         ext.putInt("Y", pos.getY());
@@ -50,9 +50,9 @@ public class ModuleTarget {
         return ext;
     }
 
-    public static ModuleTarget fromNBT(NBTTagCompound nbt) {
+    public static ModuleTarget fromNBT(CompoundNBT nbt) {
         BlockPos pos = new BlockPos(nbt.getInt("X"), nbt.getInt("Y"), nbt.getInt("Z"));
-        EnumFacing face = EnumFacing.values()[nbt.getByte("Face")];
+        Direction face = Direction.values()[nbt.getByte("Face")];
         return new ModuleTarget(nbt.getInt("Dimension"), pos, face, nbt.getString("InvName"));
     }
 
@@ -61,7 +61,7 @@ public class ModuleTarget {
         if (dt == null) {
             return null;
         }
-        WorldServer w = DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
+        ServerWorld w = DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
         if (w == null || !w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4))
             return null;
         TileEntity te = w.getTileEntity(pos);

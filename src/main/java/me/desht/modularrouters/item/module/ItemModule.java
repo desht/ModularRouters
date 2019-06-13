@@ -1,18 +1,14 @@
 package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
-import me.desht.modularrouters.client.gui.module.GuiModule;
-import me.desht.modularrouters.container.BaseContainerProvider;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.container.slot.ValidatingSlot;
-import me.desht.modularrouters.core.ITintable;
+import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
@@ -20,34 +16,32 @@ import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
+import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
-import me.desht.modularrouters.util.SlotTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.state.BooleanProperty;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -56,8 +50,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber
-public abstract class ItemModule extends ItemBase implements ITintable {
+public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_DAMAGE(false, 0x2),
@@ -80,7 +73,6 @@ public abstract class ItemModule extends ItemBase implements ITintable {
         public byte getMask() {
             return mask;
         }
-
     }
 
     // Direction relative to the facing of the router this module is installed in
@@ -100,12 +92,12 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             this.mask = mask;
         }
 
-        public EnumFacing toEnumFacing(EnumFacing current) {
+        public Direction toAbsolute(Direction current) {
             switch (this) {
                 case UP:
-                    return EnumFacing.UP;
+                    return Direction.UP;
                 case DOWN:
-                    return EnumFacing.DOWN;
+                    return Direction.DOWN;
                 case FRONT:
                     return current;
                 case LEFT:
@@ -131,10 +123,6 @@ public abstract class ItemModule extends ItemBase implements ITintable {
 
     public abstract CompiledModule compile(TileEntityItemRouter router, ItemStack stack);
 
-    public Class<? extends GuiModule> getGuiClass() {
-        return GuiModule.class;
-    }
-
     public abstract Color getItemTint();
 
     public boolean isDirectional() {
@@ -147,8 +135,18 @@ public abstract class ItemModule extends ItemBase implements ITintable {
         return false;
     }
 
-    public ContainerModule createContainer(EntityPlayer player, EnumHand hand, ItemStack stack, TileEntityItemRouter router) {
-        return new ContainerModule(player.inventory, hand, stack, router);
+    ContainerModule createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+        return new ContainerModule(getContainerType(), windowId, invPlayer, loc);
+    }
+
+    /**
+     * Override this for any module which has a GUI providing any extra controls.  Such GUI's need their own
+     * container type due to the way 1.14 handles container -> GUI connection.
+     *
+     * @return the container type
+     */
+    public ContainerType<? extends ContainerModule> getContainerType() {
+        return ModContainerTypes.CONTAINER_MODULE_BASIC;
     }
 
     /**
@@ -176,10 +174,11 @@ public abstract class ItemModule extends ItemBase implements ITintable {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(stack, world, list, flag);
 
-        if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
-            Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
+        if (Minecraft.getInstance().field_71462_r instanceof GuiItemRouter) {
+            Slot slot = ((GuiItemRouter) Minecraft.getInstance().field_71462_r).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
-                list.add(MiscUtil.translate("itemText.misc.configureHint", Keybindings.keybindConfigure.getKey().getName()).applyTextStyles(TextFormatting.GRAY));
+                String s = Keybindings.keybindConfigure.getKey().getTranslationKey();
+                list.add(MiscUtil.translate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));
             }
         }
     }
@@ -193,15 +192,15 @@ public abstract class ItemModule extends ItemBase implements ITintable {
     protected void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         if (isDirectional()) {
             RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
-            ITextComponent itc = new TextComponentTranslation(isDirectional() && dir == RelativeDirection.NONE ?
+            ITextComponent itc = new TranslationTextComponent(isDirectional() && dir == RelativeDirection.NONE ?
                     "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString()).applyTextStyle(TextFormatting.AQUA);
-            list.add(new TextComponentTranslation("guiText.label.direction")
-                    .appendSibling(new TextComponentString(": "))
+            list.add(new TranslationTextComponent("guiText.label.direction")
+                    .appendSibling(new StringTextComponent(": "))
                     .appendSibling(itc)
                     .applyTextStyle(TextFormatting.YELLOW));
         }
         addFilterInformation(itemstack, list);
-        list.add(new TextComponentString(
+        list.add(new StringTextComponent(
                         I18n.format("itemText.misc.flags") + ": " +
                                 String.join(" | ",
                                         formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
@@ -217,7 +216,7 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             String col = curRange > rm.getBaseRange() ?
                     TextFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
                     TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
-            list.add(new TextComponentTranslation("itemText.misc.rangeInfo",
+            list.add(new TranslationTextComponent("itemText.misc.rangeInfo",
                             col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange())
                     .applyTextStyle(TextFormatting.YELLOW));
         }
@@ -233,11 +232,11 @@ public abstract class ItemModule extends ItemBase implements ITintable {
                 String s = augmentStack.getDisplayName().getString();
                 if (n > 1) s = n + " x " + s;
                 s += TextFormatting.AQUA + augment.getExtraInfo(n, stack);
-                toAdd.add(new TextComponentString(" \u2022 " + TextFormatting.DARK_GREEN + s));
+                toAdd.add(new StringTextComponent(" \u2022 " + TextFormatting.DARK_GREEN + s));
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new TextComponentString(TextFormatting.GREEN.toString()).appendSibling(new TextComponentTranslation("itemText.augments")));
+            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).appendSibling(new TranslationTextComponent("itemText.augments")));
             list.addAll(toAdd);
         }
     }
@@ -261,22 +260,22 @@ public abstract class ItemModule extends ItemBase implements ITintable {
             if (s.getItem() instanceof ItemSmartFilter) {
                 int size = ((ItemSmartFilter) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(new TextComponentString(" \u2022 ").appendSibling(s.getDisplayName().appendText(suffix))
+                l2.add(new StringTextComponent(" \u2022 ").appendSibling(s.getDisplayName().appendText(suffix))
                         .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new TextComponentString(" \u2022 ").appendSibling(s.getDisplayName()
+                l2.add(new StringTextComponent(" \u2022 ").appendSibling(s.getDisplayName()
                         .applyTextStyle(TextFormatting.AQUA)));
             }
         }
         String key = "itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
         if (l2.isEmpty()) {
-            list.add(new TextComponentTranslation(key).applyTextStyles(TextFormatting.YELLOW)
+            list.add(new TranslationTextComponent(key).applyTextStyles(TextFormatting.YELLOW)
                     .appendText(": ")
-                    .appendSibling(new TextComponentTranslation("itemText.misc.noItems")
+                    .appendSibling(new TranslationTextComponent("itemText.misc.noItems")
                             .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(new TextComponentTranslation(key).applyTextStyles(TextFormatting.YELLOW)
+            list.add(new TranslationTextComponent(key).applyTextStyles(TextFormatting.YELLOW)
                             .appendText(": "));
             list.addAll(l2);
         }
@@ -284,77 +283,48 @@ public abstract class ItemModule extends ItemBase implements ITintable {
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         ModuleHelper.validateNBT(stack);
         if (!player.isSneaking()) {
             if (!world.isRemote) {
-                NetworkHooks.openGui((EntityPlayerMP)player, new ContainerProvider(hand),
-                        buf -> buf.writeBoolean(hand == EnumHand.MAIN_HAND));
+                MFLocator locator = MFLocator.heldModule(hand);
+                NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, locator), locator::writeBuf);
             }
         } else {
             return onSneakRightClick(stack, world, player, hand);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
-    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        return new ActionResult<>(EnumActionResult.PASS, stack);
+    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
+        return new ActionResult<>(ActionResultType.PASS, stack);
     }
 
     @Override
-    public boolean onEntitySwing(ItemStack stack, EntityLivingBase entity) {
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         // TODO handle for targeted modules
         return false;
     }
 
-    public static class ContainerProvider extends BaseContainerProvider {
-        private final EnumHand hand;
-        private final BlockPos routerPos;
-        private final String guiId;
+    public static class ContainerProvider implements INamedContainerProvider {
+        private final MFLocator loc;
+        private final ItemStack moduleStack;
 
-        public ContainerProvider(EnumHand hand) {
-            this.hand = hand;
-            this.routerPos = null;
-            this.guiId = "module_held";
-        }
-
-        public ContainerProvider(BlockPos routerPos) {
-            this.hand = null;
-            this.routerPos = routerPos;
-            this.guiId = "module_installed";
+        public ContainerProvider(PlayerEntity player, MFLocator loc) {
+            this.loc = loc;
+            this.moduleStack = loc.getModuleStack(player);
         }
 
         @Override
-        public Container createContainer(InventoryPlayer inventoryPlayer, EntityPlayer entityPlayer) {
-            if (hand != null) {
-                ItemStack stack = entityPlayer.getHeldItem(hand);
-                if (stack.getItem() instanceof ItemModule) {
-                    return ((ItemModule) stack.getItem()).createContainer(entityPlayer, hand, stack, null);
-                } else {
-                    return null;
-                }
-            } else if (routerPos != null) {
-                TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(entityPlayer.getEntityWorld(), routerPos);
-                int slotIndex = SlotTracker.getInstance(entityPlayer).getModuleSlot();
-                if (slotIndex >= 0) {
-                    ItemStack installedModuleStack = router.getModules().getStackInSlot(slotIndex);
-                    if (installedModuleStack.getItem() instanceof ItemModule) {
-                        return ((ItemModule) installedModuleStack.getItem()).createContainer(entityPlayer, null, installedModuleStack, router);
-                    } else {
-                        return null;
-                    }
-                } else {
-                    ModularRouters.LOGGER.warn("Attempt to configure module in router @ " + routerPos + " failed: router can't determine slot index!");
-                }
-            }
-            return null;
+        public ITextComponent getDisplayName() {
+            return moduleStack.getDisplayName();
         }
 
+        @Nullable
         @Override
-        public String getGuiID() {
-            return ModularRouters.MODID + ":" + guiId;
+        public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+            return ((ItemModule)moduleStack.getItem()).createContainer(windowId, playerInventory, loc);
         }
     }
-
 }

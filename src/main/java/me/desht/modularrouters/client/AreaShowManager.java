@@ -1,13 +1,14 @@
 package me.desht.modularrouters.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -30,15 +31,16 @@ public enum AreaShowManager {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getInstance();
-        EntityPlayer player = mc.player;
+        PlayerEntity player = mc.player;
         double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks();
         double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
         double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translated(-playerX, -playerY, -playerZ);
+//        GlStateManager.translated(-playerX, -playerY, -playerZ);
+        GlStateManager.translated(-TileEntityRendererDispatcher.staticPlayerX, -TileEntityRendererDispatcher.staticPlayerY, -TileEntityRendererDispatcher.staticPlayerZ);
 
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -54,7 +56,7 @@ public enum AreaShowManager {
             new AreaShowHandler(cp).render();
             GlStateManager.enableDepthTest();
         }
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
     }
@@ -69,7 +71,7 @@ public enum AreaShowManager {
 
     @SubscribeEvent
     public void tickEnd(TickEvent.ClientTickEvent event) {
-        EntityPlayer player = ModularRouters.proxy.getClientPlayer();
+        PlayerEntity player = ModularRouters.proxy.getClientPlayer();
         if (player != null) {
             if (player.world != world) {
                 world = player.world;
@@ -114,7 +116,7 @@ public enum AreaShowManager {
             return positions.keySet();
         }
 
-        boolean checkFace(BlockPos pos, EnumFacing face) {
+        boolean checkFace(BlockPos pos, Direction face) {
             return positions.containsKey(pos) && positions.get(pos).faces.get(face.getIndex());
         }
 

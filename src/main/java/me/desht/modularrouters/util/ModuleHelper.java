@@ -1,20 +1,16 @@
 package me.desht.modularrouters.util;
 
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
 
 /**
  * Collection of static convenience methods for managing NBT data in a module itemstack.
@@ -27,8 +23,8 @@ public class ModuleHelper {
     public static final String NBT_AUGMENTS = "Augments";
 
     @Nonnull
-    public static NBTTagCompound validateNBT(ItemStack stack) {
-        NBTTagCompound compound = stack.getOrCreateTag();
+    public static CompoundNBT validateNBT(ItemStack stack) {
+        CompoundNBT compound = stack.getOrCreateTag();
         if (compound.getTagId(NBT_FLAGS) != Constants.NBT.TAG_BYTE) {
             byte flags = 0x0;
             for (ModuleFlags b : ModuleFlags.values()) {
@@ -39,7 +35,7 @@ public class ModuleHelper {
             compound.putByte(NBT_FLAGS, flags);
         }
         if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
-            compound.put(NBT_FILTER, new NBTTagCompound());
+            compound.put(NBT_FILTER, new CompoundNBT());
         }
         return compound;
     }
@@ -65,14 +61,14 @@ public class ModuleHelper {
     }
 
     public static boolean checkFlag(ItemStack stack, ModuleFlags flag) {
-        NBTTagCompound compound = validateNBT(stack);
+        CompoundNBT compound = validateNBT(stack);
         return (compound.getByte(NBT_FLAGS) & flag.getMask()) != 0x0;
     }
 
     public static ItemModule.RelativeDirection getDirectionFromNBT(ItemStack stack) {
 
         if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isDirectional()) {
-            NBTTagCompound compound = validateNBT(stack);
+            CompoundNBT compound = validateNBT(stack);
             return ItemModule.RelativeDirection.values()[(compound.getByte(NBT_FLAGS) & 0x70) >> 4];
         } else {
             return ItemModule.RelativeDirection.NONE;
@@ -80,14 +76,14 @@ public class ModuleHelper {
     }
 
     public static int getRegulatorAmount(ItemStack itemstack) {
-        NBTTagCompound compound = validateNBT(itemstack);
+        CompoundNBT compound = validateNBT(itemstack);
         return compound.getInt(NBT_REGULATOR_AMOUNT);
     }
 
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
-        if (counter.getAugmentCount(ObjectRegistry.REDSTONE_AUGMENT) > 0) {
-            NBTTagCompound compound = validateNBT(stack);
+        if (counter.getAugmentCount(ModItems.REDSTONE_AUGMENT) > 0) {
+            CompoundNBT compound = validateNBT(stack);
             try {
                 return RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
@@ -98,13 +94,13 @@ public class ModuleHelper {
         }
     }
 
-    public static NBTTagList getFilterItems(ItemStack stack) {
-        NBTTagCompound compound = validateNBT(stack);
+    public static ListNBT getFilterItems(ItemStack stack) {
+        CompoundNBT compound = validateNBT(stack);
         return compound.getList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
     }
 
     public static int getRangeModifier(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
-        return counter.getAugmentCount(ObjectRegistry.RANGE_UP_AUGMENT) - counter.getAugmentCount(ObjectRegistry.RANGE_DOWN_AUGMENT);
+        return counter.getAugmentCount(ModItems.RANGE_UP_AUGMENT) - counter.getAugmentCount(ModItems.RANGE_DOWN_AUGMENT);
     }
 }

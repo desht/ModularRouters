@@ -2,17 +2,17 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.ParticleBeamMessage;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -59,7 +59,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
-        if (router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
+        if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).add(0.5, 0.5, 0.5);
             Vec3d vec2 = new Vec3d(targetPos).add(0.5, 0.5, 0.5);
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().dimension.getType());
@@ -80,7 +80,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     @Override
     public ModuleTarget getActualTarget(TileEntityItemRouter router) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
-        EnumFacing face = getTarget().face;
+        Direction face = getTarget().face;
         World world = router.getWorld();
         for (int i = 1; i <= getRange(); i++) {
             if (world.getTileEntity(pos) != null) {
@@ -93,9 +93,10 @@ public class CompiledSenderModule1 extends CompiledModule {
         return null;
     }
 
-    private boolean isPassable(World w, BlockPos pos, EnumFacing face) {
-        IBlockState state = w.getBlockState(pos);
-        return state.getBlockFaceShape(w, pos, face) != BlockFaceShape.SOLID || !state.isOpaqueCube(w, pos);
+    private boolean isPassable(World w, BlockPos pos, Direction face) {
+        BlockState state = w.getBlockState(pos);
+        return Block.func_220055_a(w, pos, face) || !state.isOpaqueCube(w, pos);
+//        return state.getBlockFaceShape(w, pos, face) != BlockFaceShape.SOLID || !state.isOpaqueCube(w, pos);
     }
 
     static class PositionedItemHandler {

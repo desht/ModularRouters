@@ -4,10 +4,9 @@ import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.util.SlotTracker;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -22,8 +21,8 @@ import java.util.function.Supplier;
  * 3) Open installed module GUI
  * 4) Open installed filter GUI (if it has a container)
  */
-public class OpenGuiMessage extends BaseSettingsMessage {
-    private enum What {
+public class OpenGuiMessage {
+    private enum Operation {
         ROUTER,
         MODULE_HELD,
         MODULE_INSTALLED,
@@ -31,129 +30,79 @@ public class OpenGuiMessage extends BaseSettingsMessage {
         FILTER_INSTALLED
     }
 
-    private What what;
-    private int moduleSlotIndex;
-    private int filterSlotIndex;
+    private Operation operation;
+    private MFLocator locator;
 
+    @SuppressWarnings("unused")
     public OpenGuiMessage() {
     }
 
-    private OpenGuiMessage(What what, BlockPos pos, EnumHand hand, int moduleSlotIndex, int filterSlotIndex) {
-        super(pos, hand, null);
-        this.what = what;
-        this.moduleSlotIndex = moduleSlotIndex;
-        this.filterSlotIndex = filterSlotIndex;
+    private OpenGuiMessage(Operation operation, MFLocator locator) {
+        this.operation = operation;
+        this.locator = locator;
     }
 
     OpenGuiMessage(ByteBuf buf) {
-        what = What.values()[buf.readByte()];
-        switch (what) {
-            case ROUTER:
-                routerPos = readPos(buf);
-                break;
-            case MODULE_HELD:
-                hand = EnumHand.values()[buf.readByte()];
-                break;
-            case MODULE_INSTALLED:
-                routerPos = readPos(buf);
-                moduleSlotIndex = (int) buf.readByte();
-                break;
-            case FILTER_HELD:
-                hand = EnumHand.values()[buf.readByte()];
-                filterSlotIndex = buf.readByte();
-                break;
-            case FILTER_INSTALLED:
-                routerPos = readPos(buf);
-                moduleSlotIndex = (int) buf.readByte();
-                filterSlotIndex = (int) buf.readByte();
-                break;
-        }
+        PacketBuffer pb = new PacketBuffer(buf);
+        operation = Operation.values()[pb.readByte()];
+        locator = MFLocator.fromBuffer(pb);
     }
 
-    public static OpenGuiMessage openRouter(BlockPos pos) {
-        return new OpenGuiMessage(What.ROUTER, pos, null, -1, -1);
+    public static OpenGuiMessage openRouter(MFLocator locator) {
+        return new OpenGuiMessage(Operation.ROUTER, locator);
     }
 
-    public static OpenGuiMessage openModuleInHand(EnumHand hand) {
-        return new OpenGuiMessage(What.MODULE_HELD, null, hand, -1, -1);
+    public static OpenGuiMessage openModuleInHand(MFLocator locator) {
+        return new OpenGuiMessage(Operation.MODULE_HELD, locator);
     }
 
-    public static OpenGuiMessage openModuleInRouter(BlockPos routerPos, Integer moduleSlotIndex) {
-        return new OpenGuiMessage(What.MODULE_INSTALLED, routerPos, null, moduleSlotIndex, -1);
+    public static OpenGuiMessage openModuleInRouter(MFLocator locator) {
+        return new OpenGuiMessage(Operation.MODULE_INSTALLED, locator);
     }
 
-    public static OpenGuiMessage openFilterInHeldModule(EnumHand hand, int filterSlotIndex) {
-        return new OpenGuiMessage(What.FILTER_HELD, null, hand, -1, filterSlotIndex);
+    public static OpenGuiMessage openFilterInHeldModule(MFLocator locator) {
+        return new OpenGuiMessage(Operation.FILTER_HELD, locator);
     }
 
-    public static OpenGuiMessage openFilterInInstalledModule(BlockPos routerPos, int moduleSlotIndex, int filterSlotIndex) {
-        return new OpenGuiMessage(What.FILTER_INSTALLED, routerPos, null, moduleSlotIndex, filterSlotIndex);
+    public static OpenGuiMessage openFilterInInstalledModule(MFLocator locator) {
+        return new OpenGuiMessage(Operation.FILTER_INSTALLED, locator);
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeByte(what.ordinal());
-        switch (what) {
-            case ROUTER:
-                writePos(buf, routerPos);
-                break;
-            case MODULE_HELD:
-                buf.writeByte(hand.ordinal());
-                break;
-            case MODULE_INSTALLED:
-                writePos(buf, routerPos);
-                buf.writeByte(moduleSlotIndex);
-                break;
-            case FILTER_HELD:
-                buf.writeByte(hand.ordinal());
-                buf.writeByte(filterSlotIndex);
-                break;
-            case FILTER_INSTALLED:
-                writePos(buf, routerPos);
-                buf.writeByte(moduleSlotIndex);
-                buf.writeByte(filterSlotIndex);
-                break;
-        }
+        PacketBuffer pb = new PacketBuffer(buf);
+        pb.writeByte(operation.ordinal());
+        locator.writeBuf(pb);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            EntityPlayerMP player = ctx.get().getSender();
-            final TileEntityItemRouter router = routerPos != null ? TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos) : null;
-            SlotTracker tracker = SlotTracker.getInstance(player);
-            switch (what) {
+            ServerPlayerEntity player = ctx.get().getSender();
+            assert player != null;
+            final TileEntityItemRouter router = locator.routerPos != null ?
+                    TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos) : null;
+            switch (operation) {
                 case ROUTER:
                     // item router GUI
-                    if (router != null) {
-                        NetworkHooks.openGui(player, router, buf -> buf.writeBlockPos(routerPos));
-                    }
+                    if (router != null) NetworkHooks.openGui(player, router, locator.routerPos);
                     break;
                 case MODULE_HELD:
                     // module held in player's hand
-                    NetworkHooks.openGui(player, new ItemModule.ContainerProvider(hand),
-                            buf -> buf.writeBoolean(hand == EnumHand.MAIN_HAND));
+                    NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf);
+                    break;
                 case MODULE_INSTALLED:
                     // module installed in a router
                     if (router != null) {
-                        tracker.setModuleSlot(moduleSlotIndex);
-                        NetworkHooks.openGui(player, new ItemModule.ContainerProvider(routerPos),
-                                buf -> buf.writeBlockPos(routerPos));
+                        NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf);
                     }
                     break;
                 case FILTER_HELD:
                     // filter is in a module in player's hand
-                    // record the filter slot in the module itemstack's NBT - client needs this when creating the GUI
-                    tracker.setFilterSlot(filterSlotIndex);
-                    NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(hand),
-                             buf -> buf.writeBoolean(hand == EnumHand.MAIN_HAND));
+                    NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf);
                     break;
                 case FILTER_INSTALLED:
                     // filter is in a module in a router
                     if (router != null) {
-                        tracker.setModuleSlot(moduleSlotIndex);
-                        tracker.setFilterSlot(filterSlotIndex);
-                        NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(routerPos),
-                                buf -> buf.writeBlockPos(routerPos));
+                        NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf);
                     }
                     break;
             }

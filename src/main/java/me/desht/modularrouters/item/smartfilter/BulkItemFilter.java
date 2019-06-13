@@ -1,37 +1,38 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.container.ContainerBulkItemFilter;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,12 +62,12 @@ public class BulkItemFilter extends ItemSmartFilter {
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addExtraInformation(itemstack, list);
-        list.add(new TextComponentTranslation("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
+        list.add(new TranslationTextComponent("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Class<? extends GuiScreen> getGuiClass() {
+    public Class<? extends Screen> getGuiClass() {
         return GuiBulkItemFilter.class;
     }
 
@@ -76,34 +77,34 @@ public class BulkItemFilter extends ItemSmartFilter {
     }
 
     @Override
-    public ContainerSmartFilter createContainer(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
-        return new ContainerBulkItemFilter(player, hand, router);
+    public ContainerSmartFilter createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+        return new ContainerBulkItemFilter(windowId, invPlayer, loc);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemUseContext ctx) {
+    public ActionResultType onItemUse(ItemUseContext ctx) {
         World world = ctx.getWorld();
-        EntityPlayer player = ctx.getPlayer();
+        PlayerEntity player = ctx.getPlayer();
         ItemStack stack = ctx.getItem();
         if (world.isRemote) {
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         } else if (player.isSneaking()) {
             IItemHandler handler = InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace());
             if (handler != null) {
                 int nAdded = mergeInventory(stack, handler);
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
-                world.playSound(null, ctx.getPos(), ObjectRegistry.SOUND_SUCCESS, SoundCategory.MASTER, 1.0f, 1.0f);
-                return EnumActionResult.SUCCESS;
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
+                world.playSound(null, ctx.getPos(), ModSounds.SUCCESS, SoundCategory.MASTER, 1.0f, 1.0f);
+                return ActionResultType.SUCCESS;
             } else {
                 return super.onItemUse(ctx);
             }
         } else {
-            return EnumActionResult.PASS;
+            return ActionResultType.PASS;
         }
     }
 
     @Override
-    public GuiSyncMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         if (!(player.openContainer instanceof ContainerBulkItemFilter)) {
             return null;
         }
@@ -130,7 +131,7 @@ public class BulkItemFilter extends ItemSmartFilter {
     @Override
     public int getSize(ItemStack filterStack) {
         if (filterStack.hasTag()) {
-            NBTTagCompound compound = filterStack.getTag();
+            CompoundNBT compound = filterStack.getTag();
             return BaseModuleHandler.getFilterSize(filterStack, ModuleHelper.NBT_FILTER);
         } else {
             return 0;
@@ -150,7 +151,8 @@ public class BulkItemFilter extends ItemSmartFilter {
 
         BulkFilterHandler handler = new BulkFilterHandler(filterStack);
         int slot = 0;
-        for (ItemStack stack : stacks.stream().sorted().collect(Collectors.toList())) {
+        Comparator<ItemStack> comp = (o1, o2) -> o1.getDisplayName().toString().compareTo(o2.getDisplayName().getString());
+        for (ItemStack stack : stacks.stream().sorted(comp).collect(Collectors.toList())) {
             handler.setStackInSlot(slot++, stack);
         }
         handler.save();

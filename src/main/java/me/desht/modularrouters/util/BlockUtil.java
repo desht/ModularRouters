@@ -2,22 +2,27 @@ package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockShulkerBox;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.*;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityShulkerBox;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -33,22 +38,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BlockUtil {
-    private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {
-            EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST
+    private static final Direction[] HORIZONTALS = new Direction[] {
+            Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
     };
 
-    private static IBlockState getPlaceableState(BlockItemUseContext ctx) {
+    private static BlockState getPlaceableState(BlockItemUseContext ctx) {
         try {
-            IBlockState res = null;
+            BlockState res = null;
             World world = ctx.getWorld();
             BlockPos pos = ctx.getPos();
             Item item = ctx.getItem().getItem();
-            if (item instanceof ItemBlock) {
-                Block block = ((ItemBlock) item).getBlock();
+            if (item instanceof BlockItem) {
+                Block block = ((BlockItem) item).getBlock();
                 res = block.getStateForPlacement(ctx);
             } else if (item instanceof IPlantable) {
                 res = ((IPlantable) item).getPlant(world, pos);
-            } else if (item instanceof ItemCocoa) {
+            } else if (item == Items.COCOA_BEANS) {
                 // special handling for cocoa bean planting
                 res = getCocoaBeanState(ctx);
             }
@@ -63,10 +68,10 @@ public class BlockUtil {
         }
     }
 
-    private static IBlockState getCocoaBeanState(BlockItemUseContext ctx) {
+    private static BlockState getCocoaBeanState(BlockItemUseContext ctx) {
         // try to find a jungle log in any horizontal direction
-        for (EnumFacing f : HORIZONTALS) {
-            IBlockState state = ctx.getWorld().getBlockState(ctx.getPos().offset(f));
+        for (Direction f : HORIZONTALS) {
+            BlockState state = ctx.getWorld().getBlockState(ctx.getPos().offset(f));
             if (state.getBlock() == Blocks.JUNGLE_LOG) {
                 ctx.getPlayer().rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
                 return Blocks.COCOA.getStateForPlacement(ctx);
@@ -75,7 +80,7 @@ public class BlockUtil {
         return null;
     }
 
-    private static float getYawFromFacing(EnumFacing facing) {
+    private static float getYawFromFacing(Direction facing) {
         switch (facing) {
             case WEST: return 90f;
             case NORTH: return 180f;
@@ -96,32 +101,34 @@ public class BlockUtil {
      * @param horizFacing fallback direction if the block to be placed only supports horizontal rotations
      * @return the new block state if successful, null otherwise
      */
-    public static IBlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, EnumFacing facing, EnumFacing horizFacing) {
-        IBlockState currentState = world.getBlockState(pos);
+    public static BlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, Direction facing, Direction horizFacing) {
+        BlockState currentState = world.getBlockState(pos);
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
         if (fakePlayer == null) {
             return null;
         }
         fakePlayer.rotationYaw = getYawFromFacing(facing);
+        fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
 
         float hitX = (float) (fakePlayer.posX - pos.getX());
         float hitY = (float) (fakePlayer.posY - pos.getY());
         float hitZ = (float) (fakePlayer.posZ - pos.getZ());
-        BlockItemUseContext ctx = new BlockItemUseContext(world, fakePlayer, toPlace, pos, facing, hitX, hitY, hitZ);
+        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), facing, pos, false);
+        BlockItemUseContext ctx = new BlockItemUseContext(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
         if (!currentState.isReplaceable(ctx)) {
             return null;
         }
 
-        IBlockState newState = getPlaceableState(ctx);
+        BlockState newState = getPlaceableState(ctx);
         if (newState != null) {
             BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
-            fakePlayer.setHeldItem(EnumHand.MAIN_HAND, toPlace);
+            fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
             BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockState(pos, newState, 3)) {
-                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-                ItemBlock.setTileEntityNBT(world, fakePlayer, pos, toPlace);
+                fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                BlockItem.setTileEntityNBT(world, fakePlayer, pos, toPlace);
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
                 return newState;
             }
@@ -143,14 +150,14 @@ public class BlockUtil {
      * @return a drop result object
      */
     public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         // todo 1.13 how do liquids work?
         if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 /*|| block instanceof BlockLiquid*/) {
             return BreakResult.NOT_BROKEN;
         }
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
         List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, silkTouch, fortune);
 
         Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
@@ -158,12 +165,12 @@ public class BlockUtil {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
-                if (block instanceof BlockShulkerBox) {
+                if (block instanceof ShulkerBoxBlock) {
                     ItemStack stack = specialShulkerBoxHandling(world, pos);
                     groups = new HashMap<>();
                     groups.put(true, Lists.newArrayList(stack));
                 }
-                world.removeBlock(pos);
+                world.removeBlock(pos, false);
                 return new BreakResult(true, groups);
             }
         }
@@ -177,35 +184,41 @@ public class BlockUtil {
      */
     private static ItemStack specialShulkerBoxHandling(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityShulkerBox) {
-            TileEntityShulkerBox tesb = (TileEntityShulkerBox) te;
-            if (!tesb.isCleared() && tesb.shouldDrop()) {
+        if (te instanceof ShulkerBoxTileEntity) {
+            ShulkerBoxTileEntity tesb = (ShulkerBoxTileEntity) te;
+//            if (!tesb.isCleared() && tesb.shouldDrop()) {
                 ItemStack itemstack = new ItemStack(world.getBlockState(pos).getBlock().asItem());
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                CompoundNBT nbttagcompound = new CompoundNBT();
+                CompoundNBT nbttagcompound1 = new CompoundNBT();
                 nbttagcompound.put("BlockEntityTag", tesb.saveToNbt(nbttagcompound1));
                 itemstack.setTag(nbttagcompound);
                 if (tesb.hasCustomName()) {
                     itemstack.setDisplayName(tesb.getName());
-                    tesb.setCustomName(new TextComponentString(""));
+                    tesb.setCustomName(new StringTextComponent(""));
                 }
                 tesb.clear();  // stops BlockShulkerBox#breakBlock dropping it as an item
                 return itemstack;
-            }
+//            }
         }
         return ItemStack.EMPTY;
     }
 
-    private static List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player, boolean silkTouch, int fortune) {
-        IBlockState state = world.getBlockState(pos);
+    private static List<ItemStack> getDrops(World world, BlockPos pos, PlayerEntity player, boolean silkTouch, int fortune) {
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
         if (silkTouch) {
             return state.isAir(world, pos) ? Collections.emptyList() : Lists.newArrayList(new ItemStack(block));
         } else {
-            NonNullList<ItemStack> drops = NonNullList.create();
-            block.getDrops(state, drops, world, pos, fortune);
-            float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, 1.0F, false, player);
+            ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
+            if (fortune > 0) {
+                pick.addEnchantment(Enchantments.FORTUNE, fortune);
+            }
+            List<ItemStack> drops = block.getDrops(state, new LootContext.Builder((ServerWorld) world).withParameter(LootParameters.POSITION, pos).withParameter(LootParameters.TOOL, pick));
+//            block.getDrops(state, drops, world, pos, fortune);
+            NonNullList<ItemStack> dropsN = NonNullList.create();
+            dropsN.addAll(drops);
+            float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, false, player);
             return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
         }
     }
@@ -214,7 +227,7 @@ public class BlockUtil {
         if (w == null) {
             return null;
         }
-        IBlockState state = w.getBlockState(pos);
+        BlockState state = w.getBlockState(pos);
         if (state.getBlock().isAir(state, w, pos)) {
             return "";
         } else {

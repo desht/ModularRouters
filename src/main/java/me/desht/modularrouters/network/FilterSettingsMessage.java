@@ -3,17 +3,15 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
-import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.SlotTracker;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -27,81 +25,70 @@ import java.util.function.Supplier;
  * Sent when a filter's settings have been changed in any way via its GUI.
  * The filter could be in a player's hand, or in a module (which may or may not be in a router...)
  */
-public class FilterSettingsMessage extends BaseSettingsMessage {
+public class FilterSettingsMessage {
     private Operation op;
+    private CompoundNBT payload;
+    private MFLocator locator;
 
     public enum Operation {
         CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG
     }
 
-    public FilterSettingsMessage() {}
-
-    public FilterSettingsMessage(Operation op, EnumHand hand, NBTTagCompound ext) {
-        this(op, null, hand, ext);
+    public FilterSettingsMessage() {
     }
 
-    public FilterSettingsMessage(Operation op, BlockPos routerPos, NBTTagCompound ext) {
-        this(op, routerPos, null, ext);
-    }
-
-    private FilterSettingsMessage(Operation op, BlockPos routerPos, EnumHand hand, NBTTagCompound ext) {
-        super(routerPos, hand, ext);
+    public FilterSettingsMessage(Operation op, MFLocator locator, CompoundNBT payload) {
         this.op = op;
+        this.locator = locator;
+        this.payload = payload;
     }
 
     public FilterSettingsMessage(ByteBuf buf) {
-        super(buf);
-        op = Operation.values()[buf.readByte()];
+        PacketBuffer pb = new PacketBuffer(buf);
+        op = Operation.values()[pb.readByte()];
+        locator = MFLocator.fromBuffer(pb);
+        payload = pb.readCompoundTag();
+
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
-        super.toBytes(buf);
-        buf.writeByte(op.ordinal());
+        PacketBuffer pb = new PacketBuffer(buf);
+        pb.writeByte(op.ordinal());
+        locator.writeBuf(pb);
+        pb.writeCompoundTag(payload);
     }
 
     public Operation getOp() {
         return op;
     }
 
+    public CompoundNBT getPayload() {
+        return payload;
+    }
+
     public IItemHandler getTargetInventory() {
-        ModuleTarget target = ModuleTarget.fromNBT(getNbtData());
+        ModuleTarget target = ModuleTarget.fromNBT(payload);
         World w = MiscUtil.getWorldForDimensionId(target.dimId);
         return w != null ? InventoryUtils.getInventory(w, target.pos, target.face) : null;
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            EntityPlayerMP player = ctx.get().getSender();
-            ItemStack filterStack = ItemStack.EMPTY;
-            ItemStack moduleStack = ItemStack.EMPTY;
-            ModuleFilterHandler filterHandler = null;
-            SlotTracker tracker = SlotTracker.getInstance(player);
-            if (routerPos != null) {
-                TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), routerPos);
-                if (router != null) {
-                    moduleStack = tracker.getConfiguringModule(router);
-                    filterStack = tracker.getConfiguringFilter(router);
-                    router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
-                }
-            } else if (hand != null) {
-                ItemStack heldStack = player.getHeldItem(hand);
-                if (heldStack.getItem() instanceof ItemModule) {
-                    moduleStack = heldStack;
-                    filterHandler = new ModuleFilterHandler(moduleStack);
-                    filterStack = filterHandler.getStackInSlot(tracker.getFilterSlot());
-                } else if (heldStack.getItem() instanceof ItemSmartFilter) {
-                    filterStack = heldStack;
-                }
-            }
+            ServerPlayerEntity player = ctx.get().getSender();
+            ItemStack moduleStack = locator.getModuleStack(player);
+            ItemStack filterStack = locator.getTargetItem(player);
             if (filterStack.getItem() instanceof ItemSmartFilter) {
                 ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
-                GuiSyncMessage response = sf.dispatchMessage(player, this, filterStack, moduleStack);
-                if (filterHandler != null) {
-                    filterHandler.setStackInSlot(tracker.getFilterSlot(), filterStack);
+                GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
+                if (!moduleStack.isEmpty()) {
+                    ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack);
+                    filterHandler.setStackInSlot(locator.filterSlot, filterStack);
                     filterHandler.save();
-                    if (hand != null) {
-                        player.setHeldItem(hand, filterHandler.getHolderStack());
+                    if (locator.hand != null) {
+                        player.setHeldItem(locator.hand, filterHandler.getHolderStack());
+                    } else if (locator.routerPos != null) {
+                        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.world, locator.routerPos);
+                        if (router != null) router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
                     }
                 }
                 if (response != null) {

@@ -1,17 +1,18 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.gui.module.GuiModule;
-import me.desht.modularrouters.client.gui.module.GuiModuleFluid;
+import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.awt.*;
@@ -28,6 +29,11 @@ public class FluidModule extends ItemModule {
     }
 
     @Override
+    public ContainerType<? extends ContainerModule> getContainerType() {
+        return ModContainerTypes.CONTAINER_MODULE_FLUID;
+    }
+
+    @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledFluidModule(router, stack);
     }
@@ -37,13 +43,8 @@ public class FluidModule extends ItemModule {
         super.addExtraInformation(stack, list);
         CompiledFluidModule cfm = new CompiledFluidModule(null, stack);
         String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
-        list.add(new TextComponentTranslation("itemText.fluid.direction", dir));
-        list.add(new TextComponentTranslation("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
-    }
-
-    @Override
-    public Class<? extends GuiModule> getGuiClass() {
-        return GuiModuleFluid.class;
+        list.add(new TranslationTextComponent("itemText.fluid.direction", dir));
+        list.add(new TranslationTextComponent("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
     }
 
     @Override

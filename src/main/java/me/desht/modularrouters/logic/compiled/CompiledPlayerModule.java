@@ -3,10 +3,10 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -39,19 +39,19 @@ public class CompiledPlayerModule extends CompiledModule {
     private final Section section;
     private final UUID playerId;
     private final String playerName;
-    private WeakReference<EntityPlayer> playerRef;
+    private WeakReference<PlayerEntity> playerRef;
 
     public CompiledPlayerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null) {
             playerName = ((PlayerModule) stack.getItem()).getOwnerName(stack);
             playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);
             operation = Operation.values()[compound.getInt(NBT_OPERATION)];
             section = Section.values()[compound.getInt(NBT_SECTION)];
             if (router != null && !router.getWorld().isRemote) {
-                EntityPlayer player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerId);
+                PlayerEntity player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerId);
                 playerRef = new WeakReference<>(player);
             } else {
                 playerRef = new WeakReference<>(null);
@@ -71,7 +71,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
-        EntityPlayer player = getPlayer();  // will be non-null if we get here
+        PlayerEntity player = getPlayer();  // will be non-null if we get here
         IItemHandler itemHandler = getHandler(player);
         if (itemHandler == null) {
             return false;
@@ -107,7 +107,7 @@ public class CompiledPlayerModule extends CompiledModule {
         return false;
     }
 
-    private EntityPlayer getPlayer() {
+    private PlayerEntity getPlayer() {
         return playerRef.get();
     }
 
@@ -168,7 +168,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     private int getSlotForArmorItem(ItemStack stack) {
-        switch (EntityLiving.getSlotForItemStack(stack)) {
+        switch (MobEntity.getSlotForItemStack(stack)) {
             case HEAD: return 3;
             case CHEST: return 2;
             case LEGS: return 1;
@@ -177,7 +177,7 @@ public class CompiledPlayerModule extends CompiledModule {
         }
     }
 
-    private IItemHandler getHandler(EntityPlayer player) {
+    private IItemHandler getHandler(PlayerEntity player) {
         switch (section) {
             case MAIN: return new PlayerMainInvWrapper(player.inventory);
             case ARMOR: return new PlayerArmorInvWrapper(player.inventory);

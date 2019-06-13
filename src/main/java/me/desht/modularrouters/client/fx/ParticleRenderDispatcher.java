@@ -1,9 +1,9 @@
 package me.desht.modularrouters.client.fx;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.profiler.IProfiler;
 import org.lwjgl.opengl.GL11;
 
 public class ParticleRenderDispatcher {
@@ -14,7 +14,7 @@ public class ParticleRenderDispatcher {
     public static void dispatch() {
         Tessellator tessellator = Tessellator.getInstance();
 
-        Profiler profiler = Minecraft.getInstance().profiler;
+        IProfiler profiler = Minecraft.getInstance().getProfiler();
 
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
         GlStateManager.depthMask(false);

@@ -7,55 +7,46 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.Collections;
 import java.util.List;
 
 public class GuiModuleDistributor extends GuiModule {
-    private static final int STRATEGY_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
-    private static final int TOOLTIP_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
+    private StrategyButton sb;
 
-    private DistributionStrategy strategy;
+    public GuiModuleDistributor(ContainerModule container, PlayerInventory inv, ITextComponent displayText) {
+        super(container, inv, displayText);
+    }
 
-    public GuiModuleDistributor(ContainerModule container) {
-        super(container);
+    @Override
+    public void init() {
+        super.init();
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, moduleItemStack);
 
-        strategy = cdm.getDistributionStrategy();
+        addButton(new TooltipButton(guiLeft + 130, guiTop + 23));
+        addButton(sb = new StrategyButton(guiLeft + 147, guiTop + 23, 16, 16, cdm.getDistributionStrategy()));
+
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 21, guiLeft + 165, guiTop + 41,
+                "guiText.popup.distributor.strategy");
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-
-        addButton(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 130, guiTop + 23));
-        addButton(new StrategyButton(STRATEGY_BUTTON_ID, guiLeft + 147, guiTop + 23, 16, 16, strategy) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                strategy = cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-            }
-        });
-
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 21, guiLeft + 165, guiTop + 41, "guiText.popup.distributor.strategy");
-    }
-
-    @Override
-    protected NBTTagCompound buildMessageData() {
-        NBTTagCompound tag = super.buildMessageData();
-        tag.putInt(CompiledDistributorModule.NBT_STRATEGY, strategy.ordinal());
+    protected CompoundNBT buildMessageData() {
+        CompoundNBT tag = super.buildMessageData();
+        tag.putInt(CompiledDistributorModule.NBT_STRATEGY, sb.getState().ordinal());
         return tag;
     }
 
     private class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
         private final List<List<String>> tooltips = Lists.newArrayList();
 
-        StrategyButton(int buttonId, int x, int y, int width, int height, DistributionStrategy initialVal) {
-            super(buttonId, x, y, width, height, initialVal);
+        StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
+            super(x, y, width, height, initialVal, GuiModuleDistributor.this);
             for (DistributionStrategy strategy : DistributionStrategy.values()) {
                 tooltips.add(Collections.singletonList(I18n.format("itemText.distributor.strategy." + strategy)));
             }
@@ -78,8 +69,8 @@ public class GuiModuleDistributor extends GuiModule {
     }
 
     private class TooltipButton extends TexturedButton {
-        TooltipButton(int id, int x, int y) {
-            super(id, x, y, 16, 16);
+        TooltipButton(int x, int y) {
+            super(x, y, 16, 16, p -> {});
             tooltip1.add(I18n.format("guiText.tooltip.distributor.strategy"));
         }
 
@@ -89,7 +80,7 @@ public class GuiModuleDistributor extends GuiModule {
         }
 
         @Override
-        public void playPressSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundHandler soundHandlerIn) {
         }
 
         @Override

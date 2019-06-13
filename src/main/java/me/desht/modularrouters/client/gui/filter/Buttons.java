@@ -6,8 +6,8 @@ import net.minecraft.client.resources.I18n;
 
 class Buttons {
     static class AddButton extends TexturedButton {
-        AddButton(int buttonId, int x, int y) {
-            super(buttonId, x, y, 16, 16);
+        AddButton(int x, int y, IPressable pressable) {
+            super(x, y, 16, 16, pressable);
         }
 
         @Override
@@ -22,8 +22,11 @@ class Buttons {
     }
 
     static class DeleteButton extends TexturedButton {
-        DeleteButton(int buttonId, int x, int y) {
-            super(buttonId, x, y, 16, 16);
+        private final int id;
+
+        DeleteButton(int x, int y, int id, IPressable pressable) {
+            super(x, y, 16, 16, pressable);
+            this.id = id;
         }
 
         @Override
@@ -35,25 +38,29 @@ class Buttons {
         protected int getTextureY() {
             return 16;
         }
+
+        public int getId() {
+            return id;
+        }
     }
 
     static class ClearButton extends DeleteButton {
-        ClearButton(int buttonId, int x, int y) {
-            super(buttonId, x, y);
+        ClearButton(int x, int y, IPressable pressable) {
+            super(x, y, 0, pressable);
             tooltip1.add(I18n.format("guiText.tooltip.clearFilter"));
         }
     }
 
     static class MergeButton extends AddButton {
-        MergeButton(int buttonId, int x, int y, String locStr, String name) {
-            super(buttonId, x, y);
+        MergeButton(int x, int y, String locStr, String name, IPressable pressable) {
+            super(x, y, pressable);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.mergeFilter", name, locStr);
         }
     }
 
     static class LoadButton extends TexturedButton {
-        LoadButton(int buttonId, int x, int y, String locStr, String name) {
-            super(buttonId, x, y, 16, 16);
+        LoadButton(int x, int y, String locStr, String name,  IPressable pressable) {
+            super( x, y, 16, 16, pressable);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.loadFilter", name, locStr);
         }
 

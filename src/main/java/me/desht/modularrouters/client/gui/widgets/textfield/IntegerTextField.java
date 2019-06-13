@@ -1,12 +1,12 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.regex.Pattern;
 
-public class IntegerTextField extends TextFieldWidget {
+public class IntegerTextField extends TextFieldWidgetMR {
     private final int min;
     private final int max;
     private int incr = 1;
@@ -15,8 +15,8 @@ public class IntegerTextField extends TextFieldWidget {
 
     private static final Pattern INT_MATCHER = Pattern.compile("^-?[0-9]+$");
 
-    public IntegerTextField(TextFieldManager parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, int min, int max) {
-        super(parent, componentId, fontrendererObj, x, y, par5Width, par6Height);
+    public IntegerTextField(TextFieldManager parent, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, int min, int max) {
+        super(parent, fontrendererObj, x, y, par5Width, par6Height);
         this.min = min;
         this.max = max;
 
@@ -82,9 +82,9 @@ public class IntegerTextField extends TextFieldWidget {
     }
 
     private int getAdjustment() {
-        if (GuiScreen.isShiftKeyDown()) {
+        if (Screen.hasShiftDown()) {
             return coarseIncr;
-        } else if (GuiScreen.isCtrlKeyDown()) {
+        } else if (Screen.hasControlDown()) {
             return fineIncr;
         } else {
             return incr;

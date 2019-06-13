@@ -1,9 +1,9 @@
 package me.desht.modularrouters.client;
 
+import com.mojang.blaze3d.platform.GLX;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -14,7 +14,7 @@ public class RenderHelper {
         ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
         GlStateManager.color3f(1.0F, 1.0F, 1.0F);
 
-        if (stack != null) {
+        if (!stack.isEmpty() && stack.getItem() != null) {
             GlStateManager.pushMatrix();
             GlStateManager.translatef(0.0F, 0.0F, 32.0F);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -23,7 +23,7 @@ public class RenderHelper {
             short short1 = 240;
             short short2 = 240;
             net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
-            OpenGlHelper.glMultiTexCoord2f(OpenGlHelper.GL_TEXTURE1, short1 / 1.0F, short2 / 1.0F);
+            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, short1 / 1.0F, short2 / 1.0F);
             itemRender.renderItemAndEffectIntoGUI(stack, x, y);
             itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, txt);
             GlStateManager.popMatrix();
@@ -32,7 +32,7 @@ public class RenderHelper {
         }
     }
 
-    public static void glColorHex(int color) {
+    private static void glColorHex(int color) {
         float alpha = (color >> 24 & 255) / 255F;
         float red = (color >> 16 & 255) / 255F;
         float green = (color >> 8 & 255) / 255F;
@@ -40,7 +40,7 @@ public class RenderHelper {
         GlStateManager.color4f(red, green, blue, alpha);
     }
 
-    public static void glColorHex(int color, int alpha) {
+    static void glColorHex(int color, int alpha) {
         glColorHex(color | alpha << 24);
     }
 }

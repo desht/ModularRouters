@@ -1,9 +1,9 @@
 package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -37,12 +37,12 @@ public class BufferHandler extends ItemStackHandler {
 
         if (updateFluid || updateEnergy) {
             // in case any pipes/cables need to connect/disconnect
-            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ObjectRegistry.ITEM_ROUTER);
+            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.ITEM_ROUTER);
         }
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(CompoundNBT nbt) {
         super.deserializeNBT(nbt);
 
         ItemStack stack = getStackInSlot(0);

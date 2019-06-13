@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.PacketHandler;
@@ -24,7 +24,7 @@ public class CompiledPullerModule2 extends CompiledPullerModule1 {
     }
 
     @Override
-    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
         return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
     }
 
@@ -37,7 +37,7 @@ public class CompiledPullerModule2 extends CompiledPullerModule1 {
 
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
-        if (router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
+        if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos()).add(0.5, 0.5, 0.5);
             Vec3d vec2 = new Vec3d(targetPos).add(0.5, 0.5, 0.5);
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().dimension.getType());

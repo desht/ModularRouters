@@ -3,7 +3,7 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -49,14 +49,12 @@ public class PushEntityMessage {
             if (w != null) {
                 Entity entity = w.getEntityByID(id);
                 if (entity != null) {
-                    entity.motionX = x;
-                    entity.motionY = y;
-                    entity.motionZ = z;
+                    entity.setMotion(x, y, z);
                     entity.onGround = false;
                     entity.collided = false;
                     entity.collidedHorizontally = false;
                     entity.collidedVertically = false;
-                    if (entity instanceof EntityLivingBase) ((EntityLivingBase) entity).setJumping(true);
+                    if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
                 }
             }
         });

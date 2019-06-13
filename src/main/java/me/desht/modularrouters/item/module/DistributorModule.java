@@ -1,15 +1,16 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.gui.module.GuiModule;
-import me.desht.modularrouters.client.gui.module.GuiModuleDistributor;
+import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
@@ -28,10 +29,15 @@ public class DistributorModule extends SenderModule2 {
         super.addSettingsInformation(itemstack, list);
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
 
-        list.add(new TextComponentString(
+        list.add(new StringTextComponent(
                 TextFormatting.YELLOW + I18n.format("guiText.tooltip.distributor.strategy") + ": "
                 + TextFormatting.AQUA + I18n.format("itemText.distributor.strategy." + cdm.getDistributionStrategy()))
         );
+    }
+
+    @Override
+    public ContainerType<? extends ContainerModule> getContainerType() {
+        return ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR;
     }
 
     @Override
@@ -48,11 +54,6 @@ public class DistributorModule extends SenderModule2 {
     @Override
     public Color getItemTint() {
         return new Color(240, 240, 60);
-    }
-
-    @Override
-    public Class<? extends GuiModule> getGuiClass() {
-        return GuiModuleDistributor.class;
     }
 
     @Override

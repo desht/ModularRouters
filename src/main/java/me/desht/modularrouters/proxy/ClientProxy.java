@@ -5,9 +5,10 @@ import me.desht.modularrouters.client.fx.FXSparkle;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.settings.ParticleStatus;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 public class ClientProxy implements IProxy {
@@ -46,9 +47,9 @@ public class ClientProxy implements IProxy {
 //            return true;
 
         float chance = 1F;
-        if(Minecraft.getInstance().gameSettings.particleSetting == 1)
+        if(Minecraft.getInstance().gameSettings.particles == ParticleStatus.DECREASED)
             chance = 0.6F;
-        else if(Minecraft.getInstance().gameSettings.particleSetting == 2)
+        else if(Minecraft.getInstance().gameSettings.particles == ParticleStatus.MINIMAL)
             chance = 0.2F;
 
         return chance == 1F || Math.random() < chance;
@@ -61,20 +62,20 @@ public class ClientProxy implements IProxy {
 
     @Override
     public TileEntityItemRouter getOpenItemRouter() {
-        if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
-            return ((GuiItemRouter) Minecraft.getInstance().currentScreen).router;
+        if (Minecraft.getInstance().field_71462_r instanceof GuiItemRouter) {
+            return ((GuiItemRouter) Minecraft.getInstance().field_71462_r).router;
         } else {
             return null;
         }
     }
 
     @Override
-    public EntityPlayer getClientPlayer() {
+    public PlayerEntity getClientPlayer() {
         return Minecraft.getInstance().player;
     }
 
     @Override
-    public void openSyncGui(ItemStack stack, EnumHand hand) {
+    public void openSyncGui(ItemStack stack, Hand hand) {
         Minecraft.getInstance().displayGuiScreen(new GuiSyncUpgrade(stack, hand));
     }
 }

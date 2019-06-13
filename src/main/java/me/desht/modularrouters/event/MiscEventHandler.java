@@ -2,7 +2,12 @@ package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.block.BlockTemplateFrame;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
-import net.minecraft.block.state.IBlockState;
+import me.desht.modularrouters.container.handler.AugmentHandler;
+import me.desht.modularrouters.item.IPlayerOwned;
+import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.util.InventoryUtils;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,12 +17,45 @@ public class MiscEventHandler {
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
         if (event.getPos() != null) {
-            IBlockState state = event.getEntityPlayer().getEntityWorld().getBlockState(event.getPos());
+            BlockState state = event.getEntityPlayer().getEntityWorld().getBlockState(event.getPos());
             if (state.getBlock() instanceof BlockTemplateFrame) {
                 TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(event.getEntityPlayer().getEntityWorld(), event.getPos());
                 if (te != null && te.getCamouflage() != null && te.extendedMimic()) {
-                    IBlockState camoState = te.getCamouflage();
+                    BlockState camoState = te.getCamouflage();
                     event.setNewSpeed(event.getEntityPlayer().getDigSpeed(camoState, null));
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onItemCrafted(net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent event) {
+        ItemStack stack = event.getCrafting();
+        if (event.getCrafting().getItem() instanceof IPlayerOwned) {
+            // player-owned items get tagged with the creator's name & ID
+            ((IPlayerOwned) stack.getItem()).setOwner(stack, event.getPlayer());
+        } else if (stack.getItem() instanceof ItemModule) {
+            // if self-crafting a module to reset it; retrieve any augments in the module
+            ItemStack moduleStack = ItemStack.EMPTY;
+            for (int i = 0; i < event.getInventory().getSizeInventory(); i++) {
+                ItemStack s = event.getInventory().getStackInSlot(i);
+                if (!s.isEmpty()) {
+                    if (s.getItem() == event.getCrafting().getItem()) {
+                        moduleStack = s;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (!moduleStack.isEmpty()) {
+                AugmentHandler h = new AugmentHandler(moduleStack);
+                for (int i = 0; i < h.getSlots(); i++) {
+                    ItemStack s = h.getStackInSlot(i);
+                    if (!s.isEmpty()) {
+                        if (!event.getPlayer().addItemStackToInventory(s)) {
+                            InventoryUtils.dropItems(event.getPlayer().getEntityWorld(), event.getPlayer().getPosition(), s);
+                        }
+                    }
                 }
             }
         }

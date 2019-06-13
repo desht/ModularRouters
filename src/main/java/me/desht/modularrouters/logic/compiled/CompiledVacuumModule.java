@@ -2,22 +2,22 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.init.Particles;
+import net.minecraft.entity.item.ExperienceOrbEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -40,7 +40,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private final FluidStack xpJuiceStack;
 
     private TileEntity fluidReceiver = null;
-    private EnumFacing fluidReceiverFace = null;
+    private Direction fluidReceiverFace = null;
 
     // temporary small xp buffer (generally around an orb or less)
     // does not survive router recompilation...
@@ -51,10 +51,10 @@ public class CompiledVacuumModule extends CompiledModule {
 
     public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
-        fastPickup = getAugmentCount(ObjectRegistry.FAST_PICKUP_AUGMENT) > 0;
-        xpMode = getAugmentCount(ObjectRegistry.XP_VACUUM_AUGMENT) > 0;
+        fastPickup = getAugmentCount(ModItems.FAST_PICKUP_AUGMENT) > 0;
+        xpMode = getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0;
 
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         xpCollectionType = XPCollectionType.values()[compound.getInt(NBT_XP_FLUID_TYPE)];
         autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
 
@@ -87,7 +87,7 @@ public class CompiledVacuumModule extends CompiledModule {
         if (!xpMode || xpJuiceStack == null) return;
 
         fluidReceiver = null;
-        for (EnumFacing face : EnumFacing.values()) {
+        for (Direction face : Direction.values()) {
             TileEntity te = router.getWorld().getTileEntity(router.getPos().offset(face));
             if (te != null) {
                 te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()).ifPresent(handler -> {
@@ -110,12 +110,12 @@ public class CompiledVacuumModule extends CompiledModule {
 
         BlockPos centrePos = getTarget().pos;
         int range = getRange();
-        List<EntityItem> items = router.getWorld().getEntitiesWithinAABB(EntityItem.class,
+        List<ItemEntity> items = router.getWorld().getEntitiesWithinAABB(ItemEntity.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
 
         int toPickUp = getItemsPerTick(router);
 
-        for (EntityItem item : items) {
+        for (ItemEntity item : items) {
             if (item.removed || (!fastPickup && item.cannotPickup())) {
                 continue;
             }
@@ -134,8 +134,8 @@ public class CompiledVacuumModule extends CompiledModule {
                 if (stackOnGround.isEmpty()) {
                     item.remove();
                 }
-                if (inserted > 0 && ConfigHandler.MODULE.vacuumParticles.get() && router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 2) {
-                    ((WorldServer) router.getWorld()).spawnParticle(Particles.CLOUD, item.posX, item.posY + 0.25, item.posZ, 2, 0.0, 0.0, 0.0, 0.0);
+                if (inserted > 0 && ConfigHandler.MODULE.vacuumParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
+                    ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.CLOUD, item.posX, item.posY + 0.25, item.posZ, 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {
                     break;
@@ -148,7 +148,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private boolean handleXpMode(TileEntityItemRouter router) {
         BlockPos centrePos = getTarget().pos;
         int range = getRange();
-        List<EntityXPOrb> orbs = router.getWorld().getEntitiesWithinAABB(EntityXPOrb.class,
+        List<ExperienceOrbEntity> orbs = router.getWorld().getEntitiesWithinAABB(ExperienceOrbEntity.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
         if (orbs.isEmpty()) {
             return false;
@@ -177,7 +177,7 @@ public class CompiledVacuumModule extends CompiledModule {
         }
 
         int initialSpaceForXp = spaceForXp;
-        for (EntityXPOrb orb : orbs) {
+        for (ExperienceOrbEntity orb : orbs) {
             if (orb.getXpValue() > spaceForXp) {
                 break;
             }
@@ -203,7 +203,7 @@ public class CompiledVacuumModule extends CompiledModule {
         return initialSpaceForXp - spaceForXp > 0;
     }
 
-    private boolean doFluidXPFill(EntityXPOrb orb, IFluidHandler xpHandler) {
+    private boolean doFluidXPFill(ExperienceOrbEntity orb, IFluidHandler xpHandler) {
         FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getXpValue() * xpCollectionType.getXpRatio() + xpBuffered);
         int filled = xpHandler.fill(xpStack, true);
         if (filled < xpStack.amount) {
@@ -229,13 +229,13 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    public List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
         if (router == null) {
             return null;
         }
         ItemModule.RelativeDirection dir = getDirection();
         int offset = dir == ItemModule.RelativeDirection.NONE ? 0 : getRange() + 1;
-        EnumFacing facing = router.getAbsoluteFacing(dir);
+        Direction facing = router.getAbsoluteFacing(dir);
         return Collections.singletonList(new ModuleTarget(MiscUtil.getDimensionForWorld(router.getWorld()), router.getPos().offset(facing, offset), facing));
     }
 

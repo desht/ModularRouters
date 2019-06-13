@@ -4,19 +4,20 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
+import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Hand;
 import net.minecraftforge.items.SlotItemHandler;
 
 public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotItemHandler {
     private final TileEntityItemRouter router;
-    private final EntityPlayer player;
-    private final EnumHand hand;
+    private final PlayerEntity player;
+    private final Hand hand;
     private final boolean serverSide;
     private final int index;
 
@@ -29,7 +30,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
         this.index = index;
     }
 
-    public BaseModuleSlot(T itemHandler, EntityPlayer player, EnumHand hand, int index, int xPosition, int yPosition) {
+    public BaseModuleSlot(T itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.router = null;
         this.player = player;
@@ -41,11 +42,11 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
     @Override
     public void putStack(ItemStack stack) {
         // bit of a hack, but ensures bulk item filter NBT is properly init'd
-        if (stack.getItem() instanceof ItemSmartFilter) {
-            NBTTagCompound compound = stack.getTag();
+        if (stack.getItem() instanceof BulkItemFilter) {
+            CompoundNBT compound = stack.getTag();
             if (compound == null || !compound.contains(ModuleHelper.NBT_FILTER)) {
-                compound = new NBTTagCompound();
-                compound.put(ModuleHelper.NBT_FILTER, new NBTTagList());
+                compound = new CompoundNBT();
+                compound.put(ModuleHelper.NBT_FILTER, new ListNBT());
                 stack.setTag(compound);
             }
         }
@@ -77,7 +78,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        public ModuleFilterSlot(ModuleFilterHandler itemHandler, EntityPlayer player, EnumHand hand, int index, int xPosition, int yPosition) {
+        public ModuleFilterSlot(ModuleFilterHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
             super(itemHandler, player, hand, index, xPosition, yPosition);
         }
     }
@@ -87,7 +88,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        public BulkFilterSlot(BulkFilterHandler itemHandler, EntityPlayer player, EnumHand hand, int index, int xPosition, int yPosition) {
+        public BulkFilterSlot(BulkFilterHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
             super(itemHandler, player, hand, index, xPosition, yPosition);
         }
     }

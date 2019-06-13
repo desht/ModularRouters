@@ -1,14 +1,15 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.gui.module.GuiModule;
-import me.desht.modularrouters.client.gui.module.GuiModuleDetector;
+import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.*;
 import java.util.List;
@@ -26,6 +27,10 @@ public class DetectorModule extends ItemModule {
         }
     }
 
+    @Override
+    public ContainerType<? extends ContainerModule> getContainerType() {
+        return ModContainerTypes.CONTAINER_MODULE_DETECTOR;
+    }
 
     @Override
     public CompiledModule compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
@@ -36,13 +41,8 @@ public class DetectorModule extends ItemModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
-        list.add(new TextComponentTranslation("itemText.misc.redstoneLevel",
+        list.add(new TranslationTextComponent("itemText.misc.redstoneLevel",
                 ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal." + ds.isStrongSignal())));
-    }
-
-    @Override
-    public Class<? extends GuiModule> getGuiClass() {
-        return GuiModuleDetector.class;
     }
 
     @Override

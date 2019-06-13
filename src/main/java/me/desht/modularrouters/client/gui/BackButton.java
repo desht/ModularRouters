@@ -3,8 +3,8 @@ package me.desht.modularrouters.client.gui;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 
 public class BackButton extends TexturedButton {
-    public BackButton(int buttonId, int x, int y) {
-        super(buttonId, x, y, 16, 16);
+    public BackButton(int x, int y, IPressable pressable) {
+        super(x, y, 16, 16, pressable);
     }
 
     @Override

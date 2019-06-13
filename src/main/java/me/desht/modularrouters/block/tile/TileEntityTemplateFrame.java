@@ -1,18 +1,16 @@
 package me.desht.modularrouters.block.tile;
 
 import me.desht.modularrouters.block.BlockCamo;
-import me.desht.modularrouters.core.ObjectRegistry;
-import me.desht.modularrouters.util.Scheduler;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemBlock;
+import me.desht.modularrouters.core.ModTileEntities;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumLightType;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -24,11 +22,11 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     private static final String NBT_CAMO_NAME = "CamouflageName";
     private static final String NBT_MIMIC = "Mimic";
 
-    private IBlockState camouflage = null;  // block to masquerade as
+    private BlockState camouflage = null;  // block to masquerade as
     private boolean extendedMimic; // true if extra mimicking is done (light, hardness, blast resistance)
 
     public TileEntityTemplateFrame() {
-        super(ObjectRegistry.TEMPLATE_FRAME_TILE);
+        super(ModTileEntities.TEMPLATE_FRAME);
     }
 
     public static TileEntityTemplateFrame getTileEntitySafely(IBlockReader world, BlockPos pos) {
@@ -37,12 +35,12 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public IBlockState getCamouflage() {
+    public BlockState getCamouflage() {
         return camouflage;
     }
 
     @Override
-    public void setCamouflage(IBlockState camouflage) {
+    public void setCamouflage(BlockState camouflage) {
         this.camouflage = camouflage;
         requestModelDataUpdate();
     }
@@ -68,49 +66,51 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public void read(NBTTagCompound compound) {
+    public void read(CompoundNBT compound) {
         super.read(compound);
         camouflage = getCamoStateFromNBT(compound);
         extendedMimic = compound.getBoolean(NBT_MIMIC);
     }
 
     @Override
-    public NBTTagCompound write(NBTTagCompound compound) {
+    public CompoundNBT write(CompoundNBT compound) {
         compound = super.write(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
         return getNBTFromCamoState(compound, camouflage);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         camouflage = getCamoStateFromNBT(pkt.getNbtCompound());
         extendedMimic = pkt.getNbtCompound().getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
-            getWorld().checkLightFor(EnumLightType.BLOCK, getPos());
+            // todo 1.14
+//            getWorld().checkLightFor(LightType.BLOCK, getPos());
         }
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
+    public void handleUpdateTag(CompoundNBT tag) {
         super.handleUpdateTag(tag);
         camouflage = getCamoStateFromNBT(tag);
         extendedMimic = tag.getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
-            Scheduler.client().schedule(() -> getWorld().checkLightFor(EnumLightType.BLOCK, getPos()), 1L);
+            // todo 1.14
+//            Scheduler.client().schedule(() -> getWorld().checkLightFor(LightType.BLOCK, getPos()), 1L);
         }
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(this.pos, -1, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.pos, -1, getUpdateTag());
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        NBTTagCompound compound = new NBTTagCompound();
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT compound = new CompoundNBT();
 
         compound.putInt("x", pos.getX());
         compound.putInt("y", pos.getY());
@@ -120,14 +120,14 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         return getNBTFromCamoState(compound, camouflage);
     }
 
-    private static IBlockState getCamoStateFromNBT(NBTTagCompound tag) {
+    private static BlockState getCamoStateFromNBT(CompoundNBT tag) {
         if (tag.contains(NBT_CAMO_NAME)) {
             return NBTUtil.readBlockState(tag.getCompound(NBT_CAMO_NAME));
         }
         return null;
     }
 
-    private static NBTTagCompound getNBTFromCamoState(NBTTagCompound compound, IBlockState camouflage) {
+    private static CompoundNBT getNBTFromCamoState(CompoundNBT compound, BlockState camouflage) {
         if (camouflage != null) {
             compound.put(NBT_CAMO_NAME, NBTUtil.writeBlockState(camouflage));
         }
@@ -135,8 +135,8 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     public void setCamouflage(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ItemBlock) {
-            camouflage = ((ItemBlock) itemStack.getItem()).getBlock().getDefaultState();
+        if (itemStack.getItem() instanceof BlockItem) {
+            camouflage = ((BlockItem) itemStack.getItem()).getBlock().getDefaultState();
             requestModelDataUpdate();
         }
     }

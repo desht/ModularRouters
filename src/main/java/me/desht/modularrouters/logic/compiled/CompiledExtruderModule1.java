@@ -2,19 +2,19 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.PushEntityMessage;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.EnumPushReaction;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Enchantments;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +38,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInt(NBT_EXTRUDER_DIST + getFacing());
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-        pushingAugments = getAugmentCount(ObjectRegistry.PUSHING_AUGMENT);
+        pushingAugments = getAugmentCount(ModItems.PUSHING_AUGMENT);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
-            IBlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos, getFacing(), getRouterFacing());
+            BlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos, getFacing(), getRouterFacing());
             if (state != null) {
                 router.extractBuffer(1);
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
@@ -65,7 +65,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
         } else if (!extend && distance > 0 && isRegulationOK(router, true)) {
             // try to retract
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
-            IBlockState oldState = world.getBlockState(breakPos);
+            BlockState oldState = world.getBlockState(breakPos);
             Block oldBlock = oldState.getBlock();
             if (world.isAirBlock(breakPos) /*|| oldBlock instanceof BlockLiquid*/ || oldBlock instanceof IFluidBlock) {
                 // nothing there? continue to retract anyway...
@@ -87,21 +87,19 @@ public class CompiledExtruderModule1 extends CompiledModule {
         return false;
     }
 
-    void tryPushEntities(World world, BlockPos placePos, EnumFacing facing) {
+    void tryPushEntities(World world, BlockPos placePos, Direction facing) {
         if (!ConfigHandler.MODULE.extruderPushEntities.get()) {
             return;
         }
         Vec3d v = new Vec3d(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
         for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(placePos))) {
-            if (entity.getPushReaction() != EnumPushReaction.IGNORE) {
-                entity.motionX = v.x;
-                entity.motionY = v.y;
-                entity.motionZ = v.z;
+            if (entity.getPushReaction() != PushReaction.IGNORE) {
+                entity.setMotion(v);
                 entity.onGround = false;
                 entity.collided = false;
                 entity.collidedHorizontally = false;
                 entity.collidedVertically = false;
-                if (entity instanceof EntityLivingBase) ((EntityLivingBase) entity).setJumping(true);
+                if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
                 PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.posX, entity.posY, entity.posZ, 32, world.dimension.getType());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                         new PushEntityMessage(entity, v.x, v.y, v.z));

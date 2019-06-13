@@ -1,10 +1,10 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 
-public class FloatTextField extends TextFieldWidget {
+public class FloatTextField extends TextFieldWidgetMR {
     private final float min;
     private final float max;
     private float incr = 1.0f;
@@ -12,8 +12,8 @@ public class FloatTextField extends TextFieldWidget {
     private float coarse = 5.0f;
     private String precStr = "%.1f";
 
-    public FloatTextField(TextFieldManager parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
-        super(parent, componentId, fontrendererObj, x, y, par5Width, par6Height);
+    public FloatTextField(TextFieldManager parent, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
+        super(parent, fontrendererObj, x, y, par5Width, par6Height);
         this.min = min;
         this.max = max;
 
@@ -69,9 +69,9 @@ public class FloatTextField extends TextFieldWidget {
     }
 
     private boolean adjustField(float adj) {
-        if (GuiScreen.isCtrlKeyDown()) {
+        if (Screen.hasControlDown()) {
             adj *= fine;
-        } else if (GuiScreen.isShiftKeyDown()) {
+        } else if (Screen.hasShiftDown()) {
             adj *= coarse;
         }
         float val;
@@ -86,5 +86,13 @@ public class FloatTextField extends TextFieldWidget {
             writeText(String.format(precStr, newVal));
         }
         return true;
+    }
+
+    public float getValue() {
+        try {
+            return Float.parseFloat(getText());
+        } catch (NumberFormatException e) {
+            return 0f;
+        }
     }
 }

@@ -1,9 +1,8 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -12,18 +11,18 @@ import java.util.List;
  * Handles a collection of TextFieldWidget objects, sending events and managing Tab-focus etc.
  */
 public class TextFieldManager {
-    private final List<TextFieldWidget> textFields = Lists.newArrayList();
+    private final List<TextFieldWidgetMR> textFields = Lists.newArrayList();
     private int focusedField = -1;
-    private final GuiScreen parent;
+    private final Screen parent;
 
-    public TextFieldManager(GuiScreen parent) {
+    public TextFieldManager(Screen parent) {
         this.parent = parent;
     }
 
     public void drawTextFields(int mouseX, int mouseY, float partialTicks) {
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
-        textFields.forEach(tf -> tf.drawTextField(mouseX, mouseY, partialTicks));
+        textFields.forEach(tf -> tf.renderButton(mouseX, mouseY, partialTicks));
     }
 
     public void tick() {
@@ -54,7 +53,7 @@ public class TextFieldManager {
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
          if (keyCode == GLFW.GLFW_KEY_TAB) {
-             cycleFocus(GuiScreen.isShiftKeyDown() ? -1 : 1);
+             cycleFocus(Screen.hasShiftDown() ? -1 : 1);
         } else if (isFocused() && textFields.get(focusedField).getVisible()) {
             return textFields.get(focusedField).keyPressed(keyCode, scanCode, modifiers);
             // avoid closing window while text field focused
@@ -69,7 +68,7 @@ public class TextFieldManager {
                 && textFields.get(focusedField).charTyped(c, modifiers);
     }
 
-    int addTextField(TextFieldWidget textField) {
+    int addTextField(TextFieldWidgetMR textField) {
         textFields.add(textField);
         return textFields.size() - 1;
     }
@@ -116,7 +115,7 @@ public class TextFieldManager {
     void onTextFieldFocusChange(int ordinal, boolean newFocus) {
         if (ordinal == textFields.size() - 1) {
             focusedField = -1;
-            for (TextFieldWidget t : textFields) {
+            for (TextFieldWidgetMR t : textFields) {
                 if (t.isFocused()) {
                     focusedField = t.getOrdinal();
                     break;

@@ -34,8 +34,8 @@ public class GuiSyncMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            if (Minecraft.getInstance().currentScreen instanceof IResyncableGui) {
-                ((IResyncableGui) Minecraft.getInstance().currentScreen).resync(newStack);
+            if (Minecraft.getInstance().field_71462_r instanceof IResyncableGui) {
+                ((IResyncableGui) Minecraft.getInstance().field_71462_r).resync(newStack);
             }
         });
         ctx.get().setPacketHandled(true);

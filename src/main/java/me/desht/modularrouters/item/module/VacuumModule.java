@@ -1,19 +1,20 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.gui.module.GuiModule;
-import me.desht.modularrouters.client.gui.module.GuiModuleVacuum;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.UniversalBucket;
 
@@ -23,6 +24,11 @@ import java.util.List;
 public class VacuumModule extends ItemModule implements IRangedModule {
     public VacuumModule(Properties props) {
         super(props);
+    }
+
+    @Override
+    public ContainerType<? extends ContainerModule> getContainerType() {
+        return ModContainerTypes.CONTAINER_MODULE_VACUUM;
     }
 
     @Override
@@ -43,10 +49,10 @@ public class VacuumModule extends ItemModule implements IRangedModule {
 
             String s = I18n.format("guiText.label.xpVacuum") + ": "
                     + TextFormatting.AQUA + title + TextFormatting.BLUE + TextFormatting.ITALIC + " (" + modName + ")";
-            list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new TextComponentString(s)));
+            list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new StringTextComponent(s)));
 
             if (cvm.isAutoEjecting() && !type.isSolid()) {
-                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new TextComponentTranslation("guiText.tooltip.xpVacuum.ejectFluid")));
+                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new TranslationTextComponent("guiText.tooltip.xpVacuum.ejectFluid")));
             }
         }
     }
@@ -64,11 +70,6 @@ public class VacuumModule extends ItemModule implements IRangedModule {
     @Override
     public boolean isOmniDirectional() {
         return true;
-    }
-
-    @Override
-    public Class<? extends GuiModule> getGuiClass() {
-        return GuiModuleVacuum.class;
     }
 
     @Override

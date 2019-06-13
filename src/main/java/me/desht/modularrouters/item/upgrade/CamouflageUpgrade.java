@@ -1,19 +1,20 @@
 package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModBlocks;
+import me.desht.modularrouters.core.ModSounds;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         if (itemstack.hasTag() && itemstack.getTag().contains(NBT_STATE_NAME)) {
-            list.add(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(itemstack)));
+            list.add(new TranslationTextComponent("itemText.camouflage.held", getCamoStateDisplayName(itemstack)));
         }
     }
 
@@ -37,20 +38,20 @@ public class CamouflageUpgrade extends ItemUpgrade {
         router.setCamouflage(getCamoState(stack));
     }
 
-    private static void setCamoState(ItemStack stack, IBlockState camoState) {
+    private static void setCamoState(ItemStack stack, BlockState camoState) {
         stack.getOrCreateTag().put(NBT_STATE_NAME, NBTUtil.writeBlockState(camoState));
     }
 
-    public static IBlockState readFromNBT(NBTTagCompound compound) {
+    public static BlockState readFromNBT(CompoundNBT compound) {
         return NBTUtil.readBlockState(compound);
     }
 
-    private static IBlockState getCamoState(ItemStack stack) {
+    private static BlockState getCamoState(ItemStack stack) {
         return stack.hasTag() ? readFromNBT(stack.getTag().getCompound(NBT_STATE_NAME)) : null;
     }
 
     private static String getCamoStateDisplayName(ItemStack stack) {
-        IBlockState state = getCamoState(stack);
+        BlockState state = getCamoState(stack);
         if (state != null) {
             Block b = state.getBlock();
             Item item = b.asItem();
@@ -60,28 +61,28 @@ public class CamouflageUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemUseContext ctx) {
-        EntityPlayer player = ctx.getPlayer();
+    public ActionResultType onItemUse(ItemUseContext ctx) {
+        PlayerEntity player = ctx.getPlayer();
         ItemStack stack = ctx.getItem();
 
-        IBlockState state = ctx.getWorld().getBlockState(ctx.getPos());
+        BlockState state = ctx.getWorld().getBlockState(ctx.getPos());
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
             if (!ctx.getWorld().isRemote) {
-                player.sendStatusMessage(new TextComponentTranslation("itemText.camouflage.held", getCamoStateDisplayName(stack)), false);
+                player.sendStatusMessage(new TranslationTextComponent("itemText.camouflage.held", getCamoStateDisplayName(stack)), false);
             } else {
-                player.playSound(ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.5f);
+                player.playSound(ModSounds.SUCCESS, 1.0f, 1.5f);
             }
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         } else if (ctx.getWorld().isRemote) {
-            player.playSound(ObjectRegistry.SOUND_ERROR, 1.0f, 1.0f);
-            return EnumActionResult.FAIL;
+            player.playSound(ModSounds.ERROR, 1.0f, 1.0f);
+            return ActionResultType.FAIL;
         }
-        return EnumActionResult.PASS;
+        return ActionResultType.PASS;
     }
 
-    private static boolean isBlockOKForCamo(IBlockState state) {
+    private static boolean isBlockOKForCamo(BlockState state) {
         // trying to camo a router as itself = recursion hell
-        return state.getRenderType() == EnumBlockRenderType.MODEL && state.getBlock() != ObjectRegistry.ITEM_ROUTER;
+        return state.getRenderType() == BlockRenderType.MODEL && state.getBlock() != ModBlocks.ITEM_ROUTER;
     }
 }

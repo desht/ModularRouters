@@ -2,9 +2,9 @@ package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -16,29 +16,29 @@ import java.util.function.Supplier;
  */
 public class SyncUpgradeSettingsMessage {
     private int tunedValue;
-    private EnumHand hand;
+    private Hand hand;
 
     public SyncUpgradeSettingsMessage() {
     }
 
-    public SyncUpgradeSettingsMessage(int tunedValue, EnumHand hand) {
+    public SyncUpgradeSettingsMessage(int tunedValue, Hand hand) {
         this.tunedValue = tunedValue;
         this.hand = hand;
     }
 
     public SyncUpgradeSettingsMessage(ByteBuf buf) {
         tunedValue = buf.readInt();
-        hand = buf.readBoolean() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+        hand = buf.readBoolean() ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
 
     public void toBytes(ByteBuf buf) {
         buf.writeInt(tunedValue);
-        buf.writeBoolean(hand == EnumHand.MAIN_HAND);
+        buf.writeBoolean(hand == Hand.MAIN_HAND);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            EntityPlayer player = ctx.get().getSender();
+            PlayerEntity player = ctx.get().getSender();
             ItemStack held = player.getHeldItem(hand);
             if (held.getItem() instanceof SyncUpgrade) {
                 SyncUpgrade.setTunedValue(held, tunedValue);

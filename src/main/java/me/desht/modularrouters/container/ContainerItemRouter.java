@@ -3,13 +3,16 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.slot.BufferSlot;
 import me.desht.modularrouters.container.slot.ValidatingSlot;
+import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -35,8 +38,14 @@ public class ContainerItemRouter extends Container {
 
     private final TileEntityItemRouter router;
 
-    public ContainerItemRouter(InventoryPlayer invPlayer, TileEntityItemRouter router) {
-        this.router = router;
+    public ContainerItemRouter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
+        this(windowId, invPlayer, extraData.readBlockPos());
+    }
+
+    public ContainerItemRouter(int windowId, PlayerInventory invPlayer, BlockPos routerPos) {
+        super(ModContainerTypes.CONTAINER_ITEM_ROUTER, windowId);
+
+        this.router = TileEntityItemRouter.getRouterAt(invPlayer.player.world, routerPos);
 
         // player's hotbar
         for (int x = 0; x < 9; x++) {
@@ -66,13 +75,13 @@ public class ContainerItemRouter extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    public boolean canInteractWith(PlayerEntity player) {
         return router.getWorld().getTileEntity(router.getPos()) == router
-                && player.getDistanceSq(router.getPos().add(0.5, 0.5, 0.5)) <= 64;
+                && router.getDistanceSq(player.posX, player.posY, player.posZ) <= 64;
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int sourceSlotIndex) {
+    public ItemStack transferStackInSlot(PlayerEntity player, int sourceSlotIndex) {
         Slot sourceSlot = inventorySlots.get(sourceSlotIndex);
         if (sourceSlot == null || !sourceSlot.getHasStack()) {
             return ItemStack.EMPTY;
@@ -116,5 +125,9 @@ public class ContainerItemRouter extends Container {
 
         sourceSlot.onTake(player, sourceStack);
         return copyOfSourceStack;
+    }
+
+    public TileEntityItemRouter getRouter() {
+        return router;
     }
 }

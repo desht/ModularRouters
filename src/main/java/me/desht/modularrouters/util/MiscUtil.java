@@ -2,18 +2,20 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidUtil;
@@ -28,7 +30,7 @@ public class MiscUtil {
 
     private static final int WRAP_LENGTH = 45;
 
-    public static WorldServer getWorldForDimensionId(int dimId) {
+    public static ServerWorld getWorldForDimensionId(int dimId) {
         DimensionType dt = DimensionType.getById(dimId);
         if (dt == null) return null;
         return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
@@ -51,7 +53,7 @@ public class MiscUtil {
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
         for (String s : I18n.format(key, args).split("\\\\n")) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
-                ITextComponent textComponent = new TextComponentString(s1);
+                ITextComponent textComponent = new StringTextComponent(s1);
                 result.add(textComponent.applyTextStyle(formatting));
             }
         }
@@ -107,7 +109,7 @@ public class MiscUtil {
     }
 
     public static ITextComponent translate(String key, Object... args) {
-        return new TextComponentTranslation(key, args);
+        return new TranslationTextComponent(key, args);
     }
 
     public static ResourceLocation RL(String name) {
@@ -121,7 +123,7 @@ public class MiscUtil {
 //                world.getTileEntity(pos);
     }
 
-    public static int getYawFromFacing(EnumFacing facing) {
+    public static int getYawFromFacing(Direction facing) {
         switch (facing) {
             case NORTH:
                 return 180;
@@ -143,6 +145,16 @@ public class MiscUtil {
     }
 
     public static ITextComponent settingsStr(String prefix, ITextComponent c) {
-        return new TextComponentString(prefix).appendSibling(c);
+        return new StringTextComponent(prefix).appendSibling(c);
+    }
+
+    public static Hand whichHand(PlayerEntity player, ItemStack stack) {
+        if (ItemStack.areItemStacksEqual(player.getHeldItemMainhand(), stack)) {
+            return Hand.MAIN_HAND;
+        } else if (ItemStack.areItemStacksEqual(player.getHeldItemOffhand(), stack)) {
+            return Hand.OFF_HAND;
+        } else {
+            return null;
+        }
     }
 }

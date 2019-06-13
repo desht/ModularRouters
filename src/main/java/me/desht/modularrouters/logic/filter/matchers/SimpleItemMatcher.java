@@ -4,7 +4,7 @@ import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ItemTagMatcher;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class SimpleItemMatcher implements IItemMatcher {
     private final ItemStack filterStack;
@@ -24,8 +24,8 @@ public class SimpleItemMatcher implements IItemMatcher {
             return !flags.isIgnoreTags() && tagMatcher.match(stack);
         }
         if (!flags.isIgnoreNBT()) {
-            NBTTagCompound filterTag = filterStack.getTag();
-            NBTTagCompound stackTag = stack.getTag();
+            CompoundNBT filterTag = filterStack.getTag();
+            CompoundNBT stackTag = stack.getTag();
             if (filterTag == null && stackTag != null || filterTag != null && stackTag == null) {
                 return false;
             } else if (filterTag == null) {
@@ -33,8 +33,8 @@ public class SimpleItemMatcher implements IItemMatcher {
             } else if (!filterTag.contains("GEN")) {
                 return filterTag.equals(stackTag);
             } else {
-                NBTTagCompound filterTag2 = filterTag.copy();
-                NBTTagCompound itemTag2 = stackTag.copy();
+                CompoundNBT filterTag2 = filterTag.copy();
+                CompoundNBT itemTag2 = stackTag.copy();
                 filterTag2.remove("GEN");
                 itemTag2.remove("GEN");
                 return filterTag2.equals(itemTag2);

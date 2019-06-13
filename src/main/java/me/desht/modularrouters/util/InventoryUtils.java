@@ -1,9 +1,9 @@
 package me.desht.modularrouters.util;
 
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,17 +31,15 @@ public class InventoryUtils {
                 float offsetZ = random.nextFloat() * 0.8f + 0.1f;
                 while (!itemStack.isEmpty()) {
                     int stackSize = Math.min(itemStack.getCount(), random.nextInt(21) + 10);
-                    EntityItem entityitem = new EntityItem(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize));
+                    ItemEntity entityitem = new ItemEntity(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize));
                     if (itemStack.hasTag()) {
                         entityitem.getItem().setTag(itemStack.getTag().copy());
                     }
                     itemStack.shrink(stackSize);
 
                     float motionScale = 0.05f;
-                    entityitem.motionX = random.nextGaussian() * (double) motionScale;
-                    entityitem.motionY = random.nextGaussian() * (double) motionScale + 0.20000000298023224D;
-                    entityitem.motionZ = random.nextGaussian() * (double) motionScale;
-                    world.spawnEntity(entityitem);
+                    entityitem.setMotion(random.nextGaussian() * (double) motionScale, random.nextGaussian() * (double) motionScale + 0.2, random.nextGaussian() * (double) motionScale);
+                    world.addEntity(entityitem);
                 }
             }
         }
@@ -54,7 +52,7 @@ public class InventoryUtils {
      * @param side side to access the TE from (may be null)
      * @return the item handler, or null if there is none
      */
-    public static IItemHandler getInventory(World world, BlockPos pos, @Nullable EnumFacing side) {
+    public static IItemHandler getInventory(World world, BlockPos pos, @Nullable Direction side) {
         // Adapted from Botania's InventoryHelper class (which was in turned adapted from OpenBlocks...)
         TileEntity te = world.getTileEntity(pos);
         if (te == null) {
@@ -112,8 +110,8 @@ public class InventoryUtils {
      */
     public static boolean dropItems(World world, BlockPos pos, ItemStack stack) {
         if (!world.isRemote) {
-            EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-            return world.spawnEntity(item);
+            ItemEntity item = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+            return world.addEntity(item);
         }
         return true;
     }

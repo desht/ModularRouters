@@ -2,19 +2,16 @@ package me.desht.modularrouters.item;
 
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,13 +27,13 @@ public abstract class ItemBase extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         if (world == null) return;
 
-        if (GuiScreen.isCtrlKeyDown()) {
+        if (Screen.hasControlDown()) {
             addUsageInformation(stack, list);
-        } else if (ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get() || GuiScreen.isShiftKeyDown()) {
+        } else if (ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
-            list.add(new TextComponentTranslation("itemText.misc.holdCtrl").applyTextStyles(TextFormatting.GRAY));
+            list.add(new TranslationTextComponent("itemText.misc.holdCtrl").applyTextStyles(TextFormatting.GRAY));
         } else if (!ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get()) {
-            list.add(new TextComponentTranslation("itemText.misc.holdShiftCtrl").applyTextStyles(TextFormatting.GRAY));
+            list.add(new TranslationTextComponent("itemText.misc.holdShiftCtrl").applyTextStyles(TextFormatting.GRAY));
         }
     }
 

@@ -3,14 +3,17 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot.BulkFilterSlot;
+import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.SetofItemStack;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -28,20 +31,22 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     private static final int PLAYER_HOTBAR_Y = 209;
 
     private final int currentSlot;  // currently-selected slot for player
-    private final TileEntityItemRouter router;
     private final BulkFilterHandler handler;
 
-    public ContainerBulkItemFilter(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
-        super(player, hand, router);
+    public ContainerBulkItemFilter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
+        this(windowId, invPlayer, MFLocator.fromBuffer(extraData));
+    }
+
+    public ContainerBulkItemFilter(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+        super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER, windowId, invPlayer, loc);
 
         this.handler = new BulkFilterHandler(filterStack);
-        this.currentSlot = player.inventory.currentItem + HOTBAR_START;
-        this.router = router;
+        this.currentSlot = invPlayer.currentItem + HOTBAR_START;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
             BulkFilterSlot slot = router == null ?
-                    new BulkFilterSlot(handler, player, hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
+                    new BulkFilterSlot(handler, invPlayer.player, locator.hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
                     new BulkFilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
             addSlot(slot);
         }
@@ -49,13 +54,13 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
+                this.addSlot(new Slot(invPlayer, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
             }
         }
 
         // player's hotbar - uses default locations for standard action bar texture file
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
+            this.addSlot(new Slot(invPlayer, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
         }
     }
 
@@ -101,7 +106,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack stack;
         Slot srcSlot = inventorySlots.get(index);
 
@@ -133,7 +138,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click

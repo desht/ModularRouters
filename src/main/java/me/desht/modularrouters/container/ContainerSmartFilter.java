@@ -1,40 +1,37 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.util.SlotTracker;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 
 public abstract class ContainerSmartFilter extends Container {
-    private final EntityPlayer player;
     protected final ItemStack filterStack;
-    private final EnumHand hand;
-    private final TileEntityItemRouter router;
+    protected final MFLocator locator;
+    protected final TileEntityItemRouter router;
 
-    public ContainerSmartFilter(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
-        this.player = player;
-        this.filterStack = hand == null ? SlotTracker.getInstance(player).getConfiguringFilter(router) : player.getHeldItem(hand);
-        this.hand = hand;
-        this.router = router;
+    public ContainerSmartFilter(ContainerType<?> type, int windowId, PlayerInventory inv, MFLocator locator) {
+        super(type, windowId);
+
+        this.locator = locator;
+        this.filterStack = locator.getTargetItem(inv.player);
+        this.router = locator.getRouter(inv.player.world);
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
+    public boolean canInteractWith(PlayerEntity playerIn) {
         return true;
     }
 
-    public EntityPlayer getPlayer() {
-        return player;
+    public MFLocator getLocator() {
+        return locator;
     }
 
     public ItemStack getFilterStack() {
         return filterStack;
-    }
-
-    public EnumHand getHand() {
-        return hand;
     }
 
     public TileEntityItemRouter getRouter() {

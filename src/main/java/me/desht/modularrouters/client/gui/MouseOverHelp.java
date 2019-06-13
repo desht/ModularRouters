@@ -1,12 +1,12 @@
 package me.desht.modularrouters.client.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,11 +20,11 @@ public class MouseOverHelp {
     private static final int TEXT_MARGIN = 8;
 
     private final List<HelpRegion> helpRegions = new ArrayList<>();
-    private final GuiContainer screen;
+    private final ContainerScreen screen;
 
     private boolean active = false;
 
-    public MouseOverHelp(GuiContainer screen) {
+    public MouseOverHelp(ContainerScreen screen) {
         this.screen = screen;
     }
 
@@ -40,7 +40,7 @@ public class MouseOverHelp {
         addHelpRegion(x1, y1, x2, y2, key, HelpRegion.YES);
     }
 
-    public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<GuiContainer> showPredicate) {
+    public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<ContainerScreen> showPredicate) {
         helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key)), showPredicate));
     }
 
@@ -63,7 +63,7 @@ public class MouseOverHelp {
         return null;
     }
 
-    private static void showPopupBox(GuiContainer screen, FontRenderer fontRenderer, Rectangle rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+    private static void showPopupBox(ContainerScreen screen, FontRenderer fontRenderer, Rectangle rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
         int boxWidth, boxHeight;
 
         Rectangle rect2 = new Rectangle(rect);
@@ -86,11 +86,11 @@ public class MouseOverHelp {
         int y2 = y1 + rect2.height;
 
         GlStateManager.translatef(0f, 0f, 300f);
-        Gui.drawRect(x1, y1, x2, y2, bgColor);
-        Gui.drawRect(x1, y1, x2, y1 + 1, borderColor);
-        Gui.drawRect(x1, y2, x2, y2 + 1, borderColor);
-        Gui.drawRect(x1, y1, x1 + 1, y2, borderColor);
-        Gui.drawRect(x2, y1, x2 + 1, y2 + 1, borderColor);
+        AbstractGui.fill(x1, y1, x2, y2, bgColor);
+        AbstractGui.fill(x1, y1, x2, y1 + 1, borderColor);
+        AbstractGui.fill(x1, y2, x2, y2 + 1, borderColor);
+        AbstractGui.fill(x1, y1, x1 + 1, y2, borderColor);
+        AbstractGui.fill(x2, y1, x2 + 1, y2 + 1, borderColor);
 
         if (helpText != null) {
             for (String s : helpText) {
@@ -105,14 +105,14 @@ public class MouseOverHelp {
     public static class HelpRegion {
         final Rectangle extent;
         final List<String> text;
-        final Predicate<GuiContainer> showPredicate;
-        static final Predicate<GuiContainer> YES = guiContainer -> true;
+        final Predicate<ContainerScreen> showPredicate;
+        static final Predicate<ContainerScreen> YES = guiContainer -> true;
 
         HelpRegion(int x1, int y1, int x2, int y2, List<String> text) {
             this(x1, y1, x2, y2, text, YES);
         }
 
-        HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<GuiContainer> showPredicate) {
+        HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<ContainerScreen> showPredicate) {
             this.extent = new Rectangle(x1, y1, x2 - x1, y2 - y1);
             this.text = text;
             this.showPredicate = showPredicate;
@@ -131,8 +131,8 @@ public class MouseOverHelp {
     public static class Button extends TexturedToggleButton {
         private final MouseOverHelp mouseOverHelp;
 
-        public Button(int buttonId, int x, int y, MouseOverHelp mouseOverHelp) {
-            super(buttonId, x, y, 16, 16, false);
+        public Button(int x, int y, MouseOverHelp mouseOverHelp) {
+            super(x, y, 16, 16, false, null);
             this.mouseOverHelp = mouseOverHelp;
             tooltip1.addAll(MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp.false")));
             tooltip2.addAll(MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp.true")));

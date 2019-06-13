@@ -3,11 +3,11 @@ package me.desht.modularrouters.util;
 import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.EnumPacketDirection;
-import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.PacketDirection;
+import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,11 +29,11 @@ public class FakePlayerManager {
      * @param pos position in the world
      * @return the fake player, or null; be prepared to deal with a null return value
      */
-    public static RouterFakePlayer getFakePlayer(WorldServer world, BlockPos pos) {
+    public static RouterFakePlayer getFakePlayer(ServerWorld world, BlockPos pos) {
         RouterFakePlayer fakePlayer = theFakePlayer.get();
         if (fakePlayer == null) {
             fakePlayer = new RouterFakePlayer(world, gameProfile);
-            fakePlayer.connection = new NetHandlerPlayServer(ServerLifecycleHooks.getCurrentServer(), new NetworkManager(EnumPacketDirection.SERVERBOUND), fakePlayer);
+            fakePlayer.connection = new ServerPlayNetHandler(ServerLifecycleHooks.getCurrentServer(), new NetworkManager(PacketDirection.SERVERBOUND), fakePlayer);
             theFakePlayer = new WeakReference<>(fakePlayer);
         }
         fakePlayer.world = world;
@@ -45,7 +45,7 @@ public class FakePlayerManager {
     }
 
     public static class RouterFakePlayer extends FakePlayer {
-        RouterFakePlayer(WorldServer world, GameProfile name) {
+        RouterFakePlayer(ServerWorld world, GameProfile name) {
             super(world, name);
         }
 

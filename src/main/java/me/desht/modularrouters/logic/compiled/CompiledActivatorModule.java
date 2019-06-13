@@ -3,24 +3,26 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.FakePlayerManager;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCommandBlock;
-import net.minecraft.block.BlockStructure;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.*;
+import net.minecraft.block.CommandBlockBlock;
+import net.minecraft.block.StructureBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -54,7 +56,7 @@ public class CompiledActivatorModule extends CompiledModule {
     public CompiledActivatorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null) {
             actionType = ActionType.values()[compound.getInt(NBT_ACTION_TYPE)];
             lookDirection = LookDirection.values()[compound.getInt(NBT_LOOK_DIRECTION)];
@@ -71,7 +73,7 @@ public class CompiledActivatorModule extends CompiledModule {
         World world = router.getWorld();
         BlockPos pos = router.getPos();
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
         if (fakePlayer == null) {
             return false;
         }
@@ -80,7 +82,7 @@ public class CompiledActivatorModule extends CompiledModule {
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
         fakePlayer.setSneaking(sneaking);
         ItemStack stack = router.getBufferItemStack();
-        fakePlayer.setHeldItem(EnumHand.MAIN_HAND, stack);
+        fakePlayer.setHeldItem(Hand.MAIN_HAND, stack);
         float hitX = (float)(fakePlayer.posX - pos.getX());
         float hitY = (float)(fakePlayer.posY - pos.getY());
         float hitZ = (float)(fakePlayer.posZ - pos.getZ());
@@ -102,8 +104,8 @@ public class CompiledActivatorModule extends CompiledModule {
         if (entity == null) {
             return false;
         }
-        EnumActionResult result = fakePlayer.interactOn(entity, EnumHand.MAIN_HAND);
-        if (result == EnumActionResult.SUCCESS) {
+        ActionResultType result = fakePlayer.interactOn(entity, Hand.MAIN_HAND);
+        if (result == ActionResultType.SUCCESS) {
             router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
             return true;
         }
@@ -111,7 +113,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private Entity findNearestEntity(TileEntityItemRouter router) {
-        EnumFacing face = getFacing();
+        Direction face = getFacing();
         final BlockPos pos = router.getPos();
         AxisAlignedBB box = new AxisAlignedBB(pos.offset(face))
                 .expand(face.getXOffset() * 3, face.getYOffset() * 3, face.getZOffset() * 3);
@@ -120,13 +122,13 @@ public class CompiledActivatorModule extends CompiledModule {
         if (l.isEmpty()) {
             return null;
         }
-        l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos)));
+        l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())));
         return l.get(0);
     }
 
-    private boolean doUseItem(TileEntityItemRouter router, World world, BlockPos pos, EntityPlayer fakePlayer, float hitX, float hitY, float hitZ) {
+    private boolean doUseItem(TileEntityItemRouter router, World world, BlockPos pos, PlayerEntity fakePlayer, float hitX, float hitY, float hitZ) {
         BlockPos targetPos = pos.offset(getFacing());
-        EnumFacing hitFace = getHitFace();
+        Direction hitFace = getHitFace();
         switch (lookDirection) {
             case LEVEL:
                 for (int i = 0; i < 4 && world.isAirBlock(targetPos); i++) {
@@ -142,36 +144,38 @@ public class CompiledActivatorModule extends CompiledModule {
         }
 
         ItemStack stack = fakePlayer.getHeldItemMainhand();
-        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, EnumHand.MAIN_HAND, targetPos, hitFace,  ForgeHooks.rayTraceEyeHitVec(fakePlayer, 2.0D));
+        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, Hand.MAIN_HAND, targetPos, hitFace);
         if (event.isCanceled() || event.getUseItem() == Event.Result.DENY) {
             return false;
         }
 
-        EnumActionResult ret = stack.onItemUseFirst(new ItemUseContext(fakePlayer, stack, targetPos, hitFace, hitX, hitY, hitZ));
-        if (ret != EnumActionResult.PASS) return false;
+        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), hitFace, targetPos, false);
+        ActionResultType ret = stack.onItemUseFirst(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
+        if (ret != ActionResultType.PASS) return false;
 
         if (stack.isEmpty() || fakePlayer.getCooldownTracker().hasCooldown(stack.getItem())) {
             return false;
         }
 
-        EnumActionResult result;
+        ActionResultType result;
 
-        if (stack.getItem() instanceof ItemBlock && !fakePlayer.canUseCommandBlock()) {
-            Block block = ((ItemBlock)stack.getItem()).getBlock();
-            if (block instanceof BlockCommandBlock || block instanceof BlockStructure) {
+        if (stack.getItem() instanceof BlockItem && !fakePlayer.canUseCommandBlock()) {
+            Block block = ((BlockItem)stack.getItem()).getBlock();
+            if (block instanceof CommandBlockBlock || block instanceof StructureBlock) {
                 return false;
             }
         }
 
         if (event.getUseItem() != Event.Result.DENY) {
             ItemStack copyBeforeUse = stack.copy();
-            result = stack.onItemUse(new ItemUseContext(fakePlayer, stack, targetPos, hitFace, hitX, hitY, hitZ));
-            if (result == EnumActionResult.PASS) {
-                ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(world, fakePlayer, EnumHand.MAIN_HAND);
-                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, rightClickResult.getResult());
+
+            result = stack.onItemUse(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
+            if (result == ActionResultType.PASS) {
+                ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(world, fakePlayer, Hand.MAIN_HAND);
+                fakePlayer.setHeldItem(Hand.MAIN_HAND, rightClickResult.getResult());
             }
-            if (fakePlayer.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) {
-                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(fakePlayer, copyBeforeUse, EnumHand.MAIN_HAND);
+            if (fakePlayer.getHeldItem(Hand.MAIN_HAND).isEmpty()) {
+                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(fakePlayer, copyBeforeUse, Hand.MAIN_HAND);
             }
 
             router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
@@ -181,20 +185,21 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    private boolean doActivateBlock(TileEntityItemRouter router, World world, EntityPlayer fakePlayer, float hitX, float hitY, float hitZ) {
+    private boolean doActivateBlock(TileEntityItemRouter router, World world, PlayerEntity fakePlayer, float hitX, float hitY, float hitZ) {
         BlockPos targetPos = findBlockToActivate(router);
         if (targetPos == null) {
             return false;
         }
-        EnumFacing hitFace = getHitFace();
+        Direction hitFace = getHitFace();
 
-        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, EnumHand.MAIN_HAND, targetPos, hitFace,  ForgeHooks.rayTraceEyeHitVec(fakePlayer, 2.0D));
+        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, Hand.MAIN_HAND, targetPos, hitFace);
         if (event.isCanceled() || event.getUseItem() == Event.Result.DENY) {
             return false;
         }
         if (event.getUseBlock() != Event.Result.DENY) {
-            IBlockState iblockstate = world.getBlockState(targetPos);
-            if (iblockstate.onBlockActivated(world, targetPos, fakePlayer, EnumHand.MAIN_HAND, hitFace, hitX, hitY, hitZ)) {
+            BlockState iblockstate = world.getBlockState(targetPos);
+            BlockRayTraceResult r = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), hitFace, targetPos, false);
+            if (iblockstate.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, r)) {
                 router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;
             }
@@ -220,12 +225,12 @@ public class CompiledActivatorModule extends CompiledModule {
         return null;
     }
 
-    private EnumFacing getHitFace() {
+    private Direction getHitFace() {
         switch (lookDirection) {
             case ABOVE:
-                return EnumFacing.DOWN;
+                return Direction.DOWN;
             case BELOW:
-                return EnumFacing.UP;
+                return Direction.UP;
             default:
                 return getFacing().getOpposite();
         }

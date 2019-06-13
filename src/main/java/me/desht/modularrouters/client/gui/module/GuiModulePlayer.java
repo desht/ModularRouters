@@ -5,16 +5,17 @@ import me.desht.modularrouters.client.RenderHelper;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,41 +25,25 @@ public class GuiModulePlayer extends GuiModule {
     private static final ItemStack armourStack = new ItemStack(Items.DIAMOND_CHESTPLATE);
     private static final ItemStack shieldStack = new ItemStack(Items.SHIELD);
     private static final ItemStack enderStack = new ItemStack(Blocks.ENDER_CHEST);
-    private static final ItemStack routerStack = new ItemStack(ObjectRegistry.ITEM_ROUTER);
+    private static final ItemStack routerStack = new ItemStack(ModBlocks.ITEM_ROUTER);
 
-    private static final int OP_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
-    private static final int SECT_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
+    private static final ItemStack[] stacks = new ItemStack[] { mainInvStack, armourStack, shieldStack, enderStack };
 
-    private Operation operation;
-    private Section section;
+    private SectionButton secButton;
+    private OperationButton opButton;
 
-    public GuiModulePlayer(ContainerModule container) {
-        super(container);
-
-        CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
-        operation = cpm.getOperation();
-        section = cpm.getSection();
+    public GuiModulePlayer(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+        super(container, inv, displayName);
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        ItemStack[] stacks = new ItemStack[] { mainInvStack, armourStack, shieldStack, enderStack };
-        addButton(new SectionButton(SECT_BUTTON_ID, guiLeft + 169, guiTop + 32, 16, 16, true, stacks, section) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                section = cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-            }
-        });
-        addButton(new OperationButton(OP_BUTTON_ID, guiLeft + 148, guiTop + 32, operation) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                operation = cycle(!GuiScreen.isShiftKeyDown());
-                sendModuleSettingsToServer();
-            }
-        });
+        CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
+
+        addButton(secButton = new SectionButton(guiLeft + 169, guiTop + 32, 16, 16, true, stacks, cpm.getSection()));
+        addButton(opButton = new OperationButton(guiLeft + 148, guiTop + 32, cpm.getOperation()));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "guiText.popup.player.control");
     }
@@ -67,24 +52,24 @@ public class GuiModulePlayer extends GuiModule {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        this.drawTexturedModalRect(guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
+        this.blit(guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
 
-        RenderHelper.renderItemStack(mc, routerStack, guiLeft + 128, guiTop + 32, "");
+        RenderHelper.renderItemStack(minecraft, routerStack, guiLeft + 128, guiTop + 32, "");
     }
 
     @Override
-    protected NBTTagCompound buildMessageData() {
-        NBTTagCompound compound = super.buildMessageData();
-        compound.putInt(CompiledPlayerModule.NBT_OPERATION, operation.ordinal());
-        compound.putInt(CompiledPlayerModule.NBT_SECTION, section.ordinal());
+    protected CompoundNBT buildMessageData() {
+        CompoundNBT compound = super.buildMessageData();
+        compound.putInt(CompiledPlayerModule.NBT_OPERATION, opButton.getState().ordinal());
+        compound.putInt(CompiledPlayerModule.NBT_SECTION, secButton.getState().ordinal());
         return compound;
     }
 
-    private static class SectionButton extends ItemStackCyclerButton<Section> {
+    private class SectionButton extends ItemStackCyclerButton<Section> {
         private final List<List<String>> tips = Lists.newArrayList();
 
-        SectionButton(int buttonId, int x, int y, int width, int height, boolean flat, ItemStack[] stacks, Section initialVal) {
-            super(buttonId, x, y, width, height, flat, stacks, initialVal);
+        SectionButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, Section initialVal) {
+            super(x, y, width, height, flat, stacks, initialVal, GuiModulePlayer.this);
             for (Section sect : Section.values()) {
                 tips.add(Collections.singletonList(I18n.format("guiText.label.playerSect." + sect)));
             }
@@ -96,11 +81,11 @@ public class GuiModulePlayer extends GuiModule {
         }
     }
 
-    private static class OperationButton extends TexturedCyclerButton<Operation> {
+    private class OperationButton extends TexturedCyclerButton<Operation> {
         private final List<List<String>> tooltips = Lists.newArrayList();
 
-        OperationButton(int buttonId, int x, int y, Operation initialVal) {
-            super(buttonId, x, y, 16, 16, initialVal);
+        OperationButton(int x, int y, Operation initialVal) {
+            super(x, y, 16, 16, initialVal, GuiModulePlayer.this);
 
             for (Operation op : Operation.values()) {
                 tooltips.add(Collections.singletonList(I18n.format("guiText.label.playerOp." + op)));

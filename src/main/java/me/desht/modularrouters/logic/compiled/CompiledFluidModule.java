@@ -4,7 +4,8 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -31,7 +32,7 @@ public class CompiledFluidModule extends CompiledModule {
     public CompiledFluidModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = setupNBT(stack);
+        CompoundNBT compound = setupNBT(stack);
         maxTransfer = compound.getInt(NBT_MAX_TRANSFER);
         fluidDirection = FluidDirection.values()[compound.getByte(NBT_FLUID_DIRECTION)];
         forceEmpty = compound.getBoolean(NBT_FORCE_EMPTY);
@@ -124,7 +125,7 @@ public class CompiledFluidModule extends CompiledModule {
             if (toPlace == null || toPlace.amount < 1000) {
                 return false;  // must be a full bucket's worth to place in the world
             }
-            FluidActionResult res = FluidUtil.tryPlaceFluid(null, world, pos, containerStack, toPlace);
+            FluidActionResult res = FluidUtil.tryPlaceFluid(null, world, Hand.MAIN_HAND, pos, containerStack, toPlace);
             if (res.isSuccess()) {
                 handler.drain(1000, true);
                 // ensure that liquids start flowing (without this, water & lava stay static)
@@ -165,8 +166,8 @@ public class CompiledFluidModule extends CompiledModule {
         return (total * 100) / max;
     }
 
-    private NBTTagCompound setupNBT(ItemStack stack) {
-        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
+    private CompoundNBT setupNBT(ItemStack stack) {
+        CompoundNBT compound = ModuleHelper.validateNBT(stack);
         if (!compound.contains(NBT_MAX_TRANSFER)) {
             compound.putInt(NBT_MAX_TRANSFER, 1000);
         }

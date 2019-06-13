@@ -1,22 +1,25 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.filter.GuiInspectionFilter;
+import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Comparison;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -44,19 +47,19 @@ public class InspectionFilter extends ItemSmartFilter {
         super.addExtraInformation(itemstack, list);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
-            list.add(new TextComponentString(TextFormatting.YELLOW + I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
             for (Comparison c : comparisonList.items) {
-                list.add(new TextComponentString(TextFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
+                list.add(new StringTextComponent(TextFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
             }
         }
     }
 
     public static ComparisonList getComparisonList(ItemStack filterStack) {
         if (filterStack.hasTag()) {
-            NBTTagCompound compound = filterStack.getTag();
+            CompoundNBT compound = filterStack.getTag();
             boolean matchAll = compound.getBoolean(NBT_MATCH_ALL);
             List<Comparison> l = Lists.newArrayList();
-            NBTTagList items = compound.getList(NBT_ITEMS, Constants.NBT.TAG_STRING);
+            ListNBT items = compound.getList(NBT_ITEMS, Constants.NBT.TAG_STRING);
             for (int i = 0; i < items.size(); i++) {
                 l.add(Comparison.fromString(items.getString(i)));
             }
@@ -67,33 +70,33 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     private void setComparisonList(ItemStack filterStack, ComparisonList comparisonList) {
-        NBTTagList l = comparisonList.items.stream().map(comp -> new NBTTagString(comp.toString())).collect(Collectors.toCollection(NBTTagList::new));
-        NBTTagCompound compound = filterStack.getOrCreateTag();
+        ListNBT l = comparisonList.items.stream().map(comp -> new StringNBT(comp.toString())).collect(Collectors.toCollection(ListNBT::new));
+        CompoundNBT compound = filterStack.getOrCreateTag();
         compound.putBoolean(NBT_MATCH_ALL, comparisonList.isMatchAll());
         compound.put(NBT_ITEMS, l);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Class<? extends GuiScreen> getGuiClass() {
+    public Class<? extends Screen> getGuiClass() {
         return GuiInspectionFilter.class;
     }
 
     @Override
-    public GuiSyncMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         ComparisonList comparisonList = getComparisonList(filterStack);
 
         switch (message.getOp()) {
             case ADD_STRING:
                 if (comparisonList.items.size() < MAX_SIZE) {
-                    Comparison c = Comparison.fromString(message.getNbtData().getString("Comparison"));
+                    Comparison c = Comparison.fromString(message.getPayload().getString("Comparison"));
                     comparisonList.items.add(c);
                     setComparisonList(filterStack, comparisonList);
                     return new GuiSyncMessage(filterStack);
                 }
                 break;
             case REMOVE_AT:
-                int pos = message.getNbtData().getInt("Pos");
+                int pos = message.getPayload().getInt("Pos");
                 if (pos >= 0 && pos < comparisonList.items.size()) {
                     comparisonList.items.remove(pos);
                     setComparisonList(filterStack, comparisonList);
@@ -101,7 +104,7 @@ public class InspectionFilter extends ItemSmartFilter {
                 }
                 break;
             case ANY_ALL_FLAG:
-                comparisonList.setMatchAll(message.getNbtData().getBoolean("MatchAll"));
+                comparisonList.setMatchAll(message.getPayload().getBoolean("MatchAll"));
                 setComparisonList(filterStack, comparisonList);
                 return new GuiSyncMessage(filterStack);
         }

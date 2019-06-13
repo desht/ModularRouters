@@ -1,8 +1,8 @@
 package me.desht.modularrouters.client;
 
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -16,12 +16,12 @@ public class ModelBakeEventHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        override(event, ObjectRegistry.ITEM_ROUTER, CamouflagingModel.RouterModel::new);
-        override(event, ObjectRegistry.TEMPLATE_FRAME, CamouflagingModel.TemplateFrameModel::new);
+        override(event, ModBlocks.ITEM_ROUTER, CamouflagingModel.RouterModel::new);
+        override(event, ModBlocks.TEMPLATE_FRAME, CamouflagingModel.TemplateFrameModel::new);
     }
 
     private static void override(ModelBakeEvent event, Block block, Function<IBakedModel, CamouflagingModel> f) {
-        for (IBlockState state : block.getStateContainer().getValidStates()) {
+        for (BlockState state : block.getStateContainer().getValidStates()) {
             ModelResourceLocation loc = BlockModelShapes.getModelLocation(state);
             IBakedModel model = event.getModelRegistry().get(loc);
             if (model != null) {

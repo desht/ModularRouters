@@ -2,11 +2,16 @@ package me.desht.modularrouters.client.gui.widgets;
 
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.ITextComponent;
 
-public abstract class GuiScreenBase extends GuiScreen {
+public abstract class GuiScreenBase extends Screen {
     private TextFieldManager textFieldManager;
     private int delayTicks;
+
+    protected GuiScreenBase(ITextComponent displayName) {
+        super(displayName);
+    }
 
     protected TextFieldManager getTextFieldManager() {
         if (textFieldManager == null) {
@@ -24,8 +29,8 @@ public abstract class GuiScreenBase extends GuiScreen {
         super.render(mouseX, mouseY, partialTicks);
         if (textFieldManager != null) textFieldManager.drawTextFields(mouseX, mouseY, partialTicks);
         this.buttons.stream()
-                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), mouseX, mouseY, fontRenderer));
+                .filter(button -> button.isMouseOver(mouseX, mouseY) && button instanceof ITooltipButton)
+                .forEach(button -> renderTooltip(((ITooltipButton) button).getTooltip(), mouseX, mouseY, font));
     }
 
     @Override
@@ -41,10 +46,8 @@ public abstract class GuiScreenBase extends GuiScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double dir) {
-        return textFieldManager != null ?
-                textFieldManager.mouseScrolled(dir) :
-                super.mouseScrolled(dir);
+    public boolean mouseScrolled(double x, double y, double dir) {
+        return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir);
     }
 
     @Override
@@ -75,12 +78,12 @@ public abstract class GuiScreenBase extends GuiScreen {
     }
 
     @Override
-    public void onGuiClosed() {
+    public void removed() {
         if (delayTicks > 0) {
             // flush pending changes
             sendSettingsToServer();
         }
-        super.onGuiClosed();
+        super.removed();
     }
 
     protected final void sendSettingsDelayed(int delayTicks) {

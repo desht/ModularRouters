@@ -6,7 +6,7 @@ import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -31,7 +31,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     public CompiledDistributorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null) {
             distributionStrategy = DistributionStrategy.values()[compound.getInt(NBT_STRATEGY)];
             if (distributionStrategy == DistributionStrategy.FURTHEST_FIRST) {
@@ -49,7 +49,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
         Set<ModuleTarget> t = TargetedModule.getTargets(stack, true);
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
@@ -58,7 +58,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     private static double calcDist(ModuleTarget tgt, TileEntity te) {
-        double distance = tgt.pos.getDistance(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
+        double distance = tgt.pos.distanceSq(te.getPos());
         if (tgt.dimId != MiscUtil.getDimensionForWorld(te.getWorld())) {
             distance += 100000000;  // cross-dimension penalty
         }

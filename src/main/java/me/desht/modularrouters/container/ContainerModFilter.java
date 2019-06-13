@@ -1,12 +1,14 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.GhostItemHandler;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Slot;
+import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -22,8 +24,12 @@ public class ContainerModFilter extends ContainerSmartFilter {
 
     public final IItemHandlerModifiable handler;
 
-    public ContainerModFilter(EntityPlayer player, EnumHand hand, TileEntityItemRouter router) {
-        super(player, hand, router);
+    public ContainerModFilter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
+        this(windowId, invPlayer, MFLocator.fromBuffer(extraData));
+    }
+
+    public ContainerModFilter(int windowId, PlayerInventory invPlayer, MFLocator locator) {
+        super(ModContainerTypes.CONTAINER_MOD_FILTER, windowId, invPlayer, locator);
 
         handler = new GhostItemHandler(1);
 
@@ -33,19 +39,19 @@ public class ContainerModFilter extends ContainerSmartFilter {
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(player.inventory, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
+                this.addSlot(new Slot(invPlayer, j + i * 9 + 9, PLAYER_INV_X + j * SLOT_X_SPACING, PLAYER_INV_Y + i * SLOT_Y_SPACING));
             }
         }
 
         // player's hotbar - uses default locations for standard action bar texture file
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(player.inventory, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
+            this.addSlot(new Slot(invPlayer, i, PLAYER_INV_X + i * SLOT_X_SPACING, PLAYER_HOTBAR_Y));
         }
     }
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack stack;
         Slot slot = inventorySlots.get(index);
 
@@ -70,7 +76,7 @@ public class ContainerModFilter extends ContainerSmartFilter {
 
     @Nullable
     @Override
-    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click

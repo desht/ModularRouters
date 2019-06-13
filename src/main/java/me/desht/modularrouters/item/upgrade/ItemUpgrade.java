@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.ITintable;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.ItemBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -9,7 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import java.awt.*;
 import java.util.List;
 
-public abstract class ItemUpgrade extends ItemBase implements ITintable {
+public abstract class ItemUpgrade extends ItemBase implements ModItems.ITintable {
 
     public ItemUpgrade(Properties props) {
         super(props);

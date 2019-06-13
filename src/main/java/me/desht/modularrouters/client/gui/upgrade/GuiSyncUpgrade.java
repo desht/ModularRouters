@@ -11,9 +11,9 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.SyncUpgradeSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -22,57 +22,55 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     private static final ItemStack clockStack = new ItemStack(Items.CLOCK);
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 48;
-    private static final int VALUE_TEXTFIELD_ID = 1;
-    private static final int TOOLTIP_BUTTON_ID = 1;
 
     private final String title;
 
     private int xPos, yPos;
     private int tunedValue;
-    private final EnumHand hand;
+    private final Hand hand;
 
-    public GuiSyncUpgrade(ItemStack upgradeStack, EnumHand hand) {
+    public GuiSyncUpgrade(ItemStack upgradeStack, Hand hand) {
+        super(upgradeStack.getDisplayName());
+
         this.title = upgradeStack.getDisplayName().getString();
         this.tunedValue = SyncUpgrade.getTunedValue(upgradeStack);
         this.hand = hand;
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        IntegerTextField intField = new IntegerTextField(manager, VALUE_TEXTFIELD_ID, fontRenderer,
+        IntegerTextField intField = new IntegerTextField(manager, font,
                 xPos + 77, yPos + 27, 25, 16, 0, ConfigHandler.ROUTER.baseTickRate.get() - 1);
-        intField.setTextAcceptHandler((id, s) -> {
-            if (id == VALUE_TEXTFIELD_ID) {
-                tunedValue = s.isEmpty() ? 0 : Integer.parseInt(s);
-                sendSettingsDelayed(5);
-            }
+        intField.func_212954_a((str) -> {
+            tunedValue = str.isEmpty() ? 0 : Integer.parseInt(str);
+            sendSettingsDelayed(5);
         });
         intField.setValue(tunedValue);
         intField.useGuiTextBackground();
 
-        addButton(new TooltipButton(TOOLTIP_BUTTON_ID, xPos + 55, yPos + 24, 16, 16, clockStack));
+        addButton(new TooltipButton(xPos + 55, yPos + 24, 16, 16));
 
-        super.initGui();
+        super.init();
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
+        renderBackground();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(textureLocation);
-        drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2f - fontRenderer.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        minecraft.getTextureManager().bindTexture(textureLocation);
+        blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        font.drawString(title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
         super.render(mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
+    public boolean isPauseScreen() {
         return false;
     }
 
@@ -82,14 +80,14 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     }
 
     private static class TooltipButton extends ItemStackButton {
-        TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
-            super(buttonId, x, y, width, height, renderStack, true);
+        TooltipButton(int x, int y, int width, int height) {
+            super(x, y, width, height, clockStack, true, p -> {});
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, ConfigHandler.ROUTER.baseTickRate.get() - 1);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
-        public void playPressSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundHandler soundHandlerIn) {
             // no sound
         }
     }

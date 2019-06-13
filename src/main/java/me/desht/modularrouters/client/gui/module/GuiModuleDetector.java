@@ -7,55 +7,49 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 
 public class GuiModuleDetector extends GuiModule {
-    private static final int STRENGTH_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
-    private static final int TOOLTIP_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
-    private static final int SIGNAL_LEVEL_TEXTFIELD_ID = GuiModule.EXTRA_TEXTFIELD_BASE;
-
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
 
-    private int signalStrength;
     private boolean isStrong;
+    private IntegerTextField intField;
 
-    public GuiModuleDetector(ContainerModule container) {
-        super(container);
-
-        CompiledDetectorModule settings = new CompiledDetectorModule(null, moduleItemStack);
-        signalStrength = settings.getSignalLevel();
-        isStrong = settings.isStrongSignal();
+    public GuiModuleDetector(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+        super(container, inv, displayName);
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
+
+        CompiledDetectorModule cdm = new CompiledDetectorModule(null, moduleItemStack);
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        IntegerTextField intField = new IntegerTextField(manager, SIGNAL_LEVEL_TEXTFIELD_ID, fontRenderer, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
-        intField.setValue(signalStrength);
-        intField.setTextAcceptHandler((id, s) -> signalStrength = intField.getValue());
+        intField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
+        intField.setValue(cdm.getSignalLevel());
+        intField.func_212954_a((str) -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);
         intField.useGuiTextBackground();
 
         manager.focus(0);
 
-        String label = I18n.format("itemText.misc.strongSignal." + isStrong);
-        addButton(new GuiButton(STRENGTH_BUTTON_ID, guiLeft + 138, guiTop + 33, 40, 20, label) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                isStrong = !isStrong;
-                displayString = I18n.format("itemText.misc.strongSignal." + isStrong);
-                sendModuleSettingsToServer();
-            }
-        });
+        String label = I18n.format("itemText.misc.strongSignal." + cdm.isStrongSignal());
+        isStrong = cdm.isStrongSignal();
+        addButton(new Button(guiLeft + 138, guiTop + 33, 40, 20, label, button -> {
+            isStrong = !isStrong;
+            button.setMessage(I18n.format("itemText.misc.strongSignal." + isStrong));
+            GuiModuleDetector.this.sendToServer();
+        }));
 
-        addButton(new TooltipButton(TOOLTIP_BUTTON_ID, guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
+        addButton(new TooltipButton(guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 129, guiTop + 14, guiLeft + 172, guiTop + 31, "guiText.popup.detector.signalLevel");
         getMouseOverHelp().addHelpRegion(guiLeft + 135, guiTop + 31, guiLeft + 180, guiTop + 54, "guiText.popup.detector.weakStrong");
@@ -65,26 +59,26 @@ public class GuiModuleDetector extends GuiModule {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         // text entry field background - super has already bound the correct texture
-        this.drawTexturedModalRect(guiLeft + 148, guiTop + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
+        this.blit(guiLeft + 148, guiTop + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
     }
 
     @Override
-    protected NBTTagCompound buildMessageData() {
-        NBTTagCompound compound = super.buildMessageData();
-        compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) signalStrength);
+    protected CompoundNBT buildMessageData() {
+        CompoundNBT compound = super.buildMessageData();
+        compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) intField.getValue());
         compound.putBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
         return compound;
     }
 
     private static class TooltipButton extends ItemStackButton {
-        TooltipButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack) {
-            super(buttonId, x, y, width, height, renderStack, true);
+        TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
+            super(x, y, width, height, renderStack, true, p -> {});
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.detectorTooltip");
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
-        public void playPressSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundHandler soundHandlerIn) {
             // no sound
         }
     }

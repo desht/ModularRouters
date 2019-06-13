@@ -2,17 +2,15 @@ package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidget;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
+import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
-import me.desht.modularrouters.util.SlotTracker;
+import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -27,10 +25,6 @@ public class GuiRegexFilter extends GuiFilterScreen {
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 186;
 
-    private static final int ADD_REGEX_ID = 1;
-    private static final int BACK_BUTTON_ID = 2;
-    private static final int BASE_REMOVE_ID = 100;
-
     private int xPos, yPos;
     private RegexTextField regexTextField;
     private String errorMsg = "";
@@ -39,68 +33,57 @@ public class GuiRegexFilter extends GuiFilterScreen {
     private final List<String> regexList = Lists.newArrayList();
     private final List<Buttons.DeleteButton> deleteButtons = Lists.newArrayList();
 
-    public GuiRegexFilter(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
-        super(filterStack, router, hand);
+    public GuiRegexFilter(ItemStack filterStack, MFLocator locator) {
+        super(filterStack, locator);
 
         regexList.addAll(RegexFilter.getRegexList(filterStack));
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
         TextFieldManager manager = getTextFieldManager().clear();
-        regexTextField = new RegexTextField(this, 1, fontRenderer, xPos + 10, yPos + 27, 144, 18);
+        regexTextField = new RegexTextField(this, 1, font, xPos + 10, yPos + 27, 144, 18);
         regexTextField.useGuiTextBackground();
 
         manager.focus(0);
 
-        if (SlotTracker.getInstance(mc.player).getFilterSlot() >= 0) {
-            addButton(new BackButton(BACK_BUTTON_ID, xPos - 12, yPos) {
-                @Override
-                public void onClick(double p_194829_1_, double p_194829_3_) {
-                    closeGUI();
-                }
-            });
+        if (locator.filterSlot >= 0) {
+            addButton(new BackButton(xPos - 12, yPos, p -> closeGUI()));
         }
-        addButton(new Buttons.AddButton(ADD_REGEX_ID, xPos + 155, yPos + 23) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                if (!regexTextField.getText().isEmpty()) addRegex();
-            }
-        });
+
+        addButton(new Buttons.AddButton(xPos + 155, yPos + 23, button -> {
+            if (!regexTextField.getText().isEmpty()) addRegex();
+        }));
+
         for (int i = 0; i < RegexFilter.MAX_SIZE; i++) {
-            Buttons.DeleteButton b = new Buttons.DeleteButton(BASE_REMOVE_ID + i, xPos + 8, yPos + 52 + i * 19) {
-                @Override
-                public void onClick(double p_194829_1_, double p_194829_3_) {
-                    if (id >= BASE_REMOVE_ID && id < BASE_REMOVE_ID + regexList.size()) {
-                        sendRemovePosMessage(id - BASE_REMOVE_ID);
-                    }
-                }
-            };
+            Buttons.DeleteButton b = new Buttons.DeleteButton(xPos + 8, yPos + 52 + i * 19, i,
+                    button -> sendRemovePosMessage(((Buttons.DeleteButton) button).getId()));
             addButton(b);
             deleteButtons.add(b);
         }
+
         updateDeleteButtonVisibility();
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
+        renderBackground();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(textureLocation);
-        drawTexturedModalRect(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        fontRenderer.drawString(title, xPos + GUI_WIDTH / 2f - fontRenderer.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        minecraft.getTextureManager().bindTexture(textureLocation);
+        blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        font.drawString(title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            fontRenderer.drawString("/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
+            font.drawString("/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         if (!errorMsg.isEmpty()) {
-            fontRenderer.drawString(errorMsg, xPos + 8, yPos + 170, 0x804040);
+            font.drawString(errorMsg, xPos + 8, yPos + 170, 0x804040);
         }
 
         super.render(mouseX, mouseY, partialTicks);
@@ -125,7 +108,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
             getTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
-            mc.player.playSound(ObjectRegistry.SOUND_ERROR, 1.0f, 1.0f);
+            minecraft.player.playSound(ModSounds.ERROR, 1.0f, 1.0f);
             errorMsg = I18n.format("guiText.label.regexError");
             errorTimer = 60;
         }
@@ -144,11 +127,11 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
     }
 
-    private static class RegexTextField extends TextFieldWidget {
+    private static class RegexTextField extends TextFieldWidgetMR {
         private final GuiRegexFilter parent;
 
         RegexTextField(GuiRegexFilter parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
-            super(parent.getTextFieldManager(), componentId, fontrendererObj, x, y, par5Width, par6Height);
+            super(parent.getTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
             setMaxStringLength(40);
         }

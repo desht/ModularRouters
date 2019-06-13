@@ -7,7 +7,8 @@ import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
+import me.desht.modularrouters.core.ModTileEntities;
 import me.desht.modularrouters.event.TickEventHandler;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule;
@@ -18,23 +19,24 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -49,7 +51,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TileEntityItemRouter extends TileEntity implements ITickable, ICamouflageable, IInteractionObject {
+public class TileEntityItemRouter extends TileEntity implements ITickableTileEntity, ICamouflageable, INamedContainerProvider {
     private static final int N_MODULE_SLOTS = 9;
     private static final int N_UPGRADE_SLOTS = 5;
     private static final int N_BUFFER_SLOTS = 1;
@@ -95,7 +97,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private int fluidTransferRemainingOut = 0;
 
     // for tracking redstone emission levels for the detector module
-    private final int SIDES = EnumFacing.values().length;
+    private final int SIDES = Direction.values().length;
     private final int[] redstoneLevels = new int[SIDES];
     private final int[] newRedstoneLevels = new int[SIDES];
     private final SignalType[] signalType = new SignalType[SIDES];
@@ -110,13 +112,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     private boolean ecoMode = false;  // track eco-mode
     private int ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
     private boolean hasPulsedModules = false;
-    private NBTTagCompound extData;  // extra (persisted) data which various modules can set & read
-    private IBlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
+    private CompoundNBT extData;  // extra (persisted) data which various modules can set & read
+    private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
     private boolean executing;       // are we currently executing modules?
 
     public TileEntityItemRouter() {
-        super(ObjectRegistry.ITEM_ROUTER_TILE);
+        super(ModTileEntities.ITEM_ROUTER);
     }
 
     public IItemHandler getBuffer() {
@@ -132,15 +134,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        NBTTagCompound compound = new NBTTagCompound();
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT compound = new CompoundNBT();
 
         compound.putInt("x", pos.getX());
         compound.putInt("y", pos.getY());
         compound.putInt("z", pos.getZ());
 
+        // needed for the GUI
+        compound.putByte(NBT_REDSTONE_MODE, (byte) redstoneBehaviour.ordinal());
+        compound.putBoolean(NBT_ECO_MODE, ecoMode);
+
         // these fields are needed for rendering
-        compound.putInt(NBT_MUFFLERS, getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE));
+        compound.putInt(NBT_MUFFLERS, getUpgradeCount(ModItems.MUFFLER_UPGRADE));
         compound.putBoolean(NBT_ACTIVE, active);
         compound.putByte(NBT_SIDES, sidesOpen);
         if (camouflage != null) {
@@ -150,34 +156,36 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
+    public void handleUpdateTag(CompoundNBT tag) {
         super.handleUpdateTag(tag);
         processClientSync(tag);
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(this.pos, -1, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.pos, -1, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         processClientSync(pkt.getNbtCompound());
     }
 
-    private void processClientSync(NBTTagCompound compound) {
+    private void processClientSync(CompoundNBT compound) {
         // called client-side
         int mufflers = compound.getInt(NBT_MUFFLERS);
-        if (mufflers < 3 && getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) >= 3
-                || mufflers >= 3 && getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) < 3) {
-            upgradeCount.put(ObjectRegistry.MUFFLER_UPGRADE.getRegistryName(), mufflers);
-            getWorld().markBlockRangeForRenderUpdate(pos, pos);
+        if (mufflers < 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) >= 3
+                || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 3) {
+            upgradeCount.put(ModItems.MUFFLER_UPGRADE.getRegistryName(), mufflers);
+            getWorld().markForRerender(pos);
         }
 
         // these fields are needed for rendering
         boolean newActive = compound.getBoolean(NBT_ACTIVE);
         byte newSidesOpen = compound.getByte(NBT_SIDES);
         boolean newEco = compound.getBoolean(NBT_ECO_MODE);
+        RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
+        setRedstoneBehaviour(newRedstoneBehaviour);
         setActive(newActive);
         setSidesOpen(newSidesOpen);
         setEcoMode(newEco);
@@ -190,7 +198,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return inventoryCap.cast();
         } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY) {
@@ -202,7 +210,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     @Override
-    public void read(NBTTagCompound nbt) {
+    public void read(CompoundNBT nbt) {
         super.read(nbt);
         bufferHandler.deserializeNBT(nbt.getCompound(NBT_BUFFER));
         modulesHandler.deserializeNBT(nbt.getCompound(NBT_MODULES));
@@ -217,8 +225,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         activeTimer = nbt.getInt(NBT_ACTIVE_TIMER);
         ecoMode = nbt.getBoolean(NBT_ECO_MODE);
 
-        NBTTagCompound ext = nbt.getCompound(NBT_EXTRA);
-        NBTTagCompound ext1 = getExtData();
+        CompoundNBT ext = nbt.getCompound(NBT_EXTRA);
+        CompoundNBT ext1 = getExtData();
         for (String key : ext.keySet()) {
             ext1.put(key, ext.get(key));
         }
@@ -232,7 +240,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 
     @Nonnull
     @Override
-    public NBTTagCompound write(NBTTagCompound nbt) {
+    public CompoundNBT write(CompoundNBT nbt) {
         nbt = super.write(nbt);
         nbt.put(NBT_BUFFER, bufferHandler.serializeNBT());
         nbt.put(NBT_MODULES, modulesHandler.serializeNBT());
@@ -242,8 +250,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
         nbt.putBoolean(NBT_ECO_MODE, ecoMode);
 
-        NBTTagCompound ext = new NBTTagCompound();
-        NBTTagCompound ext1 = getExtData();
+        CompoundNBT ext = new CompoundNBT();
+        CompoundNBT ext1 = getExtData();
         for (String key : ext1.keySet()) {
             ext.put(key, ext1.get(key));
         }
@@ -371,12 +379,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
     }
 
     @Override
-    public IBlockState getCamouflage() {
+    public BlockState getCamouflage() {
         return camouflage;
     }
 
     @Override
-    public void setCamouflage(IBlockState newCamouflage) {
+    public void setCamouflage(BlockState newCamouflage) {
         if (newCamouflage != camouflage) {
             this.camouflage = newCamouflage;
             handleSync(true);
@@ -390,7 +398,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
             getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
         } else if (getWorld().isRemote && renderUpdate) {
             requestModelDataUpdate();
-            getWorld().markBlockRangeForRenderUpdate(pos, pos);
+            getWorld().markForRerender(pos);
         }
     }
 
@@ -425,7 +433,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         }
 
         if (recompileNeeded != 0) {
-            IBlockState state = getWorld().getBlockState(pos);
+            BlockState state = getWorld().getBlockState(pos);
             getWorld().notifyBlockUpdate(pos, state, state, 3);
             getWorld().notifyNeighborsOfStateChange(pos, state.getBlock());
             markDirty();
@@ -470,11 +478,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
                 }
             }
 
-            itemsPerTick = 1 << (Math.min(6, getUpgradeCount(ObjectRegistry.STACK_UPGRADE)));
+            itemsPerTick = 1 << (Math.min(6, getUpgradeCount(ModItems.STACK_UPGRADE)));
             tickRate = Math.max(ConfigHandler.ROUTER.hardMinTickRate.get(),
-                    ConfigHandler.ROUTER.baseTickRate.get() - ConfigHandler.ROUTER.ticksPerUpgrade.get() * getUpgradeCount(ObjectRegistry.SPEED_UPGRADE));
+                    ConfigHandler.ROUTER.baseTickRate.get() - ConfigHandler.ROUTER.ticksPerUpgrade.get() * getUpgradeCount(ModItems.SPEED_UPGRADE));
             fluidTransferRate = Math.min(ConfigHandler.ROUTER.fluidMaxTransferRate.get(),
-                    ConfigHandler.ROUTER.fluidBaseTransferRate.get() + getUpgradeCount(ObjectRegistry.FLUID_UPGRADE) * ConfigHandler.ROUTER.mBperFluidUpgade.get());
+                    ConfigHandler.ROUTER.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE) * ConfigHandler.ROUTER.mBperFluidUpgade.get());
         }
     }
 
@@ -545,9 +553,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         }
     }
 
-    public EnumFacing getAbsoluteFacing(RelativeDirection direction) {
-        IBlockState state = getWorld().getBlockState(pos);
-        return direction.toEnumFacing(state.get(BlockItemRouter.FACING));
+    public Direction getAbsoluteFacing(RelativeDirection direction) {
+        BlockState state = getWorld().getBlockState(pos);
+        return direction.toAbsolute(state.get(BlockItemRouter.FACING));
     }
 
     public ItemStack getBufferItemStack() {
@@ -578,13 +586,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
             Arrays.fill(newRedstoneLevels, power);
             Arrays.fill(newSignalType, signalType);
         } else {
-            EnumFacing facing = getAbsoluteFacing(direction).getOpposite();
+            Direction facing = getAbsoluteFacing(direction).getOpposite();
             newRedstoneLevels[facing.ordinal()] = power;
             newSignalType[facing.ordinal()] = signalType;
         }
     }
 
-    public int getRedstoneLevel(EnumFacing facing, boolean strong) {
+    public int getRedstoneLevel(Direction facing, boolean strong) {
         if (!canEmit) {
             // -1 means the block shouldn't have any special redstone handling
             return -1;
@@ -599,13 +607,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
 
     private void handleRedstoneEmission() {
         boolean notifyOwnNeighbours = false;
-        EnumSet<EnumFacing> toNotify = EnumSet.noneOf(EnumFacing.class);
+        EnumSet<Direction> toNotify = EnumSet.noneOf(Direction.class);
 
         if (!canEmit) {
             // block has stopped being able to emit a signal (all detector modules removed)
             // notify neighbours, and neighbours of neighbours where a strong signal was being emitted
             notifyOwnNeighbours = true;
-            for (EnumFacing f : EnumFacing.values()) {
+            for (Direction f : Direction.values()) {
                 if (signalType[f.ordinal()] == SignalType.STRONG) {
                     toNotify.add(f.getOpposite());
                 }
@@ -613,7 +621,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
             Arrays.fill(redstoneLevels, 0);
             Arrays.fill(signalType, SignalType.NONE);
         } else {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (Direction facing : Direction.values()) {
                 int i = facing.ordinal();
                 // if the signal op (strong/weak) has changed, notify neighbours of block in that direction
                 // if the signal strength has changed, notify immediate neighbours
@@ -632,7 +640,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
             }
         }
 
-        for (EnumFacing f : toNotify) {
+        for (Direction f : toNotify) {
             BlockPos pos2 = pos.offset(f);
             getWorld().notifyNeighborsOfStateChange(pos2, getWorld().getBlockState(pos2).getBlock());
         }
@@ -645,12 +653,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         this.permitted.addAll(permittedIds);
     }
 
-    public boolean isPermitted(EntityPlayer player) {
+    public boolean isPermitted(PlayerEntity player) {
         if (permitted.isEmpty() || permitted.contains(player.getUniqueID())) {
             return true;
         }
-        for (EnumHand hand : EnumHand.values()) {
-            if (player.getHeldItem(hand).getItem() == ObjectRegistry.OVERRIDE_CARD) {
+        for (Hand hand : Hand.values()) {
+            if (player.getHeldItem(hand).getItem() == ModItems.OVERRIDE_CARD) {
                 return true;
             }
         }
@@ -701,7 +709,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         // like World#isBlockIndirectlyGettingPowered() but will ignore redstone from any sides
         // currently being extruded on
         int power = 0;
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (Direction facing : Direction.values()) {
             if (getExtData().getInt(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing) > 0) {
                 // ignore signal from any side we're extruding on (don't let placed redstone emitters lock up the router)
                 continue;
@@ -716,9 +724,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         return power;
     }
 
-    public NBTTagCompound getExtData() {
+    public CompoundNBT getExtData() {
         if (extData == null) {
-            extData = new NBTTagCompound();
+            extData = new CompoundNBT();
         }
         return extData;
     }
@@ -728,8 +736,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
     }
 
-    public void playSound(EntityPlayer player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        if (getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) == 0) {
+    public void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        if (getUpgradeCount(ModItems.MUFFLER_UPGRADE) == 0) {
             getWorld().playSound(player, pos, sound, category, volume, pitch);
         }
     }
@@ -752,33 +760,18 @@ public class TileEntityItemRouter extends TileEntity implements ITickable, ICamo
         return N_BUFFER_SLOTS;
     }
 
-    @Override
-    public Container createContainer(InventoryPlayer inventoryPlayer, EntityPlayer entityPlayer) {
-        return new ContainerItemRouter(inventoryPlayer, this);
+    public int getModuleCount() {
+        return compiledModules.size();
     }
 
     @Override
-    public String getGuiID() {
-        return getType().getRegistryName().toString();
-    }
-
-    @Override
-    public ITextComponent getName() {
-        return new TextComponentString(getGuiID());
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return false;
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("block.modularrouters.item_router");
     }
 
     @Nullable
     @Override
-    public ITextComponent getCustomName() {
-        return null;
-    }
-
-    public int getModuleCount() {
-        return compiledModules.size();
+    public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new ContainerItemRouter(windowId, playerInventory, this.getPos());
     }
 }

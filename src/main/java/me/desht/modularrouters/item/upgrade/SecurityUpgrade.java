@@ -2,21 +2,19 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.IPlayerOwned;
-import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.*;
 import java.util.Collections;
@@ -24,9 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static me.desht.modularrouters.core.ObjectRegistry.SOUND_ERROR;
-import static me.desht.modularrouters.core.ObjectRegistry.SOUND_SUCCESS;
 
 public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     private static final String NBT_PLAYERS = "Players";
@@ -40,14 +35,14 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     public void addExtraInformation(ItemStack itemstack,  List<ITextComponent> list) {
         String owner = getOwnerName(itemstack);
         if (owner == null) owner = "(none)";
-        list.add(new TextComponentTranslation("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
+        list.add(new TranslationTextComponent("itemText.security.owner", TextFormatting.YELLOW + getOwnerName(itemstack)));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
-            list.add(new TextComponentTranslation("itemText.security.count", names.size(), MAX_PLAYERS));
+            list.add(new TranslationTextComponent("itemText.security.count", names.size(), MAX_PLAYERS));
             list.addAll(names.stream()
                     .map(name -> " \u2022 " + TextFormatting.YELLOW + name)
                     .sorted()
-                    .map(TextComponentString::new)
+                    .map(StringTextComponent::new)
                     .collect(Collectors.toList()));
         }
     }
@@ -64,7 +59,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     private Set<UUID> getPlayerIDs(ItemStack stack) {
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound == null) {
             return Collections.emptySet();
         }
@@ -75,7 +70,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
         res.add(ownerID);
 
         if (compound.contains(NBT_PLAYERS)) {
-            NBTTagCompound p = compound.getCompound(NBT_PLAYERS);
+            CompoundNBT p = compound.getCompound(NBT_PLAYERS);
             res.addAll(p.keySet().stream().map(UUID::fromString).collect(Collectors.toList()));
         }
         return res;
@@ -88,9 +83,9 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
      * @return set of (displayable) player names
      */
     private static Set<String> getPlayerNames(ItemStack stack) {
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null && compound.contains(NBT_PLAYERS)) {
-            NBTTagCompound p = compound.getCompound(NBT_PLAYERS);
+            CompoundNBT p = compound.getCompound(NBT_PLAYERS);
             return Sets.newHashSet(p.keySet().stream().map(p::getString).sorted().collect(Collectors.toList()));
         } else {
             return Collections.emptySet();
@@ -98,12 +93,12 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     private static Result addPlayer(ItemStack stack, String id, String name) {
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null) {
             if (!compound.contains(NBT_PLAYERS)) {
-                compound.put(NBT_PLAYERS, new NBTTagCompound());
+                compound.put(NBT_PLAYERS, new CompoundNBT());
             }
-            NBTTagCompound p = compound.getCompound(NBT_PLAYERS);
+            CompoundNBT p = compound.getCompound(NBT_PLAYERS);
             if (p.contains(id)) {
                 return Result.ALREADY_ADDED;  // already there, do nothing
             }
@@ -117,12 +112,12 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     private static Result removePlayer(ItemStack stack, String id) {
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null) {
             if (!compound.contains(NBT_PLAYERS)) {
-                compound.put(NBT_PLAYERS, new NBTTagCompound());
+                compound.put(NBT_PLAYERS, new CompoundNBT());
             }
-            NBTTagCompound p = compound.getCompound(NBT_PLAYERS);
+            CompoundNBT p = compound.getCompound(NBT_PLAYERS);
             if (p.contains(id)) {
                 p.remove(id);
                 return Result.REMOVED;
@@ -134,27 +129,27 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.getEntityWorld().isRemote && player.isSneaking()) {
             setOwner(stack, player);
-            player.sendStatusMessage(new TextComponentTranslation("itemText.security.owner", player.getDisplayName().getString()), false);
-            return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+            player.sendStatusMessage(new TranslationTextComponent("itemText.security.owner", player.getDisplayName().getString()), false);
+            return ActionResult.newResult(ActionResultType.SUCCESS, stack);
         }
-        return ActionResult.newResult(EnumActionResult.PASS, stack);
+        return ActionResult.newResult(ActionResultType.PASS, stack);
     }
 
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
-        if (entity instanceof EntityPlayer) {
-            EntityPlayer targetPlayer = (EntityPlayer)entity;
+    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity targetPlayer = (PlayerEntity)entity;
             String id = targetPlayer.getUniqueID().toString();
             String name = targetPlayer.getDisplayName().toString();
             Result res = player.isSneaking() ? removePlayer(stack, id) : addPlayer(stack, id, name);
             if (player.world.isRemote) {
-                player.playSound(res.isError() ? SOUND_ERROR : SOUND_SUCCESS, 1.0f, 1.0f);
+                player.playSound(res.isError() ? ModSounds.ERROR : ModSounds.SUCCESS, 1.0f, 1.0f);
             } else {
-                player.sendStatusMessage(new TextComponentTranslation("chatText.security." + res.toString(), name), false);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.security." + res.toString(), name), false);
             }
             return true;
         }

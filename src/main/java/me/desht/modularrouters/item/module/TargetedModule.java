@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.PlaySoundMessage;
 import me.desht.modularrouters.util.BlockUtil;
@@ -13,23 +13,23 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemUseContext ctx) {
+    public ActionResultType onItemUse(ItemUseContext ctx) {
         if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
             if (InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()) != null) {
                 if (getMaxTargets() == 1) {
@@ -60,16 +60,16 @@ public abstract class TargetedModule extends ItemModule {
                 } else {
                     handleMultiTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 }
-                return EnumActionResult.SUCCESS;
+                return ActionResultType.SUCCESS;
             } else {
                 return super.onItemUse(ctx);
             }
         } else {
-            return EnumActionResult.PASS;
+            return ActionResultType.PASS;
         }
     }
 
-    private void handleMultiTarget(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing face) {
+    private void handleMultiTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {
         if (!world.isRemote) {
             boolean removing = false;
             String invName = BlockUtil.getBlockName(world, pos);
@@ -79,29 +79,29 @@ public abstract class TargetedModule extends ItemModule {
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetRemoved", tgt.toString(), targets.size(), getMaxTargets()), true);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetRemoved", tgt.toString(), targets.size(), getMaxTargets()), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetAdded", tgt.toString(), targets.size(), getMaxTargets()), true);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", tgt.toString(), targets.size(), getMaxTargets()), true);
             } else {
                 // too many targets already
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.tooManyTargets", getMaxTargets()), true);
-                PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_ERROR, 1.0f, 1.3f);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets()), true);
+                PlaySoundMessage.playSound(player, ModSounds.ERROR, 1.0f, 1.3f);
                 return;
             }
 
-            PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_SUCCESS, 1.0f, removing ? 1.1f : 1.3f);
+            PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, removing ? 1.1f : 1.3f);
             setTargets(stack, targets);
         }
     }
 
-    private void handleSingleTarget(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing face) {
+    private void handleSingleTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {
         if (!world.isRemote) {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetSet", tgt.toString()), true);
-                PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.3f);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetSet", tgt.toString()), true);
+                PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.3f);
             }
         }
     }
@@ -127,13 +127,13 @@ public abstract class TargetedModule extends ItemModule {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                list.add(new TextComponentTranslation("chatText.misc.target", target.toString()));
-                if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
-                    TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getInstance().currentScreen).router;
+                list.add(new TranslationTextComponent("chatText.misc.target", target.toString()));
+                if (Minecraft.getInstance().field_71462_r instanceof GuiItemRouter) {
+                    TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getInstance().field_71462_r).router;
                     ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().dimension.getType().getId(), router.getPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(new TextComponentTranslation("chatText.targetValidation." + val));
+                        list.add(new TranslationTextComponent("chatText.targetValidation." + val));
                     }
                 }
             }
@@ -141,13 +141,13 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     @Override
-    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            PlaySoundMessage.playSound(player, ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.1f);
-            player.sendStatusMessage(new TextComponentTranslation("chatText.misc.targetCleared"), true);
+            PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.1f);
+            player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetCleared"), true);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     /**
@@ -158,12 +158,12 @@ public abstract class TargetedModule extends ItemModule {
      * @param pos the position of the target
      * @param face clicked face of the target
      */
-    private static void setTarget(ItemStack stack, World world, BlockPos pos, EnumFacing face) {
+    private static void setTarget(ItemStack stack, World world, BlockPos pos, Direction face) {
         if (world.isRemote) {
             ModularRouters.LOGGER.warn("TargetModule.setTarget() should not be called client-side!");
             return;
         }
-        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
+        CompoundNBT compound = ModuleHelper.validateNBT(stack);
         if (pos == null) {
             compound.remove(NBT_TARGET);
         } else {
@@ -193,7 +193,7 @@ public abstract class TargetedModule extends ItemModule {
      * @return targeting data
      */
     public static ModuleTarget getTarget(ItemStack stack, boolean checkBlockName) {
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null && compound.getTagId(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
             ModuleTarget target = ModuleTarget.fromNBT(compound.getCompound(NBT_TARGET));
             if (checkBlockName) {
@@ -215,9 +215,9 @@ public abstract class TargetedModule extends ItemModule {
     public static Set<ModuleTarget> getTargets(ItemStack stack, boolean checkBlockName) {
         Set<ModuleTarget> result = Sets.newHashSet();
 
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
         if (compound != null && compound.getTagId(NBT_MULTI_TARGET) == Constants.NBT.TAG_LIST) {
-            NBTTagList list = compound.getList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
+            ListNBT list = compound.getList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 ModuleTarget target = ModuleTarget.fromNBT(list.getCompound(i));
                 if (checkBlockName) {
@@ -232,8 +232,8 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     private static void setTargets(ItemStack stack, Set<ModuleTarget> targets) {
-        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
-        NBTTagList list = new NBTTagList();
+        CompoundNBT compound = ModuleHelper.validateNBT(stack);
+        ListNBT list = new ListNBT();
         for (ModuleTarget target : targets) {
             list.add(target.toNBT());
         }
@@ -242,7 +242,7 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {
-        WorldServer w = MiscUtil.getWorldForDimensionId(target.dimId);
+        ServerWorld w = MiscUtil.getWorldForDimensionId(target.dimId);
         if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
             String invName = BlockUtil.getBlockName(w, target.pos);
             if (!target.invName.equals(invName)) {
@@ -254,11 +254,11 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     @Override
-    public boolean onEntitySwing(ItemStack stack, EntityLivingBase entityLiving) {
-        if (!(entityLiving instanceof EntityPlayerMP)) {
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entityLiving) {
+        if (!(entityLiving instanceof ServerPlayerEntity)) {
             return false;
         }
-        EntityPlayerMP player = (EntityPlayerMP) entityLiving;
+        ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
         World world = player.getEntityWorld();
         if (world.isRemote) {
             return true;
@@ -281,9 +281,9 @@ public abstract class TargetedModule extends ItemModule {
         for (ModuleTarget target : targets) {
             if (target != null) {
                 TargetValidation res = validateTarget(stack, src, target, true);
-                player.sendStatusMessage(new TextComponentTranslation("chatText.misc.target", target.toString())
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.target", target.toString())
                         .appendText("  ")
-                        .appendSibling(new TextComponentTranslation("chatText.targetValidation." + res)), false);
+                        .appendSibling(new TranslationTextComponent("chatText.targetValidation." + res)), false);
             }
         }
         return true;
@@ -307,7 +307,7 @@ public abstract class TargetedModule extends ItemModule {
         // or when the router is actually executing the module;
         // we can't reliably validate chunk loading or inventory presence on the client (for tooltip generation)
         if (validateBlocks) {
-            WorldServer w = MiscUtil.getWorldForDimensionId(dst.dimId);
+            ServerWorld w = MiscUtil.getWorldForDimensionId(dst.dimId);
             if (w == null || !w.getChunkProvider().chunkExists(dst.pos.getX() >> 4, dst.pos.getZ() >> 4)) {
                 return TargetValidation.NOT_LOADED;
             }

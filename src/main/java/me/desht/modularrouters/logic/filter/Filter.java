@@ -1,8 +1,6 @@
 package me.desht.modularrouters.logic.filter;
 
 import com.google.common.collect.Lists;
-import jdk.nashorn.internal.ir.Flags;
-import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
@@ -11,9 +9,6 @@ import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.Validate;
 

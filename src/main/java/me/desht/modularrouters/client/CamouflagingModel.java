@@ -3,18 +3,21 @@ package me.desht.modularrouters.client;
 import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.tile.ICamouflageable;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
@@ -38,11 +41,11 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand, IModelData modelData) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData) {
         if (state == null || !(state.getBlock() instanceof BlockCamo)) {
             return baseModel.getQuads(state, side, rand, modelData);
         }
-        IBlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
+        BlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
         IBlockReader blockAccess = modelData.getData(BlockCamo.BLOCK_ACCESS);
         BlockPos pos = modelData.getData(BlockCamo.BLOCK_POS);
         if (blockAccess == null || pos == null) {
@@ -63,7 +66,7 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
             IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(camoState);
 
             // Their model can be smart too
-            IBlockState extended = camoState.getBlock().getExtendedState(camoState, new FakeBlockAccess(blockAccess), pos);
+            BlockState extended = camoState.getBlock().getExtendedState(camoState, new FakeBlockAccess(blockAccess), pos);
             return model.getQuads(extended, side, rand, modelData);
         }
 
@@ -72,7 +75,7 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull IWorldReader world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull IModelData tileData) {
+    public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
         return tileData;
     }
 
@@ -121,8 +124,8 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
 
         @Nonnull
         @Override
-        public IBlockState getBlockState(@Nonnull BlockPos pos) {
-            IBlockState state = compose.getBlockState(pos);
+        public BlockState getBlockState(@Nonnull BlockPos pos) {
+            BlockState state = compose.getBlockState(pos);
             if (state.getBlock() instanceof BlockCamo) {
                 TileEntity te = compose.getTileEntity(pos);
                 if (te instanceof ICamouflageable) {

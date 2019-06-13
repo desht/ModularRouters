@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
 import me.desht.modularrouters.item.module.IRangedModule;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -12,7 +12,7 @@ import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -29,8 +29,8 @@ public abstract class CompiledModule {
     private final List<ModuleTarget> targets;
     private final RouterRedstoneBehaviour behaviour;
     private final boolean termination;
-    private final EnumFacing facing;
-    private final EnumFacing routerFacing;
+    private final Direction facing;
+    private final Direction routerFacing;
     private final int regulationAmount;
     private final AugmentCounter augmentCounter;
     private final int range, rangeSquared;
@@ -56,7 +56,7 @@ public abstract class CompiledModule {
         range = module instanceof IRangedModule ?
                 ((IRangedModule) module).getCurrentRange(getRangeModifier()) : 0;
         rangeSquared = range * range;
-        targets = setupTarget(router, stack);
+        targets = setupTargets(router, stack);
         filter = new Filter(stack);
         termination = ModuleHelper.terminates(stack);
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
@@ -106,8 +106,8 @@ public abstract class CompiledModule {
         return behaviour;
     }
 
-    int getRegulationAmount() {
-        return augmentCounter.getAugmentCount(ObjectRegistry.REGULATOR_AUGMENT) > 0 ? regulationAmount : 0;
+    public int getRegulationAmount() {
+        return augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT) > 0 ? regulationAmount : 0;
     }
 
     int getAugmentCount(Item augmentType) {
@@ -121,7 +121,7 @@ public abstract class CompiledModule {
      *
      * @return absolute direction of the module
      */
-    EnumFacing getFacing() {
+    Direction getFacing() {
         return facing;
     }
 
@@ -164,13 +164,13 @@ public abstract class CompiledModule {
      *
      * @param router router in which the module is installed
      * @param stack the module itemstack
-     * @return a router target object
+     * @return a list of router target objects (for most modules this is a singleton list)
      */
-    List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
         if (router == null || (module.isDirectional() && direction == RelativeDirection.NONE)) {
             return null;
         }
-        EnumFacing facing = router.getAbsoluteFacing(direction);
+        Direction facing = router.getAbsoluteFacing(direction);
         BlockPos pos = router.getPos().offset(facing);
         String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
         int dim = MiscUtil.getDimensionForWorld(router.getWorld());
@@ -178,7 +178,7 @@ public abstract class CompiledModule {
     }
 
     int getItemsPerTick(TileEntityItemRouter router) {
-        int n = augmentCounter.getAugmentCount(ObjectRegistry.STACK_AUGMENT);
+        int n = augmentCounter.getAugmentCount(ModItems.STACK_AUGMENT);
         return n > 0 ? Math.min(1 << n, 64) : router.getItemsPerTick();
     }
 
@@ -284,13 +284,17 @@ public abstract class CompiledModule {
     }
 
     private int getRangeModifier() {
-        return getAugmentCount(ObjectRegistry.RANGE_UP_AUGMENT) - getAugmentCount(ObjectRegistry.RANGE_DOWN_AUGMENT);
+        return getAugmentCount(ModItems.RANGE_UP_AUGMENT) - getAugmentCount(ModItems.RANGE_DOWN_AUGMENT);
     }
 
-    EnumFacing getRouterFacing() {
+    Direction getRouterFacing() {
         return routerFacing;
     }
 
     public void onNeighbourChange(TileEntityItemRouter router) {
+    }
+
+    public AugmentCounter getAugmentCounter() {
+        return augmentCounter;
     }
 }

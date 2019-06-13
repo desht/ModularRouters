@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -147,8 +146,8 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private Optional<Integer> getFoodValue(ItemStack stack) {
-            if (stack.getItem() instanceof ItemFood) {
-                return Optional.of(((ItemFood) stack.getItem()).getHealAmount(stack));
+            if (stack.getItem().isFood()) {
+                return Optional.of(stack.getItem().getFood().getHealing());
             } else {
                 return Optional.empty();
             }

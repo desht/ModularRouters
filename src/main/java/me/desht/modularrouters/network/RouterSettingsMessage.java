@@ -6,7 +6,7 @@ import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -19,24 +19,24 @@ import java.util.function.Supplier;
 public class RouterSettingsMessage {
     private boolean eco;
     private TileEntityItemRouter router;
-    private RouterRedstoneBehaviour rrb;
+    private RouterRedstoneBehaviour redstoneBehaviour;
 
     public RouterSettingsMessage() {
     }
 
-    public RouterSettingsMessage(TileEntityItemRouter router) {
+    public RouterSettingsMessage(TileEntityItemRouter router, RouterRedstoneBehaviour redstoneBehaviour, boolean ecoMode) {
         this.router = router;
-        this.rrb = router.getRedstoneBehaviour();
-        this.eco = router.getEcoMode();
+        this.redstoneBehaviour = redstoneBehaviour;
+        this.eco = ecoMode;
     }
 
     public RouterSettingsMessage(PacketBuffer buffer) {
         BlockPos pos = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
-        WorldServer world = MiscUtil.getWorldForDimensionId(buffer.readInt());
+        ServerWorld world = MiscUtil.getWorldForDimensionId(buffer.readInt());
         if (world != null) {
             router = TileEntityItemRouter.getRouterAt(world, pos);
         }
-        rrb = RouterRedstoneBehaviour.values()[buffer.readByte()];
+        redstoneBehaviour = RouterRedstoneBehaviour.values()[buffer.readByte()];
         eco = buffer.readBoolean();
     }
 
@@ -45,14 +45,14 @@ public class RouterSettingsMessage {
         byteBuf.writeInt(router.getPos().getY());
         byteBuf.writeInt(router.getPos().getZ());
         byteBuf.writeInt(MiscUtil.getDimensionForWorld(router.getWorld()));
-        byteBuf.writeByte(rrb.ordinal());
+        byteBuf.writeByte(redstoneBehaviour.ordinal());
         byteBuf.writeBoolean(eco);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (router != null) {
-                router.setRedstoneBehaviour(rrb);
+                router.setRedstoneBehaviour(redstoneBehaviour);
                 router.setEcoMode(eco);
             }
         });

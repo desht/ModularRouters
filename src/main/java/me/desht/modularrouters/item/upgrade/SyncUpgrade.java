@@ -2,17 +2,15 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import me.desht.modularrouters.core.ModSounds;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.awt.*;
@@ -27,7 +25,7 @@ public class SyncUpgrade extends ItemUpgrade {
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
-        list.add(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(itemstack)));
+        list.add(new TranslationTextComponent("itemText.sync.tuning", getTunedValue(itemstack)));
     }
 
     @Override
@@ -50,7 +48,7 @@ public class SyncUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote && !player.isSneaking()) {
             ModularRouters.proxy.openSyncGui(stack, hand);
@@ -58,10 +56,10 @@ public class SyncUpgrade extends ItemUpgrade {
             if (!world.isRemote) {
                 setTunedValue(stack, world.rand.nextInt(ConfigHandler.ROUTER.baseTickRate.get()));
             } else {
-                player.sendStatusMessage(new TextComponentTranslation("itemText.sync.tuning", getTunedValue(stack)), true);
-                player.playSound(ObjectRegistry.SOUND_SUCCESS, 1.0f, 1.5f);
+                player.sendStatusMessage(new TranslationTextComponent("itemText.sync.tuning", getTunedValue(stack)), true);
+                player.playSound(ModSounds.SUCCESS, 1.0f, 1.5f);
             }
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 }

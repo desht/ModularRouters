@@ -3,42 +3,49 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.slot.BaseModuleSlot;
+import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumHand;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Hand;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 
 public class ContainerExtruder2Module extends ContainerModule {
     private static final int TEMPLATE_SLOTS = 9;
 
-    public ContainerExtruder2Module(InventoryPlayer inv, EnumHand hand, ItemStack moduleStack, TileEntityItemRouter router) {
-        super(inv, hand, moduleStack, router);
+    ContainerExtruder2Module(int windowId, PlayerInventory inv, PacketBuffer extra) {
+        this(windowId, inv, MFLocator.fromBuffer(extra));
+    }
 
-        TemplateHandler handler = new TemplateHandler(moduleStack);
+    public ContainerExtruder2Module(int windowId, PlayerInventory inv, MFLocator locator) {
+        super(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2, windowId, inv, locator);
+
+        TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player));
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {
             int x = 129 + SLOT_X_SPACING * (i % 3);
             int y = 17 + SLOT_X_SPACING * (i / 3);
             TemplateSlot slot = router == null ?
-                    new TemplateSlot(handler, inv.player, hand, i, x, y) :
+                    new TemplateSlot(handler, inv.player, locator.hand, i, x, y) :
                     new TemplateSlot(handler, router, i, x, y);
             addSlot(slot);
         }
     }
 
     @Override
-    protected void transferStackInExtraSlot(EntityPlayer player, int index) {
+    protected void transferStackInExtraSlot(PlayerEntity player, int index) {
         inventorySlots.get(index).putStack(ItemStack.EMPTY);
     }
 
     @Override
-    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         Slot s = inventorySlots.get(slot);
         ItemStack stackOnCursor = player.inventory.getItemStack();
         ItemStack stackInSlot = s.getStack().copy();
@@ -71,11 +78,11 @@ public class ContainerExtruder2Module extends ContainerModule {
         if (stack.isEmpty()) {
             return true;  //  null is ok, clears the slot
         }
-        if (!(stack.getItem() instanceof ItemBlock)) {
+        if (!(stack.getItem() instanceof BlockItem)) {
             return true;  // non-block items are allowed - they act as spacers
         }
-        Block b = ((ItemBlock) stack.getItem()).getBlock();
-        return b.getDefaultState().getRenderType() == EnumBlockRenderType.MODEL;
+        Block b = ((BlockItem) stack.getItem()).getBlock();
+        return b.getDefaultState().getRenderType() == BlockRenderType.MODEL;
     }
 
     private static class TemplateSlot extends BaseModuleSlot<TemplateHandler> {
@@ -83,7 +90,7 @@ public class ContainerExtruder2Module extends ContainerModule {
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        TemplateSlot(TemplateHandler itemHandler, EntityPlayer player, EnumHand hand, int index, int xPosition, int yPosition) {
+        TemplateSlot(TemplateHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
             super(itemHandler, player, hand, index, xPosition, yPosition);
         }
     }

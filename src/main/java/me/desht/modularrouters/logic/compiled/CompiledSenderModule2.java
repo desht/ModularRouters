@@ -6,7 +6,7 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
@@ -18,7 +18,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     }
 
     @Override
-    protected List<ModuleTarget> setupTarget(TileEntityItemRouter router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
         return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
     }
 
@@ -29,7 +29,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
             return null;
         }
 
-        WorldServer w = MiscUtil.getWorldForDimensionId(target.dimId);
+        ServerWorld w = MiscUtil.getWorldForDimensionId(target.dimId);
         if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
             IItemHandler handler = InventoryUtils.getInventory(w, target.pos, target.face);
             return handler == null ? null : new PositionedItemHandler(target.pos, handler);

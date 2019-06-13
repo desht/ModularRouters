@@ -1,41 +1,41 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.util.SlotTracker;
+import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
 import org.lwjgl.glfw.GLFW;
 
-abstract class GuiFilterContainer extends GuiContainerBase {
-    protected final TileEntityItemRouter router;
-    protected final EnumHand hand;
+abstract class GuiFilterContainer extends GuiContainerBase<ContainerSmartFilter> {
+    protected final Hand hand;
     protected final String title;
     protected final ItemStack filterStack;
 
-    GuiFilterContainer(ContainerSmartFilter container) {
-        super(container);
-        this.router = container.getRouter();
-        this.hand = container.getHand();
+    GuiFilterContainer(ContainerSmartFilter container, PlayerInventory inv, ITextComponent displayName) {
+        super(container, inv, displayName);
+
+        this.hand = container.getLocator().hand;
         this.filterStack = container.getFilterStack();
         this.title = filterStack.getDisplayName().getString();
     }
 
     boolean closeGUI() {
-        SlotTracker.getInstance(mc.player).clearFilterSlot();
         // need to re-open module GUI for module in router slot <moduleSlotIndex>
-        if (router != null) {
-            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), SlotTracker.getInstance(mc.player).getModuleSlot()));
+        MFLocator locator = container.getLocator();
+        if (locator.routerPos != null) {
+            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (hand != null) {
-            ItemStack stack = mc.player.getHeldItem(hand);
+            ItemStack stack = minecraft.player.getHeldItem(hand);
             if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
-                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(hand));
+                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));
                 return true;
             }
         }

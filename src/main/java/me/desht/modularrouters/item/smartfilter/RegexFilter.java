@@ -7,16 +7,15 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
@@ -34,7 +33,7 @@ public class RegexFilter extends ItemSmartFilter {
 
     public static List<String> getRegexList(ItemStack filterStack) {
         if (filterStack.hasTag()) {
-            NBTTagList items = filterStack.getTag().getList(NBT_REGEX, Constants.NBT.TAG_STRING);
+            ListNBT items = filterStack.getTag().getList(NBT_REGEX, Constants.NBT.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
             for (int i = 0; i < items.size(); i++) {
                 res.add(items.getString(i));
@@ -46,20 +45,20 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     public static void setRegexList(ItemStack filterStack, List<String> regex) {
-        NBTTagList list = regex.stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new));
+        ListNBT list = regex.stream().map(StringNBT::new).collect(Collectors.toCollection(ListNBT::new));
         filterStack.getOrCreateTag().put(NBT_REGEX, list);
     }
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addExtraInformation(itemstack, list);
-        NBTTagCompound compound = itemstack.getTag();
+        CompoundNBT compound = itemstack.getTag();
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
-            list.add(new TextComponentTranslation("itemText.misc.regexFilter.count", l.size()));
-            list.addAll(l.stream().map(s -> " \u2022 " + TextFormatting.AQUA + "/" + s + "/").map(TextComponentString::new).collect(Collectors.toList()));
+            list.add(new TranslationTextComponent("itemText.misc.regexFilter.count", l.size()));
+            list.addAll(l.stream().map(s -> " \u2022 " + TextFormatting.AQUA + "/" + s + "/").map(StringTextComponent::new).collect(Collectors.toList()));
         } else {
-            list.add(new TextComponentTranslation("itemText.misc.regexFilter.count", 0));
+            list.add(new TranslationTextComponent("itemText.misc.regexFilter.count", 0));
         }
     }
 
@@ -70,7 +69,7 @@ public class RegexFilter extends ItemSmartFilter {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Class<? extends GuiScreen> getGuiClass() {
+    public Class<? extends Screen> getGuiClass() {
         return GuiRegexFilter.class;
     }
 
@@ -80,11 +79,11 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     @Override
-    public GuiSyncMessage dispatchMessage(EntityPlayer player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
         switch (message.getOp()) {
             case ADD_STRING:
-                String regex = message.getNbtData().getString("String");
+                String regex = message.getPayload().getString("String");
                 l = getRegexList(filterStack);
                 if (l.size() < MAX_SIZE) {
                     l.add(regex);
@@ -93,7 +92,7 @@ public class RegexFilter extends ItemSmartFilter {
                 }
                 break;
             case REMOVE_AT:
-                int pos = message.getNbtData().getInt("Pos");
+                int pos = message.getPayload().getInt("Pos");
                 l = getRegexList(filterStack);
                 if (pos >= 0 && pos < l.size()) {
                     l.remove(pos);

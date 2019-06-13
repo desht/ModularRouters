@@ -1,26 +1,25 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.client.gui.widgets.IResyncableGui;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
+import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.util.SlotTracker;
+import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncableGui {
-    protected final TileEntityItemRouter router;
-    protected final EnumHand hand;
     protected final String title;
+    final MFLocator locator;
 
-    GuiFilterScreen(ItemStack filterStack, TileEntityItemRouter router, EnumHand hand) {
-        this.router = router;
-        this.hand = hand;
+    GuiFilterScreen(ItemStack filterStack, MFLocator locator) {
+        super(filterStack.getDisplayName());
+        this.locator = locator;
+
         this.title = filterStack.getDisplayName().getString();
     }
 
@@ -34,16 +33,15 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
     }
 
     boolean closeGUI() {
-        SlotTracker.getInstance(mc.player).clearFilterSlot();
-        if (router != null) {
+        if (locator.routerPos != null) {
             // need to re-open module GUI for module in router slot <moduleSlotIndex>
-            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(router.getPos(), SlotTracker.getInstance(mc.player).getModuleSlot()));
+            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
-        } else if (hand != null) {
-            ItemStack stack = mc.player.getHeldItem(hand);
+        } else if (locator.hand != null) {
+            ItemStack stack = minecraft.player.getHeldItem(locator.hand);
             if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
-                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(hand));
+                PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));
                 return true;
             }
         }
@@ -51,26 +49,14 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
     }
 
     void sendAddStringMessage(String key, String s) {
-        NBTTagCompound ext = new NBTTagCompound();
+        CompoundNBT ext = new CompoundNBT();
         ext.putString(key, s);
-        if (router != null) {
-            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.ADD_STRING, router.getPos(), ext));
-        } else {
-            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.ADD_STRING, hand, ext));
-        }
+        PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ADD_STRING, locator, ext));
     }
 
     void sendRemovePosMessage(int pos) {
-        NBTTagCompound ext = new NBTTagCompound();
+        CompoundNBT ext = new CompoundNBT();
         ext.putInt("Pos", pos);
-        if (router != null) {
-            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.REMOVE_AT, router.getPos(), ext));
-        } else {
-            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                    FilterSettingsMessage.Operation.REMOVE_AT, hand, ext));
-        }
+        PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.REMOVE_AT, locator, ext));
     }
 }

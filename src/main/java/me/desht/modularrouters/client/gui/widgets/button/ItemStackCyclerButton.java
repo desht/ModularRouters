@@ -1,5 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
+import me.desht.modularrouters.client.gui.ISendToServer;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 
 public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
@@ -7,8 +9,11 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
     private final int len;
     private final ItemStack[] stacks;
 
-    public ItemStackCyclerButton(int buttonId, int x, int y, int width, int height, boolean flat, ItemStack[] stacks, T initialVal) {
-        super(buttonId, x, y, width, height, null, flat);
+    public ItemStackCyclerButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, T initialVal, ISendToServer dataSyncer) {
+        super(x, y, width, height, null, flat, button -> {
+            ((ItemStackCyclerButton) button).cycle(!Screen.hasShiftDown());
+            dataSyncer.sendToServer();
+        });
         state = initialVal;
         len = initialVal.getClass().getEnumConstants().length;
         if (stacks.length != len) {

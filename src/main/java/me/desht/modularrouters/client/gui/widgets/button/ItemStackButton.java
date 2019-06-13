@@ -1,16 +1,16 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.client.RenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 public class ItemStackButton extends TexturedButton {
     private final ItemStack renderStack;
     private boolean flat;
 
-    public ItemStackButton(int buttonId, int x, int y, int width, int height, ItemStack renderStack, boolean flat) {
-        super(buttonId, x, y, width, height);
+    public ItemStackButton(int x, int y, int width, int height, ItemStack renderStack, boolean flat, IPressable pressable) {
+        super(x, y, width, height, pressable);
         this.renderStack = renderStack;
         this.flat = flat;
     }
@@ -25,13 +25,13 @@ public class ItemStackButton extends TexturedButton {
             Minecraft mc = Minecraft.getInstance();
             mc.getTextureManager().bindTexture(resourceLocation);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            int i = this.getHoverState(this.hovered);
+            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            int i = this.getYImage(this.isHovered);
             GlStateManager.enableBlend();
             GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             if (!flat) {
-                this.drawTexturedModalRect(this.x, this.y, i * 16, 0, this.width, this.height);
+                this.blit(this.x, this.y, i * 16, 0, this.width, this.height);
             }
             int x = this.x + (width - 18) / 2;
             int y = this.y + (height - 18) / 2;
@@ -48,4 +48,5 @@ public class ItemStackButton extends TexturedButton {
     protected int getTextureY() {
         return 0;
     }
+
 }

@@ -2,21 +2,17 @@ package me.desht.modularrouters.client.gui.widgets;
 
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 
-public abstract class GuiContainerBase extends GuiContainer implements IResyncableGui {
+public abstract class GuiContainerBase<T extends Container> extends ContainerScreen<T> implements IResyncableGui {
     private TextFieldManager textFieldManager;
 
-    public GuiContainerBase(Container container) {
-        super(container);
-    }
-
-    protected boolean hasTextFieldManager() {
-        return textFieldManager != null;
+    public GuiContainerBase(T container, PlayerInventory inv, ITextComponent displayName) {
+        super(container, inv, displayName);
     }
 
     protected TextFieldManager createTextFieldManager() {
@@ -24,24 +20,22 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
         return textFieldManager;
     }
 
-    protected TextFieldManager getTextFieldManager() {
-        return textFieldManager;
-    }
-
     protected TextFieldManager getOrCreateTextFieldManager() {
-        return hasTextFieldManager() ? getTextFieldManager() : createTextFieldManager();
+        if (textFieldManager == null) textFieldManager = createTextFieldManager();
+
+        return textFieldManager;
     }
 
     @Override
     public void render(int x, int y, float partialTicks) {
-        this.drawDefaultBackground();
+        this.renderBackground();
         super.render(x, y, partialTicks);
         if (textFieldManager != null) {
             textFieldManager.drawTextFields(x, y, partialTicks);
         }
         this.buttons.stream()
-                .filter(button -> button.isMouseOver() && button instanceof ITooltipButton)
-                .forEach(button -> drawHoveringText(((ITooltipButton) button).getTooltip(), x, y, fontRenderer));
+                .filter(button -> button.isMouseOver(x, y) && button instanceof ITooltipButton)
+                .forEach(button -> renderTooltip(((ITooltipButton) button).getTooltip(), x, y, font));
 
         this.renderHoveredToolTip(x, y);
     }
@@ -52,11 +46,8 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
         if (textFieldManager != null) textFieldManager.tick();
     }
 
-    @Override
-    public boolean mouseScrolled(double dir) {
-        return textFieldManager != null ?
-                textFieldManager.mouseScrolled(dir) :
-                super.mouseScrolled(dir);
+    public boolean mouseScrolled(double x, double y, double dir) {
+        return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir);
     }
 
     @Override
@@ -86,7 +77,7 @@ public abstract class GuiContainerBase extends GuiContainer implements IResyncab
         }
     }
 
-    public boolean isFocused() {
+    protected boolean isFocused() {
         return textFieldManager != null && textFieldManager.isFocused();
     }
 

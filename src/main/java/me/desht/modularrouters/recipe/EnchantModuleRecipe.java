@@ -1,25 +1,26 @@
 package me.desht.modularrouters.recipe;
 
+import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.BreakerModule;
 import me.desht.modularrouters.item.module.ExtruderModule1;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeHidden;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class EnchantModuleRecipe extends IRecipeHidden {
-    static final Map<Class<?>, Enchantment[]> validEnchantments = new HashMap<>();
+public class EnchantModuleRecipe extends SpecialRecipe {
+    private static final Map<Class<?>, Enchantment[]> validEnchantments = new HashMap<>();
 
     static {
         validEnchantments.put(BreakerModule.class, new Enchantment[] {
@@ -31,12 +32,12 @@ class EnchantModuleRecipe extends IRecipeHidden {
         });
     }
 
-    EnchantModuleRecipe(ResourceLocation idIn) {
+    public EnchantModuleRecipe(ResourceLocation idIn) {
         super(idIn);
     }
 
     @Override
-    public boolean matches(IInventory inv, World world) {
+    public boolean matches(CraftingInventory inv, World world) {
         ItemStack book = ItemStack.EMPTY;
         ItemStack module = ItemStack.EMPTY;
 
@@ -58,7 +59,7 @@ class EnchantModuleRecipe extends IRecipeHidden {
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventory inv) {
+    public ItemStack getCraftingResult(CraftingInventory inv) {
         ItemStack book = ItemStack.EMPTY;
         ItemStack module = ItemStack.EMPTY;
 
@@ -89,7 +90,7 @@ class EnchantModuleRecipe extends IRecipeHidden {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return ModRecipes.ENCHANT_MODULE;
+        return ModRecipes.MODULE_ENCHANT;
     }
 
     private EnchantmentData getValidEnchantment(ItemStack bookStack, ItemStack moduleStack) {

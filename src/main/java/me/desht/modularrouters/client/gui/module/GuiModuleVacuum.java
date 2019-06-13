@@ -5,15 +5,16 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.UniversalBucket;
 
@@ -21,48 +22,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GuiModuleVacuum extends GuiModule {
-    private static final int XP_TYPE_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE;
-    private static final int EJECT_BUTTON_ID = GuiModule.EXTRA_BUTTON_BASE + 1;
-
     private XPTypeButton xpb;
     private EjectButton ejb;
-    private XPCollectionType xpCollectionType;
-    private boolean autoEject;
 
-    public GuiModuleVacuum(ContainerModule container) {
-        super(container);
-
-        CompiledVacuumModule vac = new CompiledVacuumModule(null, moduleItemStack);
-        xpCollectionType = vac.getXPCollectionType();
-        autoEject = vac.isAutoEjecting();
+    public GuiModuleVacuum(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+        super(container, inv, displayName);
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        ItemStack[] xpTypeIcons = Arrays.stream(XPCollectionType.values()).map(XPCollectionType::getIcon).toArray(ItemStack[]::new);
-        xpb = new XPTypeButton(XP_TYPE_BUTTON_ID, guiLeft + 170, guiTop + 28, 16, 16, true, xpTypeIcons, xpCollectionType) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                XPCollectionType oldType = getState();
-                xpCollectionType = cycle(!GuiScreen.isShiftKeyDown());
-                if (xpCollectionType != oldType) {
-                    sendModuleSettingsToServer();
-                }
-            }
-        };
-        addButton(xpb);
+        CompiledVacuumModule vac = new CompiledVacuumModule(null, moduleItemStack);
 
-        ejb = new EjectButton(EJECT_BUTTON_ID, guiLeft + 167, guiTop + 48, autoEject) {
-            @Override
-            public void onClick(double p_194829_1_, double p_194829_3_) {
-                toggle();
-                autoEject = isToggled();
-                sendModuleSettingsToServer();
-            }
-        };
-        addButton(ejb);
+        ItemStack[] icons = Arrays.stream(XPCollectionType.values()).map(XPCollectionType::getIcon).toArray(ItemStack[]::new);
+        addButton(xpb = new XPTypeButton(guiLeft + 170, guiTop + 28, 16, 16, true, icons, vac.getXPCollectionType()));
+        addButton(ejb = new EjectButton(guiLeft + 167, guiTop + 48, vac.isAutoEjecting()));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 24, guiLeft + 187, guiTop + 45, "guiText.popup.xpVacuum", guiContainer -> xpb.visible);
         getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 46, guiLeft + 187, guiTop + 65, "guiText.popup.xpVacuum.eject", guiContainer -> xpb.visible);
@@ -72,17 +47,17 @@ public class GuiModuleVacuum extends GuiModule {
     protected void setupButtonVisibility() {
         super.setupButtonVisibility();
 
-        xpb.visible = augmentCounter.getAugmentCount(ObjectRegistry.XP_VACUUM_AUGMENT) > 0;
+        xpb.visible = augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0;
         ejb.visible = xpb.visible && !xpb.getState().isSolid();
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
-        if (augmentCounter.getAugmentCount(ObjectRegistry.XP_VACUUM_AUGMENT) > 0) {
-            fontRenderer.drawString(I18n.format("guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
+        if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0) {
+            font.drawString(I18n.format("guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                fontRenderer.drawString(I18n.format("guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                font.drawString(I18n.format("guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }
@@ -90,24 +65,24 @@ public class GuiModuleVacuum extends GuiModule {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        if (augmentCounter.getAugmentCount(ObjectRegistry.XP_VACUUM_AUGMENT) > 0) {
-            this.drawTexturedModalRect(guiLeft + 168, guiTop + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
+        if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0) {
+            this.blit(guiLeft + 168, guiTop + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
         }
     }
 
     @Override
-    protected NBTTagCompound buildMessageData() {
-        NBTTagCompound compound = super.buildMessageData();
-        compound.putInt(CompiledVacuumModule.NBT_XP_FLUID_TYPE, xpCollectionType.ordinal());
-        compound.putBoolean(CompiledVacuumModule.NBT_AUTO_EJECT, autoEject);
+    protected CompoundNBT buildMessageData() {
+        CompoundNBT compound = super.buildMessageData();
+        compound.putInt(CompiledVacuumModule.NBT_XP_FLUID_TYPE, xpb.getState().ordinal());
+        compound.putBoolean(CompiledVacuumModule.NBT_AUTO_EJECT, ejb.isToggled());
         return compound;
     }
 
     private class XPTypeButton extends ItemStackCyclerButton<XPCollectionType> {
         private final List<List<String>> tips = Lists.newArrayList();
 
-        XPTypeButton(int buttonId, int x, int y, int width, int height, boolean flat, ItemStack[] stacks, XPCollectionType initialVal) {
-            super(buttonId, x, y, width, height, flat, stacks, initialVal);
+        XPTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, XPCollectionType initialVal) {
+            super(x, y, width, height, flat, stacks, initialVal, GuiModuleVacuum.this);
 
             for (XPCollectionType type : XPCollectionType.values()) {
                 String modName = ModNameCache.getModName(type.getModId());
@@ -136,8 +111,8 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     private class EjectButton extends TexturedToggleButton {
-        EjectButton(int buttonId, int x, int y, boolean initialVal) {
-            super(buttonId, x, y, 16, 16, initialVal);
+        EjectButton(int x, int y, boolean initialVal) {
+            super(x, y, 16, 16, initialVal, GuiModuleVacuum.this);
         }
 
         @Override

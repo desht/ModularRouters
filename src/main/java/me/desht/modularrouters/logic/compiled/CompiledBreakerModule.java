@@ -2,15 +2,15 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.ObjectRegistry;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Enchantments;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +29,7 @@ public class CompiledBreakerModule extends CompiledModule {
     public boolean execute(@Nonnull TileEntityItemRouter router) {
         if (isRegulationOK(router, true)) {
             World world = router.getWorld();
-            if (!(world instanceof WorldServer)) {
+            if (!(world instanceof ServerWorld)) {
                 return false;
             }
             BlockPos pos = getTarget().pos;
@@ -37,7 +37,7 @@ public class CompiledBreakerModule extends CompiledModule {
             BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
-                if (ConfigHandler.MODULE.breakerParticles.get() && router.getUpgradeCount(ObjectRegistry.MUFFLER_UPGRADE) == 0) {
+                if (ConfigHandler.MODULE.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) == 0) {
                     world.playEvent(2001, pos, oldId);
                 }
                 return true;

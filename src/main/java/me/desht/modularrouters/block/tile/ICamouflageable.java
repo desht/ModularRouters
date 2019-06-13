@@ -1,10 +1,10 @@
 package me.desht.modularrouters.block.tile;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 public interface ICamouflageable {
-    IBlockState getCamouflage();
-    void setCamouflage(IBlockState camouflage);
+    BlockState getCamouflage();
+    void setCamouflage(BlockState camouflage);
 
     default boolean extendedMimic() { return false; }
     default void setExtendedMimic(boolean mimic) {}

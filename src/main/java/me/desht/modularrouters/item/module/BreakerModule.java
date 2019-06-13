@@ -7,7 +7,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.*;
 import java.util.List;
@@ -23,7 +23,7 @@ public class BreakerModule extends ItemModule {
         super.addUsageInformation(itemstack, list);
         Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
         if (ench.isEmpty()) {
-            list.add(new TextComponentTranslation("itemText.misc.enchantBreakerHint"));
+            list.add(new TranslationTextComponent("itemText.misc.enchantBreakerHint"));
         }
     }
 

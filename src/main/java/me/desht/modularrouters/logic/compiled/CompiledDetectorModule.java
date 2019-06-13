@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nonnull;
 
@@ -18,7 +18,7 @@ public class CompiledDetectorModule extends CompiledModule {
     public CompiledDetectorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        NBTTagCompound compound = setupNBT(stack);
+        CompoundNBT compound = setupNBT(stack);
         signalLevel = compound == null ? 0 : compound.getByte(NBT_SIGNAL_LEVEL);
         strongSignal = compound != null && compound.getBoolean(NBT_STRONG_SIGNAL);
     }
@@ -41,8 +41,8 @@ public class CompiledDetectorModule extends CompiledModule {
         return true;
     }
 
-    private NBTTagCompound setupNBT(ItemStack stack) {
-        NBTTagCompound compound = ModuleHelper.validateNBT(stack);
+    private CompoundNBT setupNBT(ItemStack stack) {
+        CompoundNBT compound = ModuleHelper.validateNBT(stack);
         if (!compound.contains(NBT_SIGNAL_LEVEL)) {
             compound.putInt(NBT_SIGNAL_LEVEL, 15);
         }
