@@ -4,6 +4,20 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.14.2
+
+## 5.0.0 (15 Jun 2019)
+
+* Initial 1.14.2 port!
+* Tested on SSP and dedicated server SMP.  Still early days for Forge so expect instability and bugs.
+* Particle beams for Sender Mk1/2/3 and Puller Mk2 have been rewritten and now render the items in transit
+* Fluid Module is NOT yet functional due to lack of Forge 1.14.2 fluid support (still in development)
+* Camouflage Upgrade doesn't work yet (again waiting on some support from Forge)
+* Extruder Mk2 extruded blocks don't work yet (for same reason Camo Upgrade doesn't work)
+* Item filtering is slightly different: OreDict and Item Meta are no longer a thing in 1.14.2
+* Those filter settings in the module GUI have been replaced by Tag matching and Item Damage matching, respectively
+* Otherwise this should be functionally equivalent to the most recent Modular Routers on 1.12.2
+
 ## Minecraft 1.12.2
 
 ### 3.2.1 (1 Oct 2018)
