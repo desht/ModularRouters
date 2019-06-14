@@ -1,5 +1,6 @@
-package me.desht.modularrouters.client;
+package me.desht.modularrouters.client.render.area;
 
+import me.desht.modularrouters.client.render.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;

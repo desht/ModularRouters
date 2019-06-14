@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client;
+package me.desht.modularrouters.client.render.area;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
@@ -30,14 +30,7 @@ public enum AreaShowManager {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        Minecraft mc = Minecraft.getInstance();
-        PlayerEntity player = mc.player;
-        double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks();
-        double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
-        double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
-
         GlStateManager.pushMatrix();
-//        GlStateManager.translated(-playerX, -playerY, -playerZ);
         GlStateManager.translated(-TileEntityRendererDispatcher.staticPlayerX, -TileEntityRendererDispatcher.staticPlayerY, -TileEntityRendererDispatcher.staticPlayerZ);
 
         GlStateManager.disableTexture();
@@ -48,7 +41,7 @@ public enum AreaShowManager {
             handler.render();
         }
 
-        ItemStack curItem = player.getHeldItemMainhand();
+        ItemStack curItem = Minecraft.getInstance().player.getHeldItemMainhand();
         IPositionProvider positionProvider = getPositionProvider(curItem);
         if (positionProvider != null) {
             CompiledPosition cp = new CompiledPosition(curItem, positionProvider);

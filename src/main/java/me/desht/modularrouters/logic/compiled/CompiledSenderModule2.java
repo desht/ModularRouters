@@ -45,6 +45,11 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
 
     }
 
+    @Override
+    protected int getBeamColor() {
+        return 0xFF8000;
+    }
+
     boolean isRangeLimited() {
         return true;
     }

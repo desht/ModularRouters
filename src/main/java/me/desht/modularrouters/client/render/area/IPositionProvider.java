@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client;
+package me.desht.modularrouters.client.render.area;
 
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.item.ItemStack;

@@ -1,10 +1,10 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.client.AreaShowManager;
+import me.desht.modularrouters.client.render.area.AreaShowManager;
 import me.desht.modularrouters.client.ColorHandlers;
 import me.desht.modularrouters.client.Keybindings;
-import me.desht.modularrouters.client.ModelBakeEventHandler;
-import me.desht.modularrouters.client.fx.RenderListener;
+import me.desht.modularrouters.client.model.ModelBakeEventHandler;
+import me.desht.modularrouters.client.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
@@ -68,8 +68,8 @@ public class ModularRouters {
             MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
             MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
             MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
-            MinecraftForge.EVENT_BUS.register(RenderListener.class);
             MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
+            MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
 
             ModContainerTypes.registerScreenFactories();
 

@@ -8,7 +8,7 @@
   "key": {
     "R": { "item": "minecraft:redstone" },
     "B": { "item": "modularrouters:blank_upgrade" },
-    "N": { "item": "minecraft:gold_nugget" },
+    "N": { "tag": "forge:nuggets/gold" },
     "G": { "item": "minecraft:gunpowder" },
     "Z": { "item": "minecraft:blaze_rod" }
   },

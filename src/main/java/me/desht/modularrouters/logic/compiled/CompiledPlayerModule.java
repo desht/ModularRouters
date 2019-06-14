@@ -80,8 +80,8 @@ public class CompiledPlayerModule extends CompiledModule {
         switch (operation) {
             case EXTRACT:
                 if (bufferStack.getCount() < bufferStack.getMaxStackSize()) {
-                    int taken = transferToRouter(itemHandler, router);
-                    return taken > 0;
+                    ItemStack taken = transferToRouter(itemHandler, router);
+                    return !taken.isEmpty();
                 }
                 break;
             case INSERT:

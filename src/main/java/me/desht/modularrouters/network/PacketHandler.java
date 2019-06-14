@@ -22,8 +22,8 @@ public class PacketHandler {
     public static void setupNetwork() {
         NETWORK.registerMessage(nextId(), RouterSettingsMessage.class,
                 RouterSettingsMessage::toBytes, RouterSettingsMessage::new, RouterSettingsMessage::handle);
-        NETWORK.registerMessage(nextId(), ParticleBeamMessage.class,
-                ParticleBeamMessage::toBytes, ParticleBeamMessage::new, ParticleBeamMessage::handle);
+        NETWORK.registerMessage(nextId(), ItemBeamMessage.class,
+                ItemBeamMessage::toBytes, ItemBeamMessage::new, ItemBeamMessage::handle);
         NETWORK.registerMessage(nextId(), ModuleSettingsMessage.class,
                 ModuleSettingsMessage::toBytes, ModuleSettingsMessage::new, ModuleSettingsMessage::handle);
         NETWORK.registerMessage(nextId(), FilterSettingsMessage.class,

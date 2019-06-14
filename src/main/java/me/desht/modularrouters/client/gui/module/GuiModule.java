@@ -72,14 +72,15 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private RelativeDirection facing;
     private int sendDelay;
     private int regulatorAmount;
+    private final MouseOverHelp mouseOverHelp;
+    final ItemAugment.AugmentCounter augmentCounter;
+
     private RedstoneBehaviourButton redstoneButton;
     private RegulatorTooltipButton regulatorTooltipButton;
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
-    private final MouseOverHelp mouseOverHelp;
     private MouseOverHelp.Button mouseOverHelpButton;
     IntegerTextField regulatorTextField;
-    ItemAugment.AugmentCounter augmentCounter;
 
     public GuiModule(ContainerModule container, PlayerInventory inventory, ITextComponent displayName) {
         super(container, inventory, displayName);
@@ -122,12 +123,10 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        mouseOverHelpButton = new MouseOverHelp.Button(guiLeft + 175, guiTop + 1, mouseOverHelp);
-        addButton(mouseOverHelpButton);
+        addButton(mouseOverHelpButton = new MouseOverHelp.Button(guiLeft + 175, guiTop + 1, mouseOverHelp));
 
-        redstoneButton = new RedstoneBehaviourButton(this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
-                ModuleHelper.getRedstoneBehaviour(moduleItemStack), this);
-        addButton(redstoneButton);
+        addButton(redstoneButton = new RedstoneBehaviourButton(this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
+                ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
         TextFieldManager manager = createTextFieldManager();
         Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
@@ -139,8 +138,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);
             sendModuleSettingsDelayed(5);
         });
-        regulatorTooltipButton = new RegulatorTooltipButton(guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule());
-        addButton(regulatorTooltipButton);
+
+        addButton(regulatorTooltipButton = new RegulatorTooltipButton(guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule()));
 
         if (routerPos != null) {
             addButton(new BackButton(guiLeft + 2, guiTop + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()))));
@@ -179,10 +178,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     public void tick() {
         super.tick();
         mouseOverHelp.setActive(mouseOverHelpButton.isToggled());
-        if (sendDelay > 0) {
-            if (--sendDelay <= 0) {
-                sendToServer();
-            }
+        if (sendDelay > 0 && --sendDelay <= 0) {
+            sendToServer();
         }
     }
 
@@ -223,13 +220,10 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private ModuleToggleButton getToggleButton(ModuleFlags flags) {
-        // risk of class cast exception here, but should never happen unless something's gone horribly wrong
-        //  - best to throw exception ASAP in that case
         return toggleButtons[flags.ordinal()];
     }
 
     private DirectionButton getDirectionButton(RelativeDirection direction) {
-        // see above re: class cast exception
         return directionButtons[direction.ordinal()];
     }
 
@@ -266,7 +260,6 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
-//            SlotTracker.getInstance(minecraft.player).clearSlots();
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()));
             return true;
         } else if (Keybindings.keybindConfigure.getKey().getKeyCode() == keyCode) {
@@ -315,8 +308,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     public void removed() {
         super.removed();
         if (sendDelay > 0) {
-            // ensure no delayed updates get lost
-            sendToServer();
+            sendToServer();  // ensure no delayed updates get lost
         }
     }
 
@@ -331,7 +323,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     @Override
     public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
         if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + ItemAugment.SLOTS) {
-            augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
+            augmentCounter.refresh(moduleItemStack);
             setupButtonVisibility();
         }
     }
@@ -341,13 +333,14 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private static final int THRESHOLD = 129;
-    private int getFgColor(Color c) {
-        int luminance = (int) Math.sqrt(c.getRed() * c.getRed() * 0.241 + c.getGreen() * c.getGreen() * 0.691 + c.getBlue() * c.getBlue() * 0.068);
-        if (luminance > THRESHOLD) {
-            return 0x404040;
-        } else {
-            return 0xffffff;
-        }
+    private int getFgColor(Color bg) {
+        // calculate a foreground color which suitably contrasts with the given background color
+        int luminance = (int) Math.sqrt(
+                bg.getRed() * bg.getRed() * 0.241 +
+                bg.getGreen() * bg.getGreen() * 0.691 +
+                bg.getBlue() * bg.getBlue() * 0.068
+        );
+        return luminance > THRESHOLD ? 0x404040 : 0xffffff;
     }
 
     @Override

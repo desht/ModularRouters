@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client;
+package me.desht.modularrouters.client.model;
 
 import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.BlockCamo;
@@ -46,7 +46,7 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
             return baseModel.getQuads(state, side, rand, modelData);
         }
         BlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
-        IBlockReader blockAccess = modelData.getData(BlockCamo.BLOCK_ACCESS);
+        IEnviromentBlockReader blockAccess = modelData.getData(BlockCamo.BLOCK_ACCESS);
         BlockPos pos = modelData.getData(BlockCamo.BLOCK_POS);
         if (blockAccess == null || pos == null) {
             return baseModel.getQuads(state, side, rand, modelData);
@@ -60,14 +60,12 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
             // No camo
             return baseModel.getQuads(state, side, rand, modelData);
         } else if (camoState != null && camoState.getBlock().canRenderInLayer(camoState, layer)) {
-//            IBlockState actual = camoState.getBlock().getActualState(camoState, new FakeBlockAccess(blockAccess), pos);
-
             // Steal camo's model
             IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(camoState);
 
             // Their model can be smart too
             BlockState extended = camoState.getBlock().getExtendedState(camoState, new FakeBlockAccess(blockAccess), pos);
-            return model.getQuads(extended, side, rand, modelData);
+            return model.getQuads(extended, side, rand, model.getModelData(blockAccess, pos, extended, modelData));
         }
 
         return ImmutableList.of(); // Nothing renders

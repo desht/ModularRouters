@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,11 +37,14 @@ public abstract class ItemAugment extends ItemBase {
         private final Map<ResourceLocation, Integer> counts = new HashMap<>();
 
         public AugmentCounter(ItemStack moduleStack) {
-            if (!(moduleStack.getItem() instanceof ItemModule)) {
-                throw new IllegalArgumentException("item is not a ItemModule: " + moduleStack);
-            }
+            refresh(moduleStack);
+        }
+
+        public void refresh(ItemStack moduleStack) {
+            Validate.isTrue(moduleStack.getItem() instanceof ItemModule, "item is not a ItemModule: " + moduleStack);
 
             AugmentHandler h = new AugmentHandler(moduleStack);
+            counts.clear();
             for (int i = 0; i < h.getSlots(); i++) {
                 ItemStack augmentStack = h.getStackInSlot(i);
                 if (augmentStack.getItem() instanceof ItemAugment) {

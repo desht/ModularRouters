@@ -2,9 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     { "item" : "modularrouters:blank_upgrade" },
-    { "item": "minecraft:rose_red" },
-    { "item": "minecraft:lapis_lazuli" },
-    { "item": "minecraft:cactus_green" }
+    { "tag": "forge:dyes/red" },
+    { "tag": "forge:dyes/green" },
+    { "tag": "forge:dyes/blue" }
   ],
   "result": { "item": "modularrouters:camouflage_upgrade" }
 }

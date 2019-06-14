@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client.fx;
+package me.desht.modularrouters.client.item_beam;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -24,7 +24,7 @@ public class ParticleRenderDispatcher {
         GlStateManager.disableLighting();
 
         profiler.startSection("sparkle");
-        FXSparkle.dispatchQueuedRenders(tessellator);
+//        FXSparkle.dispatchQueuedRenders(tessellator);
         profiler.endSection();
 
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

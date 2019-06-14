@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.IPositionProvider;
+import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;

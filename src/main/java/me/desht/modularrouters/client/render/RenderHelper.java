@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client;
+package me.desht.modularrouters.client.render;
 
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -40,7 +40,7 @@ public class RenderHelper {
         GlStateManager.color4f(red, green, blue, alpha);
     }
 
-    static void glColorHex(int color, int alpha) {
+    public static void glColorHex(int color, int alpha) {
         glColorHex(color | alpha << 24);
     }
 }

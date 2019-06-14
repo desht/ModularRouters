@@ -8,15 +8,6 @@ import net.minecraft.world.World;
 
 public class ServerProxy implements IProxy {
     @Override
-    public void setSparkleFXNoClip(boolean noclip) {}
-
-    @Override
-    public void setSparkleFXCorrupt(boolean noclip) {}
-
-    @Override
-    public void sparkleFX(World world, double x, double y, double z, float r, float g, float b, float size, int m, boolean fake) {}
-
-    @Override
     public World theClientWorld() {
         return null;
     }

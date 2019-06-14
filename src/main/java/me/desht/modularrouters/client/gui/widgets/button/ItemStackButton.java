@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import me.desht.modularrouters.client.RenderHelper;
+import me.desht.modularrouters.client.render.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 

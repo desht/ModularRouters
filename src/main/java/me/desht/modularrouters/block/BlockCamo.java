@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 //@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
-    public static final ModelProperty<IBlockReader> BLOCK_ACCESS = new ModelProperty<>();
+    public static final ModelProperty<IEnviromentBlockReader> BLOCK_ACCESS = new ModelProperty<>();
     public static final ModelProperty<BlockPos> BLOCK_POS = new ModelProperty<>();
 
     BlockCamo(Properties props) {

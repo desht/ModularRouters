@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client;
+package me.desht.modularrouters.client.model;
 
 import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.block.Block;

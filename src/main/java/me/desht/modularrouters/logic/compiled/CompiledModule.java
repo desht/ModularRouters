@@ -188,24 +188,25 @@ public abstract class CompiledModule {
      *
      * @param handler the item handler
      * @param router  the router
-     * @return number of items actually transferred
+     * @return items actually transferred
      */
-    int transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
+    ItemStack transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
         CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, getItemsPerTick(router), count);
         if (wanted.isEmpty()) {
-            return 0;
+            return ItemStack.EMPTY;
         }
 
         if (count != null) {
             // item regulation in force
             wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
             if (wanted.isEmpty()) {
-                return 0;
+                return ItemStack.EMPTY;
             }
         }
 
+        ItemStack transferred = ItemStack.EMPTY;
         int totalInserted = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             int pos = getLastMatchPos(i, handler.getSlots());
@@ -214,22 +215,22 @@ public abstract class CompiledModule {
                 // we'd found an item to pull but it looks like this handler doesn't allow us to extract it
                 // give up, but advance the last match pos so we don't get stuck trying this slot forever
                 setLastMatchPos((pos + 1) % handler.getSlots());
-                return 0;
+                return ItemStack.EMPTY;
             }
             if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
                 // this item is suitable for pulling
                 ItemStack notInserted = router.insertBuffer(toPull);
                 int inserted = toPull.getCount() - notInserted.getCount();
-                handler.extractItem(pos, inserted, false);
+                transferred = handler.extractItem(pos, inserted, false);
                 wanted.shrink(inserted);
                 totalInserted += inserted;
                 if (wanted.isEmpty() || router.isBufferFull()) {
                     setLastMatchPos(handler.getStackInSlot(pos).isEmpty() ? (pos + 1) % handler.getSlots() : pos);
-                    return totalInserted;
+                    return transferred;
                 }
             }
         }
-        return totalInserted;
+        return transferred;
     }
 
     private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {

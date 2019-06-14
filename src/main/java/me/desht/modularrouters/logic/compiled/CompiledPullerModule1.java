@@ -23,10 +23,10 @@ public class CompiledPullerModule1 extends CompiledModule {
             }
             IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
             if (handler != null) {
-                int taken = transferToRouter(handler, router);
-                if (taken > 0) {
+                ItemStack taken = transferToRouter(handler, router);
+                if (!taken.isEmpty()) {
                     if (ConfigHandler.MODULE.pullerParticles.get()) {
-                        playParticles(router, getTarget().pos);
+                        playParticles(router, getTarget().pos, taken);
                     }
                     return true;
                 }
@@ -39,7 +39,7 @@ public class CompiledPullerModule1 extends CompiledModule {
         return true;
     }
 
-    void playParticles(TileEntityItemRouter router, BlockPos targetPos) {
+    void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         // do nothing by default
     }
 }
