@@ -1,12 +1,18 @@
 package me.desht.modularrouters.block;
 
 import com.google.common.collect.ImmutableList;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
+import me.desht.modularrouters.integration.top.ElementModule;
 import me.desht.modularrouters.integration.top.TOPInfoProvider;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -42,13 +48,14 @@ import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
+public class BlockItemRouter extends BlockCamo {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");
@@ -237,34 +244,7 @@ public class BlockItemRouter extends BlockCamo implements TOPInfoProvider {
     }
 
 
-    // todo 1.13 when The One Probe is available
-//    @Override
-//    @Optional.Method(modid = "theoneprobe")
-//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-//        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, data.getPos());
-//        if (router != null) {
-//            if (router.isPermitted(player)) {
-//                IItemHandler modules = router.getModules();
-//                IProbeInfo sub = probeInfo.horizontal();
-//                for (int i = 0; i < modules.getSlots(); i++) {
-//                    ItemStack stack = modules.getStackInSlot(i);
-//                    if (!stack.isEmpty()) {
-//                        sub.element(new ElementModule(stack));
-//                    }
-//                }
-//                sub = probeInfo.horizontal();
-//                for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-//                    if (router.getUpgradeCount(type) > 0) {
-//                        sub.item(ItemUpgrade.makeItemStack(type, router.getUpgradeCount(type)));
-//                    }
-//                }
-//                probeInfo.text(TextFormatting.WHITE + MiscUtil.translate("guiText.tooltip.redstone.label")
-//                        + ": " + TextFormatting.AQUA + MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
-//            } else {
-//                probeInfo.text(MiscUtil.translate("chatText.security.accessDenied"));
-//            }
-//        }
-//    }
+
 
     @Override
     public boolean canProvidePower(BlockState state) {
