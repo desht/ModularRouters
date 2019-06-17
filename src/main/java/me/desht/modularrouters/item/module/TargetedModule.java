@@ -73,7 +73,6 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote) {
             boolean removing = false;
             String invName = BlockUtil.getBlockName(world, pos);
-            world.getDimension().getType().getId();
             ModuleTarget tgt = new ModuleTarget(world.getDimension().getType().getId(), pos, face, invName);
             Set<ModuleTarget> targets = getTargets(stack, true);
             if (targets.contains(tgt)) {
@@ -283,7 +282,7 @@ public abstract class TargetedModule extends ItemModule {
                 TargetValidation res = validateTarget(stack, src, target, true);
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.target", target.toString())
                         .appendText("  ")
-                        .appendSibling(new TranslationTextComponent("chatText.targetValidation." + res)), false);
+                        .appendSibling(new TranslationTextComponent("chatText.targetValidation." + res)), true);
             }
         }
         return true;

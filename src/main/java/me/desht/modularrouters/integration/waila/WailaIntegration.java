@@ -1,12 +1,16 @@
 package me.desht.modularrouters.integration.waila;
 
-// todo 1.13
-public class WailaIntegration {
-//    public static void setup() {
-//        FMLInterModComms.sendMessage("waila", "register", "me.desht.modularrouters.integration.waila.WailaIntegration.callback");
-//    }
-//
-//    public static void callback(IWailaRegistrar registrar) {
-//        registrar.registerBodyProvider(new RouterDataProvider(), BlockItemRouter.class);
-//    }
+import mcp.mobius.waila.api.IRegistrar;
+import mcp.mobius.waila.api.IWailaPlugin;
+import mcp.mobius.waila.api.TooltipPosition;
+import mcp.mobius.waila.api.WailaPlugin;
+import me.desht.modularrouters.block.BlockItemRouter;
+
+@WailaPlugin
+public class WailaIntegration implements IWailaPlugin {
+    @Override
+    public void register(IRegistrar iRegistrar) {
+        iRegistrar.registerBlockDataProvider(new RouterDataProvider(), BlockItemRouter.class);
+        iRegistrar.registerComponentProvider(new RouterComponentProvider(), TooltipPosition.BODY, BlockItemRouter.class);
+    }
 }

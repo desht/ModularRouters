@@ -1,48 +1,46 @@
 package me.desht.modularrouters.integration.waila;
 
-// todo 1.13
-//@Optional.Interface(modid = "waila", iface = "mcp.mobius.waila.api.IWailaDataProvider")
-public class RouterDataProvider /*implements IWailaDataProvider*/ {
-//    @Override
-//    public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        return null;
-//    }
-//
-//    @Override
-//    public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        return currenttip;
-//    }
-//
-//    @Override
-//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        TileEntity te = accessor.getTileEntity();
-//        if (te instanceof TileEntityItemRouter) {
-//            TileEntityItemRouter router = (TileEntityItemRouter) te;
-//            if (router.isPermitted(accessor.getPlayer())) {
-//                MiscUtil.appendMultiline(currenttip, "itemText.misc.moduleCount", router.getModuleCount());
-//                for (ItemUpgrade.UpgradeType type : ItemUpgrade.UpgradeType.values()) {
-//                    if (router.getUpgradeCount(type) > 0) {
-//                        String name = MiscUtil.translate("item." + type.toString().toLowerCase() + "_upgrade.name");
-//                        currenttip.add(MiscUtil.translate("itemText.misc.upgradeCount", name, router.getUpgradeCount(type)));
-//                    }
-//                }
-//                currenttip.add(TextFormatting.WHITE + MiscUtil.translate("guiText.tooltip.redstone.label")
-//                        + ": " + TextFormatting.AQUA + MiscUtil.translate("guiText.tooltip.redstone." + router.getRedstoneBehaviour()));
-//            } else {
-//                currenttip.add(MiscUtil.translate("chatText.security.accessDenied"));
-//            }
-//        }
-//
-//        return currenttip;
-//    }
-//
-//    @Override
-//    public List<String> getWailaTail(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-//        return currenttip;
-//    }
-//
-//    @Override
-//    public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world, BlockPos pos) {
-//        return tag;
-//    }
+import mcp.mobius.waila.api.IServerDataProvider;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class RouterDataProvider implements IServerDataProvider<TileEntity> {
+    @Override
+    public void appendServerData(CompoundNBT compoundNBT, ServerPlayerEntity serverPlayerEntity, World world, TileEntity te) {
+        if (te instanceof TileEntityItemRouter) {
+            TileEntityItemRouter router = (TileEntityItemRouter) te;
+            if (router.isPermitted(serverPlayerEntity)) {
+                compoundNBT.putInt("ModuleCount", router.getModuleCount());
+                compoundNBT.putInt("RedstoneMode", router.getRedstoneBehaviour().ordinal());
+                compoundNBT.putBoolean("EcoMode", router.getEcoMode());
+                compoundNBT.put("Upgrades", getUpgrades(router));
+            } else {
+                compoundNBT.putBoolean("Denied", true);
+            }
+        }
+    }
+
+    private CompoundNBT getUpgrades(TileEntityItemRouter router) {
+        IItemHandler handler = router.getUpgrades();
+        Map<Item, Integer> counts = new HashMap<>();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
+            if (stack.getItem() instanceof ItemUpgrade) {
+                counts.put(stack.getItem(), counts.getOrDefault(stack.getItem(), 0) + stack.getCount());
+            }
+        }
+        CompoundNBT upgrades = new CompoundNBT();
+        counts.forEach((k, v) -> upgrades.putInt(k.getTranslationKey(), v));
+        return upgrades;
+    }
 }

@@ -229,6 +229,7 @@
   "itemText.misc.regexFilter.count": "• %d regex(es) in filter",
   "itemText.misc.modFilter.count": "• %d mod(s) in filter",
   "itemText.misc.rangeInfo": "Range: %s%d §7[base %d, max %d]",
+  "itemText.misc.ecoMode": "§2Eco Mode",
   "itemText.security.count": "%d / %d other player(s):",
   "itemText.security.owner": "§eOwner: §b%s",
   "itemText.sync.tuning": "§eTuned Value: §b%d",

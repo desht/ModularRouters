@@ -1,6 +1,7 @@
 package me.desht.modularrouters.integration;
 
 import me.desht.modularrouters.integration.top.TOPCompatibility;
+import me.desht.modularrouters.integration.waila.WailaIntegration;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.ModList;
 
@@ -12,17 +13,14 @@ public class IntegrationHandler {
         IntegrationHandler.registerTOP();
     }
 
-    public static void registerTOP() {
+    private static void registerTOP() {
         if (ModList.get().isLoaded("theoneprobe")) {
             TOPCompatibility.register();
         }
     }
 
     public static void registerWaila() {
-        if (ModList.get().isLoaded("waila")) {
-            // todo 1.14
-//            WailaIntegration.setup();
-        }
+        // nothing specific to do; registration is implicit
     }
 
     public static void checkForXpJuice() {

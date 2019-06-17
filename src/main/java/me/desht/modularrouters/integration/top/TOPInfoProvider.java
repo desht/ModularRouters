@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
 public class TOPInfoProvider {
-    static void addProbeInfoItemRouter(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+    static void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, data.getPos());
         if (router != null) {
             if (router.isPermitted(player)) {

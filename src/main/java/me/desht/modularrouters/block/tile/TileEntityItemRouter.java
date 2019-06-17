@@ -173,6 +173,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     private void processClientSync(CompoundNBT compound) {
         // called client-side
+
         int mufflers = compound.getInt(NBT_MUFFLERS);
         if (mufflers < 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) >= 3
                 || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 3) {
@@ -183,17 +184,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         // these fields are needed for rendering
         boolean newActive = compound.getBoolean(NBT_ACTIVE);
         byte newSidesOpen = compound.getByte(NBT_SIDES);
-        boolean newEco = compound.getBoolean(NBT_ECO_MODE);
-        RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
-        setRedstoneBehaviour(newRedstoneBehaviour);
         setActive(newActive);
         setSidesOpen(newSidesOpen);
-        setEcoMode(newEco);
+
         if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
             setCamouflage(CamouflageUpgrade.readFromNBT(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }
+
+        // GUI
+        RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
+        setRedstoneBehaviour(newRedstoneBehaviour);
+        setEcoMode(compound.getBoolean(NBT_ECO_MODE));
     }
 
     @Nonnull

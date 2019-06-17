@@ -41,7 +41,7 @@ public class MiscUtil {
     }
 
     public static void appendMultiline(List<String> result, String key, Object... args) {
-        ITextComponent raw = translate(key, args);
+        ITextComponent raw = xlate(key, args);
         int n = 0;
         for (String s : raw.getString().split("\\\\n")) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
@@ -108,7 +108,7 @@ public class MiscUtil {
         return String.format("DIM:%d [%d,%d,%d]", dim, pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static ITextComponent translate(String key, Object... args) {
+    public static ITextComponent xlate(String key, Object... args) {
         return new TranslationTextComponent(key, args);
     }
 

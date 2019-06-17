@@ -33,7 +33,7 @@ public class TOPCompatibility {
                 @Override
                 public void addProbeInfo(ProbeMode probeMode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData iProbeHitData) {
                     if (blockState.getBlock() instanceof BlockItemRouter) {
-                        TOPInfoProvider.addProbeInfoItemRouter(probeMode, probeInfo, player, world, blockState, iProbeHitData);
+                        TOPInfoProvider.addProbeInfo(probeMode, probeInfo, player, world, blockState, iProbeHitData);
                     }
                 }
             });

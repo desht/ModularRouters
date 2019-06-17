@@ -178,7 +178,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().field_71462_r).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
                 String s = Keybindings.keybindConfigure.getKey().getTranslationKey();
-                list.add(MiscUtil.translate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));
+                list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));
             }
         }
     }
