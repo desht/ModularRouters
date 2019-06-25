@@ -198,16 +198,7 @@ public abstract class CompiledModule {
             return ItemStack.EMPTY;
         }
 
-        if (count != null) {
-            // item regulation in force
-            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
-            if (wanted.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-        }
-
         ItemStack transferred = ItemStack.EMPTY;
-        int totalInserted = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             int pos = getLastMatchPos(i, handler.getSlots());
             ItemStack toPull = handler.extractItem(pos, wanted.getCount(), true);
@@ -223,7 +214,6 @@ public abstract class CompiledModule {
                 int inserted = toPull.getCount() - notInserted.getCount();
                 transferred = handler.extractItem(pos, inserted, false);
                 wanted.shrink(inserted);
-                totalInserted += inserted;
                 if (wanted.isEmpty() || router.isBufferFull()) {
                     setLastMatchPos(handler.getStackInSlot(pos).isEmpty() ? (pos + 1) % handler.getSlots() : pos);
                     return transferred;
@@ -235,24 +225,21 @@ public abstract class CompiledModule {
 
     private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
-        ItemStack result = ItemStack.EMPTY;
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
             // something in the router - try to pull more of that
-            result = ItemHandlerHelper.copyStackWithSize(stackInRouter, nToTake);
+            return ItemHandlerHelper.copyStackWithSize(stackInRouter, nToTake);
         } else if (stackInRouter.isEmpty()) {
             // router empty - just pull the next item that passes the filter
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (!stack.isEmpty() && getFilter().test(stack)
-                        && (count == null || count.getInt(stack) > getRegulationAmount())) {
+                if (getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
                     setLastMatchPos(pos);
-                    result = ItemHandlerHelper.copyStackWithSize(stack, nToTake);
-                    break;
+                    return ItemHandlerHelper.copyStackWithSize(stack, nToTake);
                 }
             }
         }
-        return result;
+        return ItemStack.EMPTY;
     }
 
     /**

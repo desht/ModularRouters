@@ -5,9 +5,6 @@ import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.Mod;
-import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 
