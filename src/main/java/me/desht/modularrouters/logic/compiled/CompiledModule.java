@@ -194,22 +194,11 @@ public abstract class CompiledModule {
      * @return number of items actually transferred
      */
     int transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
-        CountedItemStacks count = null;
-        if (getRegulationAmount() > 0) {
-            count = new CountedItemStacks(handler);
-        }
+        CountedItemStacks count = getAugmentCount(ItemAugment.AugmentType.REGULATOR) > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, getItemsPerTick(router), count);
         if (wanted.isEmpty()) {
             return 0;
-        }
-
-        if (count != null) {
-            // item regulation in force
-            wanted.setCount(Math.min(wanted.getCount(), count.getOrDefault(wanted, 0) - getRegulationAmount()));
-            if (wanted.isEmpty()) {
-                return 0;
-            }
         }
 
         int totalInserted = 0;
@@ -240,25 +229,23 @@ public abstract class CompiledModule {
 
     private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
-        ItemStack result = ItemStack.EMPTY;
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
             // something in the router - try to pull more of that
-            result = stackInRouter.copy();
-            result.setCount(nToTake);
+            return ItemHandlerHelper.copyStackWithSize(stackInRouter, nToTake);
         } else if (stackInRouter.isEmpty()) {
             // router empty - just pull the next item that passes the filter
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (!stack.isEmpty() && getFilter().test(stack) && (count == null || count.get(stack) > getRegulationAmount())) {
+                // if regulation is in force, there must be at least enough items to fulfill nToTake, or nothing will
+                // be pulled - https://github.com/desht/ModularRouters/issues/53
+                if (getFilter().test(stack) && (count == null || count.get(stack) - nToTake >= getRegulationAmount())) {
                     setLastMatchPos(pos);
-                    result = stack.copy();
-                    result.setCount(nToTake);
-                    break;
+                    return ItemHandlerHelper.copyStackWithSize(stack, nToTake);
                 }
             }
         }
-        return result;
+        return ItemStack.EMPTY;
     }
 
     /**
