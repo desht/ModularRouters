@@ -7,7 +7,7 @@ public class OreDictMatcher {
     private final int[] ids;
 
     public OreDictMatcher(ItemStack stack) {
-        ids = OreDictionary.getOreIDs(stack);
+        ids = stack.isEmpty() ? new int[0] : OreDictionary.getOreIDs(stack); // paranoia
     }
 
     public boolean match(ItemStack stack) {

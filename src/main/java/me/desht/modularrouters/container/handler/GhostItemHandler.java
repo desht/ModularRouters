@@ -40,7 +40,10 @@ public class GhostItemHandler implements IItemHandlerModifiable, INBTSerializabl
             NBTTagCompound compound = list.getCompoundTagAt(i);
             int slot = compound.getInteger("Slot");
             if (slot >= 0 && slot < items.length) {
-                items[slot] = new ItemStack(compound);
+                // not possible under normal circumstances, but if a modded item were in the filter, and that mod
+                // gets removed, an empty item would be possible.  https://github.com/desht/ModularRouters/issues/54
+                ItemStack stack = new ItemStack(compound);
+                if (!stack.isEmpty()) items[slot] = stack;
             }
         }
     }
