@@ -3,12 +3,13 @@
   "promos" : {
     "1.10.2-recommended" : "1.4.2",
     "1.11.2-recommended" : "2.2.2",
-    "1.12.2-recommended" : "3.1.5",
+    "1.12.2-recommended" : "3.2.2",
     "1.10.2-latest" : "1.4.2",
     "1.11.2-latest" : "2.2.2",
-    "1.12.2-latest" : "3.2.1"
+    "1.12.2-latest" : "3.2.2"
   },
   "1.12.2" : {
+    "3.2.2" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#322-25-jun-2019",
     "3.2.1" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#321-1-oct-2018",
     "3.2.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#320-23-aug-2018",
     "3.1.5" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#315-30-apr-2018",

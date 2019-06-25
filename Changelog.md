@@ -6,6 +6,11 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
+### 3.2.2 (25 Jun 2019)
+
+* Change to Puller/Regulator behaviour: when a Puller Module has a Regulator Augment installed, and the module or router has Stack Upgrades, the Puller will only pull exactly as much as the Stack upgrades define.  E.g. with 2 Stack Upgrades, the Puller Module will pull no fewer than 4 items at a time; if the inventory has fewer items, nothing will be pulled.  https://github.com/desht/ModularRouters/issues/53
+* Fixed crash caused by invalid items in a module's filter data in conjunction with oredict matching.  This could happen if you've removed a mod from your world, and an item from that mod was in a module filter.  https://github.com/desht/ModularRouters/issues/54
+
 ### 3.2.1 (1 Oct 2018)
 
 * Camouflage: connected textures are now supported for router camo and Extruder Mk2 blocks!
