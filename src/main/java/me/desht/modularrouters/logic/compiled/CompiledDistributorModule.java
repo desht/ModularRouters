@@ -22,7 +22,11 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         ROUND_ROBIN,
         RANDOM,
         NEAREST_FIRST,
-        FURTHEST_FIRST
+        FURTHEST_FIRST;
+
+        public String translationKey() {
+            return "itemText.distributor.strategy." + this.toString();
+        }
     }
 
     private final DistributionStrategy distributionStrategy;
@@ -41,8 +45,6 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
             distributionStrategy = DistributionStrategy.ROUND_ROBIN;
         }
     }
-
-    // execute() just uses the superclass method
 
     public DistributionStrategy getDistributionStrategy() {
         return distributionStrategy;

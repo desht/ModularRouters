@@ -6,6 +6,7 @@ import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
@@ -27,12 +28,11 @@ public class DistributorModule extends SenderModule2 {
     @Override
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
-        CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
 
-        list.add(new StringTextComponent(
-                TextFormatting.YELLOW + I18n.format("guiText.tooltip.distributor.strategy") + ": "
-                + TextFormatting.AQUA + I18n.format("itemText.distributor.strategy." + cdm.getDistributionStrategy()))
-        );
+        CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
+        list.add(MiscUtil.xlate("guiText.tooltip.distributor.strategy").appendText(": ")
+                .appendText(TextFormatting.AQUA.toString())
+                .appendSibling(MiscUtil.xlate(cdm.getDistributionStrategy().translationKey())).applyTextStyle(TextFormatting.YELLOW));
     }
 
     @Override

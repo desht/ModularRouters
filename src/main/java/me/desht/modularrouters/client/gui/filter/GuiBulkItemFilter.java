@@ -13,6 +13,7 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -45,28 +46,28 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
         MFLocator locator = container.getLocator();
         if (locator.filterSlot >= 0) {
             // in a module; add a back button to go back to module gui
-            addButton(new BackButton(guiLeft - 12, guiTop, p -> closeGUI()));
+            addButton(new BackButton(guiLeft + 2, guiTop + 2, p -> closeGUI()));
         }
 
         if (locator.routerSlot >= 0 && locator.routerPos != null) {
             // in a module in a router; add buttons to merge/load the module's target inventory
-            ItemStack moduleStack = locator.getTargetItem(Minecraft.getInstance().player);
+            ItemStack moduleStack = locator.getModuleStack(Minecraft.getInstance().player);
             TileEntityItemRouter router = container.getRouter();
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getActualTarget(router);
             // This should work even if the target is in another dimension, since the target name
             // is stored in the module item NBT, which was set up server-side.
             // Using getActualTarget() here *should* ensure that we always see the right target...
-            if (target != null && target.invName != null && !target.invName.isEmpty()) {
+            if (target != null && target.blockTranslationKey != null && !target.blockTranslationKey.isEmpty()) {
                 addButton(new Buttons.MergeButton(guiLeft + 28, guiTop + 130,
-                        MiscUtil.locToString(target.dimId, target.pos), target.invName, p -> {
+                        MiscUtil.locToString(target.dimId, target.pos), I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
                                 Operation.MERGE, container.getLocator(), target.toNBT()));
                     }
                 }));
                 addButton(new Buttons.LoadButton(guiLeft + 48, guiTop + 130,
-                        MiscUtil.locToString(target.dimId, target.pos), target.invName, p -> {
+                        MiscUtil.locToString(target.dimId, target.pos), I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
                                 Operation.LOAD, container.getLocator(), target.toNBT()));

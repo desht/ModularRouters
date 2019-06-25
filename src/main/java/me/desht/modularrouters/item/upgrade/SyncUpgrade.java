@@ -44,7 +44,7 @@ public class SyncUpgrade extends ItemUpgrade {
 
     @Override
     public Color getItemTint() {
-        return new Color(255, 255, 195);
+        return new Color(255, 255, 192);
     }
 
     @Override

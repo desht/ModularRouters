@@ -17,8 +17,8 @@ public class ClientProxy implements IProxy {
 
     @Override
     public TileEntityItemRouter getOpenItemRouter() {
-        if (Minecraft.getInstance().field_71462_r instanceof GuiItemRouter) {
-            return ((GuiItemRouter) Minecraft.getInstance().field_71462_r).router;
+        if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
+            return ((GuiItemRouter) Minecraft.getInstance().currentScreen).router;
         } else {
             return null;
         }

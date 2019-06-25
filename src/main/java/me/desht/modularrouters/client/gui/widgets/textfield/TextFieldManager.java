@@ -113,15 +113,23 @@ public class TextFieldManager {
     }
 
     void onTextFieldFocusChange(int ordinal, boolean newFocus) {
-        if (ordinal == textFields.size() - 1) {
-            focusedField = -1;
-            for (TextFieldWidgetMR t : textFields) {
-                if (t.isFocused()) {
-                    focusedField = t.getOrdinal();
-                    break;
-                }
-            }
+        TextFieldWidgetMR tf = textFields.get(ordinal);
+        if (newFocus) {
+            focus(ordinal);
+            tf.setCursorPositionEnd();
+            tf.setSelectionPos(0);
+        } else {
+            tf.setSelectionPos(tf.getCursorPosition());
         }
+//        if (ordinal == textFields.size() - 1) {
+//            focusedField = -1;
+//            for (TextFieldWidgetMR t : textFields) {
+//                if (t.isFocused()) {
+//                    focusedField = t.getOrdinal();
+//                    break;
+//                }
+//            }
+//        }
     }
 
     public TextFieldManager clear() {

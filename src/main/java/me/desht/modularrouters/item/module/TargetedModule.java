@@ -37,9 +37,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static me.desht.modularrouters.util.MiscUtil.xlate;
+
 /**
  * Represents a module with a specific target block or blocks (blockpos stored in itemstack NBT).
- * Used by Mk2 & Mk3 senders, for example.
  */
 public abstract class TargetedModule extends ItemModule {
     private static final String NBT_TARGET = "Target";
@@ -47,7 +48,7 @@ public abstract class TargetedModule extends ItemModule {
 
     private static final Map<UUID,Long> lastSwing = Maps.newHashMap();
 
-    public TargetedModule(Properties props) {
+    TargetedModule(Properties props) {
         super(props);
     }
 
@@ -78,13 +79,16 @@ public abstract class TargetedModule extends ItemModule {
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetRemoved", tgt.toString(), targets.size(), getMaxTargets()), true);
+                player.sendStatusMessage(xlate("chatText.misc.targetRemoved", targets.size(), getMaxTargets())
+                        .appendSibling(tgt.getTextComponent()).applyTextStyle(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", tgt.toString(), targets.size(), getMaxTargets()), true);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", targets.size(), getMaxTargets())
+                        .appendSibling(tgt.getTextComponent()).applyTextStyle(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets()), true);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
+                        .applyTextStyle(TextFormatting.RED), true);
                 PlaySoundMessage.playSound(player, ModSounds.ERROR, 1.0f, 1.3f);
                 return;
             }
@@ -99,7 +103,8 @@ public abstract class TargetedModule extends ItemModule {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetSet", tgt.toString()), true);
+                ITextComponent msg = xlate("chatText.misc.targetSet").appendSibling(tgt.getTextComponent());
+                player.sendStatusMessage(msg.applyTextStyle(TextFormatting.YELLOW), true);
                 PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.3f);
             }
         }
@@ -126,13 +131,15 @@ public abstract class TargetedModule extends ItemModule {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                list.add(new TranslationTextComponent("chatText.misc.target", target.toString()));
-                if (Minecraft.getInstance().field_71462_r instanceof GuiItemRouter) {
-                    TileEntityItemRouter router = ((GuiItemRouter) Minecraft.getInstance().field_71462_r).router;
+                ITextComponent msg = xlate("chatText.misc.target")
+                        .appendSibling(target.getTextComponent()).applyTextStyle(TextFormatting.YELLOW);
+                list.add(msg);
+                TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
+                if (router != null) {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().dimension.getType().getId(), router.getPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(new TranslationTextComponent("chatText.targetValidation." + val));
+                        list.add(xlate(val.translationKey()).applyTextStyle(val.getColor()));
                     }
                 }
             }
@@ -144,7 +151,7 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
             PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.1f);
-            player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetCleared"), true);
+            player.sendStatusMessage(xlate("chatText.misc.targetCleared").applyTextStyle(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
@@ -244,7 +251,7 @@ public abstract class TargetedModule extends ItemModule {
         ServerWorld w = MiscUtil.getWorldForDimensionId(target.dimId);
         if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
             String invName = BlockUtil.getBlockName(w, target.pos);
-            if (!target.invName.equals(invName)) {
+            if (!target.blockTranslationKey.equals(invName)) {
                 setTarget(stack, w, target.pos, target.face);
                 return new ModuleTarget(target.dimId, target.pos, target.face, invName);
             }
@@ -279,10 +286,12 @@ public abstract class TargetedModule extends ItemModule {
                 Sets.newHashSet(getTarget(stack, true));
         for (ModuleTarget target : targets) {
             if (target != null) {
-                TargetValidation res = validateTarget(stack, src, target, true);
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.target", target.toString())
-                        .appendText("  ")
-                        .appendSibling(new TranslationTextComponent("chatText.targetValidation." + res)), true);
+                TargetValidation v = validateTarget(stack, src, target, true);
+                ITextComponent msg = xlate("chatText.misc.target").appendSibling(target.getTextComponent());
+                msg.appendText(" ");
+                msg.appendSibling(xlate(v.translationKey()).applyTextStyle(v.getColor()));
+                msg.applyTextStyle(TextFormatting.YELLOW);
+                player.sendStatusMessage(msg, true);
             }
         }
         return true;
@@ -319,7 +328,7 @@ public abstract class TargetedModule extends ItemModule {
 
     private int maxDistanceSq(ItemStack stack) {
         if (stack.getItem() instanceof IRangedModule) {
-            int r =  ((IRangedModule) stack.getItem()).getCurrentRange(stack);
+            int r = ((IRangedModule) stack.getItem()).getCurrentRange(stack);
             return r * r;
         }
         return 0;
@@ -342,6 +351,14 @@ public abstract class TargetedModule extends ItemModule {
         OK,
         OUT_OF_RANGE,
         NOT_LOADED,
-        NOT_INVENTORY
+        NOT_INVENTORY;
+
+        TextFormatting getColor() {
+            return this == OK ? TextFormatting.GREEN : TextFormatting.RED;
+        }
+
+        String translationKey() {
+            return "chatText.targetValidation." + this.toString();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
@@ -7,9 +8,11 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 
+@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ColorHandlers {
     @SubscribeEvent
     public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {

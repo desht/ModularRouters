@@ -224,20 +224,7 @@ public class BlockUtil {
     }
 
     public static String getBlockName(World w, BlockPos pos) {
-        if (w == null) {
-            return null;
-        }
-        BlockState state = w.getBlockState(pos);
-        if (state.getBlock().isAir(state, w, pos)) {
-            return "";
-        } else {
-            ItemStack stack = new ItemStack(state.getBlock().asItem());
-            if (!stack.isEmpty()) {
-                return stack.getDisplayName().getString();
-            } else {
-                return state.getBlock().getTranslationKey();
-            }
-        }
+        return w == null ? "" : w.getBlockState(pos).getBlock().getTranslationKey();
     }
 
     public static class BreakResult {

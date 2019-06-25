@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
@@ -174,8 +175,10 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(stack, world, list, flag);
 
-        if (Minecraft.getInstance().field_71462_r instanceof GuiItemRouter) {
-            Slot slot = ((GuiItemRouter) Minecraft.getInstance().field_71462_r).getSlotUnderMouse();
+
+        TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
+        if (router != null) {
+            Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
                 String s = Keybindings.keybindConfigure.getKey().getTranslationKey();
                 list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));

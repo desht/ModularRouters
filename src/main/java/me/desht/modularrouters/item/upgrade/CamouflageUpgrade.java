@@ -3,6 +3,7 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModSounds;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,6 +15,8 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
@@ -28,7 +31,9 @@ public class CamouflageUpgrade extends ItemUpgrade {
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         if (itemstack.hasTag() && itemstack.getTag().contains(NBT_STATE_NAME)) {
-            list.add(new TranslationTextComponent("itemText.camouflage.held", getCamoStateDisplayName(itemstack)));
+            list.add(MiscUtil.xlate("itemText.camouflage.held")
+                    .appendText(TextFormatting.AQUA.toString())
+                    .appendSibling(getCamoStateDisplayName(itemstack)));
         }
     }
 
@@ -50,26 +55,30 @@ public class CamouflageUpgrade extends ItemUpgrade {
         return stack.hasTag() ? readFromNBT(stack.getTag().getCompound(NBT_STATE_NAME)) : null;
     }
 
-    private static String getCamoStateDisplayName(ItemStack stack) {
+    private static ITextComponent getCamoStateDisplayName(ItemStack stack) {
         BlockState state = getCamoState(stack);
         if (state != null) {
             Block b = state.getBlock();
             Item item = b.asItem();
-            return new ItemStack(item).getDisplayName().getString();
+            return new ItemStack(item).getDisplayName();
         }
-        return "<?>";
+        return new StringTextComponent("<?>");
     }
 
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
         PlayerEntity player = ctx.getPlayer();
+        assert player != null;
         ItemStack stack = ctx.getItem();
 
         BlockState state = ctx.getWorld().getBlockState(ctx.getPos());
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
             if (!ctx.getWorld().isRemote) {
-                player.sendStatusMessage(new TranslationTextComponent("itemText.camouflage.held", getCamoStateDisplayName(stack)), false);
+                player.sendStatusMessage(MiscUtil.xlate("itemText.camouflage.held")
+                        .appendText(TextFormatting.AQUA.toString())
+                        .appendSibling(getCamoStateDisplayName(stack))
+                        .applyTextStyle(TextFormatting.YELLOW), false);
             } else {
                 player.playSound(ModSounds.SUCCESS, 1.0f, 1.5f);
             }

@@ -5,6 +5,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
@@ -22,13 +25,13 @@ public class ModuleTarget {
     public final int dimId;
     public final BlockPos pos;
     public final Direction face;
-    public final String invName;
+    public final String blockTranslationKey;
 
-    public ModuleTarget(int dimId, BlockPos pos, Direction face, String invName) {
+    public ModuleTarget(int dimId, BlockPos pos, Direction face, String blockTranslationKey) {
         this.dimId = dimId;
         this.pos = pos;
         this.face = face;
-        this.invName = invName;
+        this.blockTranslationKey = blockTranslationKey;
     }
 
     public ModuleTarget(int dimId, BlockPos pos, Direction face) {
@@ -46,7 +49,7 @@ public class ModuleTarget {
         ext.putInt("Y", pos.getY());
         ext.putInt("Z", pos.getZ());
         ext.putByte("Face", (byte) face.ordinal());
-        ext.putString("InvName", invName);
+        ext.putString("InvName", blockTranslationKey);
         return ext;
     }
 
@@ -88,7 +91,15 @@ public class ModuleTarget {
 
     @Override
     public String toString() {
-        String s = invName == null || invName.isEmpty() ? "" : " [" + invName + "]";
+        String s = blockTranslationKey == null || blockTranslationKey.isEmpty() ? "" : " [" + blockTranslationKey + "]";
         return MiscUtil.locToString(dimId, pos) + " " + face + s;
+    }
+
+    public ITextComponent getTextComponent() {
+        return new StringTextComponent(MiscUtil.locToString(dimId, pos) + " " + face)
+                .appendText(" [")
+                .appendSibling(MiscUtil.xlate(blockTranslationKey))
+                .appendText("]")
+                .applyTextStyle(TextFormatting.AQUA);
     }
 }
