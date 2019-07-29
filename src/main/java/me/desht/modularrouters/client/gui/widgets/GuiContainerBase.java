@@ -46,6 +46,7 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
         if (textFieldManager != null) textFieldManager.tick();
     }
 
+    @Override
     public boolean mouseScrolled(double x, double y, double dir) {
         return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir);
     }

@@ -2,12 +2,12 @@ package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.block.*;
-import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ShulkerBoxTileEntity;
@@ -19,8 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.IPlantable;
@@ -205,22 +205,24 @@ public class BlockUtil {
 
     private static List<ItemStack> getDrops(World world, BlockPos pos, PlayerEntity player, boolean silkTouch, int fortune) {
         BlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
 
-        if (silkTouch) {
-            return state.isAir(world, pos) ? Collections.emptyList() : Lists.newArrayList(new ItemStack(block));
-        } else {
-            ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
-            if (fortune > 0) {
-                pick.addEnchantment(Enchantments.FORTUNE, fortune);
-            }
-            List<ItemStack> drops = block.getDrops(state, new LootContext.Builder((ServerWorld) world).withParameter(LootParameters.POSITION, pos).withParameter(LootParameters.TOOL, pick));
-//            block.getDrops(state, drops, world, pos, fortune);
-            NonNullList<ItemStack> dropsN = NonNullList.create();
-            dropsN.addAll(drops);
-            float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, false, player);
-            return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
+        ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
+        if (fortune > 0) {
+            pick.addEnchantment(Enchantments.FORTUNE, fortune);
+        } else if (silkTouch) {
+            pick.addEnchantment(Enchantments.SILK_TOUCH, 1);
         }
+        LootContext.Builder builder = new LootContext.Builder((ServerWorld) world)
+                .withParameter(LootParameters.POSITION, pos)
+                .withParameter(LootParameters.BLOCK_STATE, state)
+                .withParameter(LootParameters.TOOL, pick);
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null) builder = builder.withParameter(LootParameters.BLOCK_ENTITY, te);
+        List<ItemStack> drops = state.getDrops(builder);
+        NonNullList<ItemStack> dropsN = NonNullList.create();
+        dropsN.addAll(drops);
+        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, false, player);
+        return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
 
     public static String getBlockName(World w, BlockPos pos) {

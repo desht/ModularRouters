@@ -178,7 +178,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if (mufflers < 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) >= 3
                 || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 3) {
             upgradeCount.put(ModItems.MUFFLER_UPGRADE.getRegistryName(), mufflers);
-            getWorld().markForRerender(pos);
+            BlockState state = getBlockState();
+            getWorld().func_225319_b(pos, state, state);
         }
 
         // these fields are needed for rendering
@@ -401,7 +402,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
         } else if (getWorld().isRemote && renderUpdate) {
             requestModelDataUpdate();
-            getWorld().markForRerender(pos);
+            BlockState state = getBlockState();
+            getWorld().func_225319_b(pos, state, state);
         }
     }
 

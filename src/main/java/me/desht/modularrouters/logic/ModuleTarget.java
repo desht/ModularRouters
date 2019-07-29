@@ -8,8 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -65,6 +65,7 @@ public class ModuleTarget {
             return null;
         }
         ServerWorld w = DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
+        // getChunkProvider
         if (w == null || !w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4))
             return null;
         TileEntity te = w.getTileEntity(pos);
