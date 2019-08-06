@@ -9,9 +9,9 @@ import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.lang.ref.WeakReference;

@@ -17,9 +17,9 @@ public class MiscEventHandler {
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
         if (event.getPos() != null) {
-            BlockState state = event.getEntityPlayer().getEntityWorld().getBlockState(event.getPos());
+            BlockState state = event.getPlayer().getEntityWorld().getBlockState(event.getPos());
             if (state.getBlock() instanceof BlockTemplateFrame) {
-                TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(event.getEntityPlayer().getEntityWorld(), event.getPos());
+                TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(event.getPlayer().getEntityWorld(), event.getPos());
                 if (te != null && te.getCamouflage() != null && te.extendedMimic()) {
                     BlockState camoState = te.getCamouflage();
                     event.setNewSpeed(event.getEntityPlayer().getDigSpeed(camoState, null));
@@ -29,7 +29,7 @@ public class MiscEventHandler {
     }
 
     @SubscribeEvent
-    public static void onItemCrafted(net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent event) {
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         ItemStack stack = event.getCrafting();
         if (event.getCrafting().getItem() instanceof IPlayerOwned) {
             // player-owned items get tagged with the creator's name & ID
