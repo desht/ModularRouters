@@ -23,6 +23,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -72,7 +73,8 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote) {
             boolean removing = false;
             String invName = BlockUtil.getBlockName(world, pos);
-            ModuleTarget tgt = new ModuleTarget(world.getDimension().getType().getId(), pos, face, invName);
+            GlobalPos gPos = GlobalPos.of(world.getDimension().getType(), pos);
+            ModuleTarget tgt = new ModuleTarget(gPos, face, invName);
             Set<ModuleTarget> targets = getTargets(stack, true);
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
@@ -134,7 +136,7 @@ public abstract class TargetedModule extends ItemModule {
                 list.add(msg);
                 TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
                 if (router != null) {
-                    ModuleTarget moduleTarget = new ModuleTarget(router.getWorld().dimension.getType().getId(), router.getPos());
+                    ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
                         list.add(xlate(val.translationKey()).applyTextStyle(val.getColor()));
@@ -171,8 +173,8 @@ public abstract class TargetedModule extends ItemModule {
         if (pos == null) {
             compound.remove(NBT_TARGET);
         } else {
-            String invName = BlockUtil.getBlockName(world, pos);
-            ModuleTarget mt = new ModuleTarget(world.dimension.getType().getId(), pos, face, invName == null ? "?" : invName);
+            GlobalPos gPos = GlobalPos.of(world.getDimension().getType(), pos);
+            ModuleTarget mt = new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
             compound.put(NBT_TARGET, mt.toNBT());
         }
         stack.setTag(compound);
@@ -246,12 +248,13 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {
-        ServerWorld w = MiscUtil.getWorldForDimensionId(target.dimId);
-        if (w != null && w.getChunkProvider().chunkExists(target.pos.getX() >> 4, target.pos.getZ() >> 4)) {
-            String invName = BlockUtil.getBlockName(w, target.pos);
+        ServerWorld w = MiscUtil.getWorldForGlobalPos(target.gPos);
+        BlockPos pos = target.gPos.getPos();
+        if (w != null && w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4)) {
+            String invName = BlockUtil.getBlockName(w, pos);
             if (!target.blockTranslationKey.equals(invName)) {
-                setTarget(stack, w, target.pos, target.face);
-                return new ModuleTarget(target.dimId, target.pos, target.face, invName);
+                setTarget(stack, w, pos, target.face);
+                return new ModuleTarget(target.gPos, target.face, invName);
             }
         }
         return null;
@@ -278,7 +281,7 @@ public abstract class TargetedModule extends ItemModule {
         }
         lastSwing.put(player.getUniqueID(), now);
 
-        ModuleTarget src = new ModuleTarget(MiscUtil.getDimensionForWorld(world), player.getPosition());
+        ModuleTarget src = new ModuleTarget(GlobalPos.of(world.getDimension().getType(), player.getPosition()));
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
                 getTargets(stack, true) :
                 Sets.newHashSet(getTarget(stack, true));
@@ -305,7 +308,7 @@ public abstract class TargetedModule extends ItemModule {
      * @return the validation result
      */
     private TargetValidation validateTarget(ItemStack moduleStack, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
-        if (isRangeLimited() && (src.dimId != dst.dimId || src.pos.distanceSq(dst.pos) > maxDistanceSq(moduleStack))) {
+        if (isRangeLimited() && (src.gPos.getDimension() != dst.gPos.getDimension() || src.gPos.getPos().distanceSq(dst.gPos.getPos()) > maxDistanceSq(moduleStack))) {
             return TargetValidation.OUT_OF_RANGE;
         }
 
@@ -313,11 +316,11 @@ public abstract class TargetedModule extends ItemModule {
         // or when the router is actually executing the module;
         // we can't reliably validate chunk loading or inventory presence on the client (for tooltip generation)
         if (validateBlocks) {
-            ServerWorld w = MiscUtil.getWorldForDimensionId(dst.dimId);
-            if (w == null || !w.getChunkProvider().chunkExists(dst.pos.getX() >> 4, dst.pos.getZ() >> 4)) {
+            ServerWorld w = MiscUtil.getWorldForGlobalPos(dst.gPos);
+            if (w == null || !w.getChunkProvider().chunkExists(dst.gPos.getPos().getX() >> 4, dst.gPos.getPos().getZ() >> 4)) {
                 return TargetValidation.NOT_LOADED;
             }
-            if (w.getTileEntity(dst.pos) == null) {
+            if (w.getTileEntity(dst.gPos.getPos()) == null) {
                 return TargetValidation.NOT_INVENTORY;
             }
         }

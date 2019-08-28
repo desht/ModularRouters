@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +27,9 @@ public class CompiledPullerModule2 extends CompiledPullerModule1 {
 
     @Override
     boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
-        return target != null &&
-                MiscUtil.getDimensionForWorld(router.getWorld()) == target.dimId &&
-                router.getPos().distanceSq(target.pos) <= getRangeSquared();
+        return target != null
+                && router.getWorld().getDimension().getType() == target.gPos.getDimension()
+                && router.getPos().distanceSq(target.gPos.getPos()) <= getRangeSquared();
     }
 
     @Override

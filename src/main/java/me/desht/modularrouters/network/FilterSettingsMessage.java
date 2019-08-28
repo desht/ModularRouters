@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
@@ -68,8 +69,7 @@ public class FilterSettingsMessage {
 
     public IItemHandler getTargetInventory() {
         ModuleTarget target = ModuleTarget.fromNBT(payload);
-        World w = MiscUtil.getWorldForDimensionId(target.dimId);
-        return w != null ? InventoryUtils.getInventory(w, target.pos, target.face) : null;
+        return target.getItemHandler();
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -87,8 +87,8 @@ public class FilterSettingsMessage {
                     if (locator.hand != null) {
                         player.setHeldItem(locator.hand, filterHandler.getHolderStack());
                     } else if (locator.routerPos != null) {
-                        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.world, locator.routerPos);
-                        if (router != null) router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+                        TileEntityItemRouter.getRouterAt(player.world, locator.routerPos)
+                                .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
                     }
                 }
                 if (response != null) {

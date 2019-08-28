@@ -2,7 +2,6 @@ package me.desht.modularrouters.client.gui;
 
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 
 import java.util.Collections;

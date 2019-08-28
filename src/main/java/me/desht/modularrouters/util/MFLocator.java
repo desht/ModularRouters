@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 /**
  * Unified object to locate a module or filter.
@@ -111,14 +112,13 @@ public class MFLocator {
         }
     }
 
-    public TileEntityItemRouter getRouter(World world) {
-        return routerPos == null ? null : TileEntityItemRouter.getRouterAt(world, routerPos);
+    public Optional<TileEntityItemRouter> getRouter(World world) {
+        return routerPos == null ? Optional.empty() : TileEntityItemRouter.getRouterAt(world, routerPos);
     }
 
     @Nonnull
     private ItemStack getInstalledModule(World world) {
-        TileEntityItemRouter router = getRouter(world);
-        return router == null ? ItemStack.EMPTY : router.getModules().getStackInSlot(routerSlot);
+        return getRouter(world).map(router -> router.getModules().getStackInSlot(routerSlot)).orElse(ItemStack.EMPTY);
     }
 
     @Nonnull

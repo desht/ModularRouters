@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.base.Joiner;
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
@@ -21,7 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +114,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     public void render(int mouseX, int mouseY, float partialTicks) {
         renderBackground();
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         font.drawString(title, xPos + GUI_WIDTH / 2f - this.font.getStringWidth(title) / 2f, yPos + 6, 0x404040);

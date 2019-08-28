@@ -32,7 +32,7 @@ public class CompiledBreakerModule extends CompiledModule {
             if (!(world instanceof ServerWorld)) {
                 return false;
             }
-            BlockPos pos = getTarget().pos;
+            BlockPos pos = getTarget().gPos.getPos();
             int oldId = Block.getStateId(world.getBlockState(pos));
             BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
             if (breakResult.isBlockBroken()) {

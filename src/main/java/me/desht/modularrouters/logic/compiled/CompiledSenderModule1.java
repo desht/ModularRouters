@@ -14,6 +14,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -21,7 +22,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 
 public class CompiledSenderModule1 extends CompiledModule {
     public CompiledSenderModule1(TileEntityItemRouter router, ItemStack stack) {
@@ -74,19 +74,20 @@ public class CompiledSenderModule1 extends CompiledModule {
         ModuleTarget target = getActualTarget(router);
         if (target != null) {
             IItemHandler handler = target.getItemHandler();
-            return handler == null ? null : new PositionedItemHandler(target.pos, handler);
+            return handler == null ? null : new PositionedItemHandler(target.gPos.getPos(), handler);
         }
         return null;
     }
 
     @Override
     public ModuleTarget getActualTarget(TileEntityItemRouter router) {
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().pos);
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().gPos.getPos());
         Direction face = getTarget().face;
         World world = router.getWorld();
         for (int i = 1; i <= getRange(); i++) {
             if (world.getTileEntity(pos) != null) {
-                return new ModuleTarget(MiscUtil.getDimensionForWorld(world), pos.toImmutable(), face, BlockUtil.getBlockName(world, pos));
+                GlobalPos gPos = GlobalPos.of(world.getDimension().getType(), pos.toImmutable());
+                return new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
                 return null;
             }

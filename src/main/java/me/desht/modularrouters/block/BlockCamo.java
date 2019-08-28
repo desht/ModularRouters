@@ -52,30 +52,11 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
         return camo != null ? camo.getCamouflage().getShape(reader, pos) : super.getShape(state, reader, pos, ctx);
     }
 
-    // todo check needed in 1.13? (VoxelShape has multiple bounding boxes?)
-//    @Override
-//    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-//        ICamouflageable camo = getCamoState(worldIn, pos);
-//        if (camo != null) {
-//            addCollisionBoxToList(pos, entityBox, collidingBoxes, camo.getCamouflage().getCollisionShape(worldIn, pos));
-//        } else {
-//            super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, p_185477_7_);
-//        }
-//    }
-
-    // todo 1.14 figure out how to do this
-//    @Override
-//    public BlockFaceShape getBlockFaceShape(IBlockReader world, BlockState state, BlockPos pos, Direction side) {
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null ? super.getBlockFaceShape(world, state, pos, side) : camo.getCamouflage().getBlockFaceShape(world, pos, side);
-//    }
-
-    // todo 1.14 no pos-aware getLightValue() yet
-//    @Override
-//    public int getLightValue(BlockState state, IWorldReader world, BlockPos pos) {
-//        ICamouflageable camo = getCamoState(world, pos);
-//        return camo == null || !camo.extendedMimic() ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
-//    }
+    @Override
+    public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
+        ICamouflageable camo = getCamoState(world, pos);
+        return camo == null || !camo.extendedMimic() ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
+    }
 
     @Override
     public boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face) {
@@ -103,7 +84,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     }
 
     private ICamouflageable getCamoState(IBlockReader blockAccess, BlockPos pos) {
-        TileEntity te = MiscUtil.getTileEntitySafely(blockAccess, pos);
+        TileEntity te = blockAccess.getTileEntity(pos);
         return te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null ? (ICamouflageable) te : null;
     }
 

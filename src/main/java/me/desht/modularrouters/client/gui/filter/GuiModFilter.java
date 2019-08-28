@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
@@ -16,12 +17,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
 public class GuiModFilter extends GuiFilterContainer {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/modfilter.png");
+    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/modfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 252;
@@ -107,8 +107,8 @@ public class GuiModFilter extends GuiFilterContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(textureLocation);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        minecraft.getTextureManager().bindTexture(TEXTURE_LOCATION);
         blit(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
     }
 

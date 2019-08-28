@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.render.area;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.client.render.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -22,8 +23,8 @@ public class AreaShowHandler {
     }
 
     private void compileRenderList() {
-        renderList = GL11.glGenLists(1);
-        GL11.glNewList(renderList, GL11.GL_COMPILE);
+        renderList = GlStateManager.genLists(1);
+        GlStateManager.newList(renderList, GL11.GL_COMPILE);
 
         BufferBuilder wr = Tessellator.getInstance().getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -117,7 +118,7 @@ public class AreaShowHandler {
 
         wr.setTranslation(0, 0, 0);
         Tessellator.getInstance().draw();
-        GL11.glEndList();
+        GlStateManager.endList();
     }
 
     private int getFaceAlpha(AreaShowManager.CompiledPosition cp, BlockPos pos, Direction face) {
@@ -125,6 +126,6 @@ public class AreaShowHandler {
     }
 
     void render() {
-        GL11.glCallList(renderList);
+        GlStateManager.callList(renderList);
     }
 }

@@ -1,6 +1,5 @@
 package me.desht.modularrouters.block;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
@@ -12,10 +11,8 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -36,29 +33,29 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.desht.modularrouters.block.tile.TileEntityItemRouter.*;
+
 public class BlockItemRouter extends BlockCamo {
+    private static final float HARDNESS = 1.5f;
+    private static final float BLAST_RESISTANCE = 6.0f;
+
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");
 
-    private static final String NBT_MODULES = "Modules";
-    private static final String NBT_UPGRADES = "Upgrades";
-    private static final String NBT_REDSTONE_BEHAVIOUR = "RedstoneBehaviour";
-
     public BlockItemRouter() {
         super(Block.Properties.create(Material.IRON)
-                .hardnessAndResistance(5.0f)
+                .hardnessAndResistance(HARDNESS, BLAST_RESISTANCE)
                 .sound(SoundType.METAL));
         setDefaultState(this.getStateContainer().getBaseState()
                 .with(FACING, Direction.NORTH).with(ACTIVE, false).with(CAN_EMIT, false));
@@ -77,21 +74,6 @@ public class BlockItemRouter extends BlockCamo {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        CompoundNBT compound = stack.getTag();
-        if (router != null && compound != null) {
-            ((ItemStackHandler) router.getModules()).deserializeNBT(compound.getCompound(NBT_MODULES));
-            ((ItemStackHandler) router.getUpgrades()).deserializeNBT(compound.getCompound(NBT_UPGRADES));
-            try {
-                router.setRedstoneBehaviour(RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_BEHAVIOUR)));
-            } catch (IllegalArgumentException e) {
-                router.setRedstoneBehaviour(RouterRedstoneBehaviour.ALWAYS);
-            }
-        }
-    }
-
-    @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
     }
@@ -105,12 +87,11 @@ public class BlockItemRouter extends BlockCamo {
     @Override
     public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-            if (router != null) {
+            TileEntityItemRouter.getRouterAt(world, pos).ifPresent(router -> {
                 InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
                 world.updateComparatorOutputLevel(pos, this);
-            }
-            super.onReplaced(state, world, pos, newState, isMoving);
+                super.onReplaced(state, world, pos, newState, isMoving);
+            });
         }
     }
 
@@ -121,100 +102,68 @@ public class BlockItemRouter extends BlockCamo {
 
     @Override
     public int getComparatorInputOverride(BlockState blockState, World world, BlockPos pos) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        if (router != null) {
-            ItemStack stack = router.getBufferItemStack();
-            return stack.isEmpty() ? 0 : MathHelper.floor(1 + ((float) stack.getCount() / (float) stack.getMaxStackSize()) * 14);
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
-        // If it will harvest, delay deletion of the block until after getDrops()
-        return willHarvest || super.removedByPlayer(state, world, pos, player, false, fluid);
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        TileEntity te = builder.get(LootParameters.BLOCK_ENTITY);
-        ItemStack stack = new ItemStack(this);
-        if (te instanceof TileEntityItemRouter) {
-            TileEntityItemRouter router = (TileEntityItemRouter) te;
-            if (router.getModuleCount() > 0 || router.getUpgradeCount() > 0 || router.getRedstoneBehaviour() != RouterRedstoneBehaviour.ALWAYS) {
-                CompoundNBT compound = stack.getOrCreateTag();
-                if (router.getModuleCount() > 0) compound.put(NBT_MODULES, ((ItemStackHandler) router.getModules()).serializeNBT());
-                if (router.getUpgradeCount() > 0) compound.put(NBT_UPGRADES, ((ItemStackHandler) router.getUpgrades()).serializeNBT());
-                compound.putString(NBT_REDSTONE_BEHAVIOUR, router.getRedstoneBehaviour().toString());
-            }
-        }
-        return ImmutableList.of(stack);
-    }
-
-    @Override
-    public void harvestBlock(World world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity te, ItemStack stack) {
-        super.harvestBlock(world, player, pos, state, te, stack);
-        world.removeBlock(pos, false);
+        return TileEntityItemRouter.getRouterAt(world, pos)
+                .map(router -> ItemHandlerHelper.calcRedstoneFromInventory(router.getBuffer()))
+                .orElse(0);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
-        CompoundNBT compound = stack.getTag();
-        if (compound == null) return;
-
-        tooltip.add(new TranslationTextComponent("itemText.misc.routerConfigured")
-                .applyTextStyles(TextFormatting.GRAY, TextFormatting.ITALIC));
-        if (compound.contains(NBT_MODULES)) {
-            List<ITextComponent> moduleText = new ArrayList<>();
-            ItemStackHandler modulesHandler = new ItemStackHandler(9);
-            modulesHandler.deserializeNBT(compound.getCompound(NBT_MODULES));
-            for (int i = 0; i < modulesHandler.getSlots(); i++) {
-                ItemStack moduleStack = modulesHandler.getStackInSlot(i);
-                if (!moduleStack.isEmpty()) {
-                    moduleText.add(new StringTextComponent("\u2022 ")
-                            .appendSibling(moduleStack.getDisplayName())
-                            .applyTextStyle(TextFormatting.AQUA)
-                    );
+        if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
+            CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
+            tooltip.add(new TranslationTextComponent("itemText.misc.routerConfigured")
+                    .applyTextStyles(TextFormatting.GRAY, TextFormatting.ITALIC));
+            if (compound.contains(NBT_MODULES)) {
+                List<ITextComponent> moduleText = new ArrayList<>();
+                ItemStackHandler modulesHandler = new ItemStackHandler(9);
+                modulesHandler.deserializeNBT(compound.getCompound(NBT_MODULES));
+                for (int i = 0; i < modulesHandler.getSlots(); i++) {
+                    ItemStack moduleStack = modulesHandler.getStackInSlot(i);
+                    if (!moduleStack.isEmpty()) {
+                        moduleText.add(new StringTextComponent("\u2022 ")
+                                .appendSibling(moduleStack.getDisplayName())
+                                .applyTextStyle(TextFormatting.AQUA)
+                        );
+                    }
+                }
+                if (!moduleText.isEmpty()) {
+                    tooltip.add(new TranslationTextComponent("itemText.misc.moduleCount",
+                            moduleText.size()).applyTextStyles(TextFormatting.YELLOW));
+                    tooltip.addAll(moduleText);
                 }
             }
-            if (!moduleText.isEmpty()) {
-                tooltip.add(new TranslationTextComponent("itemText.misc.moduleCount",
-                        moduleText.size()).applyTextStyles(TextFormatting.YELLOW));
-                tooltip.addAll(moduleText);
-            }
-        }
-        if (compound.contains(NBT_UPGRADES)) {
-            ItemStackHandler upgradesHandler = new ItemStackHandler();
-            upgradesHandler.deserializeNBT(compound.getCompound(NBT_UPGRADES));
-            List<ITextComponent> upgradeText = new ArrayList<>();
-            for (int i = 0; i < upgradesHandler.getSlots(); i++) {
-                ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
-                if (!upgradeStack.isEmpty()) {
-                    upgradeText.add(new StringTextComponent("\u2022 " + upgradeStack.getCount() + " x ")
-                            .appendSibling(upgradeStack.getDisplayName())
-                            .applyTextStyle(TextFormatting.AQUA)
-                    );
+            if (compound.contains(NBT_UPGRADES)) {
+                ItemStackHandler upgradesHandler = new ItemStackHandler();
+                upgradesHandler.deserializeNBT(compound.getCompound(NBT_UPGRADES));
+                List<ITextComponent> upgradeText = new ArrayList<>();
+                int nUpgrades = 0;
+                for (int i = 0; i < upgradesHandler.getSlots(); i++) {
+                    ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
+                    if (!upgradeStack.isEmpty()) {
+                        nUpgrades += upgradeStack.getCount();
+                        upgradeText.add(new StringTextComponent("\u2022 " + upgradeStack.getCount() + " x ")
+                                .appendSibling(upgradeStack.getDisplayName())
+                                .applyTextStyle(TextFormatting.AQUA)
+                        );
+                    }
+                }
+                if (!upgradeText.isEmpty()) {
+                    tooltip.add(new TranslationTextComponent("itemText.misc.upgradeCount", nUpgrades).applyTextStyles(TextFormatting.YELLOW));
+                    tooltip.addAll(upgradeText);
                 }
             }
-            if (!upgradeText.isEmpty()) {
-                tooltip.add(new TranslationTextComponent("itemText.misc.upgradeCount",
-                        upgradeText.size()).applyTextStyles(TextFormatting.YELLOW));
-                tooltip.addAll(upgradeText);
-            }
-        }
-        if (compound.contains(NBT_REDSTONE_BEHAVIOUR)) {
-            try {
-                RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_BEHAVIOUR));
-                tooltip.add(new TranslationTextComponent("guiText.tooltip.redstone.label")
-                        .appendText(": ")
-                        .applyTextStyle(TextFormatting.YELLOW)
-                        .appendSibling(new TranslationTextComponent("guiText.tooltip.redstone." + rrb)
-                        .applyTextStyle(TextFormatting.RED))
-                );
-            } catch (IllegalArgumentException ignored) {
-                // bad value for NBT_REDSTONE_BEHAVIOUR tag
+            if (compound.contains(NBT_REDSTONE_MODE)) {
+                try {
+                    RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
+                    tooltip.add(new TranslationTextComponent("guiText.tooltip.redstone.label")
+                            .appendText(": ")
+                            .applyTextStyle(TextFormatting.YELLOW)
+                            .appendSibling(new TranslationTextComponent("guiText.tooltip.redstone." + rrb)
+                                    .applyTextStyle(TextFormatting.RED))
+                    );
+                } catch (IllegalArgumentException ignored) {
+                }
             }
         }
     }
@@ -222,21 +171,18 @@ public class BlockItemRouter extends BlockCamo {
     @Override
     public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
         if (!player.isSneaking()) {
-            TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-            if (router != null) {
+            return TileEntityItemRouter.getRouterAt(world, pos).map(router -> {
                 if (router.isPermitted(player) && !world.isRemote) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
                     player.sendStatusMessage(new TranslationTextComponent("chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR, 1.0f, 1.0f);
                 }
-            }
+                return true;
+            }).orElse(true);
         }
         return true;
     }
-
-
-
 
     @Override
     public boolean canProvidePower(BlockState state) {
@@ -245,24 +191,18 @@ public class BlockItemRouter extends BlockCamo {
 
     @Override
     public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
-        if (router != null) {
+        return TileEntityItemRouter.getRouterAt(blockAccess, pos).map(router -> {
             int l = router.getRedstoneLevel(side, false);
             return l < 0 ? super.getWeakPower(blockState, blockAccess, pos, side) : l;
-        } else {
-            return 0;
-        }
+        }).orElse(0);
     }
 
     @Override
     public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(blockAccess, pos);
-        if (router != null) {
+        return TileEntityItemRouter.getRouterAt(blockAccess, pos).map(router -> {
             int l = router.getRedstoneLevel(side, true);
             return l < 0 ? super.getStrongPower(blockState, blockAccess, pos, side) : l;
-        } else {
-            return 0;
-        }
+        }).orElse(0);
     }
 
     @Override
@@ -272,27 +212,23 @@ public class BlockItemRouter extends BlockCamo {
 
     @Override
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean b) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(worldIn, pos);
-        if (router != null) {
+        TileEntityItemRouter.getRouterAt(worldIn, pos).ifPresent(router -> {
             router.checkForRedstonePulse();
             router.notifyModules();
-        }
+        });
     }
 
     @Override
     public boolean canEntityDestroy(BlockState state, IBlockReader world, BlockPos pos, Entity entity) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        return (router == null || router.getUpgradeCount(ModItems.BLAST_UPGRADE) <= 0)
-                && super.canEntityDestroy(state, world, pos, entity);
+        return TileEntityItemRouter.getRouterAt(world, pos)
+                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE) <= 0 && super.canEntityDestroy(state, world, pos, entity))
+                .orElse(true);
     }
 
     @Override
     public float getExplosionResistance(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, pos);
-        if (router != null && router.getUpgradeCount(ModItems.BLAST_UPGRADE) > 0) {
-            return 20000f;
-        } else {
-            return super.getExplosionResistance(state, world, pos, exploder, explosion);
-        }
+        return TileEntityItemRouter.getRouterAt(world, pos)
+                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE) > 0 ? 20000f : BLAST_RESISTANCE)
+                .orElse(0f);
     }
 }

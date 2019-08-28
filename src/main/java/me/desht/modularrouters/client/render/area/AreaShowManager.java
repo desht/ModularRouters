@@ -3,7 +3,6 @@ package me.desht.modularrouters.client.render.area;
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.PlayerEntity;
@@ -92,15 +91,16 @@ public enum AreaShowManager {
             List<ModuleTarget> targets = provider.getStoredPositions(stack);
             for (int i = 0; i < targets.size(); i++) {
                 ModuleTarget target = targets.get(i);
-                if (target.dimId != MiscUtil.getDimensionForWorld(Minecraft.getInstance().world)) {
+                if (!target.isSameWorld(Minecraft.getInstance().world)) {
                     continue;
                 }
-                if (positions.containsKey(target.pos)) {
-                    positions.get(target.pos).faces.set(target.face.ordinal());
+                BlockPos pos = target.gPos.getPos();
+                if (positions.containsKey(pos)) {
+                    positions.get(pos).faces.set(target.face.ordinal());
                 } else {
                     FaceAndColour fc = new FaceAndColour(new BitSet(6), provider.getRenderColor(i));
                     fc.faces.set(target.face.ordinal());
-                    positions.put(target.pos, fc);
+                    positions.put(pos, fc);
                 }
             }
         }

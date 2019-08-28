@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.Fluid;
@@ -108,7 +109,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         ItemStack bufferStack = router.getBuffer().getStackInSlot(0);
 
-        BlockPos centrePos = getTarget().pos;
+        BlockPos centrePos = getTarget().gPos.getPos();
         int range = getRange();
         List<ItemEntity> items = router.getWorld().getEntitiesWithinAABB(ItemEntity.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
@@ -146,7 +147,7 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private boolean handleXpMode(TileEntityItemRouter router) {
-        BlockPos centrePos = getTarget().pos;
+        BlockPos centrePos = getTarget().gPos.getPos();
         int range = getRange();
         List<ExperienceOrbEntity> orbs = router.getWorld().getEntitiesWithinAABB(ExperienceOrbEntity.class,
                 new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
@@ -236,7 +237,8 @@ public class CompiledVacuumModule extends CompiledModule {
         ItemModule.RelativeDirection dir = getDirection();
         int offset = dir == ItemModule.RelativeDirection.NONE ? 0 : getRange() + 1;
         Direction facing = router.getAbsoluteFacing(dir);
-        return Collections.singletonList(new ModuleTarget(MiscUtil.getDimensionForWorld(router.getWorld()), router.getPos().offset(facing, offset), facing));
+        GlobalPos gPos = GlobalPos.of(router.getWorld().getDimension().getType(), router.getPos().offset(facing, offset));
+        return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 
     public XPCollectionType getXPCollectionType() {

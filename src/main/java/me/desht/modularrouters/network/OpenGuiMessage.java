@@ -10,6 +10,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -78,12 +79,13 @@ public class OpenGuiMessage {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
             assert player != null;
-            final TileEntityItemRouter router = locator.routerPos != null ?
-                    TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos) : null;
+            Optional<TileEntityItemRouter> r = locator.routerPos == null ? Optional.empty() : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos);
+//            final TileEntityItemRouter router = locator.routerPos != null ?
+//                    TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos) : null;
             switch (operation) {
                 case ROUTER:
                     // item router GUI
-                    if (router != null) NetworkHooks.openGui(player, router, locator.routerPos);
+                    r.ifPresent(router -> NetworkHooks.openGui(player, router, locator.routerPos));
                     break;
                 case MODULE_HELD:
                     // module held in player's hand
@@ -91,9 +93,7 @@ public class OpenGuiMessage {
                     break;
                 case MODULE_INSTALLED:
                     // module installed in a router
-                    if (router != null) {
-                        NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf);
-                    }
+                    r.ifPresent(router -> NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf));
                     break;
                 case FILTER_HELD:
                     // filter is in a module in player's hand
@@ -101,9 +101,7 @@ public class OpenGuiMessage {
                     break;
                 case FILTER_INSTALLED:
                     // filter is in a module in a router
-                    if (router != null) {
-                        NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf);
-                    }
+                    r.ifPresent(router -> NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf));
                     break;
             }
         });

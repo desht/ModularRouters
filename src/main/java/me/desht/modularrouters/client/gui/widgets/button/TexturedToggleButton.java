@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
-import net.minecraft.client.gui.widget.button.Button;
 
 import java.util.ArrayList;
 import java.util.List;

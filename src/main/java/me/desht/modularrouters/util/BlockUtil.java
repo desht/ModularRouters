@@ -215,7 +215,8 @@ public class BlockUtil {
         LootContext.Builder builder = new LootContext.Builder((ServerWorld) world)
                 .withParameter(LootParameters.POSITION, pos)
                 .withParameter(LootParameters.BLOCK_STATE, state)
-                .withParameter(LootParameters.TOOL, pick);
+                .withParameter(LootParameters.TOOL, pick)
+                .withParameter(LootParameters.THIS_ENTITY, player);
         TileEntity te = world.getTileEntity(pos);
         if (te != null) builder = builder.withParameter(LootParameters.BLOCK_ENTITY, te);
         List<ItemStack> drops = state.getDrops(builder);

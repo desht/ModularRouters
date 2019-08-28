@@ -20,6 +20,7 @@ import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -34,6 +35,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -63,15 +65,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private static final String NBT_ACTIVE_TIMER = "ActiveTimer";
     private static final String NBT_ECO_MODE = "EcoMode";
     private static final String NBT_SIDES = "Sides";
-    private static final String NBT_PERMITTED = "Permitted";
     private static final String NBT_BUFFER = "Buffer";
-    private static final String NBT_MODULES = "Modules";
-    private static final String NBT_UPGRADES = "Upgrades";
+    public static final String NBT_MODULES = "Modules";
+    public static final String NBT_UPGRADES = "Upgrades";
     private static final String NBT_EXTRA = "Extra";
-    private static final String NBT_REDSTONE_MODE = "Redstone";
-    private static final String NBT_TICK_RATE = "TickRate";
-    private static final String NBT_FLUID_TRANSFER_RATE = "FluidTransfer";
-    private static final String NBT_ITEMS_PER_TICK = "ItemsPerTick";
+    public static final String NBT_REDSTONE_MODE = "Redstone";
     private static final String NBT_MUFFLERS = "Mufflers";
 
     private int counter = 0;
@@ -179,7 +177,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 3) {
             upgradeCount.put(ModItems.MUFFLER_UPGRADE.getRegistryName(), mufflers);
             BlockState state = getBlockState();
-            getWorld().func_225319_b(pos, state, state);
+            getWorld().func_225319_b(pos, Blocks.AIR.getDefaultState(), state);
         }
 
         // these fields are needed for rendering
@@ -247,9 +245,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public CompoundNBT write(CompoundNBT nbt) {
         nbt = super.write(nbt);
         nbt.put(NBT_BUFFER, bufferHandler.serializeNBT());
-        nbt.put(NBT_MODULES, modulesHandler.serializeNBT());
-        nbt.put(NBT_UPGRADES, upgradesHandler.serializeNBT());
-        nbt.putString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
+        if (hasItems(modulesHandler)) nbt.put(NBT_MODULES, modulesHandler.serializeNBT());
+        if (hasItems(upgradesHandler)) nbt.put(NBT_UPGRADES, upgradesHandler.serializeNBT());
+        if (redstoneBehaviour != RouterRedstoneBehaviour.ALWAYS) nbt.putString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
         nbt.putBoolean(NBT_ACTIVE, active);
         nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
         nbt.putBoolean(NBT_ECO_MODE, ecoMode);
@@ -262,6 +260,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         nbt.put(NBT_EXTRA, ext);
 
         return nbt;
+    }
+
+    private boolean hasItems(IItemHandler handler) {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            if (!handler.getStackInSlot(i).isEmpty()) return true;
+        }
+        return false;
     }
 
     @Override
@@ -399,11 +404,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         // some tile entity field changed that the client needs to know about
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         if (!getWorld().isRemote) {
-            getWorld().notifyBlockUpdate(pos, getWorld().getBlockState(pos), getWorld().getBlockState(pos), 3);
+            getWorld().notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
         } else if (getWorld().isRemote && renderUpdate) {
             requestModelDataUpdate();
-            BlockState state = getBlockState();
-            getWorld().func_225319_b(pos, state, state);
+            getWorld().func_225319_b(pos, Blocks.AIR.getDefaultState(), getBlockState());
         }
     }
 
@@ -438,7 +442,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         }
 
         if (recompileNeeded != 0) {
-            BlockState state = getWorld().getBlockState(pos);
+            BlockState state = getBlockState();
             getWorld().notifyBlockUpdate(pos, state, state, 3);
             getWorld().notifyNeighborsOfStateChange(pos, state.getBlock());
             markDirty();
@@ -508,7 +512,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     public void setAllowRedstoneEmission(boolean allow) {
         canEmit = allow;
-        getWorld().setBlockState(pos, getWorld().getBlockState(pos).with(BlockItemRouter.CAN_EMIT, canEmit));
+        getWorld().setBlockState(pos, getBlockState().with(BlockItemRouter.CAN_EMIT, canEmit));
     }
 
     public int getUpgradeCount() {
@@ -559,8 +563,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public Direction getAbsoluteFacing(RelativeDirection direction) {
-        BlockState state = getWorld().getBlockState(pos);
-        return direction.toAbsolute(state.get(BlockItemRouter.FACING));
+        return direction.toAbsolute(getBlockState().get(BlockItemRouter.FACING));
     }
 
     public ItemStack getBufferItemStack() {
@@ -650,7 +653,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             getWorld().notifyNeighborsOfStateChange(pos2, getWorld().getBlockState(pos2).getBlock());
         }
         if (notifyOwnNeighbours) {
-            getWorld().notifyNeighborsOfStateChange(pos, getWorld().getBlockState(pos).getBlock());
+            getWorld().notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
         }
     }
 
@@ -736,9 +739,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         return extData;
     }
 
-    public static TileEntityItemRouter getRouterAt(IBlockReader world, BlockPos routerPos) {
+    public static Optional<TileEntityItemRouter> getRouterAt(IBlockReader world, BlockPos routerPos) {
         TileEntity te = world.getTileEntity(routerPos);
-        return te instanceof TileEntityItemRouter ? (TileEntityItemRouter) te : null;
+        return te instanceof TileEntityItemRouter ? Optional.of((TileEntityItemRouter) te) : Optional.empty();// (TileEntityItemRouter) te : null;
     }
 
     public void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
@@ -778,5 +781,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
         return new ContainerItemRouter(windowId, playerInventory, this.getPos());
+    }
+
+    public GlobalPos getGlobalPos() {
+        return GlobalPos.of(world.getDimension().getType(), pos);
     }
 }

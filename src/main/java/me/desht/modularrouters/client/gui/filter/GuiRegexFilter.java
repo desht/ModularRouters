@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -13,7 +14,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -72,7 +72,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
     public void render(int mouseX, int mouseY, float partialTicks) {
         renderBackground();
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         font.drawString(title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);

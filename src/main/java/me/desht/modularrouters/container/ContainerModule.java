@@ -51,7 +51,7 @@ public class ContainerModule extends Container {
         super(type, windowId);
 
         this.locator = locator;
-        this.router = locator.getRouter(inv.player.world);
+        this.router = locator.getRouter(inv.player.world).isPresent() ? locator.getRouter(inv.player.world).get() : null;
         assert router != null || locator.hand != null;
 
         ItemStack moduleStack = locator.getModuleStack(inv.player);

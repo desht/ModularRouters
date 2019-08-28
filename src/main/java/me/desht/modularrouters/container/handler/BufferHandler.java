@@ -27,13 +27,15 @@ public class BufferHandler extends ItemStackHandler {
 
         ItemStack stack = getStackInSlot(slot);
 
-        LazyOptional<IFluidHandlerItem> newHandler = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
-        boolean updateFluid = newHandler.isPresent() && !fluidCap.isPresent() || !newHandler.isPresent() && fluidCap.isPresent();
-        fluidCap = newHandler;
+        LazyOptional<IFluidHandlerItem> newFluidCap = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
+        boolean updateFluid = newFluidCap.isPresent() && !fluidCap.isPresent() || !newFluidCap.isPresent() && fluidCap.isPresent();
+        fluidCap.invalidate();
+        fluidCap = newFluidCap;
 
-        LazyOptional<IEnergyStorage> newEnergyStorage = stack.getCount() == 1 ? stack.getCapability(CapabilityEnergy.ENERGY) : LazyOptional.empty();
-        boolean updateEnergy = newEnergyStorage.isPresent() && !energyCap.isPresent() || !newEnergyStorage.isPresent() && energyCap.isPresent();
-        energyCap = newEnergyStorage;
+        LazyOptional<IEnergyStorage> newEnergyCap = stack.getCount() == 1 ? stack.getCapability(CapabilityEnergy.ENERGY) : LazyOptional.empty();
+        boolean updateEnergy = newEnergyCap.isPresent() && !energyCap.isPresent() || !newEnergyCap.isPresent() && energyCap.isPresent();
+        energyCap.invalidate();
+        energyCap = newEnergyCap;
 
         if (updateFluid || updateEnergy) {
             // in case any pipes/cables need to connect/disconnect

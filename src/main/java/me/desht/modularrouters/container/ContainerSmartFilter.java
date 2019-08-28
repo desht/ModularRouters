@@ -18,7 +18,7 @@ public abstract class ContainerSmartFilter extends Container {
 
         this.locator = locator;
         this.filterStack = locator.getTargetItem(inv.player);
-        this.router = locator.getRouter(inv.player.world);
+        this.router = locator.getRouter(inv.player.world).isPresent() ? locator.getRouter(inv.player.world).get() : null;
     }
 
     @Override

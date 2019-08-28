@@ -1,9 +1,7 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.filter.GuiInspectionFilter;
-import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Comparison;
@@ -13,7 +11,6 @@ import me.desht.modularrouters.network.GuiSyncMessage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

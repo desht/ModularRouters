@@ -55,10 +55,8 @@ public class ModuleSettingsMessage {
                     compound.put(key, payload.get(key));
                 }
                 if (locator.routerPos != null) {
-                    TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos);
-                    if (router != null) {
-                        router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
-                    }
+                    TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos)
+                            .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
                 }
             } else {
                 ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator.toString());

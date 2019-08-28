@@ -4,11 +4,14 @@ import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -29,16 +32,6 @@ import java.util.StringTokenizer;
 public class MiscUtil {
 
     private static final int WRAP_LENGTH = 45;
-
-    public static ServerWorld getWorldForDimensionId(int dimId) {
-        DimensionType dt = DimensionType.getById(dimId);
-        if (dt == null) return null;
-        return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), dt, true, true);
-    }
-
-    public static int getDimensionForWorld(World w) {
-        return w.getDimension().getType().getId();
-    }
 
     public static void appendMultiline(List<String> result, String key, Object... args) {
         ITextComponent raw = xlate(key, args);
@@ -100,10 +93,6 @@ public class MiscUtil {
         return textList;
     }
 
-    public static String locToString(World world, BlockPos pos) {
-        return locToString(getDimensionForWorld(world), pos);
-    }
-
     public static String locToString(int dim, BlockPos pos) {
         return String.format("DIM:%d [%d,%d,%d]", dim, pos.getX(), pos.getY(), pos.getZ());
     }
@@ -114,13 +103,6 @@ public class MiscUtil {
 
     public static ResourceLocation RL(String name) {
         return new ResourceLocation(ModularRouters.MODID, name);
-    }
-
-    public static TileEntity getTileEntitySafely(IBlockReader world, BlockPos pos) {
-        return world.getTileEntity(pos);
-//        return world instanceof ChunkCache ?
-//                ((ChunkCache) world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) :
-//                world.getTileEntity(pos);
     }
 
     public static int getYawFromFacing(Direction facing) {
@@ -148,13 +130,21 @@ public class MiscUtil {
         return new StringTextComponent(prefix).appendSibling(c);
     }
 
-    public static Hand whichHand(PlayerEntity player, ItemStack stack) {
-        if (ItemStack.areItemStacksEqual(player.getHeldItemMainhand(), stack)) {
-            return Hand.MAIN_HAND;
-        } else if (ItemStack.areItemStacksEqual(player.getHeldItemOffhand(), stack)) {
-            return Hand.OFF_HAND;
-        } else {
-            return null;
-        }
+    public static CompoundNBT serializeGlobalPos(GlobalPos globalPos) {
+        CompoundNBT tag = new CompoundNBT();
+        tag.put("pos", net.minecraft.nbt.NBTUtil.writeBlockPos(globalPos.getPos()));
+        tag.putString("dim", DimensionType.getKey(globalPos.getDimension()).toString());
+        return tag;
+    }
+
+    public static GlobalPos deserializeGlobalPos(CompoundNBT tag) {
+        return GlobalPos.of(
+                DimensionType.byName(new ResourceLocation(tag.getString("dim"))),
+                NBTUtil.readBlockPos(tag.getCompound("pos"))
+        );
+    }
+
+    public static ServerWorld getWorldForGlobalPos(GlobalPos pos) {
+        return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), pos.getDimension(), false, false);
     }
 }

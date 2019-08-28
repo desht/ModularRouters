@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.BackButton;
@@ -11,14 +12,12 @@ import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import org.lwjgl.opengl.GL11;
 
 public class GuiBulkItemFilter extends GuiFilterContainer {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
@@ -60,14 +59,14 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             // Using getActualTarget() here *should* ensure that we always see the right target...
             if (target != null && target.blockTranslationKey != null && !target.blockTranslationKey.isEmpty()) {
                 addButton(new Buttons.MergeButton(guiLeft + 28, guiTop + 130,
-                        MiscUtil.locToString(target.dimId, target.pos), I18n.format(target.blockTranslationKey), p -> {
+                        target.toString(), I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
                                 Operation.MERGE, container.getLocator(), target.toNBT()));
                     }
                 }));
                 addButton(new Buttons.LoadButton(guiLeft + 48, guiTop + 130,
-                        MiscUtil.locToString(target.dimId, target.pos), I18n.format(target.blockTranslationKey), p -> {
+                        target.toString(), I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
                                 Operation.LOAD, container.getLocator(), target.toNBT()));
@@ -84,7 +83,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }

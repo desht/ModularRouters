@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
 import me.desht.modularrouters.client.gui.widgets.button.InfoButton;
-import me.desht.modularrouters.container.ContainerExtruder2Module;
 import me.desht.modularrouters.container.ContainerModule;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;

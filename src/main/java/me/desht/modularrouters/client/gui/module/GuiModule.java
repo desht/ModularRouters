@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.Keybindings;
@@ -47,9 +48,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.Optional;
 
 public class GuiModule extends GuiContainerBase<ContainerModule> implements IContainerListener, IMouseOverHelpProvider, ISendToServer {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
@@ -236,7 +237,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Color c = getGuiBackgroundTint();
-        GL11.glColor4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
+        GlStateManager.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
         blit(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         if (!module.isDirectional()) {
@@ -312,8 +313,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         }
     }
 
-    TileEntityItemRouter getItemRouter() {
-        return routerPos != null ? TileEntityItemRouter.getRouterAt(Minecraft.getInstance().world, routerPos) : null;
+    Optional<TileEntityItemRouter> getItemRouter() {
+        return routerPos != null ? TileEntityItemRouter.getRouterAt(Minecraft.getInstance().world, routerPos) : Optional.empty();
     }
 
     @Override

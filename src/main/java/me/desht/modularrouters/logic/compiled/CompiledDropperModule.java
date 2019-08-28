@@ -28,7 +28,7 @@ public class CompiledDropperModule extends CompiledModule {
                 return false;
             }
             ItemStack toDrop = router.peekBuffer(nItems);
-            BlockPos pos = getTarget().pos;
+            BlockPos pos = getTarget().gPos.getPos();
             Direction face = getTarget().face;
             ItemEntity item = new ItemEntity(router.getWorld(),
                     pos.getX() + 0.5 + 0.2 * face.getXOffset(),

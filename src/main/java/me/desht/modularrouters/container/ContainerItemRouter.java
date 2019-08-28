@@ -14,6 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
@@ -45,7 +48,8 @@ public class ContainerItemRouter extends Container {
     public ContainerItemRouter(int windowId, PlayerInventory invPlayer, BlockPos routerPos) {
         super(ModContainerTypes.CONTAINER_ITEM_ROUTER, windowId);
 
-        this.router = TileEntityItemRouter.getRouterAt(invPlayer.player.world, routerPos);
+        Optional<TileEntityItemRouter> o = TileEntityItemRouter.getRouterAt(invPlayer.player.world, routerPos);
+        this.router = o.orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
 
         // player's hotbar
         for (int x = 0; x < 9; x++) {

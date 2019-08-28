@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.upgrade;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
@@ -11,11 +12,10 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.SyncUpgradeSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class GuiSyncUpgrade extends GuiScreenBase {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/sync_upgrade.png");
@@ -61,7 +61,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     public void render(int mouseX, int mouseY, float partialTicks) {
         renderBackground();
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         font.drawString(title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);

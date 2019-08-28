@@ -12,7 +12,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.awt.*;
-import java.util.Random;
 
 public class CompiledSenderModule3 extends CompiledSenderModule2 {
     private static final Color particleColor = Color.MAGENTA;

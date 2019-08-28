@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nonnull;
@@ -44,14 +45,15 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         boolean fired = super.execute(router);
 
         if (fired && ConfigHandler.MODULE.flingerEffects.get()) {
-            ModuleTarget t = getTarget();
+            ModuleTarget target = getTarget();
             int n = Math.round(speed * 5);
+            BlockPos pos = target.gPos.getPos();
             if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
                 ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.LARGE_SMOKE,
-                        t.pos.getX() + 0.5, t.pos.getY() + 0.5, t.pos.getZ() + 0.5, n,
+                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
-            router.playSound(null, t.pos, ModSounds.THUD, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
+            router.playSound(null, pos, ModSounds.THUD, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
         }
 
         return fired;

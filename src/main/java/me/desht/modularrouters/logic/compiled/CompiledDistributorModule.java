@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -60,8 +59,8 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     private static double calcDist(ModuleTarget tgt, TileEntity te) {
-        double distance = tgt.pos.distanceSq(te.getPos());
-        if (tgt.dimId != MiscUtil.getDimensionForWorld(te.getWorld())) {
+        double distance = tgt.gPos.getPos().distanceSq(te.getPos());
+        if (tgt.gPos.getDimension() != te.getWorld().getDimension().getType()) {
             distance += 100000000;  // cross-dimension penalty
         }
         return distance;

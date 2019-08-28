@@ -21,12 +21,12 @@ public class CompiledPullerModule1 extends CompiledModule {
             if (!validateRange(router, getTarget())) {
                 return false;
             }
-            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().pos, getTarget().face);
+            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().gPos.getPos(), getTarget().face);
             if (handler != null) {
                 ItemStack taken = transferToRouter(handler, router);
                 if (!taken.isEmpty()) {
                     if (ConfigHandler.MODULE.pullerParticles.get()) {
-                        playParticles(router, getTarget().pos, taken);
+                        playParticles(router, getTarget().gPos.getPos(), taken);
                     }
                     return true;
                 }

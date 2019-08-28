@@ -11,10 +11,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
-public class TOPInfoProvider {
+class TOPInfoProvider {
     static void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(world, data.getPos());
-        if (router != null) {
+        TileEntityItemRouter.getRouterAt(world, data.getPos()).ifPresent( router -> {
             if (router.isPermitted(player)) {
                 IItemHandler modules = router.getModules();
                 IProbeInfo sub = probeInfo.horizontal();
@@ -37,6 +36,6 @@ public class TOPInfoProvider {
             } else {
                 probeInfo.text(IProbeInfo.STARTLOC + "chatText.security.accessDenied" + IProbeInfo.ENDLOC);
             }
-        }
+        });
     }
 }

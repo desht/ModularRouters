@@ -2,6 +2,7 @@ package me.desht.modularrouters.block.tile;
 
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.core.ModTileEntities;
+import me.desht.modularrouters.util.Scheduler;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -84,8 +85,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         camouflage = getCamoStateFromNBT(pkt.getNbtCompound());
         extendedMimic = pkt.getNbtCompound().getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
-            // todo 1.14
-//            getWorld().checkLightFor(LightType.BLOCK, getPos());
+            getWorld().getChunkProvider().getLightManager().checkBlock(pos);
         }
     }
 
@@ -97,8 +97,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
-            // todo 1.14
-//            Scheduler.client().schedule(() -> getWorld().checkLightFor(LightType.BLOCK, getPos()), 1L);
+            Scheduler.client().schedule(() -> getWorld().getChunkProvider().getLightManager().checkBlock(pos), 1L);
         }
     }
 

@@ -9,11 +9,15 @@ import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
-import me.desht.modularrouters.util.*;
+import me.desht.modularrouters.util.BlockUtil;
+import me.desht.modularrouters.util.CountedItemStacks;
+import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -116,7 +120,7 @@ public abstract class CompiledModule {
 
     /**
      * Get the absolute direction this module faces, based on its relative direction and the facing of the router
-     * in which it's installed.  This will be null the module isn't installed in a router, or the router's facing
+     * in which it's installed.  This will be null if the module isn't installed in a router, or the router's facing
      * direction if the module's relative direction is NONE.
      *
      * @return absolute direction of the module
@@ -173,8 +177,8 @@ public abstract class CompiledModule {
         Direction facing = router.getAbsoluteFacing(direction);
         BlockPos pos = router.getPos().offset(facing);
         String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
-        int dim = MiscUtil.getDimensionForWorld(router.getWorld());
-        return Collections.singletonList(new ModuleTarget(dim, router.getPos().offset(facing), facing.getOpposite(), blockName));
+        GlobalPos gPos = GlobalPos.of(router.getWorld().getDimension().getType(), pos);
+        return Collections.singletonList(new ModuleTarget(gPos, facing.getOpposite(), blockName));
     }
 
     int getItemsPerTick(TileEntityItemRouter router) {
