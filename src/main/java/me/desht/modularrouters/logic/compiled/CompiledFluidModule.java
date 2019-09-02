@@ -75,6 +75,7 @@ public class CompiledFluidModule extends CompiledModule {
         }
 
         if (fluidDirection == FluidDirection.IN) {
+            if (worldFluidHandler.getTankProperties().length == 0) return false;
             FluidStack fluidStack = worldFluidHandler.getTankProperties()[0].getContents();
             Fluid fluid = fluidStack == null ? null : fluidStack.getFluid();
             if (!getFilter().testFluid(fluid)) return false;
