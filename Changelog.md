@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
+### 3.2.3 (2 Sep 2019)
+
+* Fix ArrayIndexOutOfBoundsException with fluid modules. https://github.com/desht/ModularRouters/issues/58
+
 ### 3.2.2 (25 Jun 2019)
 
 * Change to Puller/Regulator behaviour: when a Puller Module has a Regulator Augment installed, and the module or router has Stack Upgrades, the Puller will only pull exactly as much as the Stack upgrades define.  E.g. with 2 Stack Upgrades, the Puller Module will pull no fewer than 4 items at a time; if the inventory has fewer items, nothing will be pulled.  https://github.com/desht/ModularRouters/issues/53
