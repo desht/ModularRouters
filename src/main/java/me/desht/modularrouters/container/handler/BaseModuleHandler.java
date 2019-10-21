@@ -1,10 +1,12 @@
 package me.desht.modularrouters.container.handler;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +19,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         this.holderStack = holderStack;
         this.tagName = tagName;
 
-        deserializeNBT(holderStack.getOrCreateTag().getCompound(tagName));
+        deserializeNBT(holderStack.getOrCreateChildTag(ModularRouters.MODID).getCompound(tagName));
     }
 
     /**
@@ -37,7 +39,8 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * @return number of items in the filter
      */
     public static int getFilterSize(ItemStack holderStack, String tagName) {
-        if (holderStack.hasTag() && holderStack.getTag().contains(ModuleHelper.NBT_FILTER)) {
+        CompoundNBT tag = holderStack.getChildTag(ModularRouters.MODID);
+        if (tag != null  && tag.contains(tagName)) {
             ModuleFilterHandler handler = new ModuleFilterHandler(holderStack);
             int n = 0;
             for (int i = 0; i < handler.getSlots(); i++) {
@@ -49,7 +52,6 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         } else {
             return 0;
         }
-//        return holderStack.getOrCreateTag().getList(tagName, Constants.NBT.TAG_COMPOUND).size();
     }
 
     @Override
@@ -61,7 +63,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * Save the contents of the item handler onto the holder item stack's NBT
      */
     public void save() {
-        holderStack.getOrCreateTag().put(tagName, serializeNBT());
+        holderStack.getOrCreateChildTag(ModularRouters.MODID).put(tagName, serializeNBT());
     }
 
     public static class BulkFilterHandler extends BaseModuleHandler {
@@ -79,13 +81,6 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             return ((ItemModule) getHolderStack().getItem()).isItemValidForFilter(stack) ?
                     super.insertItem(slot, stack, simulate) : stack;
-        }
-
-        @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
-//            if (((ItemModule) getHolderStack().getItem()).isItemValidForFilter(stack)) {
-                super.setStackInSlot(slot, stack);
-//            }
         }
 
         @Override

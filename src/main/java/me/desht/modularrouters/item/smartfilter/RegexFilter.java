@@ -33,8 +33,9 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     public static List<String> getRegexList(ItemStack filterStack) {
-        if (filterStack.hasTag()) {
-            ListNBT items = filterStack.getTag().getList(NBT_REGEX, Constants.NBT.TAG_STRING);
+        CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
+        if (tag != null) {
+            ListNBT items = tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
             for (int i = 0; i < items.size(); i++) {
                 res.add(items.getString(i));
@@ -45,9 +46,9 @@ public class RegexFilter extends ItemSmartFilter {
         }
     }
 
-    public static void setRegexList(ItemStack filterStack, List<String> regex) {
+    private static void setRegexList(ItemStack filterStack, List<String> regex) {
         ListNBT list = regex.stream().map(StringNBT::new).collect(Collectors.toCollection(ListNBT::new));
-        filterStack.getOrCreateTag().put(NBT_REGEX, list);
+        filterStack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_REGEX, list);
     }
 
     @Override
@@ -110,6 +111,7 @@ public class RegexFilter extends ItemSmartFilter {
 
     @Override
     public int getSize(ItemStack filterStack) {
-        return filterStack.hasTag() ? filterStack.getTag().getList(NBT_REGEX, Constants.NBT.TAG_STRING).size() : 0;
+        CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
+        return tag != null ? tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING).size() : 0;
     }
 }

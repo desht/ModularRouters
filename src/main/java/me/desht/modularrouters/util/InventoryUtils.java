@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -45,36 +46,12 @@ public class InventoryUtils {
         }
     }
 
-    /**
-     * Get the inventory (item handler) at the given place, from the given side.
-     * @param world the world
-     * @param pos block position of the item handler TE
-     * @param side side to access the TE from (may be null)
-     * @return the item handler, or null if there is none
-     */
-    public static IItemHandler getInventory(World world, BlockPos pos, @Nullable Direction side) {
-        // Adapted from Botania's InventoryHelper class (which was in turned adapted from OpenBlocks...)
+    public static LazyOptional<IItemHandler> getInventory(World world, BlockPos pos, @Nullable Direction side) {
         TileEntity te = world.getTileEntity(pos);
         if (te == null) {
-            return null;
+            return LazyOptional.empty();
         }
-
-        // todo 1.13
-//        if (te instanceof TileEntityChest) {
-//            IItemHandler doubleChest = VanillaDoubleChestItemHandler.get(((TileEntityChest) te));
-//            if (doubleChest != VanillaDoubleChestItemHandler.NO_ADJACENT_CHESTS_INSTANCE)
-//                return doubleChest;
-//        }
-
-        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side).orElseGet(null);
-
-//        IItemHandler ret = te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) ?
-//                te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) : null;
-//
-//        if (ret == null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
-//            ret = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-
-//        return ret;
+        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
     }
 
     /**

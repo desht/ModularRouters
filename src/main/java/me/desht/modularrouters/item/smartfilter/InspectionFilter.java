@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.GuiInspectionFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
@@ -52,8 +53,8 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     public static ComparisonList getComparisonList(ItemStack filterStack) {
-        if (filterStack.hasTag()) {
-            CompoundNBT compound = filterStack.getTag();
+        CompoundNBT compound = filterStack.getChildTag(ModularRouters.MODID);
+        if (compound != null) {
             boolean matchAll = compound.getBoolean(NBT_MATCH_ALL);
             List<Comparison> l = Lists.newArrayList();
             ListNBT items = compound.getList(NBT_ITEMS, Constants.NBT.TAG_STRING);
@@ -68,7 +69,7 @@ public class InspectionFilter extends ItemSmartFilter {
 
     private void setComparisonList(ItemStack filterStack, ComparisonList comparisonList) {
         ListNBT l = comparisonList.items.stream().map(comp -> new StringNBT(comp.toString())).collect(Collectors.toCollection(ListNBT::new));
-        CompoundNBT compound = filterStack.getOrCreateTag();
+        CompoundNBT compound = filterStack.getOrCreateChildTag(ModularRouters.MODID);
         compound.putBoolean(NBT_MATCH_ALL, comparisonList.isMatchAll());
         compound.put(NBT_ITEMS, l);
     }

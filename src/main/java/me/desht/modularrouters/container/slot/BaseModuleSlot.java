@@ -1,5 +1,6 @@
 package me.desht.modularrouters.container.slot;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
@@ -42,11 +43,9 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
     public void putStack(ItemStack stack) {
         // bit of a hack, but ensures bulk item filter NBT is properly init'd
         if (stack.getItem() instanceof BulkItemFilter) {
-            CompoundNBT compound = stack.getTag();
+            CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
             if (compound == null || !compound.contains(ModuleHelper.NBT_FILTER)) {
-                compound = new CompoundNBT();
-                compound.put(ModuleHelper.NBT_FILTER, new ListNBT());
-                stack.setTag(compound);
+                stack.getOrCreateChildTag(ModularRouters.MODID).put(ModuleHelper.NBT_FILTER, new ListNBT());
             }
         }
 

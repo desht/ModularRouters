@@ -21,7 +21,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
@@ -89,15 +88,12 @@ public class BulkItemFilter extends ItemSmartFilter {
         if (world.isRemote) {
             return ActionResultType.SUCCESS;
         } else if (player.isSneaking()) {
-            IItemHandler handler = InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace());
-            if (handler != null) {
+            return InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
                 world.playSound(null, ctx.getPos(), ModSounds.SUCCESS, SoundCategory.MASTER, 1.0f, 1.0f);
                 return ActionResultType.SUCCESS;
-            } else {
-                return super.onItemUse(ctx);
-            }
+            }).orElse(super.onItemUse(ctx));
         } else {
             return ActionResultType.PASS;
         }
@@ -130,12 +126,7 @@ public class BulkItemFilter extends ItemSmartFilter {
 
     @Override
     public int getSize(ItemStack filterStack) {
-        if (filterStack.hasTag()) {
-            CompoundNBT compound = filterStack.getTag();
-            return BaseModuleHandler.getFilterSize(filterStack, ModuleHelper.NBT_FILTER);
-        } else {
-            return 0;
-        }
+        return BaseModuleHandler.getFilterSize(filterStack, ModuleHelper.NBT_FILTER);
     }
 
     private int mergeInventory(ItemStack filterStack, IItemHandler srcInventory) {

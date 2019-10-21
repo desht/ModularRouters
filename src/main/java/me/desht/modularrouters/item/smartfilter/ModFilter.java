@@ -43,8 +43,9 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     public static List<String> getModList(ItemStack filterStack) {
-        if (filterStack.hasTag()) {
-            ListNBT items = filterStack.getTag().getList(NBT_MODS, Constants.NBT.TAG_STRING);
+        CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
+        if (tag != null) {
+            ListNBT items = tag.getList(NBT_MODS, Constants.NBT.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
             for (int i = 0; i < items.size(); i++) {
                 res.add(items.getString(i));
@@ -57,14 +58,13 @@ public class ModFilter extends ItemSmartFilter {
 
     private static void setModList(ItemStack filterStack, List<String> mods) {
         ListNBT list = mods.stream().map(StringNBT::new).collect(Collectors.toCollection(ListNBT::new));
-        filterStack.getOrCreateTag().put(NBT_MODS, list);
+        filterStack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_MODS, list);
     }
 
     @Override
     public void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
         super.addExtraInformation(stack, list);
-        CompoundNBT compound = stack.getTag();
-        if (compound != null) {
+        if (stack.getChildTag(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
             list.add(new TranslationTextComponent("itemText.misc.modFilter.count", l.size()));
             list.addAll(l.stream()
@@ -123,7 +123,7 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     @Override
-    public int getSize(ItemStack filterStack) {
-        return filterStack.hasTag() ? filterStack.getTag().getList(NBT_MODS, Constants.NBT.TAG_STRING).size() : 0;
+    public int getSize(ItemStack filterStack) {CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
+        return tag != null ? tag.getList(NBT_MODS, Constants.NBT.TAG_STRING).size() : 0;
     }
 }

@@ -54,18 +54,28 @@ public abstract class TargetedModule extends ItemModule {
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
         if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
-            if (InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()) != null) {
+            return InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()).map(handler -> {
                 if (getMaxTargets() == 1) {
                     handleSingleTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 } else {
                     handleMultiTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 }
                 return ActionResultType.SUCCESS;
-            } else {
-                return super.onItemUse(ctx);
-            }
+            }).orElse(super.onItemUse(ctx));
         } else {
             return ActionResultType.PASS;
+        }
+    }
+
+    private void handleSingleTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {
+        if (!world.isRemote) {
+            setTarget(stack, world, pos, face);
+            ModuleTarget tgt = getTarget(stack, true);
+            if (tgt != null) {
+                ITextComponent msg = xlate("chatText.misc.targetSet").appendSibling(tgt.getTextComponent());
+                player.sendStatusMessage(msg.applyTextStyle(TextFormatting.YELLOW), true);
+                PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.3f);
+            }
         }
     }
 
@@ -95,18 +105,6 @@ public abstract class TargetedModule extends ItemModule {
 
             PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, removing ? 1.1f : 1.3f);
             setTargets(stack, targets);
-        }
-    }
-
-    private void handleSingleTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {
-        if (!world.isRemote) {
-            setTarget(stack, world, pos, face);
-            ModuleTarget tgt = getTarget(stack, true);
-            if (tgt != null) {
-                ITextComponent msg = xlate("chatText.misc.targetSet").appendSibling(tgt.getTextComponent());
-                player.sendStatusMessage(msg.applyTextStyle(TextFormatting.YELLOW), true);
-                PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.3f);
-            }
         }
     }
 

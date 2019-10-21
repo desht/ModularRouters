@@ -86,8 +86,6 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         FRONT(0x10),
         BACK(0x20);
 
-        private static RelativeDirection[] realSides = new RelativeDirection[] { FRONT, BACK, UP, DOWN, LEFT, RIGHT };
-
         private final int mask;
         RelativeDirection(int mask) {
             this.mask = mask;
@@ -174,7 +172,6 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(stack, world, list, flag);
-
 
         TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
         if (router != null) {

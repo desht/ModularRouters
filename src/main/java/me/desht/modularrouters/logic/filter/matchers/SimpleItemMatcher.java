@@ -17,10 +17,8 @@ public class SimpleItemMatcher implements IItemMatcher {
 
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        if (Item.getIdFromItem(filterStack.getItem()) != Item.getIdFromItem(stack.getItem())) {
-            return !flags.isIgnoreTags() && tagMatcher.match(stack);
-        }
-        if (!flags.isIgnoreDamage() && filterStack.getDamage() != stack.getDamage()) {
+        if (Item.getIdFromItem(filterStack.getItem()) != Item.getIdFromItem(stack.getItem())
+                || !flags.isIgnoreDamage() && filterStack.getDamage() != stack.getDamage()) {
             return !flags.isIgnoreTags() && tagMatcher.match(stack);
         }
         if (!flags.isIgnoreNBT()) {

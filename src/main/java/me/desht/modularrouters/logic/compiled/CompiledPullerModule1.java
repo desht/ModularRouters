@@ -6,7 +6,6 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
@@ -21,8 +20,7 @@ public class CompiledPullerModule1 extends CompiledModule {
             if (!validateRange(router, getTarget())) {
                 return false;
             }
-            IItemHandler handler = InventoryUtils.getInventory(router.getWorld(), getTarget().gPos.getPos(), getTarget().face);
-            if (handler != null) {
+            return InventoryUtils.getInventory(router.getWorld(), getTarget().gPos.getPos(), getTarget().face).map(handler -> {
                 ItemStack taken = transferToRouter(handler, router);
                 if (!taken.isEmpty()) {
                     if (ConfigHandler.MODULE.pullerParticles.get()) {
@@ -30,7 +28,8 @@ public class CompiledPullerModule1 extends CompiledModule {
                     }
                     return true;
                 }
-            }
+                return false;
+            }).orElse(false);
         }
         return false;
     }
