@@ -2,13 +2,10 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
@@ -16,8 +13,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
@@ -122,7 +117,7 @@ public class MiscUtil {
 
     public static String getFluidName(ItemStack stack) {
         return FluidUtil.getFluidContained(stack)
-                .map(fluidStack -> fluidStack.getFluid().getLocalizedName(fluidStack))
+                .map(fluidStack -> fluidStack.getFluid().getAttributes().getDisplayName(fluidStack).getString())
                 .orElse(stack.getDisplayName().getString());
     }
 

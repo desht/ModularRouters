@@ -4,9 +4,8 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule1;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
-
-import java.awt.*;
 
 public class SenderModule1 extends ItemModule implements IRangedModule {
     public SenderModule1(Properties props) {
@@ -29,7 +28,7 @@ public class SenderModule1 extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(221, 255, 163);
+    public TintColor getItemTint() {
+        return new TintColor(221, 255, 163);
     }
 }

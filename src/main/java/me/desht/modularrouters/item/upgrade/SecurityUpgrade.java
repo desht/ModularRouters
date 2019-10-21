@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.IPlayerOwned;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -55,8 +55,8 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(64, 64, 255);
+    public TintColor getItemTint() {
+        return new TintColor(64, 64, 255);
     }
 
     private Set<UUID> getPlayerIDs(ItemStack stack) {

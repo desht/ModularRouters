@@ -38,20 +38,20 @@ public class GuiModuleFlinger extends GuiModule {
                 FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED);
         speedField.setPrecision(2);
         speedField.setValue(cfm.getSpeed());
-        speedField.func_212954_a(str -> sendModuleSettingsDelayed(5));
+        speedField.setResponder(str -> sendModuleSettingsDelayed(5));
         speedField.setIncr(0.1f, 0.5f, 10.0f);
         speedField.useGuiTextBackground();
 
         pitchField = new FloatTextField(manager, font, guiLeft + 152, guiTop + 37, 35, 12,
                 FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH);
         pitchField.setValue(cfm.getPitch());
-        pitchField.func_212954_a(str -> sendModuleSettingsDelayed(5));
+        pitchField.setResponder(str -> sendModuleSettingsDelayed(5));
         pitchField.useGuiTextBackground();
 
         yawField = new FloatTextField(manager, font, guiLeft + 152, guiTop + 55, 35, 12,
                 FlingerModule.MIN_YAW, FlingerModule.MAX_YAW);
         yawField.setValue(cfm.getYaw());
-        yawField.func_212954_a(str -> sendModuleSettingsDelayed(5));
+        yawField.setResponder(str -> sendModuleSettingsDelayed(5));
         yawField.useGuiTextBackground();
 
         manager.focus(1);  // field 0 is the regulator amount textfield

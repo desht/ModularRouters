@@ -11,7 +11,6 @@ import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.CountedItemStacks;
-import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

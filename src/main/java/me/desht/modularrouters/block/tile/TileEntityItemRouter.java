@@ -187,7 +187,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         setSidesOpen(newSidesOpen);
 
         if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
-            setCamouflage(CamouflageUpgrade.readFromNBT(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
+            setCamouflage(NBTUtil.readBlockState(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }

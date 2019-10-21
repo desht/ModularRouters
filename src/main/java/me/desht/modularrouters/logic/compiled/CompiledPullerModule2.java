@@ -6,7 +6,6 @@ import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ItemBeamMessage;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;

@@ -7,8 +7,8 @@
   ],
   "key": {
     "M": { "item": "modularrouters:augment_core" },
-    "S": { "item": "minecraft:stick" },
-    "Q": { "item": "minecraft:quartz" }
+    "S": { "tag": "forge:rods/wooden" },
+    "Q": { "tag": "forge:gems/quartz" }
   },
-  "result": { "item": "modularrouters:range_down_augment" }
+  "result": { "item": "modularrouters:range_down_augment",  "count": 4 }
 }

@@ -6,9 +6,9 @@
     "GGG"
   ],
   "key": {
-    "R": { "item": "minecraft:redstone" },
+    "R": { "tag": "forge:dusts/redstone" },
     "P": { "item": "minecraft:paper" },
-    "G": { "item": "minecraft:gold_nugget" }
+    "G": { "tag": "forge:nuggets/gold" }
   },
   "result": { "item": "modularrouters:blank_module", "count": 6 }
 }

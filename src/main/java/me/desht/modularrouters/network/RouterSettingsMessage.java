@@ -3,7 +3,6 @@ package me.desht.modularrouters.network;
 import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

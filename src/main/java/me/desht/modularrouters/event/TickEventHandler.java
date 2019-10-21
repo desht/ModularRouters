@@ -1,6 +1,5 @@
 package me.desht.modularrouters.event;
 
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

@@ -7,13 +7,13 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -50,8 +50,8 @@ public class DistributorModule extends SenderModule2 {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(240, 240, 60);
+    public TintColor getItemTint() {
+        return new TintColor(240, 240, 60);
     }
 
     @Override

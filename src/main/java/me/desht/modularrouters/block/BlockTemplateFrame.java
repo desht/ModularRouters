@@ -16,7 +16,7 @@ public class BlockTemplateFrame extends BlockCamo {
     private static final String BLOCK_NAME = "template_frame";
 
     public BlockTemplateFrame() {
-        super(Properties.create(Material.SNOW));
+        super(Properties.create(Material.GLASS));
     }
 
     @Nullable

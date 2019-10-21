@@ -7,6 +7,7 @@ import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.awt.*;
 import java.util.List;
 
 public class PlayerModule extends ItemModule implements IPlayerOwned {
@@ -70,7 +70,7 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(255, 208, 144);
+    public TintColor getItemTint() {
+        return new TintColor(255, 208, 144);
     }
 }

@@ -35,7 +35,7 @@ public class GuiModuleDetector extends GuiModule {
 
         intField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
         intField.setValue(cdm.getSignalLevel());
-        intField.func_212954_a((str) -> sendModuleSettingsDelayed(5));
+        intField.setResponder((str) -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);
         intField.useGuiTextBackground();
 

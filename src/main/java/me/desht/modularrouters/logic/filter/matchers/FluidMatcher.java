@@ -1,8 +1,8 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
 import me.desht.modularrouters.logic.filter.Filter;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 

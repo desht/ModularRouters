@@ -5,12 +5,12 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.awt.*;
 import java.util.List;
 
 public class FlingerModule extends DropperModule {
@@ -43,7 +43,7 @@ public class FlingerModule extends DropperModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(230, 204, 240);
+    public TintColor getItemTint() {
+        return new TintColor(230, 204, 240);
     }
 }

@@ -4,13 +4,11 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.awt.*;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ColorHandlers {
@@ -22,11 +20,11 @@ public class ColorHandlers {
                     switch (tintIndex) {
                         case 0:
                         case 2:
-                            return Color.WHITE.getRGB();
+                            return TintColor.WHITE.getRGB();
                         case 1:
                             return ((ModItems.ITintable) stack.getItem()).getItemTint().getRGB();
                         default:
-                            return Color.BLACK.getRGB();  // shouldn't get here
+                            return TintColor.BLACK.getRGB();  // shouldn't get here
                     }
                 }, entry));
     }

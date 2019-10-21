@@ -9,16 +9,14 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.client.resources.I18n;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fluids.UniversalBucket;
 
-import java.awt.*;
 import java.util.List;
 
 public class VacuumModule extends ItemModule implements IRangedModule {
@@ -43,14 +41,9 @@ public class VacuumModule extends ItemModule implements IRangedModule {
         CompiledVacuumModule cvm = new CompiledVacuumModule(null, itemstack);
         if (cvm.isXpMode()) {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
-            String modName = ModNameCache.getModName(type.getModId());
-            String title = type.getIcon().getItem() instanceof UniversalBucket ?
-                    MiscUtil.getFluidName(type.getIcon()) : type.getIcon().getDisplayName().getString();
-
-            String s = I18n.format("guiText.label.xpVacuum") + ": "
-                    + TextFormatting.AQUA + title + TextFormatting.BLUE + TextFormatting.ITALIC + " (" + modName + ")";
-            list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new StringTextComponent(s)));
-
+            ITextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId())).applyTextStyle(TextFormatting.BLUE);
+            ITextComponent title = type.getDisplayName().applyTextStyle(TextFormatting.AQUA);
+            list.add(new TranslationTextComponent("guiText.label.xpVacuum").appendText(": ").appendSibling(title).appendSibling(modName));
             if (cvm.isAutoEjecting() && !type.isSolid()) {
                 list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new TranslationTextComponent("guiText.tooltip.xpVacuum.ejectFluid")));
             }
@@ -73,7 +66,7 @@ public class VacuumModule extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(120, 48, 191);
+    public TintColor getItemTint() {
+        return new TintColor(120, 48, 191);
     }
 }

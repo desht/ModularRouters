@@ -15,7 +15,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.lwjgl.system.CallbackI;
 
 import java.util.Objects;
 
@@ -24,7 +23,6 @@ import java.util.Objects;
  * and face of the block where insertion/extraction will occur.
  */
 public class ModuleTarget {
-//    public final int dimId;
     public final GlobalPos gPos;
     public final Direction face;
     public final String blockTranslationKey;

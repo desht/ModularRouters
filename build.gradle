@@ -83,17 +83,16 @@ dependencies {
     compile fg.deobf (project.dependencies.create("mcjty.theoneprobe:TheOneProbe-1.14:${config.top_version}") {
         transitive = false
     })
-    compile fg.deobf (project.dependencies.create("mcp.mobius.waila:Hwyla:${config.waila_version}:api") {
+    compile fg.deobf (project.dependencies.create("mcp.mobius.waila:Hwyla:${config.waila_version}") {
         transitive = false
     })
-    compile fg.deobf (project.dependencies.create("mezz.jei:jei-1.14.4:${config.jei_version}:api") {
-        transitive = false
-    })
+    runtime fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
     //deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
     //deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"
     //deobfCompile "cofh:RedstoneFlux:1.12-${config.redstone_flux_version}:universal"
     //compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
     //compile "team.chisel.ctm:CTM:MC1.12.2-0.3.2.18:api"
+//    deobf 'mezz.jei:jei:1.14.4-6.0.0.18:dev'
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
 }
 

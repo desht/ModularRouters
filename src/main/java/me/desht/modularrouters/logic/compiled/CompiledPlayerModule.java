@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
@@ -44,7 +45,7 @@ public class CompiledPlayerModule extends CompiledModule {
     public CompiledPlayerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getTag();
+        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
         if (compound != null) {
             playerName = ((PlayerModule) stack.getItem()).getOwnerName(stack);
             playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);

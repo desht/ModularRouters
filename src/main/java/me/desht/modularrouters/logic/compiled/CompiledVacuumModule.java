@@ -7,9 +7,9 @@ import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
@@ -20,11 +20,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -92,7 +90,7 @@ public class CompiledVacuumModule extends CompiledModule {
             TileEntity te = router.getWorld().getTileEntity(router.getPos().offset(face));
             if (te != null) {
                 te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()).ifPresent(handler -> {
-                    if (handler.fill(xpJuiceStack, false) > 0) {
+                    if (handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
                         fluidReceiver = te;
                         fluidReceiverFace = face.getOpposite();
                     }
@@ -206,10 +204,10 @@ public class CompiledVacuumModule extends CompiledModule {
 
     private boolean doFluidXPFill(ExperienceOrbEntity orb, IFluidHandler xpHandler) {
         FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getXpValue() * xpCollectionType.getXpRatio() + xpBuffered);
-        int filled = xpHandler.fill(xpStack, true);
-        if (filled < xpStack.amount) {
+        int filled = xpHandler.fill(xpStack, IFluidHandler.FluidAction.EXECUTE);
+        if (filled < xpStack.getAmount()) {
             // tank is too full to store entire amount...
-            xpBuffered = xpStack.amount - filled;
+            xpBuffered = xpStack.getAmount() - filled;
             return false;
         } else {
             xpBuffered = 0;
@@ -219,11 +217,13 @@ public class CompiledVacuumModule extends CompiledModule {
 
     private int findSpaceForXPFluid(IFluidHandler xpHandler) {
         int space = 0;
-        for (IFluidTankProperties tank : xpHandler.getTankProperties()) {
-            if (tank.canFillFluidType(xpJuiceStack)) {
-                if (tank.getContents() == null || tank.getContents().amount == 0
-                        || tank.getContents().getFluid().getName().equals(xpCollectionType.getRegistryName()))
-                    space += (tank.getCapacity() - (tank.getContents() == null ? 0 : tank.getContents().amount)) / xpCollectionType.getXpRatio();
+
+        for (int idx = 0; idx < xpHandler.getTanks(); idx++) {
+            if (xpHandler.isFluidValid(idx, xpJuiceStack)) {
+                FluidStack fluidStack = xpHandler.getFluidInTank(idx);
+                if (fluidStack.isEmpty() || fluidStack.getFluid() == xpCollectionType.getFluid()) {
+                    space += (xpHandler.getTankCapacity(idx) - fluidStack.getAmount()) / xpCollectionType.getXpRatio();
+                }
             }
         }
         return space;

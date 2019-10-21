@@ -4,8 +4,10 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.core.ModSounds;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -13,7 +15,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import java.awt.*;
 import java.util.List;
 
 public class SyncUpgrade extends ItemUpgrade {
@@ -35,16 +36,19 @@ public class SyncUpgrade extends ItemUpgrade {
 
     public static int getTunedValue(ItemStack stack) {
         if (!(stack.getItem() instanceof SyncUpgrade) || !stack.hasTag()) return 0;
-        return stack.getTag().getInt(NBT_TUNING);
+        CompoundNBT tag = stack.getChildTag(ModularRouters.MODID);
+        return tag == null ? 0 : tag.getInt(NBT_TUNING);
     }
 
     public static void setTunedValue(ItemStack stack, int newValue) {
-        stack.getOrCreateTag().putInt(NBT_TUNING, newValue);
+        if (stack.getItem() instanceof SyncUpgrade) {
+            stack.getOrCreateChildTag(ModularRouters.MODID).putInt(NBT_TUNING, newValue);
+        }
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(255, 255, 192);
+    public TintColor getItemTint() {
+        return new TintColor(255, 255, 192);
     }
 
     @Override

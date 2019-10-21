@@ -3,9 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVoidModule;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
-
-import java.awt.*;
 
 public class VoidModule extends ItemModule {
     public VoidModule(Properties props) {
@@ -23,7 +22,7 @@ public class VoidModule extends ItemModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return Color.RED;
+    public TintColor getItemTint() {
+        return new TintColor(255, 0, 0);
     }
 }

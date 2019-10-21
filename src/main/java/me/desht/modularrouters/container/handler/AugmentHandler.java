@@ -1,5 +1,6 @@
 package me.desht.modularrouters.container.handler;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,7 @@ public class AugmentHandler extends ItemStackHandler {
         super(ItemAugment.SLOTS);
 
         this.holderStack = holderStack;
-        deserializeNBT(holderStack.getOrCreateTag().getCompound(ModuleHelper.NBT_AUGMENTS));
+        deserializeNBT(holderStack.getOrCreateChildTag(ModularRouters.MODID).getCompound(ModuleHelper.NBT_AUGMENTS));
     }
 
     public ItemStack getHolderStack() {
@@ -40,6 +41,6 @@ public class AugmentHandler extends ItemStackHandler {
     }
 
     public void save() {
-        holderStack.getTag().put(ModuleHelper.NBT_AUGMENTS, serializeNBT());
+        holderStack.getOrCreateChildTag(ModularRouters.MODID).put(ModuleHelper.NBT_AUGMENTS, serializeNBT());
     }
 }

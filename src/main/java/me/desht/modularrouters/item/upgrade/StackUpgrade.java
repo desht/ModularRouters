@@ -2,10 +2,10 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
-import java.awt.*;
 import java.util.List;
 
 public class StackUpgrade extends ItemUpgrade {
@@ -25,7 +25,7 @@ public class StackUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(128, 223, 255);
+    public TintColor getItemTint() {
+        return new TintColor(128, 223, 255);
     }
 }

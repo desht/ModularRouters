@@ -7,7 +7,7 @@
   "key": {
     "B": { "item": "modularrouters:blank_upgrade" },
     "U": { "item": "minecraft:bucket" },
-    "G": { "item": "minecraft:glass" }
+    "G": { "tag": "forge:glass" }
   },
   "result": { "item": "modularrouters:fluid_upgrade", "count": 3 }
 }

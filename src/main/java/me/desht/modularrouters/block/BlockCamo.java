@@ -1,7 +1,6 @@
 package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.ICamouflageable;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -73,6 +72,12 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
         ICamouflageable camo = getCamoState(worldIn, pos);
         return camo == null || !camo.extendedMimic() ? super.getBlockHardness(blockState, worldIn, pos) : camo.getCamouflage().getBlockHardness(worldIn, pos);
+    }
+
+    @Override
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        ICamouflageable camo = getCamoState(worldIn, pos);
+        return camo == null || !camo.extendedMimic() ? super.isNormalCube(state, worldIn, pos) : camo.getCamouflage().isNormalCube(worldIn, pos);
     }
 
     @Override

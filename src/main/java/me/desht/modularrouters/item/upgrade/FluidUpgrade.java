@@ -3,11 +3,11 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.awt.*;
 import java.util.List;
 
 public class FluidUpgrade extends ItemUpgrade {
@@ -30,7 +30,7 @@ public class FluidUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(84, 138, 255);
+    public TintColor getItemTint() {
+        return new TintColor(84, 138, 255);
     }
 }

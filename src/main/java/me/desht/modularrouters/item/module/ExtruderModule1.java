@@ -5,13 +5,13 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +51,7 @@ public class ExtruderModule1 extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(227, 174, 27);
+    public TintColor getItemTint() {
+        return new TintColor(227, 174, 27);
     }
 }

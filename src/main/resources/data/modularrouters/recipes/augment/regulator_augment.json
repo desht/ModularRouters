@@ -8,7 +8,7 @@
   "key": {
     "M": { "item": "modularrouters:augment_core" },
     "C": { "item": "minecraft:comparator" },
-    "Q": { "item": "minecraft:quartz" }
+    "Q": { "tag": "forge:gems/quartz" }
   },
   "result": { "item": "modularrouters:regulator_augment" }
 }

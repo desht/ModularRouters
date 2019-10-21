@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.FakePlayerManager;
 import me.desht.modularrouters.util.MiscUtil;
@@ -56,7 +57,7 @@ public class CompiledActivatorModule extends CompiledModule {
     public CompiledActivatorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getTag();
+        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
         if (compound != null) {
             actionType = ActionType.values()[compound.getInt(NBT_ACTION_TYPE)];
             lookDirection = LookDirection.values()[compound.getInt(NBT_LOOK_DIRECTION)];

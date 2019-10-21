@@ -7,9 +7,9 @@
   ],
   "key": {
     "B": { "item": "modularrouters:blank_upgrade" },
-    "Q": { "item": "minecraft:quartz" },
-    "N": { "item": "minecraft:gold_nugget" },
-    "R": { "item": "minecraft:redstone" }
+    "Q": { "tag": "forge:gems/quartz" },
+    "N": { "tag": "forge:nuggets/gold" },
+    "R": { "tag": "forge:dusts/redstone" }
   },
   "result": { "item": "modularrouters:security_upgrade" }
 }

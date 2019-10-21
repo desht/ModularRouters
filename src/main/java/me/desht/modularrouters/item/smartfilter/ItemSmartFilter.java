@@ -7,7 +7,6 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -82,7 +81,7 @@ public abstract class ItemSmartFilter extends ItemBase {
         if (!world.isRemote && filter.hasContainer()) {
             NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, loc), loc::writeBuf);
         } else if (world.isRemote && !hasContainer()) {
-            Minecraft.getInstance().displayGuiScreen(FilterGuiFactory.createGuiForFilter(loc));
+            FilterGuiFactory.openFilterGui(loc);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }

@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * 1) Reopen router GUI when installed module has been edited
  * 2) Reopen module GUI when installed filter has been edited
  * 3) Open installed module GUI
- * 4) Open installed filter GUI (if it has a container)
+ * 4) Open installed filter GUI (only if it is container-based)
  */
 public class OpenGuiMessage {
     private enum Operation {
@@ -80,8 +80,6 @@ public class OpenGuiMessage {
             ServerPlayerEntity player = ctx.get().getSender();
             assert player != null;
             Optional<TileEntityItemRouter> r = locator.routerPos == null ? Optional.empty() : TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos);
-//            final TileEntityItemRouter router = locator.routerPos != null ?
-//                    TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos) : null;
             switch (operation) {
                 case ROUTER:
                     // item router GUI

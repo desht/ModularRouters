@@ -8,7 +8,7 @@
   "key": {
     "B": { "item": "modularrouters:blank_upgrade" },
     "I": { "item": "minecraft:iron_bars" },
-    "O": { "item": "minecraft:obsidian" }
+    "O": { "tag": "forge:obsidian" }
   },
   "result": { "item": "modularrouters:blast_upgrade" }
 }

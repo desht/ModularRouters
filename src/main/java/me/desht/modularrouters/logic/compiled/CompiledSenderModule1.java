@@ -8,7 +8,6 @@ import me.desht.modularrouters.network.ItemBeamMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;

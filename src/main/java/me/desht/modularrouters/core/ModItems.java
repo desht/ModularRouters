@@ -8,6 +8,7 @@ import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.item.upgrade.*;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -19,7 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,7 +158,7 @@ public class ModItems {
     }
 
     public interface ITintable {
-        Color getItemTint();
+        TintColor getItemTint();
     }
 
     public static class All {

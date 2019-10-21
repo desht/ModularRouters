@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -50,7 +49,7 @@ public class GuiModuleFluid extends GuiModule {
         int max = ConfigHandler.ROUTER.baseTickRate.get() * ConfigHandler.ROUTER.fluidMaxTransferRate.get();
         maxTransferField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
         maxTransferField.setValue(cfm.getMaxTransfer());
-        maxTransferField.func_212954_a(str -> sendModuleSettingsDelayed(5));
+        maxTransferField.setResponder(str -> sendModuleSettingsDelayed(5));
         maxTransferField.setIncr(100, 10, 10);
         maxTransferField.useGuiTextBackground();
         manager.focus(0);

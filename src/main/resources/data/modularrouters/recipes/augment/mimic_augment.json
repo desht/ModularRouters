@@ -2,9 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     { "item" : "modularrouters:augment_core" },
-    { "item" : "minecraft:obsidian" },
-    { "item" : "minecraft:redstone" },
-    { "item" : "minecraft:glowstone_dust"}
+    { "tag" : "forge:obsidian" },
+    { "tag" : "forge:dusts/redstone" },
+    { "tag" : "forge:dusts/glowstone"}
   ],
   "result": { "item": "modularrouters:mimic_augment" }
 }

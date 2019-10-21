@@ -3,8 +3,7 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
-
-import java.awt.*;
+import me.desht.modularrouters.util.TintColor;
 
 public class SpeedUpgrade extends ItemUpgrade {
     public SpeedUpgrade(Properties props) {
@@ -20,7 +19,7 @@ public class SpeedUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(224, 32, 32);
+    public TintColor getItemTint() {
+        return new TintColor(224, 32, 32);
     }
 }

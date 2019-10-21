@@ -6,10 +6,10 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,8 +39,8 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(149, 255, 93);
+    public TintColor getItemTint() {
+        return new TintColor(149, 255, 93);
     }
 
     @Override

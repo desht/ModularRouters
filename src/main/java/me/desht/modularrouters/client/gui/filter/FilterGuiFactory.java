@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class FilterGuiFactory {
     /**
-     * Create a GUI for a filter module.
+     * Create a (non-container-based) GUI for a filter module.
      *
      * @param locator the filter location; could be in a player's hand, or in a module (which may or may not be in a router)
      * @return the gui for this type of filter
@@ -31,5 +31,9 @@ public class FilterGuiFactory {
             }
         }
         return null;
+    }
+
+    public static void openFilterGui(MFLocator locator) {
+        Minecraft.getInstance().displayGuiScreen(createGuiForFilter(locator));
     }
 }

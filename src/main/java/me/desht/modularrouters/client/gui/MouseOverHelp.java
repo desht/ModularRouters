@@ -3,6 +3,7 @@ package me.desht.modularrouters.client.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.Rect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -11,7 +12,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -63,10 +63,10 @@ public class MouseOverHelp {
         return null;
     }
 
-    private static void showPopupBox(ContainerScreen screen, FontRenderer fontRenderer, Rectangle rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+    private static void showPopupBox(ContainerScreen screen, FontRenderer fontRenderer, Rect rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
         int boxWidth, boxHeight;
 
-        Rectangle rect2 = new Rectangle(rect);
+        Rect rect2 = new Rect(rect);
 
         if (helpText != null && !helpText.isEmpty()) {
             boxWidth = 0;
@@ -103,7 +103,7 @@ public class MouseOverHelp {
     }
 
     public static class HelpRegion {
-        final Rectangle extent;
+        final Rect extent;
         final List<String> text;
         final Predicate<ContainerScreen> showPredicate;
         static final Predicate<ContainerScreen> YES = guiContainer -> true;
@@ -113,7 +113,7 @@ public class MouseOverHelp {
         }
 
         HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<ContainerScreen> showPredicate) {
-            this.extent = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+            this.extent = new Rect(x1, y1, x2 - x1, y2 - y1);
             this.text = text;
             this.showPredicate = showPredicate;
         }

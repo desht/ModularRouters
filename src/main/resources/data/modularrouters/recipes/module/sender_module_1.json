@@ -3,7 +3,7 @@
   "ingredients": [
     { "item" : "modularrouters:blank_module" },
     { "item" : "minecraft:bow" },
-    { "item" : "minecraft:arrow" }
+    { "tag" : "forge:arrows" }
   ],
   "result": { "item": "modularrouters:sender_module_1" }
 }

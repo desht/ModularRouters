@@ -8,7 +8,6 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
-import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.UniversalBucket;
 
 import java.util.Arrays;
 import java.util.List;
@@ -86,9 +84,8 @@ public class GuiModuleVacuum extends GuiModule {
 
             for (XPCollectionType type : XPCollectionType.values()) {
                 String modName = ModNameCache.getModName(type.getModId());
-                String title = type.getIcon().getItem() instanceof UniversalBucket ?
-                        MiscUtil.getFluidName(type.getIcon()) : type.getIcon().getDisplayName().getString();
-                tips.add(ImmutableList.of(title, TextFormatting.BLUE + "" + TextFormatting.ITALIC + modName));
+                ITextComponent title = type.getDisplayName();
+                tips.add(ImmutableList.of(title.getFormattedText(), TextFormatting.BLUE + "" + TextFormatting.ITALIC + modName));
             }
         }
 

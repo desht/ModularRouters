@@ -5,6 +5,7 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
 import java.util.List;
 
 public class ActivatorModule extends ItemModule {
@@ -53,7 +53,7 @@ public class ActivatorModule extends ItemModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(255, 255, 195);
+    public TintColor getItemTint() {
+        return new TintColor(255, 255, 195);
     }
 }

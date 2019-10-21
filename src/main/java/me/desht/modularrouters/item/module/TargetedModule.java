@@ -177,7 +177,7 @@ public abstract class TargetedModule extends ItemModule {
             ModuleTarget mt = new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
             compound.put(NBT_TARGET, mt.toNBT());
         }
-        stack.setTag(compound);
+        stack.getTag().put(ModularRouters.MODID, compound);
     }
 
     /**
@@ -199,7 +199,7 @@ public abstract class TargetedModule extends ItemModule {
      * @return targeting data
      */
     public static ModuleTarget getTarget(ItemStack stack, boolean checkBlockName) {
-        CompoundNBT compound = stack.getTag();
+        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
         if (compound != null && compound.getTagId(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
             ModuleTarget target = ModuleTarget.fromNBT(compound.getCompound(NBT_TARGET));
             if (checkBlockName) {
@@ -221,7 +221,7 @@ public abstract class TargetedModule extends ItemModule {
     public static Set<ModuleTarget> getTargets(ItemStack stack, boolean checkBlockName) {
         Set<ModuleTarget> result = Sets.newHashSet();
 
-        CompoundNBT compound = stack.getTag();
+        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
         if (compound != null && compound.getTagId(NBT_MULTI_TARGET) == Constants.NBT.TAG_LIST) {
             ListNBT list = compound.getList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
@@ -244,7 +244,7 @@ public abstract class TargetedModule extends ItemModule {
             list.add(target.toNBT());
         }
         compound.put(NBT_MULTI_TARGET, list);
-        stack.setTag(compound);
+        stack.getTag().put(ModularRouters.MODID, compound);
     }
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {

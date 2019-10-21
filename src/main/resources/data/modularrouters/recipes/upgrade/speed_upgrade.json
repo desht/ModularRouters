@@ -6,11 +6,11 @@
     "GZG"
   ],
   "key": {
-    "R": { "item": "minecraft:redstone" },
     "B": { "item": "modularrouters:blank_upgrade" },
+    "R": { "tag": "forge:dusts/redstone" },
     "N": { "tag": "forge:nuggets/gold" },
-    "G": { "item": "minecraft:gunpowder" },
-    "Z": { "item": "minecraft:blaze_rod" }
+    "G": { "tag": "forge:gunpowder" },
+    "Z": { "tag": "forge:rods/blaze" }
   },
   "result": { "item": "modularrouters:speed_upgrade" }
 }

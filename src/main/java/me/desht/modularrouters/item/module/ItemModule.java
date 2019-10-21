@@ -20,6 +20,7 @@ import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -47,7 +48,6 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +124,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     public abstract CompiledModule compile(TileEntityItemRouter router, ItemStack stack);
 
-    public abstract Color getItemTint();
+    public abstract TintColor getItemTint();
 
     public boolean isDirectional() {
         return true;

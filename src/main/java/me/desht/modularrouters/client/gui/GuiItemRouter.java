@@ -21,7 +21,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-import java.awt.*;
 import java.util.List;
 
 public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> implements ISendToServer, IHasContainer<ContainerItemRouter> {
@@ -62,11 +61,11 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String title = I18n.format("block.modularrouters.item_router");
-        font.drawString(title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, Color.darkGray.getRGB());
-        font.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, Color.darkGray.getRGB());
-        font.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, Color.darkGray.getRGB());
-        font.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, Color.darkGray.getRGB());
-        font.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, Color.darkGray.getRGB());
+        font.drawString(title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, 0xFF404040);
+        font.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
+        font.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0xFF404040);
     }
 
     @Override

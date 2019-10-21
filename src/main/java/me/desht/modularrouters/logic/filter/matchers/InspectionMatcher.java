@@ -8,9 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -180,10 +178,9 @@ public class InspectionMatcher implements IItemMatcher {
                     .map(handler -> {
                         int total = 0;
                         int max = 0;
-                        for (IFluidTankProperties p : handler.getTankProperties()) {
-                            FluidStack fluidStack = p.getContents();
-                            max += p.getCapacity();
-                            if (fluidStack != null) total += fluidStack.amount;
+                        for (int idx = 0; idx < handler.getTanks(); idx++) {
+                            max += handler.getTankCapacity(idx);
+                            total += handler.getFluidInTank(idx).getAmount();
                         }
                         return Optional.of(asPercentage(total, max));
                     })

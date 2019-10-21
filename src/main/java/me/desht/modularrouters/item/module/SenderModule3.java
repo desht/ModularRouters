@@ -5,10 +5,10 @@ import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule3;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,8 +33,8 @@ public class SenderModule3 extends TargetedModule implements IPositionProvider {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(25, 255, 11);
+    public TintColor getItemTint() {
+        return new TintColor(25, 255, 11);
     }
 
     @Override

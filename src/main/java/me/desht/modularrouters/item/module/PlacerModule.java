@@ -3,9 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlacerModule;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
-
-import java.awt.*;
 
 public class PlacerModule extends ItemModule {
     public PlacerModule(Properties props) {
@@ -18,7 +17,7 @@ public class PlacerModule extends ItemModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(240, 208, 208);
+    public TintColor getItemTint() {
+        return new TintColor(240, 208, 208);
     }
 }

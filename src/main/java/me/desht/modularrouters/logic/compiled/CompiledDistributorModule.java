@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -34,7 +35,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     public CompiledDistributorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getTag();
+        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
         if (compound != null) {
             distributionStrategy = DistributionStrategy.values()[compound.getInt(NBT_STRATEGY)];
             if (distributionStrategy == DistributionStrategy.FURTHEST_FIRST) {

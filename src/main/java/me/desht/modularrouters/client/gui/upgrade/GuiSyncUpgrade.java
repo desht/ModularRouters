@@ -45,7 +45,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
         TextFieldManager manager = getTextFieldManager().clear();
         IntegerTextField intField = new IntegerTextField(manager, font,
                 xPos + 77, yPos + 27, 25, 16, 0, ConfigHandler.ROUTER.baseTickRate.get() - 1);
-        intField.func_212954_a((str) -> {
+        intField.setResponder((str) -> {
             tunedValue = str.isEmpty() ? 0 : Integer.parseInt(str);
             sendSettingsDelayed(5);
         });

@@ -8,7 +8,7 @@
   "key": {
     "M": { "item": "modularrouters:augment_core" },
     "T": { "item": "minecraft:redstone_torch" },
-    "R": { "item": "minecraft:redstone" }
+    "R": { "tag": "forge:dusts/redstone" }
   },
   "result": { "item": "modularrouters:redstone_augment" }
 }

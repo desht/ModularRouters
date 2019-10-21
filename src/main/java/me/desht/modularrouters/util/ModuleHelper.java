@@ -1,5 +1,6 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -7,7 +8,6 @@ import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -24,7 +24,7 @@ public class ModuleHelper {
 
     @Nonnull
     public static CompoundNBT validateNBT(ItemStack stack) {
-        CompoundNBT compound = stack.getOrCreateTag();
+        CompoundNBT compound = stack.getOrCreateChildTag(ModularRouters.MODID);
         if (compound.getTagId(NBT_FLAGS) != Constants.NBT.TAG_BYTE) {
             byte flags = 0x0;
             for (ModuleFlags b : ModuleFlags.values()) {
@@ -66,7 +66,6 @@ public class ModuleHelper {
     }
 
     public static ItemModule.RelativeDirection getDirectionFromNBT(ItemStack stack) {
-
         if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isDirectional()) {
             CompoundNBT compound = validateNBT(stack);
             return ItemModule.RelativeDirection.values()[(compound.getByte(NBT_FLAGS) & 0x70) >> 4];
@@ -94,10 +93,10 @@ public class ModuleHelper {
         }
     }
 
-    public static ListNBT getFilterItems(ItemStack stack) {
-        CompoundNBT compound = validateNBT(stack);
-        return compound.getList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-    }
+//    public static ListNBT getFilterItems(ItemStack stack) {
+//        CompoundNBT compound = validateNBT(stack);
+//        return compound.getList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
+//    }
 
     public static int getRangeModifier(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);

@@ -3,9 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.logic.compiled.CompiledDropperModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
-
-import java.awt.*;
 
 public class DropperModule extends ItemModule {
     public DropperModule(Properties props) {
@@ -18,7 +17,7 @@ public class DropperModule extends ItemModule {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(230, 204, 240);
+    public TintColor getItemTint() {
+        return new TintColor(230, 204, 240);
     }
 }

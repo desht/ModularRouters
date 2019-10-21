@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item.upgrade;
 
-import java.awt.*;
+import me.desht.modularrouters.util.TintColor;
 
 public class MufflerUpgrade extends ItemUpgrade {
     public MufflerUpgrade(Properties props) {
@@ -8,7 +8,7 @@ public class MufflerUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(255, 255, 195);
+    public TintColor getItemTint() {
+        return new TintColor(255, 255, 195);
     }
 }

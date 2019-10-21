@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item.upgrade;
 
-import java.awt.*;
+import me.desht.modularrouters.util.TintColor;
 
 public class BlastUpgrade extends ItemUpgrade {
     public BlastUpgrade(Properties props) {
@@ -8,7 +8,7 @@ public class BlastUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public Color getItemTint() {
-        return new Color(144, 0, 0);
+    public TintColor getItemTint() {
+        return new TintColor(144, 0, 0);
     }
 }

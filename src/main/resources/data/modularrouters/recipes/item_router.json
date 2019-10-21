@@ -6,7 +6,7 @@
     "IBI"
   ],
   "key": {
-    "I": { "item": "minecraft:iron_ingot" },
+    "I": { "tag": "forge:ingots/iron" },
     "B": { "item": "minecraft:iron_bars" },
     "M": { "item": "modularrouters:blank_module" }
   },

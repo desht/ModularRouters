@@ -1,14 +1,13 @@
 package me.desht.modularrouters.item.upgrade;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,7 +28,8 @@ public class CamouflageUpgrade extends ItemUpgrade {
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
-        if (itemstack.hasTag() && itemstack.getTag().contains(NBT_STATE_NAME)) {
+        CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
+        if (tag != null && tag.contains(NBT_STATE_NAME)) {
             list.add(MiscUtil.xlate("itemText.camouflage.held")
                     .appendText(TextFormatting.AQUA.toString())
                     .appendSibling(getCamoStateDisplayName(itemstack)));
@@ -39,29 +39,22 @@ public class CamouflageUpgrade extends ItemUpgrade {
     @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
+
         router.setCamouflage(getCamoState(stack));
     }
 
     private static void setCamoState(ItemStack stack, BlockState camoState) {
-        stack.getOrCreateTag().put(NBT_STATE_NAME, NBTUtil.writeBlockState(camoState));
-    }
-
-    public static BlockState readFromNBT(CompoundNBT compound) {
-        return NBTUtil.readBlockState(compound);
+        stack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_STATE_NAME, NBTUtil.writeBlockState(camoState));
     }
 
     private static BlockState getCamoState(ItemStack stack) {
-        return stack.hasTag() ? readFromNBT(stack.getTag().getCompound(NBT_STATE_NAME)) : null;
+        CompoundNBT tag = stack.getChildTag(ModularRouters.MODID);
+        return tag != null ? NBTUtil.readBlockState(tag.getCompound(NBT_STATE_NAME)) : null;
     }
 
     private static ITextComponent getCamoStateDisplayName(ItemStack stack) {
         BlockState state = getCamoState(stack);
-        if (state != null) {
-            Block b = state.getBlock();
-            Item item = b.asItem();
-            return new ItemStack(item).getDisplayName();
-        }
-        return new StringTextComponent("<?>");
+        return state != null ? new ItemStack(state.getBlock().asItem()).getDisplayName() : new StringTextComponent("<?>");
     }
 
     @Override

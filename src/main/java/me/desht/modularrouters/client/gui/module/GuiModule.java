@@ -25,9 +25,7 @@ import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.util.MFLocator;
-import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.resources.I18n;
@@ -49,16 +47,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
 import java.util.Optional;
 
 public class GuiModule extends GuiContainerBase<ContainerModule> implements IContainerListener, IMouseOverHelpProvider, ISendToServer {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
 
     // locations of extra textures on the gui module texture sheet
-    static final Point SMALL_TEXTFIELD_XY = new Point(0, 198);
-    static final Point LARGE_TEXTFIELD_XY = new Point(0, 212);
-    static final Point BUTTON_XY = new Point(0, 226);
+    static final XYPoint SMALL_TEXTFIELD_XY = new XYPoint(0, 198);
+    static final XYPoint LARGE_TEXTFIELD_XY = new XYPoint(0, 212);
+    static final XYPoint BUTTON_XY = new XYPoint(0, 226);
 
     private static final int GUI_HEIGHT = 198;
     private static final int GUI_WIDTH = 192;
@@ -135,7 +132,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         regulatorTextField = new IntegerTextField(manager, font,
                 guiLeft + 156 + xOff, guiTop + 75, 20, 12, range.getMinimum(), range.getMaximum());
         regulatorTextField.setValue(regulatorAmount);
-        regulatorTextField.func_212954_a((str) -> {
+        regulatorTextField.setResponder((str) -> {
             regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);
             sendModuleSettingsDelayed(5);
         });
@@ -236,7 +233,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        Color c = getGuiBackgroundTint();
+        TintColor c = getGuiBackgroundTint();
         GlStateManager.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
         blit(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
@@ -245,13 +242,13 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         }
     }
 
-    private Color getGuiBackgroundTint() {
+    private TintColor getGuiBackgroundTint() {
         if (ConfigHandler.CLIENT_MISC.moduleGuiBackgroundTint.get()) {
-            Color c = module.getItemTint();
-            float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-            return Color.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
+            TintColor c = module.getItemTint();
+            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+            return TintColor.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
         } else {
-            return Color.WHITE;
+            return TintColor.WHITE;
         }
     }
 
@@ -334,7 +331,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private static final int THRESHOLD = 129;
-    private int getFgColor(Color bg) {
+    private int getFgColor(TintColor bg) {
         // calculate a foreground color which suitably contrasts with the given background color
         int luminance = (int) Math.sqrt(
                 bg.getRed() * bg.getRed() * 0.241 +

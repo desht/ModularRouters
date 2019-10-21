@@ -7,9 +7,9 @@
   ],
   "key": {
     "M": { "item": "modularrouters:blank_module" },
-    "D": { "item": "minecraft:diamond" },
-    "G": { "item": "minecraft:glass" },
-    "I": { "item": "minecraft:iron_ingot" }
+    "D": { "tag": "forge:gems/diamond" },
+    "G": { "tag": "forge:glass" },
+    "I": { "tag": "forge:ingots/iron" }
   },
   "result": { "item": "modularrouters:bulk_item_filter" }
 }

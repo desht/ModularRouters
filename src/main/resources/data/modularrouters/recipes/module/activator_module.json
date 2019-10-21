@@ -7,9 +7,9 @@
   ],
   "key": {
     "L": { "item": "minecraft:lever" },
-    "R": { "item": "minecraft:redstone" },
+    "R": { "tag": "forge:dusts/redstone" },
     "D": { "item": "minecraft:dispenser" },
-    "Q": { "item": "minecraft:quartz" },
+    "Q": { "tag": "forge:gems/quartz" },
     "M": { "item": "modularrouters:blank_module" }
   },
   "result": { "item": "modularrouters:activator_module" }
