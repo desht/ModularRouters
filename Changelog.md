@@ -6,6 +6,17 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.14.2
 
+## 5.1.0 (21 Oct 2019)
+
+* First update to 1.14.4!
+* Fluid module is now functional, although only tested with vanilla water and lava buckets.
+* Camouflage Upgrade and Extruder Mk2 are now fully functional (camo works!)
+* Updated some recipes to be more tag-friendly.
+* Upgrade/Downgrade Augment recipes now give 4 augments instead of 1.
+* Completely removed all java.awt.* code (good news for Mac users)
+* Fixed mouse-over crash for modules from 5.0.0 (https://github.com/desht/ModularRouters/issues/57)
+* Redid all module, upgrade, and augment textures.
+
 ## 5.0.0 (15 Jun 2019)
 
 * Initial 1.14.2 port!

@@ -8,7 +8,12 @@
     "1.11.2-latest" : "2.2.2",
     "1.12.2-latest" : "3.2.1",
     "1.14.2-recommended" : "5.0.0",
-    "1.14.2-latest" : "5.0.0"
+    "1.14.2-latest" : "5.0.0",
+    "1.14.4-recommended" : "5.1.0",
+    "1.14.4-latest" : "5.1.0"
+  },
+  "1.14.4" : {
+    "5.1.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#510-21-oct-2019"
   },
   "1.14.2" : {
     "5.0.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#500-15-jun-2019"
