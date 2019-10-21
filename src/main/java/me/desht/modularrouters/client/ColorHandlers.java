@@ -6,11 +6,12 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.TintColor;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ColorHandlers {
     @SubscribeEvent
     public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
