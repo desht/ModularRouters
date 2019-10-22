@@ -6,7 +6,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.14.2
 
-## 5.1.0 (21 Oct 2019)
+## 5.1.0 (22 Oct 2019)
 
 * First update to 1.14.4!
 * Fluid module is now functional, although only tested with vanilla water and lava buckets.
