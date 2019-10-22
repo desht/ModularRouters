@@ -35,6 +35,8 @@ public enum ItemBeamDispatcher {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
+        if (ItemBeamDispatcher.INSTANCE.beams.isEmpty()) return;
+
         IProfiler profiler = Minecraft.getInstance().getProfiler();
         profiler.startSection("modularrouters-particles");
         GlStateManager.pushMatrix();
