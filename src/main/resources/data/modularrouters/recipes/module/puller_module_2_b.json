@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item" : "modularrouters:puller_module_1" },
+    { "item" : "modularrouters:puller_module_1" },
+    { "item" : "modularrouters:puller_module_1" },
+    { "item" : "modularrouters:puller_module_1" },
+    { "item" : "minecraft:ender_pearl" }
+  ],
+  "result": { "item": "modularrouters:puller_module_2", "count": 4 }
+}

@@ -12,10 +12,16 @@ Changes are in reverse chronological order; newest changes at the top.
 * Fluid module is now functional, although only tested with vanilla water and lava buckets.
 * Camouflage Upgrade and Extruder Mk2 are now fully functional (camo works!)
 * Updated some recipes to be more tag-friendly.
-* Upgrade/Downgrade Augment recipes now give 4 augments instead of 1.
-* Completely removed all java.awt.* code (good news for Mac users)
+* Many recipes are now a little cheaper:
+  * Puller Mk2 and Sender Mk2 now just need an Ender Pearl instead of Eye of Ender.
+  * Added Puller/Sender Mk2 recipes which take 4 of the Mk1 module and one Ender Pearl, and give 4 of the Mk2 module.
+  * Speed Upgrades need a bit more gold, but one craft now gives 3 upgrades instead of 1.
+  * Upgrade/Downgrade Augment recipes now give 4 augments instead of 1.
+  * Added an alternative Sender Mk1 recipe which uses a Piston instead of Bow & Arrow.
+  * Muffler Upgrade recipe now gives 4 upgrades instead of 1.
 * Fixed mouse-over crash for modules from 5.0.0 (https://github.com/desht/ModularRouters/issues/57)
 * Redid all module, upgrade, and augment textures.
+* Completely removed all java.awt.* code (good news for Mac users)
 
 ## 5.0.0 (15 Jun 2019)
 

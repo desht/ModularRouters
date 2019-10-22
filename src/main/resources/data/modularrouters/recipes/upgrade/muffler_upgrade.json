@@ -9,5 +9,5 @@
     "B": { "item": "modularrouters:blank_upgrade" },
     "W": { "tag": "minecraft:wool" }
   },
-  "result": { "item": "modularrouters:muffler_upgrade" }
+  "result": { "item": "modularrouters:muffler_upgrade", "count": 4 }
 }
