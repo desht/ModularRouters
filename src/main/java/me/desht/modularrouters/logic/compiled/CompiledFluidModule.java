@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.Block;
@@ -81,12 +82,13 @@ public class CompiledFluidModule extends CompiledModule {
         boolean didWork = false;
         if (!worldFluidCap.isPresent()) {
             // no TE at the target position; try to interact with a fluid block in the world
+            boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) == 0;
             switch (fluidDirection) {
                 case IN:
-                    didWork = tryPickupFluid(routerCap, world, pos);
+                    didWork = tryPickupFluid(routerCap, world, pos, playSound);
                     break;
                 case OUT:
-                    didWork = tryPourOutFluid(routerCap, world, pos, containerStack);
+                    didWork = tryPourOutFluid(routerCap, world, pos, playSound);
                     break;
             }
         } else {
@@ -107,7 +109,7 @@ public class CompiledFluidModule extends CompiledModule {
         return didWork;
     }
 
-    private boolean tryPickupFluid(LazyOptional<IFluidHandlerItem> routerCap, World world, BlockPos pos) {
+    private boolean tryPickupFluid(LazyOptional<IFluidHandlerItem> routerCap, World world, BlockPos pos, boolean playSound) {
         BlockState state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof IBucketPickupHandler)) {
             return false;
@@ -131,13 +133,13 @@ public class CompiledFluidModule extends CompiledModule {
         FluidStack transferred = routerCap.map(h ->
                 FluidUtil.tryFluidTransfer(h, tank, BUCKET_VOLUME, true))
                 .orElse(FluidStack.EMPTY);
-        if (!transferred.isEmpty()) {
+        if (!transferred.isEmpty() && playSound) {
             playFillSound(world, pos, fluid);
         }
         return !transferred.isEmpty();
     }
 
-    private boolean tryPourOutFluid(LazyOptional<IFluidHandlerItem> routerFluidCap, World world, BlockPos pos, ItemStack containerStack) {
+    private boolean tryPourOutFluid(LazyOptional<IFluidHandlerItem> routerFluidCap, World world, BlockPos pos, boolean playSound) {
         if (!forceEmpty && !(world.isAirBlock(pos) || world.getBlockState(pos).getBlock() instanceof ILiquidContainer)) {
             return false;
         }
@@ -165,12 +167,14 @@ public class CompiledFluidModule extends CompiledModule {
                 } else if (block instanceof ILiquidContainer) {
                     // a block which can take fluid, e.g. waterloggable block like a slab
                     IFluidState still = fluid instanceof FlowingFluid ? ((FlowingFluid) fluid).getStillFluidState(false) : fluid.getDefaultState();
-                    if (((ILiquidContainer)block).receiveFluid(world, pos, blockstate, still)) {
+                    if (((ILiquidContainer)block).receiveFluid(world, pos, blockstate, still) && playSound) {
                         playEmptySound(world, pos, fluid);
                     }
                 } else {
                     // air or some non-solid/replaceable block: just overwrite with the fluid
-                    playEmptySound(world, pos, fluid);
+                    if (playSound) {
+                        playEmptySound(world, pos, fluid);
+                    }
                     if (isNotSolid || isReplaceable) {
                         world.destroyBlock(pos, true);
                     }
