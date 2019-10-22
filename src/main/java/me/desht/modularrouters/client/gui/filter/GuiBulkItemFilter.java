@@ -53,7 +53,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             ItemStack moduleStack = locator.getModuleStack(Minecraft.getInstance().player);
             TileEntityItemRouter router = container.getRouter();
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
-            target = cm.getActualTarget(router);
+            target = cm.getEffectiveTarget(router);
             // This should work even if the target is in another dimension, since the target name
             // is stored in the module item NBT, which was set up server-side.
             // Using getActualTarget() here *should* ensure that we always see the right target...

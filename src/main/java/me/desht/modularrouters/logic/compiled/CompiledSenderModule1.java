@@ -70,7 +70,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
-        ModuleTarget target = getActualTarget(router);
+        ModuleTarget target = getEffectiveTarget(router);
         if (target != null) {
             IItemHandler handler = target.getItemHandler();
             return handler == null ? null : new PositionedItemHandler(target.gPos.getPos(), handler);
@@ -79,7 +79,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     @Override
-    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().gPos.getPos());
         Direction face = getTarget().face;
         World world = router.getWorld();

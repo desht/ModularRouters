@@ -87,14 +87,21 @@ public abstract class CompiledModule {
 
     /**
      * Get the static target for a router module.  This is set up when the router is compiled, and does not
-     * necessarily reflect the true target for all modules.  Use getActualTarget() to be sure.
+     * necessarily reflect the true target for all modules.  Use {@link #getEffectiveTarget(TileEntityItemRouter)}
+     * to get the actual target that should be interacted with when executing the module.
      *
-     * @return the static target set up when the router was compiled
+     * @return the first target as set up by {@link #setupTargets(TileEntityItemRouter, ItemStack)}
      */
     ModuleTarget getTarget() {
         return targets == null || targets.isEmpty() ? null : targets.get(0);
     }
 
+    /**
+     * Used by modules which can store multiple targets, e.g. the distributor module.  See also
+     * {@link #getTarget()}.
+     *
+     * @return a list of the defined targets as set up by {@link #setupTargets(TileEntityItemRouter, ItemStack)}
+     */
     List<ModuleTarget> getTargets() {
         return targets;
     }
@@ -246,13 +253,13 @@ public abstract class CompiledModule {
     }
 
     /**
-     * Get the real target for this module, which is not necessarily the same as the result of getTarget().
+     * Get the effective target for this module, which is not necessarily the same as the result of getTarget().
      * E.g. for a Sender Mk1, the real target may be a few blocks away, and may change without router recompilation
      * if blocks are placed or removed.
      *
      * @return the real target for this module
      */
-    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
         return getTarget();
     }
 

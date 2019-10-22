@@ -52,7 +52,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
-        Set<ModuleTarget> t = TargetedModule.getTargets(stack, true);
+        Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.getWorld().isRemote);
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
         l.sort(Comparator.comparingDouble(o -> calcDist(o, router)));
@@ -68,7 +68,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
         if (getTargets() == null || getTargets().isEmpty()) return null;
         int nTargets = getTargets().size();
         if (nTargets == 1) return getTargets().get(0); // degenerate case

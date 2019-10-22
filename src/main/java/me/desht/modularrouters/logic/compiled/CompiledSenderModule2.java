@@ -21,7 +21,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
 
     @Override
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
-        ModuleTarget target = getActualTarget(router);
+        ModuleTarget target = getEffectiveTarget(router);
         if (target == null || !validate(router, target)) {
             return null;
         }
@@ -47,7 +47,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     }
 
     @Override
-    public ModuleTarget getActualTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
         return getTarget();
     }
 }
