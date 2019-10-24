@@ -86,6 +86,7 @@ dependencies {
     compile fg.deobf (project.dependencies.create("mcp.mobius.waila:Hwyla:${config.waila_version}") {
         transitive = false
     })
+    compileOnly fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}:api")
     runtime fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
     //deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
     //deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"

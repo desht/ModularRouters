@@ -344,6 +344,6 @@
   "guidebook.words.augments": "Module Augments",
 
   "_comment": "JEI text",
-  "jei.recipe.reset": "Module Reset",
-  "jei.recipe.reset.description": "Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)"
+  "jei.recipe.module_reset": "Module Reset",
+  "jei.recipe.module_reset.description": "Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)"
 }
