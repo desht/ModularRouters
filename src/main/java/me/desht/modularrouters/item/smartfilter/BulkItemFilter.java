@@ -112,10 +112,10 @@ public class BulkItemFilter extends ItemSmartFilter {
                 con.clearSlots();
                 break;
             case MERGE:
-                con.mergeInventory(message.getTargetInventory(), flags, false);
+                message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, false));
                 break;
             case LOAD:
-                con.mergeInventory(message.getTargetInventory(), flags, true);
+                message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, true));
                 break;
             default:
                 ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);

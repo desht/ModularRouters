@@ -4,7 +4,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +25,8 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
             return null;
         }
 
-        IItemHandler handler = target.getItemHandler();
-        return handler == null ? null : new PositionedItemHandler(target.gPos.getPos(), handler);
+        return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.getPos(), h))
+                .orElse(PositionedItemHandler.INVALID);
     }
 
     private boolean validate(TileEntityItemRouter router, ModuleTarget target) {

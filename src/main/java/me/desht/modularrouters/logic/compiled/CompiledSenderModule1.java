@@ -32,20 +32,20 @@ public class CompiledSenderModule1 extends CompiledModule {
         IItemHandler buffer = router.getBuffer();
         ItemStack bufferStack = buffer.getStackInSlot(0);
         if (getFilter().test(bufferStack)) {
-            PositionedItemHandler target = findTargetInventory(router);
-            if (target != null) {
+            PositionedItemHandler positionedItemHandler = findTargetInventory(router);
+            if (positionedItemHandler.isValid()) {
                 int nToSend = getItemsPerTick(router);
                 if (getRegulationAmount() > 0) {
-                    int existing = InventoryUtils.countItems(bufferStack, target.handler, getRegulationAmount(), !getFilter().getFlags().isIgnoreDamage());
+                    int existing = InventoryUtils.countItems(bufferStack, positionedItemHandler.handler, getRegulationAmount(), !getFilter().getFlags().isIgnoreDamage());
                     nToSend = Math.min(nToSend, getRegulationAmount() - existing);
                     if (nToSend <= 0) {
                         return false;
                     }
                 }
-                int sent = InventoryUtils.transferItems(buffer, target.handler, 0, nToSend);
+                int sent = InventoryUtils.transferItems(buffer, positionedItemHandler.handler, 0, nToSend);
                 if (sent > 0) {
                     if (ConfigHandler.MODULE.senderParticles.get()) {
-                        playParticles(router, target.pos, ItemHandlerHelper.copyStackWithSize(bufferStack, sent));
+                        playParticles(router, positionedItemHandler.pos, ItemHandlerHelper.copyStackWithSize(bufferStack, sent));
                     }
                     return true;
                 } else {
@@ -72,10 +72,9 @@ public class CompiledSenderModule1 extends CompiledModule {
     PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
         ModuleTarget target = getEffectiveTarget(router);
         if (target != null) {
-            IItemHandler handler = target.getItemHandler();
-            return handler == null ? null : new PositionedItemHandler(target.gPos.getPos(), handler);
+            return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.getPos(), h)).orElse(PositionedItemHandler.INVALID);
         }
-        return null;
+        return PositionedItemHandler.INVALID;
     }
 
     @Override
@@ -104,9 +103,15 @@ public class CompiledSenderModule1 extends CompiledModule {
         private final BlockPos pos;
         private final IItemHandler handler;
 
+        public static PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
+
         PositionedItemHandler(BlockPos pos, IItemHandler handler) {
             this.pos = pos;
             this.handler = handler;
+        }
+
+        public boolean isValid() {
+            return pos != null && handler != null;
         }
     }
 }

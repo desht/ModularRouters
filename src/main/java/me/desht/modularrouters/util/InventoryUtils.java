@@ -48,10 +48,7 @@ public class InventoryUtils {
 
     public static LazyOptional<IItemHandler> getInventory(World world, BlockPos pos, @Nullable Direction side) {
         TileEntity te = world.getTileEntity(pos);
-        if (te == null) {
-            return LazyOptional.empty();
-        }
-        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
     }
 
     /**

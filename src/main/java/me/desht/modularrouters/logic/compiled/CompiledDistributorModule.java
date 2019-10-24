@@ -8,7 +8,6 @@ import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.Comparator;
@@ -113,7 +112,6 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     private boolean okToInsert(ModuleTarget target, ItemStack stack) {
-        IItemHandler handler = target.getItemHandler();
-        return handler != null && ItemHandlerHelper.insertItem(handler, stack, true).isEmpty();
+        return target.getItemHandler().map(h -> ItemHandlerHelper.insertItem(h, stack, true).isEmpty()).orElse(false);
     }
 }

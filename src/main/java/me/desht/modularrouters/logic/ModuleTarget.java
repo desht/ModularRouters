@@ -7,11 +7,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -63,8 +63,8 @@ public class ModuleTarget {
         return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), gPos.getDimension(), false, false);
     }
 
-    public IItemHandler getItemHandler() {
-        ServerWorld w = getWorld();
+    public LazyOptional<IItemHandler> getItemHandler() {
+        World w = getWorld();
         BlockPos pos = gPos.getPos();
         if (w == null || !w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4))
             return null;
@@ -72,7 +72,7 @@ public class ModuleTarget {
         if (te == null) {
             return null;
         }
-        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face).orElse(null);
+        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
     }
     
     @Override
@@ -90,15 +90,13 @@ public class ModuleTarget {
 
     @Override
     public String toString() {
-        String s = blockTranslationKey == null || blockTranslationKey.isEmpty() ? "" : " [" + blockTranslationKey + "]";
-        return MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face + s;
+        return MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face;
     }
 
     public ITextComponent getTextComponent() {
-        return new StringTextComponent(MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face)
-                .appendText(" [")
-                .appendSibling(MiscUtil.xlate(blockTranslationKey))
-                .appendText("]")
+        return MiscUtil.xlate(blockTranslationKey).applyTextStyle(TextFormatting.WHITE)
+                .appendText(" @ ")
+                .appendText(MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face)
                 .applyTextStyle(TextFormatting.AQUA);
     }
 }

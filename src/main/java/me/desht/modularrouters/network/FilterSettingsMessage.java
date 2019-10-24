@@ -10,6 +10,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
@@ -63,7 +64,7 @@ public class FilterSettingsMessage {
         return payload;
     }
 
-    public IItemHandler getTargetInventory() {
+    public LazyOptional<IItemHandler> getTargetInventory() {
         ModuleTarget target = ModuleTarget.fromNBT(payload);
         return target.getItemHandler();
     }
