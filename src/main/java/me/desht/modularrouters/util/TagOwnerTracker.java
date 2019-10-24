@@ -1,5 +1,6 @@
 package me.desht.modularrouters.util;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResourceManager;
@@ -18,7 +19,7 @@ import java.util.function.Predicate;
 
 public class TagOwnerTracker implements ISelectiveResourceReloadListener {
     private static TagOwnerTracker INSTANCE;
-    private static final Map<ResourceLocation, Set<ResourceLocation>> map = new HashMap<>();
+    private final Map<ResourceLocation, Set<ResourceLocation>> cache = new HashMap<>();
 
     private TagOwnerTracker() { }
 
@@ -31,20 +32,20 @@ public class TagOwnerTracker implements ISelectiveResourceReloadListener {
     }
 
     public <T extends IForgeRegistryEntry> Set<ResourceLocation> getOwningTags(TagCollection<T> collection, T t) {
-        return map.computeIfAbsent(t.getRegistryName(), resourceLocation -> {
+        return cache.computeIfAbsent(t.getRegistryName(), resourceLocation -> {
             Set<ResourceLocation> res = Sets.newHashSet();
             collection.getTagMap().forEach((resLoc, value) -> {
                 if (value.contains(t)) {
                     res.add(resLoc);
                 }
             });
-            return res;
+            return ImmutableSet.copyOf(res);
         });
     }
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
-        map.clear();
+        cache.clear();
     }
 
     @Override

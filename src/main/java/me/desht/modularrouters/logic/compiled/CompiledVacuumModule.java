@@ -115,7 +115,7 @@ public class CompiledVacuumModule extends CompiledModule {
         int toPickUp = getItemsPerTick(router);
 
         for (ItemEntity item : items) {
-            if (item.removed || (!fastPickup && item.cannotPickup())) {
+            if (!item.isAlive() || (!fastPickup && item.cannotPickup())) {
                 continue;
             }
             ItemStack stackOnGround = item.getItem();

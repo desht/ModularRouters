@@ -5,10 +5,8 @@ import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.util.SetofItemStack;
 import me.desht.modularrouters.util.TagOwnerTracker;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class BulkItemMatcher implements IItemMatcher {
@@ -20,7 +18,7 @@ public class BulkItemMatcher implements IItemMatcher {
         this.tags = Sets.newHashSet();
         if (!flags.isIgnoreTags()) {
             for (ItemStack stack : stacks) {
-                tags.addAll(TagOwnerTracker.getInstance().getOwningTags(ItemTags.getCollection(), stack.getItem()));
+                tags.addAll(TagOwnerTracker.getItemTags(stack));
             }
         }
     }
@@ -35,8 +33,6 @@ public class BulkItemMatcher implements IItemMatcher {
     }
 
     private boolean matchTags(ItemStack stack) {
-        Set<ResourceLocation> s = new HashSet<>(tags);
-        s.retainAll(TagOwnerTracker.getInstance().getOwningTags(ItemTags.getCollection(), stack.getItem()));
-        return !s.isEmpty();
+        return !Sets.intersection(TagOwnerTracker.getItemTags(stack), tags).isEmpty();
     }
 }

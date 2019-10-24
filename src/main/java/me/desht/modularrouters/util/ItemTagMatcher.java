@@ -1,5 +1,6 @@
 package me.desht.modularrouters.util;
 
+import com.google.common.collect.Sets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -14,7 +15,6 @@ public class ItemTagMatcher {
 
     public boolean match(ItemStack stack) {
         Set<ResourceLocation> tags1 = TagOwnerTracker.getItemTags(stack);
-        tags1.retainAll(tags);
-        return !tags1.isEmpty();
+        return !Sets.intersection(tags, tags1).isEmpty();
     }
 }
