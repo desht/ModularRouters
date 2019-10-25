@@ -5,7 +5,7 @@ import me.desht.modularrouters.client.gui.ISendToServer;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TexturedToggleButton extends TexturedButton implements ToggleButton {
+public abstract class TexturedToggleButton extends TexturedButton implements IToggleButton {
     protected final List<String> tooltip2 = new ArrayList<>();
     private boolean toggled;
 

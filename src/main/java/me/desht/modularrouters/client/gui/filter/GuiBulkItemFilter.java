@@ -3,7 +3,8 @@ package me.desht.modularrouters.client.gui.filter;
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.gui.BackButton;
+import me.desht.modularrouters.client.gui.widgets.button.BackButton;
+import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -13,6 +14,7 @@ import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MFLocator;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
@@ -40,7 +42,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     public void init() {
         super.init();
 
-        addButton(new Buttons.ClearButton(guiLeft + 8, guiTop + 130,
+        addButton(new ClearButton(guiLeft + 8, guiTop + 130,
                 p -> PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.CLEAR_ALL, container.getLocator(), null))
         ));
 
@@ -57,14 +59,14 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
             if (hasInventory(target)) {
-                addButton(new Buttons.MergeButton(guiLeft + 28, guiTop + 130, target.toString(),
+                addButton(new MergeButton(guiLeft + 28, guiTop + 130, target.toString(),
                         I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
                                 Operation.MERGE, container.getLocator(), target.toNBT()));
                     }
                 }));
-                addButton(new Buttons.LoadButton(guiLeft + 48, guiTop + 130, target.toString(),
+                addButton(new LoadButton(guiLeft + 48, guiTop + 130, target.toString(),
                         I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
@@ -96,5 +98,36 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    static class ClearButton extends Buttons.DeleteButton {
+        ClearButton(int x, int y, IPressable pressable) {
+            super(x, y, 0, pressable);
+            tooltip1.add(I18n.format("guiText.tooltip.clearFilter"));
+        }
+    }
+
+    static class MergeButton extends Buttons.AddButton {
+        MergeButton(int x, int y, String locStr, String name, IPressable pressable) {
+            super(x, y, pressable);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.mergeFilter", name, locStr);
+        }
+    }
+
+    static class LoadButton extends TexturedButton {
+        LoadButton(int x, int y, String locStr, String name,  IPressable pressable) {
+            super( x, y, 16, 16, pressable);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.loadFilter", name, locStr);
+        }
+
+        @Override
+        protected int getTextureX() {
+            return 144;
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 16;
+        }
     }
 }

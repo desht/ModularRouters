@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client.gui.widgets;
+package me.desht.modularrouters.client.gui;
 
 import net.minecraft.item.ItemStack;
 

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.client.gui.widgets.IResyncableGui;
+import me.desht.modularrouters.client.gui.IResyncableGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;

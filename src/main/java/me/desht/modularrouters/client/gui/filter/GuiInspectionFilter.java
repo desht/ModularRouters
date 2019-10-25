@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.gui.filter;
 import com.google.common.base.Joiner;
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.gui.BackButton;
+import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.item.smartfilter.InspectionFilter;

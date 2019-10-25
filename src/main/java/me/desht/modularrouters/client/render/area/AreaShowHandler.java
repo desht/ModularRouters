@@ -122,7 +122,7 @@ public class AreaShowHandler {
     }
 
     private int getFaceAlpha(AreaShowManager.CompiledPosition cp, BlockPos pos, Direction face) {
-        return cp.checkFace(pos, face) ? 224 : 64;
+        return cp.checkFace(pos, face) ? 160 : 64;
     }
 
     void render() {

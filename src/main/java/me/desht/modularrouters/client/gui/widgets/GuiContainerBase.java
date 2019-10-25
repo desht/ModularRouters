@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets;
 
+import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;

@@ -3,13 +3,13 @@ package me.desht.modularrouters.client.gui.widgets.button;
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TexturedButton extends Button implements ITooltipButton {
+public abstract class TexturedButton extends GuiButtonExt implements ITooltipButton {
     static final ResourceLocation resourceLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/widgets.png");
     protected final List<String> tooltip1;
 
@@ -19,7 +19,7 @@ public abstract class TexturedButton extends Button implements ITooltipButton {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             Minecraft.getInstance().getTextureManager().bindTexture(resourceLocation);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);

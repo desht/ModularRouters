@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
+import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
-import me.desht.modularrouters.client.gui.widgets.IResyncableGui;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
