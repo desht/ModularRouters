@@ -129,8 +129,8 @@ public class Filter implements Predicate<ItemStack> {
             return ignoreNBT;
         }
 
-        public boolean isIgnoreTags() {
-            return ignoreTags;
+        public boolean matchTags() {
+            return !ignoreTags;
         }
 
         public static Flags with(ModuleFlags... flags) {
