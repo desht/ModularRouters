@@ -10,11 +10,11 @@ public class ItemTagMatcher {
     private final Set<ResourceLocation> tags;
 
     public ItemTagMatcher(ItemStack stack) {
-        this.tags = TagOwnerTracker.getItemTags(stack);
+        this.tags = stack.getItem().getTags();
     }
 
     public boolean match(ItemStack stack) {
-        Set<ResourceLocation> tags1 = TagOwnerTracker.getItemTags(stack);
+        Set<ResourceLocation> tags1 = stack.getItem().getTags();
         return !Sets.intersection(tags, tags1).isEmpty();
     }
 }

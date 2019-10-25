@@ -3,7 +3,6 @@ package me.desht.modularrouters.logic.filter.matchers;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.util.SetofItemStack;
-import me.desht.modularrouters.util.TagOwnerTracker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,7 +17,7 @@ public class BulkItemMatcher implements IItemMatcher {
         this.tags = Sets.newHashSet();
         if (!flags.isIgnoreTags()) {
             for (ItemStack stack : stacks) {
-                tags.addAll(TagOwnerTracker.getItemTags(stack));
+                tags.addAll(stack.getItem().getTags());
             }
         }
     }
@@ -33,6 +32,6 @@ public class BulkItemMatcher implements IItemMatcher {
     }
 
     private boolean matchTags(ItemStack stack) {
-        return !Sets.intersection(TagOwnerTracker.getItemTags(stack), tags).isEmpty();
+        return !Sets.intersection(stack.getItem().getTags(), tags).isEmpty();
     }
 }
