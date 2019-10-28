@@ -100,7 +100,7 @@
   "guiText.tooltip.fluidRegulatorTooltip": "§bFluid Regulation Enabled\\nWhen transferring from router: only insert when destination tank(s) are less than this full.\\nWhen transferring to router: only extract if source tank(s) are more than this full.",
   "guiText.tooltip.tunedValue": "§bTuned Value (%d → %d)",
   "guiText.tooltip.fluidTransferTooltip": "§bMax Fluid Transfer\\nMaximum (in mB) that will be attempted in one operation.\\nThis is still limited by the router's overall transfer rate (Fluid and Speed Upgrades)",
-  "guiText.tooltip.maxFluidPerOp": "• Transfer Rate: %d mB every %d ticks (%d mB / tick)",
+  "guiText.tooltip.maxFluidPerOp": "§fTransfer Rate: %d mB every %d ticks (%d mB / tick)",
   "guiText.tooltip.extruder2.template": "§bTemplate\\nPlace copies of block items here to be used as the extruder template.\\n• §eLeft-Click:§7 reduce stack size\\n• §eRight-Click:§7 increase stack size\\n• §eShift + Left-Click:§7 clear stack",
   "guiText.tooltip.activator.action": "Action",
   "guiText.tooltip.activator.lookDirection": "Look",

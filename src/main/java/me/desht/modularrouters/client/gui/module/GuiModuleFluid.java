@@ -20,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 
 import java.util.Collections;
 import java.util.List;
@@ -111,7 +110,8 @@ public class GuiModuleFluid extends GuiModule {
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
-                tooltip1.add(TextFormatting.GRAY + I18n.format("guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
+                tooltip1.add(I18n.format("guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
+                tooltip1.add("");
             });
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }

@@ -4,6 +4,8 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.network.SyncUpgradesMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -35,6 +37,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -172,6 +175,7 @@ public class BlockItemRouter extends BlockCamo {
         if (!player.isSneaking()) {
             return TileEntityItemRouter.getRouterAt(world, pos).map(router -> {
                 if (router.isPermitted(player) && !world.isRemote) {
+                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncUpgradesMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
                     player.sendStatusMessage(new TranslationTextComponent("chatText.security.accessDenied"), false);

@@ -425,12 +425,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
      * Compile installed modules & upgrades etc. into internal data for faster execution
      */
     private void compile() {
+        compileUpgrades();
+
         if (getWorld().isRemote) {
+            recompileNeeded = 0;
             return;
         }
 
         compileModules();
-        compileUpgrades();
 
         if (tunedSyncValue >= 0) {
             // router has a sync upgrade - init the counter accordingly
@@ -785,5 +787,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     public GlobalPos getGlobalPos() {
         return GlobalPos.of(world.getDimension().getType(), pos);
+    }
+
+    /**
+     * Set the upgrades to the given set.  Used client-side for upgrade sync'ing.
+     *
+     * @param handler item handler containing new set of upgrades
+     */
+    public void setUpgradesFrom(IItemHandler handler) {
+        if (handler.getSlots() == upgradesHandler.getSlots()) {
+            for (int i = 0; i < handler.getSlots(); i++) {
+                upgradesHandler.setStackInSlot(i, handler.getStackInSlot(i));
+            }
+//            recompileNeeded(COMPILE_UPGRADES);
+        }
     }
 }

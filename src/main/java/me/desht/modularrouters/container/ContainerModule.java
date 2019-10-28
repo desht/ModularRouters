@@ -51,7 +51,7 @@ public class ContainerModule extends Container {
         super(type, windowId);
 
         this.locator = locator;
-        this.router = locator.getRouter(inv.player.world).isPresent() ? locator.getRouter(inv.player.world).get() : null;
+        this.router = locator.getRouter(inv.player.world).orElse(null);
         assert router != null || locator.hand != null;
 
         ItemStack moduleStack = locator.getModuleStack(inv.player);
@@ -61,18 +61,12 @@ public class ContainerModule extends Container {
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
-            ModuleFilterSlot slot = router == null ?
-                    new ModuleFilterSlot(filterHandler, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
-                    new ModuleFilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3));
-            addSlot(slot);
+            addSlot(new ModuleFilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
         }
 
         // slots for the augments
         for (int i = 0; i < ItemAugment.SLOTS; i++) {
-            ModuleAugmentSlot slot = router == null ?
-                    new ModuleAugmentSlot(augmentHandler, inv.player, this.locator.hand, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)) :
-                    new ModuleAugmentSlot(augmentHandler, router, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2));
-            addSlot(slot);
+            addSlot(new ModuleAugmentSlot(augmentHandler, router, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)));
         }
 
         // player's main inventory - uses default locations for standard inventory texture file

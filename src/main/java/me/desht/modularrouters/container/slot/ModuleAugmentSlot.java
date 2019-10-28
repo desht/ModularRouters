@@ -4,30 +4,17 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
 public class ModuleAugmentSlot extends SlotItemHandler {
     private final TileEntityItemRouter router;
-    private final PlayerEntity player;
-    private final Hand hand;
 
     public ModuleAugmentSlot(AugmentHandler itemHandler, TileEntityItemRouter router, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.router = router;
-        this.player = null;
-        this.hand = null;
-    }
-
-    public ModuleAugmentSlot(AugmentHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
-        super(itemHandler, index, xPosition, yPosition);
-        this.player = player;
-        this.hand = hand;
-        this.router = null;
     }
 
     @Override

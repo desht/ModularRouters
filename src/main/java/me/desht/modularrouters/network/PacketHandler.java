@@ -38,5 +38,7 @@ public class PacketHandler {
                 PushEntityMessage::toBytes, PushEntityMessage::new, PushEntityMessage::handle);
         NETWORK.registerMessage(nextId(), PlaySoundMessage.class,
                 PlaySoundMessage::toBytes, PlaySoundMessage::new, PlaySoundMessage::handle);
+        NETWORK.registerMessage(nextId(), SyncUpgradesMessage.class,
+                SyncUpgradesMessage::toBytes, SyncUpgradesMessage::new, SyncUpgradesMessage::handle);
     }
 }
