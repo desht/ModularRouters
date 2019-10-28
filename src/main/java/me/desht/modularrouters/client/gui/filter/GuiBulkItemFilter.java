@@ -56,7 +56,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             TileEntityItemRouter router = container.getRouter();
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
-            if (target.getItemHandler().isPresent()) {
+            if (target.getItemHandler(minecraft.world).isPresent()) {
                 addButton(new MergeButton(guiLeft + 28, guiTop + 130, target.toString(),
                         I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
