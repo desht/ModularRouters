@@ -43,7 +43,9 @@ public class VacuumModule extends ItemModule implements IRangedModule {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
             ITextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId())).applyTextStyle(TextFormatting.BLUE);
             ITextComponent title = type.getDisplayName().applyTextStyle(TextFormatting.AQUA);
-            list.add(new TranslationTextComponent("guiText.label.xpVacuum").appendText(": ").appendSibling(title).appendSibling(modName));
+            list.add(new TranslationTextComponent("guiText.label.xpVacuum")
+                    .appendText(": ").applyTextStyle(TextFormatting.YELLOW)
+                    .appendSibling(title).appendText(" - ").appendSibling(modName));
             if (cvm.isAutoEjecting() && !type.isSolid()) {
                 list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), new TranslationTextComponent("guiText.tooltip.xpVacuum.ejectFluid")));
             }

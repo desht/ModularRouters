@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,16 +43,14 @@ public abstract class CompiledModule {
 
     /**
      * Base constructor for compiled modules.  This can be called for both installed and uninstalled modules;
-     * when the module is not installed in a router, null can be passed, and any subclass constructors must be able to
+     * when the module is not installed in a router, null can be passed, so any subclass constructors must be able to
      * handle a null router.
      *
      * @param router router the module is installed in, may be null for an uninstalled module
      * @param stack item stack of the module item being compiled
      */
     CompiledModule(@Nullable TileEntityItemRouter router, ItemStack stack) {
-        if (!(stack.getItem() instanceof ItemModule)) {
-            throw new IllegalArgumentException("expected module router module, got " + stack);
-        }
+        Validate.isTrue(stack.getItem() instanceof ItemModule, "expected module item, got " + stack);
 
         module = (ItemModule) stack.getItem();
         augmentCounter = new AugmentCounter(stack);
@@ -269,7 +268,7 @@ public abstract class CompiledModule {
 
     boolean isRegulationOK(TileEntityItemRouter router, boolean inbound) {
         if (regulationAmount == 0) return true; // no regulation
-        int items = router.getBufferItemStack().isEmpty() ? 0 : router.getBufferItemStack().getCount();
+        int items = router.getBufferItemStack().getCount();
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
     }
 
@@ -290,9 +289,5 @@ public abstract class CompiledModule {
     }
 
     public void onNeighbourChange(TileEntityItemRouter router) {
-    }
-
-    public AugmentCounter getAugmentCounter() {
-        return augmentCounter;
     }
 }
