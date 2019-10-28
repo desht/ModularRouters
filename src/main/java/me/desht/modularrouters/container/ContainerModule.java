@@ -62,7 +62,7 @@ public class ContainerModule extends Container {
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
             ModuleFilterSlot slot = router == null ?
-                    new ModuleFilterSlot(filterHandler, inv.player, this.locator.hand, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
+                    new ModuleFilterSlot(filterHandler, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)) :
                     new ModuleFilterSlot(filterHandler, router, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3));
             addSlot(slot);
         }

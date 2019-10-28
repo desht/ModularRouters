@@ -14,7 +14,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 
@@ -33,7 +32,7 @@ public class ContainerExtruder2Module extends ContainerModule {
             int x = 129 + SLOT_X_SPACING * (i % 3);
             int y = 17 + SLOT_X_SPACING * (i / 3);
             TemplateSlot slot = router == null ?
-                    new TemplateSlot(handler, inv.player, locator.hand, i, x, y) :
+                    new TemplateSlot(handler, i, x, y) :
                     new TemplateSlot(handler, router, i, x, y);
             addSlot(slot);
         }
@@ -90,8 +89,8 @@ public class ContainerExtruder2Module extends ContainerModule {
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        TemplateSlot(TemplateHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
-            super(itemHandler, player, hand, index, xPosition, yPosition);
+        TemplateSlot(TemplateHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, null, index, xPosition, yPosition);
         }
     }
 

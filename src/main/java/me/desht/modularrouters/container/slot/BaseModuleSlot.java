@@ -7,35 +7,20 @@ import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHan
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Hand;
 import net.minecraftforge.items.SlotItemHandler;
+
+import static me.desht.modularrouters.block.tile.TileEntityItemRouter.COMPILE_MODULES;
 
 public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotItemHandler {
     private final TileEntityItemRouter router;
-    private final PlayerEntity player;
-    private final Hand hand;
-    private final boolean serverSide;
     private final int index;
 
     public BaseModuleSlot(T itemHandler, TileEntityItemRouter router, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.router = router;
-        this.player = null;
-        this.hand = null;
-        serverSide = !router.getWorld().isRemote;
-        this.index = index;
-    }
-
-    public BaseModuleSlot(T itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
-        super(itemHandler, index, xPosition, yPosition);
-        this.router = null;
-        this.player = player;
-        this.hand = hand;
-        serverSide = !player.getEntityWorld().isRemote;
         this.index = index;
     }
 
@@ -51,7 +36,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
 
         // avoid saving the filter handler unnecessarily
         T handler = (T) getItemHandler();
-        if (!ItemStack.areItemStacksEqual(stack, handler.getStackInSlot(index))) {
+        if (handler.isItemValid(index, stack) && !ItemStack.areItemStacksEqual(stack, handler.getStackInSlot(index))) {
             handler.setStackInSlot(index, stack);
             onSlotChanged();
         }
@@ -64,11 +49,7 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
         T handler = (T) getItemHandler();
         handler.save();
 
-        if (player != null && hand != null) {
-//            player.setHeldItem(hand, handler.getHolderStack());
-        } else if (router != null && serverSide) {
-            router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
-        }
+        if (router != null) router.recompileNeeded(COMPILE_MODULES);
     }
 
     public static class ModuleFilterSlot extends BaseModuleSlot<ModuleFilterHandler> {
@@ -76,8 +57,8 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        public ModuleFilterSlot(ModuleFilterHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
-            super(itemHandler, player, hand, index, xPosition, yPosition);
+        public ModuleFilterSlot(ModuleFilterHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, null, index, xPosition, yPosition);
         }
     }
 
@@ -86,8 +67,8 @@ public abstract class BaseModuleSlot<T extends BaseModuleHandler> extends SlotIt
             super(itemHandler, router, index, xPosition, yPosition);
         }
 
-        public BulkFilterSlot(BulkFilterHandler itemHandler, PlayerEntity player, Hand hand, int index, int xPosition, int yPosition) {
-            super(itemHandler, player, hand, index, xPosition, yPosition);
+        public BulkFilterSlot(BulkFilterHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, null, index, xPosition, yPosition);
         }
     }
 }

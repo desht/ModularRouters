@@ -46,7 +46,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
             BulkFilterSlot slot = router == null ?
-                    new BulkFilterSlot(handler, invPlayer.player, locator.hand, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
+                    new BulkFilterSlot(handler, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
                     new BulkFilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
             addSlot(slot);
         }
