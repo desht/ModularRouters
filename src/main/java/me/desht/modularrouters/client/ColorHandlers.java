@@ -2,9 +2,9 @@ package me.desht.modularrouters.client;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ICamouflageable;
+import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.util.TintColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;

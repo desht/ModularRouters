@@ -1,11 +1,11 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.ItemBeamMessage;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;

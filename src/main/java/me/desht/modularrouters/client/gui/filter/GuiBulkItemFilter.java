@@ -12,7 +12,6 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
@@ -21,7 +20,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
 
 public class GuiBulkItemFilter extends GuiFilterContainer {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
@@ -58,7 +56,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             TileEntityItemRouter router = container.getRouter();
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
-            if (hasInventory(target)) {
+            if (target.getItemHandler().isPresent()) {
                 addButton(new MergeButton(guiLeft + 28, guiTop + 130, target.toString(),
                         I18n.format(target.blockTranslationKey), p -> {
                     if (target != null) {
@@ -75,12 +73,6 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
                 }));
             }
         }
-    }
-
-    private boolean hasInventory(ModuleTarget target) {
-        World clientWorld = Minecraft.getInstance().world;
-        return target.isSameWorld(clientWorld)
-                && InventoryUtils.getInventory(clientWorld, target.gPos.getPos(), target.face).isPresent();
     }
 
     @Override

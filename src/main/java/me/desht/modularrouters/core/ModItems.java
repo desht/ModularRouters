@@ -1,6 +1,7 @@
 package me.desht.modularrouters.core;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.item.augment.*;
 import me.desht.modularrouters.item.module.*;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
@@ -8,7 +9,6 @@ import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.item.upgrade.*;
-import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -26,7 +26,6 @@ import java.util.List;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @ObjectHolder(ModularRouters.MODID)
-@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModItems {
     public static final Item BLANK_MODULE = null;
     public static final Item BLANK_UPGRADE = null;
@@ -83,78 +82,79 @@ public class ModItems {
         }
     };
 
-
-
     private static Item.Properties ib() {
         return new Item.Properties().group(MR_CREATIVE_TAB);
     }
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
-        IForgeRegistry<Item> r = event.getRegistry();
+    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class Registration {
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event) {
+            IForgeRegistry<Item> r = event.getRegistry();
 
-        // ItemBlocks
-        register(r, new BlockItem(ModBlocks.ITEM_ROUTER, ib()), ModBlocks.ITEM_ROUTER.getRegistryName());
-        register(r, new BlockItem(ModBlocks.TEMPLATE_FRAME, ib()), ModBlocks.TEMPLATE_FRAME.getRegistryName());
+            // ItemBlocks
+            register(r, new BlockItem(ModBlocks.ITEM_ROUTER, ib()), ModBlocks.ITEM_ROUTER.getRegistryName());
+            register(r, new BlockItem(ModBlocks.TEMPLATE_FRAME, ib()), ModBlocks.TEMPLATE_FRAME.getRegistryName());
 
-        // Misc items
-        register(r, new Item(ib()),RL("blank_module"));
-        register(r, new Item(ib()),RL("blank_upgrade"));
-        register(r, new Item(ib()),RL("augment_core"));
-        register(r, new Item(ib()),RL("override_card"));
+            // Misc items
+            register(r, new Item(ib()), RL("blank_module"));
+            register(r, new Item(ib()), RL("blank_upgrade"));
+            register(r, new Item(ib()), RL("augment_core"));
+            register(r, new Item(ib()), RL("override_card"));
 
-        // Modules
-        register(r, new ActivatorModule(ib()), RL("activator_module"));
-        register(r, new BreakerModule(ib()), RL("breaker_module"));
-        register(r, new DetectorModule(ib()), RL("detector_module"));
-        register(r, new DistributorModule(ib()), RL("distributor_module"));
-        register(r, new DropperModule(ib()), RL("dropper_module"));
-        register(r, new ExtruderModule1(ib()), RL("extruder_module_1"));
-        register(r, new ExtruderModule2(ib()), RL("extruder_module_2"));
-        register(r, new FlingerModule(ib()), RL("flinger_module"));
-        register(r, new FluidModule(ib()), RL("fluid_module"));
-        register(r, new PlacerModule(ib()), RL("placer_module"));
-        register(r, new PlayerModule(ib()), RL("player_module"));
-        register(r, new PullerModule1(ib()), RL("puller_module_1"));
-        register(r, new PullerModule2(ib()), RL("puller_module_2"));
-        register(r, new SenderModule1(ib()), RL("sender_module_1"));
-        register(r, new SenderModule2(ib()), RL("sender_module_2"));
-        register(r, new SenderModule3(ib()), RL("sender_module_3"));
-        register(r, new VacuumModule(ib()), RL("vacuum_module"));
-        register(r, new VoidModule(ib()), RL("void_module"));
+            // Modules
+            register(r, new ActivatorModule(ib()), RL("activator_module"));
+            register(r, new BreakerModule(ib()), RL("breaker_module"));
+            register(r, new DetectorModule(ib()), RL("detector_module"));
+            register(r, new DistributorModule(ib()), RL("distributor_module"));
+            register(r, new DropperModule(ib()), RL("dropper_module"));
+            register(r, new ExtruderModule1(ib()), RL("extruder_module_1"));
+            register(r, new ExtruderModule2(ib()), RL("extruder_module_2"));
+            register(r, new FlingerModule(ib()), RL("flinger_module"));
+            register(r, new FluidModule(ib()), RL("fluid_module"));
+            register(r, new PlacerModule(ib()), RL("placer_module"));
+            register(r, new PlayerModule(ib()), RL("player_module"));
+            register(r, new PullerModule1(ib()), RL("puller_module_1"));
+            register(r, new PullerModule2(ib()), RL("puller_module_2"));
+            register(r, new SenderModule1(ib()), RL("sender_module_1"));
+            register(r, new SenderModule2(ib()), RL("sender_module_2"));
+            register(r, new SenderModule3(ib()), RL("sender_module_3"));
+            register(r, new VacuumModule(ib()), RL("vacuum_module"));
+            register(r, new VoidModule(ib()), RL("void_module"));
 
-        // Upgrades
-        register(r, new BlastUpgrade(ib()), RL("blast_upgrade"));
-        register(r, new CamouflageUpgrade(ib()), RL("camouflage_upgrade"));
-        register(r, new FluidUpgrade(ib()), RL("fluid_upgrade"));
-        register(r, new MufflerUpgrade(ib()), RL("muffler_upgrade"));
-        register(r, new SecurityUpgrade(ib()), RL("security_upgrade"));
-        register(r, new SpeedUpgrade(ib()), RL("speed_upgrade"));
-        register(r, new StackUpgrade(ib()), RL("stack_upgrade"));
-        register(r, new SyncUpgrade(ib()), RL("sync_upgrade"));
+            // Upgrades
+            register(r, new BlastUpgrade(ib()), RL("blast_upgrade"));
+            register(r, new CamouflageUpgrade(ib()), RL("camouflage_upgrade"));
+            register(r, new FluidUpgrade(ib()), RL("fluid_upgrade"));
+            register(r, new MufflerUpgrade(ib()), RL("muffler_upgrade"));
+            register(r, new SecurityUpgrade(ib()), RL("security_upgrade"));
+            register(r, new SpeedUpgrade(ib()), RL("speed_upgrade"));
+            register(r, new StackUpgrade(ib()), RL("stack_upgrade"));
+            register(r, new SyncUpgrade(ib()), RL("sync_upgrade"));
 
-        // Augments
-        register(r, new FastPickupAugment(ib()), RL("fast_pickup_augment"));
-        register(r, new MimicAugment(ib()), RL("mimic_augment"));
-        register(r, new PickupDelayAugment(ib()), RL("pickup_delay_augment"));
-        register(r, new PushingAugment(ib()), RL("pushing_augment"));
-        register(r, new RangeAugments.RangeUpAugment(ib()), RL("range_up_augment"));
-        register(r, new RangeAugments.RangeDownAugment(ib()), RL("range_down_augment"));
-        register(r, new RedstoneAugment(ib()), RL("redstone_augment"));
-        register(r, new RegulatorAugment(ib()), RL("regulator_augment"));
-        register(r, new StackAugment(ib()), RL("stack_augment"));
-        register(r, new XPVacuumAugment(ib()), RL("xp_vacuum_augment"));
+            // Augments
+            register(r, new FastPickupAugment(ib()), RL("fast_pickup_augment"));
+            register(r, new MimicAugment(ib()), RL("mimic_augment"));
+            register(r, new PickupDelayAugment(ib()), RL("pickup_delay_augment"));
+            register(r, new PushingAugment(ib()), RL("pushing_augment"));
+            register(r, new RangeAugments.RangeUpAugment(ib()), RL("range_up_augment"));
+            register(r, new RangeAugments.RangeDownAugment(ib()), RL("range_down_augment"));
+            register(r, new RedstoneAugment(ib()), RL("redstone_augment"));
+            register(r, new RegulatorAugment(ib()), RL("regulator_augment"));
+            register(r, new StackAugment(ib()), RL("stack_augment"));
+            register(r, new XPVacuumAugment(ib()), RL("xp_vacuum_augment"));
 
-        // Filters
-        register(r, new BulkItemFilter(ib()), RL("bulk_item_filter"));
-        register(r, new InspectionFilter(ib()), RL("inspection_filter"));
-        register(r, new ModFilter(ib()), RL("mod_filter"));
-        register(r, new RegexFilter(ib()), RL("regex_filter"));
-    }
+            // Filters
+            register(r, new BulkItemFilter(ib()), RL("bulk_item_filter"));
+            register(r, new InspectionFilter(ib()), RL("inspection_filter"));
+            register(r, new ModFilter(ib()), RL("mod_filter"));
+            register(r, new RegexFilter(ib()), RL("regex_filter"));
+        }
 
-    private static void register(IForgeRegistry<Item> registry, Item item, ResourceLocation name) {
-        registry.register(item.setRegistryName(name));
-        All.items.add(item);
+        private static void register(IForgeRegistry<Item> registry, Item item, ResourceLocation name) {
+            registry.register(item.setRegistryName(name));
+            All.items.add(item);
+        }
     }
 
     public interface ITintable {

@@ -1,4 +1,4 @@
-package me.desht.modularrouters.util;
+package me.desht.modularrouters.client.util;
 
 /**
  * Replaces AWT Rectangle

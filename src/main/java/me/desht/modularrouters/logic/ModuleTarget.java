@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -9,17 +10,14 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Objects;
 
 /**
- * Represents the blockpos that a module in a particular router has targeted, including the dimension
+ * Represents the target for a given module, including the dimension, blockpos
  * and face of the block where insertion/extraction will occur.
  */
 public class ModuleTarget {
@@ -59,20 +57,27 @@ public class ModuleTarget {
         return gPos.getDimension() == world.getDimension().getType();
     }
 
-    public ServerWorld getWorld() {
-        return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), gPos.getDimension(), false, false);
-    }
-
+    /**
+     * Try to get an item handler object for this module target.  Can be run server- or client-side, but if run
+     * client-side will only return an item handler IF the target dimension is the same as the current client
+     * dimension. In addition, the client-side item handler should <strong>only</strong> be used for testing the
+     * presence of an inventory at the target with {@link LazyOptional#isPresent()}.
+     *
+     * @return a (lazy optional) item handler
+     */
     public LazyOptional<IItemHandler> getItemHandler() {
-        World w = getWorld();
+        World w = ModularRouters.proxy.theClientWorld();
+        if (w == null) {
+            w = MiscUtil.getWorldForGlobalPos(gPos);
+        } else if (!isSameWorld(w)) {
+            // if on client, the target's world *must* be the same as the client world for this to work
+            return LazyOptional.empty();
+        }
         BlockPos pos = gPos.getPos();
         if (w == null || !w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4))
-            return null;
+            return LazyOptional.empty();
         TileEntity te = w.getTileEntity(pos);
-        if (te == null) {
-            return null;
-        }
-        return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+        return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
     }
     
     @Override
@@ -99,4 +104,5 @@ public class ModuleTarget {
                 .appendText(MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face)
                 .applyTextStyle(TextFormatting.AQUA);
     }
+
 }

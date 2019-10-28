@@ -1,9 +1,9 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.util.TintColor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;

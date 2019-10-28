@@ -1,13 +1,13 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.TintColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;

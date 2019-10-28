@@ -12,14 +12,16 @@ import net.minecraftforge.registries.ObjectHolder;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @ObjectHolder(ModularRouters.MODID)
-@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
     public static final BlockItemRouter ITEM_ROUTER = null;
     public static final BlockTemplateFrame TEMPLATE_FRAME = null;
 
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(new BlockItemRouter().setRegistryName(RL("item_router")));
-        event.getRegistry().register(new BlockTemplateFrame().setRegistryName(RL("template_frame")));
+    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class Registration {
+        @SubscribeEvent
+        public static void registerBlocks(RegistryEvent.Register<Block> event) {
+            event.getRegistry().register(new BlockItemRouter().setRegistryName(RL("item_router")));
+            event.getRegistry().register(new BlockTemplateFrame().setRegistryName(RL("template_frame")));
+        }
     }
 }

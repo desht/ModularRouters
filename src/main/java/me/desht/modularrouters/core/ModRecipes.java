@@ -13,15 +13,16 @@ import net.minecraftforge.registries.ObjectHolder;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @ObjectHolder(ModularRouters.MODID)
-@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModRecipes {
     public static final IRecipeSerializer<EnchantModuleRecipe> MODULE_ENCHANT = null;
     public static final IRecipeSerializer<EnchantModuleRecipe> MODULE_RESET = null;
 
-    @SubscribeEvent
-    public static void registerRecipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        event.getRegistry().register(new SpecialRecipeSerializer<>(EnchantModuleRecipe::new).setRegistryName(RL("module_enchant")));
-        event.getRegistry().register(new SpecialRecipeSerializer<>(ResetModuleRecipe::new).setRegistryName(RL("module_reset")));
+    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class Registration {
+        @SubscribeEvent
+        public static void registerRecipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
+            event.getRegistry().register(new SpecialRecipeSerializer<>(EnchantModuleRecipe::new).setRegistryName(RL("module_enchant")));
+            event.getRegistry().register(new SpecialRecipeSerializer<>(ResetModuleRecipe::new).setRegistryName(RL("module_reset")));
+        }
     }
-
 }

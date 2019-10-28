@@ -271,15 +271,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     @Override
     public void tick() {
-        if (recompileNeeded != 0) {
-            compile();
-        }
-
         if (getWorld().isRemote) {
-            if (counter == 0) requestModelDataUpdate();
             return;
         }
 
+        if (recompileNeeded != 0) {
+            compile();
+        }
         counter++;
         pulseCounter++;
 
@@ -422,16 +420,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     /**
-     * Compile installed modules & upgrades etc. into internal data for faster execution
+     * Compile installed modules & upgrades etc. into internal data for faster execution.  Only called
+     * server-side (although compileUpgrades() can be called clientside when upgrades are sync'd)
      */
     private void compile() {
         compileUpgrades();
-
-        if (getWorld().isRemote) {
-            recompileNeeded = 0;
-            return;
-        }
-
         compileModules();
 
         if (tunedSyncValue >= 0) {
@@ -443,13 +436,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             counter = new Random().nextInt(tickRate);
         }
 
-        if (recompileNeeded != 0) {
-            BlockState state = getBlockState();
-            getWorld().notifyBlockUpdate(pos, state, state, 3);
-            getWorld().notifyNeighborsOfStateChange(pos, state.getBlock());
-            markDirty();
-            recompileNeeded = 0;
-        }
+        BlockState state = getBlockState();
+        getWorld().notifyBlockUpdate(pos, state, state, 3);
+        getWorld().notifyNeighborsOfStateChange(pos, state.getBlock());
+        markDirty();
+        recompileNeeded = 0;
     }
 
     private void compileModules() {
@@ -474,7 +465,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     private void compileUpgrades() {
-        if ((recompileNeeded & COMPILE_UPGRADES) != 0) {
+        // if called client-side, always recompile (it's due to an upgrade sync)
+        if (world.isRemote || (recompileNeeded & COMPILE_UPGRADES) != 0) {
             upgradeCount.clear();
             totalUpgradeCount = 0;
             permitted.clear();
@@ -743,7 +735,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     public static Optional<TileEntityItemRouter> getRouterAt(IBlockReader world, BlockPos routerPos) {
         TileEntity te = world.getTileEntity(routerPos);
-        return te instanceof TileEntityItemRouter ? Optional.of((TileEntityItemRouter) te) : Optional.empty();// (TileEntityItemRouter) te : null;
+        return te instanceof TileEntityItemRouter ? Optional.of((TileEntityItemRouter) te) : Optional.empty();
     }
 
     public void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
@@ -799,7 +791,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             for (int i = 0; i < handler.getSlots(); i++) {
                 upgradesHandler.setStackInSlot(i, handler.getStackInSlot(i));
             }
-//            recompileNeeded(COMPILE_UPGRADES);
         }
+        compileUpgrades();
     }
 }

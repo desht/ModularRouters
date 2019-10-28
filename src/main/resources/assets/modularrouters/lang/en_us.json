@@ -281,7 +281,7 @@
   "itemText.usage.item.distributor_module": "Distributes items from the router's buffer to multiple inventories, with a choice of round-robin, random, nearest-first or furthest-first.",
   "itemText.usage.item.security_upgrade": "Protects router; only listed players can access the router.\\n• Right-click a player to add them to this upgrade\\n• Sneak + Right-click player to remove them",
   "itemText.usage.item.stack_upgrade": "Increases the number of items processed per router tick.\\n• Max. items processed per operation: %d\\n• Max. useful upgrades: %d",
-  "itemText.usage.item.speed_upgrade": "Increases the router tick rate.\\n• Router will tick every %.02f sec (%d ticks)\\n• Max. useful upgrades: %d",
+  "itemText.usage.item.speed_upgrade": "Increases the router tick rate.\\n• This router ticks every %.02f sec (%d ticks)\\n• Max. useful upgrades: %d",
   "itemText.usage.item.camouflage_upgrade": "Makes the router look like another block.\\n• Sneak + Right-click a solid block to copy its appearance onto the upgrade.",
   "itemText.usage.item.sync_upgrade": "Makes routers activate together.\\n• Right-click: open tuning GUI\\n• Sneak + Right-click: tune to a random value.\\n• All routers with the same-tuned Sync Upgrade (and same number of Speed Upgrades) will run at the same time.",
   "itemText.usage.item.fluid_upgrade": "Increases the amount of fluid a router can transfer (in each direction) by %d mB/tick.",

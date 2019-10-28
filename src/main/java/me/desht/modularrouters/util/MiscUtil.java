@@ -2,7 +2,6 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
@@ -16,7 +15,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -113,12 +111,6 @@ public class MiscUtil {
             default:
                 return 0;
         }
-    }
-
-    public static String getFluidName(ItemStack stack) {
-        return FluidUtil.getFluidContained(stack)
-                .map(fluidStack -> fluidStack.getFluid().getAttributes().getDisplayName(fluidStack).getString())
-                .orElse(stack.getDisplayName().getString());
     }
 
     public static ITextComponent settingsStr(String prefix, ITextComponent c) {

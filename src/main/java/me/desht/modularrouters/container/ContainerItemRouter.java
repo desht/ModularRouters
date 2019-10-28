@@ -94,23 +94,25 @@ public class ContainerItemRouter extends Container {
 
         // Check if the slot clicked is one of the vanilla container slots
         if (sourceSlotIndex >= 0 && sourceSlotIndex < TE_FIRST_SLOT) {
-            // This is a vanilla container slot so merge the stack into the right part of the tile inventory
+            // This is a vanilla container slot so merge the stack into the appropriate part of the router's inventory
             if (sourceStack.getItem() instanceof ItemModule) {
                 // shift-clicked a module: see if there's a free module slot
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (sourceStack.getItem() instanceof ItemUpgrade) {
+                // shift-clicked an upgrade: see if there's a free upgrade slot
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + UPGRADE_SLOT_START, TE_FIRST_SLOT + UPGRADE_SLOT_END + 1, false)) {
                     return ItemStack.EMPTY;
                 }
             } else {
+                // try to merge item into the router's buffer slot
                 if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + BUFFER_SLOT, TE_FIRST_SLOT + BUFFER_SLOT + 1, false)) {
                     return ItemStack.EMPTY;
                 }
             }
         } else if (sourceSlotIndex >= TE_FIRST_SLOT && sourceSlotIndex < TE_FIRST_SLOT + TE_LAST_SLOT) {
-            // This is a TE slot so merge the stack into the players inventory
+            // This is a router slot, so merge the stack into the players inventory
             if (!mergeItemStack(sourceStack, 0, TE_FIRST_SLOT - 1, false)) {
                 return ItemStack.EMPTY;
             }

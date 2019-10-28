@@ -1,4 +1,4 @@
-package me.desht.modularrouters.util;
+package me.desht.modularrouters.client.util;
 
 /**
  * Since we can't use java.awt anymore, this copies the functionality we need from java.awt.Color
@@ -14,7 +14,6 @@ public class TintColor {
                 ((r & 0xFF) << 16) |
                 ((g & 0xFF) << 8)  |
                 ((b & 0xFF) << 0);
-//        testColorValueRange(r,g,b,a);
     }
 
     public TintColor(int red, int green, int blue) {

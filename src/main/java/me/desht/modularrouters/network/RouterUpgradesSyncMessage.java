@@ -18,14 +18,14 @@ import java.util.function.Supplier;
  * Sent when a router GUI is opened to sync all the upgrades to the clientside TE
  * Various GUI messages/tooltips/etc. depend on knowing what upgrades the router has
  */
-public class SyncUpgradesMessage {
+public class RouterUpgradesSyncMessage {
     private BlockPos pos;
     private ItemStackHandler handler;
 
-    public SyncUpgradesMessage() {
+    public RouterUpgradesSyncMessage() {
     }
 
-    public SyncUpgradesMessage(TileEntityItemRouter router) {
+    public RouterUpgradesSyncMessage(TileEntityItemRouter router) {
         pos = router.getPos();
         IItemHandler upgradesHandler = router.getUpgrades();
         handler = new ItemStackHandler(upgradesHandler.getSlots());
@@ -34,7 +34,7 @@ public class SyncUpgradesMessage {
         }
     }
 
-    public SyncUpgradesMessage(ByteBuf buf) {
+    public RouterUpgradesSyncMessage(ByteBuf buf) {
         PacketBuffer pb = new PacketBuffer(buf);
         pos = pb.readBlockPos();
         handler = new ItemStackHandler();

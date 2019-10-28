@@ -91,16 +91,15 @@ public enum AreaShowManager {
             List<ModuleTarget> targets = provider.getStoredPositions(stack);
             for (int i = 0; i < targets.size(); i++) {
                 ModuleTarget target = targets.get(i);
-                if (!target.isSameWorld(Minecraft.getInstance().world)) {
-                    continue;
-                }
-                BlockPos pos = target.gPos.getPos();
-                if (positions.containsKey(pos)) {
-                    positions.get(pos).faces.set(target.face.ordinal());
-                } else {
-                    FaceAndColour fc = new FaceAndColour(new BitSet(6), provider.getRenderColor(i));
-                    fc.faces.set(target.face.ordinal());
-                    positions.put(pos, fc);
+                if (target.isSameWorld(Minecraft.getInstance().world)) {
+                    BlockPos pos = target.gPos.getPos();
+                    if (positions.containsKey(pos)) {
+                        positions.get(pos).faces.set(target.face.ordinal());
+                    } else {
+                        FaceAndColour fc = new FaceAndColour(new BitSet(6), provider.getRenderColor(i));
+                        fc.faces.set(target.face.ordinal());
+                        positions.put(pos, fc);
+                    }
                 }
             }
         }

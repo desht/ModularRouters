@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item.upgrade;
 
-import me.desht.modularrouters.util.TintColor;
+import me.desht.modularrouters.client.util.TintColor;
 
 public class MufflerUpgrade extends ItemUpgrade {
     public MufflerUpgrade(Properties props) {

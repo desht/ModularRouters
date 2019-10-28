@@ -3,11 +3,11 @@ package me.desht.modularrouters;
 import me.desht.modularrouters.client.ColorHandlers;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
+import me.desht.modularrouters.client.gui.ScreenFactoryRegistration;
 import me.desht.modularrouters.client.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.area.AreaShowManager;
 import me.desht.modularrouters.config.ConfigHandler;
-import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.PacketHandler;
@@ -16,7 +16,6 @@ import me.desht.modularrouters.proxy.IProxy;
 import me.desht.modularrouters.proxy.ServerProxy;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
@@ -45,7 +44,6 @@ public class ModularRouters {
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::clientSetup);
-            MinecraftForge.EVENT_BUS.addListener(ClientHandler::registerRenders);
         });
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -71,13 +69,8 @@ public class ModularRouters {
             MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
             MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
 
-            ModContainerTypes.registerScreenFactories();
-
+            ScreenFactoryRegistration.registerScreenFactories();
             Keybindings.registerKeyBindings();
-        }
-
-        static void registerRenders(ModelRegistryEvent event) {
-            // todo 1.14 what do we need here?
         }
     }
 }

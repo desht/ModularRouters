@@ -2,8 +2,8 @@ package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
+import me.desht.modularrouters.client.util.Rect;
 import me.desht.modularrouters.util.MiscUtil;
-import me.desht.modularrouters.util.Rect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;

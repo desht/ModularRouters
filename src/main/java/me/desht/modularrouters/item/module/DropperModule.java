@@ -1,9 +1,9 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.logic.compiled.CompiledDropperModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.util.TintColor;
 import net.minecraft.item.ItemStack;
 
 public class DropperModule extends ItemModule {
