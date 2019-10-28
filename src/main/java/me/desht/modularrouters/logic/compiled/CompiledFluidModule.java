@@ -115,8 +115,9 @@ public class CompiledFluidModule extends CompiledModule {
         }
 
         // first check that the fluid matches any filter, and can be inserted
-        Fluid fluid = world.getFluidState(pos).getFluid();
-        if (fluid == Fluids.EMPTY || !getFilter().testFluid(fluid)) {
+        IFluidState fluidState = state.getFluidState();
+        Fluid fluid = fluidState.getFluid();
+        if (fluid == Fluids.EMPTY || !fluid.isSource(fluidState) || !getFilter().testFluid(fluid)) {
             return false;
         }
         FluidTank tank = new FluidTank(BUCKET_VOLUME);
