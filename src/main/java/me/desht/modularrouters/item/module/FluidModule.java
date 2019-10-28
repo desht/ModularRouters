@@ -14,6 +14,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.List;
@@ -39,6 +40,11 @@ public class FluidModule extends ItemModule {
     }
 
     @Override
+    protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
+        return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getDisplayName());
+    }
+
+    @Override
     protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
         super.addExtraInformation(stack, list);
         CompiledFluidModule cfm = new CompiledFluidModule(null, stack);
@@ -50,9 +56,10 @@ public class FluidModule extends ItemModule {
     @Override
     public boolean isItemValidForFilter(ItemStack stack) {
         // only fluid-holding items or a smart filter item can go into a fluid module's filter
-        return stack.isEmpty()
-                || (stack.getCount() == 1 && FluidUtil.getFluidContained(stack).isPresent())
-                || stack.getItem() instanceof ItemSmartFilter;
+        if (stack.isEmpty() || stack.getItem() instanceof ItemSmartFilter) return true;
+        if (stack.getCount() > 1) return false;
+
+        return FluidUtil.getFluidContained(stack).map(fluidStack -> !fluidStack.isEmpty()).orElse(false);
     }
 
     @Override

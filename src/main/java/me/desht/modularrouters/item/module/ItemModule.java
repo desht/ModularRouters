@@ -252,6 +252,10 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return (flag ? TextFormatting.DARK_GRAY : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
+    protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
+        return stack.getDisplayName();
+    }
+
     private void addFilterInformation(ItemStack itemstack, List<ITextComponent> list) {
         List<ITextComponent> l2 = new ArrayList<>();
         ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack);
@@ -263,7 +267,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                 l2.add(new StringTextComponent(" \u2022 ").appendSibling(s.getDisplayName().appendText(suffix))
                         .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new StringTextComponent(" \u2022 ").appendSibling(s.getDisplayName()
+                l2.add(new StringTextComponent(" \u2022 ").appendSibling(getFilterItemDisplayName(s)
                         .applyTextStyle(TextFormatting.AQUA)));
             }
         }
