@@ -307,7 +307,6 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-        // TODO handle for targeted modules
         return false;
     }
 

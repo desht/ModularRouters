@@ -6,6 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.14.2
 
+## 5.1.1 (30 Oct 2019)
+
+* Fixed matching by item tag not always working.
+* Fixed Fluid Module filter accepting empty fluid containers (only container with fluids should be accepted)
+  * Fluid Module item tooltip now shows names fluids in filter rather than the container item name.
+* Fixed Fluid Module being able to pick up flowing fluids (e.g. water flowing past a router) as if it were a source block.
+* A fair bit of internal code cleanup.
+
 ## 5.1.0 (22 Oct 2019)
 
 * First update to 1.14.4!

@@ -265,12 +265,6 @@ public abstract class TargetedModule extends ItemModule {
         }
         ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
         World world = player.getEntityWorld();
-        if (world.isRemote) {
-            return true;
-        }
-        if (player.isSneaking()) {
-            return false;
-        }
 
         // prevent message spamming
         long now = System.currentTimeMillis();
@@ -290,7 +284,7 @@ public abstract class TargetedModule extends ItemModule {
                 msg.appendText(" ");
                 msg.appendSibling(xlate(v.translationKey()).applyTextStyle(v.getColor()));
                 msg.applyTextStyle(TextFormatting.YELLOW);
-                player.sendStatusMessage(msg, true);
+                player.sendStatusMessage(msg, false);
             }
         }
         return true;
