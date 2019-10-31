@@ -1,6 +1,5 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.client.ColorHandlers;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.ScreenFactoryRegistration;
@@ -63,14 +62,17 @@ public class ModularRouters {
 
     static class ClientHandler {
         static void clientSetup(FMLClientSetupEvent event) {
-            MinecraftForge.EVENT_BUS.register(ModelBakeEventHandler.class);
-            MinecraftForge.EVENT_BUS.register(AreaShowManager.getInstance());
-            MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
-            MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
+            FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
+//            FMLJavaModLoadingContext.get().getModEventBus().register(ColorHandlers.class);
+//            MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
+            MinecraftForge.EVENT_BUS.register(AreaShowManager.INSTANCE);
             MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
+            MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
 
-            ScreenFactoryRegistration.registerScreenFactories();
-            Keybindings.registerKeyBindings();
+            DeferredWorkQueue.runLater(() -> {
+                ScreenFactoryRegistration.registerScreenFactories();
+                Keybindings.registerKeyBindings();
+            });
         }
     }
 }

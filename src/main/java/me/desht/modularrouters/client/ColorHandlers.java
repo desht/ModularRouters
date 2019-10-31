@@ -33,7 +33,7 @@ public class ColorHandlers {
     @SubscribeEvent
     public static void registerBlockColorHandlers(ColorHandlerEvent.Block event) {
         event.getBlockColors().register((state, reader, pos, tintIndex) -> {
-            if (pos == null) return -1;
+            if (pos == null || reader == null) return -1;
             TileEntity te = reader.getTileEntity(pos);
             if (te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null) {
                 return event.getBlockColors().getColor(((ICamouflageable) te).getCamouflage(), te.getWorld(), pos, tintIndex);
