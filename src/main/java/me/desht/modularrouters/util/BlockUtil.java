@@ -1,16 +1,12 @@
 package me.desht.modularrouters.util;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -18,7 +14,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
@@ -32,7 +27,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -165,42 +159,11 @@ public class BlockUtil {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
-                if (block instanceof ShulkerBoxBlock) {
-                    ItemStack stack = specialShulkerBoxHandling(world, pos);
-                    groups = new HashMap<>();
-                    groups.put(true, Lists.newArrayList(stack));
-                }
                 world.removeBlock(pos, false);
                 return new BreakResult(true, groups);
             }
         }
         return BreakResult.NOT_BROKEN;
-    }
-
-    /**
-     * Work around extra logic in BlockShulkerBox#breakBlock
-     * Shulker box breakBlock() method appears to be unique among all Minecraft classes
-     * in that will drop an item directly.  Sigh.
-     */
-    private static ItemStack specialShulkerBoxHandling(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ShulkerBoxTileEntity) {
-            ShulkerBoxTileEntity tesb = (ShulkerBoxTileEntity) te;
-//            if (!tesb.isCleared() && tesb.shouldDrop()) {
-                ItemStack itemstack = new ItemStack(world.getBlockState(pos).getBlock().asItem());
-                CompoundNBT nbttagcompound = new CompoundNBT();
-                CompoundNBT nbttagcompound1 = new CompoundNBT();
-                nbttagcompound.put("BlockEntityTag", tesb.saveToNbt(nbttagcompound1));
-                itemstack.setTag(nbttagcompound);
-                if (tesb.hasCustomName()) {
-                    itemstack.setDisplayName(tesb.getName());
-                    tesb.setCustomName(new StringTextComponent(""));
-                }
-                tesb.clear();  // stops BlockShulkerBox#breakBlock dropping it as an item
-                return itemstack;
-//            }
-        }
-        return ItemStack.EMPTY;
     }
 
     private static List<ItemStack> getDrops(World world, BlockPos pos, PlayerEntity player, boolean silkTouch, int fortune) {
@@ -222,7 +185,7 @@ public class BlockUtil {
         List<ItemStack> drops = state.getDrops(builder);
         NonNullList<ItemStack> dropsN = NonNullList.create();
         dropsN.addAll(drops);
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, false, player);
+        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, silkTouch, player);
         return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
 
