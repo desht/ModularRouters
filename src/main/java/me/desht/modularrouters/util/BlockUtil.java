@@ -4,6 +4,7 @@ import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -146,8 +147,8 @@ public class BlockUtil {
     public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        // todo 1.13 how do liquids work?
-        if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 /*|| block instanceof BlockLiquid*/) {
+
+        if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof FlowingFluidBlock) {
             return BreakResult.NOT_BROKEN;
         }
 
