@@ -10,7 +10,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -133,10 +135,17 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         return compound;
     }
 
-    public void setCamouflage(ItemStack itemStack) {
+    public void setCamouflage(ItemStack itemStack, Direction facing, Direction routerFacing) {
         if (itemStack.getItem() instanceof BlockItem) {
             camouflage = ((BlockItem) itemStack.getItem()).getBlock().getDefaultState();
-            requestModelDataUpdate();
+            if (camouflage.has(BlockStateProperties.AXIS)) {
+                camouflage = camouflage.with(BlockStateProperties.AXIS, facing.getAxis());
+            } else if (camouflage.has(BlockStateProperties.FACING)) {
+                camouflage = camouflage.with(BlockStateProperties.FACING, facing);
+            } else if (camouflage.has(BlockStateProperties.HORIZONTAL_FACING)) {
+                camouflage = camouflage.with(BlockStateProperties.HORIZONTAL_FACING,
+                        facing.getAxis() == Direction.Axis.Y ? routerFacing : facing);
+            }
         }
     }
 }

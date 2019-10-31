@@ -58,7 +58,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 if (state != null) {
                     TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(world, placePos);
                     if (te != null) {
-                        te.setCamouflage(blockList.get(distance));
+                        te.setCamouflage(blockList.get(distance), getFacing(), getRouterFacing());
                         te.setExtendedMimic(mimic);
                         if (mimic) {
                             // in case we're mimicking a redstone emitter
