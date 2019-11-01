@@ -18,6 +18,8 @@ import java.util.List;
 
 public abstract class ItemBase extends Item {
 
+    private static String ctrlKeyName = null;
+
     public ItemBase(Properties props) {
         super(props);
     }
@@ -31,9 +33,9 @@ public abstract class ItemBase extends Item {
             addUsageInformation(stack, list);
         } else if (ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
-            list.add(new TranslationTextComponent("itemText.misc.holdCtrl").applyTextStyles(TextFormatting.GRAY));
+            list.add(new TranslationTextComponent("itemText.misc.holdCtrl", getCtrlKeyName()).applyTextStyles(TextFormatting.GRAY));
         } else if (!ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get()) {
-            list.add(new TranslationTextComponent("itemText.misc.holdShiftCtrl").applyTextStyles(TextFormatting.GRAY));
+            list.add(new TranslationTextComponent("itemText.misc.holdShiftCtrl", getCtrlKeyName()).applyTextStyles(TextFormatting.GRAY));
         }
     }
 
@@ -48,4 +50,10 @@ public abstract class ItemBase extends Item {
         return new Object[0];
     }
 
+    private static String getCtrlKeyName() {
+        if (ctrlKeyName == null) {
+            ctrlKeyName = System.getProperty("os.name").toLowerCase().contains("mac") ? "Cmd" : "Ctrl";
+        }
+        return ctrlKeyName;
+    }
 }

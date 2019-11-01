@@ -204,8 +204,8 @@
   "gui.config.moduleGuiBackgroundTint": "Tint module GUI backgrounds with the same color as the module item",
 
   "_comment": "Item tooltips",
-  "itemText.misc.holdShiftCtrl": "Hold §e§oShift§7 for settings, §e§oCtrl§7 for info",
-  "itemText.misc.holdCtrl": "Hold §e§oCtrl§r§7 for info",
+  "itemText.misc.holdShiftCtrl": "Hold §e§oShift§7 for settings, §e§%s§7 for info",
+  "itemText.misc.holdCtrl": "Hold §e§o%s§r§7 for info",
   "itemText.misc.moduleCount": "Modules: %d",
   "itemText.misc.upgradeCount": "Upgrades: %d",
   "itemText.misc.routerConfigured": "This router has been configured",
