@@ -1,6 +1,7 @@
 package me.desht.modularrouters.integration;
 
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -30,7 +31,7 @@ public class XPCollection {
             return new ItemStack(item);
         } else {
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(resource);
-            return fluid == null ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
+            return fluid == Fluids.EMPTY ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
         }
     }
 

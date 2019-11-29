@@ -10,6 +10,7 @@ import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
@@ -59,12 +60,12 @@ public class CompiledVacuumModule extends CompiledModule {
 
         if (xpMode) {
             Fluid xpFluid = xpCollectionType.getFluid();
-            xpJuiceStack = xpFluid == null ? null : new FluidStack(xpFluid, 1000);
+            xpJuiceStack = xpFluid == Fluids.EMPTY ? FluidStack.EMPTY : new FluidStack(xpFluid, 1000);
             if (router != null) {
                 findFluidReceiver(router);
             }
         } else {
-            xpJuiceStack = null;
+            xpJuiceStack = FluidStack.EMPTY;
         }
     }
 
@@ -83,7 +84,7 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private void findFluidReceiver(TileEntityItemRouter router) {
-        if (!xpMode || xpJuiceStack == null) return;
+        if (!xpMode || xpJuiceStack.isEmpty()) return;
 
         fluidReceiver = null;
         for (Direction face : Direction.values()) {

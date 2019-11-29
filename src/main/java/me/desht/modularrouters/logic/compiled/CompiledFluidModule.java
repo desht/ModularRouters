@@ -64,18 +64,6 @@ public class CompiledFluidModule extends CompiledModule {
 
         World world = router.getWorld();
         BlockPos pos = getTarget().gPos.getPos();
-
-//        if (fluidDirection == FluidDirection.OUT
-//                && (!getFilter().test(containerStack) || !forceEmpty && !(world.isAirBlock(pos) || world.getBlockState(pos).getBlock() instanceof ILiquidContainer))) {
-//            return false;
-//        }
-
-//        if (fluidDirection == FluidDirection.IN && isInfiniteWaterSource(world, pos)) {
-//            // allows router to pull from infinite water source without block updates
-//            worldFluidCap = LazyOptional.of(() -> infiniteWater);
-//        } else {
-//            worldFluidCap = FluidUtil.getFluidHandler(world, pos, getFacing().getOpposite());
-//        }
         LazyOptional<IFluidHandler> worldFluidCap = FluidUtil.getFluidHandler(world, pos, getFacing().getOpposite());
 
         boolean didWork = false;
@@ -94,10 +82,14 @@ public class CompiledFluidModule extends CompiledModule {
             // there's a TE with a fluid capability; try to interact with that
             switch (fluidDirection) {
                 case IN:
-                    didWork = worldFluidCap.map(srcHandler -> routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false)).orElse(false);
+                    didWork = worldFluidCap.map(srcHandler ->
+                            routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false))
+                            .orElse(false);
                     break;
                 case OUT:
-                    didWork = routerCap.map(srcHandler -> worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false)).orElse(false);
+                    didWork = routerCap.map(srcHandler ->
+                            worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false))
+                            .orElse(false);
                     break;
             }
         }
