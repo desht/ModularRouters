@@ -1,39 +1,41 @@
 package me.desht.modularrouters.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 public class ConfigHandler {
     private static final ForgeConfigSpec.Builder S_BUILDER = new ForgeConfigSpec.Builder();
     public static final Module MODULE = new Module(S_BUILDER);
     public static final Router ROUTER = new Router(S_BUILDER);
     public static final Misc MISC = new Misc(S_BUILDER);
-    public static final ForgeConfigSpec SERVER_SPEC = S_BUILDER.build();
+    public static final ForgeConfigSpec COMMON_SPEC = S_BUILDER.build();
 
     private static final ForgeConfigSpec.Builder C_BUILDER = new ForgeConfigSpec.Builder();
     public static final ClientMisc CLIENT_MISC = new ClientMisc(C_BUILDER);
     public static final ForgeConfigSpec CLIENT_SPEC = C_BUILDER.build();
 
     public static class Module {
-        public final ForgeConfigSpec.ConfigValue<Integer> sender1BaseRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> sender1MaxRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> sender2BaseRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> sender2MaxRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> vacuumBaseRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> vacuumMaxRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> extruder1BaseRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> extruder1MaxRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> extruder2BaseRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> extruder2MaxRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> puller2BaseRange;
-        public final ForgeConfigSpec.ConfigValue<Integer> puller2MaxRange;
-        public final ForgeConfigSpec.ConfigValue<Boolean> senderParticles;
-        public final ForgeConfigSpec.ConfigValue<Boolean> pullerParticles;
-        public final ForgeConfigSpec.ConfigValue<Boolean> placerParticles;
-        public final ForgeConfigSpec.ConfigValue<Boolean> breakerParticles;
-        public final ForgeConfigSpec.ConfigValue<Boolean> vacuumParticles;
-        public final ForgeConfigSpec.ConfigValue<Boolean> flingerEffects;
-        public final ForgeConfigSpec.ConfigValue<Boolean> extruderSound;
-        public final ForgeConfigSpec.ConfigValue<Boolean> extruderPushEntities;
+        public final IntValue sender1BaseRange;
+        public final IntValue sender1MaxRange;
+        public final IntValue sender2BaseRange;
+        public final IntValue sender2MaxRange;
+        public final IntValue vacuumBaseRange;
+        public final IntValue vacuumMaxRange;
+        public final IntValue extruder1BaseRange;
+        public final IntValue extruder1MaxRange;
+        public final IntValue extruder2BaseRange;
+        public final IntValue extruder2MaxRange;
+        public final IntValue puller2BaseRange;
+        public final IntValue puller2MaxRange;
+        public final BooleanValue senderParticles;
+        public final BooleanValue pullerParticles;
+        public final BooleanValue placerParticles;
+        public final BooleanValue breakerParticles;
+        public final BooleanValue vacuumParticles;
+        public final BooleanValue flingerEffects;
+        public final BooleanValue extruderSound;
+        public final BooleanValue extruderPushEntities;
 
         Module(ForgeConfigSpec.Builder builder) {
             builder.push("Module");
@@ -104,14 +106,14 @@ public class ConfigHandler {
     }
 
     public static class Router {
-        public final ForgeConfigSpec.ConfigValue<Integer> baseTickRate;
-        public final ForgeConfigSpec.ConfigValue<Integer> ticksPerUpgrade;
-        public final ForgeConfigSpec.ConfigValue<Integer> hardMinTickRate;
-        public final ForgeConfigSpec.ConfigValue<Integer> ecoTimeout;
-        public final ForgeConfigSpec.ConfigValue<Integer> lowPowerTickRate;
-        public final ForgeConfigSpec.ConfigValue<Integer> fluidBaseTransferRate;
-        public final ForgeConfigSpec.ConfigValue<Integer> fluidMaxTransferRate;
-        public final ForgeConfigSpec.ConfigValue<Integer> mBperFluidUpgade;
+        public final IntValue baseTickRate;
+        public final IntValue ticksPerUpgrade;
+        public final IntValue hardMinTickRate;
+        public final IntValue ecoTimeout;
+        public final IntValue lowPowerTickRate;
+        public final IntValue fluidBaseTransferRate;
+        public final IntValue fluidMaxTransferRate;
+        public final IntValue mBperFluidUpgade;
 
         Router(ForgeConfigSpec.Builder builder) {
             builder.push("Router");
@@ -147,7 +149,7 @@ public class ConfigHandler {
     }
 
     public static class Misc {
-        public ForgeConfigSpec.ConfigValue<Boolean> startWithGuide;
+        public final BooleanValue startWithGuide;
 
         Misc(ForgeConfigSpec.Builder builder) {
             builder.push("Misc");
@@ -161,8 +163,8 @@ public class ConfigHandler {
     }
 
     public static class ClientMisc {
-        public ForgeConfigSpec.ConfigValue<Boolean> alwaysShowModuleSettings;
-        public final ForgeConfigSpec.ConfigValue<Boolean> moduleGuiBackgroundTint;
+        public final BooleanValue alwaysShowModuleSettings;
+        public final BooleanValue moduleGuiBackgroundTint;
 
         ClientMisc(ForgeConfigSpec.Builder builder) {
             builder.push("Misc");

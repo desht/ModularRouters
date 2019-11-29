@@ -31,14 +31,13 @@ import org.apache.logging.log4j.Logger;
 public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
-    static final String MODVERSION = "@VERSION@";
 
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public ModularRouters() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.SERVER_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.CLIENT_SPEC);
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
@@ -63,8 +62,6 @@ public class ModularRouters {
     static class ClientHandler {
         static void clientSetup(FMLClientSetupEvent event) {
             FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
-//            FMLJavaModLoadingContext.get().getModEventBus().register(ColorHandlers.class);
-//            MinecraftForge.EVENT_BUS.register(ColorHandlers.class);
             MinecraftForge.EVENT_BUS.register(AreaShowManager.INSTANCE);
             MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
             MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
