@@ -6,11 +6,10 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import net.minecraft.client.resources.I18n;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
@@ -25,20 +24,18 @@ public class ActivatorModule extends ItemModule {
         super.addSettingsInformation(stack, list);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
-        list.add(new StringTextComponent(
-                TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.action") + ": "
-                + TextFormatting.AQUA + I18n.format("itemText.activator.action." + cam.getActionType()))
-        );
+        list.add(MiscUtil.xlate("guiText.tooltip.activator.action").appendText(": ")
+                .applyTextStyle(TextFormatting.YELLOW)
+                .appendSibling(MiscUtil.xlate("itemText.activator.action." + cam.getActionType())
+                        .applyTextStyle(TextFormatting.AQUA)));
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
-            list.add(new StringTextComponent(
-                    TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.lookDirection") + ": "
-                    + TextFormatting.AQUA + I18n.format("itemText.activator.direction." + cam.getLookDirection()))
-            );
+            list.add(MiscUtil.xlate("guiText.tooltip.activator.lookDirection").appendText(": ")
+                    .applyTextStyle(TextFormatting.YELLOW)
+            .appendSibling(MiscUtil.xlate("itemText.activator.direction." + cam.getLookDirection()))
+                    .applyTextStyle(TextFormatting.AQUA));
         }
         if (cam.isSneaking()) {
-            list.add(new StringTextComponent(
-                    TextFormatting.YELLOW + I18n.format("guiText.tooltip.activator.sneak"))
-            );
+            list.add(MiscUtil.xlate("guiText.tooltip.activator.sneak").applyTextStyle(TextFormatting.YELLOW));
         }
     }
 

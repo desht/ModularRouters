@@ -76,7 +76,7 @@ public class Filter implements Predicate<ItemStack> {
 
     public boolean testFluid(Fluid fluid) {
         for (IItemMatcher matcher : matchers) {
-            if (matcher instanceof FluidMatcher && ((FluidMatcher) matcher).matchFluid(fluid)) {
+            if (matcher instanceof FluidMatcher && ((FluidMatcher) matcher).matchFluid(fluid, flags)) {
                 return !flags.isBlacklist();
             }
         }

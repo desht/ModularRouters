@@ -28,9 +28,8 @@ public class DistributorModule extends SenderModule2 {
         super.addSettingsInformation(itemstack, list);
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
-        list.add(MiscUtil.xlate("guiText.tooltip.distributor.strategy").appendText(": ")
-                .appendText(TextFormatting.AQUA.toString())
-                .appendSibling(MiscUtil.xlate(cdm.getDistributionStrategy().translationKey())).applyTextStyle(TextFormatting.YELLOW));
+        list.add(MiscUtil.xlate("guiText.tooltip.distributor.strategy").appendText(": ").applyTextStyle(TextFormatting.YELLOW)
+                .appendSibling(MiscUtil.xlate(cdm.getDistributionStrategy().translationKey())).applyTextStyle(TextFormatting.AQUA));
     }
 
     @Override
