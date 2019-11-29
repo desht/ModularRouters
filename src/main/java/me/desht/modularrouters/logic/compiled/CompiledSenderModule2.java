@@ -22,7 +22,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
         ModuleTarget target = getEffectiveTarget(router);
         if (target == null || !validate(router, target)) {
-            return null;
+            return PositionedItemHandler.INVALID;
         }
 
         return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.getPos(), h))
