@@ -6,7 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.14.2
 
-## 5.1.1 (30 Oct 2019)
+### 5.1.2 (30 Nov 2019)
+
+* Server-side config is now common config.  If you made any changes to `saves/<world>/serverconfig/modularrouters-server.toml` you will need to modify `config/modularrouters-common.toml` after this update.  Sorry!
+* Fixed NPE with Sender Mk2/Sender Mk3/Distributor when inventory was invalid or module not configured
+* Fluid Module filter now supports fluid tags.
+* Some other minor fluid handling improvements & fixes.
+
+### 5.1.1 (30 Oct 2019)
 
 * Fixed matching by item tag not always working.
 * Fixed Fluid Module filter accepting empty fluid containers (only container with fluids should be accepted)
@@ -14,7 +21,7 @@ Changes are in reverse chronological order; newest changes at the top.
 * Fixed Fluid Module being able to pick up flowing fluids (e.g. water flowing past a router) as if it were a source block.
 * A fair bit of internal code cleanup.
 
-## 5.1.0 (22 Oct 2019)
+### 5.1.0 (22 Oct 2019)
 
 * First update to 1.14.4!
 * Fluid module is now functional, although only tested with vanilla water and lava buckets.
@@ -31,7 +38,7 @@ Changes are in reverse chronological order; newest changes at the top.
 * Redid all module, upgrade, and augment textures.
 * Completely removed all java.awt.* code (good news for Mac users)
 
-## 5.0.0 (15 Jun 2019)
+### 5.0.0 (15 Jun 2019)
 
 * Initial 1.14.2 port!
 * Tested on SSP and dedicated server SMP.  Still early days for Forge so expect instability and bugs.
