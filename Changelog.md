@@ -12,6 +12,8 @@ Changes are in reverse chronological order; newest changes at the top.
 * Fixed NPE with Sender Mk2/Sender Mk3/Distributor when inventory was invalid or module not configured
 * Fluid Module filter now supports fluid tags.
 * Some other minor fluid handling improvements & fixes.
+* Better initial placement rotation for rotatable blocks by the Extruder.
+* Tooltips referring to "Ctrl" now use "Cmd" on Mac.
 
 ### 5.1.1 (30 Oct 2019)
 

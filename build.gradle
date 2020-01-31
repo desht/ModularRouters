@@ -28,7 +28,7 @@ if (System.getenv().BUILD_NUMBER != null) {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: config.mcp_mappings
+    mappings channel: 'stable', version: config.mcp_mappings
     //accessTransformer = file('my_at.cfg')
     runs {
         client = {
@@ -80,12 +80,11 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
-    compile fg.deobf (project.dependencies.create("mcjty.theoneprobe:TheOneProbe-1.14:${config.top_version}") {
-        transitive = false
-    })
-    compile fg.deobf (project.dependencies.create("mcp.mobius.waila:Hwyla:${config.waila_version}") {
-        transitive = false
-    })
+    
+    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
+    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
+    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.14:${config.top_version}:api")
+    runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.14:${config.top_version}")
     compileOnly fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}:api")
     runtime fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
     //deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"

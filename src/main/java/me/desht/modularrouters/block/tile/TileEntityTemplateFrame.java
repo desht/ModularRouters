@@ -87,7 +87,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         camouflage = getCamoStateFromNBT(pkt.getNbtCompound());
         extendedMimic = pkt.getNbtCompound().getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
-            getWorld().getChunkProvider().getLightManager().checkBlock(pos);
+            getWorld().getChunkProvider().func_212863_j_().checkBlock(pos);
         }
     }
 
@@ -99,7 +99,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
-            Scheduler.client().schedule(() -> getWorld().getChunkProvider().getLightManager().checkBlock(pos), 1L);
+            Scheduler.client().schedule(() -> getWorld().getChunkProvider().func_212863_j_().checkBlock(pos), 1L);
         }
     }
 
