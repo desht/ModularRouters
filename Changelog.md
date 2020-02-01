@@ -6,7 +6,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.14.4
 
-### 5.1.3 (1 Feb 2020)
+### 5.1.4 (1 Feb 2020)
 
 * Fixed item dupe bug
 
