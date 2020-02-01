@@ -1,5 +1,6 @@
 package me.desht.modularrouters.container;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
@@ -155,7 +156,7 @@ public class ContainerModule extends Container {
 
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-//        System.out.println("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
+        ModularRouters.LOGGER.info("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
         boolean sendChanges = false;
 
         if (slot > HOTBAR_END) {
@@ -195,5 +196,10 @@ public class ContainerModule extends Container {
         ItemStack ret = super.slotClick(slot, dragType, clickTypeIn, player);
         if (sendChanges) detectAndSendChanges();
         return ret;
+    }
+
+    @Override
+    public boolean canDragIntoSlot(Slot p_94531_1_) {
+        return false;
     }
 }
