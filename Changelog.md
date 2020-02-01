@@ -4,7 +4,11 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
-## Minecraft 1.14.2
+## Minecraft 1.14.4
+
+### 5.1.3 (1 Feb 2020)
+
+* Fixed item dupe bug
 
 ### 5.1.2 (30 Nov 2019)
 
@@ -39,6 +43,8 @@ Changes are in reverse chronological order; newest changes at the top.
 * Fixed mouse-over crash for modules from 5.0.0 (https://github.com/desht/ModularRouters/issues/57)
 * Redid all module, upgrade, and augment textures.
 * Completely removed all java.awt.* code (good news for Mac users)
+
+## Minecraft 1.14.2
 
 ### 5.0.0 (15 Jun 2019)
 
