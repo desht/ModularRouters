@@ -1,6 +1,5 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
@@ -156,7 +155,7 @@ public class ContainerModule extends Container {
 
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        ModularRouters.LOGGER.info("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
+//        ModularRouters.LOGGER.info("slotClick: slot=" + slot + ", dragtype=" + dragType + ", clicktype=" + clickTypeIn);
         boolean sendChanges = false;
 
         if (slot > HOTBAR_END) {
