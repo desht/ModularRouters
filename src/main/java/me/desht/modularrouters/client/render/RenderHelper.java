@@ -1,10 +1,10 @@
 package me.desht.modularrouters.client.render;
 
-import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL13;
 
 /**
  * With thanks to McJty's TheOneProbe render code!
@@ -12,23 +12,23 @@ import net.minecraft.item.ItemStack;
 public class RenderHelper {
     public static void renderItemStack(Minecraft mc, ItemStack stack, int x, int y, String txt) {
         ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
-        GlStateManager.color3f(1.0F, 1.0F, 1.0F);
+        RenderSystem.color3f(1.0F, 1.0F, 1.0F);
 
-        if (!stack.isEmpty() && stack.getItem() != null) {
-            GlStateManager.pushMatrix();
-            GlStateManager.translatef(0.0F, 0.0F, 32.0F);
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager.enableRescaleNormal();
-            GlStateManager.enableLighting();
+        if (!stack.isEmpty()) {
+            RenderSystem.pushMatrix();
+            RenderSystem.translatef(0.0F, 0.0F, 32.0F);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.enableRescaleNormal();
+            RenderSystem.enableLighting();
             short short1 = 240;
             short short2 = 240;
-            net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
-            GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, short1 / 1.0F, short2 / 1.0F);
+            net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+            RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, short1 / 1.0F, short2 / 1.0F);
             itemRender.renderItemAndEffectIntoGUI(stack, x, y);
             itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, txt);
-            GlStateManager.popMatrix();
-            GlStateManager.disableRescaleNormal();
-            GlStateManager.disableLighting();
+            RenderSystem.popMatrix();
+            RenderSystem.disableRescaleNormal();
+            RenderSystem.disableLighting();
         }
     }
 
@@ -37,7 +37,7 @@ public class RenderHelper {
         float red = (color >> 16 & 255) / 255F;
         float green = (color >> 8 & 255) / 255F;
         float blue = (color & 255) / 255F;
-        GlStateManager.color4f(red, green, blue, alpha);
+        RenderSystem.color4f(red, green, blue, alpha);
     }
 
     public static void glColorHex(int color, int alpha) {

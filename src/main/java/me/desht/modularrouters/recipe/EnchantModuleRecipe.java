@@ -90,7 +90,7 @@ public class EnchantModuleRecipe extends SpecialRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return ModRecipes.MODULE_ENCHANT;
+        return ModRecipes.MODULE_ENCHANT.get();
     }
 
     private EnchantmentData getValidEnchantment(ItemStack bookStack, ItemStack moduleStack) {

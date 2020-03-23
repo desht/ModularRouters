@@ -81,7 +81,7 @@ public class ModuleHelper {
 
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
-        if (counter.getAugmentCount(ModItems.REDSTONE_AUGMENT) > 0) {
+        if (counter.getAugmentCount(ModItems.REDSTONE_AUGMENT.get()) > 0) {
             CompoundNBT compound = validateNBT(stack);
             try {
                 return RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
@@ -100,6 +100,6 @@ public class ModuleHelper {
 
     public static int getRangeModifier(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
-        return counter.getAugmentCount(ModItems.RANGE_UP_AUGMENT) - counter.getAugmentCount(ModItems.RANGE_DOWN_AUGMENT);
+        return counter.getAugmentCount(ModItems.RANGE_UP_AUGMENT.get()) - counter.getAugmentCount(ModItems.RANGE_DOWN_AUGMENT.get());
     }
 }

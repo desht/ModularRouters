@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -20,8 +21,8 @@ import net.minecraftforge.fluids.FluidUtil;
 import java.util.List;
 
 public class FluidModule extends ItemModule {
-    public FluidModule(Properties props) {
-        super(props);
+    public FluidModule() {
+        super(ModItems.defaultProps());
     }
 
     public enum FluidDirection {
@@ -31,7 +32,7 @@ public class FluidModule extends ItemModule {
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_FLUID;
+        return ModContainerTypes.CONTAINER_MODULE_FLUID.get();
     }
 
     @Override

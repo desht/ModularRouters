@@ -1,4 +1,4 @@
-package me.desht.modularrouters.proxy;
+package me.desht.modularrouters.client.util;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
@@ -9,14 +9,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
-public class ClientProxy implements IProxy {
-    @Override
-    public World theClientWorld() {
+public class ClientUtil {
+    public static World theClientWorld() {
         return Minecraft.getInstance().world;
     }
 
-    @Override
-    public TileEntityItemRouter getOpenItemRouter() {
+    public static TileEntityItemRouter getOpenItemRouter() {
         if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
             return ((GuiItemRouter) Minecraft.getInstance().currentScreen).router;
         } else {
@@ -24,13 +22,11 @@ public class ClientProxy implements IProxy {
         }
     }
 
-    @Override
-    public PlayerEntity getClientPlayer() {
+    public static PlayerEntity getClientPlayer() {
         return Minecraft.getInstance().player;
     }
 
-    @Override
-    public void openSyncGui(ItemStack stack, Hand hand) {
+    public static void openSyncGui(ItemStack stack, Hand hand) {
         Minecraft.getInstance().displayGuiScreen(new GuiSyncUpgrade(stack, hand));
     }
 }

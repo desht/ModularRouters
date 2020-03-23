@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.PlaySoundMessage;
@@ -14,6 +15,7 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -47,13 +49,13 @@ public abstract class TargetedModule extends ItemModule {
 
     private static final Map<UUID,Long> lastSwing = Maps.newHashMap();
 
-    TargetedModule(Properties props) {
+    TargetedModule(Item.Properties props) {
         super(props);
     }
 
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
-        if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
+        if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             return InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()).map(handler -> {
                 if (getMaxTargets() == 1) {
                     handleSingleTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
@@ -74,7 +76,7 @@ public abstract class TargetedModule extends ItemModule {
             if (tgt != null) {
                 ITextComponent msg = xlate("chatText.misc.targetSet").appendSibling(tgt.getTextComponent());
                 player.sendStatusMessage(msg.applyTextStyle(TextFormatting.YELLOW), true);
-                PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.3f);
+                PlaySoundMessage.playSound(player, ModSounds.SUCCESS.get(), 1.0f, 1.3f);
             }
         }
     }
@@ -99,11 +101,11 @@ public abstract class TargetedModule extends ItemModule {
                 // too many targets already
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
                         .applyTextStyle(TextFormatting.RED), true);
-                PlaySoundMessage.playSound(player, ModSounds.ERROR, 1.0f, 1.3f);
+                PlaySoundMessage.playSound(player, ModSounds.ERROR.get(), 1.0f, 1.3f);
                 return;
             }
 
-            PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, removing ? 1.1f : 1.3f);
+            PlaySoundMessage.playSound(player, ModSounds.SUCCESS.get(), 1.0f, removing ? 1.1f : 1.3f);
             setTargets(stack, targets);
         }
     }
@@ -132,7 +134,7 @@ public abstract class TargetedModule extends ItemModule {
                 ITextComponent msg = xlate("chatText.misc.target")
                         .appendSibling(target.getTextComponent()).applyTextStyle(TextFormatting.YELLOW);
                 list.add(msg);
-                TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
+                TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
@@ -148,7 +150,7 @@ public abstract class TargetedModule extends ItemModule {
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            PlaySoundMessage.playSound(player, ModSounds.SUCCESS, 1.0f, 1.1f);
+            PlaySoundMessage.playSound(player, ModSounds.SUCCESS.get(), 1.0f, 1.1f);
             player.sendStatusMessage(xlate("chatText.misc.targetCleared").applyTextStyle(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);

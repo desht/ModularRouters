@@ -1,33 +1,21 @@
 package me.desht.modularrouters.core;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
-@ObjectHolder(ModularRouters.MODID)
 public class ModSounds {
-    public static final SoundEvent ERROR = null;
-    public static final SoundEvent SUCCESS = null;
-    public static final SoundEvent THUD = null;
+    public static final DeferredRegister<SoundEvent> SOUNDS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, ModularRouters.MODID);
 
-    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class Registration {
-        @SubscribeEvent
-        public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-            register(event.getRegistry(), RL("error"));
-            register(event.getRegistry(), RL("success"));
-            register(event.getRegistry(), RL("thud"));
-        }
+    public static final RegistryObject<SoundEvent> ERROR = register("error");
+    public static final RegistryObject<SoundEvent> SUCCESS = register("success");
+    public static final RegistryObject<SoundEvent> THUD = register("thud");
 
-        private static void register(IForgeRegistry<SoundEvent> registry, ResourceLocation name) {
-            registry.register(new SoundEvent(name).setRegistryName(name));
-        }
+    private static RegistryObject<SoundEvent> register(String name) {
+        return SOUNDS.register(name, () -> new SoundEvent(RL(name)));
     }
 }

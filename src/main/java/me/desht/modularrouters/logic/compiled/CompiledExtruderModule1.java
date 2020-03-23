@@ -38,7 +38,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInt(NBT_EXTRUDER_DIST + getFacing());
         silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-        pushingAugments = getAugmentCount(ModItems.PUSHING_AUGMENT);
+        pushingAugments = getAugmentCount(ModItems.PUSHING_AUGMENT.get());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
                 entity.collidedHorizontally = false;
                 entity.collidedVertically = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
-                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.posX, entity.posY, entity.posZ, 32, world.dimension.getType());
+                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.getPosX(), entity.getPosY(), entity.getPosZ(), 32, world.dimension.getType());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                         new PushEntityMessage(entity, v.x, v.y, v.z));
             }

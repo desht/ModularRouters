@@ -9,11 +9,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 public class RegulatorAugment extends ItemAugment {
-
-    public RegulatorAugment(Properties props) {
-        super(props);
-    }
-
     @Override
     public boolean isCompatible(ItemModule moduleType) {
         return !(moduleType instanceof DetectorModule || moduleType instanceof ExtruderModule2);

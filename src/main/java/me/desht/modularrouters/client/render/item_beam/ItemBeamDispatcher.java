@@ -1,9 +1,10 @@
-package me.desht.modularrouters.client.item_beam;
+package me.desht.modularrouters.client.render.item_beam;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.profiler.IProfiler;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,7 +18,11 @@ public enum ItemBeamDispatcher {
 
     private static final int MAX_SIZE = 250;
 
-    private final List<ItemBeam> beams = new ArrayList<>();
+    public final List<ItemBeam> beams = new ArrayList<>();
+
+    public static ItemBeamDispatcher getInstance() {
+        return INSTANCE;
+    }
 
     public void addBeam(ItemBeam itemBeam) {
         if (beams.size() < MAX_SIZE) {
@@ -35,18 +40,25 @@ public enum ItemBeamDispatcher {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
-        if (ItemBeamDispatcher.INSTANCE.beams.isEmpty()) return;
+        if (beams.isEmpty()) return;
 
         IProfiler profiler = Minecraft.getInstance().getProfiler();
         profiler.startSection("modularrouters-particles");
-        GlStateManager.pushMatrix();
 
-        GlStateManager.translated(-TileEntityRendererDispatcher.staticPlayerX, -TileEntityRendererDispatcher.staticPlayerY, -TileEntityRendererDispatcher.staticPlayerZ);
-        for (ItemBeam beam: ItemBeamDispatcher.INSTANCE.beams) {
-            beam.render(event.getPartialTicks());
+        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        MatrixStack matrixStack = event.getMatrixStack();
+
+        matrixStack.push();
+
+        Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
+
+        for (ItemBeam beam: beams) {
+            beam.render(matrixStack, buffer, event.getPartialTicks());
         }
 
-        GlStateManager.popMatrix();
+        matrixStack.pop();
+
         profiler.endSection();
     }
 

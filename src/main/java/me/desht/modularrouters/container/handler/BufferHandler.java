@@ -39,7 +39,7 @@ public class BufferHandler extends ItemStackHandler {
 
         if (updateFluid || updateEnergy) {
             // in case any pipes/cables need to connect/disconnect
-            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.ITEM_ROUTER);
+            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.ITEM_ROUTER.get());
         }
     }
 

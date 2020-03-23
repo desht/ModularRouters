@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.Keybindings;
@@ -161,9 +161,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     protected void setupButtonVisibility() {
-        redstoneButton.visible = augmentCounter.getAugmentCount(ModItems.REDSTONE_AUGMENT) > 0;
-        regulatorTooltipButton.visible = augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT) > 0;
-        regulatorTextField.setVisible(augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT) > 0);
+        redstoneButton.visible = augmentCounter.getAugmentCount(ModItems.REDSTONE_AUGMENT.get()) > 0;
+        regulatorTooltipButton.visible = augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT.get()) > 0;
+        regulatorTextField.setVisible(augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT.get()) > 0);
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
@@ -238,7 +238,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         TintColor c = getGuiBackgroundTint();
-        GlStateManager.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
+        RenderSystem.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
         blit(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         if (!module.isDirectional()) {

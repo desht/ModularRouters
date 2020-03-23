@@ -7,6 +7,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketDirection;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class FakePlayerManager {
-    private static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()), "[" + ModularRouters.MODNAME + "]");
+    private static final GameProfile GAME_PROFILE = new GameProfile(UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()), "[" + ModularRouters.MODNAME + "]");
     private static WeakReference<RouterFakePlayer> theFakePlayer = new WeakReference<>(null);
 
     /**
@@ -32,21 +33,19 @@ public class FakePlayerManager {
     public static RouterFakePlayer getFakePlayer(ServerWorld world, BlockPos pos) {
         RouterFakePlayer fakePlayer = theFakePlayer.get();
         if (fakePlayer == null) {
-            fakePlayer = new RouterFakePlayer(world, gameProfile);
+            fakePlayer = new RouterFakePlayer(world);
             fakePlayer.connection = new ServerPlayNetHandler(ServerLifecycleHooks.getCurrentServer(), new NetworkManager(PacketDirection.SERVERBOUND), fakePlayer);
             theFakePlayer = new WeakReference<>(fakePlayer);
         }
         fakePlayer.world = world;
-        fakePlayer.posX = pos.getX();
-        fakePlayer.posY = pos.getY();
-        fakePlayer.posZ = pos.getZ();
+        fakePlayer.setRawPosition(pos.getX(), pos.getY(), pos.getZ());
 
         return fakePlayer;
     }
 
     public static class RouterFakePlayer extends FakePlayer {
-        RouterFakePlayer(ServerWorld world, GameProfile name) {
-            super(world, name);
+        RouterFakePlayer(World world) {
+            super((ServerWorld) world, GAME_PROFILE);
         }
 
         @Override

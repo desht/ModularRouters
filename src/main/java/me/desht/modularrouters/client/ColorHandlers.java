@@ -5,19 +5,21 @@ import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ColorHandlers {
     @SubscribeEvent
     public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
-        ModItems.All.items.stream()
-                .filter(entry -> entry instanceof ModItems.ITintable)
-                .forEach(entry -> event.getItemColors().register((stack, tintIndex) -> {
+        for (RegistryObject<Item> item : ModItems.ITEMS.getEntries()) {
+            if (item.get() instanceof ModItems.ITintable) {
+                event.getItemColors().register((stack, tintIndex) -> {
                     switch (tintIndex) {
                         case 0:
                         case 2:
@@ -27,7 +29,9 @@ public class ColorHandlers {
                         default:
                             return TintColor.BLACK.getRGB();  // shouldn't get here
                     }
-                }, entry));
+                }, item.get());
+            }
+        }
     }
 
     @SubscribeEvent
@@ -40,6 +44,6 @@ public class ColorHandlers {
             } else {
                 return 0xffffff;
             }
-        }, ModBlocks.ITEM_ROUTER, ModBlocks.TEMPLATE_FRAME);
+        }, ModBlocks.ITEM_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
     }
 }

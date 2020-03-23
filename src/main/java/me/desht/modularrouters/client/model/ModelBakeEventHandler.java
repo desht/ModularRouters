@@ -16,8 +16,8 @@ public class ModelBakeEventHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        override(event, ModBlocks.ITEM_ROUTER, CamouflagingModel.RouterModel::new);
-        override(event, ModBlocks.TEMPLATE_FRAME, CamouflagingModel.TemplateFrameModel::new);
+        override(event, ModBlocks.ITEM_ROUTER.get(), CamouflagingModel.RouterModel::new);
+        override(event, ModBlocks.TEMPLATE_FRAME.get(), CamouflagingModel.TemplateFrameModel::new);
     }
 
     private static void override(ModelBakeEvent event, Block block, Function<IBakedModel, CamouflagingModel> f) {

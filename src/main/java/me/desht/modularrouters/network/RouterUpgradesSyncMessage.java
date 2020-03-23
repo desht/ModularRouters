@@ -1,9 +1,8 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import net.minecraft.client.Minecraft;
+import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -49,9 +48,9 @@ public class RouterUpgradesSyncMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            World w = ModularRouters.proxy.theClientWorld();
+            World w = ClientUtil.theClientWorld();
             if (w != null) {
-                TileEntityItemRouter.getRouterAt(Minecraft.getInstance().world, pos)
+                TileEntityItemRouter.getRouterAt(w, pos)
                         .ifPresent(router -> router.setUpgradesFrom(handler));
             }
         });

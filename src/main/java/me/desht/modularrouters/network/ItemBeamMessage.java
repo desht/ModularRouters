@@ -1,14 +1,12 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.item_beam.ItemBeam;
-import me.desht.modularrouters.client.item_beam.ItemBeamDispatcher;
+import me.desht.modularrouters.client.render.item_beam.ItemBeam;
+import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -65,12 +63,7 @@ public class ItemBeamMessage {
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            World w = ModularRouters.proxy.theClientWorld();
-            if (w != null) {
-                ItemBeamDispatcher.INSTANCE.addBeam(new ItemBeam(new Vec3d(pos1).add(HALF_BLOCK), new Vec3d(pos2).add(HALF_BLOCK), stack, color, Math.max(5, duration + 1), itemFade));
-            }
-        });
+        ctx.get().enqueueWork(() -> ItemBeamDispatcher.getInstance().addBeam(new ItemBeam(pos1, pos2, stack, color, Math.max(5, duration + 1), itemFade)));
         ctx.get().setPacketHandled(true);
     }
 }

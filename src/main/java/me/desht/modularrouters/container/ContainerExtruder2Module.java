@@ -25,7 +25,7 @@ public class ContainerExtruder2Module extends ContainerModule {
     }
 
     public ContainerExtruder2Module(int windowId, PlayerInventory inv, MFLocator locator) {
-        super(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2, windowId, inv, locator);
+        super(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), windowId, inv, locator);
 
         TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player));
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {

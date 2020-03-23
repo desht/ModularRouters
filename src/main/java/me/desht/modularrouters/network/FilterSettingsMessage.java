@@ -72,30 +72,36 @@ public class FilterSettingsMessage {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
-            ItemStack moduleStack = locator.getModuleStack(player);
-            ItemStack filterStack = locator.getTargetItem(player);
-            if (filterStack.getItem() instanceof ItemSmartFilter) {
-                ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
-                GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
-                if (!moduleStack.isEmpty()) {
-                    ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack);
-                    filterHandler.setStackInSlot(locator.filterSlot, filterStack);
-                    filterHandler.save();
-                    if (locator.hand != null) {
-                        player.setHeldItem(locator.hand, filterHandler.getHolderStack());
-                    } else if (locator.routerPos != null) {
-                        TileEntityItemRouter.getRouterAt(player.world, locator.routerPos)
-                                .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
-                    }
-                }
-                if (response != null) {
-                    // send to any nearby players in case they also have the GUI open
-                    PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(player.posX, player.posY, player.posZ,
-                            8, player.getEntityWorld().getDimension().getType());
-                    PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp), response);
-                }
+            if (player != null) {
+                processPacket(player);
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    private void processPacket(ServerPlayerEntity player) {
+        ItemStack moduleStack = locator.getModuleStack(player);
+        ItemStack filterStack = locator.getTargetItem(player);
+        if (filterStack.getItem() instanceof ItemSmartFilter) {
+            ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
+            GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
+            if (!moduleStack.isEmpty()) {
+                ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack);
+                filterHandler.setStackInSlot(locator.filterSlot, filterStack);
+                filterHandler.save();
+                if (locator.hand != null) {
+                    player.setHeldItem(locator.hand, filterHandler.getHolderStack());
+                } else if (locator.routerPos != null) {
+                    TileEntityItemRouter.getRouterAt(player.world, locator.routerPos)
+                            .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
+                }
+            }
+            if (response != null) {
+                // send to any nearby players in case they also have the GUI open
+                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(player.getPosX(), player.getPosY(), player.getPosZ(),
+                        8, player.getEntityWorld().getDimension().getType());
+                PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp), response);
+            }
+        }
     }
 }

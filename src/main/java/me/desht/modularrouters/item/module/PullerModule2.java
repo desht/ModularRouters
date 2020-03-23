@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule2;
@@ -14,8 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PullerModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
-    public PullerModule2(Properties props) {
-        super(props);
+    public PullerModule2() {
+        super(ModItems.defaultProps());
     }
 
     @Override

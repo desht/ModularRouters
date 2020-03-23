@@ -31,10 +31,6 @@ public class InspectionFilter extends ItemSmartFilter {
     private static final String NBT_ITEMS = "Items";
     public static final int MAX_SIZE = 6;
 
-    public InspectionFilter(Properties props) {
-        super(props);
-    }
-
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new InspectionMatcher(getComparisonList(filterStack));
@@ -68,7 +64,7 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     private void setComparisonList(ItemStack filterStack, ComparisonList comparisonList) {
-        ListNBT l = comparisonList.items.stream().map(comp -> new StringNBT(comp.toString())).collect(Collectors.toCollection(ListNBT::new));
+        ListNBT l = comparisonList.items.stream().map(comp -> StringNBT.valueOf(comp.toString())).collect(Collectors.toCollection(ListNBT::new));
         CompoundNBT compound = filterStack.getOrCreateChildTag(ModularRouters.MODID);
         compound.putBoolean(NBT_MATCH_ALL, comparisonList.isMatchAll());
         compound.put(NBT_ITEMS, l);

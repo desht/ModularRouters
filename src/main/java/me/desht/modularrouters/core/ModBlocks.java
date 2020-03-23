@@ -4,24 +4,42 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockItemRouter;
 import me.desht.modularrouters.block.BlockTemplateFrame;
 import net.minecraft.block.Block;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import static me.desht.modularrouters.util.MiscUtil.RL;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-@ObjectHolder(ModularRouters.MODID)
 public class ModBlocks {
-    public static final BlockItemRouter ITEM_ROUTER = null;
-    public static final BlockTemplateFrame TEMPLATE_FRAME = null;
+    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, ModularRouters.MODID);
+    public static final DeferredRegister<Item> ITEMS = ModItems.ITEMS;
 
-    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class Registration {
-        @SubscribeEvent
-        public static void registerBlocks(RegistryEvent.Register<Block> event) {
-            event.getRegistry().register(new BlockItemRouter().setRegistryName(RL("item_router")));
-            event.getRegistry().register(new BlockTemplateFrame().setRegistryName(RL("template_frame")));
-        }
+    public static final RegistryObject<BlockItemRouter> ITEM_ROUTER = register("item_router", BlockItemRouter::new);
+    public static final RegistryObject<BlockTemplateFrame> TEMPLATE_FRAME = register("template_frame", BlockTemplateFrame::new);
+
+    private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup) {
+        return register(name, sup, ModBlocks::itemDefault);
+    }
+
+    private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup, Function<RegistryObject<T>, Supplier<? extends Item>> itemCreator) {
+        RegistryObject<T> ret = registerNoItem(name, sup);
+        ITEMS.register(name, itemCreator.apply(ret));
+        return ret;
+    }
+
+    private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<? extends T> sup) {
+        return BLOCKS.register(name, sup);
+    }
+
+    private static Supplier<BlockItem> itemDefault(final RegistryObject<? extends Block> block) {
+        return item(block, ModItems.MR_CREATIVE_TAB);
+    }
+
+    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block, final ItemGroup itemGroup) {
+        return () -> new BlockItem(block.get(), new Item.Properties().group(itemGroup));
     }
 }

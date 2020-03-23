@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.container.handler.AugmentHandler;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.item.Item;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 public abstract class ItemAugment extends ItemBase {
     public static final int SLOTS = 4;
 
-    public ItemAugment(Properties props) {
-        super(props);
+    public ItemAugment() {
+        super(ModItems.defaultProps());
     }
 
     @Override

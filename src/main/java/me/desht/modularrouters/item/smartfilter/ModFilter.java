@@ -33,10 +33,6 @@ public class ModFilter extends ItemSmartFilter {
     private static final String NBT_MODS = "Mods";
     public static final int MAX_SIZE = 6;
 
-    public ModFilter(Properties props) {
-        super(props);
-    }
-
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new ModMatcher(getModList(filterStack));
@@ -57,7 +53,7 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     private static void setModList(ItemStack filterStack, List<String> mods) {
-        ListNBT list = mods.stream().map(StringNBT::new).collect(Collectors.toCollection(ListNBT::new));
+        ListNBT list = mods.stream().map(StringNBT::valueOf).collect(Collectors.toCollection(ListNBT::new));
         filterStack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_MODS, list);
     }
 

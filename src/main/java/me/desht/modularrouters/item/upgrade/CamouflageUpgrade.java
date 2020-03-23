@@ -22,10 +22,6 @@ import java.util.List;
 public class CamouflageUpgrade extends ItemUpgrade {
     public static final String NBT_STATE_NAME = "BlockStateName";
 
-    public CamouflageUpgrade(Properties props) {
-        super(props);
-    }
-
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
@@ -72,11 +68,11 @@ public class CamouflageUpgrade extends ItemUpgrade {
                         .appendSibling(getCamoStateDisplayName(stack))
                         .applyTextStyle(TextFormatting.YELLOW), false);
             } else {
-                player.playSound(ModSounds.SUCCESS, 1.0f, 1.5f);
+                player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
             return ActionResultType.SUCCESS;
         } else if (ctx.getWorld().isRemote) {
-            player.playSound(ModSounds.ERROR, 1.0f, 1.0f);
+            player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
             return ActionResultType.FAIL;
         }
         return ActionResultType.PASS;
@@ -84,6 +80,6 @@ public class CamouflageUpgrade extends ItemUpgrade {
 
     private static boolean isBlockOKForCamo(BlockState state) {
         // trying to camo a router as itself = recursion hell
-        return state.getRenderType() == BlockRenderType.MODEL && state.getBlock() != ModBlocks.ITEM_ROUTER;
+        return state.getRenderType() == BlockRenderType.MODEL && state.getBlock() != ModBlocks.ITEM_ROUTER.get();
     }
 }

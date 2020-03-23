@@ -2,59 +2,46 @@ package me.desht.modularrouters.core;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.container.*;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.network.IContainerFactory;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import static me.desht.modularrouters.util.MiscUtil.RL;
-
-@ObjectHolder(ModularRouters.MODID)
 public class ModContainerTypes {
-    public static final ContainerType<ContainerItemRouter> CONTAINER_ITEM_ROUTER = null;
+    public static final DeferredRegister<ContainerType<?>> CONTAINERS = new DeferredRegister<>(ForgeRegistries.CONTAINERS, ModularRouters.MODID);
 
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_BASIC = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_ACTIVATOR = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_DETECTOR = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_DISTRIBUTOR = null;
-    public static final ContainerType<ContainerExtruder2Module> CONTAINER_MODULE_EXTRUDER2 = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_FLINGER = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_FLUID = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_PLAYER = null;
-    public static final ContainerType<ContainerModule> CONTAINER_MODULE_VACUUM = null;
+    public static final RegistryObject<ContainerType<ContainerItemRouter>> CONTAINER_ITEM_ROUTER
+            = register("item_router", ContainerItemRouter::new);
 
-    public static final ContainerType<ContainerBulkItemFilter> CONTAINER_BULK_ITEM_FILTER = null;
-    public static final ContainerType<ContainerModFilter> CONTAINER_MOD_FILTER = null;
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_BASIC
+            = register("module_basic", ContainerModule::new);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_ACTIVATOR
+            = register("module_activator", ContainerModules::createActivatorContainer);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_DETECTOR
+            = register("module_detector", ContainerModules::createDetectorContainer);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_DISTRIBUTOR
+            = register("module_distributor", ContainerModules::createDistributorContainer);
+    public static final RegistryObject<ContainerType<ContainerExtruder2Module>> CONTAINER_MODULE_EXTRUDER2
+            = register("module_extruder_2", ContainerModules::createExtruder2Container);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_FLINGER
+            = register("module_flinger", ContainerModules::createFlingerContainer);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_FLUID
+            = register("module_fluid", ContainerModules::createFluidContainer);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_PLAYER
+            = register("module_player", ContainerModules::createPlayerContainer);
+    public static final RegistryObject<ContainerType<ContainerModule>> CONTAINER_MODULE_VACUUM
+            = register("module_vacuum", ContainerModules::createVacuumContainer);
 
-    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class Registration {
-        @SubscribeEvent
-        public static void registerContainers(RegistryEvent.Register<ContainerType<?>> event) {
-            event.getRegistry().registerAll(
-                    IForgeContainerType.create(ContainerModule::new)
-                            .setRegistryName(RL("container_module_basic")),
-                    IForgeContainerType.create(ContainerModules::createActivatorContainer)
-                            .setRegistryName(RL("container_module_activator")),
-                    IForgeContainerType.create(ContainerModules::createDetectorContainer)
-                            .setRegistryName(RL("container_module_detector")),
-                    IForgeContainerType.create(ContainerModules::createDistributorContainer)
-                            .setRegistryName(RL("container_module_distributor")),
-                    IForgeContainerType.create(ContainerModules::createExtruder2Container).
-                            setRegistryName(RL("container_module_extruder2")),
-                    IForgeContainerType.create(ContainerModules::createFlingerContainer)
-                            .setRegistryName(RL("container_module_flinger")),
-                    IForgeContainerType.create(ContainerModules::createFluidContainer)
-                            .setRegistryName(RL("container_module_fluid")),
-                    IForgeContainerType.create(ContainerModules::createPlayerContainer)
-                            .setRegistryName(RL("container_module_player")),
-                    IForgeContainerType.create(ContainerModules::createVacuumContainer)
-                            .setRegistryName(RL("container_module_vacuum")),
-                    IForgeContainerType.create(ContainerItemRouter::new).setRegistryName(RL("container_item_router")),
-                    IForgeContainerType.create(ContainerBulkItemFilter::new).setRegistryName(RL("container_bulk_item_filter")),
-                    IForgeContainerType.create(ContainerModFilter::new).setRegistryName(RL("container_mod_filter"))
-            );
-        }
+    public static final RegistryObject<ContainerType<ContainerBulkItemFilter>> CONTAINER_BULK_ITEM_FILTER
+            = register("bulk_item_filter", ContainerBulkItemFilter::new);
+    public static final RegistryObject<ContainerType<ContainerModFilter>> CONTAINER_MOD_FILTER
+            = register("mod_filter", ContainerModFilter::new);
+
+    private static <C extends Container, T extends ContainerType<C>> RegistryObject<T> register(String name, IContainerFactory<? extends C> f) {
+        //noinspection unchecked
+        return CONTAINERS.register(name, () -> (T) IForgeContainerType.create(f));
     }
 }

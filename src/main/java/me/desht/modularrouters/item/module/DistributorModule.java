@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 public class DistributorModule extends SenderModule2 {
-    public DistributorModule(Properties props) {
-        super(props);
-    }
-
     @Override
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
@@ -34,7 +30,7 @@ public class DistributorModule extends SenderModule2 {
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR;
+        return ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get();
     }
 
     @Override

@@ -5,6 +5,7 @@ import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
@@ -20,13 +21,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 
 public class VacuumModule extends ItemModule implements IRangedModule {
-    public VacuumModule(Properties props) {
-        super(props);
+    public VacuumModule() {
+        super(ModItems.defaultProps());
     }
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_VACUUM;
+        return ModContainerTypes.CONTAINER_MODULE_VACUUM.get();
     }
 
     @Override

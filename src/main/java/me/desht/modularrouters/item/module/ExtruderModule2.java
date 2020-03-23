@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.container.ContainerExtruder2Module;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule2;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MFLocator;
@@ -19,8 +20,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 
 public class ExtruderModule2 extends ItemModule implements IRangedModule {
-    public ExtruderModule2(Properties props) {
-        super(props);
+    public ExtruderModule2() {
+        super(ModItems.defaultProps());
     }
 
     @Override

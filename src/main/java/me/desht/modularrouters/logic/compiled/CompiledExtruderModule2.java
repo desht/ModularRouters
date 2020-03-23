@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
-    private static final ItemStack TEMPLATE_STACK = new ItemStack(ModBlocks.TEMPLATE_FRAME);
+    private static final ItemStack TEMPLATE_STACK = new ItemStack(ModBlocks.TEMPLATE_FRAME.get());
     private final List<ItemStack> blockList;
     private final boolean mimic;
 
@@ -28,7 +28,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         super(router, stack);
 
         blockList = new ArrayList<>();
-        mimic = getAugmentCount(ModItems.MIMIC_AUGMENT) > 0;
+        mimic = getAugmentCount(ModItems.MIMIC_AUGMENT.get()) > 0;
 
         TemplateHandler handler = new TemplateHandler(stack);
         for (int i = 0; i < handler.getSlots() && blockList.size() < getRange(); i++) {
@@ -81,7 +81,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), false, 0);
                 if (breakResult.isBlockBroken()) {
                     router.playSound(null, breakPos,
-                            ModBlocks.TEMPLATE_FRAME.getSoundType(oldState, world, breakPos, null).getBreakSound(),
+                            ModBlocks.TEMPLATE_FRAME.get().getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                 }
                 return true;
@@ -93,6 +93,6 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
 
     private boolean okToBreak(BlockState state, World world, BlockPos pos) {
         Block b = state.getBlock();
-        return b.isAir(state, world, pos) || b == ModBlocks.TEMPLATE_FRAME /*|| b instanceof BlockLiquid*/ || b instanceof IFluidBlock;
+        return b.isAir(state, world, pos) || b == ModBlocks.TEMPLATE_FRAME.get() || b instanceof IFluidBlock;
     }
 }

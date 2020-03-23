@@ -5,10 +5,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 public class StackAugment extends ItemAugment {
-    public StackAugment(Properties props) {
-        super(props);
-    }
-
     @Override
     public boolean isCompatible(ItemModule moduleType) {
         return !(moduleType instanceof DetectorModule || moduleType instanceof ExtruderModule1 || moduleType instanceof ExtruderModule2

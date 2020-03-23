@@ -84,9 +84,9 @@ public class CompiledActivatorModule extends CompiledModule {
         fakePlayer.setSneaking(sneaking);
         ItemStack stack = router.getBufferItemStack();
         fakePlayer.setHeldItem(Hand.MAIN_HAND, stack);
-        float hitX = (float)(fakePlayer.posX - pos.getX());
-        float hitY = (float)(fakePlayer.posY - pos.getY());
-        float hitZ = (float)(fakePlayer.posZ - pos.getZ());
+        float hitX = (float)(fakePlayer.getPosX() - pos.getX());
+        float hitY = (float)(fakePlayer.getPosY() - pos.getY());
+        float hitZ = (float)(fakePlayer.getPosZ() - pos.getZ());
 
         switch (actionType) {
             case ACTIVATE_BLOCK:
@@ -200,7 +200,7 @@ public class CompiledActivatorModule extends CompiledModule {
         if (event.getUseBlock() != Event.Result.DENY) {
             BlockState iblockstate = world.getBlockState(targetPos);
             BlockRayTraceResult r = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), hitFace, targetPos, false);
-            if (iblockstate.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, r)) {
+            if (iblockstate.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, r) == ActionResultType.SUCCESS) {
                 router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;
             }

@@ -69,7 +69,7 @@ public class CompiledFluidModule extends CompiledModule {
         boolean didWork = false;
         if (!worldFluidCap.isPresent()) {
             // no TE at the target position; try to interact with a fluid block in the world
-            boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) == 0;
+            boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
             switch (fluidDirection) {
                 case IN:
                     didWork = tryPickupFluid(routerCap, world, pos, playSound);

@@ -7,10 +7,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 public class RedstoneAugment extends ItemAugment {
-    public RedstoneAugment(Properties props) {
-        super(props);
-    }
-
     @Override
     public boolean isCompatible(ItemModule moduleType) {
         return true;

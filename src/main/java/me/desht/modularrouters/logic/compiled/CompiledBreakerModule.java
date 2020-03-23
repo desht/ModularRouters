@@ -37,7 +37,7 @@ public class CompiledBreakerModule extends CompiledModule {
             BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
-                if (ConfigHandler.MODULE.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) == 0) {
+                if (ConfigHandler.MODULE.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
                     world.playEvent(2001, pos, oldId);
                 }
                 return true;

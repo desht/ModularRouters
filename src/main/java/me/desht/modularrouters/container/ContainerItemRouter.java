@@ -45,7 +45,7 @@ public class ContainerItemRouter extends Container {
     }
 
     public ContainerItemRouter(int windowId, PlayerInventory invPlayer, BlockPos routerPos) {
-        super(ModContainerTypes.CONTAINER_ITEM_ROUTER, windowId);
+        super(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), windowId);
 
         Optional<TileEntityItemRouter> o = TileEntityItemRouter.getRouterAt(invPlayer.player.world, routerPos);
         this.router = o.orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
@@ -80,7 +80,7 @@ public class ContainerItemRouter extends Container {
     @Override
     public boolean canInteractWith(PlayerEntity player) {
         return router.getWorld().getTileEntity(router.getPos()) == router
-                && router.getDistanceSq(player.posX, player.posY, player.posZ) <= 64;
+                && router.getDistanceSq(player.getPosX(), player.getPosY(), player.getPosZ()) <= 64;
     }
 
     @Override

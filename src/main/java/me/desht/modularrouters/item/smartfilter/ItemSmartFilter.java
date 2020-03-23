@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.client.gui.filter.FilterGuiFactory;
 import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -29,8 +30,8 @@ import java.util.List;
 
 @Mod.EventBusSubscriber
 public abstract class ItemSmartFilter extends ItemBase {
-    public ItemSmartFilter(Properties props) {
-        super(props);
+    public ItemSmartFilter() {
+        super(ModItems.defaultProps());
     }
 
     public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack);

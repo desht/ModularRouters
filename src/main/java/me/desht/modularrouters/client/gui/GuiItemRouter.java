@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.Keybindings;
@@ -72,7 +72,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i1) {
         minecraft.getTextureManager().bindTexture(textureLocation);
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         blit(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 

@@ -22,6 +22,7 @@ import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -171,20 +172,20 @@ public class BlockItemRouter extends BlockCamo {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
-        if (!player.isSneaking()) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+        if (!player.isSteppingCarefully()) {
             return TileEntityItemRouter.getRouterAt(world, pos).map(router -> {
                 if (router.isPermitted(player) && !world.isRemote) {
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
                     player.sendStatusMessage(new TranslationTextComponent("chatText.security.accessDenied"), false);
-                    player.playSound(ModSounds.ERROR, 1.0f, 1.0f);
+                    player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
-                return true;
-            }).orElse(true);
+                return ActionResultType.SUCCESS;
+            }).orElse(ActionResultType.FAIL);
         }
-        return true;
+        return ActionResultType.PASS;
     }
 
     @Override
@@ -224,14 +225,14 @@ public class BlockItemRouter extends BlockCamo {
     @Override
     public boolean canEntityDestroy(BlockState state, IBlockReader world, BlockPos pos, Entity entity) {
         return TileEntityItemRouter.getRouterAt(world, pos)
-                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE) <= 0 && super.canEntityDestroy(state, world, pos, entity))
+                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) <= 0 && super.canEntityDestroy(state, world, pos, entity))
                 .orElse(true);
     }
 
     @Override
     public float getExplosionResistance(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
         return TileEntityItemRouter.getRouterAt(world, pos)
-                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE) > 0 ? 20000f : BLAST_RESISTANCE)
+                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) > 0 ? 20000f : BLAST_RESISTANCE)
                 .orElse(0f);
     }
 }

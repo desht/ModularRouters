@@ -57,7 +57,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
-        if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
+        if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
             Vec3d vec1 = new Vec3d(router.getPos());
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().dimension.getType());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
@@ -79,7 +79,7 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     @Override
     public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getTarget().gPos.getPos());
+        BlockPos.Mutable pos = new BlockPos.Mutable(getTarget().gPos.getPos());
         Direction face = getTarget().face;
         World world = router.getWorld();
         for (int i = 1; i <= getRange(); i++) {

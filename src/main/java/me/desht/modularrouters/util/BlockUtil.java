@@ -106,9 +106,9 @@ public class BlockUtil {
         fakePlayer.rotationYaw = getYawFromFacing(facing);
         fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
 
-        float hitX = (float) (fakePlayer.posX - pos.getX());
-        float hitY = (float) (fakePlayer.posY - pos.getY());
-        float hitZ = (float) (fakePlayer.posZ - pos.getZ());
+        float hitX = (float) (fakePlayer.getPosX() - pos.getX());
+        float hitY = (float) (fakePlayer.getPosY() - pos.getY());
+        float hitZ = (float) (fakePlayer.getPosZ() - pos.getZ());
         BlockRayTraceResult brtr = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), facing, pos, false);
         BlockItemUseContext ctx = new BlockItemUseContext(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
         if (!currentState.isReplaceable(ctx)) {

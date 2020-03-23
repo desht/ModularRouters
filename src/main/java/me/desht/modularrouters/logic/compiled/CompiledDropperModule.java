@@ -16,7 +16,7 @@ public class CompiledDropperModule extends CompiledModule {
     public CompiledDropperModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        pickupDelay = getAugmentCount(ModItems.PICKUP_DELAY_AUGMENT) * PickupDelayAugment.TICKS_PER_AUGMENT;
+        pickupDelay = getAugmentCount(ModItems.PICKUP_DELAY_AUGMENT.get()) * PickupDelayAugment.TICKS_PER_AUGMENT;
     }
 
     @Override

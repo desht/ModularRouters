@@ -1,27 +1,25 @@
 package me.desht.modularrouters.core;
 
+import com.google.common.collect.ImmutableSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import static me.desht.modularrouters.util.MiscUtil.RL;
+import java.util.function.Supplier;
 
-@ObjectHolder(ModularRouters.MODID)
 public class ModTileEntities {
-    public static final TileEntityType<?> ITEM_ROUTER = null;
-    public static final TileEntityType<?> TEMPLATE_FRAME = null;
+    public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, ModularRouters.MODID);
 
-    @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class Registration {
-        @SubscribeEvent
-        public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
-            event.getRegistry().register(TileEntityType.Builder.create(TileEntityItemRouter::new, ModBlocks.ITEM_ROUTER).build(null).setRegistryName(RL("item_router")));
-            event.getRegistry().register(TileEntityType.Builder.create(TileEntityTemplateFrame::new, ModBlocks.TEMPLATE_FRAME).build(null).setRegistryName(RL("template_frame")));
-        }
+    public static final RegistryObject<TileEntityType<?>> ITEM_ROUTER
+            = register("item_router", () -> new TileEntityType<>(TileEntityItemRouter::new, ImmutableSet.of(ModBlocks.ITEM_ROUTER.get()), null));
+    public static final RegistryObject<TileEntityType<?>> TEMPLATE_FRAME
+            = register("template_frame", () -> new TileEntityType<>(TileEntityTemplateFrame::new, ImmutableSet.of(ModBlocks.TEMPLATE_FRAME.get()), null));
+
+    private static <T extends TileEntityType<?>> RegistryObject<T> register(String name, Supplier<T> sup) {
+        return TILE_ENTITIES.register(name, sup);
     }
 }

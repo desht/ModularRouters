@@ -29,7 +29,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     private boolean extendedMimic; // true if extra mimicking is done (light, hardness, blast resistance)
 
     public TileEntityTemplateFrame() {
-        super(ModTileEntities.TEMPLATE_FRAME);
+        super(ModTileEntities.TEMPLATE_FRAME.get());
     }
 
     public static TileEntityTemplateFrame getTileEntitySafely(IBlockReader world, BlockPos pos) {
@@ -52,8 +52,8 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     @Override
     public IModelData getModelData() {
         return new ModelDataMap.Builder()
-                .withInitial(BlockCamo.BLOCK_ACCESS, world)
-                .withInitial(BlockCamo.BLOCK_POS, pos)
+//                .withInitial(BlockCamo.BLOCK_ACCESS, world)
+//                .withInitial(BlockCamo.BLOCK_POS, pos)
                 .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
@@ -87,7 +87,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         camouflage = getCamoStateFromNBT(pkt.getNbtCompound());
         extendedMimic = pkt.getNbtCompound().getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
-            getWorld().getChunkProvider().func_212863_j_().checkBlock(pos);
+            getWorld().getChunkProvider().getLightManager().checkBlock(pos);
         }
     }
 
@@ -99,7 +99,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
-            Scheduler.client().schedule(() -> getWorld().getChunkProvider().func_212863_j_().checkBlock(pos), 1L);
+            Scheduler.client().schedule(() -> getWorld().getChunkProvider().getLightManager().checkBlock(pos), 1L);
         }
     }
 

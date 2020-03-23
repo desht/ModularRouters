@@ -1,7 +1,7 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
@@ -45,17 +45,15 @@ public class PushEntityMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            World w = ModularRouters.proxy.theClientWorld();
-            if (w != null) {
-                Entity entity = w.getEntityByID(id);
-                if (entity != null) {
-                    entity.setMotion(x, y, z);
-                    entity.onGround = false;
-                    entity.collided = false;
-                    entity.collidedHorizontally = false;
-                    entity.collidedVertically = false;
-                    if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
-                }
+            World w = ClientUtil.theClientWorld();
+            Entity entity = w.getEntityByID(id);
+            if (entity != null) {
+                entity.setMotion(x, y, z);
+                entity.onGround = false;
+                entity.collided = false;
+                entity.collidedHorizontally = false;
+                entity.collidedVertically = false;
+                if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
             }
         });
         ctx.get().setPacketHandled(true);

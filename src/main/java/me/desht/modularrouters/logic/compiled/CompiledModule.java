@@ -116,7 +116,7 @@ public abstract class CompiledModule {
     }
 
     public int getRegulationAmount() {
-        return augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT) > 0 ? regulationAmount : 0;
+        return augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT.get()) > 0 ? regulationAmount : 0;
     }
 
     int getAugmentCount(Item augmentType) {
@@ -187,7 +187,7 @@ public abstract class CompiledModule {
     }
 
     int getItemsPerTick(TileEntityItemRouter router) {
-        int n = augmentCounter.getAugmentCount(ModItems.STACK_AUGMENT);
+        int n = augmentCounter.getAugmentCount(ModItems.STACK_AUGMENT.get());
         return n > 0 ? Math.min(1 << n, 64) : router.getItemsPerTick();
     }
 
@@ -281,7 +281,7 @@ public abstract class CompiledModule {
     }
 
     private int getRangeModifier() {
-        return getAugmentCount(ModItems.RANGE_UP_AUGMENT) - getAugmentCount(ModItems.RANGE_DOWN_AUGMENT);
+        return getAugmentCount(ModItems.RANGE_UP_AUGMENT.get()) - getAugmentCount(ModItems.RANGE_DOWN_AUGMENT.get());
     }
 
     Direction getRouterFacing() {

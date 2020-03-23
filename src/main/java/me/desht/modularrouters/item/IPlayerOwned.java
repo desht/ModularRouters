@@ -29,8 +29,8 @@ public interface IPlayerOwned {
     default void setOwner(ItemStack stack, PlayerEntity player) {
         CompoundNBT compound = stack.getOrCreateTag();
         ListNBT owner = new ListNBT();
-        owner.add(new StringNBT(player.getDisplayName().getString()));
-        owner.add(new StringNBT(player.getUniqueID().toString()));
+        owner.add(StringNBT.valueOf(player.getDisplayName().getString()));
+        owner.add(StringNBT.valueOf(player.getUniqueID().toString()));
         compound.put(NBT_OWNER, owner);
         stack.setTag(compound);
     }

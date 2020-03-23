@@ -38,7 +38,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     }
 
     public ContainerBulkItemFilter(int windowId, PlayerInventory invPlayer, MFLocator loc) {
-        super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER, windowId, invPlayer, loc);
+        super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), windowId, invPlayer, loc);
 
         this.handler = new BulkFilterHandler(filterStack);
         this.currentSlot = invPlayer.currentItem + HOTBAR_START;

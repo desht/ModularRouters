@@ -1,10 +1,10 @@
 package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
@@ -145,7 +145,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
      * @return the container type
      */
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_BASIC;
+        return ModContainerTypes.CONTAINER_MODULE_BASIC.get();
     }
 
     /**
@@ -173,7 +173,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(stack, world, list, flag);
 
-        TileEntityItemRouter router = ModularRouters.proxy.getOpenItemRouter();
+        TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
         if (router != null) {
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
@@ -290,7 +290,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         ModuleHelper.validateNBT(stack);
-        if (!player.isSneaking()) {
+        if (!player.isSteppingCarefully()) {
             if (!world.isRemote) {
                 MFLocator locator = MFLocator.heldModule(hand);
                 NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, locator), locator::writeBuf);

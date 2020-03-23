@@ -48,12 +48,12 @@ public class CompiledFlingerModule extends CompiledDropperModule {
             ModuleTarget target = getTarget();
             int n = Math.round(speed * 5);
             BlockPos pos = target.gPos.getPos();
-            if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
+            if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
                 ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.LARGE_SMOKE,
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
-            router.playSound(null, pos, ModSounds.THUD, SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
+            router.playSound(null, pos, ModSounds.THUD.get(), SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
         }
 
         return fired;

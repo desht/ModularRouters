@@ -45,14 +45,14 @@ public class GuiModuleVacuum extends GuiModule {
     protected void setupButtonVisibility() {
         super.setupButtonVisibility();
 
-        xpb.visible = augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0;
+        xpb.visible = augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0;
         ejb.visible = xpb.visible && !xpb.getState().isSolid();
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
-        if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0) {
+        if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
             font.drawString(I18n.format("guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
                 font.drawString(I18n.format("guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
@@ -63,7 +63,7 @@ public class GuiModuleVacuum extends GuiModule {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0) {
+        if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
             this.blit(guiLeft + 168, guiTop + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
         }
     }

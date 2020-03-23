@@ -5,14 +5,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.ToolType;
@@ -22,21 +20,9 @@ import javax.annotation.Nullable;
 //@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
-    public static final ModelProperty<IEnviromentBlockReader> BLOCK_ACCESS = new ModelProperty<>();
-    public static final ModelProperty<BlockPos> BLOCK_POS = new ModelProperty<>();
 
     BlockCamo(Properties props) {
         super(props);
-    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
-    }
-
-    @Override
-    public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer) {
-        return true;
     }
 
     @Override
@@ -52,15 +38,9 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     }
 
     @Override
-    public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         ICamouflageable camo = getCamoState(world, pos);
         return camo == null || !camo.extendedMimic() ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(BlockState state, IEnviromentBlockReader world, BlockPos pos, Direction face) {
-        ICamouflageable camo = getCamoState(world, pos);
-        return camo == null || camo.getCamouflage().doesSideBlockRendering(world, pos, face);
     }
 
     @Override

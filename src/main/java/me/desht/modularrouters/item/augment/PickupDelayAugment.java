@@ -8,10 +8,6 @@ import net.minecraft.item.ItemStack;
 public class PickupDelayAugment extends ItemAugment {
     public static final int TICKS_PER_AUGMENT = 10;
 
-    public PickupDelayAugment(Properties props) {
-        super(props);
-    }
-
     @Override
     public boolean isCompatible(ItemModule moduleType) {
         return moduleType instanceof DropperModule;  // includes flinger module

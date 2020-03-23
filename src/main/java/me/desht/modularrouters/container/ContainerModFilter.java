@@ -29,7 +29,7 @@ public class ContainerModFilter extends ContainerSmartFilter {
     }
 
     public ContainerModFilter(int windowId, PlayerInventory invPlayer, MFLocator locator) {
-        super(ModContainerTypes.CONTAINER_MOD_FILTER, windowId, invPlayer, locator);
+        super(ModContainerTypes.CONTAINER_MOD_FILTER.get(), windowId, invPlayer, locator);
 
         handler = new GhostItemHandler(1);
 

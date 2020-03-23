@@ -40,7 +40,7 @@ public class ContainerModule extends Container {
     private final MFLocator locator;
 
     public ContainerModule(int windowId, PlayerInventory inv, PacketBuffer extra) {
-        this(ModContainerTypes.CONTAINER_MODULE_BASIC, windowId, inv, MFLocator.fromBuffer(extra));
+        this(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), windowId, inv, MFLocator.fromBuffer(extra));
     }
 
     public ContainerModule(ContainerType type, int windowId, PlayerInventory inv, PacketBuffer extra) {

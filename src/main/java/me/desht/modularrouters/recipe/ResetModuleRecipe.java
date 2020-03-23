@@ -56,6 +56,6 @@ public class ResetModuleRecipe extends SpecialRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return ModRecipes.MODULE_RESET;
+        return ModRecipes.MODULE_RESET.get();
     }
 }

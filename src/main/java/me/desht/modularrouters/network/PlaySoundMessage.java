@@ -1,7 +1,7 @@
 package me.desht.modularrouters.network;
 
 import io.netty.buffer.ByteBuf;
-import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -52,7 +52,7 @@ public class PlaySoundMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = ModularRouters.proxy.getClientPlayer();
+            PlayerEntity player = ClientUtil.getClientPlayer();
             if (player != null) {
                 player.playSound(ForgeRegistries.SOUND_EVENTS.getValue(soundName), volume, pitch);
             }

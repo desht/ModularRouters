@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
@@ -82,7 +82,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }

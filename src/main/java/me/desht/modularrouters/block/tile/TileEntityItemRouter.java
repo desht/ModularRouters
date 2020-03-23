@@ -116,7 +116,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private boolean executing;       // are we currently executing modules?
 
     public TileEntityItemRouter() {
-        super(ModTileEntities.ITEM_ROUTER);
+        super(ModTileEntities.ITEM_ROUTER.get());
     }
 
     public IItemHandler getBuffer() {
@@ -144,7 +144,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         compound.putBoolean(NBT_ECO_MODE, ecoMode);
 
         // these fields are needed for rendering
-        compound.putInt(NBT_MUFFLERS, getUpgradeCount(ModItems.MUFFLER_UPGRADE));
+        compound.putInt(NBT_MUFFLERS, getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()));
         compound.putBoolean(NBT_ACTIVE, active);
         compound.putByte(NBT_SIDES, sidesOpen);
         if (camouflage != null) {
@@ -173,11 +173,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         // called client-side
 
         int mufflers = compound.getInt(NBT_MUFFLERS);
-        if (mufflers < 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) >= 3
-                || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 3) {
-            upgradeCount.put(ModItems.MUFFLER_UPGRADE.getRegistryName(), mufflers);
+        if (mufflers < 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) >= 3
+                || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 3) {
+            upgradeCount.put(ModItems.MUFFLER_UPGRADE.get().getRegistryName(), mufflers);
             BlockState state = getBlockState();
-            getWorld().func_225319_b(pos, Blocks.AIR.getDefaultState(), state);
+            getWorld().markBlockRangeForRenderUpdate(pos, Blocks.AIR.getDefaultState(), state);
         }
 
         // these fields are needed for rendering
@@ -405,7 +405,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             getWorld().notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
         } else if (getWorld().isRemote && renderUpdate) {
             requestModelDataUpdate();
-            getWorld().func_225319_b(pos, Blocks.AIR.getDefaultState(), getBlockState());
+            getWorld().markBlockRangeForRenderUpdate(pos, Blocks.AIR.getDefaultState(), getBlockState());
         }
     }
 
@@ -413,8 +413,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public IModelData getModelData() {
         return new ModelDataMap.Builder()
-                .withInitial(BlockCamo.BLOCK_ACCESS, world)
-                .withInitial(BlockCamo.BLOCK_POS, pos)
+//                .withInitial(BlockCamo.BLOCK_ACCESS, world)
+//                .withInitial(BlockCamo.BLOCK_POS, pos)
                 .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
@@ -481,11 +481,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 }
             }
 
-            itemsPerTick = 1 << (Math.min(6, getUpgradeCount(ModItems.STACK_UPGRADE)));
+            itemsPerTick = 1 << (Math.min(6, getUpgradeCount(ModItems.STACK_UPGRADE.get())));
             tickRate = Math.max(ConfigHandler.ROUTER.hardMinTickRate.get(),
-                    ConfigHandler.ROUTER.baseTickRate.get() - ConfigHandler.ROUTER.ticksPerUpgrade.get() * getUpgradeCount(ModItems.SPEED_UPGRADE));
+                    ConfigHandler.ROUTER.baseTickRate.get() - ConfigHandler.ROUTER.ticksPerUpgrade.get() * getUpgradeCount(ModItems.SPEED_UPGRADE.get()));
             fluidTransferRate = Math.min(ConfigHandler.ROUTER.fluidMaxTransferRate.get(),
-                    ConfigHandler.ROUTER.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE) * ConfigHandler.ROUTER.mBperFluidUpgade.get());
+                    ConfigHandler.ROUTER.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * ConfigHandler.ROUTER.mBperFluidUpgade.get());
         }
     }
 
@@ -660,7 +660,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             return true;
         }
         for (Hand hand : Hand.values()) {
-            if (player.getHeldItem(hand).getItem() == ModItems.OVERRIDE_CARD) {
+            if (player.getHeldItem(hand).getItem() == ModItems.OVERRIDE_CARD.get()) {
                 return true;
             }
         }
@@ -739,7 +739,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        if (getUpgradeCount(ModItems.MUFFLER_UPGRADE) == 0) {
+        if (getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
             getWorld().playSound(player, pos, sound, category, volume, pitch);
         }
     }

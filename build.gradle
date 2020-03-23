@@ -28,7 +28,7 @@ if (System.getenv().BUILD_NUMBER != null) {
 }
 
 minecraft {
-    mappings channel: 'stable', version: config.mcp_mappings
+    mappings channel: 'snapshot', version: config.mcp_mappings
     //accessTransformer = file('my_at.cfg')
     runs {
         client = {
@@ -83,10 +83,10 @@ dependencies {
     
     compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
     runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
-    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.14:${config.top_version}:api")
-    runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.14:${config.top_version}")
-    compileOnly fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}:api")
-    runtime fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
+    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.15:${config.top_version}:api")
+    runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.15:${config.top_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}:api")
+    runtime fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}")
     //deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
     //deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"
     //deobfCompile "cofh:RedstoneFlux:1.12-${config.redstone_flux_version}:universal"
@@ -108,7 +108,7 @@ jar {
     manifest {
         attributes(["Specification-Title": "modularrouters",
                     "Specification-Vendor": "desht",
-                    "Specification-Version": "26.0", // We are version 1 of the modlauncher specification
+                    "Specification-Version": "31.0", // We are version 1 of the modlauncher specification
                     "Implementation-Title": project.name,
                     "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"desht",

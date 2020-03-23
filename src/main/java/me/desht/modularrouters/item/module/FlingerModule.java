@@ -21,8 +21,8 @@ public class FlingerModule extends DropperModule {
     public static final float MIN_YAW = -60.0f;
     public static final float MAX_YAW = 60.0f;
 
-    public FlingerModule(Properties props) {
-        super(props);
+    public FlingerModule() {
+        super();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class FlingerModule extends DropperModule {
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_FLINGER;
+        return ModContainerTypes.CONTAINER_MODULE_FLINGER.get();
     }
 
     @Override

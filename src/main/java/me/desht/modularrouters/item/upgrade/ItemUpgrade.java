@@ -11,8 +11,8 @@ import java.util.List;
 
 public abstract class ItemUpgrade extends ItemBase implements ModItems.ITintable {
 
-    public ItemUpgrade(Properties props) {
-        super(props);
+    public ItemUpgrade() {
+        super(ModItems.defaultProps());
     }
 
     public TintColor getItemTint() {

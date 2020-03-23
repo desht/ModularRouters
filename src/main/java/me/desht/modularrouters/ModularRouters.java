@@ -1,21 +1,20 @@
 package me.desht.modularrouters;
 
+import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
-import me.desht.modularrouters.client.gui.ScreenFactoryRegistration;
-import me.desht.modularrouters.client.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
-import me.desht.modularrouters.client.render.area.AreaShowManager;
+import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
+import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.proxy.ClientProxy;
-import me.desht.modularrouters.proxy.IProxy;
-import me.desht.modularrouters.proxy.ServerProxy;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -34,17 +33,22 @@ public class ModularRouters {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
-
     public ModularRouters() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.CLIENT_SPEC);
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::clientSetup);
-        });
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> modBus.addListener(ClientHandler::clientSetup));
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        modBus.addListener(this::commonSetup);
+
+        ModBlocks.BLOCKS.register(modBus);
+        ModItems.ITEMS.register(modBus);
+        ModTileEntities.TILE_ENTITIES.register(modBus);
+        ModContainerTypes.CONTAINERS.register(modBus);
+        ModSounds.SOUNDS.register(modBus);
+        ModRecipes.RECIPES.register(modBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -62,12 +66,12 @@ public class ModularRouters {
     static class ClientHandler {
         static void clientSetup(FMLClientSetupEvent event) {
             FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
-            MinecraftForge.EVENT_BUS.register(AreaShowManager.INSTANCE);
+            MinecraftForge.EVENT_BUS.register(ModuleTargetRenderer.class);
             MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
             MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
 
             DeferredWorkQueue.runLater(() -> {
-                ScreenFactoryRegistration.registerScreenFactories();
+                ClientSetup.init();
                 Keybindings.registerKeyBindings();
             });
         }

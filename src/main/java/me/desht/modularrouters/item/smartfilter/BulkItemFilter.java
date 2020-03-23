@@ -38,10 +38,6 @@ import java.util.stream.Collectors;
 public class BulkItemFilter extends ItemSmartFilter {
     public static final int FILTER_SIZE = 54;
 
-    public BulkItemFilter(Properties props) {
-        super(props);
-    }
-
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
@@ -87,11 +83,11 @@ public class BulkItemFilter extends ItemSmartFilter {
         ItemStack stack = ctx.getItem();
         if (world.isRemote) {
             return ActionResultType.SUCCESS;
-        } else if (player.isSneaking()) {
+        } else if (player != null && player.isSteppingCarefully()) {
             return InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
-                world.playSound(null, ctx.getPos(), ModSounds.SUCCESS, SoundCategory.MASTER, 1.0f, 1.0f);
+                world.playSound(null, ctx.getPos(), ModSounds.SUCCESS.get(), SoundCategory.MASTER, 1.0f, 1.0f);
                 return ActionResultType.SUCCESS;
             }).orElse(super.onItemUse(ctx));
         } else {

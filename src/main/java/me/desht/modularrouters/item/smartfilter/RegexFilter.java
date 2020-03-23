@@ -28,10 +28,6 @@ public class RegexFilter extends ItemSmartFilter {
     private static final String NBT_REGEX = "Regex";
     public static final int MAX_SIZE = 6;
 
-    public RegexFilter(Properties props) {
-        super(props);
-    }
-
     public static List<String> getRegexList(ItemStack filterStack) {
         CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
         if (tag != null) {
@@ -47,7 +43,7 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     private static void setRegexList(ItemStack filterStack, List<String> regex) {
-        ListNBT list = regex.stream().map(StringNBT::new).collect(Collectors.toCollection(ListNBT::new));
+        ListNBT list = regex.stream().map(StringNBT::valueOf).collect(Collectors.toCollection(ListNBT::new));
         filterStack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_REGEX, list);
     }
 

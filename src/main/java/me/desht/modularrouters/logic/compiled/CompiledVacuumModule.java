@@ -51,8 +51,8 @@ public class CompiledVacuumModule extends CompiledModule {
 
     public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
-        fastPickup = getAugmentCount(ModItems.FAST_PICKUP_AUGMENT) > 0;
-        xpMode = getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0;
+        fastPickup = getAugmentCount(ModItems.FAST_PICKUP_AUGMENT.get()) > 0;
+        xpMode = getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0;
 
         CompoundNBT compound = stack.getTag();
         xpCollectionType = XPCollectionType.values()[compound.getInt(NBT_XP_FLUID_TYPE)];
@@ -134,8 +134,8 @@ public class CompiledVacuumModule extends CompiledModule {
                 if (stackOnGround.isEmpty()) {
                     item.remove();
                 }
-                if (inserted > 0 && ConfigHandler.MODULE.vacuumParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE) < 2) {
-                    ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.CLOUD, item.posX, item.posY + 0.25, item.posZ, 2, 0.0, 0.0, 0.0, 0.0);
+                if (inserted > 0 && ConfigHandler.MODULE.vacuumParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
+                    ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.CLOUD, item.getPosX(), item.getPosY() + 0.25, item.getPosZ(), 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {
                     break;

@@ -10,7 +10,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,10 +26,6 @@ import java.util.stream.Collectors;
 public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     private static final String NBT_PLAYERS = "Players";
     private static final int MAX_PLAYERS = 6;
-
-    public SecurityUpgrade(Properties props) {
-        super(props);
-    }
 
     @Override
     public void addExtraInformation(ItemStack itemstack,  List<ITextComponent> list) {
@@ -132,12 +127,12 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (!player.getEntityWorld().isRemote && player.isSneaking()) {
+        if (!player.getEntityWorld().isRemote && player.isSteppingCarefully()) {
             setOwner(stack, player);
             player.sendStatusMessage(new TranslationTextComponent("itemText.security.owner", player.getDisplayName().getString()), false);
-            return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+            return ActionResult.resultSuccess(stack);
         }
-        return ActionResult.newResult(ActionResultType.PASS, stack);
+        return ActionResult.resultPass(stack);
     }
 
     @Override
@@ -146,9 +141,9 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
             PlayerEntity targetPlayer = (PlayerEntity)entity;
             String id = targetPlayer.getUniqueID().toString();
             String name = targetPlayer.getDisplayName().toString();
-            Result res = player.isSneaking() ? removePlayer(stack, id) : addPlayer(stack, id, name);
+            Result res = player.isSteppingCarefully() ? removePlayer(stack, id) : addPlayer(stack, id, name);
             if (player.world.isRemote) {
-                player.playSound(res.isError() ? ModSounds.ERROR : ModSounds.SUCCESS, 1.0f, 1.0f);
+                player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
             } else {
                 player.sendStatusMessage(new TranslationTextComponent("chatText.security." + res.toString(), name), false);
             }

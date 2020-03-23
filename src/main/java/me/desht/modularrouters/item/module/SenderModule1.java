@@ -3,13 +3,14 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule1;
 import net.minecraft.item.ItemStack;
 
 public class SenderModule1 extends ItemModule implements IRangedModule {
-    public SenderModule1(Properties props) {
-        super(props);
+    public SenderModule1() {
+        super(ModItems.defaultProps());
     }
 
     @Override

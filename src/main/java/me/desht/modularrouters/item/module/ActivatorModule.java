@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -15,8 +16,8 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.List;
 
 public class ActivatorModule extends ItemModule {
-    public ActivatorModule(Properties props) {
-        super(props);
+    public ActivatorModule() {
+        super(ModItems.defaultProps());
     }
 
     @Override
@@ -41,7 +42,7 @@ public class ActivatorModule extends ItemModule {
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_ACTIVATOR;
+        return ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get();
     }
 
     @Override

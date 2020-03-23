@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.client.resources.I18n;
@@ -15,8 +16,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 
 public class DetectorModule extends ItemModule {
-    public DetectorModule(Properties props) {
-        super(props);
+    public DetectorModule() {
+        super(ModItems.defaultProps());
     }
 
     public enum SignalType {
@@ -29,7 +30,7 @@ public class DetectorModule extends ItemModule {
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_DETECTOR;
+        return ModContainerTypes.CONTAINER_MODULE_DETECTOR.get();
     }
 
     @Override

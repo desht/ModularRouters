@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
@@ -21,8 +22,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 
 public class PlayerModule extends ItemModule implements IPlayerOwned {
-    public PlayerModule(Properties props) {
-        super(props);
+    public PlayerModule() {
+        super(ModItems.defaultProps());
     }
 
     @Override
@@ -43,7 +44,7 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
 
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_PLAYER;
+        return ModContainerTypes.CONTAINER_MODULE_PLAYER.get();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
     public ActionResultType onItemUse(ItemUseContext ctx) {
         if (ctx.getWorld().isRemote) {
             return ActionResultType.SUCCESS;
-        } else if (ctx.getPlayer() != null && ctx.getPlayer().isSneaking()) {
+        } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItem(), ctx.getPlayer());
             ctx.getPlayer().sendStatusMessage(new TranslationTextComponent("itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
             return ActionResultType.SUCCESS;

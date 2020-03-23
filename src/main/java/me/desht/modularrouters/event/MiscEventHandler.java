@@ -22,7 +22,7 @@ public class MiscEventHandler {
                 TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(event.getPlayer().getEntityWorld(), event.getPos());
                 if (te != null && te.getCamouflage() != null && te.extendedMimic()) {
                     BlockState camoState = te.getCamouflage();
-                    event.setNewSpeed(event.getEntityPlayer().getDigSpeed(camoState, null));
+                    event.setNewSpeed(event.getPlayer().getDigSpeed(camoState, null));
                 }
             }
         }
