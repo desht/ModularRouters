@@ -29,8 +29,6 @@ public class BufferHandler extends ItemStackHandler {
 
     @Override
     public void onContentsChanged(int slot) {
-        router.markDirty();  // will also update comparator output
-
         ItemStack stack = getStackInSlot(slot);
 
         LazyOptional<IFluidHandlerItem> newFluidCap = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
@@ -49,6 +47,8 @@ public class BufferHandler extends ItemStackHandler {
             // in case any pipes/cables need to connect/disconnect
             router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.ITEM_ROUTER.get());
         }
+
+        router.markDirty();  // will also update comparator output
     }
 
     @Override
