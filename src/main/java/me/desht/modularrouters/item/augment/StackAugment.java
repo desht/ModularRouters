@@ -8,7 +8,7 @@ public class StackAugment extends ItemAugment {
     @Override
     public boolean isCompatible(ItemModule moduleType) {
         return !(moduleType instanceof DetectorModule || moduleType instanceof ExtruderModule1 || moduleType instanceof ExtruderModule2
-                || moduleType instanceof BreakerModule || moduleType instanceof PlacerModule || moduleType instanceof FluidModule);
+                || moduleType instanceof BreakerModule || moduleType instanceof PlacerModule || moduleType instanceof FluidModule1);
     }
 
     @Override

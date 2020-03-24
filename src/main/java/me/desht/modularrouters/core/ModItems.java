@@ -34,7 +34,8 @@ public class ModItems {
     public static final RegistryObject<Item> EXTRUDER_MODULE_1 = register("extruder_module_1", ExtruderModule1::new);
     public static final RegistryObject<Item> EXTRUDER_MODULE_2 = register("extruder_module_2", ExtruderModule2::new);
     public static final RegistryObject<Item> FLINGER_MODULE = register("flinger_module", FlingerModule::new);
-    public static final RegistryObject<Item> FLUID_MODULE = register("fluid_module", FluidModule::new);
+    public static final RegistryObject<Item> FLUID_MODULE = register("fluid_module", FluidModule1::new);
+    public static final RegistryObject<Item> FLUID_MODULE_2 = register("fluid_module_2", FluidModule2::new);
     public static final RegistryObject<Item> PLACER_MODULE = register("placer_module", PlacerModule::new);
     public static final RegistryObject<Item> PLAYER_MODULE = register("player_module", PlayerModule::new);
     public static final RegistryObject<Item> PULLER_MODULE_1 = register("puller_module_1", PullerModule1::new);

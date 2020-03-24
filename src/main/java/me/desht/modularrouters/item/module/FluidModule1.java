@@ -6,7 +6,7 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
+import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -20,8 +20,8 @@ import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.List;
 
-public class FluidModule extends ItemModule {
-    public FluidModule() {
+public class FluidModule1 extends ItemModule {
+    public FluidModule1() {
         super(ModItems.defaultProps());
     }
 
@@ -37,7 +37,7 @@ public class FluidModule extends ItemModule {
 
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledFluidModule(router, stack);
+        return new CompiledFluidModule1(router, stack);
     }
 
     @Override
@@ -48,10 +48,8 @@ public class FluidModule extends ItemModule {
     @Override
     protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
         super.addExtraInformation(stack, list);
-        CompiledFluidModule cfm = new CompiledFluidModule(null, stack);
-        String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
-        list.add(new TranslationTextComponent("itemText.fluid.direction", dir));
-        list.add(new TranslationTextComponent("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
+
+        addFluidModuleInformation(stack, list);
     }
 
     @Override
@@ -76,5 +74,12 @@ public class FluidModule extends ItemModule {
     @Override
     public TintColor getItemTint() {
         return new TintColor(79, 191, 255);
+    }
+
+    static void addFluidModuleInformation(ItemStack stack, List<ITextComponent> list) {
+        CompiledFluidModule1 cfm = new CompiledFluidModule1(null, stack);
+        String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
+        list.add(new TranslationTextComponent("itemText.fluid.direction", dir));
+        list.add(new TranslationTextComponent("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
     }
 }

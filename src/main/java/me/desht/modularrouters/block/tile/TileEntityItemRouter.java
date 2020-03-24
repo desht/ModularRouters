@@ -11,7 +11,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModTileEntities;
 import me.desht.modularrouters.event.TickEventHandler;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
-import me.desht.modularrouters.item.module.FluidModule;
+import me.desht.modularrouters.item.module.FluidModule1;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
@@ -202,11 +202,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return inventoryCap.cast();
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(cap, inventoryCap);
+        } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.orEmpty(cap, bufferHandler.getFluidCapability());
         } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY) {
-            return bufferHandler.getFluidCapability().cast();
+            return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(cap, bufferHandler.getFluidItemCapability());
         } else if (cap == CapabilityEnergy.ENERGY) {
-            return bufferHandler.getEnergyCapability().cast();
+            return CapabilityEnergy.ENERGY.orEmpty(cap, bufferHandler.getEnergyCapability());
         }
         return super.getCapability(cap, side);
     }
@@ -537,11 +539,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         return fluidTransferRate;
     }
 
-    public int getCurrentFluidTransferAllowance(FluidModule.FluidDirection dir) {
-        return dir == FluidModule.FluidDirection.IN ? fluidTransferRemainingIn : fluidTransferRemainingOut;
+    public int getCurrentFluidTransferAllowance(FluidModule1.FluidDirection dir) {
+        return dir == FluidModule1.FluidDirection.IN ? fluidTransferRemainingIn : fluidTransferRemainingOut;
     }
 
-    public void transferredFluid(int amount, FluidModule.FluidDirection dir) {
+    public void transferredFluid(int amount, FluidModule1.FluidDirection dir) {
         switch (dir) {
             case IN:
                 if (fluidTransferRemainingIn < amount) ModularRouters.LOGGER.warn("fluid transfer: " + fluidTransferRemainingIn + " < " + amount);

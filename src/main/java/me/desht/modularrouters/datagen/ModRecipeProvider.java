@@ -126,6 +126,16 @@ public class ModRecipeProvider extends RecipeProvider {
                 'M', ModItems.BLANK_MODULE.get()
         ).build(consumer);
 
+        shapeless(ModItems.FLUID_MODULE_2.get(), ModItems.FLUID_MODULE.get(),
+                ModItems.FLUID_MODULE.get(), Items.PRISMARINE_SHARD
+        ).build(consumer);
+
+        shapeless(ModItems.FLUID_MODULE_2.get(), 4, ModItems.FLUID_MODULE.get(),
+                ModItems.FLUID_MODULE.get(), ModItems.FLUID_MODULE.get(),
+                ModItems.FLUID_MODULE.get(), ModItems.FLUID_MODULE.get(),
+                Items.PRISMARINE_SHARD
+        ).build(consumer, RL("fluid_module_2_x4"));
+
         shapeless(ModItems.SENDER_MODULE_1.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.BOW, Tags.Items.ARROWS
         ).build(consumer);

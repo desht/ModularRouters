@@ -10,8 +10,8 @@ import me.desht.modularrouters.client.render.RenderHelper;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
-import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
-import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
+import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
+import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.resources.I18n;
@@ -41,7 +41,7 @@ public class GuiModuleFluid extends GuiModule {
     public void init() {
         super.init();
 
-        CompiledFluidModule cfm = new CompiledFluidModule(null, moduleItemStack);
+        CompiledFluidModule1 cfm = new CompiledFluidModule1(null, moduleItemStack);
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
@@ -96,9 +96,9 @@ public class GuiModuleFluid extends GuiModule {
     @Override
     protected CompoundNBT buildMessageData() {
         CompoundNBT compound = super.buildMessageData();
-        compound.putInt(CompiledFluidModule.NBT_MAX_TRANSFER, maxTransferField.getValue());
-        compound.putByte(CompiledFluidModule.NBT_FLUID_DIRECTION, (byte) fdb.getState().ordinal());
-        compound.putBoolean(CompiledFluidModule.NBT_FORCE_EMPTY, feb.isToggled());
+        compound.putInt(CompiledFluidModule1.NBT_MAX_TRANSFER, maxTransferField.getValue());
+        compound.putByte(CompiledFluidModule1.NBT_FLUID_DIRECTION, (byte) fdb.getState().ordinal());
+        compound.putBoolean(CompiledFluidModule1.NBT_FORCE_EMPTY, feb.isToggled());
         return compound;
     }
 

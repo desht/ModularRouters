@@ -22,6 +22,8 @@ public class MRConfig {
             public static int extruder2MaxRange;
             public static int puller2BaseRange;
             public static int puller2MaxRange;
+            public static int fluid2BaseRange;
+            public static int fluid2MaxRange;
             public static boolean senderParticles;
             public static boolean pullerParticles;
             public static boolean placerParticles;

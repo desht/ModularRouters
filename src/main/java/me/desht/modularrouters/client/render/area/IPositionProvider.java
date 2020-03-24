@@ -1,9 +1,11 @@
 package me.desht.modularrouters.client.render.area;
 
+import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,7 +19,10 @@ public interface IPositionProvider {
      * @param stack the itemstack
      * @return a list of block positions that has been retrieved from the itemstack
      */
-    List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack);
+    default List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
+        ModuleTarget target = TargetedModule.getTarget(stack);
+        return target == null ? Collections.emptyList() : Collections.singletonList(target);
+    }
 
     /**
      * Color that should be used to highlight the stored block positions if & when they are rendered on-screen.

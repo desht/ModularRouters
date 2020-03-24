@@ -33,6 +33,8 @@ public class ConfigHelper {
         MRConfig.Common.Module.extruder2MaxRange = common.module.extruder2MaxRange.get();
         MRConfig.Common.Module.puller2BaseRange = common.module.puller2BaseRange.get();
         MRConfig.Common.Module.puller2MaxRange = common.module.puller2MaxRange.get();
+        MRConfig.Common.Module.fluid2BaseRange = common.module.fluid2BaseRange.get();
+        MRConfig.Common.Module.fluid2MaxRange = common.module.fluid2MaxRange.get();
         MRConfig.Common.Module.senderParticles = common.module.senderParticles.get();
         MRConfig.Common.Module.pullerParticles = common.module.pullerParticles.get();
         MRConfig.Common.Module.placerParticles = common.module.placerParticles.get();

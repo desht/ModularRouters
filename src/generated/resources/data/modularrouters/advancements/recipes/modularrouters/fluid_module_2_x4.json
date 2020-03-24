@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "modularrouters:fluid_module_2_x4"
+    ]
+  },
+  "criteria": {
+    "has_fluid_module": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "modularrouters:fluid_module"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "modularrouters:fluid_module_2_x4"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_fluid_module",
+      "has_the_recipe"
+    ]
+  ]
+}

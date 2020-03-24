@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
+import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -34,7 +34,7 @@ import javax.annotation.Nonnull;
 
 import static net.minecraftforge.fluids.FluidAttributes.BUCKET_VOLUME;
 
-public class CompiledFluidModule extends CompiledModule {
+public class CompiledFluidModule1 extends CompiledModule {
     public static final String NBT_FORCE_EMPTY = "ForceEmpty";
     public static final String NBT_MAX_TRANSFER = "MaxTransfer";
     public static final String NBT_FLUID_DIRECTION = "FluidDir";
@@ -45,7 +45,7 @@ public class CompiledFluidModule extends CompiledModule {
 
 //    private static final InfiniteWaterHandler infiniteWater = new InfiniteWaterHandler();
 
-    public CompiledFluidModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledFluidModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
         CompoundNBT compound = setupNBT(stack);

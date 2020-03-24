@@ -56,17 +56,23 @@ public abstract class TargetedModule extends ItemModule {
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
         if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
-            return InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()).map(handler -> {
+            if (isValidTarget(ctx)) {
                 if (getMaxTargets() == 1) {
                     handleSingleTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 } else {
                     handleMultiTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
                 }
                 return ActionResultType.SUCCESS;
-            }).orElse(super.onItemUse(ctx));
+            } else {
+                return super.onItemUse(ctx);
+            }
         } else {
             return ActionResultType.PASS;
         }
+    }
+
+    protected boolean isValidTarget(ItemUseContext ctx) {
+        return InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()).isPresent();
     }
 
     private void handleSingleTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {

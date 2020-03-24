@@ -18,6 +18,8 @@ public class CommonConfig {
         IntValue extruder2MaxRange;
         IntValue puller2BaseRange;
         IntValue puller2MaxRange;
+        IntValue fluid2BaseRange;
+        IntValue fluid2MaxRange;
         BooleanValue senderParticles;
         BooleanValue pullerParticles;
         BooleanValue placerParticles;
@@ -80,6 +82,12 @@ public class CommonConfig {
         module.puller2MaxRange = builder.comment("Max range for Puller Mk2")
                 .translation("gui.config.puller2MaxRange")
                 .defineInRange("puller2MaxRange", 24, 1, Integer.MAX_VALUE);
+        module.fluid2BaseRange = builder.comment("Base range for Fluid Mk2 (no range upgrades)")
+                .translation("gui.config.fluid2BaseRange")
+                .defineInRange("fluid2BaseRange", 12, 1, Integer.MAX_VALUE);
+        module.fluid2MaxRange = builder.comment("Max range for Fluid Mk2")
+                .translation("gui.config.fluid2MaxRange")
+                .defineInRange("fluid2MaxRange", 24, 1, Integer.MAX_VALUE);
         module.senderParticles = builder.comment("Should Sender modules show particle effects when working?")
                 .translation("gui.config.senderParticles")
                 .define("senderParticles", true);

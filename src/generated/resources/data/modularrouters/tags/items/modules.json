@@ -10,6 +10,7 @@
     "modularrouters:extruder_module_2",
     "modularrouters:flinger_module",
     "modularrouters:fluid_module",
+    "modularrouters:fluid_module_2",
     "modularrouters:placer_module",
     "modularrouters:player_module",
     "modularrouters:puller_module_1",
