@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -55,12 +55,12 @@ public class VacuumModule extends ItemModule implements IRangedModule {
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.MODULE.vacuumBaseRange.get();
+        return MRConfig.Common.Module.vacuumBaseRange;
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.MODULE.vacuumMaxRange.get();
+        return MRConfig.Common.Module.vacuumMaxRange;
     }
 
     @Override

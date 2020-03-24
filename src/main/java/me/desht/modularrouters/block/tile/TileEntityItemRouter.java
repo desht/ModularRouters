@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
 import me.desht.modularrouters.core.ModItems;
@@ -85,7 +85,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     private final List<CompiledModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
-    private int tickRate = ConfigHandler.ROUTER.baseTickRate.get();
+    private int tickRate = MRConfig.Common.Router.baseTickRate;
     private int itemsPerTick = 1;
     private final Map<ResourceLocation, Integer> upgradeCount = new HashMap<>();
     private int totalUpgradeCount;
@@ -108,7 +108,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
     private byte sidesOpen;          // bitmask of which of the 6 sides are currently open
     private boolean ecoMode = false;  // track eco-mode
-    private int ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
+    private int ecoCounter = MRConfig.Common.Router.ecoTimeout;
     private boolean hasPulsedModules = false;
     private CompoundNBT extData;  // extra (persisted) data which various modules can set & read
     private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
@@ -299,7 +299,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
         if (ecoMode) {
             if (active) {
-                ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
+                ecoCounter = MRConfig.Common.Router.ecoTimeout;
             } else if (ecoCounter > 0) {
                 ecoCounter--;
             }
@@ -336,7 +336,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public int getTickRate() {
-        return ecoMode && ecoCounter == 0 ? ConfigHandler.ROUTER.lowPowerTickRate.get() : tickRate;
+        return ecoMode && ecoCounter == 0 ? MRConfig.Common.Router.lowPowerTickRate : tickRate;
     }
 
     public RouterRedstoneBehaviour getRedstoneBehaviour() {
@@ -381,7 +381,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public void setEcoMode(boolean newEco) {
         if (newEco != ecoMode) {
             ecoMode = newEco;
-            ecoCounter = ConfigHandler.ROUTER.ecoTimeout.get();
+            ecoCounter = MRConfig.Common.Router.ecoTimeout;
         }
     }
 
@@ -482,10 +482,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             }
 
             itemsPerTick = 1 << (Math.min(6, getUpgradeCount(ModItems.STACK_UPGRADE.get())));
-            tickRate = Math.max(ConfigHandler.ROUTER.hardMinTickRate.get(),
-                    ConfigHandler.ROUTER.baseTickRate.get() - ConfigHandler.ROUTER.ticksPerUpgrade.get() * getUpgradeCount(ModItems.SPEED_UPGRADE.get()));
-            fluidTransferRate = Math.min(ConfigHandler.ROUTER.fluidMaxTransferRate.get(),
-                    ConfigHandler.ROUTER.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * ConfigHandler.ROUTER.mBperFluidUpgade.get());
+            tickRate = Math.max(MRConfig.Common.Router.hardMinTickRate,
+                    MRConfig.Common.Router.baseTickRate - MRConfig.Common.Router.ticksPerUpgrade * getUpgradeCount(ModItems.SPEED_UPGRADE.get()));
+            fluidTransferRate = Math.min(MRConfig.Common.Router.fluidMaxTransferRate,
+                    MRConfig.Common.Router.fluidBaseTransferRate + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * MRConfig.Common.Router.mBperFluidUpgade);
         }
     }
 
@@ -528,7 +528,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private void allocateFluidTransfer(int ticks) {
         // increment the in/out fluid transfer allowance based on the number of ticks which have passed
         // and the current fluid transfer rate of the router (which depends on the number of fluid upgrades)
-        int maxTransfer = ConfigHandler.ROUTER.baseTickRate.get() * fluidTransferRate;
+        int maxTransfer = MRConfig.Common.Router.baseTickRate * fluidTransferRate;
         fluidTransferRemainingIn = Math.min(fluidTransferRemainingIn + ticks * fluidTransferRate, maxTransfer);
         fluidTransferRemainingOut = Math.min(fluidTransferRemainingOut + ticks * fluidTransferRate, maxTransfer);
     }
@@ -572,7 +572,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
             if (redstonePower > lastPower && pulseCounter >= tickRate) {
-                allocateFluidTransfer(Math.min(pulseCounter, ConfigHandler.ROUTER.baseTickRate.get()));
+                allocateFluidTransfer(Math.min(pulseCounter, MRConfig.Common.Router.baseTickRate));
                 executeModules(true);
                 pulseCounter = 0;
                 if (active) {

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item;
 
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,10 +31,10 @@ public abstract class ItemBase extends Item {
 
         if (Screen.hasControlDown()) {
             addUsageInformation(stack, list);
-        } else if (ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
+        } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             list.add(new TranslationTextComponent("itemText.misc.holdCtrl", getCtrlKeyName()).applyTextStyles(TextFormatting.GRAY));
-        } else if (!ConfigHandler.CLIENT_MISC.alwaysShowModuleSettings.get()) {
+        } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
             list.add(new TranslationTextComponent("itemText.misc.holdShiftCtrl", getCtrlKeyName()).applyTextStyles(TextFormatting.GRAY));
         }
     }

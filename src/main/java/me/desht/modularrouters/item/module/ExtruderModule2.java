@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerExtruder2Module;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.container.ContainerModule;
@@ -59,12 +59,12 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.MODULE.extruder2BaseRange.get();
+        return MRConfig.Common.Module.extruder2BaseRange;
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.MODULE.extruder2MaxRange.get();
+        return MRConfig.Common.Module.extruder2MaxRange;
     }
 
     @Override

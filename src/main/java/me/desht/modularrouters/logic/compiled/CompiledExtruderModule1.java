@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.PushEntityMessage;
@@ -54,7 +54,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             if (state != null) {
                 router.extractBuffer(1);
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
-                if (ConfigHandler.MODULE.extruderSound.get()) {
+                if (MRConfig.Common.Module.extruderSound) {
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
@@ -76,7 +76,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             if (dropResult.isBlockBroken()) {
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());
-                if (ConfigHandler.MODULE.extruderSound.get()) {
+                if (MRConfig.Common.Module.extruderSound) {
                     router.playSound(null, breakPos,
                             oldBlock.getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
@@ -88,7 +88,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     }
 
     void tryPushEntities(World world, BlockPos placePos, Direction facing) {
-        if (!ConfigHandler.MODULE.extruderPushEntities.get()) {
+        if (!MRConfig.Common.Module.extruderPushEntities) {
             return;
         }
         Vec3d v = new Vec3d(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);

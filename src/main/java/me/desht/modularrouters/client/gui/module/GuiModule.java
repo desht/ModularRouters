@@ -14,7 +14,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment;
@@ -247,7 +247,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private TintColor getGuiBackgroundTint() {
-        if (ConfigHandler.CLIENT_MISC.moduleGuiBackgroundTint.get()) {
+        if (MRConfig.Client.Misc.moduleGuiBackgroundTint) {
             TintColor c = module.getItemTint();
             float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
             return TintColor.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);

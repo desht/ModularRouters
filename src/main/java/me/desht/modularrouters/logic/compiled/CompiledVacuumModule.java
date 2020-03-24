@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -134,7 +134,7 @@ public class CompiledVacuumModule extends CompiledModule {
                 if (stackOnGround.isEmpty()) {
                     item.remove();
                 }
-                if (inserted > 0 && ConfigHandler.MODULE.vacuumParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
+                if (inserted > 0 && MRConfig.Common.Module.vacuumParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
                     ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.CLOUD, item.getPosX(), item.getPosY() + 0.25, item.getPosZ(), 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {

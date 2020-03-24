@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -31,12 +31,12 @@ public class PullerModule2 extends TargetedModule implements IRangedModule, IPos
 
     @Override
     public int getBaseRange() {
-        return ConfigHandler.MODULE.puller2BaseRange.get();
+        return MRConfig.Common.Module.puller2BaseRange;
     }
 
     @Override
     public int getHardMaxRange() {
-        return ConfigHandler.MODULE.puller2MaxRange.get();
+        return MRConfig.Common.Module.puller2MaxRange;
     }
 
     @Override

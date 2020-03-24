@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.network.ItemBeamMessage;
@@ -44,7 +44,7 @@ public class CompiledSenderModule1 extends CompiledModule {
                 }
                 int sent = InventoryUtils.transferItems(buffer, positionedItemHandler.handler, 0, nToSend);
                 if (sent > 0) {
-                    if (ConfigHandler.MODULE.senderParticles.get()) {
+                    if (MRConfig.Common.Module.senderParticles) {
                         playParticles(router, positionedItemHandler.pos, ItemHandlerHelper.copyStackWithSize(bufferStack, sent));
                     }
                     return true;
@@ -103,14 +103,14 @@ public class CompiledSenderModule1 extends CompiledModule {
         private final BlockPos pos;
         private final IItemHandler handler;
 
-        public static PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
+        static final PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
 
         PositionedItemHandler(BlockPos pos, IItemHandler handler) {
             this.pos = pos;
             this.handler = handler;
         }
 
-        public boolean isValid() {
+        boolean isValid() {
             return pos != null && handler != null;
         }
     }

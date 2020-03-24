@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.SyncUpgradeSettingsMessage;
@@ -49,7 +49,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
 
         TextFieldManager manager = getTextFieldManager().clear();
         IntegerTextField intField = new IntegerTextField(manager, font,
-                xPos + 77, yPos + 27, 25, 16, 0, ConfigHandler.ROUTER.baseTickRate.get() - 1);
+                xPos + 77, yPos + 27, 25, 16, 0, MRConfig.Common.Router.baseTickRate - 1);
         intField.setResponder((str) -> {
             tunedValue = str.isEmpty() ? 0 : Integer.parseInt(str);
             sendSettingsDelayed(5);
@@ -87,7 +87,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height) {
             super(x, y, width, height, clockStack, true, p -> {});
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, ConfigHandler.ROUTER.baseTickRate.get() - 1);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, MRConfig.Common.Router.baseTickRate - 1);
             MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
         }
 

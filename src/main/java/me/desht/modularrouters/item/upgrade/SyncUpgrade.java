@@ -4,7 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModSounds;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -55,7 +55,7 @@ public class SyncUpgrade extends ItemUpgrade {
             GuiSyncUpgrade.openSyncGui(stack, hand);
         } else if (player.isSteppingCarefully()) {
             if (!world.isRemote) {
-                setTunedValue(stack, world.rand.nextInt(ConfigHandler.ROUTER.baseTickRate.get()));
+                setTunedValue(stack, world.rand.nextInt(MRConfig.Common.Router.baseTickRate));
             } else {
                 player.sendStatusMessage(new TranslationTextComponent("itemText.sync.tuning", getTunedValue(stack)), true);
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);

@@ -7,7 +7,7 @@ import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.button.RedstoneBehaviourButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
@@ -119,7 +119,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         @Override
         public List<String> getTooltip() {
             return MiscUtil.wrapString(I18n.format("guiText.tooltip.eco." + isToggled(),
-                    ConfigHandler.ROUTER.ecoTimeout.get() / 20.f, ConfigHandler.ROUTER.lowPowerTickRate.get() / 20.f));
+                    MRConfig.Common.Router.ecoTimeout / 20.f, MRConfig.Common.Router.lowPowerTickRate / 20.f));
         }
     }
 }

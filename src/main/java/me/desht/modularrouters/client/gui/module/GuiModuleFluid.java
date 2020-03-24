@@ -7,7 +7,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.render.RenderHelper;
-import me.desht.modularrouters.config.ConfigHandler;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.item.module.FluidModule.FluidDirection;
@@ -45,7 +45,7 @@ public class GuiModuleFluid extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        int max = ConfigHandler.ROUTER.baseTickRate.get() * ConfigHandler.ROUTER.fluidMaxTransferRate.get();
+        int max = MRConfig.Common.Router.baseTickRate * MRConfig.Common.Router.fluidMaxTransferRate;
         maxTransferField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
         maxTransferField.setValue(cfm.getMaxTransfer());
         maxTransferField.setResponder(str -> sendModuleSettingsDelayed(5));

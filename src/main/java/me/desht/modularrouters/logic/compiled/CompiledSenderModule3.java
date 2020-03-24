@@ -13,7 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class CompiledSenderModule3 extends CompiledSenderModule2 {
-    private static final TintColor particleColor = new TintColor(255, 0, 255);
+    private static final TintColor PARTICLE_COLOR = new TintColor(255, 0, 255);
 
     public CompiledSenderModule3(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
@@ -31,7 +31,7 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
             Direction facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().dimension.getType());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
-                    new ItemBeamMessage(router.getPos(), router.getPos().offset(facing, 2), stack, particleColor.getRGB(), router.getTickRate()).withFadeout());
+                    new ItemBeamMessage(router.getPos(), router.getPos().offset(facing, 2), stack, PARTICLE_COLOR.getRGB(), router.getTickRate()).withFadeout());
         }
     }
 }
