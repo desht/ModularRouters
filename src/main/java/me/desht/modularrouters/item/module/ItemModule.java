@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.Keybindings;
+import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
@@ -177,7 +177,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         if (router != null) {
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ValidatingSlot.Module) {
-                String s = Keybindings.keybindConfigure.getKey().getTranslationKey();
+                String s = ClientSetup.keybindConfigure.getKey().getTranslationKey();
                 list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));
             }
         }

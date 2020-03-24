@@ -1,7 +1,6 @@
 package me.desht.modularrouters;
 
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.Keybindings;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
@@ -73,10 +72,7 @@ public class ModularRouters {
             MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
             MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
 
-            DeferredWorkQueue.runLater(() -> {
-                ClientSetup.init();
-                Keybindings.registerKeyBindings();
-            });
+            DeferredWorkQueue.runLater(ClientSetup::init);
         }
     }
 

@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
+import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.resources.I18n;
@@ -26,6 +27,7 @@ public class GuiModuleActivator extends GuiModule {
 
     private LookDirectionButton lookDirectionButton;
     private ActionTypeButton actionTypeButton;
+    private EntityModeButton entityModeButton;
     private SneakButton sneakButton;
 
     public GuiModuleActivator(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
@@ -42,7 +44,9 @@ public class GuiModuleActivator extends GuiModule {
         addButton(actionTypeButton = new ActionTypeButton(guiLeft + 167, guiTop + 20, 16, 16, true, stacks, cam.getActionType()));
         addButton(sneakButton = new SneakButton(guiLeft + 167, guiTop + 40, cam.isSneaking()));
         addButton(lookDirectionButton = new LookDirectionButton(guiLeft + 167, guiTop + 60, 16, 16, cam.getLookDirection()));
+        addButton(entityModeButton = new EntityModeButton(guiLeft + 167, guiTop + 60, 16, 16, cam.getEntityMode()));
         lookDirectionButton.visible = cam.getActionType() != ActionType.USE_ITEM_ON_ENTITY;
+        entityModeButton.visible = cam.getActionType() == ActionType.USE_ITEM_ON_ENTITY;
 
         getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 18, guiLeft + 183, guiTop + 37, "guiText.popup.activator.action");
         getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 39, guiLeft + 183, guiTop + 56, "guiText.popup.activator.sneak");
@@ -64,6 +68,8 @@ public class GuiModuleActivator extends GuiModule {
         font.drawString(I18n.format("guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
         if (actionTypeButton.getState() != ActionType.USE_ITEM_ON_ENTITY) {
             font.drawString(I18n.format("guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
+        } else {
+            font.drawString(I18n.format("guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
         }
     }
 
@@ -72,6 +78,7 @@ public class GuiModuleActivator extends GuiModule {
         super.tick();
 
         lookDirectionButton.visible = actionTypeButton.getState() != ActionType.USE_ITEM_ON_ENTITY;
+        entityModeButton.visible = actionTypeButton.getState() == ActionType.USE_ITEM_ON_ENTITY;
     }
 
     @Override
@@ -79,24 +86,25 @@ public class GuiModuleActivator extends GuiModule {
         CompoundNBT compound = super.buildMessageData();
         compound.putInt(CompiledActivatorModule.NBT_ACTION_TYPE, actionTypeButton.getState().ordinal());
         compound.putInt(CompiledActivatorModule.NBT_LOOK_DIRECTION, lookDirectionButton.getState().ordinal());
+        compound.putInt(CompiledActivatorModule.NBT_ENTITY_MODE, entityModeButton.getState().ordinal());
         compound.putBoolean(CompiledActivatorModule.NBT_SNEAKING, sneakButton.isToggled());
         return compound;
     }
 
     private class ActionTypeButton extends ItemStackCyclerButton<ActionType> {
-        private final List<List<String>> tips = Lists.newArrayList();
+        private final List<List<String>> tooltips = Lists.newArrayList();
 
         ActionTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, ActionType initialVal) {
             super(x, y, width, height, flat, stacks, initialVal, GuiModuleActivator.this);
 
             for (ActionType actionType : ActionType.values()) {
-                tips.add(Collections.singletonList(I18n.format("itemText.activator.action." + actionType)));
+                tooltips.add(Collections.singletonList(I18n.format("itemText.activator.action." + actionType)));
             }
         }
 
         @Override
         public List<String> getTooltip() {
-            return tips.get(getState().ordinal());
+            return tooltips.get(getState().ordinal());
         }
     }
 
@@ -139,6 +147,41 @@ public class GuiModuleActivator extends GuiModule {
         @Override
         protected int getTextureY() {
             return 16;
+        }
+    }
+
+    private class EntityModeButton extends TexturedCyclerButton<EntityMode> {
+        private final List<List<String>> tooltips = Lists.newArrayList();
+
+        EntityModeButton(int x, int y, int width, int height, EntityMode initialVal) {
+            super(x, y, width, height, initialVal, GuiModuleActivator.this);
+            for (EntityMode mode : EntityMode.values()) {
+                tooltips.add(Collections.singletonList(I18n.format("itemText.activator.entityMode." + mode)));
+            }
+        }
+
+        @Override
+        protected int getTextureX() {
+            switch (getState()) {
+                case RANDOM: return 176;
+                case NEAREST: return 192;
+                case ROUND_ROBIN: return 160;
+                default: return 0;
+            }
+        }
+
+        @Override
+        protected int getTextureY() {
+            switch (getState()) {
+                case RANDOM: case ROUND_ROBIN: return 32;
+                case NEAREST: return 16;
+                default: return 0;
+            }
+        }
+
+        @Override
+        public List<String> getTooltip() {
+            return tooltips.get(getState().ordinal());
         }
     }
 }

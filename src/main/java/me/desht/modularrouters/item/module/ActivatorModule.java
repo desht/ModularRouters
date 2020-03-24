@@ -32,8 +32,13 @@ public class ActivatorModule extends ItemModule {
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
             list.add(MiscUtil.xlate("guiText.tooltip.activator.lookDirection").appendText(": ")
                     .applyTextStyle(TextFormatting.YELLOW)
-            .appendSibling(MiscUtil.xlate("itemText.activator.direction." + cam.getLookDirection()))
-                    .applyTextStyle(TextFormatting.AQUA));
+                    .appendSibling(MiscUtil.xlate("itemText.activator.direction." + cam.getLookDirection())
+                            .applyTextStyle(TextFormatting.AQUA)));
+        } else {
+            list.add(MiscUtil.xlate("guiText.tooltip.activator.entityMode").appendText(": ")
+                    .applyTextStyle(TextFormatting.YELLOW)
+                    .appendSibling(MiscUtil.xlate("itemText.activator.entityMode." + cam.getEntityMode())
+                            .applyTextStyle(TextFormatting.AQUA)));
         }
         if (cam.isSneaking()) {
             list.add(MiscUtil.xlate("guiText.tooltip.activator.sneak").applyTextStyle(TextFormatting.YELLOW));

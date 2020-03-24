@@ -8,14 +8,30 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModContainerTypes;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import org.lwjgl.glfw.GLFW;
 
 public class ClientSetup {
+    public static KeyBinding keybindConfigure;
+
     public static void init() {
         setupRenderLayers();
         registerScreenFactories();
+        registerKeyBindings();
+    }
+
+    private static void registerKeyBindings() {
+        keybindConfigure = new KeyBinding("key.modularrouters.configure", KeyConflictContext.GUI,
+                InputMappings.getInputByCode(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
+
+        ClientRegistry.registerKeyBinding(keybindConfigure);
     }
 
     private static void setupRenderLayers() {
+        // due to camouflage requirements, these need to render in any layer
         RenderTypeLookup.setRenderLayer(ModBlocks.ITEM_ROUTER.get(), renderType -> true);
         RenderTypeLookup.setRenderLayer(ModBlocks.TEMPLATE_FRAME.get(), renderType -> true);
     }

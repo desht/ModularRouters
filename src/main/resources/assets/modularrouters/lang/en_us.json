@@ -105,6 +105,7 @@
   "guiText.tooltip.extruder2.template": "§bTemplate\\nPlace copies of block items here to be used as the extruder template.\\n• §eLeft-Click:§7 reduce stack size\\n• §eRight-Click:§7 increase stack size\\n• §eShift + Left-Click:§7 clear stack",
   "guiText.tooltip.activator.action": "Action",
   "guiText.tooltip.activator.lookDirection": "Look",
+  "guiText.tooltip.activator.entityMode": "Entity",
   "guiText.tooltip.activator.sneak": "Sneak",
   "guiText.tooltip.distributor.strategy": "Distribution Strategy",
   "guiText.tooltip.mouseOverHelp.false": "Click to activate mouse-over help",
@@ -256,6 +257,9 @@
   "itemText.activator.direction.LEVEL": "Look Level",
   "itemText.activator.direction.ABOVE": "Look Above",
   "itemText.activator.direction.BELOW": "Look Below",
+  "itemText.activator.entityMode.RANDOM": "Random in-range entity",
+  "itemText.activator.entityMode.NEAREST": "Nearest in-range entity",
+  "itemText.activator.entityMode.ROUND_ROBIN": "Round Robin in-range entities",
   "itemText.distributor.strategy.ROUND_ROBIN": "Round Robin",
   "itemText.distributor.strategy.NEAREST_FIRST": "Nearest First",
   "itemText.distributor.strategy.FURTHEST_FIRST": "Furthest First",
@@ -347,5 +351,7 @@
 
   "_comment": "JEI text",
   "jei.recipe.module_reset": "Module Reset",
-  "jei.recipe.module_reset.description": "Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)"
+  "jei.recipe.module_reset.description": "Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)",
+
+  "key.modularrouters.category": "Modular Routers"
 }

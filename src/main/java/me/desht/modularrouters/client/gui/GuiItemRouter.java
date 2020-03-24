@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.Keybindings;
+import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.button.RedstoneBehaviourButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -78,7 +78,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-         return Keybindings.keybindConfigure.getKey().getKeyCode() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
+         return ClientSetup.keybindConfigure.getKey().getKeyCode() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

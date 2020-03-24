@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.gui.module;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.Keybindings;
+import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
@@ -264,7 +264,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()));
             return true;
-        } else if (Keybindings.keybindConfigure.getKey().getKeyCode() == keyCode) {
+        } else if (ClientSetup.keybindConfigure.getKey().getKeyCode() == keyCode) {
             // trying to configure an installed smart filter, we're done
             return handleFilterConfig();
         } else {

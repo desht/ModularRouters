@@ -37,10 +37,13 @@ public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_ACTION_TYPE = "ActionType";
     public static final String NBT_LOOK_DIRECTION = "LookDirection";
     public static final String NBT_SNEAKING = "Sneaking";
+    public static final String NBT_ENTITY_MODE = "EntityMode";
 
     private final ActionType actionType;
     private final LookDirection lookDirection;
+    private final EntityMode entityMode;
     private final boolean sneaking;
+    private int entityIdx;
 
     public enum ActionType {
         ACTIVATE_BLOCK,
@@ -54,6 +57,12 @@ public class CompiledActivatorModule extends CompiledModule {
         BELOW
     }
 
+    public enum EntityMode {
+        NEAREST,
+        RANDOM,
+        ROUND_ROBIN
+    }
+
     public CompiledActivatorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
@@ -61,10 +70,12 @@ public class CompiledActivatorModule extends CompiledModule {
         if (compound != null) {
             actionType = ActionType.values()[compound.getInt(NBT_ACTION_TYPE)];
             lookDirection = LookDirection.values()[compound.getInt(NBT_LOOK_DIRECTION)];
+            entityMode = EntityMode.values()[compound.getInt(NBT_ENTITY_MODE)];
             sneaking = compound.getBoolean(NBT_SNEAKING);
         } else {
             actionType = ActionType.ACTIVATE_BLOCK;
             lookDirection = LookDirection.LEVEL;
+            entityMode = EntityMode.NEAREST;
             sneaking = false;
         }
     }
@@ -101,7 +112,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doUseItemOnEntity(TileEntityItemRouter router, FakePlayer fakePlayer) {
-        Entity entity = findNearestEntity(router);
+        Entity entity = findEntity(router);
         if (entity == null) {
             return false;
         }
@@ -113,7 +124,7 @@ public class CompiledActivatorModule extends CompiledModule {
         return false;
     }
 
-    private Entity findNearestEntity(TileEntityItemRouter router) {
+    private Entity findEntity(TileEntityItemRouter router) {
         Direction face = getFacing();
         final BlockPos pos = router.getPos();
         AxisAlignedBB box = new AxisAlignedBB(pos.offset(face))
@@ -123,8 +134,20 @@ public class CompiledActivatorModule extends CompiledModule {
         if (l.isEmpty()) {
             return null;
         }
-        l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())));
-        return l.get(0);
+
+        switch (entityMode) {
+            case RANDOM:
+                return l.get(router.getWorld().rand.nextInt(l.size()));
+            case NEAREST:
+                l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())));
+                return l.get(0);
+            case ROUND_ROBIN:
+                l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())));
+                entityIdx = (entityIdx + 1) % l.size();
+                return l.get(entityIdx);
+            default:
+                return null;
+        }
     }
 
     private boolean doUseItem(TileEntityItemRouter router, World world, BlockPos pos, PlayerEntity fakePlayer, float hitX, float hitY, float hitZ) {
@@ -243,6 +266,10 @@ public class CompiledActivatorModule extends CompiledModule {
 
     public LookDirection getLookDirection() {
         return lookDirection;
+    }
+
+    public EntityMode getEntityMode() {
+        return entityMode;
     }
 
     public boolean isSneaking() {

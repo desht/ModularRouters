@@ -75,7 +75,7 @@ public class BufferHandler extends ItemStackHandler {
     private class FluidItemAdapter implements IFluidHandler {
         private final int slot;
 
-        public FluidItemAdapter(int slot) {
+        FluidItemAdapter(int slot) {
             this.slot = slot;
         }
 
