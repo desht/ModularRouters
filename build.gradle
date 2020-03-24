@@ -27,13 +27,18 @@ if (System.getenv().BUILD_NUMBER != null) {
     version += "-CUSTOM"
 }
 
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
 minecraft {
     mappings channel: 'snapshot', version: config.mcp_mappings
     //accessTransformer = file('my_at.cfg')
     runs {
         client = {
             // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+//            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            properties 'forge.logging.markers': 'CONFIG'
             // recommended logging level for the console
             properties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
@@ -46,6 +51,18 @@ minecraft {
             properties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
             source sourceSets.main
+        }
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            mods {
+                modularrouters {
+                    source sourceSets.main
+                }
+            }
+            args '--mod', 'modularrouters', '--all', '--output', file('src/generated/resources/')
+            environment 'target', 'fmluserdevdata'
         }
     }
 }

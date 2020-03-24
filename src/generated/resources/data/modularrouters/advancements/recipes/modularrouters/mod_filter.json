@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "modularrouters:mod_filter"
+    ]
+  },
+  "criteria": {
+    "has_bulk_item_filter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "modularrouters:bulk_item_filter"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "modularrouters:mod_filter"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_bulk_item_filter",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "GMG"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:glass"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "M": {
+      "item": "modularrouters:blank_module"
+    }
+  },
+  "result": {
+    "item": "modularrouters:fluid_module"
+  }
+}

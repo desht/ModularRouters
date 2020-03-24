@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "modularrouters:blast_upgrade",
+    "modularrouters:camouflage_upgrade",
+    "modularrouters:fluid_upgrade",
+    "modularrouters:muffler_upgrade",
+    "modularrouters:security_upgrade",
+    "modularrouters:speed_upgrade",
+    "modularrouters:stack_upgrade",
+    "modularrouters:sync_upgrade"
+  ]
+}

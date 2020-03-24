@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " T ",
+    "RMR",
+    " T "
+  ],
+  "key": {
+    "M": {
+      "item": "modularrouters:augment_core"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "result": {
+    "item": "modularrouters:redstone_augment"
+  }
+}

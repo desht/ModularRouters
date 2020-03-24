@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "modularrouters:range_down_augment"
+    }
+  ],
+  "result": {
+    "item": "modularrouters:range_up_augment"
+  }
+}

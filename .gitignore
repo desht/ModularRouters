@@ -24,3 +24,6 @@ run
 run-*
 conf
 *.xcf
+
+# datagen caches
+**/.cache

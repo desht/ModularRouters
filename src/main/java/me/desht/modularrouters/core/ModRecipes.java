@@ -12,8 +12,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ModRecipes {
     public static final DeferredRegister<IRecipeSerializer<?>> RECIPES = new DeferredRegister<>(ForgeRegistries.RECIPE_SERIALIZERS, ModularRouters.MODID);
 
-    public static final RegistryObject<IRecipeSerializer<EnchantModuleRecipe>> MODULE_ENCHANT
+    public static final RegistryObject<SpecialRecipeSerializer<EnchantModuleRecipe>> MODULE_ENCHANT
             = RECIPES.register("module_enchant", () -> new SpecialRecipeSerializer<>(EnchantModuleRecipe::new));
-    public static final RegistryObject<IRecipeSerializer<ResetModuleRecipe>> MODULE_RESET
+    public static final RegistryObject<SpecialRecipeSerializer<ResetModuleRecipe>> MODULE_RESET
             = RECIPES.register("module_reset", () -> new SpecialRecipeSerializer<>(ResetModuleRecipe::new));
 }

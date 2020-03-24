@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item" : "modularrouters:augment_core" },
-    { "tag": "forge:slimeballs" }
-  ],
-  "result": { "item": "modularrouters:pickup_delay_augment" }
-}

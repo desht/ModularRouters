@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "PPP",
+    "GGG"
+  ],
+  "key": {
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "G": {
+      "tag": "forge:nuggets/gold"
+    }
+  },
+  "result": {
+    "item": "modularrouters:blank_module",
+    "count": 6
+  }
+}

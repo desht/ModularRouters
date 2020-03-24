@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    { "item" : "modularrouters:augment_core" },
-    { "item" : "minecraft:soul_sand" }
-  ],
-  "result": { "item": "modularrouters:xp_vacuum_augment" }
-}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "modularrouters:sender_module_1_alt"
+    ]
+  },
+  "criteria": {
+    "has_blank_module": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "modularrouters:blank_module"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "modularrouters:sender_module_1_alt"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_blank_module",
+      "has_the_recipe"
+    ]
+  ]
+}

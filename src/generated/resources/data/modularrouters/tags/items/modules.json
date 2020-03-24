@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "modularrouters:activator_module",
+    "modularrouters:breaker_module",
+    "modularrouters:detector_module",
+    "modularrouters:distributor_module",
+    "modularrouters:dropper_module",
+    "modularrouters:extruder_module_1",
+    "modularrouters:extruder_module_2",
+    "modularrouters:flinger_module",
+    "modularrouters:fluid_module",
+    "modularrouters:placer_module",
+    "modularrouters:player_module",
+    "modularrouters:puller_module_1",
+    "modularrouters:puller_module_2",
+    "modularrouters:sender_module_1",
+    "modularrouters:sender_module_2",
+    "modularrouters:sender_module_3",
+    "modularrouters:vacuum_module",
+    "modularrouters:void_module"
+  ]
+}

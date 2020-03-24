@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EBE",
+    " P "
+  ],
+  "key": {
+    "B": {
+      "item": "modularrouters:bulk_item_filter"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "E": {
+      "item": "minecraft:spider_eye"
+    }
+  },
+  "result": {
+    "item": "modularrouters:inspection_filter"
+  }
+}

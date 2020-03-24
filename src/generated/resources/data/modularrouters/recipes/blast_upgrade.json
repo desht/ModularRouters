@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IOI",
+    "OBO",
+    "IOI"
+  ],
+  "key": {
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "B": {
+      "item": "modularrouters:blank_upgrade"
+    }
+  },
+  "result": {
+    "item": "modularrouters:blast_upgrade"
+  }
+}

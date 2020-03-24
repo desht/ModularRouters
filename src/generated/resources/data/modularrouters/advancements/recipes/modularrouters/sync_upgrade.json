@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "modularrouters:sync_upgrade"
+    ]
+  },
+  "criteria": {
+    "has_blank_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "modularrouters:blank_upgrade"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "modularrouters:sync_upgrade"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_blank_upgrade",
+      "has_the_recipe"
+    ]
+  ]
+}
