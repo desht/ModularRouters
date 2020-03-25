@@ -13,6 +13,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.*;
@@ -24,18 +25,23 @@ public class ModuleTargetRenderer {
     private static CompiledPosition compiledPos = null;
 
     @SubscribeEvent
-    public static void renderWorldLastEvent(RenderWorldLastEvent event) {
-        ItemStack curItem = Minecraft.getInstance().player.getHeldItemMainhand();
-        if (!ItemStack.areItemStacksEqual(curItem, lastStack)) {
-            lastStack = curItem.copy();
-            IPositionProvider positionProvider = getPositionProvider(curItem);
-            if (positionProvider != null) {
-                compiledPos = new CompiledPosition(curItem, positionProvider);
-            } else {
-                compiledPos = null;
+    public static void clientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START && Minecraft.getInstance().player != null) {
+            ItemStack curItem = Minecraft.getInstance().player.getHeldItemMainhand();
+            if (!ItemStack.areItemStacksEqual(curItem, lastStack)) {
+                lastStack = curItem.copy();
+                IPositionProvider positionProvider = getPositionProvider(curItem);
+                if (positionProvider != null) {
+                    compiledPos = new CompiledPosition(curItem, positionProvider);
+                } else {
+                    compiledPos = null;
+                }
             }
         }
-        
+    }
+
+    @SubscribeEvent
+    public static void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (compiledPos != null) {
             IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
             MatrixStack matrixStack = event.getMatrixStack();
@@ -57,7 +63,7 @@ public class ModuleTargetRenderer {
         }
     }
 
-    static void render(IRenderTypeBuffer.Impl buffer, MatrixStack matrixStack, ModuleTargetRenderer.CompiledPosition cp) {
+    private static void render(IRenderTypeBuffer.Impl buffer, MatrixStack matrixStack, ModuleTargetRenderer.CompiledPosition cp) {
         float start = (1 - BOX_SIZE) / 2.0f;
 
         for (BlockPos pos : cp.getPositions()) {
