@@ -28,7 +28,7 @@ public class Filter implements Predicate<ItemStack> {
     public Filter(ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
-            ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack);
+            ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, null);
             for (int i = 0; i < filterHandler.getSlots(); i++) {
                 ItemStack filterStack = filterHandler.getStackInSlot(i);
                 if (!filterStack.isEmpty()) {

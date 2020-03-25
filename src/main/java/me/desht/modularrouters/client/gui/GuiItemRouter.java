@@ -40,7 +40,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     public final TileEntityItemRouter router;
 
-    private RedstoneBehaviourButton rbb;
+    private RedstoneBehaviourButton rrb;
     private RouterEcoButton reb;
 
     public GuiItemRouter(ContainerItemRouter container, PlayerInventory inventoryPlayer, ITextComponent displayName) {
@@ -55,7 +55,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     public void init() {
         super.init();
 
-        addButton(rbb = new RedstoneBehaviourButton(this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
+        addButton(rrb = new RedstoneBehaviourButton(this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
         addButton(reb = new RouterEcoButton(this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
     }
 
@@ -98,7 +98,9 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     @Override
     public void sendToServer() {
-        PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router, rbb.getState(), reb.isToggled()));
+        router.setRedstoneBehaviour(rrb.getState());
+        router.setEcoMode(reb.isToggled());
+        PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
     }
 
     private class RouterEcoButton extends TexturedToggleButton {

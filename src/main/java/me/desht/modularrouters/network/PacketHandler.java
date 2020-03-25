@@ -36,8 +36,6 @@ public class PacketHandler {
                 SyncUpgradeSettingsMessage::toBytes, SyncUpgradeSettingsMessage::new, SyncUpgradeSettingsMessage::handle);
         NETWORK.registerMessage(nextId(), PushEntityMessage.class,
                 PushEntityMessage::toBytes, PushEntityMessage::new, PushEntityMessage::handle);
-        NETWORK.registerMessage(nextId(), PlaySoundMessage.class,
-                PlaySoundMessage::toBytes, PlaySoundMessage::new, PlaySoundMessage::handle);
         NETWORK.registerMessage(nextId(), RouterUpgradesSyncMessage.class,
                 RouterUpgradesSyncMessage::toBytes, RouterUpgradesSyncMessage::new, RouterUpgradesSyncMessage::handle);
     }

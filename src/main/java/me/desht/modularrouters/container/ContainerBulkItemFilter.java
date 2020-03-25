@@ -2,7 +2,6 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
-import me.desht.modularrouters.container.slot.BaseModuleSlot.BulkFilterSlot;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
@@ -16,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.SlotItemHandler;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -40,15 +40,12 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     public ContainerBulkItemFilter(int windowId, PlayerInventory invPlayer, MFLocator loc) {
         super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), windowId, invPlayer, loc);
 
-        this.handler = new BulkFilterHandler(filterStack);
+        this.handler = new BulkFilterHandler(filterStack, router);
         this.currentSlot = invPlayer.currentItem + HOTBAR_START;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
-            BulkFilterSlot slot = router == null ?
-                    new BulkFilterSlot(handler, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)) :
-                    new BulkFilterSlot(handler, router, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9));
-            addSlot(slot);
+            addSlot(new SlotItemHandler(handler, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)));
         }
 
         // player's main inventory - uses default locations for standard inventory texture file

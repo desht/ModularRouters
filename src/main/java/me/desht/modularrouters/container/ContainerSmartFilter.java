@@ -4,16 +4,15 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 
-public abstract class ContainerSmartFilter extends Container {
+public abstract class ContainerSmartFilter extends ContainerMRBase {
     protected final ItemStack filterStack;
     protected final MFLocator locator;
     protected final TileEntityItemRouter router;
 
-    public ContainerSmartFilter(ContainerType<?> type, int windowId, PlayerInventory inv, MFLocator locator) {
+    ContainerSmartFilter(ContainerType<?> type, int windowId, PlayerInventory inv, MFLocator locator) {
         super(type, windowId);
 
         this.locator = locator;

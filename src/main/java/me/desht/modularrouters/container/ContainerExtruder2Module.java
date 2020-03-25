@@ -2,7 +2,6 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
-import me.desht.modularrouters.container.slot.BaseModuleSlot;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.block.Block;
@@ -14,6 +13,9 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.SlotItemHandler;
+
+import javax.annotation.Nonnull;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 
@@ -27,14 +29,9 @@ public class ContainerExtruder2Module extends ContainerModule {
     public ContainerExtruder2Module(int windowId, PlayerInventory inv, MFLocator locator) {
         super(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), windowId, inv, locator);
 
-        TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player));
+        TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player), router);
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {
-            int x = 129 + SLOT_X_SPACING * (i % 3);
-            int y = 17 + SLOT_X_SPACING * (i / 3);
-            TemplateSlot slot = router == null ?
-                    new TemplateSlot(handler, i, x, y) :
-                    new TemplateSlot(handler, router, i, x, y);
-            addSlot(slot);
+            addSlot(new SlotItemHandler(handler, i, 129 + SLOT_X_SPACING * (i % 3), 17 + SLOT_X_SPACING * (i / 3)));
         }
     }
 
@@ -50,7 +47,7 @@ public class ContainerExtruder2Module extends ContainerModule {
         ItemStack stackInSlot = s.getStack().copy();
         if (clickTypeIn == ClickType.QUICK_MOVE) {
             s.putStack(ItemStack.EMPTY);  // shift-left-click clears the slot
-        } else if (!stackOnCursor.isEmpty() && !ItemStack.areItemsEqual(stackInSlot, stackOnCursor)) {
+        } else if (!stackOnCursor.isEmpty() && !ItemStack.areItemsEqual(stackInSlot, stackOnCursor) && s.isItemValid(stackOnCursor)) {
             // placing a new item in the template buffer
             ItemStack stack1 = stackOnCursor.copy();
             if (dragType == 1) {
@@ -84,33 +81,28 @@ public class ContainerExtruder2Module extends ContainerModule {
         return b.getDefaultState().getRenderType() == BlockRenderType.MODEL;
     }
 
-    private static class TemplateSlot extends BaseModuleSlot<TemplateHandler> {
-        TemplateSlot(TemplateHandler itemHandler, TileEntityItemRouter router, int index, int xPosition, int yPosition) {
-            super(itemHandler, router, index, xPosition, yPosition);
-        }
-
-        TemplateSlot(TemplateHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(itemHandler, null, index, xPosition, yPosition);
-        }
-    }
-
     public static class TemplateHandler extends BaseModuleHandler {
         private static final String NBT_TEMPLATE = "Template";
 
-        public TemplateHandler(ItemStack holderStack) {
-            super(holderStack, TEMPLATE_SLOTS, NBT_TEMPLATE);
+        public TemplateHandler(ItemStack holderStack, TileEntityItemRouter router) {
+            super(holderStack, router, TEMPLATE_SLOTS, NBT_TEMPLATE);
         }
 
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return isItemOKForTemplate(stack) ? super.insertItem(slot, stack, simulate) : stack;
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            return isItemOKForTemplate(stack);
         }
 
-        @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
-            if (isItemOKForTemplate(stack)) {
-                super.setStackInSlot(slot, stack);
-            }
-        }
+//        @Override
+//        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+//            return isItemOKForTemplate(stack) ? super.insertItem(slot, stack, simulate) : stack;
+//        }
+//
+//        @Override
+//        public void setStackInSlot(int slot, ItemStack stack) {
+//            if (isItemOKForTemplate(stack)) {
+//                super.setStackInSlot(slot, stack);
+//            }
+//        }
     }
 }

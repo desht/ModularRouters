@@ -7,7 +7,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.network.PlaySoundMessage;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
@@ -20,10 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
@@ -82,7 +78,7 @@ public abstract class TargetedModule extends ItemModule {
             if (tgt != null) {
                 ITextComponent msg = xlate("chatText.misc.targetSet").appendSibling(tgt.getTextComponent());
                 player.sendStatusMessage(msg.applyTextStyle(TextFormatting.YELLOW), true);
-                PlaySoundMessage.playSound(player, ModSounds.SUCCESS.get(), 1.0f, 1.3f);
+                world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
             }
         }
     }
@@ -107,11 +103,11 @@ public abstract class TargetedModule extends ItemModule {
                 // too many targets already
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
                         .applyTextStyle(TextFormatting.RED), true);
-                PlaySoundMessage.playSound(player, ModSounds.ERROR.get(), 1.0f, 1.3f);
+                world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
             }
 
-            PlaySoundMessage.playSound(player, ModSounds.SUCCESS.get(), 1.0f, removing ? 1.1f : 1.3f);
+            world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, removing ? 1.1f : 1.3f);
             setTargets(stack, targets);
         }
     }
@@ -156,7 +152,7 @@ public abstract class TargetedModule extends ItemModule {
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            PlaySoundMessage.playSound(player, ModSounds.SUCCESS.get(), 1.0f, 1.1f);
+            world.playSound(null, player.getPosition(), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
             player.sendStatusMessage(xlate("chatText.misc.targetCleared").applyTextStyle(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);

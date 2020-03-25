@@ -1,5 +1,6 @@
 package me.desht.modularrouters.recipe;
 
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.BreakerModule;
 import me.desht.modularrouters.item.module.ExtruderModule1;
@@ -12,7 +13,9 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -91,6 +94,18 @@ public class EnchantModuleRecipe extends SpecialRecipe {
     @Override
     public IRecipeSerializer<?> getSerializer() {
         return ModRecipes.MODULE_ENCHANT.get();
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        ItemStack silkTouch = new ItemStack(Items.ENCHANTED_BOOK);
+        silkTouch.addEnchantment(Enchantments.SILK_TOUCH, 1);
+        ItemStack fortune = new ItemStack(Items.ENCHANTED_BOOK);
+        silkTouch.addEnchantment(Enchantments.FORTUNE, 1);
+
+        return NonNullList.from(Ingredient.EMPTY,
+                Ingredient.fromItems(ModItems.BREAKER_MODULE.get(), ModItems.EXTRUDER_MODULE_1.get()),
+                Ingredient.fromStacks(silkTouch, fortune));
     }
 
     private EnchantmentData getValidEnchantment(ItemStack bookStack, ItemStack moduleStack) {

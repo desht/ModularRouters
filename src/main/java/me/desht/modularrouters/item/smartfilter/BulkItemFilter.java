@@ -47,7 +47,7 @@ public class BulkItemFilter extends ItemSmartFilter {
 
     private static SetofItemStack getFilterItems(ItemStack filterStack, Flags flags) {
         if (filterStack.hasTag()) {
-            BulkFilterHandler handler = new BulkFilterHandler(filterStack);
+            BulkFilterHandler handler = new BulkFilterHandler(filterStack, null);
             return SetofItemStack.fromItemHandler(handler, flags);
         } else {
             return new SetofItemStack(Flags.DEFAULT_FLAGS);
@@ -136,7 +136,7 @@ public class BulkItemFilter extends ItemSmartFilter {
             }
         }
 
-        BulkFilterHandler handler = new BulkFilterHandler(filterStack);
+        BulkFilterHandler handler = new BulkFilterHandler(filterStack, null);
         int slot = 0;
         Comparator<ItemStack> comp = (o1, o2) -> o1.getDisplayName().toString().compareTo(o2.getDisplayName().getString());
         for (ItemStack stack : stacks.stream().sorted(comp).collect(Collectors.toList())) {

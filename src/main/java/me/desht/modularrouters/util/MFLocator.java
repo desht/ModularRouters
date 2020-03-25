@@ -126,7 +126,7 @@ public class MFLocator {
         if (stack.getItem() instanceof ItemSmartFilter) {
             return stack;
         } else if (stack.getItem() instanceof ItemModule && filterSlot >= 0) {
-            return new BaseModuleHandler.ModuleFilterHandler(stack).getStackInSlot(filterSlot);
+            return new BaseModuleHandler.ModuleFilterHandler(stack, null).getStackInSlot(filterSlot);
         } else {
             return ItemStack.EMPTY;
         }

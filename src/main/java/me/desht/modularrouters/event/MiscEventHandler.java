@@ -48,7 +48,7 @@ public class MiscEventHandler {
                 }
             }
             if (!moduleStack.isEmpty()) {
-                AugmentHandler h = new AugmentHandler(moduleStack);
+                AugmentHandler h = new AugmentHandler(moduleStack, null);
                 for (int i = 0; i < h.getSlots(); i++) {
                     ItemStack s = h.getStackInSlot(i);
                     if (!s.isEmpty()) {

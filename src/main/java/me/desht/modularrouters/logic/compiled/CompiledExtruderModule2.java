@@ -30,7 +30,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         blockList = new ArrayList<>();
         mimic = getAugmentCount(ModItems.MIMIC_AUGMENT.get()) > 0;
 
-        TemplateHandler handler = new TemplateHandler(stack);
+        TemplateHandler handler = new TemplateHandler(stack, router);
         for (int i = 0; i < handler.getSlots() && blockList.size() < getRange(); i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
             for (int j = 0; j < stack1.getCount(); j++) {

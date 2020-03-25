@@ -34,7 +34,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
         super.addSettingsInformation(itemstack, list);
 
         list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).appendSibling(new TranslationTextComponent("itemText.extruder2.template")));
-        TemplateHandler handler = new TemplateHandler(itemstack);
+        TemplateHandler handler = new TemplateHandler(itemstack, null);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);

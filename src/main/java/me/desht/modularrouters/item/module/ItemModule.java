@@ -6,9 +6,9 @@ import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
-import me.desht.modularrouters.container.slot.ValidatingSlot;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.ItemBase;
@@ -176,7 +176,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
         if (router != null) {
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
-            if (slot instanceof ValidatingSlot.Module) {
+            if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
                 String s = ClientSetup.keybindConfigure.getKey().getTranslationKey();
                 list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));
             }
@@ -258,7 +258,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     private void addFilterInformation(ItemStack itemstack, List<ITextComponent> list) {
         List<ITextComponent> l2 = new ArrayList<>();
-        ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack);
+        ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack, null);
         for (int i = 0; i < filterHandler.getSlots(); i++) {
             ItemStack s = filterHandler.getStackInSlot(i);
             if (s.getItem() instanceof ItemSmartFilter) {

@@ -5,6 +5,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.Block;
@@ -176,6 +177,8 @@ public class BlockItemRouter extends BlockCamo {
         if (!player.isSteppingCarefully()) {
             return TileEntityItemRouter.getRouterAt(world, pos).map(router -> {
                 if (router.isPermitted(player) && !world.isRemote) {
+                    // TODO combine into one packet?
+                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterSettingsMessage(router));
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {

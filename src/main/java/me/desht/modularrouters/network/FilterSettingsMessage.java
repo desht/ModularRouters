@@ -86,14 +86,14 @@ public class FilterSettingsMessage {
             ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
-                ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack);
+                TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.world, locator.routerPos).orElse(null);
+                ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, router);
                 filterHandler.setStackInSlot(locator.filterSlot, filterStack);
                 filterHandler.save();
                 if (locator.hand != null) {
                     player.setHeldItem(locator.hand, filterHandler.getHolderStack());
-                } else if (locator.routerPos != null) {
-                    TileEntityItemRouter.getRouterAt(player.world, locator.routerPos)
-                            .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
+                } else if (router != null) {
+                    router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
                 }
             }
             if (response != null) {

@@ -52,8 +52,6 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     @Override
     public IModelData getModelData() {
         return new ModelDataMap.Builder()
-//                .withInitial(BlockCamo.BLOCK_ACCESS, world)
-//                .withInitial(BlockCamo.BLOCK_POS, pos)
                 .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }

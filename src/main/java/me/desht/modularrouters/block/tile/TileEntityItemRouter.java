@@ -19,10 +19,13 @@ import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
@@ -34,6 +37,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
@@ -42,9 +46,11 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -52,6 +58,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class TileEntityItemRouter extends TileEntity implements ITickableTileEntity, ICamouflageable, INamedContainerProvider {
     private static final int N_MODULE_SLOTS = 9;
@@ -80,8 +87,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private final BufferHandler bufferHandler = new BufferHandler(this);
     private final LazyOptional<IItemHandler> inventoryCap = LazyOptional.of(() -> bufferHandler);
 
-    private final ItemStackHandler modulesHandler = new RouterItemHandler.ModuleHandler(this);
-    private final ItemStackHandler upgradesHandler = new RouterItemHandler.UpgradeHandler(this);
+    private final ItemStackHandler modulesHandler = new ModuleHandler();
+    private final ItemStackHandler upgradesHandler = new UpgradeHandler();
 
     private final List<CompiledModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
@@ -139,14 +146,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         compound.putInt("y", pos.getY());
         compound.putInt("z", pos.getZ());
 
-        // needed for the GUI
-        compound.putByte(NBT_REDSTONE_MODE, (byte) redstoneBehaviour.ordinal());
-        compound.putBoolean(NBT_ECO_MODE, ecoMode);
-
-        // these fields are needed for rendering
-        compound.putInt(NBT_MUFFLERS, getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()));
-        compound.putBoolean(NBT_ACTIVE, active);
-        compound.putByte(NBT_SIDES, sidesOpen);
         if (camouflage != null) {
             compound.put(CamouflageUpgrade.NBT_STATE_NAME, NBTUtil.writeBlockState(camouflage));
         }
@@ -172,30 +171,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private void processClientSync(CompoundNBT compound) {
         // called client-side
 
-        int mufflers = compound.getInt(NBT_MUFFLERS);
-        if (mufflers < 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) >= 3
-                || mufflers >= 3 && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 3) {
-            upgradeCount.put(ModItems.MUFFLER_UPGRADE.get().getRegistryName(), mufflers);
-            BlockState state = getBlockState();
-            getWorld().markBlockRangeForRenderUpdate(pos, Blocks.AIR.getDefaultState(), state);
-        }
-
-        // these fields are needed for rendering
-        boolean newActive = compound.getBoolean(NBT_ACTIVE);
-        byte newSidesOpen = compound.getByte(NBT_SIDES);
-        setActive(newActive);
-        setSidesOpen(newSidesOpen);
-
         if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
             setCamouflage(NBTUtil.readBlockState(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }
-
-        // GUI
-        RouterRedstoneBehaviour newRedstoneBehaviour = RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
-        setRedstoneBehaviour(newRedstoneBehaviour);
-        setEcoMode(compound.getBoolean(NBT_ECO_MODE));
     }
 
     @Nonnull
@@ -286,10 +266,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
             // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
             // however, we do need to turn the state inactive after a short time if we were set active by a pulse
-            if (activeTimer > 0) {
-                if (--activeTimer == 0) {
-                    setActive(false);
-                }
+            if (activeTimer > 0 && --activeTimer == 0) {
+                setActive(false);
             }
         } else {
             if (counter >= getTickRate()) {
@@ -353,24 +331,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         handleSync(false);
     }
 
-    /**
-     * Check if the router processed anything on its last tick
-     *
-     * @return true if the router processed something
-     */
-    public boolean isActive() {
-        return active;
-    }
-
     private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
-            world.setBlockState(getPos(), getBlockState().with(BlockItemRouter.ACTIVE, newActive), 2);
+            world.setBlockState(getPos(), getBlockState().with(BlockItemRouter.ACTIVE,
+                    newActive && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 3), Constants.BlockFlags.BLOCK_UPDATE);
         }
-    }
-
-    public boolean isSideOpen(RelativeDirection side) {
-        return (sidesOpen & side.getMask()) != 0;
     }
 
     private void setSidesOpen(byte sidesOpen) {
@@ -404,7 +370,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         // some tile entity field changed that the client needs to know about
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         if (!getWorld().isRemote) {
-            getWorld().notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+            getWorld().notifyBlockUpdate(pos, getBlockState(), getBlockState(), Constants.BlockFlags.DEFAULT);
         } else if (getWorld().isRemote && renderUpdate) {
             requestModelDataUpdate();
             getWorld().markBlockRangeForRenderUpdate(pos, Blocks.AIR.getDefaultState(), getBlockState());
@@ -415,8 +381,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public IModelData getModelData() {
         return new ModelDataMap.Builder()
-//                .withInitial(BlockCamo.BLOCK_ACCESS, world)
-//                .withInitial(BlockCamo.BLOCK_POS, pos)
                 .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
@@ -439,7 +403,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         }
 
         BlockState state = getBlockState();
-        getWorld().notifyBlockUpdate(pos, state, state, 3);
         getWorld().notifyNeighborsOfStateChange(pos, state.getBlock());
         markDirty();
         recompileNeeded = 0;
@@ -469,6 +432,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private void compileUpgrades() {
         // if called client-side, always recompile (it's due to an upgrade sync)
         if (world.isRemote || (recompileNeeded & COMPILE_UPGRADES) != 0) {
+            int prevMufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
             upgradeCount.clear();
             totalUpgradeCount = 0;
             permitted.clear();
@@ -488,6 +452,23 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                     MRConfig.Common.Router.baseTickRate - MRConfig.Common.Router.ticksPerUpgrade * getUpgradeCount(ModItems.SPEED_UPGRADE.get()));
             fluidTransferRate = Math.min(MRConfig.Common.Router.fluidMaxTransferRate,
                     MRConfig.Common.Router.fluidBaseTransferRate + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * MRConfig.Common.Router.mBperFluidUpgade);
+            if (!world.isRemote) {
+                int mufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
+                if (prevMufflers != mufflers) {
+                    world.setBlockState(pos, getBlockState().with(BlockItemRouter.ACTIVE, active && mufflers < 3), Constants.BlockFlags.BLOCK_UPDATE);
+                }
+                notifyWatchingPlayers();
+            }
+        }
+    }
+
+    private void notifyWatchingPlayers() {
+        for (PlayerEntity player : world.getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(getPos()).grow(5))) {
+            if (player.openContainer instanceof ContainerItemRouter) {
+                if (((ContainerItemRouter) player.openContainer).getRouter() == this) {
+                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(this));
+                }
+            }
         }
     }
 
@@ -509,10 +490,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public void setAllowRedstoneEmission(boolean allow) {
         canEmit = allow;
         getWorld().setBlockState(pos, getBlockState().with(BlockItemRouter.CAN_EMIT, canEmit));
-    }
-
-    public int getUpgradeCount() {
-        return totalUpgradeCount;
     }
 
     public int getUpgradeCount(Item type) {
@@ -795,5 +772,40 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             }
         }
         compileUpgrades();
+    }
+
+    abstract class RouterItemHandler extends ItemStackHandler {
+        private final Predicate<ItemStack> validator;
+        private final int flag;
+
+        private RouterItemHandler(int flag, int size, Predicate<ItemStack> validator) {
+            super(size);
+            this.validator = validator;
+            this.flag = flag;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            return super.isItemValid(slot, stack) && validator.test(stack);
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+
+            recompileNeeded(flag);
+        }
+    }
+
+    class ModuleHandler extends RouterItemHandler {
+        ModuleHandler() {
+            super(TileEntityItemRouter.COMPILE_MODULES, getModuleSlotCount(), s -> s.getItem() instanceof ItemModule);
+        }
+    }
+
+    class UpgradeHandler extends RouterItemHandler {
+        UpgradeHandler() {
+            super(TileEntityItemRouter.COMPILE_UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof ItemUpgrade);
+        }
     }
 }

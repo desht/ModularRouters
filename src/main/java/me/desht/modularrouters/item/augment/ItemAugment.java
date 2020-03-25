@@ -44,7 +44,7 @@ public abstract class ItemAugment extends ItemBase {
         public void refresh(ItemStack moduleStack) {
             Validate.isTrue(moduleStack.getItem() instanceof ItemModule, "item is not a ItemModule: " + moduleStack);
 
-            AugmentHandler h = new AugmentHandler(moduleStack);
+            AugmentHandler h = new AugmentHandler(moduleStack, null);
             counts.clear();
             for (int i = 0; i < h.getSlots(); i++) {
                 ItemStack augmentStack = h.getStackInSlot(i);

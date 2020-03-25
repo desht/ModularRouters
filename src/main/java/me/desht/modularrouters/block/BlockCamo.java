@@ -68,7 +68,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
                 camo.getCamouflage().getBlock().getExplosionResistance(state, world, pos, exploder, explosion);
     }
 
-    private ICamouflageable getCamoState(IBlockReader blockAccess, BlockPos pos) {
+    ICamouflageable getCamoState(IBlockReader blockAccess, BlockPos pos) {
         TileEntity te = blockAccess.getTileEntity(pos);
         return te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null ? (ICamouflageable) te : null;
     }
