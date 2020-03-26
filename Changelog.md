@@ -4,6 +4,19 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.15.2
+
+### 6.0.0 (unreleased)
+
+* Initial 1.15.2 port!
+* Added a Patchouli guidebook
+* Added a Fluid Mk2 module, which can transfer fluids to/from tanks and blocks 12-24 blocks away
+* Retextured the Item Router a bit
+* Activator module, when in "use item on entity" mode, can now target multiple nearby entities 
+  * choose between nearest, round robin, or random
+* Add hard item limits on the number of upgrades/augments which can be added to routers/modules
+  * e.g. it's no longer possible to put more than 9 Speed Upgrades in an Item Router, or more than 1 XP Vacuum Augment in a Vacuum Module
+
 ## Minecraft 1.14.4
 
 ### 5.1.4 (1 Feb 2020)

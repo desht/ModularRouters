@@ -10,16 +10,21 @@
     "1.14.2-recommended" : "5.0.0",
     "1.14.2-latest" : "5.0.0",
     "1.14.4-recommended" : "5.1.4",
-    "1.14.4-latest" : "5.1.4"
+    "1.14.4-latest" : "5.1.4",
+    "1.15.2-recommended" : "6.0.0",
+    "1.15.2-latest" : "6.0.0"
+  },
+  "1.15.2" : {
+    "6.0.0" : "https://github.com/desht/ModularRouters/blob/MC1.15-master/Changelog.md#600-27-mar-2020"
   },
   "1.14.4" : {
-    "5.1.4" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#514-1-feb-2020",
-    "5.1.2" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#512-30-nov-2019",
-    "5.1.1" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#511-30-oct-2019",
-    "5.1.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#510-22-oct-2019"
+    "5.1.4" : "https://github.com/desht/ModularRouters/blob/MC1.14-master/Changelog.md#514-1-feb-2020",
+    "5.1.2" : "https://github.com/desht/ModularRouters/blob/MC1.14-master/Changelog.md#512-30-nov-2019",
+    "5.1.1" : "https://github.com/desht/ModularRouters/blob/MC1.14-master/Changelog.md#511-30-oct-2019",
+    "5.1.0" : "https://github.com/desht/ModularRouters/blob/MC1.14-master/Changelog.md#510-22-oct-2019"
   },
   "1.14.2" : {
-    "5.0.0" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#500-15-jun-2019"
+    "5.0.0" : "https://github.com/desht/ModularRouters/blob/MC1.14-master/Changelog.md#500-15-jun-2019"
   },
   "1.12.2" : {
     "3.2.1" : "https://github.com/desht/ModularRouters/blob/MC1.12-master/Changelog.md#321-1-oct-2018",
