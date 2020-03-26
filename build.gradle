@@ -93,6 +93,10 @@ repositories {
         name = "K-4u Mod maven"
         url = "https://modmaven.k-4u.nl/"
     }
+    maven {
+        name = 'Patchouli'
+        url = 'http://maven.blamejared.com/'
+    }
 }
 
 dependencies {
@@ -104,12 +108,8 @@ dependencies {
     runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.15:${config.top_version}")
     compileOnly fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}:api")
     runtime fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}")
-    //deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
-    //deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"
-    //deobfCompile "cofh:RedstoneFlux:1.12-${config.redstone_flux_version}:universal"
-    //compile "net.darkhax.tesla:Tesla-1.12:${config.tesla_version}"
-    //compile "team.chisel.ctm:CTM:MC1.12.2-0.3.2.18:api"
-//    deobf 'mezz.jei:jei:1.14.4-6.0.0.18:dev'
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
 }
 

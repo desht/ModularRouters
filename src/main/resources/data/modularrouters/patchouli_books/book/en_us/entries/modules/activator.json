@@ -1,0 +1,23 @@
+{
+  "name": "Activator Module",
+  "category": "modules",
+  "icon": "modularrouters:activator_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "This powerful module acts like a $(italic)fake player/$ which can right-click an item in the router's buffer, against nearby blocks or entities. There are three modes, which can be selected via the controls on the right of the GUI:$(li)$(bold)Activate Block/$ - right-clicks a nearby block, running the block's activation behaviour"
+    },
+    {
+      "type": "text",
+      "text": "$(li)$(bold)Right-click item in buffer/$ - right-clicks the item, running its activation behaviour$(li)$(bold)Right-click item in buffer on entity/$ - finds a nearby entity and right-clicks the item on that entity.$(p)The appropriate mode to use does depend on the item/block/entity combination, so it's best to experiment to see what works."
+    },
+    {
+      "type": "text",
+      "text": "The Activator has a range of about 4 blocks, similar to what an actual player has. The module can also be configured to look $(bold)up/$ or $(bold)down/$ (default is straight ahead). In this case, it will $(italic)only/$ affect the block directly above or below the block in module's $(l:intro/modules#direction)configured direction/$.$(p)The module can also be configured to simulate $(bold)sneaking/$, which may modify the activation behaviour for some items/blocks/entities."
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:activator_module"
+    }
+  ]
+}

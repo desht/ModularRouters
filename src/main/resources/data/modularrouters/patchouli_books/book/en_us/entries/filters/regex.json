@@ -1,0 +1,29 @@
+{
+  "name": "Regex Filter",
+  "category": "filters",
+  "icon": "modularrouters:regex_filter",
+  "pages": [
+    {
+      "type": "text",
+      "text": "This filter allows for matching of items with a regular expression against the item's displayed name. Regular expressions are very powerful, but take some learning to unlock their full potential. However, basic regex usage isn't too difficult. There are many websites with tutorial information on regular expressions, e.g. $(l:https://regexone.com/)RegexOne/$."
+    },
+    {
+      "type": "text",
+      "text": "$(thing)To open the module GUI, $(thing)right-click/$ the filter, or $(thing)middle-click/$ / press $(bold)$(4)[$(k:modularrouters.configure)]/$ on a filter which is installed in a module.$(li)Type your regex into the textfield at the top, and hit $(thing)Return/$ or click the green $(bold)$(2)+/$ button. Your regex will be added to the list, assuming its syntax is valid. You can have up to 6 entries in one filter.$(li)Click the red $(bold)$(4)X/$ next to any regex to remove it from the list.$(li)Matches are case-insensitive."
+    },
+    {
+      "type": "text",
+      "title": "Example 1",
+      "text": "A regex of 'ore' will match any items with 'ore' in their name (\"iron ore\", \"gold ore\", \"redstone ore\"). Unfortunately, it will also match \"Drill Core\", but you can avoid this by using a regex of $(1)$(bold)\\bore/$ - the $(1)$(bold)\\b/$ sequence means match only at a word boundary. To be even more specific, you could use $(1)$(bold)\\bore$/$, which also ensures that the string \"ore\" is at the end of the item name."
+    },
+    {
+      "type": "text",
+      "title": "Example 2",
+      "text": "Configure a $(l:modules/player)Player Module/$ to extract from the player's main inventory, and put a regex filter containing $(1)$(bold)\\bore/$ in the module. This can be used to extract any ores from your inventory, regardless of where you are, into your ore processing system; very handy if you're mining far from your base and you want ores that you've mined to be sent home immediately."
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:regex_filter"
+    }
+  ]
+}

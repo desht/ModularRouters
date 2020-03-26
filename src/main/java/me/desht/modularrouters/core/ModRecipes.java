@@ -2,6 +2,7 @@ package me.desht.modularrouters.core;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.recipe.EnchantModuleRecipe;
+import me.desht.modularrouters.recipe.GuideBookRecipe;
 import me.desht.modularrouters.recipe.ResetModuleRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
@@ -16,4 +17,6 @@ public class ModRecipes {
             = RECIPES.register("module_enchant", () -> new SpecialRecipeSerializer<>(EnchantModuleRecipe::new));
     public static final RegistryObject<SpecialRecipeSerializer<ResetModuleRecipe>> MODULE_RESET
             = RECIPES.register("module_reset", () -> new SpecialRecipeSerializer<>(ResetModuleRecipe::new));
+    public static final RegistryObject<SpecialRecipeSerializer<GuideBookRecipe>> GUIDE_BOOK
+            = RECIPES.register("guide_book", () -> new SpecialRecipeSerializer<>(GuideBookRecipe::new));
 }

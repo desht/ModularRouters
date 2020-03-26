@@ -309,6 +309,7 @@ public class ModRecipeProvider extends RecipeProvider {
 
         CustomRecipeBuilder.customRecipe(ModRecipes.MODULE_ENCHANT.get()).build(consumer, RL("enchant_module").toString());
         CustomRecipeBuilder.customRecipe(ModRecipes.MODULE_RESET.get()).build(consumer, RL("reset_module").toString());
+        CustomRecipeBuilder.customRecipe(ModRecipes.GUIDE_BOOK.get()).build(consumer, RL("guide_book").toString());
     }
 
     private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
