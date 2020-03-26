@@ -6,7 +6,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 
 public class PushingAugment extends ItemAugment {
     @Override
-    public boolean isCompatible(ItemModule moduleType) {
-        return moduleType instanceof ExtruderModule1 || moduleType instanceof ExtruderModule2;
+    public int getMaxAugments(ItemModule moduleType) {
+        return moduleType instanceof ExtruderModule1 || moduleType instanceof ExtruderModule2 ? 64 : 0;
     }
 }

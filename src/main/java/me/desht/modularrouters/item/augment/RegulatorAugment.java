@@ -10,8 +10,8 @@ import net.minecraft.item.ItemStack;
 
 public class RegulatorAugment extends ItemAugment {
     @Override
-    public boolean isCompatible(ItemModule moduleType) {
-        return !(moduleType instanceof DetectorModule || moduleType instanceof ExtruderModule2);
+    public int getMaxAugments(ItemModule moduleType) {
+        return moduleType instanceof DetectorModule || moduleType instanceof ExtruderModule2 ? 0 : 1;
     }
 
     @Override

@@ -9,8 +9,8 @@ public class PickupDelayAugment extends ItemAugment {
     public static final int TICKS_PER_AUGMENT = 10;
 
     @Override
-    public boolean isCompatible(ItemModule moduleType) {
-        return moduleType instanceof DropperModule;  // includes flinger module
+    public int getMaxAugments(ItemModule moduleType) {
+        return moduleType instanceof DropperModule ? 20 : 0;  // includes flinger module
     }
 
     @Override

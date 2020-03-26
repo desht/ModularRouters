@@ -45,9 +45,14 @@ public class MiscUtil {
         }
     }
 
-    public static String[] splitLong(String key, int len, Object... args) {
-        return WordUtils.wrap(I18n.format(key, args), len, "=CUT", false, "\\n").split("=CUT");
-    }
+//    public static void appendMultilineText(List<ITextComponent> result, Consumer<Style> formatting, String key, Object... args) {
+//        for (String s : I18n.format(key, args).split("\\\\n")) {
+//            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
+//                ITextComponent textComponent = new StringTextComponent(s1);
+//                result.add(textComponent.applyTextStyle(formatting));
+//            }
+//        }
+//    }
 
     public static List<String> wrapString(String text) {
         return wrapString(text, WRAP_LENGTH);

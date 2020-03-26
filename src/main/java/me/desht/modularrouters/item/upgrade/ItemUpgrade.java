@@ -26,4 +26,13 @@ public abstract class ItemUpgrade extends ItemBase implements ModItems.ITintable
     protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
 
     }
+
+    /**
+     * Get the maximum number of this upgrade that can be put in an upgrade slot
+     * @param slot the slot number
+     * @return the max number of upgrades
+     */
+    public int getStackLimit(int slot) {
+        return 1;
+    }
 }

@@ -8,8 +8,8 @@ import net.minecraft.item.ItemStack;
 
 public class RedstoneAugment extends ItemAugment {
     @Override
-    public boolean isCompatible(ItemModule moduleType) {
-        return true;
+    public int getMaxAugments(ItemModule moduleType) {
+        return 1;
     }
 
     @Override

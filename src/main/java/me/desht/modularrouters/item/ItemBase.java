@@ -1,5 +1,6 @@
 package me.desht.modularrouters.item;
 
+import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,9 +18,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class ItemBase extends Item {
-
-    private static String ctrlKeyName = null;
-
     public ItemBase(Properties props) {
         super(props);
     }
@@ -29,13 +27,13 @@ public abstract class ItemBase extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         if (world == null) return;
 
-        if (Screen.hasControlDown()) {
+        if (ClientSetup.keybindModuleInfo.isKeyDown()) {
             addUsageInformation(stack, list);
         } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
-            list.add(new TranslationTextComponent("itemText.misc.holdCtrl", getCtrlKeyName()).applyTextStyles(TextFormatting.GRAY));
+            list.add(new TranslationTextComponent("itemText.misc.holdKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
-            list.add(new TranslationTextComponent("itemText.misc.holdShiftCtrl", getCtrlKeyName()).applyTextStyles(TextFormatting.GRAY));
+            list.add(new TranslationTextComponent("itemText.misc.holdShiftKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
         }
     }
 
@@ -48,12 +46,5 @@ public abstract class ItemBase extends Item {
 
     protected Object[] getExtraUsageParams() {
         return new Object[0];
-    }
-
-    private static String getCtrlKeyName() {
-        if (ctrlKeyName == null) {
-            ctrlKeyName = System.getProperty("os.name").toLowerCase().contains("mac") ? "Cmd" : "Ctrl";
-        }
-        return ctrlKeyName;
     }
 }

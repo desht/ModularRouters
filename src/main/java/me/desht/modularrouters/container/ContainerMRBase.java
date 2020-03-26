@@ -16,6 +16,7 @@ public abstract class ContainerMRBase extends Container {
      * Modified mergeItemStack to fix a vanilla problem: when items are shift-clicked into a slot which already has
      * some of that item, putStack() isn't called, rather the itemstack size is simply updated.  This means
      * ItemStackHandler#onContentsChanged() never gets called in this case, which is no good for us.
+     * Also, modified to properly honour slot/stack limits (important for upgrade limits)
      */
     protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
         boolean flag = false;
@@ -38,7 +39,9 @@ public abstract class ContainerMRBase extends Container {
                 ItemStack itemstack = slot.getStack();
                 if (!itemstack.isEmpty() && areItemsAndTagsEqual(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
-                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+                    // modified HERE
+                    int maxSize = Math.min(slot.getItemStackLimit(itemstack), Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize()));
+//                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
                     if (j <= maxSize) {
                         stack.setCount(0);
                         itemstack.setCount(j);
@@ -81,11 +84,18 @@ public abstract class ContainerMRBase extends Container {
                 Slot slot1 = this.inventorySlots.get(i);
                 ItemStack itemstack1 = slot1.getStack();
                 if (itemstack1.isEmpty() && slot1.isItemValid(stack)) {
-                    if (stack.getCount() > slot1.getSlotStackLimit()) {
-                        slot1.putStack(stack.split(slot1.getSlotStackLimit()));
+                    // modified HERE
+                    int limit = Math.min(slot1.getSlotStackLimit(), slot1.getItemStackLimit(stack));
+                    if (stack.getCount() > limit) {
+                        slot1.putStack(stack.split(limit));
                     } else {
                         slot1.putStack(stack.split(stack.getCount()));
                     }
+//                    if (stack.getCount() > slot1.getSlotStackLimit()) {
+//                        slot1.putStack(stack.split(slot1.getSlotStackLimit()));
+//                    } else {
+//                        slot1.putStack(stack.split(stack.getCount()));
+//                    }
 
                     slot1.onSlotChanged();
                     flag = true;

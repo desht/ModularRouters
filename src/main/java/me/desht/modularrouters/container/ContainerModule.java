@@ -118,6 +118,7 @@ public class ContainerModule extends ContainerMRBase {
                     return ItemStack.EMPTY;
                 }
                 srcSlot.putStack(stackInSlot);
+                detectAndSendChanges();
             } else if (index <= HOTBAR_END) {
                 // shift-clicking in player inventory
                 ItemStack stackInSlot = srcSlot.getStack();
@@ -126,6 +127,7 @@ public class ContainerModule extends ContainerMRBase {
                     if (!mergeItemStack(stackInSlot, AUGMENT_START, AUGMENT_START + ItemAugment.SLOTS, false)) {
                         return ItemStack.EMPTY;
                     }
+                    detectAndSendChanges();
                 } else {
                     // copy it into the filter (if not already present)
                     // but don't remove it from player inventory
@@ -194,6 +196,7 @@ public class ContainerModule extends ContainerMRBase {
         if (forceUpdate) {
             // force item handler's onContentsChanged() to be called
             inventorySlots.get(slot).putStack(inventorySlots.get(slot).getStack());
+            detectAndSendChanges();
         }
         return ret;
     }

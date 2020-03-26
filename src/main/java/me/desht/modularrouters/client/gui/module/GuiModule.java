@@ -140,6 +140,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);
             sendModuleSettingsDelayed(5);
         });
+        addButton(regulatorTextField);
 
         addButton(regulatorTooltipButton = new RegulatorTooltipButton(guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule()));
 

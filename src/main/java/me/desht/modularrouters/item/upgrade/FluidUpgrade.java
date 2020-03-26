@@ -29,4 +29,9 @@ public class FluidUpgrade extends ItemUpgrade {
     public TintColor getItemTint() {
         return new TintColor(84, 138, 255);
     }
+
+    @Override
+    public int getStackLimit(int slot) {
+        return 35;
+    }
 }

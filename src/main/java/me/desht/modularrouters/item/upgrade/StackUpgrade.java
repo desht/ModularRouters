@@ -24,4 +24,9 @@ public class StackUpgrade extends ItemUpgrade {
     public TintColor getItemTint() {
         return new TintColor(128, 223, 255);
     }
+
+    @Override
+    public int getStackLimit(int slot) {
+        return 6;
+    }
 }

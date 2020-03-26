@@ -5,7 +5,7 @@ import me.desht.modularrouters.item.module.ItemModule;
 
 public class MimicAugment extends ItemAugment {
     @Override
-    public boolean isCompatible(ItemModule moduleType) {
-        return moduleType instanceof ExtruderModule2;
+    public int getMaxAugments(ItemModule moduleType) {
+        return moduleType instanceof ExtruderModule2 ? 1 : 0;
     }
 }

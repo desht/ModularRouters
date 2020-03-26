@@ -7,4 +7,9 @@ public class MufflerUpgrade extends ItemUpgrade {
     public TintColor getItemTint() {
         return new TintColor(255, 255, 195);
     }
+
+    @Override
+    public int getStackLimit(int slot) {
+        return 3;
+    }
 }

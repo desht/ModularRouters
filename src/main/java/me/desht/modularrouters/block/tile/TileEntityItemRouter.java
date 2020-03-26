@@ -807,5 +807,20 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         UpgradeHandler() {
             super(TileEntityItemRouter.COMPILE_UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof ItemUpgrade);
         }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            // can't have the same upgrade in more than one slot
+            for (int i = 0; i < getSlots(); i++) {
+                if (slot != i && stack.getItem() == getStackInSlot(i).getItem()) return false;
+            }
+            return super.isItemValid(slot, stack);
+        }
+
+        @Override
+        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+            if (!(stack.getItem() instanceof ItemUpgrade)) return 0;
+            return ((ItemUpgrade) stack.getItem()).getStackLimit(slot);
+        }
     }
 }

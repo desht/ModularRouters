@@ -31,11 +31,26 @@ public class AugmentHandler extends ItemStackHandler {
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        if (!(stack.getItem() instanceof ItemAugment)) return false;
+
+        ItemAugment augment = (ItemAugment) stack.getItem();
+        if (augment.getMaxAugments((ItemModule) holderStack.getItem()) == 0) return false;
+
+        // can't have the same augment in multiple slots
+        for (int i = 0; i < getSlots(); i++) {
+            if (slot != i && stack.getItem() == getStackInSlot(i).getItem()) return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
         if (stack.getItem() instanceof ItemAugment) {
             ItemAugment augment = (ItemAugment) stack.getItem();
-            return augment.isCompatible((ItemModule) holderStack.getItem());
+            return augment.getMaxAugments((ItemModule) holderStack.getItem());
         }
-        return false;
+        return 0;
     }
 
     @Override

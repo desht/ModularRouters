@@ -18,4 +18,9 @@ public class SpeedUpgrade extends ItemUpgrade {
     public TintColor getItemTint() {
         return new TintColor(224, 32, 32);
     }
+
+    @Override
+    public int getStackLimit(int slot) {
+        return 9;
+    }
 }

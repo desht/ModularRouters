@@ -28,7 +28,7 @@ public abstract class ItemAugment extends ItemBase {
     protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
     }
 
-    public abstract boolean isCompatible(ItemModule moduleType);
+    public abstract int getMaxAugments(ItemModule moduleType);
 
     public String getExtraInfo(int c, ItemStack moduleStack) {
         return "";

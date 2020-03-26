@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class ClientSetup {
     public static KeyBinding keybindConfigure;
+    public static KeyBinding keybindModuleInfo;
 
     public static void init() {
         setupRenderLayers();
@@ -26,8 +27,11 @@ public class ClientSetup {
     private static void registerKeyBindings() {
         keybindConfigure = new KeyBinding("key.modularrouters.configure", KeyConflictContext.GUI,
                 InputMappings.getInputByCode(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
+        keybindModuleInfo = new KeyBinding("key.modularrouters.moduleInfo", KeyConflictContext.GUI,
+                InputMappings.getInputByCode(GLFW.GLFW_KEY_I, -1), "key.modularrouters.category");
 
         ClientRegistry.registerKeyBinding(keybindConfigure);
+        ClientRegistry.registerKeyBinding(keybindModuleInfo);
     }
 
     private static void setupRenderLayers() {

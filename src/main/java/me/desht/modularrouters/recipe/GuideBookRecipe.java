@@ -19,8 +19,8 @@ public class GuideBookRecipe extends SpecialRecipe {
     @ObjectHolder("patchouli:guide_book")
     private static Item GUIDE_BOOK = null;
 
-    private static final String NBT_KEY = "patchouli:book";
-    private static final String NBT_VAL = "modularrouters:book";
+    public static final String NBT_KEY = "patchouli:book";
+    public static final String NBT_VAL = "modularrouters:book";
 
     public GuideBookRecipe(ResourceLocation idIn) {
         super(idIn);

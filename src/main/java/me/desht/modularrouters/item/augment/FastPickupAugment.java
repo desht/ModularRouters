@@ -5,7 +5,7 @@ import me.desht.modularrouters.item.module.VacuumModule;
 
 public class FastPickupAugment extends ItemAugment {
     @Override
-    public boolean isCompatible(ItemModule moduleType) {
-        return moduleType instanceof VacuumModule;
+    public int getMaxAugments(ItemModule moduleType) {
+        return moduleType instanceof VacuumModule ? 1 : 0;
     }
 }

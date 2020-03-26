@@ -203,8 +203,8 @@
   "gui.config.moduleGuiBackgroundTint": "Tint module GUI backgrounds with the same color as the module item",
 
   "_comment": "Item tooltips",
-  "itemText.misc.holdShiftCtrl": "Hold §e§oShift§7 for settings, §e§%s§7 for info",
-  "itemText.misc.holdCtrl": "Hold §e§o%s§r§7 for info",
+  "itemText.misc.holdShiftKey": "Hold §f[Shift]§7 for settings, §f§[%s]§7 for more info",
+  "itemText.misc.holdKey": "Hold §f[%s]§r§7 for more info",
   "itemText.misc.moduleCount": "Modules: %d",
   "itemText.misc.upgradeCount": "Upgrades: %d",
   "itemText.misc.routerConfigured": "This router has been configured",
@@ -335,6 +335,9 @@
   "_comment": "JEI text",
   "jei.recipe.module_reset": "Module Reset",
   "jei.recipe.module_reset.description": "Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)",
+  "jei.tooltip.guidebook": "Note: Recipe might not show in JEI due to a JEI issue. Craft a vanilla Book and a Blank Module to make this.",
 
-  "key.modularrouters.category": "Modular Routers"
+  "key.modularrouters.category": "Modular Routers",
+  "key.modularrouters.configure": "Configure Installed Module (GUI)",
+  "key.modularrouters.moduleInfo": "Extra Tooltip Info (GUI)"
 }

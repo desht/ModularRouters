@@ -44,6 +44,10 @@
       "type": "text",
       "title": "Eco Mode (cont)",
       "text": "This is primarily intended for busy servers, to save on CPU cycles, but it's potentially nice-to-have for any router that only runs rarely and where rapid item transfer isn't that important (e.g. a sheep farm where you might have a $(l:modules/vacuum)Vacuum Module/$ gathering sheared wool periodically)."
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:item_router"
     }
   ]
 }
