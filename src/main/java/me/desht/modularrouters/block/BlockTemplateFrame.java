@@ -9,6 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
@@ -30,5 +33,10 @@ public class BlockTemplateFrame extends BlockCamo {
         if (camo == null) return super.getPickBlock(state, target, world, pos, player);
         ItemStack stack = new ItemStack(camo.getCamouflage().getBlock().asItem());
         return stack.setDisplayName(stack.getDisplayName().appendText("..?"));
+    }
+
+    @Override
+    public VoxelShape getUncamouflagedShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext ctx) {
+        return VoxelShapes.fullCube();
     }
 }

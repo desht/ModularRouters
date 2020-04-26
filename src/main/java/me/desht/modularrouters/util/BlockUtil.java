@@ -132,6 +132,17 @@ public class BlockUtil {
         return null;
     }
 
+    public static boolean tryPlaceBlock(BlockState newState, World world, BlockPos pos) {
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
+        if (fakePlayer == null) {
+            return false;
+        }
+        BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
+        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
+        MinecraftForge.EVENT_BUS.post(event);
+        return !event.isCanceled() && world.setBlockState(pos, newState);
+    }
+
     /**
      * Try to break the block at the given position. If the block has any drops, but no drops pass the filter, then the
      * block will not be broken. Liquid, air & unbreakable blocks (bedrock etc.) will never be broken.  Drops will be

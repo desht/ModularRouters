@@ -19,11 +19,12 @@ public class MiscEventHandler {
         if (event.getPos() != null) {
             BlockState state = event.getPlayer().getEntityWorld().getBlockState(event.getPos());
             if (state.getBlock() instanceof BlockTemplateFrame) {
-                TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(event.getPlayer().getEntityWorld(), event.getPos());
-                if (te != null && te.getCamouflage() != null && te.extendedMimic()) {
-                    BlockState camoState = te.getCamouflage();
-                    event.setNewSpeed(event.getPlayer().getDigSpeed(camoState, null));
-                }
+                TileEntityTemplateFrame.getTemplateFrame(event.getPlayer().getEntityWorld(), event.getPos()).ifPresent(te -> {
+                    if (te.getCamouflage() != null && te.extendedMimic()) {
+                        BlockState camoState = te.getCamouflage();
+                        event.setNewSpeed(event.getPlayer().getDigSpeed(camoState, null));
+                    }
+                });
             }
         }
     }

@@ -19,7 +19,7 @@ public class ModBlocks {
     public static final DeferredRegister<Item> ITEMS = ModItems.ITEMS;
 
     public static final RegistryObject<BlockItemRouter> ITEM_ROUTER = register("item_router", BlockItemRouter::new);
-    public static final RegistryObject<BlockTemplateFrame> TEMPLATE_FRAME = register("template_frame", BlockTemplateFrame::new);
+    public static final RegistryObject<BlockTemplateFrame> TEMPLATE_FRAME = registerNoItem("template_frame", BlockTemplateFrame::new);
 
     private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup) {
         return register(name, sup, ModBlocks::itemDefault);

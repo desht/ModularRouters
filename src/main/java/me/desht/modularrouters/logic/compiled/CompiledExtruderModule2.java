@@ -14,13 +14,13 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
-    private static final ItemStack TEMPLATE_STACK = new ItemStack(ModBlocks.TEMPLATE_FRAME.get());
     private final List<ItemStack> blockList;
     private final boolean mimic;
 
@@ -33,11 +33,12 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         TemplateHandler handler = new TemplateHandler(stack, router);
         for (int i = 0; i < handler.getSlots() && blockList.size() < getRange(); i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
-            for (int j = 0; j < stack1.getCount(); j++) {
-                ItemStack copy = stack1.copy();
-                copy.setCount(1);
-                blockList.add(copy);
-                if (blockList.size() >= getRange()) break;
+            if (stack1.isEmpty()) {
+                blockList.add(ItemStack.EMPTY);
+            } else {
+                for (int j = 0; j < stack1.getCount() && blockList.size() < getRange(); j++) {
+                    blockList.add(ItemHandlerHelper.copyStackWithSize(stack1, 1));
+                }
             }
         }
     }
@@ -54,17 +55,16 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
             } else {
                 BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
-                BlockState state = BlockUtil.tryPlaceAsBlock(TEMPLATE_STACK, world, placePos, getFacing(), getRouterFacing());
-                if (state != null) {
-                    TileEntityTemplateFrame te = TileEntityTemplateFrame.getTileEntitySafely(world, placePos);
-                    if (te != null) {
+                BlockState state = ModBlocks.TEMPLATE_FRAME.get().getDefaultState();
+                if (BlockUtil.tryPlaceBlock(state, world, placePos)) {
+                    TileEntityTemplateFrame.getTemplateFrame(world, placePos).ifPresent(te -> {
                         te.setCamouflage(blockList.get(distance), getFacing(), getRouterFacing());
                         te.setExtendedMimic(mimic);
                         if (mimic) {
                             // in case we're mimicking a redstone emitter
                             world.notifyNeighborsOfStateChange(placePos, state.getBlock());
                         }
-                    }
+                    });
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);

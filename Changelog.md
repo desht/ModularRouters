@@ -6,7 +6,11 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.15.2
 
-### 6.0.0 (unreleased)
+### 6.0.1 (unreleased)
+
+* Fixed some culling issues when router/template frame blocks are camouflaged
+
+### 6.0.0 (26 Mar 2020)
 
 * Initial 1.15.2 port!
 * Added a Patchouli guidebook

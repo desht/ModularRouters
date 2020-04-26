@@ -20,6 +20,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class TileEntityTemplateFrame extends TileEntity implements ICamouflageable {
     private static final String NBT_CAMO_NAME = "CamouflageName";
@@ -32,9 +33,9 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         super(ModTileEntities.TEMPLATE_FRAME.get());
     }
 
-    public static TileEntityTemplateFrame getTileEntitySafely(IBlockReader world, BlockPos pos) {
+    public static Optional<TileEntityTemplateFrame> getTemplateFrame(IBlockReader world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        return te instanceof TileEntityTemplateFrame ? (TileEntityTemplateFrame) te : null;
+        return te instanceof TileEntityTemplateFrame ? Optional.of((TileEntityTemplateFrame) te) : Optional.empty();
     }
 
     @Override

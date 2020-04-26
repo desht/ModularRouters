@@ -3,17 +3,23 @@ package me.desht.modularrouters.client.model;
 import me.desht.modularrouters.block.BlockCamo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -37,31 +43,21 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
         }
         BlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
 
-        if (camoState != null) {
-            ModelResourceLocation location = BlockModelShapes.getModelLocation(camoState);
-            IBakedModel model = Minecraft.getInstance().getModelManager().getModel(location);
-            return model.getQuads(camoState, side, rand, modelData);
+        RenderType layer = MinecraftForgeClient.getRenderLayer();
+        if (layer == null) {
+            layer = RenderType.getSolid(); // workaround for when this isn't set (digging, etc.)
         }
-
-        return baseModel.getQuads(state, side, rand, modelData);
-
-//        RenderType layer = MinecraftForgeClient.getRenderLayer();
-//        if (layer == null) {
-//            layer = RenderType.getSolid(); // workaround for when this isn't set (digging, etc.)
-//        }
-//        if (camoState == null && layer == RenderType.getSolid()) {
-//            // No camo
-//            return baseModel.getQuads(state, side, rand, modelData);
-//        } else if (camoState != null && camoState.getBlock().canRenderInLayer(camoState, layer)) {
-//            // Steal camo's model
-//            IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(camoState);
-//
-//            // Their model can be smart too
-//            BlockState extended = camoState.getBlock().getExtendedState(camoState, new FakeBlockAccess(blockAccess), pos);
-//            return model.getQuads(extended, side, rand, model.getModelData(blockAccess, pos, extended, modelData));
-//        }
-//
-//        return ImmutableList.of(); // Nothing renders
+        if (camoState == null && layer == RenderType.getSolid()) {
+            // No camo
+            return baseModel.getQuads(state, side, rand, modelData);
+        } else if (camoState != null && RenderTypeLookup.canRenderInLayer(camoState, layer)) {
+            // Steal camo's model
+            IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(camoState);
+            return model.getQuads(camoState, side, rand, modelData);
+        } else {
+            // Not rendering in this layer
+            return Collections.emptyList();
+        }
     }
 
     @Nonnull
