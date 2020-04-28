@@ -82,6 +82,10 @@ public class CompiledActivatorModule extends CompiledModule {
 
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
+        ItemStack stack = router.getBufferItemStack();
+        if (!getFilter().test(stack)) {
+            return false;
+        }
         World world = router.getWorld();
         BlockPos pos = router.getPos();
 
@@ -93,7 +97,6 @@ public class CompiledActivatorModule extends CompiledModule {
         fakePlayer.rotationPitch = getFacing().getYOffset() * -90;
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
         fakePlayer.setSneaking(sneaking);
-        ItemStack stack = router.getBufferItemStack();
         fakePlayer.setHeldItem(Hand.MAIN_HAND, stack);
         float hitX = (float)(fakePlayer.getPosX() - pos.getX());
         float hitY = (float)(fakePlayer.getPosY() - pos.getY());

@@ -13,7 +13,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -34,7 +33,7 @@ public class FakePlayerManager {
         RouterFakePlayer fakePlayer = theFakePlayer.get();
         if (fakePlayer == null) {
             fakePlayer = new RouterFakePlayer(world);
-            fakePlayer.connection = new ServerPlayNetHandler(ServerLifecycleHooks.getCurrentServer(), new NetworkManager(PacketDirection.SERVERBOUND), fakePlayer);
+            fakePlayer.connection = new ServerPlayNetHandler(world.getServer(), new NetworkManager(PacketDirection.SERVERBOUND), fakePlayer);
             theFakePlayer = new WeakReference<>(fakePlayer);
         }
         fakePlayer.world = world;
