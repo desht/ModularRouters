@@ -20,6 +20,10 @@
       "text": "$(li)If you have multiple routers together with Extruder Modules installed (e.g. for a wide door or bridge), you may find the $(l:upgrades/sync)Sync Upgrade/$ useful to ensure they all run on the same tick.$(li)The Extruder (like the $(l:modules/placer)Placer/$) can also plant crop seeds on farmland, and cocoa beans on an adjacent jungle log."
     },
     {
+      "type": "text",
+      "text": "It is important to note that the $(l:modules/breaker)Breaker Module/$ used to craft this module will transfer its harvest level (and enchantments) to this module. So if you want your Extruder Module to be able to break $(item)Obsidian/$, for example, make sure you use a Breaker Module crafted with a $(item)Diamond Pickaxe/$!"
+    },
+    {
       "type": "crafting",
       "recipe": "modularrouters:extruder_module_1"
     }
