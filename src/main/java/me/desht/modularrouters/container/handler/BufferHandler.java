@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemStackHandler;
@@ -17,36 +17,32 @@ import javax.annotation.Nonnull;
 
 public class BufferHandler extends ItemStackHandler {
     private final TileEntityItemRouter router;
-    private LazyOptional<IFluidHandlerItem> fluidCap = LazyOptional.empty();
-    private LazyOptional<IEnergyStorage> energyCap = LazyOptional.empty();
+    private boolean hasFluidCap;
+    private boolean hasEnergyCap;
+
     private final IFluidHandler adapter = new FluidItemAdapter(0);
     private LazyOptional<IFluidHandler> fluidAdapter = LazyOptional.of(() -> adapter);
 
     public BufferHandler(TileEntityItemRouter router) {
         super(router.getBufferSlotCount());
         this.router = router;
+        this.hasFluidCap = getStackInSlot(0).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+        this.hasEnergyCap = getStackInSlot(0).getCapability(CapabilityEnergy.ENERGY).isPresent();
     }
 
     @Override
     public void onContentsChanged(int slot) {
         ItemStack stack = getStackInSlot(slot);
 
-        LazyOptional<IFluidHandlerItem> newFluidCap = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
-        boolean updateFluid = newFluidCap.isPresent() && !fluidCap.isPresent() || !newFluidCap.isPresent() && fluidCap.isPresent();
-        fluidCap.invalidate();
-        fluidAdapter.invalidate();
-        fluidCap = newFluidCap;
-        fluidAdapter = LazyOptional.of(() -> adapter);  // need to reassign to revalidate it after the invalidate() call
+        boolean newFluidCap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+        boolean newEnergyCap = stack.getCapability(CapabilityEnergy.ENERGY).isPresent();
 
-        LazyOptional<IEnergyStorage> newEnergyCap = stack.getCount() == 1 ? stack.getCapability(CapabilityEnergy.ENERGY) : LazyOptional.empty();
-        boolean updateEnergy = newEnergyCap.isPresent() && !energyCap.isPresent() || !newEnergyCap.isPresent() && energyCap.isPresent();
-        energyCap.invalidate();
-        energyCap = newEnergyCap;
-
-        if (updateFluid || updateEnergy) {
+        if (newFluidCap != hasFluidCap || newEnergyCap != hasEnergyCap) {
             // in case any pipes/cables need to connect/disconnect
             router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.ITEM_ROUTER.get());
         }
+        hasFluidCap = newFluidCap;
+        hasEnergyCap = newEnergyCap;
 
         router.markDirty();  // will also update comparator output
     }
@@ -56,20 +52,20 @@ public class BufferHandler extends ItemStackHandler {
         super.deserializeNBT(nbt);
 
         ItemStack stack = getStackInSlot(0);
-        fluidCap = stack.getCount() == 1 ? FluidUtil.getFluidHandler(stack) : LazyOptional.empty();
-        energyCap = stack.getCount() == 1 ? stack.getCapability(CapabilityEnergy.ENERGY) : LazyOptional.empty();
+        this.hasFluidCap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+        this.hasEnergyCap = stack.getCapability(CapabilityEnergy.ENERGY).isPresent();
     }
 
     public LazyOptional<IFluidHandlerItem> getFluidItemCapability() {
-        return fluidCap;
+        return getStackInSlot(0).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
     }
 
     public LazyOptional<IFluidHandler> getFluidCapability() {
-        return fluidCap.isPresent() ? fluidAdapter : LazyOptional.empty();
+        return hasFluidCap ? fluidAdapter : LazyOptional.empty();
     }
 
     public LazyOptional<IEnergyStorage> getEnergyCapability() {
-        return energyCap;
+        return getStackInSlot(0).getCapability(CapabilityEnergy.ENERGY);
     }
 
     private class FluidItemAdapter implements IFluidHandler {
@@ -81,30 +77,30 @@ public class BufferHandler extends ItemStackHandler {
 
         @Override
         public int getTanks() {
-            return fluidCap.map(IFluidHandler::getTanks).orElse(0);
+            return getFluidItemCapability().map(IFluidHandler::getTanks).orElse(0);
         }
 
         @Nonnull
         @Override
         public FluidStack getFluidInTank(int tank) {
-            return fluidCap.map(h -> h.getFluidInTank(tank)).orElse(FluidStack.EMPTY);
+            return getFluidItemCapability().map(h -> h.getFluidInTank(tank)).orElse(FluidStack.EMPTY);
         }
 
         @Override
         public int getTankCapacity(int tank) {
-            return fluidCap.map(h -> h.getTankCapacity(tank)).orElse(0);
+            return getFluidItemCapability().map(h -> h.getTankCapacity(tank)).orElse(0);
         }
 
         @Override
         public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-            return fluidCap.map(h -> h.isFluidValid(tank, stack)).orElse(false);
+            return getFluidItemCapability().map(h -> h.isFluidValid(tank, stack)).orElse(false);
         }
 
         @Override
         public int fill(FluidStack resource, FluidAction action) {
-            return fluidCap.map(h -> {
+            return getFluidItemCapability().map(h -> {
                 int filled = h.fill(resource, action);
-                if (action.execute()) setStackInSlot(slot, h.getContainer());
+                if (action.execute() && filled != 0) setStackInSlot(slot, h.getContainer());
                 return filled;
             }).orElse(0);
         }
@@ -112,9 +108,9 @@ public class BufferHandler extends ItemStackHandler {
         @Nonnull
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
-            return fluidCap.map(h -> {
+            return getFluidItemCapability().map(h -> {
                 FluidStack drained = h.drain(resource, action);
-                if (action.execute()) setStackInSlot(slot, h.getContainer());
+                if (action.execute() && !drained.isEmpty()) setStackInSlot(slot, h.getContainer());
                 return drained;
             }).orElse(FluidStack.EMPTY);
         }
@@ -122,9 +118,9 @@ public class BufferHandler extends ItemStackHandler {
         @Nonnull
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
-            return fluidCap.map(h -> {
+            return getFluidItemCapability().map(h -> {
                 FluidStack drained = h.drain(maxDrain, action);
-                if (action.execute()) setStackInSlot(slot, h.getContainer());
+                if (action.execute() && !drained.isEmpty()) setStackInSlot(slot, h.getContainer());
                 return drained;
             }).orElse(FluidStack.EMPTY);
         }
