@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
@@ -54,17 +55,23 @@ public class CompiledVacuumModule extends CompiledModule {
         fastPickup = getAugmentCount(ModItems.FAST_PICKUP_AUGMENT.get()) > 0;
         xpMode = getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0;
 
-        CompoundNBT compound = stack.getTag();
-        xpCollectionType = XPCollectionType.values()[compound.getInt(NBT_XP_FLUID_TYPE)];
-        autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
+        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
+        if (compound != null) {
+            xpCollectionType = XPCollectionType.values()[compound.getInt(NBT_XP_FLUID_TYPE)];
+            autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
 
-        if (xpMode) {
-            Fluid xpFluid = xpCollectionType.getFluid();
-            xpJuiceStack = xpFluid == Fluids.EMPTY ? FluidStack.EMPTY : new FluidStack(xpFluid, 1000);
-            if (router != null) {
-                findFluidReceiver(router);
+            if (xpMode) {
+                Fluid xpFluid = xpCollectionType.getFluid();
+                xpJuiceStack = xpFluid == Fluids.EMPTY ? FluidStack.EMPTY : new FluidStack(xpFluid, 1000);
+                if (router != null) {
+                    findFluidReceiver(router);
+                }
+            } else {
+                xpJuiceStack = FluidStack.EMPTY;
             }
         } else {
+            xpCollectionType = XPCollectionType.BOTTLE_O_ENCHANTING;
+            autoEjecting = false;
             xpJuiceStack = FluidStack.EMPTY;
         }
     }
@@ -149,7 +156,7 @@ public class CompiledVacuumModule extends CompiledModule {
         BlockPos centrePos = getTarget().gPos.getPos();
         int range = getRange();
         List<ExperienceOrbEntity> orbs = router.getWorld().getEntitiesWithinAABB(ExperienceOrbEntity.class,
-                new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
+                new AxisAlignedBB(centrePos).grow(range));
         if (orbs.isEmpty()) {
             return false;
         }

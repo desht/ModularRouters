@@ -2,7 +2,6 @@ package me.desht.modularrouters.integration;
 
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -15,40 +14,44 @@ import java.util.Arrays;
 public class XPCollection {
     private static final boolean[] AVAILABLE = new boolean[XPCollectionType.values().length];
     private static final ItemStack[] ICONS = new ItemStack[XPCollectionType.values().length];
-    private static final boolean[] SOLID = new boolean[XPCollectionType.values().length];
 
     public static void detectXPTypes() {
-        for (XPCollectionType type : XPCollectionType.values()) {
-            AVAILABLE[type.ordinal()] = !getIconForResource(type.registryName).isEmpty();
-            SOLID[type.ordinal()] = ForgeRegistries.ITEMS.containsKey(type.registryName);
-        }
         Arrays.fill(ICONS, null);  // null is OK here; it means "not queried yet"
-    }
 
-    private static ItemStack getIconForResource(ResourceLocation resource) {
-        Item item = ForgeRegistries.ITEMS.getValue(resource);
-        if (item != null) {
-            return new ItemStack(item);
-        } else {
-            Fluid fluid = ForgeRegistries.FLUIDS.getValue(resource);
-            return fluid == Fluids.EMPTY ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
+        for (XPCollectionType type : XPCollectionType.values()) {
+            AVAILABLE[type.ordinal()] = !getIconForResource(type).isEmpty();
         }
     }
 
-    // note: bottles o' enchanting are worth 3-11 experience, with an average of 7
-    public enum XPCollectionType {
-        BOTTLE_O_ENCHANTING(7, "minecraft:experience_bottle"),  // vanilla bottles o' enchanting
-        SOLIDIFIED_EXPERIENCE(8, "actuallyadditions:item_solidified_experience");  // AA solidified experience
+    private static ItemStack getIconForResource(XPCollectionType type) {
+        if (ICONS[type.ordinal()] == null) {
+            if (type.isSolid()) {
+                ICONS[type.ordinal()] = new ItemStack(ForgeRegistries.ITEMS.getValue(type.getRegistryName()));
+            } else {
+                Fluid fluid = ForgeRegistries.FLUIDS.getValue(type.getRegistryName());
+                ICONS[type.ordinal()] = fluid == Fluids.EMPTY ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
+            }
+        }
+        return ICONS[type.ordinal()];
+    }
 
-        // TODO 1.14 other mod exp levels... should be in config or data pack, really
+    public enum XPCollectionType {
+        BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
+        // note: bottles o' enchanting are worth 3-11 experience, so an average of 7
+        SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
+        MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence");
+
+        // TODO 1.15 other mod exp levels... should be in config or data pack, really
 //        XPJUICE(20, "xpjuice"),  // Enderio/Openblocks/Cyclic/Reliquary
 //        KNOWLEDGE(20, "experience"), // CoFH Essence of Knowledge
 //        ESSENCE(20, "essence"); // Industrial Foregoing essence - TODO: respect IF config "essenceMultiplier"
 
+        private boolean solid;
         private final int xpRatio;  // XP points per item or mB of fluid
         private final ResourceLocation registryName;
 
-        XPCollectionType(int xpRatio, String registryName) {
+        XPCollectionType(boolean solid, int xpRatio, String registryName) {
+            this.solid = solid;
             this.xpRatio = xpRatio;
             this.registryName = new ResourceLocation(registryName);
         }
@@ -62,7 +65,7 @@ public class XPCollection {
         }
 
         public boolean isSolid() {
-            return SOLID[this.ordinal()];
+            return solid;
         }
 
         public Fluid getFluid() {
@@ -78,14 +81,11 @@ public class XPCollection {
         }
 
         public ItemStack getIcon() {
-            if (ICONS[ordinal()] == null) {
-                ICONS[ordinal()] = getIconForResource(registryName);
-            }
-            return ICONS[ordinal()];
+            return getIconForResource(this);
         }
 
         public ITextComponent getDisplayName() {
-            return getIconForResource(registryName).getDisplayName();
+            return getIconForResource(this).getDisplayName();
         }
     }
 }
