@@ -1,17 +1,3 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "modularrouters:blank_module"
-    },
-    {
-      "item": "modularrouters:placer_module"
-    },
-    {
-      "item": "modularrouters:breaker_module"
-    }
-  ],
-  "result": {
-    "item": "modularrouters:extruder_module_1"
-  }
+  "type": "modularrouters:extruder_module_1"
 }

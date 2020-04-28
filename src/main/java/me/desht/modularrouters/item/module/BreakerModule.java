@@ -5,27 +5,11 @@ import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
-import java.util.List;
-import java.util.Map;
-
-public class BreakerModule extends ItemModule {
+public class BreakerModule extends ItemModule implements IPickaxeUser {
     public BreakerModule() {
         super(ModItems.defaultProps());
-    }
-
-    @Override
-    public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
-        super.addUsageInformation(itemstack, list);
-        Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
-        if (ench.isEmpty()) {
-            list.add(new TranslationTextComponent("itemText.misc.enchantBreakerHint"));
-        }
     }
 
     @Override
@@ -37,4 +21,5 @@ public class BreakerModule extends ItemModule {
     public TintColor getItemTint() {
         return new TintColor(240, 208, 208);
     }
+
 }

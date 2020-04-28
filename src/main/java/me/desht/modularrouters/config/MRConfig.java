@@ -32,6 +32,7 @@ public class MRConfig {
             public static boolean flingerEffects;
             public static boolean extruderSound;
             public static boolean extruderPushEntities;
+            public static boolean breakerHarvestLevelLimit;
         }
 
         public static class Router {

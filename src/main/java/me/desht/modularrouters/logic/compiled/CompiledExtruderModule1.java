@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
+import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.PushEntityMessage;
 import me.desht.modularrouters.util.BlockUtil;
@@ -10,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -31,14 +31,19 @@ public class CompiledExtruderModule1 extends CompiledModule {
     private static final double AUGMENT_BOOST = 0.15;
 
     int distance;  // marks the current extension length (0 = no extrusion)
-    private final boolean silkTouch;
     private final int pushingAugments;
+    private final ItemStack pickaxe;
 
     public CompiledExtruderModule1(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInt(NBT_EXTRUDER_DIST + getFacing());
-        silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
         pushingAugments = getAugmentCount(ModItems.PUSHING_AUGMENT.get());
+        pickaxe = stack.getItem() instanceof IPickaxeUser ? ((IPickaxeUser) stack.getItem()).getPickaxe(stack) : ItemStack.EMPTY;
+
+        // backwards compat
+        if (!EnchantmentHelper.getEnchantments(stack).isEmpty() && EnchantmentHelper.getEnchantments(pickaxe).isEmpty()) {
+            EnchantmentHelper.setEnchantments(EnchantmentHelper.getEnchantments(stack), pickaxe);
+        }
     }
 
     @Override
@@ -72,7 +77,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
             }
-            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
+            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), pickaxe);
             if (dropResult.isBlockBroken()) {
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());

@@ -43,7 +43,8 @@ public class ConfigHelper {
         MRConfig.Common.Module.flingerEffects = common.module.flingerEffects.get();
         MRConfig.Common.Module.extruderSound = common.module.extruderSound.get();
         MRConfig.Common.Module.extruderPushEntities = common.module.extruderPushEntities.get();
-        
+        MRConfig.Common.Module.breakerHarvestLevelLimit = common.module.breakerHarvestLevelLimit.get();
+
         MRConfig.Common.Router.baseTickRate = common.router.baseTickRate.get();
         MRConfig.Common.Router.ticksPerUpgrade = common.router.ticksPerUpgrade.get();
         MRConfig.Common.Router.hardMinTickRate = common.router.hardMinTickRate.get();

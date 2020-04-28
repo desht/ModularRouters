@@ -1,7 +1,5 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.EnchantModuleRecipe;
-import me.desht.modularrouters.recipe.GuideBookRecipe;
 import me.desht.modularrouters.recipe.ResetModuleRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -23,8 +21,6 @@ public class JEIModularRoutersPlugin implements IModPlugin {
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory().addCategoryExtension(EnchantModuleRecipe.class, SpecialRecipeCategoryExtension::new);
         registration.getCraftingCategory().addCategoryExtension(ResetModuleRecipe.class, SpecialRecipeCategoryExtension::new);
-        registration.getCraftingCategory().addCategoryExtension(GuideBookRecipe.class, SpecialRecipeCategoryExtension::new);
     }
 }

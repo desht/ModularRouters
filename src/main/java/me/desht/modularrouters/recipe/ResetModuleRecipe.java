@@ -1,6 +1,7 @@
 package me.desht.modularrouters.recipe;
 
 import me.desht.modularrouters.core.ModRecipes;
+import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.inventory.CraftingInventory;
@@ -32,17 +33,22 @@ public class ResetModuleRecipe extends SpecialRecipe {
 
     @Override
     public ItemStack getCraftingResult(CraftingInventory inv) {
-        ItemModule module = null;
+        ItemStack moduleStack = ItemStack.EMPTY;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem() instanceof ItemModule) {
-                module = (ItemModule) stack.getItem();
+                moduleStack = stack;
+                break;
             }
         }
 
-        if (module != null) {
-            ItemStack newStack = new ItemStack(module);
+        if (!moduleStack.isEmpty()) {
+            ItemStack newStack = new ItemStack(moduleStack.getItem());
             ModuleHelper.validateNBT(newStack);
+            if (moduleStack.getItem() instanceof IPickaxeUser) {
+                ItemStack pick = ((IPickaxeUser) moduleStack.getItem()).getPickaxe(moduleStack);
+                if (!pick.isEmpty()) ((IPickaxeUser) moduleStack.getItem()).setPickaxe(newStack, pick);
+            }
             return newStack;
         } else {
             return ItemStack.EMPTY;

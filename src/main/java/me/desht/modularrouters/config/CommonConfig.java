@@ -28,6 +28,7 @@ public class CommonConfig {
         BooleanValue flingerEffects;
         BooleanValue extruderSound;
         BooleanValue extruderPushEntities;
+        BooleanValue breakerHarvestLevelLimit;
     }
 
     public static class Router {
@@ -112,6 +113,9 @@ public class CommonConfig {
         module.extruderPushEntities = builder.comment("Should Extruder Mk1/2 modules push entities along when extruding blocks?")
                 .translation("gui.config.extruderPushEntities")
                 .define("extruderPushEntities", true);
+        module.breakerHarvestLevelLimit = builder.comment("Should Breaker & Extruder Mk1 Modules respect the harvest level of the pickaxe used to craft them? (e.g. craft with an Iron Pickaxe => can't break Obsidian")
+                .translation("gui.config.breakerHarvestLevelLimit")
+                .define("breakerHarvestLevelLimit", true);
         builder.pop();
 
         builder.push("Router");

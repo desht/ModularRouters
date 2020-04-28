@@ -115,9 +115,8 @@ public class ModRecipeProvider extends RecipeProvider {
         ).build(consumer);
 
         // modules
-        shapeless(ModItems.EXTRUDER_MODULE_1.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.BLANK_MODULE.get(), ModItems.PLACER_MODULE.get(), ModItems.BREAKER_MODULE.get()
-        ).build(consumer);
+        CustomRecipeBuilder.customRecipe(ModRecipes.EXTRUDER_MODULE_1.get())
+                .build(consumer, RL("extruder_module_1").toString());
 
         shaped(ModItems.FLUID_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 " C /GMG",
@@ -154,9 +153,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.SENDER_MODULE_1.get(), Items.ENDER_PEARL
         ).build(consumer);
 
-        shapeless(ModItems.BREAKER_MODULE.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.BLANK_MODULE.get(), Items.IRON_PICKAXE
-        ).build(consumer);
+        CustomRecipeBuilder.customRecipe(ModRecipes.BREAKER_MODULE.get())
+                .build(consumer, RL("breaker_module").toString());
 
         shapeless(ModItems.DROPPER_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.DROPPER
@@ -307,7 +305,6 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.BULK_ITEM_FILTER.get(), Items.COMPARATOR
         ).build(consumer);
 
-        CustomRecipeBuilder.customRecipe(ModRecipes.MODULE_ENCHANT.get()).build(consumer, RL("enchant_module").toString());
         CustomRecipeBuilder.customRecipe(ModRecipes.MODULE_RESET.get()).build(consumer, RL("reset_module").toString());
         CustomRecipeBuilder.customRecipe(ModRecipes.GUIDE_BOOK.get()).build(consumer, RL("guide_book").toString());
     }

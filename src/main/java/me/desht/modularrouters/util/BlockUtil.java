@@ -1,10 +1,12 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -19,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -151,11 +154,10 @@ public class BlockUtil {
      * @param world     the world
      * @param pos       the block position
      * @param filter    filter for the block's drops
-     * @param silkTouch use silk touch when breaking the block
-     * @param fortune   use fortune when breaking the block
+     * @param pickaxe   the pickaxe to use to break block
      * @return a drop result object
      */
-    public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
+    public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, ItemStack pickaxe) {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -164,8 +166,12 @@ public class BlockUtil {
         }
 
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
-        List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, silkTouch, fortune);
+        fakePlayer.setHeldItem(Hand.MAIN_HAND, pickaxe);
+        if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.canHarvestBlock(state, fakePlayer, world, pos)) {
+            return BreakResult.NOT_BROKEN;
+        }
 
+        List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, pickaxe);
         Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
@@ -178,25 +184,21 @@ public class BlockUtil {
         return BreakResult.NOT_BROKEN;
     }
 
-    private static List<ItemStack> getDrops(World world, BlockPos pos, PlayerEntity player, boolean silkTouch, int fortune) {
+    private static List<ItemStack> getDrops(World world, BlockPos pos, PlayerEntity player, ItemStack pickaxe) {
         BlockState state = world.getBlockState(pos);
 
-        ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
-        if (fortune > 0) {
-            pick.addEnchantment(Enchantments.FORTUNE, fortune);
-        } else if (silkTouch) {
-            pick.addEnchantment(Enchantments.SILK_TOUCH, 1);
-        }
         LootContext.Builder builder = new LootContext.Builder((ServerWorld) world)
                 .withParameter(LootParameters.POSITION, pos)
                 .withParameter(LootParameters.BLOCK_STATE, state)
-                .withParameter(LootParameters.TOOL, pick)
+                .withParameter(LootParameters.TOOL, pickaxe)
                 .withParameter(LootParameters.THIS_ENTITY, player);
         TileEntity te = world.getTileEntity(pos);
         if (te != null) builder = builder.withParameter(LootParameters.BLOCK_ENTITY, te);
         List<ItemStack> drops = state.getDrops(builder);
         NonNullList<ItemStack> dropsN = NonNullList.create();
         dropsN.addAll(drops);
+        int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, pickaxe);
+        boolean silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, pickaxe) > 0;
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, silkTouch, player);
         return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }

@@ -7,16 +7,13 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
-import java.util.Map;
 
-public class ExtruderModule1 extends ItemModule implements IRangedModule {
+public class ExtruderModule1 extends ItemModule implements IRangedModule, IPickaxeUser {
     public ExtruderModule1() {
         super(ModItems.defaultProps());
     }
@@ -24,15 +21,6 @@ public class ExtruderModule1 extends ItemModule implements IRangedModule {
     @Override
     public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
         return new CompiledExtruderModule1(router, stack);
-    }
-
-    @Override
-    public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
-        super.addUsageInformation(itemstack, list);
-        Map<Enchantment, Integer> ench = EnchantmentHelper.getEnchantments(itemstack);
-        if (ench.isEmpty()) {
-            list.add(new TranslationTextComponent("itemText.misc.enchantBreakerHint"));
-        }
     }
 
     @Override

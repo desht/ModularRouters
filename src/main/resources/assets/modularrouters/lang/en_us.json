@@ -216,8 +216,6 @@
   "itemText.misc.IGNORE_TAGS": "Tags",
   "itemText.misc.TERMINATE": "Termination",
   "itemText.misc.flags": "Flags",
-  "itemText.misc.enchantBreakerHint": "This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.",
-  "itemText.misc.enchantExtruderHint": "This module can also be crafted with a §bSilk Touch§7 Enchanted Book.",
   "itemText.misc.configureHint": "Press §e§o[%s]§7§o or §e§oMiddle-Click§7§o to configure",
   "itemText.misc.redstoneLevel": "§eSignal Level: §b%d (%s)",
   "itemText.misc.strongSignal.false": "Weak",
@@ -229,6 +227,7 @@
   "itemText.misc.modFilter.count": "• %d mod(s) in filter",
   "itemText.misc.rangeInfo": "Range: %s%d §7[base %d, max %d]",
   "itemText.misc.ecoMode": "§2Eco Mode",
+  "itemText.misc.breakerPick": "§ePickaxe: ",
   "itemText.security.count": "%d / %d other player(s):",
   "itemText.security.owner": "§eOwner: §b%s",
   "itemText.sync.tuning": "§eTuned Value: §b%d",
@@ -329,13 +328,12 @@
   "chatText.targetValidation.NOT_LOADED": "§c✘ Not Loaded",
   "chatText.targetValidation.NOT_INVENTORY": "§c✘ No Inventory",
 
-  "patchouli.book.name": "Modular Routers Manual",
-  "patchouli.book.landing": "This manual is a complete reference guide to $(#228)Modular Routers/$.",
+  "modularrouters.patchouli.book.name": "Modular Routers Manual",
+  "modularrouters.patchouli.book.landing": "This manual is a complete reference guide to $(#228)Modular Routers/$.",
 
   "_comment": "JEI text",
   "jei.recipe.module_reset": "Module Reset",
   "jei.recipe.module_reset.description": "Completely resets the module to its newly-crafted state.  Beware: ALL data, including filter settings and enchantments, will be lost (but any installed augments will be returned)",
-  "jei.tooltip.guidebook": "Note: Recipe might not show in JEI due to a JEI issue. Craft a vanilla Book and a Blank Module to make this.",
 
   "key.modularrouters.category": "Modular Routers",
   "key.modularrouters.configure": "Configure Installed Module (GUI)",

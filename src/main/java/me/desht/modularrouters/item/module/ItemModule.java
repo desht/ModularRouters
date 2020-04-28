@@ -24,6 +24,7 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -220,6 +221,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                             col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange())
                     .applyTextStyle(TextFormatting.YELLOW));
         }
+        if (this instanceof IPickaxeUser) {
+            ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
+            list.add(new TranslationTextComponent("itemText.misc.breakerPick").appendSibling(pick.getDisplayName().applyTextStyle(TextFormatting.AQUA)));
+            EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
+                list.add(new StringTextComponent("\u25b6 ").appendSibling(ench.getDisplayName(level).applyTextStyle(TextFormatting.AQUA)).applyTextStyle(TextFormatting.YELLOW));
+            });
+        }
     }
 
     private void addAugmentInformation(ItemStack stack, List<ITextComponent> list) {
@@ -299,6 +307,15 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             return onSneakRightClick(stack, world, player, hand);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        if (stack.getItem() instanceof IPickaxeUser) {
+            ItemStack pick = ((IPickaxeUser) stack.getItem()).getPickaxe(stack);
+            return !pick.isEmpty() && !EnchantmentHelper.getEnchantments(pick).isEmpty();
+        }
+        return false;
     }
 
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {

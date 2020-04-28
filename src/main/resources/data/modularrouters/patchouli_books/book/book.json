@@ -1,6 +1,6 @@
 {
-  "name": "patchouli.book.name",
-  "landing_text": "patchouli.book.landing",
+  "name": "modularrouters.patchouli.book.name",
+  "landing_text": "modularrouters.patchouli.book.landing",
   "creative_tab": "modularrouters",
   "version": 1,
   "model": "modularrouters:manual",
