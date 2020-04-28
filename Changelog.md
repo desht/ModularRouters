@@ -6,8 +6,17 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.15.2
 
-### 6.0.1 (unreleased)
+### 6.0.1 (28 Apr 2020)
 
+* Changed the way Breaker Module and Extruder Module Mk1 harvest levels are determined
+  * Instead of just being able to harvest anything, the pickaxe used in crafting a Breaker Module now determines its harvest level. E.g. if you want to break Obsidian, use a Diamond Pickaxe to craft the module.
+  * Breaker Module can now be crafted with *any* pickaxe, included modded pickaxes.
+  * Module enchanting by crafting the module with an enchanted book is gone; instead, any enchantments on the pickaxe will be "absorbed" into the crafted module.  Silk Touch and Fortune are the useful enchantments to have.
+  * Extruder Mk1 will inherit the harvest level of the Breaker Module used to craft it.
+  * You can disable harvest level limits in config: `breakerHarvestLevelLimit` in the "Modules" section.
+* Vacuum Module (XP Mode) now supports PneumaticCraft: Repressurized Memory Essence XP Fluid
+  * No, PNC:R doesn't yet have a release for 1.15.2, but it's very close...
+* Activator Module now respects its filter items
 * Fixed some culling issues when router/template frame blocks are camouflaged
 
 ### 6.0.0 (26 Mar 2020)
