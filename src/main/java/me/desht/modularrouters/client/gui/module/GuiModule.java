@@ -76,12 +76,14 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private int regulatorAmount;
     private final MouseOverHelp mouseOverHelp;
     final ItemAugment.AugmentCounter augmentCounter;
+    private final boolean matchAll;
 
     private RedstoneBehaviourButton redstoneButton;
     private RegulatorTooltipButton regulatorTooltipButton;
     private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
     private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
     private MouseOverHelp.Button mouseOverHelpButton;
+    private TexturedToggleButton matchAllButton;
     IntegerTextField regulatorTextField;
 
     public GuiModule(ContainerModule container, PlayerInventory inventory, ITextComponent displayName) {
@@ -98,9 +100,12 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         this.facing = ModuleHelper.getDirectionFromNBT(moduleItemStack);
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
+        this.matchAll = ModuleHelper.isMatchAll(moduleItemStack);
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
         this.mouseOverHelp = new MouseOverHelp(this);
+
+        this.passEvents = true;
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -114,6 +119,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
         addToggleButton(ModuleFlags.IGNORE_TAGS, 25, 93);
         addToggleButton(ModuleFlags.TERMINATE, 45, 93);
+        addButton(matchAllButton = new MatchAllButton(guiLeft + 45, guiTop + 75, matchAll));
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -219,6 +225,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         compound.putByte(ModuleHelper.NBT_FLAGS, flags);
         compound.putByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
         compound.putInt(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
+        compound.putBoolean(ModuleHelper.NBT_MATCH_ALL, matchAllButton.isToggled());
         return compound;
     }
 
@@ -438,6 +445,24 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             }
 
             super.onPress();
+        }
+    }
+
+    private class MatchAllButton extends TexturedToggleButton {
+        MatchAllButton(int x, int y, boolean toggled) {
+            super(x, y, 16, 16, toggled, GuiModule.this);
+            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.matchAll.false");
+            MiscUtil.appendMultiline(tooltip2, "guiText.tooltip.matchAll.true");
+        }
+
+        @Override
+        protected int getTextureX() {
+            return isToggled() ? 224 : 208;
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 16;
         }
     }
 }

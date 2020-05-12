@@ -49,6 +49,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         this.xSize = GUI_WIDTH;
         this.ySize = GUI_HEIGHT;
         this.router = container.getRouter();
+
+        this.passEvents = true;
     }
 
     @Override

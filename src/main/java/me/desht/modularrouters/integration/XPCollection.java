@@ -37,9 +37,10 @@ public class XPCollection {
 
     public enum XPCollectionType {
         BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
-        // note: bottles o' enchanting are worth 3-11 experience, so an average of 7
+        // note: bottles o' enchanting are randomly worth 3-11 experience, so let's use an average of 7
         SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
-        MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence");
+        MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence"),
+        CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice");
 
         // TODO 1.15 other mod exp levels... should be in config or data pack, really
 //        XPJUICE(20, "xpjuice"),  // Enderio/Openblocks/Cyclic/Reliquary
@@ -47,7 +48,7 @@ public class XPCollection {
 //        ESSENCE(20, "essence"); // Industrial Foregoing essence - TODO: respect IF config "essenceMultiplier"
 
         private boolean solid;
-        private final int xpRatio;  // XP points per item or mB of fluid
+        private final int xpRatio;  // XP points per item, or (for fluids) mB per XP
         private final ResourceLocation registryName;
 
         XPCollectionType(boolean solid, int xpRatio, String registryName) {

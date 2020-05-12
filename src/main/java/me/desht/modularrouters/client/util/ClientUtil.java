@@ -22,6 +22,10 @@ public class ClientUtil {
         }
     }
 
+    public static boolean thisScreenPassesEvents() {
+        return Minecraft.getInstance().currentScreen == null || Minecraft.getInstance().currentScreen.passEvents;
+    }
+
     public static PlayerEntity getClientPlayer() {
         return Minecraft.getInstance().player;
     }

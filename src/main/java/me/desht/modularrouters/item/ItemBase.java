@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item;
 
 import me.desht.modularrouters.client.ClientSetup;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.screen.Screen;
@@ -31,9 +32,13 @@ public abstract class ItemBase extends Item {
             addUsageInformation(stack, list);
         } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
-            list.add(new TranslationTextComponent("itemText.misc.holdKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
+            if (ClientUtil.thisScreenPassesEvents()) {
+                list.add(new TranslationTextComponent("itemText.misc.holdKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
+            }
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
-            list.add(new TranslationTextComponent("itemText.misc.holdShiftKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
+            if (ClientUtil.thisScreenPassesEvents()) {
+                list.add(new TranslationTextComponent("itemText.misc.holdShiftKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
+            }
         }
     }
 

@@ -211,6 +211,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                                 )
                 ).applyTextStyles(TextFormatting.YELLOW)
         );
+        boolean matchAll = ModuleHelper.isMatchAll(itemstack);
+        list.add(new TranslationTextComponent("itemText.misc.match").appendText(": ")
+                .applyTextStyle(TextFormatting.YELLOW)
+                .appendSibling(new TranslationTextComponent("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
+                        .applyTextStyle(TextFormatting.AQUA)));
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
             int curRange = rm.getCurrentRange(itemstack);

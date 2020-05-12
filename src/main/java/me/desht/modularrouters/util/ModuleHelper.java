@@ -21,6 +21,7 @@ public class ModuleHelper {
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
     public static final String NBT_AUGMENTS = "Augments";
+    public static final String NBT_MATCH_ALL = "MatchAll";
 
     @Nonnull
     public static CompoundNBT validateNBT(ItemStack stack) {
@@ -93,13 +94,14 @@ public class ModuleHelper {
         }
     }
 
-//    public static ListNBT getFilterItems(ItemStack stack) {
-//        CompoundNBT compound = validateNBT(stack);
-//        return compound.getList(NBT_FILTER, Constants.NBT.TAG_COMPOUND);
-//    }
 
     public static int getRangeModifier(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
         return counter.getAugmentCount(ModItems.RANGE_UP_AUGMENT.get()) - counter.getAugmentCount(ModItems.RANGE_DOWN_AUGMENT.get());
+    }
+
+    public static boolean isMatchAll(ItemStack stack) {
+        CompoundNBT compound = validateNBT(stack);
+        return compound.getBoolean(NBT_MATCH_ALL);
     }
 }

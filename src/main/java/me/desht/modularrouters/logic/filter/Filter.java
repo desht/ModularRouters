@@ -20,14 +20,17 @@ public class Filter implements Predicate<ItemStack> {
 
     private final Flags flags;
     private final List<IItemMatcher> matchers = Lists.newArrayList();
+    private final boolean matchAll;
 
     public Filter() {
         flags = Flags.DEFAULT_FLAGS;
+        matchAll = false;
     }
 
     public Filter(ItemStack moduleStack) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
+            matchAll = ModuleHelper.isMatchAll(moduleStack);
             ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, null);
             for (int i = 0; i < filterHandler.getSlots(); i++) {
                 ItemStack filterStack = filterHandler.getStackInSlot(i);
@@ -40,6 +43,7 @@ public class Filter implements Predicate<ItemStack> {
             }
         } else {
             flags = Flags.DEFAULT_FLAGS;
+            matchAll = false;
         }
     }
 
@@ -65,13 +69,15 @@ public class Filter implements Predicate<ItemStack> {
         }
 
         for (IItemMatcher matcher : matchers) {
-            if (matcher.matchItem(stack, flags)) {
-                return !flags.isBlacklist();
+            boolean matchedOne = matcher.matchItem(stack, flags);
+            if (!matchAll && matchedOne || matchAll && !matchedOne) {
+                return matchAll == flags.isBlacklist();
             }
         }
 
         // no matches: test succeeds if this is a blacklist, fails if a whitelist
-        return flags.isBlacklist();
+        return matchAll != flags.isBlacklist();
+
     }
 
     public boolean testFluid(Fluid fluid) {
