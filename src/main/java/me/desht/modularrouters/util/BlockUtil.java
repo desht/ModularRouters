@@ -124,7 +124,7 @@ public class BlockUtil {
             fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
             BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
-            if (!event.isCanceled() && world.setBlockState(pos, newState, 3)) {
+            if (!event.isCanceled() && world.setBlockState(pos, newState)) {
                 fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
                 BlockItem.setTileEntityNBT(world, fakePlayer, pos, toPlace);
                 newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
@@ -136,6 +136,8 @@ public class BlockUtil {
     }
 
     public static boolean tryPlaceBlock(BlockState newState, World world, BlockPos pos) {
+        if (!world.getBlockState(pos).getMaterial().isReplaceable()) return false;
+
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
         if (fakePlayer == null) {
             return false;
