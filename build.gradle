@@ -1,6 +1,3 @@
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
-
 // For those who want the bleeding edge
 buildscript {
     repositories {
@@ -26,6 +23,12 @@ ext.config = parseConfig(configFile)
 version = config.mc_version + "-" + config.mod_version
 
 archivesBaseName = 'modular-routers'
+
+if (System.getenv().BUILD_NUMBER != null) {
+    version += "-${System.getenv().BUILD_NUMBER}"
+} else {
+    version += "-CUSTOM"
+}
 
 minecraft {
     version = config.mc_version + "-" + config.forge_version

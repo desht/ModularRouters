@@ -6,6 +6,17 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.12.2
 
+### 3.3.0 (12 May 2020)
+
+This will be the final build of Modular Routers released for 1.12.2 (barring any critical bugs).  It contains one new feature, backported from the 1.15.2 version of the mod:
+
+* Changed the way Breaker Module and Extruder Module Mk1 harvest levels are determined
+  * Instead of just being able to harvest anything, the pickaxe used in crafting a Breaker Module now determines its harvest level. E.g. if you want to break Obsidian, use a Diamond Pickaxe to craft the module.
+  * Breaker Module can now be crafted with *any* pickaxe, including (properly coded) modded pickaxes.
+  * Module enchanting by crafting the module with an enchanted book is gone; instead, any enchantments on the pickaxe will be "absorbed" into the crafted module.  Silk Touch and Fortune are the useful enchantments to have.
+  * Extruder Mk1 will inherit the harvest level of the Breaker Module used to craft it.
+  * You can disable harvest level limits in config: `breakerHarvestLevelLimit` in the "Modules" section.
+  
 ### 3.2.3 (2 Sep 2019)
 
 * Fix ArrayIndexOutOfBoundsException with fluid modules. https://github.com/desht/ModularRouters/issues/58
