@@ -42,6 +42,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public abstract class Module extends ItemSubTypes.SubItemHandler {
+
     public enum ModuleFlags {
         BLACKLIST(true, 0x1),
         IGNORE_META(false, 0x2),
@@ -133,6 +134,10 @@ public abstract class Module extends ItemSubTypes.SubItemHandler {
     public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         addSettingsInformation(itemstack, list);
         addAugmentInformation(itemstack, list);
+    }
+
+    public boolean hasEffect(ItemStack stack) {
+        return false;
     }
 
     private void addSettingsInformation(ItemStack itemstack, List<String> list) {

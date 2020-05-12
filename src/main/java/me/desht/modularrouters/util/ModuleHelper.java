@@ -7,6 +7,7 @@ import me.desht.modularrouters.item.module.ItemModule.ModuleType;
 import me.desht.modularrouters.item.module.Module;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -28,6 +29,7 @@ public class ModuleHelper {
     private static final String NBT_OWNER = "Owner";
     private static final String NBT_CONFIG_SLOT = "ConfigSlot";
     public static final String NBT_AUGMENTS = "Augments";
+    public static final String NBT_PICKAXE = "Pickaxe";
 
     @Nonnull
     public static NBTTagCompound validateNBT(ItemStack stack) {
@@ -173,5 +175,15 @@ public class ModuleHelper {
     public static int getRangeModifier(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
         return counter.getAugmentCount(ItemAugment.AugmentType.RANGE_UP) - counter.getAugmentCount(ItemAugment.AugmentType.RANGE_DOWN);
+    }
+
+    public static void setPickaxe(ItemStack moduleStack, ItemStack pickaxe) {
+        NBTTagCompound compound = validateNBT(moduleStack);
+        compound.setTag(NBT_PICKAXE, pickaxe.serializeNBT());
+    }
+
+    public static ItemStack getPickaxe(ItemStack moduleStack) {
+        NBTTagCompound compound = validateNBT(moduleStack);
+        return compound.hasKey(NBT_PICKAXE) ? new ItemStack(compound.getCompoundTag(NBT_PICKAXE)) : new ItemStack(Items.IRON_PICKAXE);
     }
 }

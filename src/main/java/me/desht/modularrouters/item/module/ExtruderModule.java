@@ -11,6 +11,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.awt.*;
@@ -35,7 +36,20 @@ public class ExtruderModule extends Module implements IRangedModule {
     @Override
     public void addExtraInformation(ItemStack itemstack, World player, List<String> list, ITooltipFlag advanced) {
         super.addExtraInformation(itemstack, player, list, advanced);
+
+        ItemStack pick = ModuleHelper.getPickaxe(itemstack);
+        list.add(I18n.format("itemText.misc.breakerModulePick", pick.getDisplayName()));
+        EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
+            list.add(TextFormatting.YELLOW + "\u25b6 " + TextFormatting.AQUA + ench.getTranslatedName(level));
+        });
+
         list.add(I18n.format("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        ItemStack pick = ModuleHelper.getPickaxe(stack);
+        return !EnchantmentHelper.getEnchantments(pick).isEmpty();
     }
 
     @Override

@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.util.BlockUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
@@ -13,14 +14,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 public class CompiledBreakerModule extends CompiledModule {
-    private final boolean silkTouch;
-    private final int fortune;
+    private final ItemStack pick;
 
     public CompiledBreakerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-        fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
+        pick = ModuleHelper.getPickaxe(stack).copy();
     }
 
     @Override
@@ -32,7 +31,7 @@ public class CompiledBreakerModule extends CompiledModule {
             }
             BlockPos pos = getTarget().pos;
             int oldId = Block.getStateId(world.getBlockState(pos));
-            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), silkTouch, fortune);
+            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), pick);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
                 if (ConfigHandler.module.breakerParticles && router.getUpgradeCount(ItemUpgrade.UpgradeType.MUFFLER) == 0) {

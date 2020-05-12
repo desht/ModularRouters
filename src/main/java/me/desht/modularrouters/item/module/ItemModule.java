@@ -124,4 +124,9 @@ public class ItemModule extends ItemSubTypes<ItemModule.ModuleType> {
         ItemStack stack = player.getHeldItem(hand);
         return getModule(stack).onItemUse(stack, player, world, pos, hand, face, x, y, z);
     }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        return getModule(stack).hasEffect(stack);
+    }
 }
