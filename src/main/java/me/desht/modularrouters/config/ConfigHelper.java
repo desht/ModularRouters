@@ -13,6 +13,7 @@ public class ConfigHelper {
         ClientConfig client = ConfigHolder.client;
         MRConfig.Client.Misc.alwaysShowModuleSettings = client.misc.alwaysShowModuleSettings.get();
         MRConfig.Client.Misc.moduleGuiBackgroundTint = client.misc.moduleGuiBackgroundTint.get();
+        MRConfig.Client.Misc.renderFlyingItems = client.misc.renderFlyingItems.get();
 
         ModularRouters.LOGGER.info("Client config re-baked");
     }

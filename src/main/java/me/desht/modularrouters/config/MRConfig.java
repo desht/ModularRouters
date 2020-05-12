@@ -5,6 +5,7 @@ public class MRConfig {
         public static class Misc {
             public static boolean alwaysShowModuleSettings;
             public static boolean moduleGuiBackgroundTint;
+            public static boolean renderFlyingItems;
         }
     }
 
