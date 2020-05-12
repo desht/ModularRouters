@@ -6,6 +6,21 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.15.2
 
+### 6.1.0 (12 May 2020)
+
+* Added support for Cyclic XP Juice in the Vacuum Module (XP augment)
+* Added config option to not display "flying" items when they're being transferred
+  * Large numbers of these could hurt the frame rate
+* Added a "Match Any" / "Match All" button to the module GUI - https://github.com/desht/ModularRouters/issues/56
+  * "Match Any" acts as previously and is the default - used in the vast majority of cases
+  * "Match All" requires *all* items in the filter to match - useful e.g. to match "enchanted leather boots"
+* Added an extra Player Module option: "Main Inventory (no Hotbar)" - https://github.com/desht/ModularRouters/issues/73
+  * This will completely ignore the player's hotbar slots when transferring items to/from the main inventory
+* Fixed the Extruder Mk2 Module just breaking everything its path when extending - https://github.com/desht/ModularRouters/issues/74
+  * It's supposed to stop at (non-replaceable) blocks, just like the Extruder Mk1
+* Fixed NPE triggered by other mods passing a null world/pos to certain Block methods they shouldn't - https://github.com/desht/ModularRouters/issues/72
+* Fixed the "show module info" keybind (bound to "I" by default) not working in Router and Module GUI's (worked OK in default inventory screen)
+
 ### 6.0.1 (28 Apr 2020)
 
 * Changed the way Breaker Module and Extruder Module Mk1 harvest levels are determined
