@@ -44,10 +44,10 @@ repositories {
         name = "tterrag maven"
         url = "http://maven.tterrag.com/"
     }
-    maven {
-        name = "guideapi/hwyla"
-        url = 'http://tehnut.info/maven/'
-    }
+//    maven {
+//        name = "guideapi/hwyla"
+//        url = 'http://tehnut.info/maven/'
+//    }
     maven {
         name = "tesla"
         url = "http://maven.mcmoddev.com"
@@ -63,6 +63,10 @@ repositories {
     maven {
         name = "K-4u Mod maven"
         url = "https://modmaven.k-4u.nl/"
+    }
+    maven {
+        name = "github temp"
+        url = "https://github.com/TehNut/temporary-maven-thing/blob/master/maven"
     }
 }
 
