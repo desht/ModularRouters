@@ -21,13 +21,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class GuiModulePlayer extends GuiModule {
-    private static final ItemStack mainInvStack = new ItemStack(Blocks.CHEST);
-    private static final ItemStack armourStack = new ItemStack(Items.DIAMOND_CHESTPLATE);
-    private static final ItemStack shieldStack = new ItemStack(Items.SHIELD);
-    private static final ItemStack enderStack = new ItemStack(Blocks.ENDER_CHEST);
-    private static final ItemStack routerStack = new ItemStack(ModBlocks.ITEM_ROUTER.get());
+    private static final ItemStack MAIN_INV_STACK = new ItemStack(Blocks.CHEST);
+    private static final ItemStack MAIN_NO_HOTBAR_INV_STACK = new ItemStack(Blocks.BARREL);
+    private static final ItemStack ARMOUR_STACK = new ItemStack(Items.DIAMOND_CHESTPLATE);
+    private static final ItemStack OFFHAND_STACK = new ItemStack(Items.SHIELD);
+    private static final ItemStack ENDER_STACK = new ItemStack(Blocks.ENDER_CHEST);
+    private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.ITEM_ROUTER.get());
 
-    private static final ItemStack[] stacks = new ItemStack[] { mainInvStack, armourStack, shieldStack, enderStack };
+    private static final ItemStack[] STACKS = new ItemStack[] {
+            MAIN_INV_STACK, MAIN_NO_HOTBAR_INV_STACK, ARMOUR_STACK, OFFHAND_STACK, ENDER_STACK
+    };
 
     private SectionButton secButton;
     private OperationButton opButton;
@@ -42,7 +45,7 @@ public class GuiModulePlayer extends GuiModule {
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
 
-        addButton(secButton = new SectionButton(guiLeft + 169, guiTop + 32, 16, 16, true, stacks, cpm.getSection()));
+        addButton(secButton = new SectionButton(guiLeft + 169, guiTop + 32, 16, 16, true, STACKS, cpm.getSection()));
         addButton(opButton = new OperationButton(guiLeft + 148, guiTop + 32, cpm.getOperation()));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "guiText.popup.player.control");
@@ -54,7 +57,7 @@ public class GuiModulePlayer extends GuiModule {
 
         this.blit(guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
 
-        RenderHelper.renderItemStack(minecraft, routerStack, guiLeft + 128, guiTop + 32, "");
+        RenderHelper.renderItemStack(minecraft, ROUTER_STACK, guiLeft + 128, guiTop + 32, "");
     }
 
     @Override

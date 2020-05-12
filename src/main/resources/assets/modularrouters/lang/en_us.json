@@ -120,6 +120,7 @@
   "guiText.label.playerOp.EXTRACT": "From Player to Item Router",
   "guiText.label.playerOp.INSERT": "From Item Router to Player",
   "guiText.label.playerSect.MAIN": "Main Inventory",
+  "guiText.label.playerSect.MAIN_NO_HOTBAR": "Main Inventory (no Hotbar)",
   "guiText.label.playerSect.ARMOR": "Armor Slots",
   "guiText.label.playerSect.OFFHAND": "Offhand Slot",
   "guiText.label.playerSect.ENDER": "Ender Inventory",

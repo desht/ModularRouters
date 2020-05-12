@@ -6,6 +6,7 @@ import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,10 +14,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
-import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
+import net.minecraftforge.items.wrapper.*;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
@@ -33,7 +31,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     public enum Section {
-        MAIN, ARMOR, OFFHAND, ENDER
+        MAIN, MAIN_NO_HOTBAR, ARMOR, OFFHAND, ENDER
     }
 
     private final Operation operation;
@@ -181,10 +179,17 @@ public class CompiledPlayerModule extends CompiledModule {
     private IItemHandler getHandler(PlayerEntity player) {
         switch (section) {
             case MAIN: return new PlayerMainInvWrapper(player.inventory);
+            case MAIN_NO_HOTBAR: return new PlayerMainInvNoHotbarWrapper(player.inventory);
             case ARMOR: return new PlayerArmorInvWrapper(player.inventory);
             case OFFHAND: return new PlayerOffhandInvWrapper(player.inventory);
             case ENDER: return new InvWrapper(player.getInventoryEnderChest());
             default: return null;
+        }
+    }
+
+    public static class PlayerMainInvNoHotbarWrapper extends RangedWrapper {
+        PlayerMainInvNoHotbarWrapper(PlayerInventory inv) {
+            super(new InvWrapper(inv), PlayerInventory.getHotbarSize(), inv.mainInventory.size());
         }
     }
 }
