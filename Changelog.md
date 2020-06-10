@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.15.2
 
+### 6.1.1 (unreleased)
+
+* Fixed recipes for Breaker and Extruder Mk1 modules not showing in JEI
+
 ### 6.1.0 (12 May 2020)
 
 * Added support for Cyclic XP Juice in the Vacuum Module (XP augment)
