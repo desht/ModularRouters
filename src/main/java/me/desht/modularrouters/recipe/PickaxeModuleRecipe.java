@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.crafting.StackList;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
@@ -25,6 +26,9 @@ import java.util.stream.Stream;
 public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     PickaxeModuleRecipe(ResourceLocation resourceLocation, ItemStack result, NonNullList<Ingredient> ingredients) {
         super(resourceLocation, "", result, ingredients);
+
+        Validate.isTrue(result.getItem() instanceof IPickaxeUser,
+                "recipe " + resourceLocation.toString() + ": result is not a IPickaxeUser!");
     }
 
     @Override
@@ -46,7 +50,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE)) {
-                pick = inv.getStackInSlot(i);
+                pick = stack;
                 break;
             } else if (stack.getItem() instanceof IPickaxeUser) {
                 pick = ((IPickaxeUser) stack.getItem()).getPickaxe(stack);
@@ -59,16 +63,6 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         } else {
             return ItemStack.EMPTY;
         }
-    }
-
-    @Override
-    public boolean isDynamic() {
-        return true;
-    }
-
-    @Override
-    public ItemStack getRecipeOutput() {
-        return ItemStack.EMPTY;
     }
 
     public static class BreakerModuleRecipe extends PickaxeModuleRecipe {
