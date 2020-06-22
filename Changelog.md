@@ -8,6 +8,8 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ### 6.1.1 (unreleased)
 
+* Fixed energy/fluid dupe issues with more than one of a stackable energy or fluid containing item in the router's buffer
+  * Fluid/energy capabilities are now only offered with a single item in the buffer
 * Fixed recipes for Breaker and Extruder Mk1 modules not showing in JEI
 
 ### 6.1.0 (12 May 2020)
