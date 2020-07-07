@@ -7,10 +7,11 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,12 +44,12 @@ public class GuiModuleDistributor extends GuiModule {
     }
 
     private class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
-        private final List<List<String>> tooltips = Lists.newArrayList();
+        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
 
         StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
             super(x, y, width, height, initialVal, GuiModuleDistributor.this);
             for (DistributionStrategy strategy : DistributionStrategy.values()) {
-                tooltips.add(Collections.singletonList(I18n.format("itemText.distributor.strategy." + strategy)));
+                tooltips.add(Collections.singletonList(new TranslationTextComponent(strategy.getTranslationKey())));
             }
         }
 
@@ -63,15 +64,15 @@ public class GuiModuleDistributor extends GuiModule {
         }
 
         @Override
-        public List<String> getTooltip() {
+        public List<ITextComponent> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
     }
 
-    private class TooltipButton extends TexturedButton {
+    private static class TooltipButton extends TexturedButton {
         TooltipButton(int x, int y) {
             super(x, y, 16, 16, p -> {});
-            tooltip1.add(I18n.format("guiText.tooltip.distributor.strategy"));
+            tooltip1.add(new TranslationTextComponent("guiText.tooltip.distributor.strategy"));
         }
 
         @Override

@@ -10,17 +10,17 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
@@ -112,7 +112,7 @@ public class BlockUtil {
         float hitX = (float) (fakePlayer.getPosX() - pos.getX());
         float hitY = (float) (fakePlayer.getPosY() - pos.getY());
         float hitZ = (float) (fakePlayer.getPosZ() - pos.getZ());
-        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), facing, pos, false);
+        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vector3d(hitX, hitY, hitZ), facing, pos, false);
         BlockItemUseContext ctx = new BlockItemUseContext(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
         if (!currentState.isReplaceable(ctx)) {
             return null;
@@ -120,7 +120,7 @@ public class BlockUtil {
 
         BlockState newState = getPlaceableState(ctx);
         if (newState != null) {
-            BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
+            BlockSnapshot snap = BlockSnapshot.create(world, pos);
             fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
             BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
@@ -142,7 +142,7 @@ public class BlockUtil {
         if (fakePlayer == null) {
             return false;
         }
-        BlockSnapshot snap = new BlockSnapshot(world, pos, newState);
+        BlockSnapshot snap = BlockSnapshot.create(world, pos);
         BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
         MinecraftForge.EVENT_BUS.post(event);
         return !event.isCanceled() && world.setBlockState(pos, newState);
@@ -240,11 +240,11 @@ public class BlockUtil {
             for (ItemStack drop : getFilteredDrops(true)) {
                 ItemStack excess = handler.insertItem(0, drop, false);
                 if (!excess.isEmpty()) {
-                    InventoryUtils.dropItems(world, pos, excess);
+                    InventoryUtils.dropItems(world, Vector3d.func_237489_a_(pos), excess);
                 }
             }
             for (ItemStack drop : getFilteredDrops(false)) {
-                InventoryUtils.dropItems(world, pos, drop);
+                InventoryUtils.dropItems(world, Vector3d.func_237489_a_(pos), drop);
             }
         }
     }

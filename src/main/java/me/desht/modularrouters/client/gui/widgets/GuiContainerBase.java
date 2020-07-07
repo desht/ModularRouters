@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -28,17 +29,18 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
     }
 
     @Override
-    public void render(int x, int y, float partialTicks) {
-        this.renderBackground();
-        super.render(x, y, partialTicks);
+    public void render(MatrixStack matrixStack, int x, int y, float partialTicks) {
+        this.renderBackground(matrixStack);
+        super.render(matrixStack, x, y, partialTicks);
         if (textFieldManager != null) {
-            textFieldManager.drawTextFields(x, y, partialTicks);
+            textFieldManager.drawTextFields(matrixStack, x, y, partialTicks);
         }
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(x, y) && button instanceof ITooltipButton)
-                .forEach(button -> renderTooltip(((ITooltipButton) button).getTooltip(), x, y, font));
+                .forEach(button -> renderTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), x, y, font));
 
-        this.renderHoveredToolTip(x, y);
+        // TODO 1.16 func_230459_a_ = renderHoveredTooltip
+        this.func_230459_a_(matrixStack, x, y);
     }
 
     @Override

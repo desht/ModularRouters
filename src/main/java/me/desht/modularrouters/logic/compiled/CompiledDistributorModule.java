@@ -23,7 +23,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         NEAREST_FIRST,
         FURTHEST_FIRST;
 
-        public String translationKey() {
+        public String getTranslationKey() {
             return "itemText.distributor.strategy." + this.toString();
         }
     }
@@ -60,7 +60,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     private static double calcDist(ModuleTarget tgt, TileEntity te) {
         double distance = tgt.gPos.getPos().distanceSq(te.getPos());
-        if (tgt.gPos.getDimension() != te.getWorld().getDimension().getType()) {
+        if (!tgt.isSameWorld(te.getWorld())) {
             distance += 100000000;  // cross-dimension penalty
         }
         return distance;

@@ -8,7 +8,7 @@ import me.desht.modularrouters.network.ItemBeamMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Collections;
@@ -27,15 +27,15 @@ public class CompiledPullerModule2 extends CompiledPullerModule1 {
     @Override
     boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
         return target != null
-                && router.getWorld().getDimension().getType() == target.gPos.getDimension()
+                && target.isSameWorld(router.getWorld())
                 && router.getPos().distanceSq(target.gPos.getPos()) <= getRangeSquared();
     }
 
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vec3d vec1 = new Vec3d(router.getPos());
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().dimension.getType());
+            Vector3d vec1 = Vector3d.func_237489_a_(router.getPos());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().func_234923_W_());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(targetPos, router.getPos(), stack, 0x6080FF, router.getTickRate()));
         }

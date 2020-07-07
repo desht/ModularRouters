@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -136,7 +137,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
+    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
         if (entity instanceof PlayerEntity) {
             PlayerEntity targetPlayer = (PlayerEntity)entity;
             String id = targetPlayer.getUniqueID().toString();
@@ -147,9 +148,9 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
             } else {
                 player.sendStatusMessage(new TranslationTextComponent("chatText.security." + res.toString(), name), false);
             }
-            return true;
+            return ActionResultType.SUCCESS;
         }
-        return false;
+        return ActionResultType.PASS;
     }
 
     enum Result {

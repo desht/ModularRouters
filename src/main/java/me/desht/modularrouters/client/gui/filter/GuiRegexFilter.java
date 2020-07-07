@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
@@ -69,24 +70,24 @@ public class GuiRegexFilter extends GuiFilterScreen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        renderBackground();
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(matrixStack);
 
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
-        blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.drawString(title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            font.drawString("/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
+            font.drawString(matrixStack, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         if (!errorMsg.isEmpty()) {
-            font.drawString(errorMsg, xPos + 8, yPos + 170, 0x804040);
+            font.drawString(matrixStack, errorMsg, xPos + 8, yPos + 170, 0x804040);
         }
 
-        super.render(mouseX, mouseY, partialTicks);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

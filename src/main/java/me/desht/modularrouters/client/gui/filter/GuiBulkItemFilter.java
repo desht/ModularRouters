@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 public class GuiBulkItemFilter extends GuiFilterContainer {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
@@ -76,15 +78,15 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        font.drawString(title, this.xSize / 2f - font.getStringWidth(title) / 2f, 8, 0x404040);
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+        font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, 8, 0x404040);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
-        blit(guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        blit(matrixStack, guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }
 
     @Override
@@ -95,21 +97,21 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     static class ClearButton extends Buttons.DeleteButton {
         ClearButton(int x, int y, IPressable pressable) {
             super(x, y, 0, pressable);
-            tooltip1.add(I18n.format("guiText.tooltip.clearFilter"));
+            tooltip1.add(MiscUtil.xlate("guiText.tooltip.clearFilter"));
         }
     }
 
     static class MergeButton extends Buttons.AddButton {
         MergeButton(int x, int y, String locStr, String name, IPressable pressable) {
             super(x, y, pressable);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.mergeFilter", name, locStr);
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.mergeFilter", name, locStr);
         }
     }
 
     static class LoadButton extends TexturedButton {
         LoadButton(int x, int y, String locStr, String name,  IPressable pressable) {
             super( x, y, 16, 16, pressable);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.loadFilter", name, locStr);
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.loadFilter", name, locStr);
         }
 
         @Override

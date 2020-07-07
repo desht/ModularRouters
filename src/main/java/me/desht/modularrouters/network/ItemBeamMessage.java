@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -17,7 +17,6 @@ import java.util.function.Supplier;
  * Sent by server to play an item beam between a router and another inventory
  */
 public class ItemBeamMessage {
-    private static final Vec3d HALF_BLOCK = new Vec3d(0.5, 0.5, 0.5);
     private int duration;
     private BlockPos pos1;
     private BlockPos pos2;

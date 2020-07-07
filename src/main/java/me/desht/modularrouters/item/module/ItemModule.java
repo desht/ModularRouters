@@ -179,7 +179,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
                 String s = ClientSetup.keybindConfigure.getKey().getTranslationKey();
-                list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).applyTextStyles(TextFormatting.GRAY));
+                list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).func_240699_a_(TextFormatting.GRAY));
             }
         }
     }
@@ -194,11 +194,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         if (isDirectional()) {
             RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
             ITextComponent itc = new TranslationTextComponent(isDirectional() && dir == RelativeDirection.NONE ?
-                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString()).applyTextStyle(TextFormatting.AQUA);
+                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString()).func_240699_a_(TextFormatting.AQUA);
             list.add(new TranslationTextComponent("guiText.label.direction")
-                    .appendSibling(new StringTextComponent(": "))
-                    .appendSibling(itc)
-                    .applyTextStyle(TextFormatting.YELLOW));
+                    .func_230529_a_(new StringTextComponent(": "))
+                    .func_230529_a_(itc)
+                    .func_240699_a_(TextFormatting.YELLOW));
         }
         addFilterInformation(itemstack, list);
         list.add(new StringTextComponent(
@@ -209,13 +209,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                                         formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack)),
                                         formatFlag("TERMINATE", !ModuleHelper.terminates(itemstack))
                                 )
-                ).applyTextStyles(TextFormatting.YELLOW)
+                ).func_240701_a_(TextFormatting.YELLOW)
         );
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
-        list.add(new TranslationTextComponent("itemText.misc.match").appendText(": ")
-                .applyTextStyle(TextFormatting.YELLOW)
-                .appendSibling(new TranslationTextComponent("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
-                        .applyTextStyle(TextFormatting.AQUA)));
+        list.add(new TranslationTextComponent("itemText.misc.match").func_240702_b_(": ")
+                .func_240699_a_(TextFormatting.YELLOW)
+                .func_230529_a_(new TranslationTextComponent("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
+                        .func_240699_a_(TextFormatting.AQUA)));
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
             int curRange = rm.getCurrentRange(itemstack);
@@ -224,13 +224,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                     TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
             list.add(new TranslationTextComponent("itemText.misc.rangeInfo",
                             col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange())
-                    .applyTextStyle(TextFormatting.YELLOW));
+                    .func_240699_a_(TextFormatting.YELLOW));
         }
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
-            list.add(new TranslationTextComponent("itemText.misc.breakerPick").appendSibling(pick.getDisplayName().applyTextStyle(TextFormatting.AQUA)));
+            list.add(new TranslationTextComponent("itemText.misc.breakerPick").func_230529_a_(pick.getDisplayName().copyRaw().func_240699_a_(TextFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
-                list.add(new StringTextComponent("\u25b6 ").appendSibling(ench.getDisplayName(level).applyTextStyle(TextFormatting.AQUA)).applyTextStyle(TextFormatting.YELLOW));
+                list.add(new StringTextComponent("\u25b6 ").func_230529_a_(ench.getDisplayName(level).copyRaw().func_240699_a_(TextFormatting.AQUA)).func_240699_a_(TextFormatting.YELLOW));
             });
         }
     }
@@ -249,7 +249,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).appendSibling(new TranslationTextComponent("itemText.augments")));
+            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).func_230529_a_(new TranslationTextComponent("itemText.augments")));
             list.addAll(toAdd);
         }
     }
@@ -277,23 +277,23 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             if (s.getItem() instanceof ItemSmartFilter) {
                 int size = ((ItemSmartFilter) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(new StringTextComponent(" \u2022 ").appendSibling(s.getDisplayName().appendText(suffix))
-                        .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC));
+                l2.add(new StringTextComponent(" \u2022 ").func_230529_a_(s.getDisplayName().copyRaw().func_240702_b_(suffix))
+                        .func_240701_a_(TextFormatting.AQUA, TextFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new StringTextComponent(" \u2022 ").appendSibling(getFilterItemDisplayName(s)
-                        .applyTextStyle(TextFormatting.AQUA)));
+                l2.add(new StringTextComponent(" \u2022 ").func_230529_a_(getFilterItemDisplayName(s).copyRaw()
+                        .func_240699_a_(TextFormatting.AQUA)));
             }
         }
         String key = "itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
         if (l2.isEmpty()) {
-            list.add(new TranslationTextComponent(key).applyTextStyles(TextFormatting.YELLOW)
-                    .appendText(": ")
-                    .appendSibling(new TranslationTextComponent("itemText.misc.noItems")
-                            .applyTextStyles(TextFormatting.AQUA, TextFormatting.ITALIC))
+            list.add(new TranslationTextComponent(key).func_240701_a_(TextFormatting.YELLOW)
+                    .func_240702_b_(": ")
+                    .func_230529_a_(new TranslationTextComponent("itemText.misc.noItems")
+                            .func_240701_a_(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(new TranslationTextComponent(key).applyTextStyles(TextFormatting.YELLOW)
-                            .appendText(": "));
+            list.add(new TranslationTextComponent(key).func_240701_a_(TextFormatting.YELLOW)
+                            .func_240702_b_(": "));
             list.addAll(l2);
         }
     }

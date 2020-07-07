@@ -18,7 +18,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -96,16 +96,16 @@ public class CompiledExtruderModule1 extends CompiledModule {
         if (!MRConfig.Common.Module.extruderPushEntities) {
             return;
         }
-        Vec3d v = new Vec3d(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
+        Vector3d v = Vector3d.func_237492_c_(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
         for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(placePos))) {
             if (entity.getPushReaction() != PushReaction.IGNORE) {
                 entity.setMotion(v);
-                entity.onGround = false;
-                entity.collided = false;
+                entity.func_230245_c_(false);  // setOnGround
+//                entity.collided = false;
                 entity.collidedHorizontally = false;
                 entity.collidedVertically = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
-                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.getPosX(), entity.getPosY(), entity.getPosZ(), 32, world.dimension.getType());
+                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.getPosX(), entity.getPosY(), entity.getPosZ(), 32, world.func_234923_W_());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                         new PushEntityMessage(entity, v.x, v.y, v.z));
             }

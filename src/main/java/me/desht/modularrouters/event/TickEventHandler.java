@@ -1,6 +1,6 @@
 package me.desht.modularrouters.event;
 
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,7 +12,8 @@ public class TickEventHandler {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.world.getDimension().getType() == DimensionType.OVERWORLD && event.phase == TickEvent.Phase.END) {
+        // field_234918_g_ = OVERWORLD
+        if (event.world.func_234923_W_() == World.field_234918_g_ && event.phase == TickEvent.Phase.END) {
             TickCounter++;
         }
     }

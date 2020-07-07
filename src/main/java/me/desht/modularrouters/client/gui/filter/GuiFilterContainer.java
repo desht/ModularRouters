@@ -32,7 +32,7 @@ abstract class GuiFilterContainer extends GuiContainerBase<ContainerSmartFilter>
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (hand != null) {
-            ItemStack stack = minecraft.player.getHeldItem(hand);
+            ItemStack stack = getMinecraft().player.getHeldItem(hand);
             if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));

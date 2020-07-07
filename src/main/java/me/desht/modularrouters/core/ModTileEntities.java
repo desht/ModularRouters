@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.function.Supplier;
 
 public class ModTileEntities {
-    public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, ModularRouters.MODID);
+    public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, ModularRouters.MODID);
 
     public static final RegistryObject<TileEntityType<?>> ITEM_ROUTER
             = register("item_router", () -> new TileEntityType<>(TileEntityItemRouter::new, ImmutableSet.of(ModBlocks.ITEM_ROUTER.get()), null));

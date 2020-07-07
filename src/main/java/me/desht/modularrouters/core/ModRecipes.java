@@ -12,7 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModRecipes {
-    public static final DeferredRegister<IRecipeSerializer<?>> RECIPES = new DeferredRegister<>(ForgeRegistries.RECIPE_SERIALIZERS, ModularRouters.MODID);
+    public static final DeferredRegister<IRecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModularRouters.MODID);
 
     public static final RegistryObject<SpecialRecipeSerializer<BreakerModuleRecipe>> BREAKER_MODULE
             = RECIPES.register("breaker_module", () -> new SpecialRecipeSerializer<>(BreakerModuleRecipe::new));

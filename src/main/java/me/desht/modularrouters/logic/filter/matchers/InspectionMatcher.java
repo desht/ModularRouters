@@ -122,6 +122,10 @@ public class InspectionMatcher implements IItemMatcher {
         ENCHANT,
         FOOD;
 
+        public String getTranslationKey() {
+            return "guiText.label.inspectionSubject." + toString();
+        }
+
         private Optional<Integer> getValue(ItemStack stack) {
             switch (this) {
                 case NONE:
@@ -159,18 +163,6 @@ public class InspectionMatcher implements IItemMatcher {
             return stack.getCapability(CapabilityEnergy.ENERGY, null)
                     .map(handler -> Optional.of(asPercentage(handler.getEnergyStored(), handler.getMaxEnergyStored())))
                     .orElse(Optional.empty());
-
-//            if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-//                IEnergyStorage s = stack.getCapability(CapabilityEnergy.ENERGY, null);
-//                return Optional.of(asPercentage(s.getEnergyStored(), s.getMaxEnergyStored()));
-//            } else if (TeslaIntegration.enabled && TeslaUtils.isTeslaHolder(stack, null)) {
-//                ITeslaHolder h = TeslaUtils.getTeslaHolder(stack, null);
-//                return Optional.of(asPercentage(h.getStoredPower(), h.getCapacity()));
-//            } else if (RFIntegration.enabled && stack.getItem() instanceof IEnergyContainerItem) {
-//                IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();
-//                return Optional.of(asPercentage(containerItem.getEnergyStored(stack), containerItem.getMaxEnergyStored(stack)));
-//            }
-//            return Optional.empty();
         }
 
         private Optional<Integer> getFluidPercent(ItemStack stack) {
@@ -220,6 +212,10 @@ public class InspectionMatcher implements IItemMatcher {
         GE,
         EQ,
         NE;
+
+        public String getTranslationKey() {
+            return "guiText.label.inspectionOp." + toString();
+        }
 
         public boolean check(long value, long target) {
             switch (this) {

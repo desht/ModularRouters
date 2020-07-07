@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -82,9 +83,9 @@ public class InventoryUtils {
      * @param stack itemstack to drop
      * @return true if the entity was spawned, false otherwise
      */
-    public static boolean dropItems(World world, BlockPos pos, ItemStack stack) {
+    public static boolean dropItems(World world, Vector3d pos, ItemStack stack) {
         if (!world.isRemote) {
-            ItemEntity item = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+            ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             return world.addEntity(item);
         }
         return true;

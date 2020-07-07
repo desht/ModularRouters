@@ -48,7 +48,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     @Override
     public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
         ICamouflageable camo = getCamoState(worldIn, pos);
-        return camo == null ? getUncamouflagedRaytraceShape(state, worldIn, pos) : camo.getCamouflage().getRaytraceShape(worldIn, pos);
+        return camo == null ? getUncamouflagedRaytraceShape(state, worldIn, pos) : camo.getCamouflage().getRaytraceShape(worldIn, pos, ISelectionContext.dummy());
     }
 
     @Override
@@ -62,24 +62,27 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
         ICamouflageable camo = getCamoState(world, pos);
         return camo == null ? super.getOpacity(state, world, pos) : camo.getCamouflage().getOpacity(world, pos);
     }
-    @Override
-    public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
-        ICamouflageable camo = getCamoState(worldIn, pos);
-        return camo == null || !camo.extendedMimic() ? super.getBlockHardness(blockState, worldIn, pos) : camo.getCamouflage().getBlockHardness(worldIn, pos);
-    }
+
+    // TODO 1.16
+
+//    @Override
+//    public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
+//        ICamouflageable camo = getCamoState(worldIn, pos);
+//        return camo == null || !camo.extendedMimic() ? super.getBlockHardness(blockState, worldIn, pos) : camo.getCamouflage().getBlockHardness(worldIn, pos);
+//    }
+//
+//    @Override
+//    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+//        ICamouflageable camo = getCamoState(worldIn, pos);
+//        return camo == null || !camo.extendedMimic() ? super.isNormalCube(state, worldIn, pos) : camo.getCamouflage().isNormalCube(worldIn, pos);
+//    }
 
     @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        ICamouflageable camo = getCamoState(worldIn, pos);
-        return camo == null || !camo.extendedMimic() ? super.isNormalCube(state, worldIn, pos) : camo.getCamouflage().isNormalCube(worldIn, pos);
-    }
-
-    @Override
-    public float getExplosionResistance(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+    public float getExplosionResistance(BlockState state, IBlockReader world, BlockPos pos, Explosion explosion) {
         ICamouflageable camo = getCamoState(world, pos);
         return camo == null || !camo.extendedMimic() ?
-                super.getExplosionResistance(state, world, pos, exploder, explosion) :
-                camo.getCamouflage().getBlock().getExplosionResistance(state, world, pos, exploder, explosion);
+                super.getExplosionResistance(state, world, pos, explosion) :
+                camo.getCamouflage().getBlock().getExplosionResistance(state, world, pos, explosion);
     }
 
     @Override

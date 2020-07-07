@@ -27,7 +27,11 @@ public class FluidModule1 extends ItemModule {
 
     public enum FluidDirection {
         IN,  // to router
-        OUT  // from router
+        OUT;  // from router
+
+        public String getTranslationKey() {
+            return "itemText.fluid.direction." + toString();
+        }
     }
 
     @Override

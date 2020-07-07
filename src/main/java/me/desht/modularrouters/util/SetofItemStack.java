@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -62,10 +63,12 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
         return this.stream().sorted(compareStacks).collect(Collectors.toList());
     }
 
-    private static final Comparator<? super ItemStack> compareStacks = (Comparator<ItemStack>) (o1, o2) -> {
-        // matches by mod, then by display name
-        int c = o1.getItem().getRegistryName().getNamespace().compareTo(o2.getItem().getRegistryName().getNamespace());
-        if (c != 0) return c;
-        return o1.getDisplayName().getString().compareTo(o2.getDisplayName().getString());
-    };
+    // matches by mod, then by display name
+    private static final Comparator<? super ItemStack> compareStacks = Comparator
+            .comparing((ItemStack stack) -> namespace(stack.getItem()))
+            .thenComparing(stack -> stack.getDisplayName().getString());
+
+    private static String namespace(IForgeRegistryEntry<?> entry) {
+        return entry.getRegistryName() == null ? "?" : entry.getRegistryName().getNamespace();
+    }
 }

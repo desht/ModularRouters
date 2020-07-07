@@ -13,4 +13,8 @@ public enum RouterRedstoneBehaviour {
             default: return false;
         }
     }
+
+    public String getTranslationKey() {
+        return "guiText.tooltip.redstone." + toString();
+    }
 }

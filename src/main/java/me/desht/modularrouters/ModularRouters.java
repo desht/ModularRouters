@@ -1,10 +1,6 @@
 package me.desht.modularrouters;
 
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.gui.MouseOverHelp;
-import me.desht.modularrouters.client.model.ModelBakeEventHandler;
-import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
-import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.ModItemTagsProvider;
@@ -16,13 +12,11 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -41,7 +35,7 @@ public class ModularRouters {
 
         ConfigHolder.init();
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> modBus.addListener(ClientHandler::clientSetup));
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientSetup::initEarly);
 
         modBus.addListener(this::commonSetup);
 
@@ -63,17 +57,6 @@ public class ModularRouters {
             XPCollection.detectXPTypes();
             ModNameCache.init();
         });
-    }
-
-    static class ClientHandler {
-        static void clientSetup(FMLClientSetupEvent event) {
-            FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
-            MinecraftForge.EVENT_BUS.register(ModuleTargetRenderer.class);
-            MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
-            MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
-
-            DeferredWorkQueue.runLater(ClientSetup::init);
-        }
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

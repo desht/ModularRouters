@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -8,12 +9,13 @@ import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class GuiModuleDetector extends GuiModule {
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
@@ -41,11 +43,11 @@ public class GuiModuleDetector extends GuiModule {
 
         manager.focus(0);
 
-        String label = I18n.format("itemText.misc.strongSignal." + cdm.isStrongSignal());
+        ITextComponent label = new TranslationTextComponent("itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
         addButton(new Button(guiLeft + 138, guiTop + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
-            button.setMessage(I18n.format("itemText.misc.strongSignal." + isStrong));
+            button.setMessage(new TranslationTextComponent("itemText.misc.strongSignal." + isStrong));
             GuiModuleDetector.this.sendToServer();
         }));
 
@@ -56,10 +58,10 @@ public class GuiModuleDetector extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
         // text entry field background - super has already bound the correct texture
-        this.blit(guiLeft + 148, guiTop + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
+        this.blit(matrixStack, guiLeft + 148, guiTop + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
     }
 
     @Override
@@ -73,8 +75,8 @@ public class GuiModuleDetector extends GuiModule {
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.detectorTooltip");
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.detectorTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

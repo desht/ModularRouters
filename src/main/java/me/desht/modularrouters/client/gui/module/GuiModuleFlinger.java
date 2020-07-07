@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -8,10 +9,11 @@ import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class GuiModuleFlinger extends GuiModule {
     private FloatTextField speedField;
@@ -62,12 +64,12 @@ public class GuiModuleFlinger extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
 
-        this.blit(guiLeft + 148, guiTop + 16, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
-        this.blit(guiLeft + 148, guiTop + 34, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
-        this.blit(guiLeft + 148, guiTop + 52, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.blit(matrixStack, guiLeft + 148, guiTop + 16, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.blit(matrixStack, guiLeft + 148, guiTop + 34, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.blit(matrixStack, guiLeft + 148, guiTop + 52, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
     }
 
     @Override
@@ -85,8 +87,8 @@ public class GuiModuleFlinger extends GuiModule {
         TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
             super(x, y, 16, 16, p -> {});
             this.buttonId = buttonId;
-            tooltip1.add(I18n.format("guiText.tooltip.flinger." + key, min, max));
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
+            tooltip1.add(new TranslationTextComponent("guiText.tooltip.flinger." + key, min, max));
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

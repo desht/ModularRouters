@@ -153,8 +153,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        super.handleUpdateTag(state, tag);
         processClientSync(tag);
     }
 
@@ -194,8 +194,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public void read(CompoundNBT nbt) {
-        super.read(nbt);
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
         bufferHandler.deserializeNBT(nbt.getCompound(NBT_BUFFER));
         modulesHandler.deserializeNBT(nbt.getCompound(NBT_MODULES));
         upgradesHandler.deserializeNBT(nbt.getCompound(NBT_UPGRADES));
@@ -757,7 +757,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public GlobalPos getGlobalPos() {
-        return GlobalPos.of(world.getDimension().getType(), pos);
+        return GlobalPos.func_239648_a_(world.func_234923_W_(), pos);
     }
 
     /**

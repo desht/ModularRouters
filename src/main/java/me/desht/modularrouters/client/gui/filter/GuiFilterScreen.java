@@ -38,7 +38,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (locator.hand != null) {
-            ItemStack stack = minecraft.player.getHeldItem(locator.hand);
+            ItemStack stack = getMinecraft().player.getHeldItem(locator.hand);
             if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));

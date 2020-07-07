@@ -11,8 +11,8 @@ import net.minecraft.block.ILiquidContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
@@ -107,7 +107,7 @@ public class CompiledFluidModule1 extends CompiledModule {
         }
 
         // first check that the fluid matches any filter, and can be inserted
-        IFluidState fluidState = state.getFluidState();
+        FluidState fluidState = state.getFluidState();
         Fluid fluid = fluidState.getFluid();
         if (fluid == Fluids.EMPTY || !fluid.isSource(fluidState) || !getFilter().testFluid(fluid)) {
             return false;
@@ -153,12 +153,12 @@ public class CompiledFluidModule1 extends CompiledModule {
             }
             Block block = blockstate.getBlock();
             if (world.isAirBlock(pos) || isNotSolid || isReplaceable || block instanceof ILiquidContainer && ((ILiquidContainer)block).canContainFluid(world, pos, blockstate, toPlace.getFluid())) {
-                if (world.dimension.doesWaterVaporize() && fluid.isIn(FluidTags.WATER)) {
+                if (world.func_230315_m_().func_236040_e_() && fluid.isIn(FluidTags.WATER)) {
                     // no pouring water in the nether!
                     playEvaporationEffects(world, pos);
                 } else if (block instanceof ILiquidContainer) {
                     // a block which can take fluid, e.g. waterloggable block like a slab
-                    IFluidState still = fluid instanceof FlowingFluid ? ((FlowingFluid) fluid).getStillFluidState(false) : fluid.getDefaultState();
+                    FluidState still = fluid instanceof FlowingFluid ? ((FlowingFluid) fluid).getStillFluidState(false) : fluid.getDefaultState();
                     if (((ILiquidContainer)block).receiveFluid(world, pos, blockstate, still) && playSound) {
                         playEmptySound(world, pos, fluid);
                     }

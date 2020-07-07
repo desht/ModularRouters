@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.render.RenderHelper;
@@ -10,15 +11,17 @@ import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Collections;
 import java.util.List;
+
+import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 public class GuiModulePlayer extends GuiModule {
     private static final ItemStack MAIN_INV_STACK = new ItemStack(Blocks.CHEST);
@@ -52,12 +55,12 @@ public class GuiModulePlayer extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
 
-        this.blit(guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
+        this.blit(matrixStack, guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
 
-        RenderHelper.renderItemStack(minecraft, ROUTER_STACK, guiLeft + 128, guiTop + 32, "");
+        RenderHelper.renderItemStack(matrixStack, minecraft, ROUTER_STACK, guiLeft + 128, guiTop + 32, "");
     }
 
     @Override
@@ -69,29 +72,29 @@ public class GuiModulePlayer extends GuiModule {
     }
 
     private class SectionButton extends ItemStackCyclerButton<Section> {
-        private final List<List<String>> tips = Lists.newArrayList();
+        private final List<List<ITextComponent>> tips = Lists.newArrayList();
 
         SectionButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, Section initialVal) {
             super(x, y, width, height, flat, stacks, initialVal, GuiModulePlayer.this);
             for (Section sect : Section.values()) {
-                tips.add(Collections.singletonList(I18n.format("guiText.label.playerSect." + sect)));
+                tips.add(Collections.singletonList(xlate(sect.getTranslationKey())));
             }
         }
 
         @Override
-        public List<String> getTooltip() {
+        public List<ITextComponent> getTooltip() {
             return tips.get(getState().ordinal());
         }
     }
 
     private class OperationButton extends TexturedCyclerButton<Operation> {
-        private final List<List<String>> tooltips = Lists.newArrayList();
+        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
 
         OperationButton(int x, int y, Operation initialVal) {
             super(x, y, 16, 16, initialVal, GuiModulePlayer.this);
 
             for (Operation op : Operation.values()) {
-                tooltips.add(Collections.singletonList(I18n.format("guiText.label.playerOp." + op)));
+                tooltips.add(Collections.singletonList(xlate(op.getTranslationKey())));
             }
         }
 
@@ -106,7 +109,7 @@ public class GuiModulePlayer extends GuiModule {
         }
 
         @Override
-        public java.util.List<String> getTooltip() {
+        public List<ITextComponent> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
     }

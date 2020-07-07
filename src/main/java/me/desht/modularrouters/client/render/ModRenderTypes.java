@@ -9,8 +9,8 @@ import org.lwjgl.opengl.GL11;
 import java.util.OptionalDouble;
 
 public class ModRenderTypes extends RenderType {
-    public ModRenderTypes(String name, VertexFormat format, int p_i225992_3_, int p_i225992_4_, boolean p_i225992_5_, boolean p_i225992_6_, Runnable pre, Runnable post) {
-        super(name, format, p_i225992_3_, p_i225992_4_, p_i225992_5_, p_i225992_6_, pre, post);
+    public ModRenderTypes(String name, VertexFormat format, int drawMode, int bufferSize, boolean useDelegate, boolean needsSorting, Runnable pre, Runnable post) {
+        super(name, format, drawMode, bufferSize, useDelegate, needsSorting, pre, post);
     }
 
     private static final LineState THICK_LINE = new LineState(OptionalDouble.of(10.0));
@@ -19,18 +19,16 @@ public class ModRenderTypes extends RenderType {
     public static final RenderType BEAM_LINE_THICK = makeType("beam_line",
             DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
             RenderType.State.getBuilder().line(THICK_LINE)
-                    .layer(RenderState.PROJECTION_LAYERING)
-//                    .alpha(AlphaState.DEFAULT_ALPHA)
+                    .layer(RenderState.field_239235_M_)
                     .transparency(TransparencyState.TRANSLUCENT_TRANSPARENCY)
                     .lightmap(RenderState.LIGHTMAP_DISABLED)
                     .texture(RenderState.NO_TEXTURE)
-            .build(false)
+                    .build(false)
     );
     public static final RenderType BEAM_LINE_THIN = makeType("beam_line",
             DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
             RenderType.State.getBuilder().line(THIN_LINE)
-                    .layer(RenderState.PROJECTION_LAYERING)
-//                    .alpha(AlphaState.DEFAULT_ALPHA)
+                    .layer(RenderState.field_239235_M_)
                     .transparency(TransparencyState.TRANSLUCENT_TRANSPARENCY)
                     .lightmap(RenderState.LIGHTMAP_DISABLED)
                     .texture(RenderState.NO_TEXTURE)
@@ -40,7 +38,7 @@ public class ModRenderTypes extends RenderType {
     public static final RenderType BLOCK_HILIGHT_FACE = makeType("block_hilight",
             DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256,
             RenderType.State.getBuilder()
-                    .layer(RenderState.PROJECTION_LAYERING)
+                    .layer(RenderState.field_239235_M_)
                     .transparency(TRANSLUCENT_TRANSPARENCY)
                     .texture(NO_TEXTURE)
                     .depthTest(DEPTH_ALWAYS)
@@ -53,7 +51,7 @@ public class ModRenderTypes extends RenderType {
     public static final RenderType BLOCK_HILIGHT_LINE = makeType("block_hilight_line",
             DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
             RenderType.State.getBuilder().line(THIN_LINE)
-                    .layer(RenderState.PROJECTION_LAYERING)
+                    .layer(RenderState.field_239235_M_)
                     .transparency(TRANSLUCENT_TRANSPARENCY)
                     .texture(NO_TEXTURE)
                     .depthTest(DEPTH_ALWAYS)

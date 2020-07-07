@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -19,10 +20,15 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.Collections;
 import java.util.List;
+
+import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 public class GuiModuleFluid extends GuiModule {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
@@ -63,26 +69,26 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
 
         // text entry field custom background - super has already bound the correct texture
-        this.blit(guiLeft + 146, guiTop + 20, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.blit(matrixStack, guiLeft + 146, guiTop + 20, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
 
-        RenderHelper.renderItemStack(minecraft, routerStack, guiLeft + 128, guiTop + 44, "");
-        RenderHelper.renderItemStack(minecraft, waterStack, guiLeft + 168, guiTop + 44, "");
+        RenderHelper.renderItemStack(matrixStack, minecraft, routerStack, guiLeft + 128, guiTop + 44, "");
+        RenderHelper.renderItemStack(matrixStack, minecraft, waterStack, guiLeft + 168, guiTop + 44, "");
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        super.drawGuiContainerForegroundLayer(par1, par2);
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.func_230451_b_(matrixStack, mouseX, mouseY);
 
         if (regulatorTextField.getVisible()) {
-            font.drawString("%", 179, 77, 0x404040);
+            font.drawString(matrixStack, "%", 179, 77, 0x404040);
         }
         if (feb.visible) {
             String s = I18n.format("guiText.label.fluidForceEmpty");
-            font.drawString(s, 165 - font.getStringWidth(s), 73, 0x202040);
+            font.drawString(matrixStack, s, 165 - font.getStringWidth(s), 73, 0x202040);
         }
     }
 
@@ -105,15 +111,15 @@ public class GuiModuleFluid extends GuiModule {
     private class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.fluidTransferTooltip");
-            tooltip1.add("");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.fluidTransferTooltip");
+            tooltip1.add(StringTextComponent.EMPTY.copyRaw());
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
-                tooltip1.add(I18n.format("guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
-                tooltip1.add("");
+                tooltip1.add(xlate("guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
+                tooltip1.add(StringTextComponent.EMPTY.copyRaw());
             });
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
@@ -123,12 +129,12 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     private class FluidDirectionButton extends TexturedCyclerButton<FluidDirection> {
-        private final List<List<String>> tooltips = Lists.newArrayList();
+        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
 
         FluidDirectionButton(int x, int y, FluidDirection initialVal) {
             super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
             for (FluidDirection dir : FluidDirection.values()) {
-                tooltips.add(Collections.singletonList(I18n.format("itemText.fluid.direction." + dir)));
+                tooltips.add(Collections.singletonList(xlate(dir.getTranslationKey())));
             }
         }
 
@@ -143,7 +149,7 @@ public class GuiModuleFluid extends GuiModule {
         }
 
         @Override
-        public java.util.List<String> getTooltip() {
+        public List<ITextComponent> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
     }
@@ -151,8 +157,8 @@ public class GuiModuleFluid extends GuiModule {
     private class ForceEmptyButton extends TexturedToggleButton {
         ForceEmptyButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.fluidForceEmpty.false");
-            MiscUtil.appendMultiline(tooltip2, "guiText.tooltip.fluidForceEmpty.true");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.fluidForceEmpty.false");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "guiText.tooltip.fluidForceEmpty.true");
         }
 
         @Override

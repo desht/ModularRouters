@@ -1,7 +1,7 @@
 # The mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[31,)" #mandatory (24 is current forge version)
+loaderVersion="[32,)" #mandatory (24 is current forge version)
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/desht/ModularRouters/issues"
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -31,12 +31,12 @@ Modular Routers is a highly flexible mod for moving items around the world in va
 [[dependencies.modularrouters]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[31.1.27,)" #mandatory
+    versionRange="[32.0.7,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.1]"
     ordering="NONE"
     side="BOTH"

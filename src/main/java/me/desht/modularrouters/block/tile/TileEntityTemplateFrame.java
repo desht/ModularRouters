@@ -68,8 +68,8 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
+    public void read(BlockState state, CompoundNBT compound) {
+        super.read(state, compound);
         camouflage = getCamoStateFromNBT(compound);
         extendedMimic = compound.getBoolean(NBT_MIMIC);
     }
@@ -91,8 +91,9 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        super.handleUpdateTag(state, tag);
+
         camouflage = getCamoStateFromNBT(tag);
         extendedMimic = tag.getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
@@ -137,11 +138,12 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     public void setCamouflage(ItemStack itemStack, Direction facing, Direction routerFacing) {
         if (itemStack.getItem() instanceof BlockItem) {
             camouflage = ((BlockItem) itemStack.getItem()).getBlock().getDefaultState();
-            if (camouflage.has(BlockStateProperties.AXIS)) {
+            // func_235901_b_ = has
+            if (camouflage.func_235901_b_(BlockStateProperties.AXIS)) {
                 camouflage = camouflage.with(BlockStateProperties.AXIS, facing.getAxis());
-            } else if (camouflage.has(BlockStateProperties.FACING)) {
+            } else if (camouflage.func_235901_b_(BlockStateProperties.FACING)) {
                 camouflage = camouflage.with(BlockStateProperties.FACING, facing);
-            } else if (camouflage.has(BlockStateProperties.HORIZONTAL_FACING)) {
+            } else if (camouflage.func_235901_b_(BlockStateProperties.HORIZONTAL_FACING)) {
                 camouflage = camouflage.with(BlockStateProperties.HORIZONTAL_FACING,
                         facing.getAxis() == Direction.Axis.Y ? routerFacing : facing);
             }

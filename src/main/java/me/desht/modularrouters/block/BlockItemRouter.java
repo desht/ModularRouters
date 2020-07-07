@@ -126,7 +126,7 @@ public class BlockItemRouter extends BlockCamo {
         if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
             tooltip.add(new TranslationTextComponent("itemText.misc.routerConfigured")
-                    .applyTextStyles(TextFormatting.GRAY, TextFormatting.ITALIC));
+                    .func_240701_a_(TextFormatting.GRAY, TextFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<ITextComponent> moduleText = new ArrayList<>();
                 ItemStackHandler modulesHandler = new ItemStackHandler(9);
@@ -135,14 +135,14 @@ public class BlockItemRouter extends BlockCamo {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
                         moduleText.add(new StringTextComponent("\u2022 ")
-                                .appendSibling(moduleStack.getDisplayName())
-                                .applyTextStyle(TextFormatting.AQUA)
+                                .func_230529_a_(moduleStack.getDisplayName())
+                                .func_240699_a_(TextFormatting.AQUA)
                         );
                     }
                 }
                 if (!moduleText.isEmpty()) {
                     tooltip.add(new TranslationTextComponent("itemText.misc.moduleCount",
-                            moduleText.size()).applyTextStyles(TextFormatting.YELLOW));
+                            moduleText.size()).func_240699_a_(TextFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
             }
@@ -156,13 +156,13 @@ public class BlockItemRouter extends BlockCamo {
                     if (!upgradeStack.isEmpty()) {
                         nUpgrades += upgradeStack.getCount();
                         upgradeText.add(new StringTextComponent("\u2022 " + upgradeStack.getCount() + " x ")
-                                .appendSibling(upgradeStack.getDisplayName())
-                                .applyTextStyle(TextFormatting.AQUA)
+                                .func_230529_a_(upgradeStack.getDisplayName())
+                                .func_240699_a_(TextFormatting.AQUA)
                         );
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(new TranslationTextComponent("itemText.misc.upgradeCount", nUpgrades).applyTextStyles(TextFormatting.YELLOW));
+                    tooltip.add(new TranslationTextComponent("itemText.misc.upgradeCount", nUpgrades).func_240699_a_(TextFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
@@ -170,10 +170,10 @@ public class BlockItemRouter extends BlockCamo {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
                     tooltip.add(new TranslationTextComponent("guiText.tooltip.redstone.label")
-                            .appendText(": ")
-                            .applyTextStyle(TextFormatting.YELLOW)
-                            .appendSibling(new TranslationTextComponent("guiText.tooltip.redstone." + rrb)
-                                    .applyTextStyle(TextFormatting.RED))
+                            .func_240702_b_(": ")
+                            .func_240699_a_(TextFormatting.YELLOW)
+                            .func_230529_a_(new TranslationTextComponent("guiText.tooltip.redstone." + rrb)
+                                    .func_240699_a_(TextFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
                 }
@@ -242,7 +242,7 @@ public class BlockItemRouter extends BlockCamo {
     }
 
     @Override
-    public float getExplosionResistance(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+    public float getExplosionResistance(BlockState state, IBlockReader world, BlockPos pos, Explosion explosion) {
         return TileEntityItemRouter.getRouterAt(world, pos)
                 .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) > 0 ? 20000f : BLAST_RESISTANCE)
                 .orElse(0f);

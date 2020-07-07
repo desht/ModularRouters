@@ -25,23 +25,23 @@ public class ActivatorModule extends ItemModule {
         super.addSettingsInformation(stack, list);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
-        list.add(MiscUtil.xlate("guiText.tooltip.activator.action").appendText(": ")
-                .applyTextStyle(TextFormatting.YELLOW)
-                .appendSibling(MiscUtil.xlate("itemText.activator.action." + cam.getActionType())
-                        .applyTextStyle(TextFormatting.AQUA)));
+        list.add(MiscUtil.xlate("guiText.tooltip.activator.action").func_240702_b_(": ")
+                .func_240699_a_(TextFormatting.YELLOW)
+                .func_230529_a_(MiscUtil.xlate("itemText.activator.action." + cam.getActionType())
+                        .func_240699_a_(TextFormatting.AQUA)));
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
-            list.add(MiscUtil.xlate("guiText.tooltip.activator.lookDirection").appendText(": ")
-                    .applyTextStyle(TextFormatting.YELLOW)
-                    .appendSibling(MiscUtil.xlate("itemText.activator.direction." + cam.getLookDirection())
-                            .applyTextStyle(TextFormatting.AQUA)));
+            list.add(MiscUtil.xlate("guiText.tooltip.activator.lookDirection").func_240702_b_(": ")
+                    .func_240699_a_(TextFormatting.YELLOW)
+                    .func_230529_a_(MiscUtil.xlate("itemText.activator.direction." + cam.getLookDirection())
+                            .func_240699_a_(TextFormatting.AQUA)));
         } else {
-            list.add(MiscUtil.xlate("guiText.tooltip.activator.entityMode").appendText(": ")
-                    .applyTextStyle(TextFormatting.YELLOW)
-                    .appendSibling(MiscUtil.xlate("itemText.activator.entityMode." + cam.getEntityMode())
-                            .applyTextStyle(TextFormatting.AQUA)));
+            list.add(MiscUtil.xlate("guiText.tooltip.activator.entityMode").func_240702_b_(": ")
+                    .func_240699_a_(TextFormatting.YELLOW)
+                    .func_230529_a_(MiscUtil.xlate("itemText.activator.entityMode." + cam.getEntityMode())
+                            .func_240699_a_(TextFormatting.AQUA)));
         }
         if (cam.isSneaking()) {
-            list.add(MiscUtil.xlate("guiText.tooltip.activator.sneak").applyTextStyle(TextFormatting.YELLOW));
+            list.add(MiscUtil.xlate("guiText.tooltip.activator.sneak").func_240699_a_(TextFormatting.YELLOW));
         }
     }
 

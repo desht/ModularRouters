@@ -22,6 +22,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -76,8 +77,8 @@ public abstract class TargetedModule extends ItemModule {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                ITextComponent msg = xlate("chatText.misc.targetSet").appendSibling(tgt.getTextComponent());
-                player.sendStatusMessage(msg.applyTextStyle(TextFormatting.YELLOW), true);
+                IFormattableTextComponent msg = xlate("chatText.misc.targetSet").func_230529_a_(tgt.getTextComponent());
+                player.sendStatusMessage(msg.func_240699_a_(TextFormatting.YELLOW), true);
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
             }
         }
@@ -87,22 +88,22 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote) {
             boolean removing = false;
             String invName = BlockUtil.getBlockName(world, pos);
-            GlobalPos gPos = GlobalPos.of(world.getDimension().getType(), pos);
+            GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos);
             ModuleTarget tgt = new ModuleTarget(gPos, face, invName);
             Set<ModuleTarget> targets = getTargets(stack, true);
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
                 player.sendStatusMessage(xlate("chatText.misc.targetRemoved", targets.size(), getMaxTargets())
-                        .appendSibling(tgt.getTextComponent()).applyTextStyle(TextFormatting.YELLOW), true);
+                        .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", targets.size(), getMaxTargets())
-                        .appendSibling(tgt.getTextComponent()).applyTextStyle(TextFormatting.YELLOW), true);
+                        .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
-                        .applyTextStyle(TextFormatting.RED), true);
+                        .func_240699_a_(TextFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
             }
@@ -134,14 +135,14 @@ public abstract class TargetedModule extends ItemModule {
         for (ModuleTarget target : targets) {
             if (target != null) {
                 ITextComponent msg = xlate("chatText.misc.target")
-                        .appendSibling(target.getTextComponent()).applyTextStyle(TextFormatting.YELLOW);
+                        .func_230529_a_(target.getTextComponent()).func_240699_a_(TextFormatting.YELLOW);
                 list.add(msg);
                 TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(xlate(val.translationKey()).applyTextStyle(val.getColor()));
+                        list.add(xlate(val.translationKey()).func_240699_a_(val.getColor()));
                     }
                 }
             }
@@ -152,8 +153,8 @@ public abstract class TargetedModule extends ItemModule {
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            world.playSound(null, player.getPosition(), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
-            player.sendStatusMessage(xlate("chatText.misc.targetCleared").applyTextStyle(TextFormatting.YELLOW), true);
+            world.playSound(null, new BlockPos(player.getPositionVec()), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
+            player.sendStatusMessage(xlate("chatText.misc.targetCleared").func_240699_a_(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
@@ -175,8 +176,7 @@ public abstract class TargetedModule extends ItemModule {
         if (pos == null) {
             compound.remove(NBT_TARGET);
         } else {
-            GlobalPos gPos = GlobalPos.of(world.getDimension().getType(), pos);
-            ModuleTarget mt = new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
+            ModuleTarget mt = new ModuleTarget(MiscUtil.makeGlobalPos(world, pos), face, BlockUtil.getBlockName(world, pos));
             compound.put(NBT_TARGET, mt.toNBT());
         }
         stack.getTag().put(ModularRouters.MODID, compound);
@@ -277,17 +277,18 @@ public abstract class TargetedModule extends ItemModule {
         }
         lastSwing.put(player.getUniqueID(), now);
 
-        ModuleTarget src = new ModuleTarget(GlobalPos.of(world.getDimension().getType(), player.getPosition()));
+        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(world, new BlockPos(player.getPositionVec())));
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
                 getTargets(stack, true) :
                 Sets.newHashSet(getTarget(stack, true));
         for (ModuleTarget target : targets) {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
-                ITextComponent msg = xlate("chatText.misc.target").appendSibling(target.getTextComponent());
-                msg.appendText(" ");
-                msg.appendSibling(xlate(v.translationKey()).applyTextStyle(v.getColor()));
-                msg.applyTextStyle(TextFormatting.YELLOW);
+                IFormattableTextComponent msg = xlate("chatText.misc.target")
+                        .func_230529_a_(target.getTextComponent())
+                        .func_240702_b_(" ")
+                        .func_230529_a_(xlate(v.translationKey()).func_240699_a_(v.getColor()))
+                        .func_240699_a_(TextFormatting.YELLOW);
                 player.sendStatusMessage(msg, false);
             }
         }
@@ -304,7 +305,7 @@ public abstract class TargetedModule extends ItemModule {
      * @return the validation result
      */
     private TargetValidation validateTarget(ItemStack moduleStack, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
-        if (isRangeLimited() && (src.gPos.getDimension() != dst.gPos.getDimension() || src.gPos.getPos().distanceSq(dst.gPos.getPos()) > maxDistanceSq(moduleStack))) {
+        if (isRangeLimited() && (!src.isSameWorld(dst) || src.gPos.getPos().distanceSq(dst.gPos.getPos()) > maxDistanceSq(moduleStack))) {
             return TargetValidation.OUT_OF_RANGE;
         }
 

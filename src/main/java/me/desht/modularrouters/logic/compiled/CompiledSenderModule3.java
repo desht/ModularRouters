@@ -9,7 +9,7 @@ import me.desht.modularrouters.network.PacketHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class CompiledSenderModule3 extends CompiledSenderModule2 {
@@ -27,9 +27,9 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vec3d vec = new Vec3d(router.getPos());
+            Vector3d vec = Vector3d.func_237489_a_(router.getPos());
             Direction facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().dimension.getType());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().func_234923_W_());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router.getPos(), router.getPos().offset(facing, 2), stack, PARTICLE_COLOR.getRGB(), router.getTickRate()).withFadeout());
         }

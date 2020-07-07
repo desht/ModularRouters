@@ -28,10 +28,18 @@ public class CompiledPlayerModule extends CompiledModule {
         EXTRACT, INSERT;
 
         public String getSymbol() { return this == INSERT ? "⟹" : "⟸"; }
+
+        public String getTranslationKey() {
+            return "guiText.label.playerOp." + toString();
+        }
     }
 
     public enum Section {
-        MAIN, MAIN_NO_HOTBAR, ARMOR, OFFHAND, ENDER
+        MAIN, MAIN_NO_HOTBAR, ARMOR, OFFHAND, ENDER;
+
+        public String getTranslationKey() {
+            return "guiText.label.playerSect." + toString();
+        }
     }
 
     private final Operation operation;

@@ -1,27 +1,50 @@
 package me.desht.modularrouters.client;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
+import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.filter.GuiBulkItemFilter;
 import me.desht.modularrouters.client.gui.filter.GuiModFilter;
 import me.desht.modularrouters.client.gui.module.*;
+import me.desht.modularrouters.client.model.ModelBakeEventHandler;
+import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
+import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModContainerTypes;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 
+@Mod.EventBusSubscriber(modid = ModularRouters.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
     public static KeyBinding keybindConfigure;
     public static KeyBinding keybindModuleInfo;
 
-    public static void init() {
-        setupRenderLayers();
-        registerScreenFactories();
-        registerKeyBindings();
+    public static void initEarly() {
+        FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
+        MinecraftForge.EVENT_BUS.register(ModuleTargetRenderer.class);
+        MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
+    }
+
+    @SubscribeEvent
+    public static void init(FMLClientSetupEvent event) {
+        DeferredWorkQueue.runLater(() -> {
+            setupRenderLayers();
+            registerScreenFactories();
+            registerKeyBindings();
+        });
     }
 
     private static void registerKeyBindings() {

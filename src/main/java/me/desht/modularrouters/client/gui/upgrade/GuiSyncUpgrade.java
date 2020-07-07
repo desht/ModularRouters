@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.upgrade;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 public class GuiSyncUpgrade extends GuiScreenBase {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/sync_upgrade.png");
@@ -63,15 +65,15 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        renderBackground();
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(matrixStack);
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
-        blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.drawString(title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
-        super.render(mouseX, mouseY, partialTicks);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -87,8 +89,8 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height) {
             super(x, y, width, height, clockStack, true, p -> {});
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.tunedValue", 0, MRConfig.Common.Router.baseTickRate - 1);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE,"guiText.tooltip.tunedValue", 0, MRConfig.Common.Router.baseTickRate - 1);
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

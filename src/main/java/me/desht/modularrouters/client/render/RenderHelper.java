@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -10,7 +11,7 @@ import org.lwjgl.opengl.GL13;
  * With thanks to McJty's TheOneProbe render code!
  */
 public class RenderHelper {
-    public static void renderItemStack(Minecraft mc, ItemStack stack, int x, int y, String txt) {
+    public static void renderItemStack(MatrixStack matrixStack, Minecraft mc, ItemStack stack, int x, int y, String txt) {
         ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
         RenderSystem.color3f(1.0F, 1.0F, 1.0F);
 

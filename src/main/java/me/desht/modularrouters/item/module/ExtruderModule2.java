@@ -19,6 +19,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
+import static me.desht.modularrouters.util.MiscUtil.asFormattable;
+
 public class ExtruderModule2 extends ItemModule implements IRangedModule {
     public ExtruderModule2() {
         super(ModItems.defaultProps());
@@ -33,20 +35,20 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
 
-        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).appendSibling(new TranslationTextComponent("itemText.extruder2.template")));
+        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).func_230529_a_(new TranslationTextComponent("itemText.extruder2.template")));
         TemplateHandler handler = new TemplateHandler(itemstack, null);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);
             if (!blockStack.isEmpty()) {
-                list.add(new StringTextComponent(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x ").appendSibling(blockStack.getDisplayName()));
+                list.add(new StringTextComponent(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x ").func_230529_a_(blockStack.getDisplayName()));
             }
         }
         if (list.size() == size) {
             ITextComponent tc = list.get(size - 1);
-            list.set(list.size() - 1,
-                    tc.appendSibling(new StringTextComponent(" " + TextFormatting.AQUA + TextFormatting.ITALIC))
-                    .appendSibling(new TranslationTextComponent("itemText.misc.noItems"))
+            list.set(list.size() - 1, asFormattable(tc)
+                    .func_230529_a_(new StringTextComponent(" " + TextFormatting.AQUA + TextFormatting.ITALIC))
+                    .func_230529_a_(new TranslationTextComponent("itemText.misc.noItems"))
             );
 
         }

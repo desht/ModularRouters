@@ -10,6 +10,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -79,7 +80,7 @@ public class ContainerItemRouter extends ContainerMRBase {
     @Override
     public boolean canInteractWith(PlayerEntity player) {
         return router.getWorld().getTileEntity(router.getPos()) == router
-                && router.getDistanceSq(player.getPosX(), player.getPosY(), player.getPosZ()) <= 64;
+                && Vector3d.func_237489_a_(router.getPos()).squareDistanceTo(player.getPositionVec()) <= 64;
     }
 
     @Override

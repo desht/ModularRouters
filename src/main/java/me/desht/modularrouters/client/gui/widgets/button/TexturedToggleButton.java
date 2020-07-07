@@ -1,12 +1,14 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TexturedToggleButton extends TexturedButton implements IToggleButton {
-    protected final List<String> tooltip2 = new ArrayList<>();
+    protected final List<ITextComponent> tooltip2 = new ArrayList<>();
     private boolean toggled;
 
     public TexturedToggleButton(int x, int y, int width, int height, boolean toggled, ISendToServer dataSyncer) {
@@ -30,7 +32,7 @@ public abstract class TexturedToggleButton extends TexturedButton implements ITo
     }
 
     @Override
-    public List<String> getTooltip() {
+    public List<ITextComponent> getTooltip() {
         return toggled ? tooltip2 : super.getTooltip();
     }
 }

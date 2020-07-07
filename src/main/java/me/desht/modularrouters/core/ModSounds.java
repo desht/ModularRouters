@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModSounds {
-    public static final DeferredRegister<SoundEvent> SOUNDS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, ModularRouters.MODID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, ModularRouters.MODID);
 
     public static final RegistryObject<SoundEvent> ERROR = register("error");
     public static final RegistryObject<SoundEvent> SUCCESS = register("success");

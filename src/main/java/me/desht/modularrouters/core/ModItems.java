@@ -19,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.function.Supplier;
 
 public class ModItems {
-    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, ModularRouters.MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ModularRouters.MODID);
 
     public static final RegistryObject<Item> BLANK_MODULE = register("blank_module");
     public static final RegistryObject<Item> BLANK_UPGRADE = register("blank_upgrade");

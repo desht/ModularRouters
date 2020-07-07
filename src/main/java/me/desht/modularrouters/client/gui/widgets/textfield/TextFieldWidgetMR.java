@@ -2,13 +2,15 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.util.text.StringTextComponent;
 
 public class TextFieldWidgetMR extends TextFieldWidget {
     private final TextFieldManager manager;
     private final int ordinal;  // order in which this field appears in the textfield manager
 
-    public TextFieldWidgetMR(TextFieldManager manager, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
-        super(fontrendererObj, x, y, par5Width, par6Height, "");
+    public TextFieldWidgetMR(TextFieldManager manager, FontRenderer fontrendererObj, int x, int y, int width, int height) {
+        super(fontrendererObj, x, y, width, height, StringTextComponent.EMPTY);
+
         this.manager = manager;
         this.ordinal = manager.addTextField(this);
     }

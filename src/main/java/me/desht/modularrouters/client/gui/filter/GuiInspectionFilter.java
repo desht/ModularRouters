@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.base.Joiner;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
@@ -17,7 +18,6 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -25,6 +25,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 public class GuiInspectionFilter extends GuiFilterScreen {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
@@ -57,19 +59,19 @@ public class GuiInspectionFilter extends GuiFilterScreen {
             addButton(new BackButton(xPos - 12, yPos, button -> closeGUI()));
         }
 
-        addButton(new Button(xPos + 8, yPos + 22, 90, 20, I18n.format("guiText.label.inspectionSubject." + currentSubject), button -> {
+        addButton(new Button(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
             currentSubject = currentSubject.cycle(Screen.hasShiftDown() ? -1 : 1);
-            button.setMessage(I18n.format("guiText.label.inspectionSubject." + currentSubject));
+            button.setMessage(xlate(currentSubject.getTranslationKey()));
         }));
 
-        addButton(new Button(xPos + 95, yPos + 22, 20, 20, I18n.format("guiText.label.inspectionOp." + currentOp), button -> {
+        addButton(new Button(xPos + 95, yPos + 22, 20, 20, xlate(currentOp.getTranslationKey()), button -> {
             currentOp = currentOp.cycle(Screen.hasShiftDown() ? -1 : 1);
-            button.setMessage(I18n.format("guiText.label.inspectionOp." + currentOp));
+            button.setMessage(xlate(currentOp.getTranslationKey()));
         }));
 
         addButton(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
 
-        matchButton = new Button(xPos + 8, yPos + 167, 60, 20, I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
+        matchButton = new Button(xPos + 8, yPos + 167, 60, 20, xlate("guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
             CompoundNBT ext = new CompoundNBT();
             ext.putBoolean("MatchAll", !comparisonList.isMatchAll());
             PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ANY_ALL_FLAG, locator, ext));
@@ -111,27 +113,27 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        renderBackground();
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(matrixStack);
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
-        blit(xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.drawString(title, xPos + GUI_WIDTH / 2f - this.font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
-            font.drawString(comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
+            font.drawString(matrixStack, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
-        super.render(mouseX, mouseY, partialTicks);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
 
     }
 
     @Override
     public void resync(ItemStack stack) {
         comparisonList = InspectionFilter.getComparisonList(stack);
-        matchButton.setMessage(I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll()));
+        matchButton.setMessage(xlate("guiText.label.matchAll." + comparisonList.isMatchAll()));
         updateDeleteButtonVisibility();
     }
 }

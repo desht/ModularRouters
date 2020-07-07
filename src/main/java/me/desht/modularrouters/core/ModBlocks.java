@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ModBlocks {
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, ModularRouters.MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModularRouters.MODID);
     public static final DeferredRegister<Item> ITEMS = ModItems.ITEMS;
 
     public static final RegistryObject<BlockItemRouter> ITEM_ROUTER = register("item_router", BlockItemRouter::new);

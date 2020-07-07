@@ -7,11 +7,11 @@ import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -48,7 +48,7 @@ public class ModuleTargetRenderer {
 
             matrixStack.push();
 
-            Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+            Vector3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
             matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
             render(buffer, matrixStack, compiledPos);
             matrixStack.pop();
@@ -114,7 +114,7 @@ public class ModuleTargetRenderer {
             faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.pos(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
 
-            RenderSystem.disableDepthTest();
+//            RenderSystem.disableDepthTest();
             buffer.finish(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             IVertexBuilder lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
@@ -149,7 +149,7 @@ public class ModuleTargetRenderer {
             lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
             lineBuilder.pos(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
 
-            RenderSystem.disableDepthTest();
+//            RenderSystem.disableDepthTest();
             buffer.finish(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
             matrixStack.pop();

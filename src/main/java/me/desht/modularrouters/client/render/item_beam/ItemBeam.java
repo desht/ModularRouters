@@ -6,7 +6,9 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.config.MRConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
@@ -14,6 +16,8 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
 public class ItemBeam {
@@ -91,7 +95,7 @@ public class ItemBeam {
         builder.pos(positionMatrix, endPos.getX(), endPos.getY(), endPos.getZ())
                 .color(colors[0], colors[1], colors[2], alpha)
                 .endVertex();
-        RenderSystem.disableDepthTest();
+//        RenderSystem.disableDepthTest();
         buffer.finish(ModRenderTypes.BEAM_LINE_THICK);
 
         IVertexBuilder builder2 = buffer.getBuffer(ModRenderTypes.BEAM_LINE_THIN);
@@ -101,7 +105,7 @@ public class ItemBeam {
         builder2.pos(positionMatrix, endPos.getX(), endPos.getY(), endPos.getZ())
                 .color(colors[0], colors[1], colors[2], alpha)
                 .endVertex();
-        RenderSystem.disableDepthTest();
+//        RenderSystem.disableDepthTest();
         buffer.finish(ModRenderTypes.BEAM_LINE_THIN);
     }
 

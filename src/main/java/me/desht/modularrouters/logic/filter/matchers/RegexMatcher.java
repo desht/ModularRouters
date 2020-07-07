@@ -30,8 +30,7 @@ public class RegexMatcher implements IItemMatcher {
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (stack.isEmpty()) return false;
-        String name = TextFormatting.getTextWithoutFormattingCodes(stack.getDisplayName().getFormattedText());
-        if (name == null) name = stack.getTranslationKey();
+        String name = stack.getItem().getRegistryName().getPath();
         for (Pattern pat : patterns) {
             if (pat.matcher(name).find()) {
                 return true;

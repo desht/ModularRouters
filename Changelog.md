@@ -4,6 +4,10 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.16.1
+
+*porting underway!*
+
 ## Minecraft 1.15.2
 
 ### 6.1.1 (unreleased)

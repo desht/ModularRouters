@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.Rect;
 import me.desht.modularrouters.util.MiscUtil;
@@ -20,11 +20,11 @@ public class MouseOverHelp {
     private static final int TEXT_MARGIN = 8;
 
     private final List<HelpRegion> helpRegions = new ArrayList<>();
-    private final ContainerScreen screen;
+    private final ContainerScreen<?> screen;
 
     private boolean active = false;
 
-    public MouseOverHelp(ContainerScreen screen) {
+    public MouseOverHelp(ContainerScreen<?> screen) {
         this.screen = screen;
     }
 
@@ -40,16 +40,16 @@ public class MouseOverHelp {
         addHelpRegion(x1, y1, x2, y2, key, HelpRegion.YES);
     }
 
-    public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<ContainerScreen> showPredicate) {
+    public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<ContainerScreen<?>> showPredicate) {
         helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key)), showPredicate));
     }
 
-    private void onMouseOver(int mouseX, int mouseY) {
+    private void onMouseOver(MatrixStack matrixStack, int mouseX, int mouseY) {
         if (active) {
             HelpRegion region = getRegionAt(mouseX, mouseY);
             if (region != null) {
-                showPopupBox(screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
-                showPopupBox(screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
+                showPopupBox(matrixStack, screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
+                showPopupBox(matrixStack, screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
             }
         }
     }
@@ -63,7 +63,7 @@ public class MouseOverHelp {
         return null;
     }
 
-    private static void showPopupBox(ContainerScreen screen, FontRenderer fontRenderer, Rect rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+    private static void showPopupBox(MatrixStack matrixStack, ContainerScreen<?> screen, FontRenderer fontRenderer, Rect rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
         int boxWidth, boxHeight;
 
         Rect rect2 = new Rect(rect);
@@ -85,34 +85,35 @@ public class MouseOverHelp {
         int x2 = x1 + rect2.width;
         int y2 = y1 + rect2.height;
 
-        GlStateManager.translatef(0f, 0f, 300f);
-        AbstractGui.fill(x1, y1, x2, y2, bgColor);
-        AbstractGui.fill(x1, y1, x2, y1 + 1, borderColor);
-        AbstractGui.fill(x1, y2, x2, y2 + 1, borderColor);
-        AbstractGui.fill(x1, y1, x1 + 1, y2, borderColor);
-        AbstractGui.fill(x2, y1, x2 + 1, y2 + 1, borderColor);
+        matrixStack.push();
+        matrixStack.translate(0, 0, 300);
+        AbstractGui.fill(matrixStack, x1, y1, x2, y2, bgColor);
+        AbstractGui.fill(matrixStack, x1, y1, x2, y1 + 1, borderColor);
+        AbstractGui.fill(matrixStack, x1, y2, x2, y2 + 1, borderColor);
+        AbstractGui.fill(matrixStack, x1, y1, x1 + 1, y2, borderColor);
+        AbstractGui.fill(matrixStack, x2, y1, x2 + 1, y2 + 1, borderColor);
 
         if (helpText != null) {
             for (String s : helpText) {
-                fontRenderer.drawString(s, x1 + TEXT_MARGIN / 2, y1 + TEXT_MARGIN / 2, textColor);
+                fontRenderer.drawString(matrixStack, s, x1 + TEXT_MARGIN / 2f, y1 + TEXT_MARGIN / 2f, textColor);
                 y1 += fontRenderer.FONT_HEIGHT;
             }
         }
 
-        GlStateManager.translatef(0f, 0f, -300f);
+        matrixStack.pop();
     }
 
     public static class HelpRegion {
         final Rect extent;
         final List<String> text;
-        final Predicate<ContainerScreen> showPredicate;
-        static final Predicate<ContainerScreen> YES = guiContainer -> true;
+        final Predicate<ContainerScreen<?>> showPredicate;
+        static final Predicate<ContainerScreen<?>> YES = guiContainer -> true;
 
         HelpRegion(int x1, int y1, int x2, int y2, List<String> text) {
             this(x1, y1, x2, y2, text, YES);
         }
 
-        HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<ContainerScreen> showPredicate) {
+        HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<ContainerScreen<?>> showPredicate) {
             this.extent = new Rect(x1, y1, x2 - x1, y2 - y1);
             this.text = text;
             this.showPredicate = showPredicate;
@@ -124,7 +125,7 @@ public class MouseOverHelp {
         // using an event ensures this is done after all subclass drawing is done
         // otherwise help region highlights can obscure text
         if (event.getGuiContainer() instanceof IMouseOverHelpProvider) {
-            ((IMouseOverHelpProvider) event.getGuiContainer()).getMouseOverHelp().onMouseOver(event.getMouseX(), event.getMouseY());
+            ((IMouseOverHelpProvider) event.getGuiContainer()).getMouseOverHelp().onMouseOver(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
         }
     }
 
@@ -134,8 +135,8 @@ public class MouseOverHelp {
         public Button(int x, int y, MouseOverHelp mouseOverHelp) {
             super(x, y, 16, 16, false, null);
             this.mouseOverHelp = mouseOverHelp;
-            tooltip1.addAll(MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp.false")));
-            tooltip2.addAll(MiscUtil.wrapString(I18n.format("guiText.tooltip.mouseOverHelp.true")));
+            tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("guiText.tooltip.mouseOverHelp.false")));
+            tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("guiText.tooltip.mouseOverHelp.true")));
         }
 
         @Override

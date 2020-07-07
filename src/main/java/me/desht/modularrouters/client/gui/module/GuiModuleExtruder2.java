@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.InfoButton;
 import me.desht.modularrouters.container.ContainerModule;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,8 +21,8 @@ public class GuiModuleExtruder2 extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        this.blit(guiLeft + 128, guiTop + 16, 202, 52, 54, 54);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
+        this.blit(matrixStack, guiLeft + 128, guiTop + 16, 202, 52, 54, 54);
     }
 }

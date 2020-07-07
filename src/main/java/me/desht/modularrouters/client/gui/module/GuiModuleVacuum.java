@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.container.ContainerModule;
@@ -13,7 +14,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.Arrays;
@@ -50,21 +53,21 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        super.drawGuiContainerForegroundLayer(par1, par2);
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.func_230451_b_(matrixStack, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            font.drawString(I18n.format("guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
+            font.drawString(matrixStack, I18n.format("guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                font.drawString(I18n.format("guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                font.drawString(matrixStack, I18n.format("guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            this.blit(guiLeft + 168, guiTop + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
+            this.blit(matrixStack,guiLeft + 168, guiTop + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
         }
     }
 
@@ -77,15 +80,15 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     private class XPTypeButton extends ItemStackCyclerButton<XPCollectionType> {
-        private final List<List<String>> tips = Lists.newArrayList();
+        private final List<List<ITextComponent>> tips = Lists.newArrayList();
 
         XPTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, XPCollectionType initialVal) {
             super(x, y, width, height, flat, stacks, initialVal, GuiModuleVacuum.this);
 
             for (XPCollectionType type : XPCollectionType.values()) {
-                String modName = ModNameCache.getModName(type.getModId());
-                ITextComponent title = type.getDisplayName();
-                tips.add(ImmutableList.of(title.getFormattedText(), TextFormatting.BLUE + "" + TextFormatting.ITALIC + modName));
+                StringTextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId()));
+                IFormattableTextComponent title = type.getDisplayName().copyRaw();
+                tips.add(ImmutableList.of(title, modName.func_240701_a_(TextFormatting.BLUE, TextFormatting.ITALIC)));
             }
         }
 
@@ -97,7 +100,7 @@ public class GuiModuleVacuum extends GuiModule {
         }
 
         @Override
-        public List<String> getTooltip() {
+        public List<ITextComponent> getTooltip() {
             return tips.get(getState().ordinal());
         }
 

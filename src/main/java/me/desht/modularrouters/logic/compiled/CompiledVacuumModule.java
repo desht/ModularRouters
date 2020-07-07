@@ -20,6 +20,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -196,7 +197,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     ItemStack excess = router.insertBuffer(stack);
                     xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
                     if (!excess.isEmpty()) {
-                        InventoryUtils.dropItems(router.getWorld(), router.getPos(), excess);
+                        InventoryUtils.dropItems(router.getWorld(), Vector3d.func_237489_a_(router.getPos()), excess);
                     }
                 }
             } else {
@@ -245,7 +246,7 @@ public class CompiledVacuumModule extends CompiledModule {
         ItemModule.RelativeDirection dir = getDirection();
         int offset = dir == ItemModule.RelativeDirection.NONE ? 0 : getRange() + 1;
         Direction facing = router.getAbsoluteFacing(dir);
-        GlobalPos gPos = GlobalPos.of(router.getWorld().getDimension().getType(), router.getPos().offset(facing, offset));
+        GlobalPos gPos = GlobalPos.func_239648_a_(router.getWorld().func_234923_W_(), router.getPos().offset(facing, offset));
         return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 

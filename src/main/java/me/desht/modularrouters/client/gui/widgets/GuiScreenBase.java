@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.screen.Screen;
@@ -25,12 +26,12 @@ public abstract class GuiScreenBase extends Screen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
-        if (textFieldManager != null) textFieldManager.drawTextFields(mouseX, mouseY, partialTicks);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        if (textFieldManager != null) textFieldManager.drawTextFields(matrixStack, mouseX, mouseY, partialTicks);
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(mouseX, mouseY) && button instanceof ITooltipButton)
-                .forEach(button -> renderTooltip(((ITooltipButton) button).getTooltip(), mouseX, mouseY, font));
+                .forEach(button -> renderTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY, font));
     }
 
     @Override

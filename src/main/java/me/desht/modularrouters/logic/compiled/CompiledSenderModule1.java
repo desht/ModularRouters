@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
@@ -58,8 +58,8 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vec3d vec1 = new Vec3d(router.getPos());
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().dimension.getType());
+            Vector3d vec1 = Vector3d.func_237489_a_(router.getPos());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().func_234923_W_());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router.getPos(), targetPos, stack, getBeamColor(), router.getTickRate()));
         }
@@ -79,12 +79,13 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     @Override
     public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
-        BlockPos.Mutable pos = new BlockPos.Mutable(getTarget().gPos.getPos());
+        BlockPos p0 = getTarget().gPos.getPos();
+        BlockPos.Mutable pos = new BlockPos.Mutable(p0.getX(), p0.getY(), p0.getZ());
         Direction face = getTarget().face;
         World world = router.getWorld();
         for (int i = 1; i <= getRange(); i++) {
             if (world.getTileEntity(pos) != null) {
-                GlobalPos gPos = GlobalPos.of(world.getDimension().getType(), pos.toImmutable());
+                GlobalPos gPos = GlobalPos.func_239648_a_(world.func_234923_W_(), pos.toImmutable());
                 return new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
                 return null;

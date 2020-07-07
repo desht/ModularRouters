@@ -54,7 +54,7 @@ public class MiscEventHandler {
                     ItemStack s = h.getStackInSlot(i);
                     if (!s.isEmpty()) {
                         if (!event.getPlayer().addItemStackToInventory(s)) {
-                            InventoryUtils.dropItems(event.getPlayer().getEntityWorld(), event.getPlayer().getPosition(), s);
+                            InventoryUtils.dropItems(event.getPlayer().getEntityWorld(), event.getPlayer().getPositionVec(), s);
                         }
                     }
                 }

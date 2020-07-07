@@ -3,8 +3,13 @@ package me.desht.modularrouters.client.gui.widgets.button;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Collections;
+import java.util.List;
 
 public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstoneBehaviour> {
     public RedstoneBehaviourButton(int x, int y, int width, int height, RouterRedstoneBehaviour initialVal, ISendToServer dataSyncer) {
@@ -22,7 +27,12 @@ public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstone
     }
 
     @Override
-    public java.util.List<String> getTooltip() {
-        return Collections.singletonList(I18n.format("guiText.tooltip.redstone.label") + ": " + I18n.format("guiText.tooltip.redstone." + getState().name()));
+    public List<ITextComponent> getTooltip() {
+        return Collections.singletonList(
+                // TODO 1.16 func_230529_a_ = appendSibling
+                new TranslationTextComponent("guiText.tooltip.redstone.label")
+                        .func_230529_a_(new StringTextComponent(": "))
+                        .func_230529_a_(new TranslationTextComponent(getState().getTranslationKey()))
+        );
     }
 }

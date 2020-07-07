@@ -28,16 +28,19 @@ public abstract class ItemBase extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         if (world == null) return;
 
+        ITextComponent text = ClientSetup.keybindModuleInfo.func_238171_j_();
+
         if (ClientSetup.keybindModuleInfo.isKeyDown()) {
             addUsageInformation(stack, list);
         } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             if (ClientUtil.thisScreenPassesEvents()) {
-                list.add(new TranslationTextComponent("itemText.misc.holdKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
+                // TODO 1.16 func_240699_a_() = applyTextStyle()
+                list.add(new TranslationTextComponent("itemText.misc.holdKey", text.getString()).func_240699_a_(TextFormatting.GRAY));
             }
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
             if (ClientUtil.thisScreenPassesEvents()) {
-                list.add(new TranslationTextComponent("itemText.misc.holdShiftKey", ClientSetup.keybindModuleInfo.getLocalizedName().toUpperCase()).applyTextStyles(TextFormatting.GRAY));
+                list.add(new TranslationTextComponent("itemText.misc.holdShiftKey", text.getString()).func_240699_a_(TextFormatting.GRAY));
             }
         }
     }

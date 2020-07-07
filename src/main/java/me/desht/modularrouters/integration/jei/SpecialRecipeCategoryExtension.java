@@ -8,15 +8,17 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICustomCraftingC
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static me.desht.modularrouters.util.MiscUtil.asFormattable;
+
 public class SpecialRecipeCategoryExtension implements ICustomCraftingCategoryExtension {
-    private final String name;
-    private final List<String> description;
-    @javax.annotation.Nonnull
+    private final ITextComponent name;
+    private final List<ITextComponent> description;
     private final SpecialRecipe recipe;
     private final boolean tooltipExists;
 
@@ -24,8 +26,8 @@ public class SpecialRecipeCategoryExtension implements ICustomCraftingCategoryEx
         this.recipe = recipe;
         String path = recipe.getId().getPath();
         tooltipExists = I18n.hasKey("jei.recipe." + path + ".name");
-        this.name = I18n.format("jei.recipe." + path + ".name");
-        this.description = MiscUtil.wrapString("jei.recipe." + path + ".description");
+        this.name = MiscUtil.xlate("jei.recipe." + path + ".name");
+        this.description = MiscUtil.wrapStringAsTextComponent("jei.recipe." + path + ".description");
     }
 
     @Override
@@ -45,10 +47,8 @@ public class SpecialRecipeCategoryExtension implements ICustomCraftingCategoryEx
         if (tooltipExists) {
             layout.getItemStacks().addTooltipCallback((index, input, stack, tooltip) -> {
                 if (index == 0 && !input) {
-                    tooltip.add(TextFormatting.GREEN + TextFormatting.BOLD.toString() + name);
-                    for (String d : description) {
-                        tooltip.add(TextFormatting.GREEN + d);
-                    }
+                    tooltip.add(asFormattable(name).func_240701_a_(TextFormatting.GREEN, TextFormatting.BOLD));
+                    description.stream().map(d -> asFormattable(d).func_240699_a_(TextFormatting.GREEN)).forEach(tooltip::add);
                 }
             });
         }

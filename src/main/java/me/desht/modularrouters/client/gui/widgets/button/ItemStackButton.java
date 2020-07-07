@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.client.render.RenderHelper;
@@ -8,7 +9,7 @@ import net.minecraft.item.ItemStack;
 
 public class ItemStackButton extends TexturedButton {
     private final ItemStack renderStack;
-    private boolean flat;
+    private final boolean flat;
 
     public ItemStackButton(int x, int y, int width, int height, ItemStack renderStack, boolean flat, IPressable pressable) {
         super(x, y, width, height, pressable);
@@ -21,22 +22,22 @@ public class ItemStackButton extends TexturedButton {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float p3) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             Minecraft mc = Minecraft.getInstance();
             mc.getTextureManager().bindTexture(TEXTURE);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+//            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getYImage(this.isHovered);
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             if (!flat) {
-                this.blit(this.x, this.y, i * 16, 0, this.width, this.height);
+                this.blit(matrixStack, this.x, this.y, i * 16, 0, this.width, this.height);
             }
             int x = this.x + (width - 18) / 2;
             int y = this.y + (height - 18) / 2;
-            RenderHelper.renderItemStack(mc, getRenderStack(), x, y, "");
+            RenderHelper.renderItemStack(matrixStack, mc, getRenderStack(), x, y, "");
         }
     }
 

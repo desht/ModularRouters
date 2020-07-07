@@ -11,7 +11,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModContainerTypes {
-    public static final DeferredRegister<ContainerType<?>> CONTAINERS = new DeferredRegister<>(ForgeRegistries.CONTAINERS, ModularRouters.MODID);
+    public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, ModularRouters.MODID);
 
     public static final RegistryObject<ContainerType<ContainerItemRouter>> CONTAINER_ITEM_ROUTER
             = register("item_router", ContainerItemRouter::new);

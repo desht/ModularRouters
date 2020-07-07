@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -20,6 +21,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
@@ -61,26 +63,28 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         addButton(reb = new RouterEcoButton(this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
     }
 
+    // TODO 1.16 drawGuiContainerForegroundLayer
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
         String title = I18n.format("block.modularrouters.item_router");
-        font.drawString(title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, 0xFF404040);
-        font.drawString(I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.drawString(I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.drawString(I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
-        font.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0xFF404040);
+        font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0xFF404040);
     }
 
+    // TODO 1.16 drawGuiContainerBackgroundLayer
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i1) {
-        minecraft.getTextureManager().bindTexture(textureLocation);
+    protected void func_230450_a_(MatrixStack matrixStack, float v, int i, int i1) {
+        getMinecraft().getTextureManager().bindTexture(textureLocation);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-         return ClientSetup.keybindConfigure.getKey().getKeyCode() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
+        return ClientSetup.keybindConfigure.getKey().getKeyCode() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
@@ -121,9 +125,12 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         }
 
         @Override
-        public List<String> getTooltip() {
-            return MiscUtil.wrapString(I18n.format("guiText.tooltip.eco." + isToggled(),
-                    MRConfig.Common.Router.ecoTimeout / 20.f, MRConfig.Common.Router.lowPowerTickRate / 20.f));
+        public List<ITextComponent> getTooltip() {
+            return MiscUtil.wrapStringAsTextComponent(
+                    I18n.format("guiText.tooltip.eco." + isToggled(),
+                            MRConfig.Common.Router.ecoTimeout / 20.f,
+                            MRConfig.Common.Router.lowPowerTickRate / 20.f)
+            );
         }
     }
 }

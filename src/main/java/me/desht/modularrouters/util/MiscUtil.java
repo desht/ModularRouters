@@ -5,42 +5,41 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.*;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class MiscUtil {
 
     private static final int WRAP_LENGTH = 45;
 
-    public static void appendMultiline(List<String> result, String key, Object... args) {
-        ITextComponent raw = xlate(key, args);
-        int n = 0;
-        for (String s : raw.getString().split("\\\\n")) {
-            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
-                result.add((n++ > 0 ? "\u00a77" : "") + s1);
-            }
-        }
-    }
+//    public static void appendMultiline(List<String> result, String key, Object... args) {
+//        ITextComponent raw = xlate(key, args);
+//        int n = 0;
+//        for (String s : raw.getString().split("\\\\n")) {
+//            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
+//                result.add((n++ > 0 ? "\u00a77" : "") + s1);
+//            }
+//        }
+//    }
 
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
-        for (String s : I18n.format(key, args).split("\\\\n")) {
-            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
-                ITextComponent textComponent = new StringTextComponent(s1);
-                result.add(textComponent.applyTextStyle(formatting));
+        for (String s : I18n.format(key, args).split(Pattern.quote("${br}"))) {
+            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\n")) {
+                result.add(new StringTextComponent(s1).func_240699_a_(formatting));
             }
         }
     }
@@ -56,6 +55,14 @@ public class MiscUtil {
 
     public static List<String> wrapString(String text) {
         return wrapString(text, WRAP_LENGTH);
+    }
+
+    public static List<ITextComponent> wrapStringAsTextComponent(String text) {
+        return wrapString(text, WRAP_LENGTH).stream().map(StringTextComponent::new).collect(Collectors.toList());
+    }
+
+    public static IFormattableTextComponent asFormattable(ITextComponent component) {
+        return component instanceof IFormattableTextComponent ? (IFormattableTextComponent) component : component.copyRaw();
     }
 
     public static List<String> wrapString(String text, int maxCharPerLine) {
@@ -91,11 +98,15 @@ public class MiscUtil {
         return textList;
     }
 
-    public static String locToString(int dim, BlockPos pos) {
-        return String.format("DIM:%d [%d,%d,%d]", dim, pos.getX(), pos.getY(), pos.getZ());
+    public static String locToString(ResourceLocation dim, BlockPos pos) {
+        return String.format("%s [%d,%d,%d]", dim.toString(), pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static ITextComponent xlate(String key, Object... args) {
+    public static String locToString(GlobalPos pos) {
+        return locToString(pos.func_239646_a_().func_240901_a_(), pos.getPos());
+    }
+
+    public static IFormattableTextComponent xlate(String key, Object... args) {
         return new TranslationTextComponent(key, args);
     }
 
@@ -119,24 +130,26 @@ public class MiscUtil {
     }
 
     public static ITextComponent settingsStr(String prefix, ITextComponent c) {
-        return new StringTextComponent(prefix).appendSibling(c);
+        return new StringTextComponent(prefix).func_230529_a_(c);  // appendSibling
     }
 
     public static CompoundNBT serializeGlobalPos(GlobalPos globalPos) {
         CompoundNBT tag = new CompoundNBT();
         tag.put("pos", net.minecraft.nbt.NBTUtil.writeBlockPos(globalPos.getPos()));
-        tag.putString("dim", DimensionType.getKey(globalPos.getDimension()).toString());
+        tag.putString("dim", globalPos.func_239646_a_().func_240901_a_().toString());
         return tag;
     }
 
     public static GlobalPos deserializeGlobalPos(CompoundNBT tag) {
-        return GlobalPos.of(
-                DimensionType.byName(new ResourceLocation(tag.getString("dim"))),
-                NBTUtil.readBlockPos(tag.getCompound("pos"))
-        );
+        RegistryKey<World> k = RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dim")));
+        return GlobalPos.func_239648_a_(k, NBTUtil.readBlockPos(tag.getCompound("pos")));
     }
 
     public static ServerWorld getWorldForGlobalPos(GlobalPos pos) {
-        return DimensionManager.getWorld(ServerLifecycleHooks.getCurrentServer(), pos.getDimension(), false, false);
+        return ServerLifecycleHooks.getCurrentServer().getWorld(pos.func_239646_a_());
+    }
+
+    public static GlobalPos makeGlobalPos(World w, BlockPos pos) {
+        return GlobalPos.func_239648_a_(w.func_234923_W_(), pos);
     }
 }

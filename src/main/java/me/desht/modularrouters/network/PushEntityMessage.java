@@ -49,8 +49,8 @@ public class PushEntityMessage {
             Entity entity = w.getEntityByID(id);
             if (entity != null) {
                 entity.setMotion(x, y, z);
-                entity.onGround = false;
-                entity.collided = false;
+//                entity.onGround = false;
+//                entity.collided = false;
                 entity.collidedHorizontally = false;
                 entity.collidedVertically = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);

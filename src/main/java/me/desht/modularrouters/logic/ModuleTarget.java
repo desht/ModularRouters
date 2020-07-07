@@ -53,7 +53,11 @@ public class ModuleTarget {
     }
 
     public boolean isSameWorld(World world) {
-        return gPos.getDimension() == world.getDimension().getType();
+        return gPos.func_239646_a_() == world.func_234923_W_();
+    }
+
+    public boolean isSameWorld(ModuleTarget dst) {
+        return gPos.func_239646_a_() == dst.gPos.func_239646_a_();
     }
 
     /**
@@ -90,7 +94,7 @@ public class ModuleTarget {
         TileEntity te = w.getTileEntity(pos);
         return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,14 +110,13 @@ public class ModuleTarget {
 
     @Override
     public String toString() {
-        return MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face;
+        return MiscUtil.locToString(gPos) + " " + face;
     }
 
     public ITextComponent getTextComponent() {
-        return MiscUtil.xlate(blockTranslationKey).applyTextStyle(TextFormatting.WHITE)
-                .appendText(" @ ")
-                .appendText(MiscUtil.locToString(gPos.getDimension().getId(), gPos.getPos()) + " " + face)
-                .applyTextStyle(TextFormatting.AQUA);
+        return MiscUtil.xlate(blockTranslationKey).func_240699_a_(TextFormatting.WHITE)
+                .func_240702_b_(" @ ")  // appendText
+                .func_240702_b_(toString())
+                .func_240699_a_(TextFormatting.AQUA);
     }
-
 }

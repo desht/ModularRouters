@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -44,6 +45,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -80,8 +82,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     private RedstoneBehaviourButton redstoneButton;
     private RegulatorTooltipButton regulatorTooltipButton;
-    private DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
-    private ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
+    private final DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
+    private final ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
     private MouseOverHelp.Button mouseOverHelpButton;
     private TexturedToggleButton matchAllButton;
     IntegerTextField regulatorTextField;
@@ -238,19 +240,19 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
         String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? " " + I18n.format("guiText.label.installed") : "");
-        this.font.drawString(title, this.xSize / 2f - this.font.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
+        this.font.drawString(matrixStack, title, this.xSize / 2f - this.font.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         TintColor c = getGuiBackgroundTint();
         RenderSystem.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-        blit(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
+        blit(matrixStack, guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         if (!module.isDirectional()) {
-            blit(guiLeft + 69, guiTop + 17, 204, 0, 52, 52);
+            blit(matrixStack, guiLeft + 69, guiTop + 17, 204, 0, 52, 52);
         }
     }
 
@@ -361,8 +363,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private static class RegulatorTooltipButton extends TexturedButton {
         RegulatorTooltipButton(int x, int y, boolean isFluid) {
             super(x, y, 16, 16, p -> {});
-            MiscUtil.appendMultiline(tooltip1, isFluid ? "guiText.tooltip.fluidRegulatorTooltip" : "guiText.tooltip.regulatorTooltip");
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, isFluid ? "guiText.tooltip.fluidRegulatorTooltip" : "guiText.tooltip.regulatorTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
@@ -392,8 +394,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         ModuleToggleButton(ModuleFlags flag, int x, int y, boolean toggled) {
             super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
             this.flagId = flag.ordinal();
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip." + ModuleFlags.values()[flagId] + ".1");
-            MiscUtil.appendMultiline(tooltip2, "guiText.tooltip." + ModuleFlags.values()[flagId] + ".2");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip." + ModuleFlags.values()[flagId] + ".1");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "guiText.tooltip." + ModuleFlags.values()[flagId] + ".2");
         }
 
         @Override
@@ -415,9 +417,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             super(DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
 
             this.direction = dir;
-            String dirStr = module.getDirectionString(dir);
-            tooltip1.add(TextFormatting.GRAY + dirStr);
-            tooltip2.add(TextFormatting.YELLOW + dirStr);
+            StringTextComponent dirStr = new StringTextComponent(module.getDirectionString(dir));
+            tooltip1.add(dirStr.func_240699_a_(TextFormatting.GRAY));
+            tooltip2.add(dirStr.func_240699_a_(TextFormatting.YELLOW));
         }
 
         @Override
@@ -451,8 +453,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private class MatchAllButton extends TexturedToggleButton {
         MatchAllButton(int x, int y, boolean toggled) {
             super(x, y, 16, 16, toggled, GuiModule.this);
-            MiscUtil.appendMultiline(tooltip1, "guiText.tooltip.matchAll.false");
-            MiscUtil.appendMultiline(tooltip2, "guiText.tooltip.matchAll.true");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.matchAll.false");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "guiText.tooltip.matchAll.true");
         }
 
         @Override

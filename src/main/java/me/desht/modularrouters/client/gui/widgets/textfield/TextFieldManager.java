@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
@@ -19,10 +20,10 @@ public class TextFieldManager {
         this.parent = parent;
     }
 
-    public void drawTextFields(int mouseX, int mouseY, float partialTicks) {
+    public void drawTextFields(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
-        textFields.forEach(tf -> tf.renderButton(mouseX, mouseY, partialTicks));
+        textFields.forEach(tf -> tf.renderButton(matrixStack, mouseX, mouseY, partialTicks));
     }
 
     public void tick() {

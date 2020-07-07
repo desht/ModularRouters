@@ -21,7 +21,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeHooks;
@@ -48,19 +48,31 @@ public class CompiledActivatorModule extends CompiledModule {
     public enum ActionType {
         ACTIVATE_BLOCK,
         USE_ITEM,
-        USE_ITEM_ON_ENTITY
+        USE_ITEM_ON_ENTITY;
+
+        public String getTranslationKey() {
+            return "itemText.activator.action." + toString();
+        }
     }
 
     public enum LookDirection {
         LEVEL,
         ABOVE,
-        BELOW
+        BELOW;
+
+        public String getTranslationKey() {
+            return "itemText.activator.direction." + toString();
+        }
     }
 
     public enum EntityMode {
         NEAREST,
         RANDOM,
-        ROUND_ROBIN
+        ROUND_ROBIN;
+
+        public String getTranslationKey() {
+            return "itemText.activator.entityMode." + toString();
+        }
     }
 
     public CompiledActivatorModule(TileEntityItemRouter router, ItemStack stack) {
@@ -176,7 +188,7 @@ public class CompiledActivatorModule extends CompiledModule {
             return false;
         }
 
-        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), hitFace, targetPos, false);
+        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vector3d(hitX, hitY, hitZ), hitFace, targetPos, false);
         ActionResultType ret = stack.onItemUseFirst(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
         if (ret != ActionResultType.PASS) return false;
 
@@ -225,7 +237,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
         if (event.getUseBlock() != Event.Result.DENY) {
             BlockState iblockstate = world.getBlockState(targetPos);
-            BlockRayTraceResult r = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), hitFace, targetPos, false);
+            BlockRayTraceResult r = new BlockRayTraceResult(new Vector3d(hitX, hitY, hitZ), hitFace, targetPos, false);
             if (iblockstate.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, r) == ActionResultType.SUCCESS) {
                 router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;

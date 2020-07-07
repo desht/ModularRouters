@@ -30,10 +30,8 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     }
 
     private boolean validate(TileEntityItemRouter router, ModuleTarget target) {
-        return !(isRangeLimited() &&
-                (router.getWorld().getDimension().getType() != target.gPos.getDimension()
-                || router.getPos().distanceSq(target.gPos.getPos()) > getRangeSquared()));
-
+        if (!isRangeLimited()) return true;
+        return target.isSameWorld(router.getWorld()) && router.getPos().distanceSq(target.gPos.getPos()) <= getRangeSquared();
     }
 
     @Override
