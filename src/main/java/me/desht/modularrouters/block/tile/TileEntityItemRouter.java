@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.client.render.item_beam.ItemBeam;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
@@ -71,13 +72,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private static final String NBT_ACTIVE = "Active";
     private static final String NBT_ACTIVE_TIMER = "ActiveTimer";
     private static final String NBT_ECO_MODE = "EcoMode";
-    private static final String NBT_SIDES = "Sides";
     private static final String NBT_BUFFER = "Buffer";
     public static final String NBT_MODULES = "Modules";
     public static final String NBT_UPGRADES = "Upgrades";
     private static final String NBT_EXTRA = "Extra";
     public static final String NBT_REDSTONE_MODE = "Redstone";
-    private static final String NBT_MUFFLERS = "Mufflers";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -95,7 +94,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private int tickRate = MRConfig.Common.Router.baseTickRate;
     private int itemsPerTick = 1;
     private final Map<ResourceLocation, Integer> upgradeCount = new HashMap<>();
-    private int totalUpgradeCount;
 
     private int fluidTransferRate;  // mB/t
     private int fluidTransferRemainingIn = 0;
@@ -121,6 +119,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
     private boolean executing;       // are we currently executing modules?
+
+    public final List<ItemBeam> beams = new ArrayList<>(); // client only
+    private AxisAlignedBB cachedRenderAABB;
 
     public TileEntityItemRouter() {
         super(ModTileEntities.ITEM_ROUTER.get());
@@ -254,34 +255,41 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public void tick() {
         if (getWorld().isRemote) {
-            return;
-        }
-
-        if (recompileNeeded != 0) {
-            compile();
-        }
-        counter++;
-        pulseCounter++;
-
-        if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
-            // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
-            // however, we do need to turn the state inactive after a short time if we were set active by a pulse
-            if (activeTimer > 0 && --activeTimer == 0) {
-                setActive(false);
+            for (Iterator<ItemBeam> iterator = beams.iterator(); iterator.hasNext(); ) {
+                ItemBeam beam = iterator.next();
+                beam.tick();
+                if (beam.isExpired()) {
+                    iterator.remove();
+                    cachedRenderAABB = null;
+                }
             }
         } else {
-            if (counter >= getTickRate()) {
-                allocateFluidTransfer(counter);
-                executeModules(false);
-                counter = 0;
+            if (recompileNeeded != 0) {
+                compile();
             }
-        }
+            counter++;
+            pulseCounter++;
 
-        if (ecoMode) {
-            if (active) {
-                ecoCounter = MRConfig.Common.Router.ecoTimeout;
-            } else if (ecoCounter > 0) {
-                ecoCounter--;
+            if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
+                // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
+                // however, we do need to turn the state inactive after a short time if we were set active by a pulse
+                if (activeTimer > 0 && --activeTimer == 0) {
+                    setActive(false);
+                }
+            } else {
+                if (counter >= getTickRate()) {
+                    allocateFluidTransfer(counter);
+                    executeModules(false);
+                    counter = 0;
+                }
+            }
+
+            if (ecoMode) {
+                if (active) {
+                    ecoCounter = MRConfig.Common.Router.ecoTimeout;
+                } else if (ecoCounter > 0) {
+                    ecoCounter--;
+                }
             }
         }
     }
@@ -434,7 +442,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if (world.isRemote || (recompileNeeded & COMPILE_UPGRADES) != 0) {
             int prevMufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
             upgradeCount.clear();
-            totalUpgradeCount = 0;
             permitted.clear();
             setCamouflage(null);
             tunedSyncValue = -1;
@@ -442,7 +449,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
                 if (stack.getItem() instanceof ItemUpgrade) {
                     upgradeCount.put(stack.getItem().getRegistryName(), getUpgradeCount(stack.getItem()) + stack.getCount());
-                    totalUpgradeCount += stack.getCount();
                     ((ItemUpgrade) stack.getItem()).onCompiled(stack, this);
                 }
             }
@@ -772,6 +778,20 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             }
         }
         compileUpgrades();
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        if (cachedRenderAABB == null) {
+            cachedRenderAABB = super.getRenderBoundingBox();
+            beams.forEach(beam -> cachedRenderAABB = cachedRenderAABB.union(beam.getAABB()));
+        }
+        return cachedRenderAABB;
+    }
+
+    public void addItemBeam(ItemBeam itemBeam) {
+        beams.add(itemBeam);
+        cachedRenderAABB = null;
     }
 
     abstract class RouterItemHandler extends ItemStackHandler {

@@ -9,8 +9,10 @@ import me.desht.modularrouters.client.gui.module.*;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
+import me.desht.modularrouters.client.render.item_beam.ItemBeamTileRenderer;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModTileEntities;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.settings.KeyBinding;
@@ -34,7 +36,6 @@ public class ClientSetup {
     public static void initEarly() {
         FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
         MinecraftForge.EVENT_BUS.register(ModuleTargetRenderer.class);
-        MinecraftForge.EVENT_BUS.register(ItemBeamDispatcher.INSTANCE);
         MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
     }
 
@@ -44,6 +45,8 @@ public class ClientSetup {
             setupRenderLayers();
             registerScreenFactories();
             registerKeyBindings();
+
+            ClientRegistry.bindTileEntityRenderer(ModTileEntities.ITEM_ROUTER.get(), ItemBeamTileRenderer::new);
         });
     }
 

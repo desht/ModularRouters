@@ -61,7 +61,7 @@ public class CompiledSenderModule1 extends CompiledModule {
             Vector3d vec1 = Vector3d.func_237489_a_(router.getPos());
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().func_234923_W_());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
-                    new ItemBeamMessage(router.getPos(), targetPos, stack, getBeamColor(), router.getTickRate()));
+                    new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate()));
         }
     }
 
