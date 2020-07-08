@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "modularrouters:extruder1",
   "ingredients": [
     { "item" : "#blankmodule" },
     { "item" : "#placer" },

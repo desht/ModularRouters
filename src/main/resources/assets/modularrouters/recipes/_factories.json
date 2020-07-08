@@ -1,0 +1,6 @@
+{
+  "recipes": {
+    "breaker": "me.desht.modularrouters.recipe.BreakerFactory",
+    "extruder1": "me.desht.modularrouters.recipe.Extruder1Factory"
+  }
+}

@@ -1,6 +1,3 @@
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
-
 // For those who want the bleeding edge
 buildscript {
     repositories {
@@ -27,6 +24,12 @@ version = config.mc_version + "-" + config.mod_version
 
 archivesBaseName = 'modular-routers'
 
+if (System.getenv().BUILD_NUMBER != null) {
+    version += "-${System.getenv().BUILD_NUMBER}"
+} else {
+    version += "-CUSTOM"
+}
+
 minecraft {
     version = config.mc_version + "-" + config.forge_version
     mappings = config.mcp_mappings
@@ -37,14 +40,17 @@ minecraft {
 
 repositories {
     jcenter { }
+    flatDir {
+        dir 'libs/'
+    }
     maven { // TOP
         name = "tterrag maven"
         url = "http://maven.tterrag.com/"
     }
-    maven {
-        name = "guideapi/hwyla"
-        url = 'http://tehnut.info/maven/'
-    }
+//    maven {
+//        name = "guideapi/hwyla"
+//        url = 'http://tehnut.info/maven/'
+//    }
     maven {
         name = "tesla"
         url = "http://maven.mcmoddev.com"
@@ -64,7 +70,7 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "mcp.mobius.waila:Hwyla:${config.waila_version}"
+    deobfCompile "mcp.mobius.waila:Hwyla:${config.waila_version}:api"
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${config.top_version}"
     deobfCompile "info.amerifrance.guideapi:Guide-API:1.12-${config.guideapi_version}"
     deobfCompile "mezz.jei:jei_1.12.2:${config.jei_version}"

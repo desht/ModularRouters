@@ -2,11 +2,14 @@ package me.desht.modularrouters.util;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -193,11 +197,10 @@ public class BlockUtil {
      * @param world     the world
      * @param pos       the block position
      * @param filter    filter for the block's drops
-     * @param silkTouch use silk touch when breaking the block
-     * @param fortune   use fortune when breaking the block
+     * @param pick      pickaxe being used
      * @return a drop result object
      */
-    public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, boolean silkTouch, int fortune) {
+    public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, ItemStack pick) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof BlockLiquid) {
@@ -205,7 +208,11 @@ public class BlockUtil {
         }
 
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((WorldServer) world, pos);
-        List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, silkTouch, fortune);
+        fakePlayer.setHeldItem(EnumHand.MAIN_HAND, pick);
+        if (ConfigHandler.module.breakerHarvestLimit && !ForgeHooks.canHarvestBlock(block, fakePlayer, world, pos)) {
+            return BreakResult.NOT_BROKEN;
+        }
+        List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, pick);
 
         Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
@@ -250,10 +257,12 @@ public class BlockUtil {
         return ItemStack.EMPTY;
     }
 
-    private static List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player, boolean silkTouch, int fortune) {
+    private static List<ItemStack> getDrops(World world, BlockPos pos, EntityPlayer player, ItemStack pick) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
+        boolean silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, pick) > 0;
+        int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, pick);
         if (silkTouch) {
             Item item = Item.getItemFromBlock(block);
             if (item == Items.AIR) {

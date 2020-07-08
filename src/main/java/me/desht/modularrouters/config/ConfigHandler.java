@@ -122,6 +122,10 @@ public class ConfigHandler {
         @Config.LangKey("gui.config.extruderPushEnties")
         @Config.Comment("Should the Extruder Mk1/2 push entities along when extruding blocks?")
         public boolean extruderPushEntities = true;
+
+        @Config.LangKey("gui.config.breakerHarvestLimit")
+        @Config.Comment("Should Breaker & Extruder Mk1 Modules respect the harvest level of the pickaxe used to craft them? (e.g. craft with an Iron Pickaxe => can't break Obsidian)")
+        public boolean breakerHarvestLimit = true;
     }
 
     public static class Router {

@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber
 class ItemCraftedListener {
@@ -35,12 +36,7 @@ class ItemCraftedListener {
             if (!moduleStack.isEmpty()) {
                 AugmentHandler h = new AugmentHandler(moduleStack);
                 for (int i = 0; i < h.getSlots(); i++) {
-                    ItemStack s = h.getStackInSlot(i);
-                    if (!s.isEmpty()) {
-                        if (!event.player.addItemStackToInventory(s)) {
-                            InventoryUtils.dropItems(event.player.getEntityWorld(), event.player.getPosition(), s);
-                        }
-                    }
+                    ItemHandlerHelper.giveItemToPlayer(event.player, h.getStackInSlot(i));
                 }
             }
         }

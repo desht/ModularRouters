@@ -216,6 +216,7 @@ itemText.misc.IGNORE_NBT=NBT
 itemText.misc.IGNORE_OREDICT=Oredict
 itemText.misc.TERMINATE=Termination
 itemText.misc.flags=Flags
+itemText.misc.breakerModulePick=§ePickaxe: §b%s
 itemText.misc.enchantBreakerHint=This module can also be crafted with a §bSilk Touch§7 or §bFortune§7 Enchanted Book.
 itemText.misc.enchantExtruderHint=This module can also be crafted with a §bSilk Touch§7 Enchanted Book.
 itemText.misc.configureHint=§oPress §e§o[%s]§7§o or §e§oMiddle-Click§7§o to configure

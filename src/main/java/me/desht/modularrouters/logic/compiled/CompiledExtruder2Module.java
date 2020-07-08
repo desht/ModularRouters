@@ -9,6 +9,7 @@ import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
@@ -22,6 +23,7 @@ import java.util.List;
 public class CompiledExtruder2Module extends CompiledExtruderModule {
     private static final ItemStack TEMPLATE_STACK = new ItemStack(RegistrarMR.TEMPLATE_FRAME);
     private final List<ItemStack> blockList;
+    private final ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
 
     public CompiledExtruder2Module(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
@@ -76,7 +78,7 @@ public class CompiledExtruder2Module extends CompiledExtruderModule {
             IBlockState oldState = world.getBlockState(breakPos);
             router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
             if (okToBreak(oldState, world, breakPos)) {
-                BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), false, 0);
+                BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), pick);
                 if (breakResult.isBlockBroken()) {
                     router.playSound(null, breakPos,
                             RegistrarMR.TEMPLATE_FRAME.getSoundType(oldState, world, breakPos, null).getBreakSound(),

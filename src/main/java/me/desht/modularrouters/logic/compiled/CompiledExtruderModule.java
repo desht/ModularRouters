@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.ConfigHandler;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.network.PushEntityMessage;
 import me.desht.modularrouters.util.BlockUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.EnumPushReaction;
@@ -29,13 +30,14 @@ public class CompiledExtruderModule extends CompiledModule {
     private static final double BASE_PUSH_STRENGTH = 0.55;
     private static final double AUGMENT_BOOST = 0.15;
 
+    private final ItemStack pick;
+
     int distance;  // marks the current extension length (0 = no extrusion)
-    private final boolean silkTouch;
 
     public CompiledExtruderModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
         distance = router == null ? 0 : router.getExtData().getInteger(NBT_EXTRUDER_DIST + getFacing());
-        silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
+        pick = ModuleHelper.getPickaxe(stack);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class CompiledExtruderModule extends CompiledModule {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
             }
-            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), silkTouch, 0);
+            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), pick);
             if (dropResult.isBlockBroken()) {
                 router.getExtData().setInteger(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());
