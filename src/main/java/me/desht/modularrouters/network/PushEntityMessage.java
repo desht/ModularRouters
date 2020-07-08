@@ -1,9 +1,9 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -29,14 +29,14 @@ public class PushEntityMessage {
         this.z = z;
     }
 
-    public PushEntityMessage(ByteBuf buf) {
+    public PushEntityMessage(PacketBuffer buf) {
         id = buf.readInt();
         x = buf.readDouble();
         y = buf.readDouble();
         z = buf.readDouble();
     }
 
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(id);
         buf.writeDouble(x);
         buf.writeDouble(y);

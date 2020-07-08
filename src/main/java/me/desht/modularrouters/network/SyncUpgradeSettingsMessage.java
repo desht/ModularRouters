@@ -1,9 +1,9 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -26,12 +26,12 @@ public class SyncUpgradeSettingsMessage {
         this.hand = hand;
     }
 
-    public SyncUpgradeSettingsMessage(ByteBuf buf) {
+    public SyncUpgradeSettingsMessage(PacketBuffer buf) {
         tunedValue = buf.readInt();
         hand = buf.readBoolean() ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
 
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(tunedValue);
         buf.writeBoolean(hand == Hand.MAIN_HAND);
     }

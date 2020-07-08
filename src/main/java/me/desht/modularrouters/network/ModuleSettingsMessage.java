@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
@@ -27,10 +26,9 @@ public class ModuleSettingsMessage {
     public ModuleSettingsMessage() {
     }
 
-    ModuleSettingsMessage(ByteBuf byteBuf) {
-        PacketBuffer pb = new PacketBuffer(byteBuf);
-        locator = MFLocator.fromBuffer(pb);
-        payload = pb.readCompoundTag();
+    ModuleSettingsMessage(PacketBuffer buf) {
+        locator = MFLocator.fromBuffer(buf);
+        payload = buf.readCompoundTag();
     }
 
     public ModuleSettingsMessage(MFLocator locator, CompoundNBT payload) {
@@ -38,10 +36,9 @@ public class ModuleSettingsMessage {
         this.payload = payload;
     }
 
-    public void toBytes(ByteBuf byteBuf) {
-        PacketBuffer pb = new PacketBuffer(byteBuf);
-        locator.writeBuf(pb);
-        pb.writeCompoundTag(payload);
+    public void toBytes(PacketBuffer buf) {
+        locator.writeBuf(buf);
+        buf.writeCompoundTag(payload);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

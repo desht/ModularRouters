@@ -26,16 +26,6 @@ public class MiscUtil {
 
     private static final int WRAP_LENGTH = 45;
 
-//    public static void appendMultiline(List<String> result, String key, Object... args) {
-//        ITextComponent raw = xlate(key, args);
-//        int n = 0;
-//        for (String s : raw.getString().split("\\\\n")) {
-//            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
-//                result.add((n++ > 0 ? "\u00a77" : "") + s1);
-//            }
-//        }
-//    }
-
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
         for (String s : I18n.format(key, args).split(Pattern.quote("${br}"))) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\n")) {
@@ -44,14 +34,9 @@ public class MiscUtil {
         }
     }
 
-//    public static void appendMultilineText(List<ITextComponent> result, Consumer<Style> formatting, String key, Object... args) {
-//        for (String s : I18n.format(key, args).split("\\\\n")) {
-//            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\\\n")) {
-//                ITextComponent textComponent = new StringTextComponent(s1);
-//                result.add(textComponent.applyTextStyle(formatting));
-//            }
-//        }
-//    }
+    public static IFormattableTextComponent asFormattable(ITextComponent component) {
+        return component instanceof IFormattableTextComponent ? (IFormattableTextComponent) component : component.copyRaw();
+    }
 
     public static List<String> wrapString(String text) {
         return wrapString(text, WRAP_LENGTH);
@@ -61,41 +46,40 @@ public class MiscUtil {
         return wrapString(text, WRAP_LENGTH).stream().map(StringTextComponent::new).collect(Collectors.toList());
     }
 
-    public static IFormattableTextComponent asFormattable(ITextComponent component) {
-        return component instanceof IFormattableTextComponent ? (IFormattableTextComponent) component : component.copyRaw();
-    }
-
     public static List<String> wrapString(String text, int maxCharPerLine) {
-        StringTokenizer tok = new StringTokenizer(text, " ");
-        StringBuilder output = new StringBuilder(text.length());
-        List<String> textList = new ArrayList<>();
-        String color = "";
-        int lineLen = 0;
-        while (tok.hasMoreTokens()) {
-            String word = tok.nextToken();
-            if (word.contains("\u00a7")) {
-                // save text formatting information so it can be continued on the next line
-                for (int i = 0; i < word.length() - 1; i++) {
-                    if (word.substring(i, i + 2).contains("\u00a7"))
-                        color = word.substring(i, i + 2);
+        List<String> result = new ArrayList<>();
+
+        StringBuilder builder = new StringBuilder(text.length());
+        String format = "";
+        for (String para : text.split(Pattern.quote("${br}"))) {
+            StringTokenizer tok = new StringTokenizer(para, " ");
+            int lineLen = 0;
+            while (tok.hasMoreTokens()) {
+                String word = tok.nextToken();
+                int idx = word.lastIndexOf("\u00a7");
+                if (idx >= 0 && idx < word.length() - 1) {
+                    // note the formatting sequence so we can apply to next line if any
+                    format = word.substring(idx, idx + 2);
+                    // formatting sequence does not contribute to line length
+                    lineLen -= 2;
                 }
-                lineLen -= 2; // formatting doesn't count toward line length
+                if (lineLen + word.length() > maxCharPerLine) {
+                    result.add(builder.toString());
+                    builder.delete(0, builder.length());
+                    builder.append(format);
+                    lineLen = 0;
+                } else if (lineLen > 0) {
+                    builder.append(" ");
+                    lineLen++;
+                }
+                builder.append(word);
+                lineLen += word.length();
             }
-            if (lineLen + word.length() > maxCharPerLine || word.contains("\\n")) {
-                word = word.replace("\\n", "");
-                textList.add(output.toString());
-                output.delete(0, output.length());
-                output.append(color);
-                lineLen = 0;
-            } else if (lineLen > 0) {
-                output.append(" ");
-                lineLen++;
-            }
-            output.append(word);
-            lineLen += word.length();
+            result.add(builder.toString());
+            builder.delete(0, builder.length());
+            builder.append(format);
         }
-        textList.add(output.toString());
-        return textList;
+        return result;
     }
 
     public static String locToString(ResourceLocation dim, BlockPos pos) {

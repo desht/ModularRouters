@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
-import me.desht.modularrouters.client.render.RenderHelper;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
@@ -15,7 +15,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Collections;
@@ -60,7 +59,7 @@ public class GuiModulePlayer extends GuiModule {
 
         this.blit(matrixStack, guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
 
-        RenderHelper.renderItemStack(matrixStack, minecraft, ROUTER_STACK, guiLeft + 128, guiTop + 32, "");
+        GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, guiLeft + 128, guiTop + 32, "");
     }
 
     @Override

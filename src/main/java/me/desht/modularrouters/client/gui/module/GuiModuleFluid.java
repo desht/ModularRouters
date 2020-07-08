@@ -7,7 +7,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.client.render.RenderHelper;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
@@ -20,7 +20,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -75,8 +74,8 @@ public class GuiModuleFluid extends GuiModule {
         // text entry field custom background - super has already bound the correct texture
         this.blit(matrixStack, guiLeft + 146, guiTop + 20, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
 
-        RenderHelper.renderItemStack(matrixStack, minecraft, routerStack, guiLeft + 128, guiTop + 44, "");
-        RenderHelper.renderItemStack(matrixStack, minecraft, waterStack, guiLeft + 168, guiTop + 44, "");
+        GuiUtil.renderItemStack(matrixStack, minecraft, routerStack, guiLeft + 128, guiTop + 44, "");
+        GuiUtil.renderItemStack(matrixStack, minecraft, waterStack, guiLeft + 168, guiTop + 44, "");
     }
 
     @Override

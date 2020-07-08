@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -24,12 +23,12 @@ public class GuiSyncMessage {
         this.newStack = newStack;
     }
 
-    public GuiSyncMessage(ByteBuf buf) {
-        newStack = new PacketBuffer(buf).readItemStack();
+    public GuiSyncMessage(PacketBuffer buf) {
+        newStack = buf.readItemStack();
     }
 
-    public void toBytes(ByteBuf buf) {
-        new PacketBuffer(buf).writeItemStack(newStack);
+    public void toBytes(PacketBuffer buf) {
+        buf.writeItemStack(newStack);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

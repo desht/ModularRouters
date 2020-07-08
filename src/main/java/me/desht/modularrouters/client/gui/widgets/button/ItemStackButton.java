@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.gui.widgets.button;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.desht.modularrouters.client.render.RenderHelper;
+import me.desht.modularrouters.client.util.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
@@ -37,7 +37,7 @@ public class ItemStackButton extends TexturedButton {
             }
             int x = this.x + (width - 18) / 2;
             int y = this.y + (height - 18) / 2;
-            RenderHelper.renderItemStack(matrixStack, mc, getRenderStack(), x, y, "");
+            GuiUtil.renderItemStack(matrixStack, mc, getRenderStack(), x, y, "");
         }
     }
 

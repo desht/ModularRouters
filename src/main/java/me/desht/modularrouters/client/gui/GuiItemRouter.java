@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.ClientSetup;
@@ -21,7 +20,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
@@ -63,7 +61,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         addButton(reb = new RouterEcoButton(this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
     }
 
-    // TODO 1.16 drawGuiContainerForegroundLayer
+    // drawGuiContainerForegroundLayer
     @Override
     protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
         String title = I18n.format("block.modularrouters.item_router");
@@ -74,11 +72,10 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         font.drawString(matrixStack, I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0xFF404040);
     }
 
-    // TODO 1.16 drawGuiContainerBackgroundLayer
+    // drawGuiContainerBackgroundLayer
     @Override
     protected void func_230450_a_(MatrixStack matrixStack, float v, int i, int i1) {
         getMinecraft().getTextureManager().bindTexture(textureLocation);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 

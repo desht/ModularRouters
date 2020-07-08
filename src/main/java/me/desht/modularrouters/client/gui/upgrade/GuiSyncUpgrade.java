@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.upgrade;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
@@ -68,7 +67,6 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
 
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);

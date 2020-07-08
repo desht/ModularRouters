@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.module;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
@@ -11,7 +10,6 @@ import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -31,9 +29,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import static me.desht.modularrouters.util.MiscUtil.xlate;
 
@@ -44,15 +40,13 @@ public abstract class TargetedModule extends ItemModule {
     private static final String NBT_TARGET = "Target";
     private static final String NBT_MULTI_TARGET = "MultiTarget";
 
-    private static final Map<UUID,Long> lastSwing = Maps.newHashMap();
-
     TargetedModule(Item.Properties props) {
         super(props);
     }
 
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
-        if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
+        if (ctx.getPlayer() != null && ctx.getPlayer().isCrouching()) {
             if (isValidTarget(ctx)) {
                 if (getMaxTargets() == 1) {
                     handleSingleTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
@@ -262,37 +256,25 @@ public abstract class TargetedModule extends ItemModule {
         return null;
     }
 
-    @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entityLiving) {
-        if (!(entityLiving instanceof ServerPlayerEntity)) {
-            return false;
-        }
-        ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
-        World world = player.getEntityWorld();
-
-        // prevent message spamming
-        long now = System.currentTimeMillis();
-        if (now - lastSwing.getOrDefault(player.getUniqueID(), 0L) < 250) {
-            return true;
-        }
-        lastSwing.put(player.getUniqueID(), now);
-
-        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(world, new BlockPos(player.getPositionVec())));
+    /**
+     * Called server-side from ValidateModuleMessage
+     *
+     * @param stack the module item
+     * @param player the player holding the module
+     */
+    public void doModuleValidation(ItemStack stack, ServerPlayerEntity player) {
+        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getEntityWorld(), new BlockPos(player.getPositionVec())));
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
                 getTargets(stack, true) :
                 Sets.newHashSet(getTarget(stack, true));
         for (ModuleTarget target : targets) {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
-                IFormattableTextComponent msg = xlate("chatText.misc.target")
-                        .func_230529_a_(target.getTextComponent())
-                        .func_240702_b_(" ")
-                        .func_230529_a_(xlate(v.translationKey()).func_240699_a_(v.getColor()))
-                        .func_240699_a_(TextFormatting.YELLOW);
+                IFormattableTextComponent msg = MiscUtil.asFormattable(target.getTextComponent())
+                        .func_240702_b_(" ").func_230529_a_(xlate(v.translationKey()).func_240699_a_(v.getColor()));
                 player.sendStatusMessage(msg, false);
             }
         }
-        return true;
     }
 
     /**

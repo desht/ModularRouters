@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.network.PacketBuffer;
@@ -33,17 +32,15 @@ public class RouterUpgradesSyncMessage {
         }
     }
 
-    public RouterUpgradesSyncMessage(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        pos = pb.readBlockPos();
+    public RouterUpgradesSyncMessage(PacketBuffer buf) {
+        pos = buf.readBlockPos();
         handler = new ItemStackHandler();
-        handler.deserializeNBT(pb.readCompoundTag());
+        handler.deserializeNBT(buf.readCompoundTag());
     }
 
-    public void toBytes(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        pb.writeBlockPos(pos);
-        pb.writeCompoundTag(handler.serializeNBT());
+    public void toBytes(PacketBuffer buf) {
+        buf.writeBlockPos(pos);
+        buf.writeCompoundTag(handler.serializeNBT());
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

@@ -2,7 +2,6 @@ package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
@@ -108,7 +107,6 @@ public class GuiModFilter extends GuiFilterContainer {
 
     @Override
     protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(TEXTURE_LOCATION);
         blit(matrixStack, guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
     }

@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.render.item_beam.ItemBeam;
 import me.desht.modularrouters.client.util.ClientUtil;
@@ -29,15 +28,14 @@ public class ItemBeamMessage {
     public ItemBeamMessage() {
     }
 
-    public ItemBeamMessage(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        reversed = pb.readBoolean();
-        pos1 = pb.readBlockPos();
-        pos2 = pb.readBlockPos();
-        stack = pb.readItemStack();
-        color = pb.readInt();
-        itemFade = pb.readBoolean();
-        duration = pb.readVarInt();
+    public ItemBeamMessage(PacketBuffer buf) {
+        reversed = buf.readBoolean();
+        pos1 = buf.readBlockPos();
+        pos2 = buf.readBlockPos();
+        stack = buf.readItemStack();
+        color = buf.readInt();
+        itemFade = buf.readBoolean();
+        duration = buf.readVarInt();
     }
 
     /**
@@ -64,15 +62,14 @@ public class ItemBeamMessage {
         return this;
     }
 
-    public void toBytes(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        pb.writeBoolean(reversed);
-        pb.writeBlockPos(pos1);
-        pb.writeBlockPos(pos2);
-        pb.writeItemStack(stack);
-        pb.writeInt(color);
-        pb.writeBoolean(itemFade);
-        pb.writeVarInt(duration);
+    public void toBytes(PacketBuffer buf) {
+        buf.writeBoolean(reversed);
+        buf.writeBlockPos(pos1);
+        buf.writeBlockPos(pos2);
+        buf.writeItemStack(stack);
+        buf.writeInt(color);
+        buf.writeBoolean(itemFade);
+        buf.writeVarInt(duration);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

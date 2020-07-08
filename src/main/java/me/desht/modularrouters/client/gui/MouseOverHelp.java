@@ -2,12 +2,12 @@ package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
-import me.desht.modularrouters.client.util.Rect;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,10 +28,6 @@ public class MouseOverHelp {
         this.screen = screen;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -41,7 +37,7 @@ public class MouseOverHelp {
     }
 
     public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<ContainerScreen<?>> showPredicate) {
-        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key)), showPredicate));
+        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key), 35), showPredicate));
     }
 
     private void onMouseOver(MatrixStack matrixStack, int mouseX, int mouseY) {
@@ -63,10 +59,8 @@ public class MouseOverHelp {
         return null;
     }
 
-    private static void showPopupBox(MatrixStack matrixStack, ContainerScreen<?> screen, FontRenderer fontRenderer, Rect rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+    private static Rectangle2d calcBounds(ContainerScreen<?> screen, FontRenderer fontRenderer, Rectangle2d rect, List<String> helpText) {
         int boxWidth, boxHeight;
-
-        Rect rect2 = new Rect(rect);
 
         if (helpText != null && !helpText.isEmpty()) {
             boxWidth = 0;
@@ -75,15 +69,21 @@ public class MouseOverHelp {
                 boxWidth = Math.max(boxWidth, fontRenderer.getStringWidth(s));
             }
             // enlarge box width & height for a text margin
-            int xOff = rect.x - screen.getGuiLeft() < screen.getXSize() / 2 ? rect.width + 10 : -(boxWidth + TEXT_MARGIN + 10);
-            int yOff = (rect.height - boxHeight - TEXT_MARGIN) / 2;
-            rect2.setBounds(rect.x + xOff, rect.y + yOff, boxWidth + TEXT_MARGIN, boxHeight + TEXT_MARGIN);
+            int xOff = rect.getX() - screen.getGuiLeft() < screen.getXSize() / 2 ? rect.getWidth() + 10 : -(boxWidth + TEXT_MARGIN + 10);
+            int yOff = (rect.getHeight() - boxHeight - TEXT_MARGIN) / 2;
+            return new Rectangle2d(rect.getX() + xOff, rect.getY() + yOff, rect.getWidth() + TEXT_MARGIN, rect.getHeight() + TEXT_MARGIN);
+        } else {
+            return rect;
         }
+    }
 
-        int x1 = rect2.x - screen.getGuiLeft();
-        int y1 = rect2.y - screen.getGuiTop();
-        int x2 = x1 + rect2.width;
-        int y2 = y1 + rect2.height;
+    private static void showPopupBox(MatrixStack matrixStack, ContainerScreen<?> screen, FontRenderer fontRenderer, Rectangle2d rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+        Rectangle2d actualRect = calcBounds(screen, fontRenderer, rect, helpText);
+
+        int x1 = actualRect.getX() - screen.getGuiLeft();
+        int y1 = actualRect.getY() - screen.getGuiTop();
+        int x2 = x1 + actualRect.getWidth();
+        int y2 = y1 + actualRect.getHeight();
 
         matrixStack.push();
         matrixStack.translate(0, 0, 300);
@@ -104,7 +104,7 @@ public class MouseOverHelp {
     }
 
     public static class HelpRegion {
-        final Rect extent;
+        final Rectangle2d extent;
         final List<String> text;
         final Predicate<ContainerScreen<?>> showPredicate;
         static final Predicate<ContainerScreen<?>> YES = guiContainer -> true;
@@ -114,7 +114,7 @@ public class MouseOverHelp {
         }
 
         HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<ContainerScreen<?>> showPredicate) {
-            this.extent = new Rect(x1, y1, x2 - x1, y2 - y1);
+            this.extent = new Rectangle2d(x1, y1, x2 - x1, y2 - y1);
             this.text = text;
             this.showPredicate = showPredicate;
         }
@@ -130,11 +130,8 @@ public class MouseOverHelp {
     }
 
     public static class Button extends TexturedToggleButton {
-        private final MouseOverHelp mouseOverHelp;
-
-        public Button(int x, int y, MouseOverHelp mouseOverHelp) {
+        public Button(int x, int y) {
             super(x, y, 16, 16, false, null);
-            this.mouseOverHelp = mouseOverHelp;
             tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("guiText.tooltip.mouseOverHelp.false")));
             tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("guiText.tooltip.mouseOverHelp.true")));
         }

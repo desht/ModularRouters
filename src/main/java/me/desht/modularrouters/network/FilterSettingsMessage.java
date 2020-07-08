@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
@@ -41,19 +40,17 @@ public class FilterSettingsMessage {
         this.payload = payload;
     }
 
-    public FilterSettingsMessage(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        op = Operation.values()[pb.readByte()];
-        locator = MFLocator.fromBuffer(pb);
-        payload = pb.readCompoundTag();
+    public FilterSettingsMessage(PacketBuffer buf) {
+        op = Operation.values()[buf.readByte()];
+        locator = MFLocator.fromBuffer(buf);
+        payload = buf.readCompoundTag();
 
     }
 
-    public void toBytes(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        pb.writeByte(op.ordinal());
-        locator.writeBuf(pb);
-        pb.writeCompoundTag(payload);
+    public void toBytes(PacketBuffer buf) {
+        buf.writeByte(op.ordinal());
+        locator.writeBuf(buf);
+        buf.writeCompoundTag(payload);
     }
 
     public Operation getOp() {

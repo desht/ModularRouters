@@ -7,6 +7,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -115,8 +116,6 @@ public class ModuleTarget {
 
     public ITextComponent getTextComponent() {
         return MiscUtil.xlate(blockTranslationKey).func_240699_a_(TextFormatting.WHITE)
-                .func_240702_b_(" @ ")  // appendText
-                .func_240702_b_(toString())
-                .func_240699_a_(TextFormatting.AQUA);
+                .func_230529_a_(new StringTextComponent(" @ " + toString()).func_240699_a_(TextFormatting.AQUA));
     }
 }

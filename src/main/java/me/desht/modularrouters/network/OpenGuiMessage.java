@@ -43,10 +43,9 @@ public class OpenGuiMessage {
         this.locator = locator;
     }
 
-    OpenGuiMessage(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        operation = Operation.values()[pb.readByte()];
-        locator = MFLocator.fromBuffer(pb);
+    OpenGuiMessage(PacketBuffer buf) {
+        operation = Operation.values()[buf.readByte()];
+        locator = MFLocator.fromBuffer(buf);
     }
 
     public static OpenGuiMessage openRouter(MFLocator locator) {

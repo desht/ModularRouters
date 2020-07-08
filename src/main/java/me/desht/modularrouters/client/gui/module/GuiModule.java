@@ -133,7 +133,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        addButton(mouseOverHelpButton = new MouseOverHelp.Button(guiLeft + 175, guiTop + 1, mouseOverHelp));
+        addButton(mouseOverHelpButton = new MouseOverHelp.Button(guiLeft + 175, guiTop + 1));
 
         addButton(redstoneButton = new RedstoneBehaviourButton(this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));

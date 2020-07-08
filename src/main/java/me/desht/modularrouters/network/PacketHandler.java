@@ -38,5 +38,7 @@ public class PacketHandler {
                 PushEntityMessage::toBytes, PushEntityMessage::new, PushEntityMessage::handle);
         NETWORK.registerMessage(nextId(), RouterUpgradesSyncMessage.class,
                 RouterUpgradesSyncMessage::toBytes, RouterUpgradesSyncMessage::new, RouterUpgradesSyncMessage::handle);
+        NETWORK.registerMessage(nextId(), ValidateModuleMessage.class,
+                ValidateModuleMessage::toBytes, ValidateModuleMessage::new, ValidateModuleMessage::handle);
     }
 }
