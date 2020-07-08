@@ -12,7 +12,7 @@ public class IntegrationHandler {
 
     private static void registerTOP() {
         if (ModList.get().isLoaded("theoneprobe")) {
-//            TOPCompatibility.register();
+            TOPCompatibility.register();
         }
     }
 
