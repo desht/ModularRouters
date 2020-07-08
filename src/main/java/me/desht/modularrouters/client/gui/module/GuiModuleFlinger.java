@@ -13,7 +13,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 
 public class GuiModuleFlinger extends GuiModule {
     private FloatTextField speedField;
@@ -87,7 +86,7 @@ public class GuiModuleFlinger extends GuiModule {
         TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
             super(x, y, 16, 16, p -> {});
             this.buttonId = buttonId;
-            tooltip1.add(new TranslationTextComponent("guiText.tooltip.flinger." + key, min, max));
+            tooltip1.add(MiscUtil.xlate("guiText.tooltip.flinger." + key, min, max));
             MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 

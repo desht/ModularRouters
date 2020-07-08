@@ -10,13 +10,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 public abstract class ItemBase extends Item {
     public ItemBase(Properties props) {
@@ -35,12 +36,12 @@ public abstract class ItemBase extends Item {
         } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             if (ClientUtil.thisScreenPassesEvents()) {
-                // TODO 1.16 func_240699_a_() = applyTextStyle()
-                list.add(new TranslationTextComponent("itemText.misc.holdKey", text.getString()).func_240699_a_(TextFormatting.GRAY));
+                // func_240701_a_() = applyTextStyles()
+                list.add(xlate("itemText.misc.holdKey", text.getString()));
             }
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
             if (ClientUtil.thisScreenPassesEvents()) {
-                list.add(new TranslationTextComponent("itemText.misc.holdShiftKey", text.getString()).func_240699_a_(TextFormatting.GRAY));
+                list.add(xlate("itemText.misc.holdShiftKey", text.getString()));
             }
         }
     }

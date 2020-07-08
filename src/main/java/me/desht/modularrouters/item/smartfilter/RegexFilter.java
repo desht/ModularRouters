@@ -2,12 +2,11 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.gui.filter.GuiRegexFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import net.minecraft.client.gui.screen.Screen;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,9 +15,6 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -53,22 +49,16 @@ public class RegexFilter extends ItemSmartFilter {
         CompoundNBT compound = itemstack.getTag();
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
-            list.add(new TranslationTextComponent("itemText.misc.regexFilter.count", l.size()));
+            list.add(MiscUtil.xlate("itemText.misc.regexFilter.count", l.size()));
             list.addAll(l.stream().map(s -> " \u2022 " + TextFormatting.AQUA + "/" + s + "/").map(StringTextComponent::new).collect(Collectors.toList()));
         } else {
-            list.add(new TranslationTextComponent("itemText.misc.regexFilter.count", 0));
+            list.add(MiscUtil.xlate("itemText.misc.regexFilter.count", 0));
         }
     }
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new RegexMatcher(getRegexList(filterStack));
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public Class<? extends Screen> getGuiClass() {
-        return GuiRegexFilter.class;
     }
 
     @Override

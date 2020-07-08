@@ -7,11 +7,11 @@ import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class DetectorModule extends ItemModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
-        list.add(new TranslationTextComponent("itemText.misc.redstoneLevel",
+        list.add(MiscUtil.xlate("itemText.misc.redstoneLevel",
                 ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal." + ds.isStrongSignal())));
     }
 

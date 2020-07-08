@@ -8,6 +8,7 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
@@ -33,9 +34,10 @@ class TOPInfoProvider {
                     }
                 }
 
-                probeInfo.text(MiscUtil.xlate("guiText.tooltip.redstone.label").func_240699_a_(TextFormatting.AQUA)
-                        .func_240702_b_(": ")
-                        .func_230529_a_(MiscUtil.xlate(router.getRedstoneBehaviour().getTranslationKey()).func_240699_a_(TextFormatting.AQUA))
+                probeInfo.text(new StringTextComponent(TextFormatting.YELLOW.toString())
+                        .func_230529_a_(MiscUtil.xlate("guiText.tooltip.redstone.label"))
+                        .func_240702_b_(TextFormatting.WHITE + ": ")
+                        .func_230529_a_(MiscUtil.xlate(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {
                 probeInfo.text(MiscUtil.xlate("chatText.security.accessDenied"));

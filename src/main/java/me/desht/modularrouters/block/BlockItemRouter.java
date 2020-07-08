@@ -8,6 +8,7 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -34,10 +35,8 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -125,7 +124,7 @@ public class BlockItemRouter extends BlockCamo {
     public void addInformation(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
         if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
-            tooltip.add(new TranslationTextComponent("itemText.misc.routerConfigured")
+            tooltip.add(MiscUtil.xlate("itemText.misc.routerConfigured")
                     .func_240701_a_(TextFormatting.GRAY, TextFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<ITextComponent> moduleText = new ArrayList<>();
@@ -141,7 +140,7 @@ public class BlockItemRouter extends BlockCamo {
                     }
                 }
                 if (!moduleText.isEmpty()) {
-                    tooltip.add(new TranslationTextComponent("itemText.misc.moduleCount",
+                    tooltip.add(MiscUtil.xlate("itemText.misc.moduleCount",
                             moduleText.size()).func_240699_a_(TextFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
@@ -162,17 +161,17 @@ public class BlockItemRouter extends BlockCamo {
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(new TranslationTextComponent("itemText.misc.upgradeCount", nUpgrades).func_240699_a_(TextFormatting.YELLOW));
+                    tooltip.add(MiscUtil.xlate("itemText.misc.upgradeCount", nUpgrades).func_240699_a_(TextFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
             if (compound.contains(NBT_REDSTONE_MODE)) {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-                    tooltip.add(new TranslationTextComponent("guiText.tooltip.redstone.label")
+                    tooltip.add(MiscUtil.xlate("guiText.tooltip.redstone.label")
                             .func_240702_b_(": ")
                             .func_240699_a_(TextFormatting.YELLOW)
-                            .func_230529_a_(new TranslationTextComponent("guiText.tooltip.redstone." + rrb)
+                            .func_230529_a_(MiscUtil.xlate("guiText.tooltip.redstone." + rrb)
                                     .func_240699_a_(TextFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
@@ -191,7 +190,7 @@ public class BlockItemRouter extends BlockCamo {
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
-                    player.sendStatusMessage(new TranslationTextComponent("chatText.security.accessDenied"), false);
+                    player.sendStatusMessage(MiscUtil.xlate("chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
                 return ActionResultType.SUCCESS;

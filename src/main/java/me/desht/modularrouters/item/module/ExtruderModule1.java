@@ -6,10 +6,10 @@ import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class ExtruderModule1 extends ItemModule implements IRangedModule, IPicka
     @Override
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
-        list.add(new TranslationTextComponent("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
+        list.add(MiscUtil.xlate("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
     }
 
     @Override

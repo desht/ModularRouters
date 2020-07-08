@@ -14,11 +14,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.List;
+
+import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 public class FluidModule1 extends ItemModule {
     public FluidModule1() {
@@ -83,7 +84,7 @@ public class FluidModule1 extends ItemModule {
     static void addFluidModuleInformation(ItemStack stack, List<ITextComponent> list) {
         CompiledFluidModule1 cfm = new CompiledFluidModule1(null, stack);
         String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
-        list.add(new TranslationTextComponent("itemText.fluid.direction", dir));
-        list.add(new TranslationTextComponent("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
+        list.add(xlate("itemText.fluid.direction", dir));
+        list.add(xlate("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
     }
 }

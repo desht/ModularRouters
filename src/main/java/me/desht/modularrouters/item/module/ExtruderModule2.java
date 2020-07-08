@@ -10,12 +10,12 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule2;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MFLocator;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
 
-        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).func_230529_a_(new TranslationTextComponent("itemText.extruder2.template")));
+        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).func_230529_a_(MiscUtil.xlate("itemText.extruder2.template")));
         TemplateHandler handler = new TemplateHandler(itemstack, null);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
@@ -48,7 +48,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
             ITextComponent tc = list.get(size - 1);
             list.set(list.size() - 1, asFormattable(tc)
                     .func_230529_a_(new StringTextComponent(" " + TextFormatting.AQUA + TextFormatting.ITALIC))
-                    .func_230529_a_(new TranslationTextComponent("itemText.misc.noItems"))
+                    .func_230529_a_(MiscUtil.xlate("itemText.misc.noItems"))
             );
 
         }

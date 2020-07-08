@@ -10,15 +10,14 @@ import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Collections;
 import java.util.List;
@@ -101,7 +100,7 @@ public class GuiModuleActivator extends GuiModule {
             super(x, y, width, height, flat, stacks, initialVal, GuiModuleActivator.this);
 
             for (ActionType actionType : ActionType.values()) {
-                tooltips.add(Collections.singletonList(new TranslationTextComponent(actionType.getTranslationKey())));
+                tooltips.add(Collections.singletonList(MiscUtil.xlate(actionType.getTranslationKey())));
             }
         }
 
@@ -117,7 +116,7 @@ public class GuiModuleActivator extends GuiModule {
         LookDirectionButton(int x, int y, int width, int height, LookDirection initialVal) {
             super(x, y, width, height, initialVal, GuiModuleActivator.this);
             for (LookDirection dir : LookDirection.values()) {
-                tooltips.add(Collections.singletonList(new TranslationTextComponent(dir.getTranslationKey())));
+                tooltips.add(Collections.singletonList(MiscUtil.xlate(dir.getTranslationKey())));
             }
         }
 
@@ -159,7 +158,7 @@ public class GuiModuleActivator extends GuiModule {
         EntityModeButton(int x, int y, int width, int height, EntityMode initialVal) {
             super(x, y, width, height, initialVal, GuiModuleActivator.this);
             for (EntityMode mode : EntityMode.values()) {
-                tooltips.add(Collections.singletonList(new TranslationTextComponent(mode.getTranslationKey())));
+                tooltips.add(Collections.singletonList(MiscUtil.xlate(mode.getTranslationKey())));
             }
         }
 

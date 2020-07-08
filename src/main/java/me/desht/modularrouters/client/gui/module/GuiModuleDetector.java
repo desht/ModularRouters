@@ -15,7 +15,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 
 public class GuiModuleDetector extends GuiModule {
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
@@ -43,11 +42,11 @@ public class GuiModuleDetector extends GuiModule {
 
         manager.focus(0);
 
-        ITextComponent label = new TranslationTextComponent("itemText.misc.strongSignal." + cdm.isStrongSignal());
+        ITextComponent label = MiscUtil.xlate("itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
         addButton(new Button(guiLeft + 138, guiTop + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
-            button.setMessage(new TranslationTextComponent("itemText.misc.strongSignal." + isStrong));
+            button.setMessage(MiscUtil.xlate("itemText.misc.strongSignal." + isStrong));
             GuiModuleDetector.this.sendToServer();
         }));
 

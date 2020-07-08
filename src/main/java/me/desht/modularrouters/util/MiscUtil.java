@@ -10,7 +10,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -91,7 +94,9 @@ public class MiscUtil {
     }
 
     public static IFormattableTextComponent xlate(String key, Object... args) {
-        return new TranslationTextComponent(key, args);
+        // not using TranslationTextComponent here because each argument starts a separate child component,
+        // which resets any formatting each time
+        return new StringTextComponent(I18n.format(key, args));
     }
 
     public static ResourceLocation RL(String name) {

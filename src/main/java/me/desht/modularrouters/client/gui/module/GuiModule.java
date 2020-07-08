@@ -301,7 +301,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
-                minecraft.displayGuiScreen(FilterGuiFactory.createGuiForFilter(locator));
+                FilterGuiFactory.openFilterGui(locator);
+//                minecraft.displayGuiScreen(FilterGuiFactory.createGuiForFilter(locator));
             }
         } else if (hand != null) {
             // module is in player's hand
@@ -310,7 +311,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInHeldModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
-                minecraft.displayGuiScreen(FilterGuiFactory.createGuiForFilter(locator));
+                FilterGuiFactory.openFilterGui(locator);
+//                minecraft.displayGuiScreen(FilterGuiFactory.createGuiForFilter(locator));
             }
         }
         return true;

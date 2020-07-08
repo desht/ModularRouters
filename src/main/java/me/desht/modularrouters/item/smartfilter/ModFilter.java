@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.gui.filter.GuiModFilter;
 import me.desht.modularrouters.container.ContainerModFilter;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -10,8 +9,8 @@ import me.desht.modularrouters.logic.filter.matchers.ModMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -21,9 +20,6 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -62,21 +58,15 @@ public class ModFilter extends ItemSmartFilter {
         super.addExtraInformation(stack, list);
         if (stack.getChildTag(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
-            list.add(new TranslationTextComponent("itemText.misc.modFilter.count", l.size()));
+            list.add(MiscUtil.xlate("itemText.misc.modFilter.count", l.size()));
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
                     .map(s -> " \u2022 " + TextFormatting.AQUA + s)
                     .map(StringTextComponent::new)
                     .collect(Collectors.toList()));
         } else {
-            list.add(new TranslationTextComponent("itemText.misc.modFilter.count", 0));
+            list.add(MiscUtil.xlate("itemText.misc.modFilter.count", 0));
         }
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public Class<? extends Screen> getGuiClass() {
-        return GuiModFilter.class;
     }
 
     @Override

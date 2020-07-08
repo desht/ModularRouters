@@ -92,17 +92,5 @@ public class ContainerExtruder2Module extends ContainerModule {
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             return isItemOKForTemplate(stack);
         }
-
-//        @Override
-//        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-//            return isItemOKForTemplate(stack) ? super.insertItem(slot, stack, simulate) : stack;
-//        }
-//
-//        @Override
-//        public void setStackInSlot(int slot, ItemStack stack) {
-//            if (isItemOKForTemplate(stack)) {
-//                super.setStackInSlot(slot, stack);
-//            }
-//        }
     }
 }

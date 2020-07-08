@@ -3,15 +3,14 @@ package me.desht.modularrouters.client;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
-import me.desht.modularrouters.client.gui.filter.GuiBulkItemFilter;
-import me.desht.modularrouters.client.gui.filter.GuiModFilter;
+import me.desht.modularrouters.client.gui.filter.*;
 import me.desht.modularrouters.client.gui.module.*;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
-import me.desht.modularrouters.client.render.item_beam.ItemBeamDispatcher;
 import me.desht.modularrouters.client.render.item_beam.ItemBeamTileRenderer;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModTileEntities;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -48,6 +47,9 @@ public class ClientSetup {
 
             ClientRegistry.bindTileEntityRenderer(ModTileEntities.ITEM_ROUTER.get(), ItemBeamTileRenderer::new);
         });
+
+        FilterGuiFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), GuiInspectionFilter::new);
+        FilterGuiFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), GuiRegexFilter::new);
     }
 
     private static void registerKeyBindings() {

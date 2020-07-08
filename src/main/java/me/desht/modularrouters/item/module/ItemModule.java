@@ -19,7 +19,6 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MFLocator;
-import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -38,10 +37,10 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -51,6 +50,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {
@@ -179,7 +180,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
                 String s = ClientSetup.keybindConfigure.getKey().getTranslationKey();
-                list.add(MiscUtil.xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)).func_240699_a_(TextFormatting.GRAY));
+                list.add(xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)));
             }
         }
     }
@@ -193,12 +194,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     protected void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         if (isDirectional()) {
             RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
-            ITextComponent itc = new TranslationTextComponent(isDirectional() && dir == RelativeDirection.NONE ?
-                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString()).func_240699_a_(TextFormatting.AQUA);
-            list.add(new TranslationTextComponent("guiText.label.direction")
+            IFormattableTextComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
+                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString());
+            list.add(xlate("guiText.label.direction")
                     .func_230529_a_(new StringTextComponent(": "))
-                    .func_230529_a_(itc)
-                    .func_240699_a_(TextFormatting.YELLOW));
+                    .func_230529_a_(itc.func_240699_a_(TextFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
         list.add(new StringTextComponent(
@@ -209,12 +209,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                                         formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack)),
                                         formatFlag("TERMINATE", !ModuleHelper.terminates(itemstack))
                                 )
-                ).func_240701_a_(TextFormatting.YELLOW)
+                )
         );
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
-        list.add(new TranslationTextComponent("itemText.misc.match").func_240702_b_(": ")
-                .func_240699_a_(TextFormatting.YELLOW)
-                .func_230529_a_(new TranslationTextComponent("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
+        list.add(xlate("itemText.misc.match").func_240702_b_(": ")
+                .func_230529_a_(xlate("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
                         .func_240699_a_(TextFormatting.AQUA)));
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
@@ -222,13 +221,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             String col = curRange > rm.getBaseRange() ?
                     TextFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
                     TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
-            list.add(new TranslationTextComponent("itemText.misc.rangeInfo",
-                            col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange())
-                    .func_240699_a_(TextFormatting.YELLOW));
+            list.add(xlate("itemText.misc.rangeInfo", col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
         }
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
-            list.add(new TranslationTextComponent("itemText.misc.breakerPick").func_230529_a_(pick.getDisplayName().copyRaw().func_240699_a_(TextFormatting.AQUA)));
+            list.add(xlate("itemText.misc.breakerPick").func_230529_a_(pick.getDisplayName().copyRaw().func_240699_a_(TextFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
                 list.add(new StringTextComponent("\u25b6 ").func_230529_a_(ench.getDisplayName(level).copyRaw().func_240699_a_(TextFormatting.AQUA)).func_240699_a_(TextFormatting.YELLOW));
             });
@@ -249,7 +246,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).func_230529_a_(new TranslationTextComponent("itemText.augments")));
+            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).func_230529_a_(xlate("itemText.augments")));
             list.addAll(toAdd);
         }
     }
@@ -286,13 +283,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         }
         String key = "itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
         if (l2.isEmpty()) {
-            list.add(new TranslationTextComponent(key).func_240701_a_(TextFormatting.YELLOW)
+            list.add(xlate(key).func_240701_a_(TextFormatting.YELLOW)
                     .func_240702_b_(": ")
-                    .func_230529_a_(new TranslationTextComponent("itemText.misc.noItems")
+                    .func_230529_a_(xlate("itemText.misc.noItems")
                             .func_240701_a_(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(new TranslationTextComponent(key).func_240701_a_(TextFormatting.YELLOW)
+            list.add(xlate(key).func_240701_a_(TextFormatting.YELLOW)
                             .func_240702_b_(": "));
             list.addAll(l2);
         }

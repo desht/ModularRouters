@@ -71,7 +71,7 @@ public class MouseOverHelp {
             // enlarge box width & height for a text margin
             int xOff = rect.getX() - screen.getGuiLeft() < screen.getXSize() / 2 ? rect.getWidth() + 10 : -(boxWidth + TEXT_MARGIN + 10);
             int yOff = (rect.getHeight() - boxHeight - TEXT_MARGIN) / 2;
-            return new Rectangle2d(rect.getX() + xOff, rect.getY() + yOff, rect.getWidth() + TEXT_MARGIN, rect.getHeight() + TEXT_MARGIN);
+            return new Rectangle2d(rect.getX() + xOff, rect.getY() + yOff, boxWidth + TEXT_MARGIN, boxHeight + TEXT_MARGIN);
         } else {
             return rect;
         }

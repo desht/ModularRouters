@@ -6,12 +6,11 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +48,7 @@ public class GuiModuleDistributor extends GuiModule {
         StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
             super(x, y, width, height, initialVal, GuiModuleDistributor.this);
             for (DistributionStrategy strategy : DistributionStrategy.values()) {
-                tooltips.add(Collections.singletonList(new TranslationTextComponent(strategy.getTranslationKey())));
+                tooltips.add(Collections.singletonList(MiscUtil.xlate(strategy.getTranslationKey())));
             }
         }
 
@@ -72,7 +71,7 @@ public class GuiModuleDistributor extends GuiModule {
     private static class TooltipButton extends TexturedButton {
         TooltipButton(int x, int y) {
             super(x, y, 16, 16, p -> {});
-            tooltip1.add(new TranslationTextComponent("guiText.tooltip.distributor.strategy"));
+            tooltip1.add(MiscUtil.xlate("guiText.tooltip.distributor.strategy"));
         }
 
         @Override

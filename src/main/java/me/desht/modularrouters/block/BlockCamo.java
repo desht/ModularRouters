@@ -3,7 +3,7 @@ package me.desht.modularrouters.block;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -12,7 +12,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.ToolType;
 
@@ -63,7 +62,11 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
         return camo == null ? super.getOpacity(state, world, pos) : camo.getCamouflage().getOpacity(world, pos);
     }
 
-    // TODO 1.16
+    @Override
+    public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+        ICamouflageable camo = getCamoState(worldIn, pos);
+        return camo == null || !camo.extendedMimic() ? super.getPlayerRelativeBlockHardness(state, player, worldIn, pos) : camo.getCamouflage().getPlayerRelativeBlockHardness(player, worldIn, pos);
+    }
 
 //    @Override
 //    public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos) {

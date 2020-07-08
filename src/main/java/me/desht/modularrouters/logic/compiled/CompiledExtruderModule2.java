@@ -34,7 +34,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         for (int i = 0; i < handler.getSlots() && blockList.size() < getRange(); i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
             if (stack1.isEmpty()) {
-                blockList.add(ItemStack.EMPTY);
+                break;
             } else {
                 for (int j = 0; j < stack1.getCount() && blockList.size() < getRange(); j++) {
                     blockList.add(ItemHandlerHelper.copyStackWithSize(stack1, 1));
@@ -81,12 +81,6 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 if (oldState.getBlock() == ModBlocks.TEMPLATE_FRAME.get()) {
                     world.removeBlock(breakPos, false);
                 }
-//                BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), false, 0);
-//                if (breakResult.isBlockBroken()) {
-//                    router.playSound(null, breakPos,
-//                            ModBlocks.TEMPLATE_FRAME.get().getSoundType(oldState, world, breakPos, null).getBreakSound(),
-//                            SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
-//                }
                 return true;
             }
         }

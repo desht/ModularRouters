@@ -23,7 +23,6 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -31,6 +30,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 import java.util.Set;
 
+import static me.desht.modularrouters.util.MiscUtil.asFormattable;
 import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 /**
@@ -92,11 +92,11 @@ public abstract class TargetedModule extends ItemModule {
                         .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", targets.size(), getMaxTargets())
+                player.sendStatusMessage(MiscUtil.xlate("chatText.misc.targetAdded", targets.size(), getMaxTargets())
                         .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
+                player.sendStatusMessage(MiscUtil.xlate("chatText.misc.tooManyTargets", getMaxTargets())
                         .func_240699_a_(TextFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
@@ -128,8 +128,9 @@ public abstract class TargetedModule extends ItemModule {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                ITextComponent msg = xlate("chatText.misc.target")
-                        .func_230529_a_(target.getTextComponent()).func_240699_a_(TextFormatting.YELLOW);
+                ITextComponent msg = asFormattable(target.getTextComponent()).func_240699_a_(TextFormatting.WHITE);
+//                ITextComponent msg = xlate("chatText.misc.target")
+//                        .func_230529_a_(target.getTextComponent()).func_240699_a_(TextFormatting.YELLOW);
                 list.add(msg);
                 TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {

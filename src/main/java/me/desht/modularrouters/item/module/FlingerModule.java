@@ -6,10 +6,10 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class FlingerModule extends DropperModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledFlingerModule fs = new CompiledFlingerModule(null, itemstack);
-        list.add(new TranslationTextComponent("itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
+        list.add(MiscUtil.xlate("itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
     }
 
     @Override

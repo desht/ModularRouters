@@ -8,7 +8,6 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -20,8 +19,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -35,12 +32,6 @@ public abstract class ItemSmartFilter extends ItemBase {
     }
 
     public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack);
-
-    /**
-     * Get the GUI class for this item - only for non-container-based GUI's.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public abstract Class<? extends Screen> getGuiClass();
 
     /**
      * Handle a filter settings message received from a client-side GUI by updating the filter itemstack appropriately.
