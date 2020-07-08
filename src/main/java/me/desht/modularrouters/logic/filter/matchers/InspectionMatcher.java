@@ -197,6 +197,7 @@ public class InspectionMatcher implements IItemMatcher {
 
         private static final BigDecimal HUNDRED = new BigDecimal(100);
         private int asPercentage(long val, long max) {
+            if (max == 0) return 0;  // https://github.com/desht/ModularRouters/issues/82
             // BigDecimal is a bit overkill perhaps, but guarantees no danger of overflow here
             BigDecimal a = new BigDecimal(val);
             BigDecimal b = new BigDecimal(max);
