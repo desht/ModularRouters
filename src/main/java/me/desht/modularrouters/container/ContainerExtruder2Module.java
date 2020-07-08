@@ -13,7 +13,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +30,7 @@ public class ContainerExtruder2Module extends ContainerModule {
 
         TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player), router);
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {
-            addSlot(new SlotItemHandler(handler, i, 129 + SLOT_X_SPACING * (i % 3), 17 + SLOT_X_SPACING * (i / 3)));
+            addSlot(new FilterSlot(handler, i, 129 + SLOT_X_SPACING * (i % 3), 17 + SLOT_X_SPACING * (i / 3)));
         }
     }
 

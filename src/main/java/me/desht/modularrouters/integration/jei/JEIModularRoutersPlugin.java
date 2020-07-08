@@ -1,9 +1,9 @@
 package me.desht.modularrouters.integration.jei;
 
-import me.desht.modularrouters.recipe.ResetModuleRecipe;
+import me.desht.modularrouters.client.gui.module.GuiModule;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.util.ResourceLocation;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
@@ -19,8 +19,13 @@ public class JEIModularRoutersPlugin implements IModPlugin {
 //    public void registerRecipes(IRecipeRegistration registration) {
 //    }
 
+//    @Override
+//    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+//        registration.getCraftingCategory().addCategoryExtension(ResetModuleRecipe.class, SpecialRecipeCategoryExtension::new);
+//    }
+
     @Override
-    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory().addCategoryExtension(ResetModuleRecipe.class, SpecialRecipeCategoryExtension::new);
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        registration.addGhostIngredientHandler(GuiModule.class, new GuiModuleGhost());
     }
 }

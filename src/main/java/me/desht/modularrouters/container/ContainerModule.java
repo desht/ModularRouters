@@ -60,7 +60,7 @@ public class ContainerModule extends ContainerMRBase {
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
-            addSlot(new SlotItemHandler(filterHandler, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
+            addSlot(new FilterSlot(filterHandler, i, 8 + SLOT_X_SPACING * (i % 3), 17 + SLOT_Y_SPACING * (i / 3)));
         }
 
         // slots for the augments

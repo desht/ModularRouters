@@ -40,5 +40,7 @@ public class PacketHandler {
                 RouterUpgradesSyncMessage::toBytes, RouterUpgradesSyncMessage::new, RouterUpgradesSyncMessage::handle);
         NETWORK.registerMessage(nextId(), ValidateModuleMessage.class,
                 ValidateModuleMessage::toBytes, ValidateModuleMessage::new, ValidateModuleMessage::handle);
+        NETWORK.registerMessage(nextId(), ModuleFilterMessage.class,
+                ModuleFilterMessage::toBytes, ModuleFilterMessage::new, ModuleFilterMessage::handle);
     }
 }
