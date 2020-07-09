@@ -3,10 +3,10 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModSounds;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,7 +23,7 @@ public class SyncUpgrade extends ItemUpgrade {
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
-        list.add(MiscUtil.xlate("itemText.sync.tuning", getTunedValue(itemstack)));
+        list.add(ClientUtil.xlate("itemText.sync.tuning", getTunedValue(itemstack)));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SyncUpgrade extends ItemUpgrade {
             if (!world.isRemote) {
                 setTunedValue(stack, world.rand.nextInt(MRConfig.Common.Router.baseTickRate));
             } else {
-                player.sendStatusMessage(MiscUtil.xlate("itemText.sync.tuning", getTunedValue(stack)), true);
+                player.sendStatusMessage(ClientUtil.xlate("itemText.sync.tuning", getTunedValue(stack)), true);
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
         }

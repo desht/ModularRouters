@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
@@ -17,6 +18,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, itemstack);
         String owner = cpm.getPlayerName() == null ? "-" : cpm.getPlayerName();
         list.add(MiscUtil.settingsStr(TextFormatting.YELLOW.toString(),
-                MiscUtil.xlate("itemText.security.owner", owner)));
+                ClientUtil.xlate("itemText.security.owner", owner)));
 
         String s = String.format(TextFormatting.YELLOW + "%s: " + TextFormatting.AQUA + "%s %s %s",
                 I18n.format("itemText.misc.operation"),
@@ -63,7 +65,7 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
             return ActionResultType.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItem(), ctx.getPlayer());
-            ctx.getPlayer().sendStatusMessage(MiscUtil.xlate("itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
+            ctx.getPlayer().sendStatusMessage(new TranslationTextComponent("itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
             return ActionResultType.SUCCESS;
         } else {
             return super.onItemUse(ctx);

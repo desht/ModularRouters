@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerBulkItemFilter;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
@@ -11,7 +12,10 @@ import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import me.desht.modularrouters.util.*;
+import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MFLocator;
+import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -19,6 +23,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -49,7 +54,7 @@ public class    BulkItemFilter extends ItemSmartFilter {
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addExtraInformation(itemstack, list);
-        list.add(MiscUtil.xlate("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
+        list.add(ClientUtil.xlate("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
     }
 
     @Override
@@ -72,7 +77,7 @@ public class    BulkItemFilter extends ItemSmartFilter {
         } else if (player != null && player.isSteppingCarefully()) {
             return InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
-                player.sendStatusMessage(MiscUtil.xlate("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
                 world.playSound(null, ctx.getPos(), ModSounds.SUCCESS.get(), SoundCategory.MASTER, 1.0f, 1.0f);
                 return ActionResultType.SUCCESS;
             }).orElse(super.onItemUse(ctx));

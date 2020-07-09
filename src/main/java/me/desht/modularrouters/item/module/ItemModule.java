@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.desht.modularrouters.util.MiscUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {

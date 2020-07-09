@@ -19,7 +19,7 @@ import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.List;
 
-import static me.desht.modularrouters.util.MiscUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class FluidModule1 extends ItemModule {
     public FluidModule1() {

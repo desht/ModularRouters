@@ -1,13 +1,13 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -24,8 +24,8 @@ public class DistributorModule extends SenderModule2 {
         super.addSettingsInformation(itemstack, list);
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
-        list.add(MiscUtil.xlate("guiText.tooltip.distributor.strategy").func_240702_b_(": ").func_240699_a_(TextFormatting.YELLOW)
-                .func_230529_a_(MiscUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).func_240699_a_(TextFormatting.AQUA));
+        list.add(ClientUtil.xlate("guiText.tooltip.distributor.strategy").func_240702_b_(": ").func_240699_a_(TextFormatting.YELLOW)
+                .func_230529_a_(ClientUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).func_240699_a_(TextFormatting.AQUA));
     }
 
     @Override

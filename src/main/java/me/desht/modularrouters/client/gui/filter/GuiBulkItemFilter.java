@@ -5,6 +5,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -95,7 +96,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     static class ClearButton extends Buttons.DeleteButton {
         ClearButton(int x, int y, IPressable pressable) {
             super(x, y, 0, pressable);
-            tooltip1.add(MiscUtil.xlate("guiText.tooltip.clearFilter"));
+            tooltip1.add(ClientUtil.xlate("guiText.tooltip.clearFilter"));
         }
     }
 

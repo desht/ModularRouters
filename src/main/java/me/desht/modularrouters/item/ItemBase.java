@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static me.desht.modularrouters.util.MiscUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ItemBase extends Item {
     public ItemBase(Properties props) {

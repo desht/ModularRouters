@@ -2,9 +2,9 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModSounds;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +16,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
         if (tag != null && tag.contains(NBT_STATE_NAME)) {
-            list.add(MiscUtil.xlate("itemText.camouflage.held")
+            list.add(ClientUtil.xlate("itemText.camouflage.held")
                     .func_240702_b_(TextFormatting.AQUA.toString())
                     .func_230529_a_(getCamoStateDisplayName(itemstack)));
         }
@@ -63,7 +64,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
             if (!ctx.getWorld().isRemote) {
-                player.sendStatusMessage(MiscUtil.xlate("itemText.camouflage.held")
+                player.sendStatusMessage(new TranslationTextComponent("itemText.camouflage.held")
                         .func_240702_b_(TextFormatting.AQUA.toString())
                         .func_230529_a_(getCamoStateDisplayName(stack))
                         .func_240699_a_(TextFormatting.YELLOW), false);

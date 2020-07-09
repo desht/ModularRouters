@@ -4,12 +4,12 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
@@ -35,12 +35,12 @@ class TOPInfoProvider {
                 }
 
                 probeInfo.text(new StringTextComponent(TextFormatting.YELLOW.toString())
-                        .func_230529_a_(MiscUtil.xlate("guiText.tooltip.redstone.label"))
+                        .func_230529_a_(new TranslationTextComponent("guiText.tooltip.redstone.label"))
                         .func_240702_b_(TextFormatting.WHITE + ": ")
-                        .func_230529_a_(MiscUtil.xlate(router.getRedstoneBehaviour().getTranslationKey()))
+                        .func_230529_a_(new TranslationTextComponent(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {
-                probeInfo.text(MiscUtil.xlate("chatText.security.accessDenied"));
+                probeInfo.text(new TranslationTextComponent("chatText.security.accessDenied"));
             }
         });
     }

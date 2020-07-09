@@ -9,6 +9,7 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -115,7 +116,7 @@ public class ModuleTarget {
     }
 
     public ITextComponent getTextComponent() {
-        return MiscUtil.xlate(blockTranslationKey).func_240699_a_(TextFormatting.WHITE)
+        return new TranslationTextComponent(blockTranslationKey).func_240699_a_(TextFormatting.WHITE)
                 .func_230529_a_(new StringTextComponent(" @ " + toString()).func_240699_a_(TextFormatting.AQUA));
     }
 }

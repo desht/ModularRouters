@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
@@ -86,7 +87,7 @@ public class GuiModuleFlinger extends GuiModule {
         TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
             super(x, y, 16, 16, p -> {});
             this.buttonId = buttonId;
-            tooltip1.add(MiscUtil.xlate("guiText.tooltip.flinger." + key, min, max));
+            tooltip1.add(ClientUtil.xlate("guiText.tooltip.flinger." + key, min, max));
             MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
         }
 

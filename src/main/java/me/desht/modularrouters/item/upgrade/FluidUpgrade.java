@@ -4,7 +4,6 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
@@ -21,7 +20,7 @@ public class FluidUpgrade extends ItemUpgrade {
         super.addUsageInformation(itemstack, list);
         TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
         if (router != null) {
-            list.add(MiscUtil.xlate("itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
+            list.add(ClientUtil.xlate("itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
         }
     }
 

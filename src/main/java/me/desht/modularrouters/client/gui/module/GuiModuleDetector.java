@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -42,11 +43,11 @@ public class GuiModuleDetector extends GuiModule {
 
         manager.focus(0);
 
-        ITextComponent label = MiscUtil.xlate("itemText.misc.strongSignal." + cdm.isStrongSignal());
+        ITextComponent label = ClientUtil.xlate("itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
         addButton(new Button(guiLeft + 138, guiTop + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
-            button.setMessage(MiscUtil.xlate("itemText.misc.strongSignal." + isStrong));
+            button.setMessage(ClientUtil.xlate("itemText.misc.strongSignal." + isStrong));
             GuiModuleDetector.this.sendToServer();
         }));
 

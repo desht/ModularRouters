@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerModFilter;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -9,7 +10,6 @@ import me.desht.modularrouters.logic.filter.matchers.ModMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
-import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -58,14 +58,14 @@ public class ModFilter extends ItemSmartFilter {
         super.addExtraInformation(stack, list);
         if (stack.getChildTag(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
-            list.add(MiscUtil.xlate("itemText.misc.modFilter.count", l.size()));
+            list.add(ClientUtil.xlate("itemText.misc.modFilter.count", l.size()));
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
                     .map(s -> " \u2022 " + TextFormatting.AQUA + s)
                     .map(StringTextComponent::new)
                     .collect(Collectors.toList()));
         } else {
-            list.add(MiscUtil.xlate("itemText.misc.modFilter.count", 0));
+            list.add(ClientUtil.xlate("itemText.misc.modFilter.count", 0));
         }
     }
 

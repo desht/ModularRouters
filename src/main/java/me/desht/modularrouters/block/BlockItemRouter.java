@@ -1,6 +1,7 @@
 package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -8,7 +9,6 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.InventoryUtils;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -124,7 +124,7 @@ public class BlockItemRouter extends BlockCamo {
     public void addInformation(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
         if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
-            tooltip.add(MiscUtil.xlate("itemText.misc.routerConfigured")
+            tooltip.add(ClientUtil.xlate("itemText.misc.routerConfigured")
                     .func_240701_a_(TextFormatting.GRAY, TextFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<ITextComponent> moduleText = new ArrayList<>();
@@ -140,7 +140,7 @@ public class BlockItemRouter extends BlockCamo {
                     }
                 }
                 if (!moduleText.isEmpty()) {
-                    tooltip.add(MiscUtil.xlate("itemText.misc.moduleCount",
+                    tooltip.add(ClientUtil.xlate("itemText.misc.moduleCount",
                             moduleText.size()).func_240699_a_(TextFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
@@ -161,17 +161,17 @@ public class BlockItemRouter extends BlockCamo {
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(MiscUtil.xlate("itemText.misc.upgradeCount", nUpgrades).func_240699_a_(TextFormatting.YELLOW));
+                    tooltip.add(ClientUtil.xlate("itemText.misc.upgradeCount", nUpgrades).func_240699_a_(TextFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
             if (compound.contains(NBT_REDSTONE_MODE)) {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-                    tooltip.add(MiscUtil.xlate("guiText.tooltip.redstone.label")
+                    tooltip.add(ClientUtil.xlate("guiText.tooltip.redstone.label")
                             .func_240702_b_(": ")
                             .func_240699_a_(TextFormatting.YELLOW)
-                            .func_230529_a_(MiscUtil.xlate("guiText.tooltip.redstone." + rrb)
+                            .func_230529_a_(ClientUtil.xlate("guiText.tooltip.redstone." + rrb)
                                     .func_240699_a_(TextFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
@@ -190,7 +190,7 @@ public class BlockItemRouter extends BlockCamo {
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
-                    player.sendStatusMessage(MiscUtil.xlate("chatText.security.accessDenied"), false);
+                    player.sendStatusMessage(ClientUtil.xlate("chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
                 return ActionResultType.SUCCESS;

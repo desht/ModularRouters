@@ -20,7 +20,7 @@ import net.minecraft.util.text.ITextComponent;
 import java.util.Collections;
 import java.util.List;
 
-import static me.desht.modularrouters.util.MiscUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class GuiModulePlayer extends GuiModule {
     private static final ItemStack MAIN_INV_STACK = new ItemStack(Blocks.CHEST);

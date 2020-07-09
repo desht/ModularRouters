@@ -23,6 +23,7 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -30,8 +31,8 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 import java.util.Set;
 
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.asFormattable;
-import static me.desht.modularrouters.util.MiscUtil.xlate;
 
 /**
  * Represents a module with a specific target block or blocks (blockpos stored in itemstack NBT).
@@ -71,7 +72,7 @@ public abstract class TargetedModule extends ItemModule {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                IFormattableTextComponent msg = xlate("chatText.misc.targetSet").func_230529_a_(tgt.getTextComponent());
+                IFormattableTextComponent msg = new TranslationTextComponent("chatText.misc.targetSet").func_230529_a_(tgt.getTextComponent());
                 player.sendStatusMessage(msg.func_240699_a_(TextFormatting.YELLOW), true);
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
             }
@@ -88,15 +89,15 @@ public abstract class TargetedModule extends ItemModule {
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
-                player.sendStatusMessage(xlate("chatText.misc.targetRemoved", targets.size(), getMaxTargets())
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetRemoved", targets.size(), getMaxTargets())
                         .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.sendStatusMessage(MiscUtil.xlate("chatText.misc.targetAdded", targets.size(), getMaxTargets())
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", targets.size(), getMaxTargets())
                         .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
-                player.sendStatusMessage(MiscUtil.xlate("chatText.misc.tooManyTargets", getMaxTargets())
+                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
                         .func_240699_a_(TextFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
@@ -149,7 +150,7 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
             world.playSound(null, new BlockPos(player.getPositionVec()), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
-            player.sendStatusMessage(xlate("chatText.misc.targetCleared").func_240699_a_(TextFormatting.YELLOW), true);
+            player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetCleared").func_240699_a_(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
@@ -272,7 +273,7 @@ public abstract class TargetedModule extends ItemModule {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
                 IFormattableTextComponent msg = MiscUtil.asFormattable(target.getTextComponent())
-                        .func_240702_b_(" ").func_230529_a_(xlate(v.translationKey()).func_240699_a_(v.getColor()));
+                        .func_240702_b_(" ").func_230529_a_(new TranslationTextComponent(v.translationKey()).func_240699_a_(v.getColor()));
                 player.sendStatusMessage(msg, false);
             }
         }

@@ -2,11 +2,11 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -49,10 +49,10 @@ public class RegexFilter extends ItemSmartFilter {
         CompoundNBT compound = itemstack.getTag();
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
-            list.add(MiscUtil.xlate("itemText.misc.regexFilter.count", l.size()));
+            list.add(ClientUtil.xlate("itemText.misc.regexFilter.count", l.size()));
             list.addAll(l.stream().map(s -> " \u2022 " + TextFormatting.AQUA + "/" + s + "/").map(StringTextComponent::new).collect(Collectors.toList()));
         } else {
-            list.add(MiscUtil.xlate("itemText.misc.regexFilter.count", 0));
+            list.add(ClientUtil.xlate("itemText.misc.regexFilter.count", 0));
         }
     }
 

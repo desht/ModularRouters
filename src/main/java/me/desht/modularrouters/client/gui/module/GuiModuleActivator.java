@@ -5,12 +5,12 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
@@ -100,7 +100,7 @@ public class GuiModuleActivator extends GuiModule {
             super(x, y, width, height, flat, stacks, initialVal, GuiModuleActivator.this);
 
             for (ActionType actionType : ActionType.values()) {
-                tooltips.add(Collections.singletonList(MiscUtil.xlate(actionType.getTranslationKey())));
+                tooltips.add(Collections.singletonList(ClientUtil.xlate(actionType.getTranslationKey())));
             }
         }
 
@@ -116,7 +116,7 @@ public class GuiModuleActivator extends GuiModule {
         LookDirectionButton(int x, int y, int width, int height, LookDirection initialVal) {
             super(x, y, width, height, initialVal, GuiModuleActivator.this);
             for (LookDirection dir : LookDirection.values()) {
-                tooltips.add(Collections.singletonList(MiscUtil.xlate(dir.getTranslationKey())));
+                tooltips.add(Collections.singletonList(ClientUtil.xlate(dir.getTranslationKey())));
             }
         }
 
@@ -158,7 +158,7 @@ public class GuiModuleActivator extends GuiModule {
         EntityModeButton(int x, int y, int width, int height, EntityMode initialVal) {
             super(x, y, width, height, initialVal, GuiModuleActivator.this);
             for (EntityMode mode : EntityMode.values()) {
-                tooltips.add(Collections.singletonList(MiscUtil.xlate(mode.getTranslationKey())));
+                tooltips.add(Collections.singletonList(ClientUtil.xlate(mode.getTranslationKey())));
             }
         }
 

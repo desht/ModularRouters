@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
@@ -43,11 +44,11 @@ public class VacuumModule extends ItemModule implements IRangedModule {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
             ITextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId())).func_240699_a_(TextFormatting.BLUE);
             ITextComponent title = type.getDisplayName().copyRaw().func_240699_a_(TextFormatting.AQUA);
-            list.add(MiscUtil.xlate("guiText.label.xpVacuum")
+            list.add(ClientUtil.xlate("guiText.label.xpVacuum")
                     .func_240702_b_(": ").func_240699_a_(TextFormatting.YELLOW)
                     .func_230529_a_(title).func_240702_b_(" - ").func_230529_a_(modName));
             if (cvm.isAutoEjecting() && !type.isSolid()) {
-                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), MiscUtil.xlate("guiText.tooltip.xpVacuum.ejectFluid")));
+                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), ClientUtil.xlate("guiText.tooltip.xpVacuum.ejectFluid")));
             }
         }
     }

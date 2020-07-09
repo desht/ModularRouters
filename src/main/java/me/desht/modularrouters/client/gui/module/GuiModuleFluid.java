@@ -27,7 +27,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.Collections;
 import java.util.List;
 
-import static me.desht.modularrouters.util.MiscUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class GuiModuleFluid extends GuiModule {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);

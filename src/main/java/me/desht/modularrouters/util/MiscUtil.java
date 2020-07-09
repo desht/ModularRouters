@@ -93,12 +93,6 @@ public class MiscUtil {
         return locToString(pos.func_239646_a_().func_240901_a_(), pos.getPos());
     }
 
-    public static IFormattableTextComponent xlate(String key, Object... args) {
-        // not using TranslationTextComponent here because each argument starts a separate child component,
-        // which resets any formatting each time
-        return new StringTextComponent(I18n.format(key, args));
-    }
-
     public static ResourceLocation RL(String name) {
         return new ResourceLocation(ModularRouters.MODID, name);
     }

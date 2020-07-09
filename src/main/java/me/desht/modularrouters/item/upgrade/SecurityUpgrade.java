@@ -2,10 +2,10 @@ package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.IPlayerOwned;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -16,6 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.util.Collections;
@@ -32,10 +33,10 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     public void addExtraInformation(ItemStack itemstack,  List<ITextComponent> list) {
         String owner = getOwnerName(itemstack);
         if (owner == null) owner = "-";
-        list.add(MiscUtil.xlate("itemText.security.owner", TextFormatting.AQUA + owner));
+        list.add(ClientUtil.xlate("itemText.security.owner", TextFormatting.AQUA + owner));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
-            list.add(MiscUtil.xlate("itemText.security.count", names.size(), MAX_PLAYERS));
+            list.add(ClientUtil.xlate("itemText.security.count", names.size(), MAX_PLAYERS));
             list.addAll(names.stream()
                     .map(name -> " \u2022 " + TextFormatting.YELLOW + name)
                     .sorted()
@@ -130,7 +131,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.getEntityWorld().isRemote && player.isSteppingCarefully()) {
             setOwner(stack, player);
-            player.sendStatusMessage(MiscUtil.xlate("itemText.security.owner", player.getDisplayName().getString()), false);
+            player.sendStatusMessage(new TranslationTextComponent("itemText.security.owner", player.getDisplayName().getString()), false);
             return ActionResult.resultSuccess(stack);
         }
         return ActionResult.resultPass(stack);
@@ -146,7 +147,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
             if (player.world.isRemote) {
                 player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
             } else {
-                player.sendStatusMessage(MiscUtil.xlate("chatText.security." + res.toString(), name), false);
+                player.sendStatusMessage(new TranslationTextComponent("chatText.security." + res.toString(), name), false);
             }
             return ActionResultType.SUCCESS;
         }
