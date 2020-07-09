@@ -7,8 +7,8 @@ import net.minecraft.data.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -318,9 +318,9 @@ public class ModRecipeProvider extends RecipeProvider {
         Arrays.stream(pattern.split("/")).forEach(b::patternLine);
         for (int i = 0; i < keys.length; i += 2) {
             Object v = keys[i + 1];
-            if (v instanceof Tag<?>) {
+            if (v instanceof ITag.INamedTag<?>) {
                 //noinspection unchecked
-                b.key((Character) keys[i], (Tag<Item>) v);
+                b.key((Character) keys[i], (ITag.INamedTag<Item>) v);
             } else if (v instanceof IItemProvider) {
                 b.key((Character) keys[i], (IItemProvider) v);
             } else if (v instanceof Ingredient) {
@@ -329,7 +329,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 throw new IllegalArgumentException("bad type for recipe ingredient " + v);
             }
         }
-        b.addCriterion("has_" + safeName(required), this.hasItem(required));
+        b.addCriterion("has_" + safeName(required), hasItem(required));
         return b;
     }
 
@@ -340,9 +340,9 @@ public class ModRecipeProvider extends RecipeProvider {
     private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
         ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapelessRecipe(result, count);
         for (Object v : ingredients) {
-            if (v instanceof Tag<?>) {
+            if (v instanceof ITag.INamedTag<?>) {
                 //noinspection unchecked
-                b.addIngredient((Tag<Item>) v);
+                b.addIngredient((ITag.INamedTag<Item>) v);
             } else if (v instanceof IItemProvider) {
                 b.addIngredient((IItemProvider) v);
             } else if (v instanceof Ingredient) {
@@ -351,7 +351,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 throw new IllegalArgumentException("bad type for recipe ingredient " + v);
             }
         }
-        b.addCriterion("has_" + safeName(required), this.hasItem(required));
+        b.addCriterion("has_" + safeName(required), hasItem(required));
         return b;
     }
 
