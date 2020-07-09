@@ -6,18 +6,19 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.1
 
-*porting underway!*
+### 7.0.0 (9 Jul 2020)
+* Initial release for Minecraft 1.16!  This is largely feature-equivalent to the last 1.15.2 release (6.1.1)
+* Support for JEI, The One Probe and Patchouli is in place.  Support for Hwyla will be added back when it gets a 1.16.1 Forge port.
+* Items can now be dragged from JEI directly to filter slots in module GUI's.  No need to have those items in your inventory anymore.
 
 ## Minecraft 1.15.2
 
-### 6.1.1 (unreleased)
-
+### 6.1.1 (22 Jun 2020)
 * Fixed energy/fluid dupe issues with more than one of a stackable energy or fluid containing item in the router's buffer
   * Fluid/energy capabilities are now only offered with a single item in the buffer
 * Fixed recipes for Breaker and Extruder Mk1 modules not showing in JEI
 
 ### 6.1.0 (12 May 2020)
-
 * Added support for Cyclic XP Juice in the Vacuum Module (XP augment)
 * Added config option to not display "flying" items when they're being transferred
   * Large numbers of these could hurt the frame rate
