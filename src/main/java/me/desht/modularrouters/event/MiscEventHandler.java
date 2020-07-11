@@ -5,12 +5,12 @@ import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber
 public class MiscEventHandler {
@@ -51,12 +51,7 @@ public class MiscEventHandler {
             if (!moduleStack.isEmpty()) {
                 AugmentHandler h = new AugmentHandler(moduleStack, null);
                 for (int i = 0; i < h.getSlots(); i++) {
-                    ItemStack s = h.getStackInSlot(i);
-                    if (!s.isEmpty()) {
-                        if (!event.getPlayer().addItemStackToInventory(s)) {
-                            InventoryUtils.dropItems(event.getPlayer().getEntityWorld(), event.getPlayer().getPositionVec(), s);
-                        }
-                    }
+                    ItemHandlerHelper.giveItemToPlayer(event.getPlayer(), h.getStackInSlot(i));
                 }
             }
         }

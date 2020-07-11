@@ -11,6 +11,7 @@ import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.CountedItemStacks;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -182,7 +183,7 @@ public abstract class CompiledModule {
         Direction facing = router.getAbsoluteFacing(direction);
         BlockPos pos = router.getPos().offset(facing);
         String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
-        GlobalPos gPos = GlobalPos.func_239648_a_(router.getWorld().func_234923_W_(), pos);
+        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getWorld(), pos);
         return Collections.singletonList(new ModuleTarget(gPos, facing.getOpposite(), blockName));
     }
 

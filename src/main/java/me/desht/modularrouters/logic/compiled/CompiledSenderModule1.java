@@ -8,15 +8,18 @@ import me.desht.modularrouters.network.ItemBeamMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -84,8 +87,9 @@ public class CompiledSenderModule1 extends CompiledModule {
         Direction face = getTarget().face;
         World world = router.getWorld();
         for (int i = 1; i <= getRange(); i++) {
-            if (world.getTileEntity(pos) != null) {
-                GlobalPos gPos = GlobalPos.func_239648_a_(world.func_234923_W_(), pos.toImmutable());
+            TileEntity te = world.getTileEntity(pos);
+            if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getTarget().face).isPresent()) {
+                GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos.toImmutable());
                 return new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
                 return null;

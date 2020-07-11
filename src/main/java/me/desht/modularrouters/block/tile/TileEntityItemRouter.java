@@ -22,6 +22,7 @@ import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -763,7 +764,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public GlobalPos getGlobalPos() {
-        return GlobalPos.func_239648_a_(world.func_234923_W_(), pos);
+        return MiscUtil.makeGlobalPos(world, pos);
     }
 
     /**

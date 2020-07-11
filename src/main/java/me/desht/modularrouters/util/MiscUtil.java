@@ -124,8 +124,8 @@ public class MiscUtil {
     }
 
     public static GlobalPos deserializeGlobalPos(CompoundNBT tag) {
-        RegistryKey<World> k = RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dim")));
-        return GlobalPos.func_239648_a_(k, NBTUtil.readBlockPos(tag.getCompound("pos")));
+        RegistryKey<World> worldKey = RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dim")));
+        return GlobalPos.func_239648_a_(worldKey, NBTUtil.readBlockPos(tag.getCompound("pos")));
     }
 
     public static ServerWorld getWorldForGlobalPos(GlobalPos pos) {

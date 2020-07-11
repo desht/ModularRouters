@@ -8,6 +8,7 @@ import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.fluid.Fluid;
@@ -246,7 +247,7 @@ public class CompiledVacuumModule extends CompiledModule {
         ItemModule.RelativeDirection dir = getDirection();
         int offset = dir == ItemModule.RelativeDirection.NONE ? 0 : getRange() + 1;
         Direction facing = router.getAbsoluteFacing(dir);
-        GlobalPos gPos = GlobalPos.func_239648_a_(router.getWorld().func_234923_W_(), router.getPos().offset(facing, offset));
+        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getWorld(), router.getPos().offset(facing, offset));
         return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 
