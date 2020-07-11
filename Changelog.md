@@ -6,7 +6,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.1
 
-### 7.0.0 (9 Jul 2020)
+### 7.0.0 (11 Jul 2020)
 * Initial release for Minecraft 1.16!  This is largely feature-equivalent to the last 1.15.2 release (6.1.1)
 * Support for JEI, The One Probe and Patchouli is in place.  Support for Hwyla will be added back when it gets a 1.16.1 Forge port.
 * Items can now be dragged from JEI directly to filter slots in module GUI's.  No need to have those items in your inventory anymore.
