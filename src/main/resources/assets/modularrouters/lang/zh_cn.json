@@ -206,8 +206,6 @@
   "gui.config.moduleGuiBackgroundTint": "把模块GUI的背景色染成模块物品的颜色",
 
   "_comment": "Item tooltips",
-  "itemText.misc.holdShiftCtrl": "按住§e§oShift§7键进行设置，§e§%s§7键获取信息",
-  "itemText.misc.holdCtrl": "按住§e§o%s§r§7键获取信息",
   "itemText.misc.moduleCount": "模块：%d",
   "itemText.misc.upgradeCount": "升级：%d",
   "itemText.misc.routerConfigured": "此路由器已配置",
@@ -343,5 +341,7 @@
 
   "key.modularrouters.category": "模块化路由器",
   "key.modularrouters.configure": "配置已安装的模块 （GUI）",
-  "key.modularrouters.moduleInfo": "额外的工具提示信息 （GUI）"
+  "key.modularrouters.moduleInfo": "额外的工具提示信息 （GUI）",
+  "itemText.misc.holdShiftKey": "§7§o▶ Hold §3§o[Shift]§7§o for settings, §3§o[%s]§7§o for more info",
+  "itemText.misc.holdKey": "§7§o▶ Hold §3§o[%s]§7§o for more info"
 }
