@@ -25,23 +25,23 @@ public class ActivatorModule extends ItemModule {
         super.addSettingsInformation(stack, list);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
-        list.add(ClientUtil.xlate("guiText.tooltip.activator.action").func_240702_b_(": ")
-                .func_240699_a_(TextFormatting.YELLOW)
-                .func_230529_a_(ClientUtil.xlate("itemText.activator.action." + cam.getActionType())
-                        .func_240699_a_(TextFormatting.AQUA)));
+        list.add(ClientUtil.xlate("guiText.tooltip.activator.action").appendString(": ")
+                .mergeStyle(TextFormatting.YELLOW)
+                .append(ClientUtil.xlate("itemText.activator.action." + cam.getActionType())
+                        .mergeStyle(TextFormatting.AQUA)));
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
-            list.add(ClientUtil.xlate("guiText.tooltip.activator.lookDirection").func_240702_b_(": ")
-                    .func_240699_a_(TextFormatting.YELLOW)
-                    .func_230529_a_(ClientUtil.xlate("itemText.activator.direction." + cam.getLookDirection())
-                            .func_240699_a_(TextFormatting.AQUA)));
+            list.add(ClientUtil.xlate("guiText.tooltip.activator.lookDirection").appendString(": ")
+                    .mergeStyle(TextFormatting.YELLOW)
+                    .append(ClientUtil.xlate("itemText.activator.direction." + cam.getLookDirection())
+                            .mergeStyle(TextFormatting.AQUA)));
         } else {
-            list.add(ClientUtil.xlate("guiText.tooltip.activator.entityMode").func_240702_b_(": ")
-                    .func_240699_a_(TextFormatting.YELLOW)
-                    .func_230529_a_(ClientUtil.xlate("itemText.activator.entityMode." + cam.getEntityMode())
-                            .func_240699_a_(TextFormatting.AQUA)));
+            list.add(ClientUtil.xlate("guiText.tooltip.activator.entityMode").appendString(": ")
+                    .mergeStyle(TextFormatting.YELLOW)
+                    .append(ClientUtil.xlate("itemText.activator.entityMode." + cam.getEntityMode())
+                            .mergeStyle(TextFormatting.AQUA)));
         }
         if (cam.isSneaking()) {
-            list.add(ClientUtil.xlate("guiText.tooltip.activator.sneak").func_240699_a_(TextFormatting.YELLOW));
+            list.add(ClientUtil.xlate("guiText.tooltip.activator.sneak").mergeStyle(TextFormatting.YELLOW));
         }
     }
 

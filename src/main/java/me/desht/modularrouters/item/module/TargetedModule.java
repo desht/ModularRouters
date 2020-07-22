@@ -72,8 +72,8 @@ public abstract class TargetedModule extends ItemModule {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                IFormattableTextComponent msg = new TranslationTextComponent("chatText.misc.targetSet").func_230529_a_(tgt.getTextComponent());
-                player.sendStatusMessage(msg.func_240699_a_(TextFormatting.YELLOW), true);
+                IFormattableTextComponent msg = new TranslationTextComponent("chatText.misc.targetSet").append(tgt.getTextComponent());
+                player.sendStatusMessage(msg.mergeStyle(TextFormatting.YELLOW), true);
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
             }
         }
@@ -90,15 +90,15 @@ public abstract class TargetedModule extends ItemModule {
                 targets.remove(tgt);
                 removing = true;
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetRemoved", targets.size(), getMaxTargets())
-                        .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
+                        .append(tgt.getTextComponent()).mergeStyle(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", targets.size(), getMaxTargets())
-                        .func_230529_a_(tgt.getTextComponent()).func_240699_a_(TextFormatting.YELLOW), true);
+                        .append(tgt.getTextComponent()).mergeStyle(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
                 player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
-                        .func_240699_a_(TextFormatting.RED), true);
+                        .mergeStyle(TextFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
             }
@@ -129,16 +129,16 @@ public abstract class TargetedModule extends ItemModule {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                ITextComponent msg = asFormattable(target.getTextComponent()).func_240699_a_(TextFormatting.WHITE);
+                ITextComponent msg = asFormattable(target.getTextComponent()).mergeStyle(TextFormatting.WHITE);
 //                ITextComponent msg = xlate("chatText.misc.target")
-//                        .func_230529_a_(target.getTextComponent()).func_240699_a_(TextFormatting.YELLOW);
+//                        .append(target.getTextComponent()).mergeStyle(TextFormatting.YELLOW);
                 list.add(msg);
                 TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(xlate(val.translationKey()).func_240699_a_(val.getColor()));
+                        list.add(xlate(val.translationKey()).mergeStyle(val.getColor()));
                     }
                 }
             }
@@ -150,7 +150,7 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
             world.playSound(null, new BlockPos(player.getPositionVec()), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
-            player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetCleared").func_240699_a_(TextFormatting.YELLOW), true);
+            player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetCleared").mergeStyle(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
@@ -273,7 +273,7 @@ public abstract class TargetedModule extends ItemModule {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
                 IFormattableTextComponent msg = MiscUtil.asFormattable(target.getTextComponent())
-                        .func_240702_b_(" ").func_230529_a_(new TranslationTextComponent(v.translationKey()).func_240699_a_(v.getColor()));
+                        .appendString(" ").append(new TranslationTextComponent(v.translationKey()).mergeStyle(v.getColor()));
                 player.sendStatusMessage(msg, false);
             }
         }

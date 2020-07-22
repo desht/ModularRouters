@@ -138,12 +138,11 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     public void setCamouflage(ItemStack itemStack, Direction facing, Direction routerFacing) {
         if (itemStack.getItem() instanceof BlockItem) {
             camouflage = ((BlockItem) itemStack.getItem()).getBlock().getDefaultState();
-            // func_235901_b_ = has
-            if (camouflage.func_235901_b_(BlockStateProperties.AXIS)) {
+            if (camouflage.hasProperty(BlockStateProperties.AXIS)) {
                 camouflage = camouflage.with(BlockStateProperties.AXIS, facing.getAxis());
-            } else if (camouflage.func_235901_b_(BlockStateProperties.FACING)) {
+            } else if (camouflage.hasProperty(BlockStateProperties.FACING)) {
                 camouflage = camouflage.with(BlockStateProperties.FACING, facing);
-            } else if (camouflage.func_235901_b_(BlockStateProperties.HORIZONTAL_FACING)) {
+            } else if (camouflage.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
                 camouflage = camouflage.with(BlockStateProperties.HORIZONTAL_FACING,
                         facing.getAxis() == Direction.Axis.Y ? routerFacing : facing);
             }

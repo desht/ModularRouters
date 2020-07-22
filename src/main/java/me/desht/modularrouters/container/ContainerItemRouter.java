@@ -80,7 +80,7 @@ public class ContainerItemRouter extends ContainerMRBase {
     @Override
     public boolean canInteractWith(PlayerEntity player) {
         return router.getWorld().getTileEntity(router.getPos()) == router
-                && Vector3d.func_237489_a_(router.getPos()).squareDistanceTo(player.getPositionVec()) <= 64;
+                && Vector3d.copyCentered(router.getPos()).squareDistanceTo(player.getPositionVec()) <= 64;
     }
 
     @Override

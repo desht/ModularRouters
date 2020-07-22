@@ -2,8 +2,6 @@ package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -31,8 +29,8 @@ public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstone
         return Collections.singletonList(
                 // TODO 1.16 func_230529_a_ = appendSibling
                 new TranslationTextComponent("guiText.tooltip.redstone.label")
-                        .func_230529_a_(new StringTextComponent(": "))
-                        .func_230529_a_(new TranslationTextComponent(getState().getTranslationKey()))
+                        .append(new StringTextComponent(": "))
+                        .append(new TranslationTextComponent(getState().getTranslationKey()))
         );
     }
 }

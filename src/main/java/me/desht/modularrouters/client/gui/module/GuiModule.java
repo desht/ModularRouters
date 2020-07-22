@@ -420,8 +420,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
             this.direction = dir;
             StringTextComponent dirStr = new StringTextComponent(module.getDirectionString(dir));
-            tooltip1.add(dirStr.func_240699_a_(TextFormatting.GRAY));
-            tooltip2.add(dirStr.func_240699_a_(TextFormatting.YELLOW));
+            tooltip1.add(dirStr.mergeStyle(TextFormatting.GRAY));
+            tooltip2.add(dirStr.mergeStyle(TextFormatting.YELLOW));
         }
 
         @Override

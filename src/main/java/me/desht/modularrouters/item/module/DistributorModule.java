@@ -24,8 +24,8 @@ public class DistributorModule extends SenderModule2 {
         super.addSettingsInformation(itemstack, list);
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
-        list.add(ClientUtil.xlate("guiText.tooltip.distributor.strategy").func_240702_b_(": ").func_240699_a_(TextFormatting.YELLOW)
-                .func_230529_a_(ClientUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).func_240699_a_(TextFormatting.AQUA));
+        list.add(ClientUtil.xlate("guiText.tooltip.distributor.strategy").appendString(": ").mergeStyle(TextFormatting.YELLOW)
+                .append(ClientUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).mergeStyle(TextFormatting.AQUA));
     }
 
     @Override

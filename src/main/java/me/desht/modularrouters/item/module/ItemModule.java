@@ -197,8 +197,8 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             IFormattableTextComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
                     "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString());
             list.add(xlate("guiText.label.direction")
-                    .func_230529_a_(new StringTextComponent(": "))
-                    .func_230529_a_(itc.func_240699_a_(TextFormatting.AQUA)));
+                    .append(new StringTextComponent(": "))
+                    .append(itc.mergeStyle(TextFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
         list.add(new StringTextComponent(
@@ -212,9 +212,9 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                 )
         );
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
-        list.add(xlate("itemText.misc.match").func_240702_b_(": ")
-                .func_230529_a_(xlate("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
-                        .func_240699_a_(TextFormatting.AQUA)));
+        list.add(xlate("itemText.misc.match").appendString(": ")
+                .append(xlate("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
+                        .mergeStyle(TextFormatting.AQUA)));
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
             int curRange = rm.getCurrentRange(itemstack);
@@ -225,9 +225,9 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         }
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
-            list.add(xlate("itemText.misc.breakerPick").func_230529_a_(pick.getDisplayName().copyRaw().func_240699_a_(TextFormatting.AQUA)));
+            list.add(xlate("itemText.misc.breakerPick").append(pick.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
-                list.add(new StringTextComponent("\u25b6 ").func_230529_a_(ench.getDisplayName(level).copyRaw().func_240699_a_(TextFormatting.AQUA)).func_240699_a_(TextFormatting.YELLOW));
+                list.add(new StringTextComponent("\u25b6 ").append(ench.getDisplayName(level).copyRaw().mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.YELLOW));
             });
         }
     }
@@ -246,7 +246,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).func_230529_a_(xlate("itemText.augments")));
+            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).append(xlate("itemText.augments")));
             list.addAll(toAdd);
         }
     }
@@ -274,23 +274,23 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             if (s.getItem() instanceof ItemSmartFilter) {
                 int size = ((ItemSmartFilter) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(new StringTextComponent(" \u2022 ").func_230529_a_(s.getDisplayName().copyRaw().func_240702_b_(suffix))
-                        .func_240701_a_(TextFormatting.AQUA, TextFormatting.ITALIC));
+                l2.add(new StringTextComponent(" \u2022 ").append(s.getDisplayName().copyRaw().appendString(suffix))
+                        .mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new StringTextComponent(" \u2022 ").func_230529_a_(getFilterItemDisplayName(s).copyRaw()
-                        .func_240699_a_(TextFormatting.AQUA)));
+                l2.add(new StringTextComponent(" \u2022 ").append(getFilterItemDisplayName(s).copyRaw()
+                        .mergeStyle(TextFormatting.AQUA)));
             }
         }
         String key = "itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
         if (l2.isEmpty()) {
-            list.add(xlate(key).func_240701_a_(TextFormatting.YELLOW)
-                    .func_240702_b_(": ")
-                    .func_230529_a_(xlate("itemText.misc.noItems")
-                            .func_240701_a_(TextFormatting.AQUA, TextFormatting.ITALIC))
+            list.add(xlate(key).mergeStyle(TextFormatting.YELLOW)
+                    .appendString(": ")
+                    .append(xlate("itemText.misc.noItems")
+                            .mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(xlate(key).func_240701_a_(TextFormatting.YELLOW)
-                            .func_240702_b_(": "));
+            list.add(xlate(key).mergeStyle(TextFormatting.YELLOW)
+                            .appendString(": "));
             list.addAll(l2);
         }
     }

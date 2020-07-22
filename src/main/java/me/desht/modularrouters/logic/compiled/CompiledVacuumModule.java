@@ -198,7 +198,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     ItemStack excess = router.insertBuffer(stack);
                     xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
                     if (!excess.isEmpty()) {
-                        InventoryUtils.dropItems(router.getWorld(), Vector3d.func_237489_a_(router.getPos()), excess);
+                        InventoryUtils.dropItems(router.getWorld(), Vector3d.copyCentered(router.getPos()), excess);
                     }
                 }
             } else {

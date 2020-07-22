@@ -32,7 +32,7 @@ public class BlockTemplateFrame extends BlockCamo {
         ICamouflageable camo = getCamoState(world, pos);
         if (camo == null) return super.getPickBlock(state, target, world, pos, player);
         ItemStack stack = new ItemStack(camo.getCamouflage().getBlock().asItem());
-        return stack.setDisplayName(stack.getDisplayName().copyRaw().func_240702_b_("..?"));
+        return stack.setDisplayName(stack.getDisplayName().copyRaw().appendString("..?"));
     }
 
     @Override

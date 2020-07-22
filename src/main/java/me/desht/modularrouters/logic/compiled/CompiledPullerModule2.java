@@ -34,7 +34,7 @@ public class CompiledPullerModule2 extends CompiledPullerModule1 {
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vector3d vec1 = Vector3d.func_237489_a_(router.getPos());
+            Vector3d vec1 = Vector3d.copyCentered(router.getPos());
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().func_234923_W_());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router, targetPos, true, stack, 0x6080FF, router.getTickRate()));

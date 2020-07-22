@@ -39,8 +39,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @SafeVarargs
     private final void addItemsToTag(ITag.INamedTag<Item> tag, Supplier<? extends IItemProvider>... items) {
-        func_240522_a_(tag).func_240534_a_(Arrays.stream(items).map(Supplier::get).map(IItemProvider::asItem).toArray(Item[]::new));
-//        getBuilder(tag).add(Arrays.stream(items).map(Supplier::get).map(IItemProvider::asItem).toArray(Item[]::new));
+        getOrCreateBuilder(tag).add(Arrays.stream(items).map(Supplier::get).map(IItemProvider::asItem).toArray(Item[]::new));
     }
 
     @Override

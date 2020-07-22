@@ -116,7 +116,7 @@ public class ModuleTarget {
     }
 
     public ITextComponent getTextComponent() {
-        return new TranslationTextComponent(blockTranslationKey).func_240699_a_(TextFormatting.WHITE)
-                .func_230529_a_(new StringTextComponent(" @ " + toString()).func_240699_a_(TextFormatting.AQUA));
+        return new TranslationTextComponent(blockTranslationKey).mergeStyle(TextFormatting.WHITE)
+                .append(new StringTextComponent(" @ " + toString()).mergeStyle(TextFormatting.AQUA));
     }
 }

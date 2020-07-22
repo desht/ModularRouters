@@ -28,8 +28,8 @@ public class CamouflageUpgrade extends ItemUpgrade {
         CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
         if (tag != null && tag.contains(NBT_STATE_NAME)) {
             list.add(ClientUtil.xlate("itemText.camouflage.held")
-                    .func_240702_b_(TextFormatting.AQUA.toString())
-                    .func_230529_a_(getCamoStateDisplayName(itemstack)));
+                    .appendString(TextFormatting.AQUA.toString())
+                    .append(getCamoStateDisplayName(itemstack)));
         }
     }
 
@@ -65,9 +65,9 @@ public class CamouflageUpgrade extends ItemUpgrade {
             setCamoState(stack, state);
             if (!ctx.getWorld().isRemote) {
                 player.sendStatusMessage(new TranslationTextComponent("itemText.camouflage.held")
-                        .func_240702_b_(TextFormatting.AQUA.toString())
-                        .func_230529_a_(getCamoStateDisplayName(stack))
-                        .func_240699_a_(TextFormatting.YELLOW), false);
+                        .appendString(TextFormatting.AQUA.toString())
+                        .append(getCamoStateDisplayName(stack))
+                        .mergeStyle(TextFormatting.YELLOW), false);
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }

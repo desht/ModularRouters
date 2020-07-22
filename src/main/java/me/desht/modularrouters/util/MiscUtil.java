@@ -32,7 +32,7 @@ public class MiscUtil {
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
         for (String s : I18n.format(key, args).split(Pattern.quote("${br}"))) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\n")) {
-                result.add(new StringTextComponent(s1).func_240699_a_(formatting));
+                result.add(new StringTextComponent(s1).mergeStyle(formatting));
             }
         }
     }
@@ -113,7 +113,7 @@ public class MiscUtil {
     }
 
     public static ITextComponent settingsStr(String prefix, ITextComponent c) {
-        return new StringTextComponent(prefix).func_230529_a_(c);  // appendSibling
+        return new StringTextComponent(prefix).append(c);  // appendSibling
     }
 
     public static CompoundNBT serializeGlobalPos(GlobalPos globalPos) {

@@ -88,7 +88,7 @@ public class GuiModuleVacuum extends GuiModule {
             for (XPCollectionType type : XPCollectionType.values()) {
                 StringTextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId()));
                 IFormattableTextComponent title = type.getDisplayName().copyRaw();
-                tips.add(ImmutableList.of(title, modName.func_240701_a_(TextFormatting.BLUE, TextFormatting.ITALIC)));
+                tips.add(ImmutableList.of(title, modName.mergeStyle(TextFormatting.BLUE, TextFormatting.ITALIC)));
             }
         }
 

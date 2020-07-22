@@ -32,7 +32,8 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: config.mcp_mappings
+//    mappings channel: 'snapshot', version: config.mcp_mappings
+    mappings channel: 'snapshot', version: '20200712-1.16.1'
     //accessTransformer = file('my_at.cfg')
     runs {
         client = {
@@ -100,6 +101,10 @@ repositories {
     maven {
         name = 'Patchouli'
         url = 'http://www.cursemaven.com/'
+    }
+    maven {
+        name = 'Gigaherz mappings'
+        url 'http://dogforce-games.com/maven'
     }
 }
 

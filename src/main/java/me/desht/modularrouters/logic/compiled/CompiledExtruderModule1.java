@@ -96,12 +96,11 @@ public class CompiledExtruderModule1 extends CompiledModule {
         if (!MRConfig.Common.Module.extruderPushEntities) {
             return;
         }
-        Vector3d v = Vector3d.func_237492_c_(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
+        Vector3d v = Vector3d.copy(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
         for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(placePos))) {
             if (entity.getPushReaction() != PushReaction.IGNORE) {
                 entity.setMotion(v);
-                entity.func_230245_c_(false);  // setOnGround
-//                entity.collided = false;
+                entity.setOnGround(false);
                 entity.collidedHorizontally = false;
                 entity.collidedVertically = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);

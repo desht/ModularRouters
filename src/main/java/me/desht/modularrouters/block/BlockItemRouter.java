@@ -125,7 +125,7 @@ public class BlockItemRouter extends BlockCamo {
         if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
             tooltip.add(ClientUtil.xlate("itemText.misc.routerConfigured")
-                    .func_240701_a_(TextFormatting.GRAY, TextFormatting.ITALIC));
+                    .mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<ITextComponent> moduleText = new ArrayList<>();
                 ItemStackHandler modulesHandler = new ItemStackHandler(9);
@@ -134,14 +134,14 @@ public class BlockItemRouter extends BlockCamo {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
                         moduleText.add(new StringTextComponent("\u2022 ")
-                                .func_230529_a_(moduleStack.getDisplayName())
-                                .func_240699_a_(TextFormatting.AQUA)
+                                .append(moduleStack.getDisplayName())
+                                .mergeStyle(TextFormatting.AQUA)
                         );
                     }
                 }
                 if (!moduleText.isEmpty()) {
                     tooltip.add(ClientUtil.xlate("itemText.misc.moduleCount",
-                            moduleText.size()).func_240699_a_(TextFormatting.YELLOW));
+                            moduleText.size()).mergeStyle(TextFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
             }
@@ -155,13 +155,13 @@ public class BlockItemRouter extends BlockCamo {
                     if (!upgradeStack.isEmpty()) {
                         nUpgrades += upgradeStack.getCount();
                         upgradeText.add(new StringTextComponent("\u2022 " + upgradeStack.getCount() + " x ")
-                                .func_230529_a_(upgradeStack.getDisplayName())
-                                .func_240699_a_(TextFormatting.AQUA)
+                                .append(upgradeStack.getDisplayName())
+                                .mergeStyle(TextFormatting.AQUA)
                         );
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("itemText.misc.upgradeCount", nUpgrades).func_240699_a_(TextFormatting.YELLOW));
+                    tooltip.add(ClientUtil.xlate("itemText.misc.upgradeCount", nUpgrades).mergeStyle(TextFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
@@ -169,10 +169,10 @@ public class BlockItemRouter extends BlockCamo {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
                     tooltip.add(ClientUtil.xlate("guiText.tooltip.redstone.label")
-                            .func_240702_b_(": ")
-                            .func_240699_a_(TextFormatting.YELLOW)
-                            .func_230529_a_(ClientUtil.xlate("guiText.tooltip.redstone." + rrb)
-                                    .func_240699_a_(TextFormatting.RED))
+                            .appendString(": ")
+                            .mergeStyle(TextFormatting.YELLOW)
+                            .append(ClientUtil.xlate("guiText.tooltip.redstone." + rrb)
+                                    .mergeStyle(TextFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
                 }

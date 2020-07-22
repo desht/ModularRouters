@@ -240,11 +240,11 @@ public class BlockUtil {
             for (ItemStack drop : getFilteredDrops(true)) {
                 ItemStack excess = handler.insertItem(0, drop, false);
                 if (!excess.isEmpty()) {
-                    InventoryUtils.dropItems(world, Vector3d.func_237489_a_(pos), excess);
+                    InventoryUtils.dropItems(world, Vector3d.copyCentered(pos), excess);
                 }
             }
             for (ItemStack drop : getFilteredDrops(false)) {
-                InventoryUtils.dropItems(world, Vector3d.func_237489_a_(pos), drop);
+                InventoryUtils.dropItems(world, Vector3d.copyCentered(pos), drop);
             }
         }
     }

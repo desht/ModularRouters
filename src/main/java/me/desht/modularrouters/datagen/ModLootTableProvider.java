@@ -53,8 +53,8 @@ public class ModLootTableProvider extends LootTableProvider {
                                     .addOperation("Modules", "BlockEntityTag.Modules", CopyNbt.Action.REPLACE)
                                     .addOperation("Upgrades", "BlockEntityTag.Upgrades", CopyNbt.Action.REPLACE)
                                     .addOperation("Redstone", "BlockEntityTag.Redstone", CopyNbt.Action.REPLACE))
-                            .acceptFunction(SetContents.func_215920_b()
-                                    .func_216075_a(DynamicLootEntry.func_216162_a(ShulkerBoxBlock.CONTENTS))));
+                            .acceptFunction(SetContents.builderIn()
+                                    .addLootEntry(DynamicLootEntry.func_216162_a(ShulkerBoxBlock.CONTENTS))));
             registerLootTable(router, LootTable.builder().addLootPool(builder));
         }
 

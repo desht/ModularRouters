@@ -35,9 +35,9 @@ class TOPInfoProvider {
                 }
 
                 probeInfo.text(new StringTextComponent(TextFormatting.YELLOW.toString())
-                        .func_230529_a_(new TranslationTextComponent("guiText.tooltip.redstone.label"))
-                        .func_240702_b_(TextFormatting.WHITE + ": ")
-                        .func_230529_a_(new TranslationTextComponent(router.getRedstoneBehaviour().getTranslationKey()))
+                        .append(new TranslationTextComponent("guiText.tooltip.redstone.label"))
+                        .appendString(TextFormatting.WHITE + ": ")
+                        .append(new TranslationTextComponent(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {
                 probeInfo.text(new TranslationTextComponent("chatText.security.accessDenied"));
