@@ -155,7 +155,7 @@ public abstract class CompiledModule {
      */
     private int getLastMatchPos(int offset, int size) {
         int pos = lastMatchPos + offset;
-        if (pos >= size) pos -= size;
+        while (pos >= size) pos -= size;
         return pos;
     }
 
