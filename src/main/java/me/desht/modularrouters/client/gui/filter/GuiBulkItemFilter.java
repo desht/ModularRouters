@@ -78,12 +78,12 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, 8, 0x404040);
     }
 
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(matrixStack, guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }

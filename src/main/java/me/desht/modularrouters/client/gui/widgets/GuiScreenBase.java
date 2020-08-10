@@ -79,12 +79,12 @@ public abstract class GuiScreenBase extends Screen {
     }
 
     @Override
-    public void removed() {
+    public void onClose() {
         if (delayTicks > 0) {
             // flush pending changes
             sendSettingsToServer();
         }
-        super.removed();
+        super.onClose();
     }
 
     protected final void sendSettingsDelayed(int delayTicks) {

@@ -32,8 +32,7 @@ sourceSets.main.resources {
 }
 
 minecraft {
-//    mappings channel: 'snapshot', version: config.mcp_mappings
-    mappings channel: 'snapshot', version: '20200712-1.16.1'
+    mappings channel: 'snapshot', version: config.mcp_mappings
     //accessTransformer = file('my_at.cfg')
     runs {
         client = {

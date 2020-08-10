@@ -58,7 +58,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
         intField.setValue(tunedValue);
         intField.useGuiTextBackground();
         intField.setFocused2(true);
-        setFocused(intField);
+        setListener(intField);
 
         addButton(new TooltipButton(xPos + 55, yPos + 24, 16, 16));
 

@@ -56,15 +56,15 @@ public class GuiModuleActivator extends GuiModule {
     }
 
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.func_230450_a_(matrixStack, partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
 
         this.blit(matrixStack, guiLeft + 165, guiTop + 19, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.func_230451_b_(matrixStack, mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
         font.drawString(matrixStack, I18n.format("guiText.tooltip.activator.action"), 132, 23, 0x404040);
         font.drawString(matrixStack, I18n.format("guiText.tooltip.activator.sneak"), 132, 43, 0x404040);

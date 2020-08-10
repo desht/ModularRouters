@@ -240,13 +240,13 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? " " + I18n.format("guiText.label.installed") : "");
         this.font.drawString(matrixStack, title, this.xSize / 2f - this.font.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         TintColor c = getGuiBackgroundTint();
         RenderSystem.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
@@ -319,8 +319,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    public void removed() {
-        super.removed();
+    public void onClose() {
+        super.onClose();
         if (sendDelay > 0) {
             sendToServer();  // ensure no delayed updates get lost
         }

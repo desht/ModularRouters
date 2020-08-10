@@ -63,7 +63,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     // drawGuiContainerForegroundLayer
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         String title = I18n.format("block.modularrouters.item_router");
         font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, 0xFF404040);
         font.drawString(matrixStack, I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
@@ -74,7 +74,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     // drawGuiContainerBackgroundLayer
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float v, int i, int i1) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float v, int i, int i1) {
         getMinecraft().getTextureManager().bindTexture(textureLocation);
         blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
     }
