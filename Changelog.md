@@ -6,7 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.15.2
 
-### 6.1.1 (unreleased)
+### 6.1.2 (12 Aug 2020)
+
+* Fixed NPE with unconfigured Fluid Module Mk2 under some circumstances
+* Fixed divide by 0 crash with Inspection Filter under some circumstances
+
+### 6.1.1 (22 Jun 2020)
 
 * Fixed energy/fluid dupe issues with more than one of a stackable energy or fluid containing item in the router's buffer
   * Fluid/energy capabilities are now only offered with a single item in the buffer
