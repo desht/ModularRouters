@@ -56,6 +56,8 @@ public class CompiledFluidModule1 extends CompiledModule {
 
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
+        if (getTarget() == null) return false;
+
         LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
         if (!routerCap.isPresent()) {
