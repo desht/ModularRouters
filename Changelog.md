@@ -6,6 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.1
 
+### 7.0.1 (12 Aug 2020)
+* Update zh_cn translations
+* Added back Waila/Hwyla support
+* Fix crash with Puller Module pulling from Industrial Foregoing Mob Slaughter Factory (possibly other inventories too)
+* Fix crash with unconfigured Fluid Module Mk2 under some circumstances
+
 ### 7.0.0 (11 Jul 2020)
 * Initial release for Minecraft 1.16!  This is largely feature-equivalent to the last 1.15.2 release (6.1.1)
 * Support for JEI, The One Probe and Patchouli is in place.  Support for Hwyla will be added back when it gets a 1.16.1 Forge port.
