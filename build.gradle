@@ -101,15 +101,15 @@ repositories {
         name = 'Patchouli'
         url = 'http://www.cursemaven.com/'
     }
-    maven {
-        name = 'Gigaherz mappings'
-        url 'http://dogforce-games.com/maven'
-    }
+//    maven {
+//        name = 'Gigaherz mappings'
+//        url 'http://dogforce-games.com/maven'
+//    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
-    
+    compile fg.deobf("curse.maven:hwyla:${hwyla_curse_id}")
 //    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
 //    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
     compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}:api")
