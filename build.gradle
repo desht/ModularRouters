@@ -116,10 +116,10 @@ dependencies {
     runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}")
     compileOnly fg.deobf("mezz.jei:jei-1.16.1:${config.jei_version}:api")
     runtime fg.deobf("mezz.jei:jei-1.16.1:${config.jei_version}")
-    compileOnly fg.deobf("curse.maven:patchouli:${config.patchouli_curse_id}")
-    runtime fg.deobf("curse.maven:patchouli:${config.patchouli_curse_id}")
-//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
-//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
+//    compileOnly fg.deobf("curse.maven:patchouli:${config.patchouli_curse_id}")
+//    runtime fg.deobf("curse.maven:patchouli:${config.patchouli_curse_id}")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
 }
 
