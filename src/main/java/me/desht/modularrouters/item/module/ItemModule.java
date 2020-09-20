@@ -320,6 +320,10 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return false;
     }
 
+    public String getRegulatorTranslationKey(ItemStack stack) {
+        return "guiText.tooltip.regulator.label";
+    }
+
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
         return new ActionResult<>(ActionResultType.PASS, stack);
     }

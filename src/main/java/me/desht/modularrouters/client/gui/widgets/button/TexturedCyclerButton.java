@@ -9,7 +9,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
 
     public TexturedCyclerButton(int x, int y, int width, int height, T initialVal, ISendToServer dataSyncer) {
         super(x, y, width, height, button -> {
-            ((TexturedCyclerButton) button).cycle(!Screen.hasShiftDown());
+            ((TexturedCyclerButton<?>) button).cycle(!Screen.hasShiftDown());
             dataSyncer.sendToServer();
         });
         state = initialVal;

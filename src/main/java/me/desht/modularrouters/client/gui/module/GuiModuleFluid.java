@@ -23,6 +23,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import org.apache.commons.lang3.Range;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +36,9 @@ public class GuiModuleFluid extends GuiModule {
     private static final ItemStack routerStack = new ItemStack(ModBlocks.ITEM_ROUTER.get());
     private static final ItemStack waterStack = new ItemStack(Items.WATER_BUCKET);
 
-    private ForceEmptyButton feb;
-    private FluidDirectionButton fdb;
+    private ForceEmptyButton forceEmptyButton;
+    private RegulateAbsoluteButton regulationTypeButton;
+    private FluidDirectionButton fluidDirButton;
     private IntegerTextField maxTransferField;
 
     public GuiModuleFluid(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
@@ -51,7 +54,8 @@ public class GuiModuleFluid extends GuiModule {
         TextFieldManager manager = getOrCreateTextFieldManager();
 
         int max = MRConfig.Common.Router.baseTickRate * MRConfig.Common.Router.fluidMaxTransferRate;
-        maxTransferField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 23, 34, 12, 0, max);
+        maxTransferField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 23, 34, 12,
+                Range.between(0, max));
         maxTransferField.setValue(cfm.getMaxTransfer());
         maxTransferField.setResponder(str -> sendModuleSettingsDelayed(5));
         maxTransferField.setIncr(100, 10, 10);
@@ -59,12 +63,24 @@ public class GuiModuleFluid extends GuiModule {
         manager.focus(0);
 
         addButton(new TooltipButton(guiLeft + 130, guiTop + 19, 16, 16, bucketStack));
-        addButton(fdb = new FluidDirectionButton(guiLeft + 148, guiTop + 44, cfm.getFluidDirection()));
-        addButton(feb = new ForceEmptyButton(guiLeft + 168, guiTop + 69, cfm.isForceEmpty()));
+        addButton(fluidDirButton = new FluidDirectionButton(guiLeft + 148, guiTop + 44, cfm.getFluidDirection()));
+        addButton(forceEmptyButton = new ForceEmptyButton(guiLeft + 168, guiTop + 69, cfm.isForceEmpty()));
+        addButton(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.x + regulatorTextField.getWidth() + 2, regulatorTextField.y - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 17, guiLeft + 183, guiTop + 35, "guiText.popup.fluid.maxTransfer");
         getMouseOverHelp().addHelpRegion(guiLeft + 126, guiTop + 42, guiLeft + 185, guiTop + 61, "guiText.popup.fluid.direction");
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 67, guiLeft + 185, guiTop + 86, "guiText.popup.fluid.forceEmpty");
+    }
+
+    @Override
+    protected IntegerTextField buildRegulationTextField(TextFieldManager manager) {
+        IntegerTextField tf = new IntegerTextField(manager, font, guiLeft + 128, guiTop + 90, 40, 12, Range.between(0, Integer.MAX_VALUE));
+        tf.setValue(getRegulatorAmount());
+        tf.setResponder((str) -> {
+            setRegulatorAmount(str.isEmpty() ? 0 : Integer.parseInt(str));
+            sendModuleSettingsDelayed(5);
+        });
+        return tf;
     }
 
     @Override
@@ -82,10 +98,7 @@ public class GuiModuleFluid extends GuiModule {
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
-        if (regulatorTextField.getVisible()) {
-            font.drawString(matrixStack, "%", 179, 77, 0x404040);
-        }
-        if (feb.visible) {
+        if (forceEmptyButton.visible) {
             String s = I18n.format("guiText.label.fluidForceEmpty");
             font.drawString(matrixStack, s, 165 - font.getStringWidth(s), 73, 0x202040);
         }
@@ -95,15 +108,19 @@ public class GuiModuleFluid extends GuiModule {
     public void tick() {
         super.tick();
 
-        feb.visible = fdb.getState() == FluidDirection.OUT;
+        regulationTypeButton.visible = regulatorTextField.visible;
+        regulationTypeButton.setText();
+        regulatorTextField.setRange(Range.between(0, regulationTypeButton.regulateAbsolute ? Integer.MAX_VALUE : 100));
+        forceEmptyButton.visible = fluidDirButton.getState() == FluidDirection.OUT;
     }
 
     @Override
     protected CompoundNBT buildMessageData() {
         CompoundNBT compound = super.buildMessageData();
         compound.putInt(CompiledFluidModule1.NBT_MAX_TRANSFER, maxTransferField.getValue());
-        compound.putByte(CompiledFluidModule1.NBT_FLUID_DIRECTION, (byte) fdb.getState().ordinal());
-        compound.putBoolean(CompiledFluidModule1.NBT_FORCE_EMPTY, feb.isToggled());
+        compound.putByte(CompiledFluidModule1.NBT_FLUID_DIRECTION, (byte) fluidDirButton.getState().ordinal());
+        compound.putBoolean(CompiledFluidModule1.NBT_FORCE_EMPTY, forceEmptyButton.isToggled());
+        compound.putBoolean(CompiledFluidModule1.NBT_REGULATE_ABSOLUTE, regulationTypeButton.regulateAbsolute);
         return compound;
     }
 
@@ -125,6 +142,12 @@ public class GuiModuleFluid extends GuiModule {
         public void playDownSound(SoundHandler soundHandlerIn) {
             // no sound
         }
+    }
+
+    private void toggleRegulationType() {
+        regulationTypeButton.toggle();
+        regulatorTextField.setRange(regulationTypeButton.regulateAbsolute ? Range.between(0, Integer.MAX_VALUE) : Range.between(0, 100));
+        sendToServer();
     }
 
     private class FluidDirectionButton extends TexturedCyclerButton<FluidDirection> {
@@ -168,6 +191,23 @@ public class GuiModuleFluid extends GuiModule {
         @Override
         protected int getTextureY() {
             return 16;
+        }
+    }
+
+    private static class RegulateAbsoluteButton extends ExtendedButton {
+        private boolean regulateAbsolute;
+
+        public RegulateAbsoluteButton(int xPos, int yPos, int width, int height, IPressable pressable, boolean regulateAbsolute) {
+            super(xPos, yPos, width, height, StringTextComponent.EMPTY, pressable);
+            this.regulateAbsolute = regulateAbsolute;
+        }
+
+        private void toggle() {
+            regulateAbsolute = !regulateAbsolute;
+        }
+
+        void setText() {
+            setMessage(new StringTextComponent(regulateAbsolute ? "mB" : "%"));
         }
     }
 }

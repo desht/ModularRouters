@@ -138,19 +138,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addButton(redstoneButton = new RedstoneBehaviourButton(this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
-        TextFieldManager manager = createTextFieldManager();
-        Range<Integer> range = module.isFluidModule() ? Range.between(0, 100) : Range.between(0, 64);
-        int xOff = module.isFluidModule() ? 0 : 10;
-        regulatorTextField = new IntegerTextField(manager, font,
-                guiLeft + 156 + xOff, guiTop + 75, 20, 12, range.getMinimum(), range.getMaximum());
-        regulatorTextField.setValue(regulatorAmount);
-        regulatorTextField.setResponder((str) -> {
-            regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);
-            sendModuleSettingsDelayed(5);
-        });
-        addButton(regulatorTextField);
+        addButton(regulatorTextField = buildRegulationTextField(createTextFieldManager()));
 
-        addButton(regulatorTooltipButton = new RegulatorTooltipButton(guiLeft + 138 + xOff, guiTop + 73, module.isFluidModule()));
+        addButton(regulatorTooltipButton = new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
 
         if (routerPos != null) {
             addButton(new BackButton(guiLeft + 2, guiTop + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()))));
@@ -162,11 +152,29 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "guiText.popup.augments");
     }
 
+    protected IntegerTextField buildRegulationTextField(TextFieldManager manager) {
+        IntegerTextField tf = new IntegerTextField(manager, font, guiLeft + 166, guiTop + 75, 20, 12, Range.between(0, 64));
+        tf.setValue(regulatorAmount);
+        tf.setResponder((str) -> {
+            regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);
+            sendModuleSettingsDelayed(5);
+        });
+        return tf;
+    }
+
     @SubscribeEvent
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
         getContainer().removeListener(this);
         getContainer().addListener(this);
         setupButtonVisibility();
+    }
+
+    public int getRegulatorAmount() {
+        return regulatorAmount;
+    }
+
+    public void setRegulatorAmount(int regulatorAmount) {
+        this.regulatorAmount = regulatorAmount;
     }
 
     protected void setupButtonVisibility() {
@@ -209,8 +217,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     /**
-     * Encode the message data for this module.  This NBT data will be copied directly
-     * into the module itemstack's NBT when the server receives the module settings message.
+     * Encode the message data to be sent to the server in {@link ModuleSettingsMessage}. This NBT data will
+     * be copied directly into the module itemstack's NBT when the server receives the packet.
      * Overriding subclasses must call the superclass method!
      *
      * @return the message data NBT

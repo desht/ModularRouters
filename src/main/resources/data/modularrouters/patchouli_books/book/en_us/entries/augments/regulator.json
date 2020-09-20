@@ -17,7 +17,7 @@
     },
     {
       "type": "text",
-      "text": "$(li)For the Fluid $(l:modules/fluid)Mk1/$ / $(l:modules/fluid_2)Mk2/$ modules, the limit is a percentage of the target tank's capacity rather than a number of items. When pulling fluid from the target, the module will only run if there is more fluid than the configured percentage, and when pushing fluid to the target, the module will only run if there is less fluid than the configured percentage."
+      "text": "$(li)For the Fluid $(l:modules/fluid)Mk1/$ / $(l:modules/fluid_2)Mk2/$ modules, the limit can be a percentage of the target tank's capacity or an absolute amount in mB (selectable in the GUI) rather than a number of items. When pulling fluid, the module will only run if there is $(italic)more/$ fluid in the target than the configured amount; when pushing fluid, it will only run if there is $(italic)less/$ fluid than the configured amount."
     },
     {
       "type": "crafting",

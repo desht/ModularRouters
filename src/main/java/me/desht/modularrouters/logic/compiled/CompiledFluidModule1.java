@@ -38,10 +38,12 @@ public class CompiledFluidModule1 extends CompiledModule {
     public static final String NBT_FORCE_EMPTY = "ForceEmpty";
     public static final String NBT_MAX_TRANSFER = "MaxTransfer";
     public static final String NBT_FLUID_DIRECTION = "FluidDir";
+    public static final String NBT_REGULATE_ABSOLUTE = "RegulateAbsolute";
 
     private final int maxTransfer;
     private final FluidDirection fluidDirection;
     private final boolean forceEmpty;  // force emptying even if there's a fluid block in the way
+    private final boolean regulateAbsolute;  // true = regulate by mB; false = regulate by % of tank's capacity
 
 //    private static final InfiniteWaterHandler infiniteWater = new InfiniteWaterHandler();
 
@@ -52,6 +54,7 @@ public class CompiledFluidModule1 extends CompiledModule {
         maxTransfer = compound.getInt(NBT_MAX_TRANSFER);
         fluidDirection = FluidDirection.values()[compound.getByte(NBT_FLUID_DIRECTION)];
         forceEmpty = compound.getBoolean(NBT_FORCE_EMPTY);
+        regulateAbsolute = compound.getBoolean(NBT_REGULATE_ABSOLUTE);
     }
 
     @Override
@@ -225,9 +228,9 @@ public class CompiledFluidModule1 extends CompiledModule {
 
     private boolean doTransfer(TileEntityItemRouter router, IFluidHandler src, IFluidHandler dest, FluidDirection direction) {
         if (getRegulationAmount() > 0) {
-            if (direction == FluidDirection.IN && checkFluidPercent(src) <= getRegulationAmount()) {
+            if (direction == FluidDirection.IN && checkFluidInTank(src) <= getRegulationAmount()) {
                 return false;
-            } else if (direction == FluidDirection.OUT && checkFluidPercent(dest) >= getRegulationAmount()) {
+            } else if (direction == FluidDirection.OUT && checkFluidInTank(dest) >= getRegulationAmount()) {
                 return false;
             }
         }
@@ -243,14 +246,21 @@ public class CompiledFluidModule1 extends CompiledModule {
         return false;
     }
 
-    private int checkFluidPercent(IFluidHandler handler) {
+    private int checkFluidInTank(IFluidHandler handler) {
         // note: total amount of all fluids in all tanks... not ideal for inventories with multiple tanks
         int total = 0, max = 0;
-        for (int idx = 0; idx < handler.getTanks(); idx++) {
-            max += handler.getTankCapacity(idx);
-            total += handler.getFluidInTank(idx).getAmount();
+        if (isRegulateAbsolute()) {
+            for (int idx = 0; idx < handler.getTanks(); idx++) {
+                total += handler.getFluidInTank(idx).getAmount();
+            }
+            return total;
+        } else {
+            for (int idx = 0; idx < handler.getTanks(); idx++) {
+                max += handler.getTankCapacity(idx);
+                total += handler.getFluidInTank(idx).getAmount();
+            }
+            return max == 0 ? 0 : (total * 100) / max;
         }
-        return (total * 100) / max;
     }
 
     private CompoundNBT setupNBT(ItemStack stack) {
@@ -276,7 +286,10 @@ public class CompiledFluidModule1 extends CompiledModule {
         return forceEmpty;
     }
 
-    // @todo 1.13
+    public boolean isRegulateAbsolute() {
+        return regulateAbsolute;
+    }
+// @todo 1.13
 //    private static class InfiniteWaterHandler implements IFluidHandler {
 //        private static final IFluidTankProperties waterTank = new IFluidTankProperties() {
 //            @Nullable

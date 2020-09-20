@@ -5,7 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -43,20 +43,22 @@ public class ModuleSettingsMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = ctx.get().getSender();
-            ItemStack moduleStack = locator.getModuleStack(player);
+            ServerPlayerEntity player = ctx.get().getSender();
+            if (player != null) {
+                ItemStack moduleStack = locator.getModuleStack(player);
 
-            if (moduleStack.getItem() instanceof ItemModule) {
-                CompoundNBT compound = ModuleHelper.validateNBT(moduleStack);
-                for (String key : payload.keySet()) {
-                    compound.put(key, payload.get(key));
+                if (moduleStack.getItem() instanceof ItemModule) {
+                    CompoundNBT compound = ModuleHelper.validateNBT(moduleStack);
+                    for (String key : payload.keySet()) {
+                        compound.put(key, payload.get(key));
+                    }
+                    if (locator.routerPos != null) {
+                        TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos)
+                                .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
+                    }
+                } else {
+                    ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator.toString());
                 }
-                if (locator.routerPos != null) {
-                    TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos)
-                            .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
-                }
-            } else {
-                ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator.toString());
             }
         });
 

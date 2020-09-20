@@ -16,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import org.apache.commons.lang3.Range;
 
 public class GuiModuleDetector extends GuiModule {
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
@@ -35,7 +36,7 @@ public class GuiModuleDetector extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        intField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 19, 20, 12, 0, 15);
+        intField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 19, 20, 12, Range.between(0, 15));
         intField.setValue(cdm.getSignalLevel());
         intField.setResponder((str) -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);

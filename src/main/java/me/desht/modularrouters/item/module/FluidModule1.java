@@ -10,9 +10,11 @@ import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
+import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -33,6 +35,13 @@ public class FluidModule1 extends ItemModule {
         public String getTranslationKey() {
             return "itemText.fluid.direction." + toString();
         }
+    }
+
+    @Override
+    public String getRegulatorTranslationKey(ItemStack stack) {
+        CompoundNBT compound = ModuleHelper.validateNBT(stack);
+        boolean isAbsolute = compound.getBoolean(CompiledFluidModule1.NBT_REGULATE_ABSOLUTE);
+        return "guiText.tooltip.regulator." + (isAbsolute ? "labelFluidmB" : "labelFluidPct");
     }
 
     @Override

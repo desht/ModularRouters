@@ -20,6 +20,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         updateDeleteButtonVisibility();
 
         TextFieldManager manager = getTextFieldManager().clear();
-        valueTextField = new IntegerTextField(manager, font, xPos + 120, yPos + 28, 20, 14, 0, 100) {
+        valueTextField = new IntegerTextField(manager, font, xPos + 120, yPos + 28, 20, 14, Range.between(0, 100)) {
             @Override
             public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
                 if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {

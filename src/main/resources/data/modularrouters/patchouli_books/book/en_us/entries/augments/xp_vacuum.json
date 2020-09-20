@@ -9,7 +9,7 @@
     },
     {
       "type": "text",
-      "text": "Depending on what other mods are installed, it might also be possible to convert orbs into XP fluids.$(p)$(italic)At the time of writing, no third-party mods on 1.15.2 are supported, but this will change in the future."
+      "text": "Depending on what other mods are installed, it might also be possible to convert orbs into XP fluids. This requires that either a fluid-containing tank is in the router's buffer, or adjacent to the router. In the latter case, ensure that the $(bold)Eject/$ button is enabled in the Vacuum Module's GUI."
     },
     {
       "type": "crafting",

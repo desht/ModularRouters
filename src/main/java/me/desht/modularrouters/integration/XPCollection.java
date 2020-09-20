@@ -29,25 +29,27 @@ public class XPCollection {
                 ICONS[type.ordinal()] = new ItemStack(ForgeRegistries.ITEMS.getValue(type.getRegistryName()));
             } else {
                 Fluid fluid = ForgeRegistries.FLUIDS.getValue(type.getRegistryName());
-                ICONS[type.ordinal()] = fluid == Fluids.EMPTY ? ItemStack.EMPTY : FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
+                ICONS[type.ordinal()] = fluid == null || fluid == Fluids.EMPTY ?
+                        ItemStack.EMPTY :
+                        FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
             }
         }
         return ICONS[type.ordinal()];
     }
 
     public enum XPCollectionType {
-        BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
         // note: bottles o' enchanting are randomly worth 3-11 experience, so let's use an average of 7
         SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
+        BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
         MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence"),
-        CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice");
+        CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice"),
+        IF_ESSENCE(false, 20, "industrialforegoing:essence");
 
         // TODO 1.15 other mod exp levels... should be in config or data pack, really
 //        XPJUICE(20, "xpjuice"),  // Enderio/Openblocks/Cyclic/Reliquary
 //        KNOWLEDGE(20, "experience"), // CoFH Essence of Knowledge
-//        ESSENCE(20, "essence"); // Industrial Foregoing essence - TODO: respect IF config "essenceMultiplier"
 
-        private boolean solid;
+        private final boolean solid;
         private final int xpRatio;  // XP points per item, or (for fluids) mB per XP
         private final ResourceLocation registryName;
 

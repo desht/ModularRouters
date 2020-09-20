@@ -2,36 +2,37 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.regex.Pattern;
 
 public class IntegerTextField extends TextFieldWidgetMR {
-    private final int min;
-    private final int max;
+    private Range<Integer> range;
     private int incr = 1;
     private int coarseIncr = 10;
     private int fineIncr = 1;
 
     private static final Pattern INT_MATCHER = Pattern.compile("^-?[0-9]+$");
 
-    public IntegerTextField(TextFieldManager parent, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, int min, int max) {
+    public IntegerTextField(TextFieldManager parent, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, Range<Integer> range) {
         super(parent, fontrendererObj, x, y, par5Width, par6Height);
-        this.min = min;
-        this.max = max;
 
-        setMaxStringLength(Math.max(Integer.toString(min).length(), Integer.toString(max).length()));
+        setRange(range);
 
-        setValidator(input -> {
-            if (input == null || input.isEmpty()) {
-                return true;  // treat as numeric zero
-            }
-            if (!INT_MATCHER.matcher(input).matches()) {
-                return false;
-            }
-            int n = Integer.parseInt(input);
-            return n >= this.min && n <= this.max;
-        });
+        setValidator(this::validate);
+    }
+
+    private boolean validate(String input) {
+        if (input == null || input.isEmpty()) {
+            return true;  // treat as numeric zero
+        }
+        if (!INT_MATCHER.matcher(input).matches()) {
+            return false;
+        }
+        int n = Integer.parseInt(input);
+        return range.contains(n);
     }
 
     @Override
@@ -42,12 +43,21 @@ public class IntegerTextField extends TextFieldWidgetMR {
             case GLFW.GLFW_KEY_DOWN:
                 return adjustField(-getAdjustment());
             case GLFW.GLFW_KEY_PAGE_UP:
-                return adjustField(max);
+                return adjustField(range.getMaximum());
             case GLFW.GLFW_KEY_PAGE_DOWN:
-                return adjustField(-max);
+                return adjustField(-range.getMaximum());
             default:
                 return super.keyPressed(keyCode, scanCode, modifiers);
         }
+    }
+
+    public void setRange(Range<Integer> range) {
+        this.range = range;
+        if (!range.contains(getValue())) {
+            setValue(MathHelper.clamp(getValue(), range.getMinimum(), range.getMaximum()));
+//            setCursorPosition(1);
+        }
+        setMaxStringLength(Math.max(Integer.toString(range.getMinimum()).length(), Integer.toString(range.getMaximum()).length()));
     }
 
     @Override
@@ -56,7 +66,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     public void setValue(int val) {
-        if (val >= min && val <= max) {
+        if (range.contains(val)) {
             setText(Integer.toString(val));
         }
     }
@@ -66,7 +76,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
         try {
             val = Integer.parseInt(getText());
         } catch (NumberFormatException e) {
-            val = min;
+            val = range.getMinimum();
         }
         return val;
     }
@@ -92,7 +102,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     private boolean adjustField(int adj) {
-        int newVal = Math.max(min, Math.min(max, getValue() + adj));
+        int newVal = MathHelper.clamp(getValue() + adj, range.getMinimum(), range.getMaximum());
         if (newVal != getValue()) {
             setText("");
             writeText(Integer.toString(newVal));

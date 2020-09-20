@@ -18,6 +18,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.apache.commons.lang3.Range;
 
 public class GuiSyncUpgrade extends GuiScreenBase {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/sync_upgrade.png");
@@ -50,7 +51,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
 
         TextFieldManager manager = getTextFieldManager().clear();
         IntegerTextField intField = new IntegerTextField(manager, font,
-                xPos + 77, yPos + 27, 25, 16, 0, MRConfig.Common.Router.baseTickRate - 1);
+                xPos + 77, yPos + 27, 25, 16, Range.between(0, MRConfig.Common.Router.baseTickRate - 1));
         intField.setResponder((str) -> {
             tunedValue = str.isEmpty() ? 0 : Integer.parseInt(str);
             sendSettingsDelayed(5);
