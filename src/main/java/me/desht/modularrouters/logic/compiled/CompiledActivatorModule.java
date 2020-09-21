@@ -95,16 +95,14 @@ public class CompiledActivatorModule extends CompiledModule {
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (!getFilter().test(stack)) {
+        // we'll allow an empty stack, since right-clicking with an empty hand is a valid operation
+        if (!stack.isEmpty() && !getFilter().test(stack)) {
             return false;
         }
         World world = router.getWorld();
         BlockPos pos = router.getPos();
 
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
-        if (fakePlayer == null) {
-            return false;
-        }
         fakePlayer.setPosition(pos.getX() + 0.5, pos.getY() + 0.5 - fakePlayer.getEyeHeight(), pos.getZ() + 0.5);
         fakePlayer.rotationPitch = getFacing().getYOffset() * -90;
         fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
