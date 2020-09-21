@@ -83,7 +83,8 @@ public class CompiledActivatorModule extends CompiledModule {
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
         ItemStack stack = router.getBufferItemStack();
-        if (!getFilter().test(stack)) {
+        if (!stack.isEmpty() && !getFilter().test(stack)) {
+            // allow running with no item in buffer, since right-clicking with an empty hand is valid
             return false;
         }
         World world = router.getWorld();
