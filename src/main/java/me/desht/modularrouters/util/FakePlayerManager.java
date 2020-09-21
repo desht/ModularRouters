@@ -37,6 +37,7 @@ public class FakePlayerManager {
             theFakePlayer = new WeakReference<>(fakePlayer);
         }
         fakePlayer.world = world;
+        fakePlayer.inventory.currentItem = 0;  // held item always in slot 0
         fakePlayer.setRawPosition(pos.getX(), pos.getY(), pos.getZ());
 
         return fakePlayer;
@@ -50,6 +51,11 @@ public class FakePlayerManager {
         @Override
         protected void playEquipSound(ItemStack stack) {
             // silence annoying sound effects when fake player equips the buffer item
+        }
+
+        @Override
+        public double getPosYEye() {
+            return getPosY();
         }
     }
 
