@@ -40,7 +40,8 @@ public class XPCollection {
         // note: bottles o' enchanting are randomly worth 3-11 experience, so let's use an average of 7
         SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
         MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence"),
-        CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice");
+        CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice"),
+        IF_ESSENCE(false, 20, "industrialforegoing:essence");
 
         // TODO 1.15 other mod exp levels... should be in config or data pack, really
 //        XPJUICE(20, "xpjuice"),  // Enderio/Openblocks/Cyclic/Reliquary
