@@ -8,7 +8,7 @@
       "item": "minecraft:bow"
     },
     {
-      "tag": "forge:arrows"
+      "tag": "minecraft:arrows"
     }
   ],
   "result": {
