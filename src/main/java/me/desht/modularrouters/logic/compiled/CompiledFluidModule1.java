@@ -250,7 +250,7 @@ public class CompiledFluidModule1 extends CompiledModule {
             max += handler.getTankCapacity(idx);
             total += handler.getFluidInTank(idx).getAmount();
         }
-        return (total * 100) / max;
+        return max == 0 ? 0 : (total * 100) / max;
     }
 
     private CompoundNBT setupNBT(ItemStack stack) {
