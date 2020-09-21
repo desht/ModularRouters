@@ -6,6 +6,17 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.1
 
+### 7.0.2 (21 Sep 2020)
+* Activator Module can now run with no item in the router (only really useful when in "Right Click Block" mode, of course)
+* Activator Module: internal raytracing improvements
+  * In particular, activating an empty bottle against water will now produce a water bottle, as expected
+* Activator Module: extra items produced by activating an item are now dropped in-world instead of lost
+  * e.g. Right-clicking a stack of empty buckets against a cow produces extra milk buckets
+* Fixed a divide-by-0 crash with some fluid tanks which report their max capacity as 0 mB
+* Added support for Industrial Foregoing Essence for the Vacuum Module / XP Augment
+* Fluid Module with Regulator Augment can now regulate by absolute fluid amount (mB) in addition to percentage of tank capacity
+  * Selectable in Fluid Module GUI when Regulator Augment is installed
+
 ### 7.0.1 (12 Aug 2020)
 * Update zh_cn translations
 * Added back Waila/Hwyla support
