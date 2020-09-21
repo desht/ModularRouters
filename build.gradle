@@ -9,6 +9,9 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
+plugins {
+    id "com.wynprice.cursemaven" version "2.1.5"
+}
 apply plugin: 'net.minecraftforge.gradle'
 //apply plugin: 'eclipse'
 
@@ -101,9 +104,10 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
-    
-    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
-    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
+
+    compile fg.deobf("curse.maven:hwyla:${config.hwyla_curse_id}")
+//    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
+//    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
     compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.15:${config.top_version}:api")
     runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.15:${config.top_version}")
     compileOnly fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}:api")
