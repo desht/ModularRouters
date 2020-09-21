@@ -1,6 +1,8 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -14,6 +16,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -90,7 +93,7 @@ public class MiscUtil {
     }
 
     public static String locToString(GlobalPos pos) {
-        return locToString(pos.func_239646_a_().func_240901_a_(), pos.getPos());
+        return locToString(pos.getDimension().getLocation(), pos.getPos());
     }
 
     public static ResourceLocation RL(String name) {
@@ -119,20 +122,25 @@ public class MiscUtil {
     public static CompoundNBT serializeGlobalPos(GlobalPos globalPos) {
         CompoundNBT tag = new CompoundNBT();
         tag.put("pos", net.minecraft.nbt.NBTUtil.writeBlockPos(globalPos.getPos()));
-        tag.putString("dim", globalPos.func_239646_a_().func_240901_a_().toString());
+        tag.putString("dim", globalPos.getDimension().getLocation().toString());
         return tag;
     }
 
     public static GlobalPos deserializeGlobalPos(CompoundNBT tag) {
-        RegistryKey<World> worldKey = RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dim")));
-        return GlobalPos.func_239648_a_(worldKey, NBTUtil.readBlockPos(tag.getCompound("pos")));
+        RegistryKey<World> worldKey = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dim")));
+        return GlobalPos.getPosition(worldKey, NBTUtil.readBlockPos(tag.getCompound("pos")));
     }
 
     public static ServerWorld getWorldForGlobalPos(GlobalPos pos) {
-        return ServerLifecycleHooks.getCurrentServer().getWorld(pos.func_239646_a_());
+        return ServerLifecycleHooks.getCurrentServer().getWorld(pos.getDimension());
     }
 
     public static GlobalPos makeGlobalPos(World w, BlockPos pos) {
-        return GlobalPos.func_239648_a_(w.func_234923_W_(), pos);
+        return GlobalPos.getPosition(w.getDimensionKey(), pos);
+    }
+
+    // this method from Block went missing in 1.16.2
+    public static boolean blockHasSolidSide(BlockState state, IBlockReader worldIn, BlockPos pos, Direction side) {
+        return Block.doesSideFillSquare(state.getRenderShape(worldIn, pos), side);
     }
 }

@@ -55,11 +55,11 @@ public class ModuleTarget {
     }
 
     public boolean isSameWorld(World world) {
-        return gPos.func_239646_a_() == world.func_234923_W_();
+        return gPos.getDimension() == world.getDimensionKey();
     }
 
     public boolean isSameWorld(ModuleTarget dst) {
-        return gPos.func_239646_a_() == dst.gPos.func_239646_a_();
+        return gPos.getDimension() == dst.gPos.getDimension();
     }
 
     /**

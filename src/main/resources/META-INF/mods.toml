@@ -1,7 +1,7 @@
 # The mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[32,)" #mandatory (24 is current forge version)
+loaderVersion="[34,)" #mandatory (24 is current forge version)
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/desht/ModularRouters/issues"
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -12,6 +12,8 @@ displayURL="https://minecraft.curseforge.com/projects/modular-routers"
 credits=""
 # A text field displayed in the mod UI
 authors="desht"
+# License
+license="MIT"
 # A list of mods - how many allowed here is determined by the individual mod loader
 
 [[mods]] #mandatory
@@ -22,7 +24,7 @@ version="${file.jarVersion}" #mandatory
  # A display name for the mod
 displayName="Modular Routers"
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.15-master/release_info.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.16.3-master/release_info.json" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Modular Routers is a highly flexible mod for moving items around the world in various ways.
@@ -31,12 +33,12 @@ Modular Routers is a highly flexible mod for moving items around the world in va
 [[dependencies.modularrouters]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[32.0.7,)" #mandatory
+    versionRange="[34.0.9,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.1]"
+    versionRange="[1.16.3]"
     ordering="NONE"
     side="BOTH"

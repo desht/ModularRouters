@@ -96,7 +96,7 @@ public class FilterSettingsMessage {
             if (response != null) {
                 // send to any nearby players in case they also have the GUI open
                 PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(player.getPosX(), player.getPosY(), player.getPosZ(),
-                        8, player.getEntityWorld().func_234923_W_());
+                        8, player.getEntityWorld().getDimensionKey());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp), response);
             }
         }

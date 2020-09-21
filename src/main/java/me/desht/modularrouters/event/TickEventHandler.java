@@ -12,8 +12,7 @@ public class TickEventHandler {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        // field_234918_g_ = OVERWORLD
-        if (event.world.func_234923_W_() == World.field_234918_g_ && event.phase == TickEvent.Phase.END) {
+        if (event.world.getDimensionKey() == World.OVERWORLD && event.phase == TickEvent.Phase.END) {
             TickCounter++;
         }
     }

@@ -6,8 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootContext;
@@ -15,7 +13,6 @@ import net.minecraft.loot.LootParameters;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -26,7 +23,6 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.items.IItemHandler;
 
@@ -103,9 +99,6 @@ public class BlockUtil {
         BlockState currentState = world.getBlockState(pos);
 
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
-        if (fakePlayer == null) {
-            return null;
-        }
         fakePlayer.rotationYaw = getYawFromFacing(facing);
         fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
 
@@ -120,7 +113,7 @@ public class BlockUtil {
 
         BlockState newState = getPlaceableState(ctx);
         if (newState != null) {
-            BlockSnapshot snap = BlockSnapshot.create(world, pos);
+            BlockSnapshot snap = BlockSnapshot.create(world.getDimensionKey(), world, pos);
             fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
             BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
@@ -136,13 +129,10 @@ public class BlockUtil {
     }
 
     public static boolean tryPlaceBlock(BlockState newState, World world, BlockPos pos) {
-        if (!world.getBlockState(pos).getMaterial().isReplaceable()) return false;
+        if (!(world instanceof ServerWorld) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
 
         FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
-        if (fakePlayer == null) {
-            return false;
-        }
-        BlockSnapshot snap = BlockSnapshot.create(world, pos);
+        BlockSnapshot snap = BlockSnapshot.create(world.getDimensionKey(), world, pos);
         BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
         MinecraftForge.EVENT_BUS.post(event);
         return !event.isCanceled() && world.setBlockState(pos, newState);
@@ -160,6 +150,9 @@ public class BlockUtil {
      * @return a drop result object
      */
     public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, ItemStack pickaxe) {
+        if (!(world instanceof ServerWorld)) return BreakResult.NOT_BROKEN;
+        ServerWorld serverWorld = (ServerWorld) world;
+
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -167,13 +160,13 @@ public class BlockUtil {
             return BreakResult.NOT_BROKEN;
         }
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
+        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer(serverWorld, pos);
         fakePlayer.setHeldItem(Hand.MAIN_HAND, pickaxe);
         if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.canHarvestBlock(state, fakePlayer, world, pos)) {
             return BreakResult.NOT_BROKEN;
         }
 
-        List<ItemStack> allDrops = getDrops(world, pos, fakePlayer, pickaxe);
+        List<ItemStack> allDrops = Block.getDrops(world.getBlockState(pos), serverWorld, pos, world.getTileEntity(pos), fakePlayer, pickaxe);
         Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
@@ -184,25 +177,6 @@ public class BlockUtil {
             }
         }
         return BreakResult.NOT_BROKEN;
-    }
-
-    private static List<ItemStack> getDrops(World world, BlockPos pos, PlayerEntity player, ItemStack pickaxe) {
-        BlockState state = world.getBlockState(pos);
-
-        LootContext.Builder builder = new LootContext.Builder((ServerWorld) world)
-                .withParameter(LootParameters.POSITION, pos)
-                .withParameter(LootParameters.BLOCK_STATE, state)
-                .withParameter(LootParameters.TOOL, pickaxe)
-                .withParameter(LootParameters.THIS_ENTITY, player);
-        TileEntity te = world.getTileEntity(pos);
-        if (te != null) builder = builder.withParameter(LootParameters.BLOCK_ENTITY, te);
-        List<ItemStack> drops = state.getDrops(builder);
-        NonNullList<ItemStack> dropsN = NonNullList.create();
-        dropsN.addAll(drops);
-        int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, pickaxe);
-        boolean silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, pickaxe) > 0;
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsN, world, pos, state, fortune, 1.0F, silkTouch, player);
-        return drops.stream().filter(s -> world.rand.nextFloat() <= dropChance).collect(Collectors.toList());
     }
 
     public static String getBlockName(World w, BlockPos pos) {

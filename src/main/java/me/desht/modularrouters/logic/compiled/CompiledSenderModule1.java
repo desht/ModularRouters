@@ -62,7 +62,7 @@ public class CompiledSenderModule1 extends CompiledModule {
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
             Vector3d vec1 = Vector3d.copyCentered(router.getPos());
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().func_234923_W_());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().getDimensionKey());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate()));
         }
@@ -101,7 +101,7 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     private boolean isPassable(World w, BlockPos pos, Direction face) {
         BlockState state = w.getBlockState(pos);
-        return !Block.hasSolidSide(state, w, pos, face.getOpposite()) || !state.isOpaqueCube(w, pos);
+        return !MiscUtil.blockHasSolidSide(state, w, pos, face.getOpposite()) || !state.isOpaqueCube(w, pos);
     }
 
     static class PositionedItemHandler {

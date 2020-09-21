@@ -25,6 +25,7 @@ run-*
 conf
 *.xcf
 *.pl
+*.log
 
 # datagen caches
 **/.cache

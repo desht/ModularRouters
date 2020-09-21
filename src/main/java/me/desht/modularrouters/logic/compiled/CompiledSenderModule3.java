@@ -29,7 +29,7 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
             Vector3d vec = Vector3d.copyCentered(router.getPos());
             Direction facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().func_234923_W_());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().getDimensionKey());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router, router.getPos().offset(facing, 2), false, stack, PARTICLE_COLOR.getRGB(), router.getTickRate()).withFadeout());
         }

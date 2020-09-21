@@ -31,7 +31,7 @@ public abstract class GuiScreenBase extends Screen {
         if (textFieldManager != null) textFieldManager.drawTextFields(matrixStack, mouseX, mouseY, partialTicks);
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(mouseX, mouseY) && button instanceof ITooltipButton)
-                .forEach(button -> renderTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
+                .forEach(button -> func_243308_b(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
     }
 
     @Override

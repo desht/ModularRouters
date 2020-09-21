@@ -136,7 +136,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).build(consumer, RL("fluid_module_2_x4"));
 
         shapeless(ModItems.SENDER_MODULE_1.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.BLANK_MODULE.get(), Items.BOW, Tags.Items.ARROWS
+                ModItems.BLANK_MODULE.get(), Items.BOW, ItemTags.ARROWS
         ).build(consumer);
 
         shapeless(ModItems.SENDER_MODULE_3.get(), ModItems.BLANK_MODULE.get(),

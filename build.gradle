@@ -35,27 +35,41 @@ minecraft {
     mappings channel: 'snapshot', version: config.mcp_mappings
     //accessTransformer = file('my_at.cfg')
     runs {
-        client = {
+        client {
             // recommended logging data for a userdev environment
 //            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            properties 'forge.logging.markers': 'CONFIG'
+            property 'forge.logging.markers', 'CONFIG'
             // recommended logging level for the console
-            properties 'forge.logging.console.level': 'debug'
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.disableRefMap', 'true'
+            ideaModule "${project.name}.main"
             workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+            mods {
+                modularrouters {
+                    source sourceSets.main
+                }
+            }
         }
-        server = {
+        server {
             // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             // recommended logging level for the console
-            properties 'forge.logging.console.level': 'debug'
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.disableRefMap', 'true'
+            ideaModule "${project.name}.main"
             workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+            mods {
+                modularrouters {
+                    source sourceSets.main
+                }
+            }
         }
         data {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.disableRefMap', 'true'
+            ideaModule "${project.name}.main"
             mods {
                 modularrouters {
                     source sourceSets.main
@@ -114,10 +128,8 @@ dependencies {
 //    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
     compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}:api")
     runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}")
-    compileOnly fg.deobf("mezz.jei:jei-1.16.1:${config.jei_version}:api")
-    runtime fg.deobf("mezz.jei:jei-1.16.1:${config.jei_version}")
-//    compileOnly fg.deobf("curse.maven:patchouli:${config.patchouli_curse_id}")
-//    runtime fg.deobf("curse.maven:patchouli:${config.patchouli_curse_id}")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.2:${config.jei_version}:api")
+    runtime fg.deobf("mezz.jei:jei-1.16.2:${config.jei_version}")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
