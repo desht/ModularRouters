@@ -6,6 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.15.2
 
+### 6.1.3 (21 Sep 2020)
+
+* Fixed a divide-by-0 crash with some fluid tanks which report their max capacity as 0 mB
+* Activator Module can now run with no item in the router (only really useful when in "Right Click Block" mode, of course)
+* Added support for Industrial Foregoing Essence for the Vacuum Module / XP Augment
+
 ### 6.1.2 (12 Aug 2020)
 
 * Fixed NPE with unconfigured Fluid Module Mk2 under some circumstances
