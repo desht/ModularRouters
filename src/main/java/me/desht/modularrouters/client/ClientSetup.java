@@ -40,7 +40,7 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> {
+        event.enqueueWork(() -> {
             setupRenderLayers();
             registerScreenFactories();
             registerKeyBindings();

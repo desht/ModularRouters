@@ -52,7 +52,7 @@ public class ModularRouters {
 
         PacketHandler.setupNetwork();
 
-        DeferredWorkQueue.runLater(() -> {
+        event.enqueueWork(() -> {
             IntegrationHandler.registerAll();
             XPCollection.detectXPTypes();
             ModNameCache.init();
