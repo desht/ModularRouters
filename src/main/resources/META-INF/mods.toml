@@ -33,7 +33,7 @@ Modular Routers is a highly flexible mod for moving items around the world in va
 [[dependencies.modularrouters]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[34.0.9,)" #mandatory
+    versionRange="[34.1.0,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]

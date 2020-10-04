@@ -4,6 +4,14 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.16.3
+
+7.1.0 is pretty much the same as 7.0.2 for MC 1.16.1 with one fix
+
+### 7.1.0 (4 Oct 2020)
+* Fixed client crash when dragging fluids from JEI into the filter slots of a Fluid Module
+  * It now places a bucket of that fluid into the filter, if possible
+
 ## Minecraft 1.16.1
 
 ### 7.0.2 (21 Sep 2020)
