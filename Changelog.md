@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.1
 
+### 7.0.3 (unreleased)
+* Fixed client crash when dragging fluids from JEI into the Fluid Module filter
+  * This will now put a bucket of that fluid into the filter if possible
+  
 ### 7.0.2 (21 Sep 2020)
 * Activator Module can now run with no item in the router (only really useful when in "Right Click Block" mode, of course)
 * Activator Module: internal raytracing improvements
