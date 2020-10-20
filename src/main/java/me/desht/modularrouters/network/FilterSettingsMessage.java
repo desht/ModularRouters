@@ -83,7 +83,7 @@ public class FilterSettingsMessage {
             ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
-                TileEntityItemRouter router = TileEntityItemRouter.getRouterAt(player.world, locator.routerPos).orElse(null);
+                TileEntityItemRouter router = locator.getRouter(player.world).orElse(null);
                 ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, router);
                 filterHandler.setStackInSlot(locator.filterSlot, filterStack);
                 filterHandler.save();
