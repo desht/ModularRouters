@@ -86,8 +86,6 @@ public class ItemBeamTileRenderer extends TileEntityRenderer<TileEntityItemRoute
         builder.pos(positionMatrix, beam.endPos.getX(), beam.endPos.getY(), beam.endPos.getZ())
                 .color(beam.colors[0], beam.colors[1], beam.colors[2], alpha)
                 .endVertex();
-//        RenderSystem.disableDepthTest();
-//        buffer.finish(ModRenderTypes.BEAM_LINE_THICK);
 
         IVertexBuilder builder2 = buffer.getBuffer(ModRenderTypes.BEAM_LINE_THIN);
         builder2.pos(positionMatrix, beam.startPos.getX(), beam.startPos.getY(), beam.startPos.getZ())
@@ -96,7 +94,5 @@ public class ItemBeamTileRenderer extends TileEntityRenderer<TileEntityItemRoute
         builder2.pos(positionMatrix, beam.endPos.getX(), beam.endPos.getY(), beam.endPos.getZ())
                 .color(beam.colors[0], beam.colors[1], beam.colors[2], alpha * 2)
                 .endVertex();
-//        RenderSystem.disableDepthTest();
-//        buffer.finish(ModRenderTypes.BEAM_LINE_THIN);
     }
 }

@@ -7,13 +7,13 @@ public class TintColor {
     public static final TintColor WHITE = new TintColor(255, 255, 255);
     public static final TintColor BLACK = new TintColor(0, 0, 0);
 
-    private int value;
+    private final int value;
 
     public TintColor(int r, int g, int b, int a) {
         value = ((a & 0xFF) << 24) |
                 ((r & 0xFF) << 16) |
                 ((g & 0xFF) << 8)  |
-                ((b & 0xFF) << 0);
+                ((b & 0xFF));
     }
 
     public TintColor(int red, int green, int blue) {
@@ -38,7 +38,7 @@ public class TintColor {
     }
 
     public int getBlue() {
-        return (getRGB() >> 0) & 0xFF;
+        return (getRGB()) & 0xFF;
     }
 
     public static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
@@ -46,9 +46,9 @@ public class TintColor {
         if (hsbvals == null) {
             hsbvals = new float[3];
         }
-        int cmax = (r > g) ? r : g;
+        int cmax = Math.max(r, g);
         if (b > cmax) cmax = b;
-        int cmin = (r < g) ? r : g;
+        int cmin = Math.min(r, g);
         if (b < cmin) cmin = b;
 
         brightness = ((float) cmax) / 255.0f;
@@ -121,7 +121,7 @@ public class TintColor {
                     break;
             }
         }
-        return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
+        return 0xff000000 | (r << 16) | (g << 8) | b;
     }
 
     public static TintColor getHSBColor(float h, float s, float b) {

@@ -184,13 +184,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(cap, inventoryCap);
+            return inventoryCap.cast();
         } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.orEmpty(cap, bufferHandler.getFluidCapability());
+            return bufferHandler.getFluidCapability().cast();
         } else if (cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(cap, bufferHandler.getFluidItemCapability());
+            return bufferHandler.getFluidItemCapability().cast();
         } else if (cap == CapabilityEnergy.ENERGY) {
-            return CapabilityEnergy.ENERGY.orEmpty(cap, bufferHandler.getEnergyCapability());
+            return bufferHandler.getEnergyCapability().cast();
         }
         return super.getCapability(cap, side);
     }

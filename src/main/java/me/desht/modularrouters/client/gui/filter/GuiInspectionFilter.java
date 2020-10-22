@@ -39,7 +39,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     private IntegerTextField valueTextField;
     private InspectionSubject currentSubject = InspectionSubject.NONE;
     private InspectionOp currentOp = InspectionOp.NONE;
-    private List<Buttons.DeleteButton> deleteButtons = new ArrayList<>();
+    private final List<Buttons.DeleteButton> deleteButtons = new ArrayList<>();
     private Button matchButton;
 
     public GuiInspectionFilter(ItemStack filterStack, MFLocator locator) {
@@ -107,10 +107,12 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     }
 
     private void addEntry() {
-        int val = valueTextField.getValue();
-        String s = Joiner.on(" ").join(currentSubject, currentOp, val);
-        sendAddStringMessage("Comparison", s);
-        valueTextField.setText("");
+        if (currentOp != InspectionOp.NONE && currentSubject != InspectionSubject.NONE) {
+            int val = valueTextField.getValue();
+            String s = Joiner.on(" ").join(currentSubject, currentOp, val);
+            sendAddStringMessage("Comparison", s);
+            valueTextField.setText("");
+        }
     }
 
     @Override
