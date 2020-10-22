@@ -180,7 +180,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
             if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
                 String s = ClientSetup.keybindConfigure.getKey().getTranslationKey();
-                list.add(xlate("itemText.misc.configureHint", s.charAt(s.length() - 1)));
+                list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
             }
         }
     }
@@ -195,14 +195,14 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         if (isDirectional()) {
             RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
             IFormattableTextComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
-                    "guiText.tooltip.allDirections" : "guiText.tooltip." + dir.toString());
-            list.add(xlate("guiText.label.direction")
+                    "modularrouters.guiText.tooltip.allDirections" : "modularrouters.guiText.tooltip." + dir.toString());
+            list.add(xlate("modularrouters.guiText.label.direction")
                     .append(new StringTextComponent(": "))
                     .append(itc.mergeStyle(TextFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
         list.add(new StringTextComponent(
-                        I18n.format("itemText.misc.flags") + ": " +
+                        I18n.format("modularrouters.itemText.misc.flags") + ": " +
                                 String.join(" | ",
                                         formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
                                         formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
@@ -212,8 +212,8 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                 )
         );
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
-        list.add(xlate("itemText.misc.match").appendString(": ")
-                .append(xlate("itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
+        list.add(xlate("modularrouters.itemText.misc.match").appendString(": ")
+                .append(xlate("modularrouters.itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
                         .mergeStyle(TextFormatting.AQUA)));
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
@@ -221,11 +221,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             String col = curRange > rm.getBaseRange() ?
                     TextFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
                     TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
-            list.add(xlate("itemText.misc.rangeInfo", col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
+            list.add(xlate("modularrouters.itemText.misc.rangeInfo", col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
         }
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
-            list.add(xlate("itemText.misc.breakerPick").append(pick.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA)));
+            list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
                 list.add(new StringTextComponent("\u25b6 ").append(ench.getDisplayName(level).copyRaw().mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.YELLOW));
             });
@@ -246,19 +246,19 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).append(xlate("itemText.augments")));
+            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).append(xlate("modularrouters.itemText.augments")));
             list.addAll(toAdd);
         }
     }
 
     public String getDirectionString(RelativeDirection dir) {
         return isOmniDirectional() && dir == RelativeDirection.NONE ?
-                I18n.format("guiText.tooltip.allDirections") :
-                I18n.format("guiText.tooltip." + dir.toString());
+                I18n.format("modularrouters.guiText.tooltip.allDirections") :
+                I18n.format("modularrouters.guiText.tooltip." + dir.toString());
     }
 
     private String formatFlag(String key, boolean flag) {
-        String text = I18n.format("itemText.misc." + key);
+        String text = I18n.format("modularrouters.itemText.misc." + key);
         return (flag ? TextFormatting.DARK_GRAY : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
@@ -281,11 +281,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                         .mergeStyle(TextFormatting.AQUA)));
             }
         }
-        String key = "itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
+        String key = "modularrouters.itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
         if (l2.isEmpty()) {
             list.add(xlate(key).mergeStyle(TextFormatting.YELLOW)
                     .appendString(": ")
-                    .append(xlate("itemText.misc.noItems")
+                    .append(xlate("modularrouters.itemText.misc.noItems")
                             .mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
@@ -321,7 +321,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     }
 
     public String getRegulatorTranslationKey(ItemStack stack) {
-        return "guiText.tooltip.regulator.label";
+        return "modularrouters.guiText.tooltip.regulator.label";
     }
 
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {

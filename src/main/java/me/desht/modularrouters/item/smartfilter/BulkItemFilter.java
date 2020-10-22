@@ -54,7 +54,7 @@ public class    BulkItemFilter extends ItemSmartFilter {
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addExtraInformation(itemstack, list);
-        list.add(ClientUtil.xlate("itemText.misc.bulkItemFilter.count", getSize(itemstack)));
+        list.add(ClientUtil.xlate("modularrouters.itemText.misc.bulkItemFilter.count", getSize(itemstack)));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class    BulkItemFilter extends ItemSmartFilter {
         } else if (player != null && player.isSteppingCarefully()) {
             return InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
+                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
                 world.playSound(null, ctx.getPos(), ModSounds.SUCCESS.get(), SoundCategory.MASTER, 1.0f, 1.0f);
                 return ActionResultType.SUCCESS;
             }).orElse(super.onItemUse(ctx));

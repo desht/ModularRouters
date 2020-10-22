@@ -24,7 +24,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         FURTHEST_FIRST;
 
         public String getTranslationKey() {
-            return "itemText.distributor.strategy." + this.toString();
+            return "modularrouters.itemText.distributor.strategy." + this.toString();
         }
     }
 

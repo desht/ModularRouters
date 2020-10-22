@@ -50,7 +50,7 @@ public class GuiModulePlayer extends GuiModule {
         addButton(secButton = new SectionButton(guiLeft + 169, guiTop + 32, 16, 16, true, STACKS, cpm.getSection()));
         addButton(opButton = new OperationButton(guiLeft + 148, guiTop + 32, cpm.getOperation()));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "guiText.popup.player.control");
+        getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "modularrouters.guiText.popup.player.control");
     }
 
     @Override

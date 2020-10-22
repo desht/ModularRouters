@@ -96,21 +96,21 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     static class ClearButton extends Buttons.DeleteButton {
         ClearButton(int x, int y, IPressable pressable) {
             super(x, y, 0, pressable);
-            tooltip1.add(ClientUtil.xlate("guiText.tooltip.clearFilter"));
+            tooltip1.add(ClientUtil.xlate("modularrouters.guiText.tooltip.clearFilter"));
         }
     }
 
     static class MergeButton extends Buttons.AddButton {
         MergeButton(int x, int y, String locStr, String name, IPressable pressable) {
             super(x, y, pressable);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.mergeFilter", name, locStr);
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.mergeFilter", name, locStr);
         }
     }
 
     static class LoadButton extends TexturedButton {
         LoadButton(int x, int y, String locStr, String name,  IPressable pressable) {
             super( x, y, 16, 16, pressable);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.loadFilter", name, locStr);
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.loadFilter", name, locStr);
         }
 
         @Override

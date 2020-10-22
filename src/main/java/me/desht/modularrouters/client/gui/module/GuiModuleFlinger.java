@@ -58,9 +58,9 @@ public class GuiModuleFlinger extends GuiModule {
 
         manager.focus(1);  // field 0 is the regulator amount textfield
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 13, guiLeft + 186, guiTop + 32, "guiText.popup.flinger.speed");
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 31, guiLeft + 186, guiTop + 50, "guiText.popup.flinger.pitch");
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 49, guiLeft + 186, guiTop + 68, "guiText.popup.flinger.yaw");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 13, guiLeft + 186, guiTop + 32, "modularrouters.guiText.popup.flinger.speed");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 31, guiLeft + 186, guiTop + 50, "modularrouters.guiText.popup.flinger.pitch");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 49, guiLeft + 186, guiTop + 68, "modularrouters.guiText.popup.flinger.yaw");
     }
 
     @Override
@@ -87,8 +87,8 @@ public class GuiModuleFlinger extends GuiModule {
         TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
             super(x, y, 16, 16, p -> {});
             this.buttonId = buttonId;
-            tooltip1.add(ClientUtil.xlate("guiText.tooltip.flinger." + key, min, max));
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
+            tooltip1.add(ClientUtil.xlate("modularrouters.guiText.tooltip.flinger." + key, min, max));
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

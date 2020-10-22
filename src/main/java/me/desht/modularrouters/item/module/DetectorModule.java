@@ -42,8 +42,8 @@ public class DetectorModule extends ItemModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
-        list.add(ClientUtil.xlate("itemText.misc.redstoneLevel",
-                ds.getSignalLevel(), I18n.format("itemText.misc.strongSignal." + ds.isStrongSignal())));
+        list.add(ClientUtil.xlate("modularrouters.itemText.misc.redstoneLevel",
+                ds.getSignalLevel(), I18n.format("modularrouters.itemText.misc.strongSignal." + ds.isStrongSignal())));
     }
 
     @Override

@@ -33,10 +33,10 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     public void addExtraInformation(ItemStack itemstack,  List<ITextComponent> list) {
         String owner = getOwnerName(itemstack);
         if (owner == null) owner = "-";
-        list.add(ClientUtil.xlate("itemText.security.owner", TextFormatting.AQUA + owner));
+        list.add(ClientUtil.xlate("modularrouters.itemText.security.owner", TextFormatting.AQUA + owner));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
-            list.add(ClientUtil.xlate("itemText.security.count", names.size(), MAX_PLAYERS));
+            list.add(ClientUtil.xlate("modularrouters.itemText.security.count", names.size(), MAX_PLAYERS));
             list.addAll(names.stream()
                     .map(name -> " \u2022 " + TextFormatting.YELLOW + name)
                     .sorted()
@@ -131,7 +131,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.getEntityWorld().isRemote && player.isSteppingCarefully()) {
             setOwner(stack, player);
-            player.sendStatusMessage(new TranslationTextComponent("itemText.security.owner", player.getDisplayName().getString()), false);
+            player.sendStatusMessage(new TranslationTextComponent("modularrouters.itemText.security.owner", player.getDisplayName().getString()), false);
             return ActionResult.resultSuccess(stack);
         }
         return ActionResult.resultPass(stack);
@@ -147,7 +147,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
             if (player.world.isRemote) {
                 player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
             } else {
-                player.sendStatusMessage(new TranslationTextComponent("chatText.security." + res.toString(), name), false);
+                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.security." + res.toString(), name), false);
             }
             return ActionResultType.SUCCESS;
         }

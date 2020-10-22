@@ -20,20 +20,20 @@ public class RouterComponentProvider implements IComponentProvider {
         CompoundNBT data = accessor.getServerData();
         if (accessor.getTileEntity() instanceof TileEntityItemRouter) {
             if (data.getBoolean("Denied")) {
-                tooltip.add(new TranslationTextComponent("chatText.security.accessDenied"));
+                tooltip.add(new TranslationTextComponent("modularrouters.chatText.security.accessDenied"));
             } else {
-                MiscUtil.appendMultilineText(tooltip, TextFormatting.WHITE,"itemText.misc.moduleCount", data.getInt("ModuleCount"));
+                MiscUtil.appendMultilineText(tooltip, TextFormatting.WHITE,"modularrouters.itemText.misc.moduleCount", data.getInt("ModuleCount"));
                 CompoundNBT upgrades = data.getCompound("Upgrades");
                 for (String k : upgrades.keySet()) {
-                    tooltip.add(new TranslationTextComponent("itemText.misc.upgradeCount", I18n.format(k), upgrades.getInt(k)));
+                    tooltip.add(new TranslationTextComponent("modularrouters.itemText.misc.upgradeCount", I18n.format(k), upgrades.getInt(k)));
                 }
                 RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.values()[data.getInt("RedstoneMode")];
-                tooltip.add(new TranslationTextComponent("guiText.tooltip.redstone.label")
+                tooltip.add(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone.label")
                         .appendString(": " + TextFormatting.AQUA)
-                        .append(new TranslationTextComponent("guiText.tooltip.redstone." + rrb))
+                        .append(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone." + rrb))
                 );
                 if (data.getBoolean("EcoMode")) {
-                    tooltip.add(new TranslationTextComponent("itemText.misc.ecoMode"));
+                    tooltip.add(new TranslationTextComponent("modularrouters.itemText.misc.ecoMode"));
                 }
             }
         }

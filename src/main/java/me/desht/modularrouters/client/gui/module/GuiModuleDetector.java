@@ -44,18 +44,18 @@ public class GuiModuleDetector extends GuiModule {
 
         manager.focus(0);
 
-        ITextComponent label = ClientUtil.xlate("itemText.misc.strongSignal." + cdm.isStrongSignal());
+        ITextComponent label = ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
         addButton(new Button(guiLeft + 138, guiTop + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
-            button.setMessage(ClientUtil.xlate("itemText.misc.strongSignal." + isStrong));
+            button.setMessage(ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
             GuiModuleDetector.this.sendToServer();
         }));
 
         addButton(new TooltipButton(guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 129, guiTop + 14, guiLeft + 172, guiTop + 31, "guiText.popup.detector.signalLevel");
-        getMouseOverHelp().addHelpRegion(guiLeft + 135, guiTop + 31, guiLeft + 180, guiTop + 54, "guiText.popup.detector.weakStrong");
+        getMouseOverHelp().addHelpRegion(guiLeft + 129, guiTop + 14, guiLeft + 172, guiTop + 31, "modularrouters.guiText.popup.detector.signalLevel");
+        getMouseOverHelp().addHelpRegion(guiLeft + 135, guiTop + 31, guiLeft + 180, guiTop + 54, "modularrouters.guiText.popup.detector.weakStrong");
     }
 
     @Override
@@ -76,8 +76,8 @@ public class GuiModuleDetector extends GuiModule {
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.detectorTooltip");
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.detectorTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

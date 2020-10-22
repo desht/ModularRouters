@@ -40,8 +40,8 @@ public class GuiModuleVacuum extends GuiModule {
         addButton(xpb = new XPTypeButton(guiLeft + 170, guiTop + 28, 16, 16, true, icons, vac.getXPCollectionType()));
         addButton(ejb = new EjectButton(guiLeft + 167, guiTop + 48, vac.isAutoEjecting()));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 24, guiLeft + 187, guiTop + 45, "guiText.popup.xpVacuum", guiContainer -> xpb.visible);
-        getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 46, guiLeft + 187, guiTop + 65, "guiText.popup.xpVacuum.eject", guiContainer -> xpb.visible);
+        getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 24, guiLeft + 187, guiTop + 45, "modularrouters.guiText.popup.xpVacuum", guiContainer -> xpb.visible);
+        getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 46, guiLeft + 187, guiTop + 65, "modularrouters.guiText.popup.xpVacuum.eject", guiContainer -> xpb.visible);
     }
 
     @Override
@@ -56,9 +56,9 @@ public class GuiModuleVacuum extends GuiModule {
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            font.drawString(matrixStack, I18n.format("guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
+            font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                font.drawString(matrixStack, I18n.format("guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }

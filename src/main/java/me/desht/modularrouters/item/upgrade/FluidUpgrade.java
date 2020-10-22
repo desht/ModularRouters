@@ -20,7 +20,7 @@ public class FluidUpgrade extends ItemUpgrade {
         super.addUsageInformation(itemstack, list);
         TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
         if (router != null) {
-            list.add(ClientUtil.xlate("itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
+            list.add(ClientUtil.xlate("modularrouters.itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
         }
     }
 

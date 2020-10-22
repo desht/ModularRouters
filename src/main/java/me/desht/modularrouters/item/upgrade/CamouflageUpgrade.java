@@ -27,7 +27,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
         CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
         if (tag != null && tag.contains(NBT_STATE_NAME)) {
-            list.add(ClientUtil.xlate("itemText.camouflage.held")
+            list.add(ClientUtil.xlate("modularrouters.itemText.camouflage.held")
                     .appendString(TextFormatting.AQUA.toString())
                     .append(getCamoStateDisplayName(itemstack)));
         }
@@ -64,7 +64,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
             if (!ctx.getWorld().isRemote) {
-                player.sendStatusMessage(new TranslationTextComponent("itemText.camouflage.held")
+                player.sendStatusMessage(new TranslationTextComponent("modularrouters.itemText.camouflage.held")
                         .appendString(TextFormatting.AQUA.toString())
                         .append(getCamoStateDisplayName(stack))
                         .mergeStyle(TextFormatting.YELLOW), false);

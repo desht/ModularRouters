@@ -30,7 +30,7 @@ public class CompiledPlayerModule extends CompiledModule {
         public String getSymbol() { return this == INSERT ? "⟹" : "⟸"; }
 
         public String getTranslationKey() {
-            return "guiText.label.playerOp." + toString();
+            return "modularrouters.guiText.label.playerOp." + toString();
         }
     }
 
@@ -38,7 +38,7 @@ public class CompiledPlayerModule extends CompiledModule {
         MAIN, MAIN_NO_HOTBAR, ARMOR, OFFHAND, ENDER;
 
         public String getTranslationKey() {
-            return "guiText.label.playerSect." + toString();
+            return "modularrouters.guiText.label.playerSect." + toString();
         }
     }
 

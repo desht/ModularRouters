@@ -54,7 +54,7 @@ public class CompiledActivatorModule extends CompiledModule {
         USE_ITEM_ON_ENTITY;
 
         public String getTranslationKey() {
-            return "itemText.activator.action." + toString();
+            return "modularrouters.itemText.activator.action." + toString();
         }
     }
 
@@ -64,7 +64,7 @@ public class CompiledActivatorModule extends CompiledModule {
         BELOW;
 
         public String getTranslationKey() {
-            return "itemText.activator.direction." + toString();
+            return "modularrouters.itemText.activator.direction." + toString();
         }
     }
 
@@ -74,7 +74,7 @@ public class CompiledActivatorModule extends CompiledModule {
         ROUND_ROBIN;
 
         public String getTranslationKey() {
-            return "itemText.activator.entityMode." + toString();
+            return "modularrouters.itemText.activator.entityMode." + toString();
         }
     }
 

@@ -71,7 +71,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
 
         addButton(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
 
-        matchButton = new Button(xPos + 8, yPos + 167, 60, 20, xlate("guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
+        matchButton = new Button(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
             CompoundNBT ext = new CompoundNBT();
             ext.putBoolean("MatchAll", !comparisonList.isMatchAll());
             PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ANY_ALL_FLAG, locator, ext));
@@ -135,7 +135,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     @Override
     public void resync(ItemStack stack) {
         comparisonList = InspectionFilter.getComparisonList(stack);
-        matchButton.setMessage(xlate("guiText.label.matchAll." + comparisonList.isMatchAll()));
+        matchButton.setMessage(xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()));
         updateDeleteButtonVisibility();
     }
 }

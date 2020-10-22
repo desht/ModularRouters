@@ -79,7 +79,7 @@ public class GuiModFilter extends GuiFilterContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        String title = filterStack.getDisplayName().getString() + (container.getRouter() != null ? I18n.format("guiText.label.installed") : "");
+        String title = filterStack.getDisplayName().getString() + (container.getRouter() != null ? I18n.format("modularrouters.guiText.label.installed") : "");
         font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, 8, 0x404040);
 
         if (!modName.isEmpty()) {

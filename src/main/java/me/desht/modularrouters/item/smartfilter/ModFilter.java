@@ -58,14 +58,14 @@ public class ModFilter extends ItemSmartFilter {
         super.addExtraInformation(stack, list);
         if (stack.getChildTag(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
-            list.add(ClientUtil.xlate("itemText.misc.modFilter.count", l.size()));
+            list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", l.size()));
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
                     .map(s -> " \u2022 " + TextFormatting.AQUA + s)
                     .map(StringTextComponent::new)
                     .collect(Collectors.toList()));
         } else {
-            list.add(ClientUtil.xlate("itemText.misc.modFilter.count", 0));
+            list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", 0));
         }
     }
 

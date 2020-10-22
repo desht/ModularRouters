@@ -107,8 +107,8 @@ public class InspectionMatcher implements IItemMatcher {
         public String asLocalizedText() {
             if (subject == null || op == null) return "<?>";
             return Joiner.on(" ").join(
-                    I18n.format("guiText.label.inspectionSubject." + subject),
-                    I18n.format("guiText.label.inspectionOp." + op),
+                    I18n.format("modularrouters.guiText.label.inspectionSubject." + subject),
+                    I18n.format("modularrouters.guiText.label.inspectionOp." + op),
                     target + subject.getDisplaySuffix()
             );
         }
@@ -123,7 +123,7 @@ public class InspectionMatcher implements IItemMatcher {
         FOOD;
 
         public String getTranslationKey() {
-            return "guiText.label.inspectionSubject." + toString();
+            return "modularrouters.guiText.label.inspectionSubject." + toString();
         }
 
         private Optional<Integer> getValue(ItemStack stack) {
@@ -215,7 +215,7 @@ public class InspectionMatcher implements IItemMatcher {
         NE;
 
         public String getTranslationKey() {
-            return "guiText.label.inspectionOp." + toString();
+            return "modularrouters.guiText.label.inspectionOp." + toString();
         }
 
         public boolean check(long value, long target) {

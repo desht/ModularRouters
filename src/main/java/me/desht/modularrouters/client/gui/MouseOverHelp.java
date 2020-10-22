@@ -132,8 +132,8 @@ public class MouseOverHelp {
     public static class Button extends TexturedToggleButton {
         public Button(int x, int y) {
             super(x, y, 16, 16, false, null);
-            tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("guiText.tooltip.mouseOverHelp.false")));
-            tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("guiText.tooltip.mouseOverHelp.true")));
+            tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("modularrouters.guiText.tooltip.mouseOverHelp.false")));
+            tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("modularrouters.guiText.tooltip.mouseOverHelp.true")));
         }
 
         @Override

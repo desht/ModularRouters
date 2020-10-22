@@ -49,10 +49,10 @@ public class RegexFilter extends ItemSmartFilter {
         CompoundNBT compound = itemstack.getTag();
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
-            list.add(ClientUtil.xlate("itemText.misc.regexFilter.count", l.size()));
+            list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", l.size()));
             list.addAll(l.stream().map(s -> " \u2022 " + TextFormatting.AQUA + "/" + s + "/").map(StringTextComponent::new).collect(Collectors.toList()));
         } else {
-            list.add(ClientUtil.xlate("itemText.misc.regexFilter.count", 0));
+            list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", 0));
         }
     }
 

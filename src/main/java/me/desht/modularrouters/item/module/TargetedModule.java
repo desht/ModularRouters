@@ -72,7 +72,7 @@ public abstract class TargetedModule extends ItemModule {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                IFormattableTextComponent msg = new TranslationTextComponent("chatText.misc.targetSet").append(tgt.getTextComponent());
+                IFormattableTextComponent msg = new TranslationTextComponent("modularrouters.chatText.misc.targetSet").append(tgt.getTextComponent());
                 player.sendStatusMessage(msg.mergeStyle(TextFormatting.YELLOW), true);
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
             }
@@ -89,15 +89,15 @@ public abstract class TargetedModule extends ItemModule {
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetRemoved", targets.size(), getMaxTargets())
+                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
                         .append(tgt.getTextComponent()).mergeStyle(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetAdded", targets.size(), getMaxTargets())
+                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetAdded", targets.size(), getMaxTargets())
                         .append(tgt.getTextComponent()).mergeStyle(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
-                player.sendStatusMessage(new TranslationTextComponent("chatText.misc.tooManyTargets", getMaxTargets())
+                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.tooManyTargets", getMaxTargets())
                         .mergeStyle(TextFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
@@ -112,7 +112,7 @@ public abstract class TargetedModule extends ItemModule {
     @Override
     public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addUsageInformation(itemstack, list);
-        MiscUtil.appendMultilineText(list, TextFormatting.YELLOW, getMaxTargets() > 1 ? "itemText.targetingHintMulti" : "itemText.targetingHint");
+        MiscUtil.appendMultilineText(list, TextFormatting.YELLOW, getMaxTargets() > 1 ? "modularrouters.itemText.targetingHintMulti" : "modularrouters.itemText.targetingHint");
     }
 
     @Override
@@ -130,8 +130,6 @@ public abstract class TargetedModule extends ItemModule {
         for (ModuleTarget target : targets) {
             if (target != null) {
                 ITextComponent msg = asFormattable(target.getTextComponent()).mergeStyle(TextFormatting.WHITE);
-//                ITextComponent msg = xlate("chatText.misc.target")
-//                        .append(target.getTextComponent()).mergeStyle(TextFormatting.YELLOW);
                 list.add(msg);
                 TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {
@@ -150,7 +148,7 @@ public abstract class TargetedModule extends ItemModule {
         if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
             world.playSound(null, new BlockPos(player.getPositionVec()), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
-            player.sendStatusMessage(new TranslationTextComponent("chatText.misc.targetCleared").mergeStyle(TextFormatting.YELLOW), true);
+            player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetCleared").mergeStyle(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
@@ -340,7 +338,7 @@ public abstract class TargetedModule extends ItemModule {
         }
 
         String translationKey() {
-            return "chatText.targetValidation." + this.toString();
+            return "modularrouters.chatText.targetValidation." + this.toString();
         }
     }
 }

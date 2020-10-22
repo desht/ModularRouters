@@ -90,8 +90,8 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height) {
             super(x, y, width, height, clockStack, true, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE,"guiText.tooltip.tunedValue", 0, MRConfig.Common.Router.baseTickRate - 1);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE,"modularrouters.guiText.tooltip.tunedValue", 0, MRConfig.Common.Router.baseTickRate - 1);
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override

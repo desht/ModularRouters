@@ -17,7 +17,7 @@ public class GuiModuleExtruder2 extends GuiModule {
 
         addButton(new InfoButton(guiLeft + 173, guiTop + 70, "extruder2.template"));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 16, guiLeft + 181, guiTop + 69, "guiText.popup.extruder2.template");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 16, guiLeft + 181, guiTop + 69, "modularrouters.guiText.popup.extruder2.template");
     }
 
     @Override

@@ -35,12 +35,12 @@ class TOPInfoProvider {
                 }
 
                 probeInfo.text(new StringTextComponent(TextFormatting.YELLOW.toString())
-                        .append(new TranslationTextComponent("guiText.tooltip.redstone.label"))
+                        .append(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone.label"))
                         .appendString(TextFormatting.WHITE + ": ")
                         .append(new TranslationTextComponent(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {
-                probeInfo.text(new TranslationTextComponent("chatText.security.accessDenied"));
+                probeInfo.text(new TranslationTextComponent("modularrouters.chatText.security.accessDenied"));
             }
         });
     }

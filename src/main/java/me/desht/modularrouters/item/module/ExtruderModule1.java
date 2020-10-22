@@ -26,7 +26,7 @@ public class ExtruderModule1 extends ItemModule implements IRangedModule, IPicka
     @Override
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
-        list.add(ClientUtil.xlate("itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
+        list.add(ClientUtil.xlate("modularrouters.itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
     }
 
     @Override

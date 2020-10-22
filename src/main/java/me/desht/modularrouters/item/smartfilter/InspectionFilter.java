@@ -37,7 +37,7 @@ public class InspectionFilter extends ItemSmartFilter {
         super.addExtraInformation(itemstack, list);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.YELLOW + I18n.format("guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + I18n.format("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
             for (Comparison c : comparisonList.items) {
                 list.add(new StringTextComponent(TextFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
             }

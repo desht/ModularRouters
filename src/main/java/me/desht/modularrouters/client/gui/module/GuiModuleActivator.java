@@ -50,9 +50,9 @@ public class GuiModuleActivator extends GuiModule {
         lookDirectionButton.visible = cam.getActionType() != ActionType.USE_ITEM_ON_ENTITY;
         entityModeButton.visible = cam.getActionType() == ActionType.USE_ITEM_ON_ENTITY;
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 18, guiLeft + 183, guiTop + 37, "guiText.popup.activator.action");
-        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 39, guiLeft + 183, guiTop + 56, "guiText.popup.activator.sneak");
-        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 59, guiLeft + 183, guiTop + 76, "guiText.popup.activator.look", guiContainer -> lookDirectionButton.visible);
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 18, guiLeft + 183, guiTop + 37, "modularrouters.guiText.popup.activator.action");
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 39, guiLeft + 183, guiTop + 56, "modularrouters.guiText.popup.activator.sneak");
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 59, guiLeft + 183, guiTop + 76, "modularrouters.guiText.popup.activator.look", guiContainer -> lookDirectionButton.visible);
     }
 
     @Override
@@ -66,12 +66,12 @@ public class GuiModuleActivator extends GuiModule {
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
-        font.drawString(matrixStack, I18n.format("guiText.tooltip.activator.action"), 132, 23, 0x404040);
-        font.drawString(matrixStack, I18n.format("guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
+        font.drawString(matrixStack, I18n.format("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040);
+        font.drawString(matrixStack, I18n.format("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
         if (actionTypeButton.getState() != ActionType.USE_ITEM_ON_ENTITY) {
-            font.drawString(matrixStack, I18n.format("guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
+            font.drawString(matrixStack, I18n.format("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
         } else {
-            font.drawString(matrixStack, I18n.format("guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
+            font.drawString(matrixStack, I18n.format("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
         }
     }
 

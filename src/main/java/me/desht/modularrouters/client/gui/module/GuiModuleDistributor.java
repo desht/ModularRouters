@@ -32,7 +32,7 @@ public class GuiModuleDistributor extends GuiModule {
         addButton(sb = new StrategyButton(guiLeft + 147, guiTop + 23, 16, 16, cdm.getDistributionStrategy()));
 
         getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 21, guiLeft + 165, guiTop + 41,
-                "guiText.popup.distributor.strategy");
+                "modularrouters.guiText.popup.distributor.strategy");
     }
 
     @Override
@@ -71,7 +71,7 @@ public class GuiModuleDistributor extends GuiModule {
     private static class TooltipButton extends TexturedButton {
         TooltipButton(int x, int y) {
             super(x, y, 16, 16, p -> {});
-            tooltip1.add(ClientUtil.xlate("guiText.tooltip.distributor.strategy"));
+            tooltip1.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy"));
         }
 
         @Override

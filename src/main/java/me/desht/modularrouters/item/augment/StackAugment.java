@@ -15,6 +15,6 @@ public class StackAugment extends ItemAugment {
 
     @Override
     public String getExtraInfo(int c, ItemStack stack) {
-        return " - " + I18n.format("itemText.augments.stackInfo", Math.min(1 << c, 64));
+        return " - " + I18n.format("modularrouters.itemText.augments.stackInfo", Math.min(1 << c, 64));
     }
 }

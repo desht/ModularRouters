@@ -33,7 +33,7 @@ public class FluidModule1 extends ItemModule {
         OUT;  // from router
 
         public String getTranslationKey() {
-            return "itemText.fluid.direction." + toString();
+            return "modularrouters.itemText.fluid.direction." + toString();
         }
     }
 
@@ -41,7 +41,7 @@ public class FluidModule1 extends ItemModule {
     public String getRegulatorTranslationKey(ItemStack stack) {
         CompoundNBT compound = ModuleHelper.validateNBT(stack);
         boolean isAbsolute = compound.getBoolean(CompiledFluidModule1.NBT_REGULATE_ABSOLUTE);
-        return "guiText.tooltip.regulator." + (isAbsolute ? "labelFluidmB" : "labelFluidPct");
+        return "modularrouters.guiText.tooltip.regulator." + (isAbsolute ? "labelFluidmB" : "labelFluidPct");
     }
 
     @Override
@@ -92,8 +92,8 @@ public class FluidModule1 extends ItemModule {
 
     static void addFluidModuleInformation(ItemStack stack, List<ITextComponent> list) {
         CompiledFluidModule1 cfm = new CompiledFluidModule1(null, stack);
-        String dir = I18n.format("itemText.fluid.direction." + cfm.getFluidDirection());
-        list.add(xlate("itemText.fluid.direction", dir));
-        list.add(xlate("itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
+        String dir = I18n.format("modularrouters.itemText.fluid.direction." + cfm.getFluidDirection());
+        list.add(xlate("modularrouters.itemText.fluid.direction", dir));
+        list.add(xlate("modularrouters.itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
     }
 }

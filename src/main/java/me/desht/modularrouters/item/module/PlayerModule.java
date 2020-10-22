@@ -34,13 +34,13 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, itemstack);
         String owner = cpm.getPlayerName() == null ? "-" : cpm.getPlayerName();
         list.add(MiscUtil.settingsStr(TextFormatting.YELLOW.toString(),
-                ClientUtil.xlate("itemText.security.owner", owner)));
+                ClientUtil.xlate("modularrouters.itemText.security.owner", owner)));
 
         String s = String.format(TextFormatting.YELLOW + "%s: " + TextFormatting.AQUA + "%s %s %s",
-                I18n.format("itemText.misc.operation"),
+                I18n.format("modularrouters.itemText.misc.operation"),
                 I18n.format("block.modularrouters.item_router"),
                 cpm.getOperation().getSymbol(),
-                I18n.format("guiText.label.playerSect." + cpm.getSection()));
+                I18n.format("modularrouters.guiText.label.playerSect." + cpm.getSection()));
         list.add(new StringTextComponent(s));
     }
 
@@ -65,7 +65,7 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
             return ActionResultType.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItem(), ctx.getPlayer());
-            ctx.getPlayer().sendStatusMessage(new TranslationTextComponent("itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
+            ctx.getPlayer().sendStatusMessage(new TranslationTextComponent("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
             return ActionResultType.SUCCESS;
         } else {
             return super.onItemUse(ctx);

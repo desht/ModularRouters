@@ -15,6 +15,6 @@ public enum RouterRedstoneBehaviour {
     }
 
     public String getTranslationKey() {
-        return "guiText.tooltip.redstone." + toString();
+        return "modularrouters.guiText.tooltip.redstone." + toString();
     }
 }

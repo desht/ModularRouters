@@ -124,7 +124,7 @@ public class BlockItemRouter extends BlockCamo {
     public void addInformation(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
         if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
-            tooltip.add(ClientUtil.xlate("itemText.misc.routerConfigured")
+            tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.routerConfigured")
                     .mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<ITextComponent> moduleText = new ArrayList<>();
@@ -140,7 +140,7 @@ public class BlockItemRouter extends BlockCamo {
                     }
                 }
                 if (!moduleText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("itemText.misc.moduleCount",
+                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.moduleCount",
                             moduleText.size()).mergeStyle(TextFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
@@ -161,17 +161,17 @@ public class BlockItemRouter extends BlockCamo {
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("itemText.misc.upgradeCount", nUpgrades).mergeStyle(TextFormatting.YELLOW));
+                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.upgradeCount", nUpgrades).mergeStyle(TextFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
             if (compound.contains(NBT_REDSTONE_MODE)) {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-                    tooltip.add(ClientUtil.xlate("guiText.tooltip.redstone.label")
+                    tooltip.add(ClientUtil.xlate("modularrouters.guiText.tooltip.redstone.label")
                             .appendString(": ")
                             .mergeStyle(TextFormatting.YELLOW)
-                            .append(ClientUtil.xlate("guiText.tooltip.redstone." + rrb)
+                            .append(ClientUtil.xlate("modularrouters.guiText.tooltip.redstone." + rrb)
                                     .mergeStyle(TextFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
@@ -190,7 +190,7 @@ public class BlockItemRouter extends BlockCamo {
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isRemote) {
-                    player.sendStatusMessage(ClientUtil.xlate("chatText.security.accessDenied"), false);
+                    player.sendStatusMessage(ClientUtil.xlate("modularrouters.chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
                 return ActionResultType.SUCCESS;

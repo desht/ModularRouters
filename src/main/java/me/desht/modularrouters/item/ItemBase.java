@@ -37,18 +37,18 @@ public abstract class ItemBase extends Item {
             addExtraInformation(stack, list);
             if (ClientUtil.thisScreenPassesEvents()) {
                 // func_240701_a_() = applyTextStyles()
-                list.add(xlate("itemText.misc.holdKey", text.getString()));
+                list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
             }
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
             if (ClientUtil.thisScreenPassesEvents()) {
-                list.add(xlate("itemText.misc.holdShiftKey", text.getString()));
+                list.add(xlate("modularrouters.itemText.misc.holdShiftKey", text.getString()));
             }
         }
     }
 
     protected void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
         MiscUtil.appendMultilineText(list, TextFormatting.GRAY,
-                "itemText.usage.item." + itemstack.getItem().getRegistryName().getPath(), getExtraUsageParams());
+                "modularrouters.itemText.usage.item." + itemstack.getItem().getRegistryName().getPath(), getExtraUsageParams());
     }
 
     protected abstract void addExtraInformation(ItemStack stack, List<ITextComponent> list);

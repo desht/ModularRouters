@@ -29,7 +29,7 @@ public class FlingerModule extends DropperModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledFlingerModule fs = new CompiledFlingerModule(null, itemstack);
-        list.add(ClientUtil.xlate("itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
+        list.add(ClientUtil.xlate("modularrouters.itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
     }
 
     @Override

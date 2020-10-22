@@ -35,7 +35,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
     public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         super.addSettingsInformation(itemstack, list);
 
-        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).append(ClientUtil.xlate("itemText.extruder2.template")));
+        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).append(ClientUtil.xlate("modularrouters.itemText.extruder2.template")));
         TemplateHandler handler = new TemplateHandler(itemstack, null);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
@@ -48,7 +48,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
             ITextComponent tc = list.get(size - 1);
             list.set(list.size() - 1, asFormattable(tc)
                     .append(new StringTextComponent(" " + TextFormatting.AQUA + TextFormatting.ITALIC))
-                    .append(ClientUtil.xlate("itemText.misc.noItems"))
+                    .append(ClientUtil.xlate("modularrouters.itemText.misc.noItems"))
             );
 
         }

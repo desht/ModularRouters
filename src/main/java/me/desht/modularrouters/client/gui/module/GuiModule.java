@@ -146,10 +146,10 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             addButton(new BackButton(guiLeft + 2, guiTop + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()))));
         }
 
-        mouseOverHelp.addHelpRegion(guiLeft + 7, guiTop + 16, guiLeft + 60, guiTop + 69, "guiText.popup.filter");
-        mouseOverHelp.addHelpRegion(guiLeft + 5, guiTop + 73, guiLeft + 62, guiTop + 110, "guiText.popup.filterControl");
-        mouseOverHelp.addHelpRegion(guiLeft + 68, guiTop + 16, guiLeft + 121, guiTop + 69, module.isDirectional() ? "guiText.popup.direction" : "guiText.popup.noDirection");
-        mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "guiText.popup.augments");
+        mouseOverHelp.addHelpRegion(guiLeft + 7, guiTop + 16, guiLeft + 60, guiTop + 69, "modularrouters.guiText.popup.filter");
+        mouseOverHelp.addHelpRegion(guiLeft + 5, guiTop + 73, guiLeft + 62, guiTop + 110, "modularrouters.guiText.popup.filterControl");
+        mouseOverHelp.addHelpRegion(guiLeft + 68, guiTop + 16, guiLeft + 121, guiTop + 69, module.isDirectional() ? "modularrouters.guiText.popup.direction" : "modularrouters.guiText.popup.noDirection");
+        mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "modularrouters.guiText.popup.augments");
     }
 
     protected IntegerTextField buildRegulationTextField(TextFieldManager manager) {
@@ -249,7 +249,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? " " + I18n.format("guiText.label.installed") : "");
+        String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? " " + I18n.format("modularrouters.guiText.label.installed") : "");
         this.font.drawString(matrixStack, title, this.xSize / 2f - this.font.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
@@ -373,8 +373,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private static class RegulatorTooltipButton extends TexturedButton {
         RegulatorTooltipButton(int x, int y, boolean isFluid) {
             super(x, y, 16, 16, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, isFluid ? "guiText.tooltip.fluidRegulatorTooltip" : "guiText.tooltip.regulatorTooltip");
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, isFluid ? "modularrouters.guiText.tooltip.fluidRegulatorTooltip" : "modularrouters.guiText.tooltip.regulatorTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
@@ -404,8 +404,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         ModuleToggleButton(ModuleFlags flag, int x, int y, boolean toggled) {
             super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
             this.flagId = flag.ordinal();
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip." + ModuleFlags.values()[flagId] + ".1");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "guiText.tooltip." + ModuleFlags.values()[flagId] + ".2");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + ModuleFlags.values()[flagId] + ".1");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + ModuleFlags.values()[flagId] + ".2");
         }
 
         @Override
@@ -463,8 +463,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private class MatchAllButton extends TexturedToggleButton {
         MatchAllButton(int x, int y, boolean toggled) {
             super(x, y, 16, 16, toggled, GuiModule.this);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.matchAll.false");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "guiText.tooltip.matchAll.true");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.false");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.true");
         }
 
         @Override

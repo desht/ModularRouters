@@ -16,6 +16,6 @@ public class PickupDelayAugment extends ItemAugment {
     @Override
     public String getExtraInfo(int nAugments, ItemStack moduleStack) {
         int pickupDelay = nAugments * TICKS_PER_AUGMENT;
-        return " - " + I18n.format("itemText.augments.pickupDelay", pickupDelay, pickupDelay / 20.0f);
+        return " - " + I18n.format("modularrouters.itemText.augments.pickupDelay", pickupDelay, pickupDelay / 20.0f);
     }
 }

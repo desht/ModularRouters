@@ -111,7 +111,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
             errorMsg = "";
         } catch (PatternSyntaxException e) {
             minecraft.player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
-            errorMsg = I18n.format("guiText.label.regexError");
+            errorMsg = I18n.format("modularrouters.guiText.label.regexError");
             errorTimer = 60;
         }
     }

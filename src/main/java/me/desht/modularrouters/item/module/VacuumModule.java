@@ -44,11 +44,11 @@ public class VacuumModule extends ItemModule implements IRangedModule {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
             ITextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId())).mergeStyle(TextFormatting.BLUE);
             ITextComponent title = type.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA);
-            list.add(ClientUtil.xlate("guiText.label.xpVacuum")
+            list.add(ClientUtil.xlate("modularrouters.guiText.label.xpVacuum")
                     .appendString(": ").mergeStyle(TextFormatting.YELLOW)
                     .append(title).appendString(" - ").append(modName));
             if (cvm.isAutoEjecting() && !type.isSolid()) {
-                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), ClientUtil.xlate("guiText.tooltip.xpVacuum.ejectFluid")));
+                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), ClientUtil.xlate("modularrouters.guiText.tooltip.xpVacuum.ejectFluid")));
             }
         }
     }

@@ -66,9 +66,9 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         String title = I18n.format("block.modularrouters.item_router");
         font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
         font.drawString(matrixStack, I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0xFF404040);
     }
 
@@ -124,7 +124,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         @Override
         public List<ITextComponent> getTooltip() {
             return MiscUtil.wrapStringAsTextComponent(
-                    I18n.format("guiText.tooltip.eco." + isToggled(),
+                    I18n.format("modularrouters.guiText.tooltip.eco." + isToggled(),
                             MRConfig.Common.Router.ecoTimeout / 20.f,
                             MRConfig.Common.Router.lowPowerTickRate / 20.f)
             );

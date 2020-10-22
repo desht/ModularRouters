@@ -67,9 +67,9 @@ public class GuiModuleFluid extends GuiModule {
         addButton(forceEmptyButton = new ForceEmptyButton(guiLeft + 168, guiTop + 69, cfm.isForceEmpty()));
         addButton(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.x + regulatorTextField.getWidth() + 2, regulatorTextField.y - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 17, guiLeft + 183, guiTop + 35, "guiText.popup.fluid.maxTransfer");
-        getMouseOverHelp().addHelpRegion(guiLeft + 126, guiTop + 42, guiLeft + 185, guiTop + 61, "guiText.popup.fluid.direction");
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 67, guiLeft + 185, guiTop + 86, "guiText.popup.fluid.forceEmpty");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 17, guiLeft + 183, guiTop + 35, "modularrouters.guiText.popup.fluid.maxTransfer");
+        getMouseOverHelp().addHelpRegion(guiLeft + 126, guiTop + 42, guiLeft + 185, guiTop + 61, "modularrouters.guiText.popup.fluid.direction");
+        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 67, guiLeft + 185, guiTop + 86, "modularrouters.guiText.popup.fluid.forceEmpty");
     }
 
     @Override
@@ -99,7 +99,7 @@ public class GuiModuleFluid extends GuiModule {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
         if (forceEmptyButton.visible) {
-            String s = I18n.format("guiText.label.fluidForceEmpty");
+            String s = I18n.format("modularrouters.guiText.label.fluidForceEmpty");
             font.drawString(matrixStack, s, 165 - font.getStringWidth(s), 73, 0x202040);
         }
     }
@@ -127,15 +127,15 @@ public class GuiModuleFluid extends GuiModule {
     private class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.fluidTransferTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.fluidTransferTooltip");
             tooltip1.add(StringTextComponent.EMPTY.copyRaw());
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
-                tooltip1.add(xlate("guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
+                tooltip1.add(xlate("modularrouters.guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
                 tooltip1.add(StringTextComponent.EMPTY.copyRaw());
             });
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
@@ -179,8 +179,8 @@ public class GuiModuleFluid extends GuiModule {
     private class ForceEmptyButton extends TexturedToggleButton {
         ForceEmptyButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "guiText.tooltip.fluidForceEmpty.false");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "guiText.tooltip.fluidForceEmpty.true");
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.false");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.true");
         }
 
         @Override

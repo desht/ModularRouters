@@ -17,7 +17,7 @@ public class ClientConfig {
                 .translation("gui.config.alwaysShowSettings")
                 .define("alwaysShowSettings", true);
         misc.moduleGuiBackgroundTint = builder.comment("Should module GUI's be tinted according to the module item colour?")
-                .translation("gui.config.moduleGuiBackgroundTint")
+                .translation("modularrouters.gui.config.moduleGuiBackgroundTint")
                 .define("moduleGuiBackgroundTint", true);
         misc.renderFlyingItems = builder.comment("Should items being transferred be rendered in-world? Looks good, but many items may incur an FPS hit.")
                 .translation("gui.config.renderFlyingItems")

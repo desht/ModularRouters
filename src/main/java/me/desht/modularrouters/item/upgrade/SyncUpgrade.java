@@ -23,7 +23,7 @@ public class SyncUpgrade extends ItemUpgrade {
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
-        list.add(ClientUtil.xlate("itemText.sync.tuning", getTunedValue(itemstack)));
+        list.add(ClientUtil.xlate("modularrouters.itemText.sync.tuning", getTunedValue(itemstack)));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SyncUpgrade extends ItemUpgrade {
             if (!world.isRemote) {
                 setTunedValue(stack, world.rand.nextInt(MRConfig.Common.Router.baseTickRate));
             } else {
-                player.sendStatusMessage(ClientUtil.xlate("itemText.sync.tuning", getTunedValue(stack)), true);
+                player.sendStatusMessage(ClientUtil.xlate("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
         }

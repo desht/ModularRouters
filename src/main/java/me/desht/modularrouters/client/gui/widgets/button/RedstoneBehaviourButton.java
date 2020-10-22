@@ -28,7 +28,7 @@ public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstone
     public List<ITextComponent> getTooltip() {
         return Collections.singletonList(
                 // TODO 1.16 func_230529_a_ = appendSibling
-                new TranslationTextComponent("guiText.tooltip.redstone.label")
+                new TranslationTextComponent("modularrouters.guiText.tooltip.redstone.label")
                         .append(new StringTextComponent(": "))
                         .append(new TranslationTextComponent(getState().getTranslationKey()))
         );
