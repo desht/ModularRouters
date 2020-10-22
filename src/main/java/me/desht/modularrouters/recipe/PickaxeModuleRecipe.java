@@ -109,8 +109,9 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
                     new ItemStack(Items.WOODEN_PICKAXE),
                     new ItemStack(Items.STONE_PICKAXE),
                     new ItemStack(Items.IRON_PICKAXE),
-                    new ItemStack(Items.DIAMOND_PICKAXE))))
-            );
+                    new ItemStack(Items.DIAMOND_PICKAXE),
+                    new ItemStack(Items.NETHERITE_PICKAXE)
+            ))));
         }
 
         @Override
