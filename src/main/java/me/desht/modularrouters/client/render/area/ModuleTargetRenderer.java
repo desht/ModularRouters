@@ -114,7 +114,7 @@ public class ModuleTargetRenderer {
             faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.pos(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
 
-//            RenderSystem.disableDepthTest();
+            RenderSystem.disableDepthTest();
             buffer.finish(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             IVertexBuilder lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
@@ -149,7 +149,7 @@ public class ModuleTargetRenderer {
             lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
             lineBuilder.pos(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
 
-//            RenderSystem.disableDepthTest();
+            RenderSystem.disableDepthTest();
             buffer.finish(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
             matrixStack.pop();
@@ -157,7 +157,7 @@ public class ModuleTargetRenderer {
     }
 
     private static int getFaceAlpha(ModuleTargetRenderer.CompiledPosition cp, BlockPos pos, Direction face) {
-        return cp.checkFace(pos, face) ? 160 : 64;
+        return cp.checkFace(pos, face) ? 160 : 40;
     }
 
     static class CompiledPosition {
