@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import org.jline.utils.Log;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class GuiModFilter extends GuiFilterContainer {
         this.ySize = GUI_HEIGHT;
 
         mods.addAll(ModFilter.getModList(filterStack));
+        mods.forEach(s -> ModularRouters.LOGGER.info("mod: " + s));
     }
 
     @Override
@@ -57,12 +59,12 @@ public class GuiModFilter extends GuiFilterContainer {
                 getContainer().inventorySlots.get(0).putStack(ItemStack.EMPTY);
             }
         }));
+        deleteButtons.clear();
         for (int i = 0; i < ModFilter.MAX_SIZE; i++) {
             DeleteButton b = new DeleteButton(guiLeft + 8, guiTop + 44 + i * 19, i, button -> {
                 CompoundNBT ext = new CompoundNBT();
                 ext.putInt("Pos", ((DeleteButton) button).getId());
-                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                        Operation.REMOVE_AT, container.getLocator(), ext));
+                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.REMOVE_AT, container.getLocator(), ext));
             });
             addButton(b);
             deleteButtons.add(b);

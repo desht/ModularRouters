@@ -59,6 +59,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
             if (!regexTextField.getText().isEmpty()) addRegex();
         }));
 
+        deleteButtons.clear();
         for (int i = 0; i < RegexFilter.MAX_SIZE; i++) {
             Buttons.DeleteButton b = new Buttons.DeleteButton(xPos + 8, yPos + 52 + i * 19, i,
                     button -> sendRemovePosMessage(((Buttons.DeleteButton) button).getId()));
