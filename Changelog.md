@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3
 
+### 7.1.1 (22 Oct 2020)
+* Fixed the "x" delete buttons sometimes not showing on filter GUI's (mod, regex, inspection)
+* Fixed sync issue with configuring a filter which is in an uninstalled module (i.e. module in hand, not router)
+
 7.1.0 is pretty much the same as 7.0.2 for MC 1.16.1 with one fix
 
 ### 7.1.0 (4 Oct 2020)
