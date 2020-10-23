@@ -28,6 +28,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> ACTIVATOR_MODULE = register("activator_module", ActivatorModule::new);
     public static final RegistryObject<Item> BREAKER_MODULE = register("breaker_module", BreakerModule::new);
+    public static final RegistryObject<Item> CREATIVE_MODULE = register("creative_module", CreativeModule::new);
     public static final RegistryObject<Item> DETECTOR_MODULE = register("detector_module", DetectorModule::new);
     public static final RegistryObject<Item> DISTRIBUTOR_MODULE = register("distributor_module", DistributorModule::new);
     public static final RegistryObject<Item> DROPPER_MODULE = register("dropper_module", DropperModule::new);

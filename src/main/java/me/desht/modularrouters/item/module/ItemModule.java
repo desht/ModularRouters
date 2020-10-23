@@ -50,6 +50,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -118,11 +119,16 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     }
 
-    public ItemModule(Properties props) {
+    final BiFunction<TileEntityItemRouter, ItemStack, ? extends CompiledModule> compiler;
+
+    public ItemModule(Properties props, BiFunction<TileEntityItemRouter, ItemStack, ? extends CompiledModule> compiler) {
         super(props);
+        this.compiler = compiler;
     }
 
-    public abstract CompiledModule compile(TileEntityItemRouter router, ItemStack stack);
+    final public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
+        return compiler.apply(router, stack);
+    }
 
     public abstract TintColor getItemTint();
 
@@ -266,6 +272,10 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return stack.getDisplayName();
     }
 
+    protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
+        return xlate("modularrouters.itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist"));
+    }
+
     private void addFilterInformation(ItemStack itemstack, List<ITextComponent> list) {
         List<ITextComponent> l2 = new ArrayList<>();
         ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack, null);
@@ -281,16 +291,12 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                         .mergeStyle(TextFormatting.AQUA)));
             }
         }
-        String key = "modularrouters.itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist");
         if (l2.isEmpty()) {
-            list.add(xlate(key).mergeStyle(TextFormatting.YELLOW)
-                    .appendString(": ")
-                    .append(xlate("modularrouters.itemText.misc.noItems")
-                            .mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
+            list.add(itemListHeader(itemstack).mergeStyle(TextFormatting.YELLOW).appendString(": ")
+                    .append(xlate("modularrouters.itemText.misc.noItems").mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(xlate(key).mergeStyle(TextFormatting.YELLOW)
-                            .appendString(": "));
+            itemListHeader(itemstack).mergeStyle(TextFormatting.YELLOW).appendString(": ");
             list.addAll(l2);
         }
     }

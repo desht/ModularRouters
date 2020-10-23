@@ -1,13 +1,11 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.IPlayerOwned;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.resources.I18n;
@@ -23,8 +21,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 
 public class PlayerModule extends ItemModule implements IPlayerOwned {
+
+    private static final TintColor TINT_COLOR = new TintColor(255, 208, 144);
+
     public PlayerModule() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledPlayerModule::new);
     }
 
     @Override
@@ -50,11 +51,6 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
     }
 
     @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledPlayerModule(router, stack);
-    }
-
-    @Override
     public boolean isDirectional() {
         return false;
     }
@@ -74,6 +70,6 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(255, 208, 144);
+        return TINT_COLOR;
     }
 }

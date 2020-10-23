@@ -6,6 +6,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
@@ -30,6 +31,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.asFormattable;
@@ -41,8 +43,8 @@ public abstract class TargetedModule extends ItemModule {
     private static final String NBT_TARGET = "Target";
     private static final String NBT_MULTI_TARGET = "MultiTarget";
 
-    TargetedModule(Item.Properties props) {
-        super(props);
+    TargetedModule(Item.Properties props, BiFunction<TileEntityItemRouter,ItemStack,? extends CompiledModule> compiler) {
+        super(props, compiler);
     }
 
     @Override

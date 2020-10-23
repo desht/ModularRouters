@@ -1,13 +1,11 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -16,8 +14,10 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.List;
 
 public class ActivatorModule extends ItemModule {
+    private static final TintColor TINT_COLOR = new TintColor(255, 255, 195);
+
     public ActivatorModule() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledActivatorModule::new);
     }
 
     @Override
@@ -51,12 +51,7 @@ public class ActivatorModule extends ItemModule {
     }
 
     @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledActivatorModule(router, stack);
-    }
-
-    @Override
     public TintColor getItemTint() {
-        return new TintColor(255, 255, 195);
+        return TINT_COLOR;
     }
 }

@@ -13,15 +13,18 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class SenderModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
+
+    private static final TintColor TINT_COLOR = new TintColor(149, 255, 93);
+
     public SenderModule2() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledSenderModule2::new);
     }
 
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledSenderModule2(router, stack);
+    public SenderModule2(BiFunction<TileEntityItemRouter,ItemStack,? extends CompiledModule> compiler) {
+        super(ModItems.defaultProps(), compiler);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(149, 255, 93);
+        return TINT_COLOR;
     }
 
     @Override

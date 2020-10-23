@@ -1,21 +1,17 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledVoidModule;
-import net.minecraft.item.ItemStack;
 
 public class VoidModule extends ItemModule {
+
+    private static final TintColor TINT_COLOR = new TintColor(255, 0, 0);
+
     public VoidModule() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledVoidModule::new);
     }
 
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledVoidModule(router, stack);
-    }
 
     @Override
     public boolean isDirectional() {
@@ -24,6 +20,6 @@ public class VoidModule extends ItemModule {
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(255, 0, 0);
+        return TINT_COLOR;
     }
 }

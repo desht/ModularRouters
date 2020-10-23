@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "This powerful module acts like a $(italic)fake player/$ which can right-click an item in the router's buffer, against nearby blocks or entities. There are three modes, which can be selected via the controls on the right of the GUI:$(li)$(bold)Activate Block/$ - right-clicks a nearby block, running the block's activation behaviour"
+      "text": "This powerful module acts like a $(italic)fake player/$ which can right-click an item in the router's buffer, against nearby blocks or entities. There are three modes, which can be selected via the controls on the right of the GUI:$(li)$(bold)Activate Block/$ - right-clicks a nearby block, running the block's activation behaviour."
     },
     {
       "type": "text",

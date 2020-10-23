@@ -1,24 +1,19 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule1;
-import net.minecraft.item.ItemStack;
 
 public class PullerModule1 extends ItemModule {
-    public PullerModule1() {
-        super(ModItems.defaultProps());
-    }
 
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledPullerModule1(router, stack);
+    private static final TintColor TINT_COLOR = new TintColor(192, 192, 255);
+
+    public PullerModule1() {
+        super(ModItems.defaultProps(), CompiledPullerModule1::new);
     }
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(192, 192, 255);
+        return TINT_COLOR;
     }
 }

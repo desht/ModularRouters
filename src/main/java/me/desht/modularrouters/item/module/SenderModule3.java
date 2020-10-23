@@ -1,11 +1,9 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule3;
 import net.minecraft.item.ItemStack;
 
@@ -14,13 +12,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class SenderModule3 extends TargetedModule implements IPositionProvider {
-    public SenderModule3() {
-        super(ModItems.defaultProps());
-    }
 
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledSenderModule3(router, stack);
+    private static final TintColor TINT_COLOR = new TintColor(25, 255, 11);
+
+    public SenderModule3() {
+        super(ModItems.defaultProps(), CompiledSenderModule3::new);
     }
 
     @Override
@@ -35,7 +31,7 @@ public class SenderModule3 extends TargetedModule implements IPositionProvider {
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(25, 255, 11);
+        return TINT_COLOR;
     }
 
     @Override

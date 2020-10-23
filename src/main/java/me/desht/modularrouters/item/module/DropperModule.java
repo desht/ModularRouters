@@ -7,18 +7,21 @@ import me.desht.modularrouters.logic.compiled.CompiledDropperModule;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.item.ItemStack;
 
+import java.util.function.BiFunction;
+
 public class DropperModule extends ItemModule {
+    private static final TintColor TINT_COLOR = new TintColor(230, 204, 240);
+
     public DropperModule() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledDropperModule::new);
     }
 
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledDropperModule(router, stack);
+    public DropperModule(BiFunction<TileEntityItemRouter,ItemStack,? extends CompiledModule> compiler) {
+        super(ModItems.defaultProps(), compiler);
     }
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(230, 204, 240);
+        return TINT_COLOR;
     }
 }

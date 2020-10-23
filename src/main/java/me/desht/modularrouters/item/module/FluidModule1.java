@@ -1,13 +1,11 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -24,8 +22,11 @@ import java.util.List;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class FluidModule1 extends ItemModule {
+
+    private static final TintColor TINT_COLOR = new TintColor(79, 191, 255);
+
     public FluidModule1() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledFluidModule1::new);
     }
 
     public enum FluidDirection {
@@ -47,11 +48,6 @@ public class FluidModule1 extends ItemModule {
     @Override
     public ContainerType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_FLUID.get();
-    }
-
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledFluidModule1(router, stack);
     }
 
     @Override
@@ -87,7 +83,7 @@ public class FluidModule1 extends ItemModule {
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(79, 191, 255);
+        return TINT_COLOR;
     }
 
     static void addFluidModuleInformation(ItemStack stack, List<ITextComponent> list) {

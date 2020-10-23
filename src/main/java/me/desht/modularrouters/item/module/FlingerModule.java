@@ -1,12 +1,10 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -20,9 +18,10 @@ public class FlingerModule extends DropperModule {
     public static final float MAX_PITCH = 90.0f;
     public static final float MIN_YAW = -60.0f;
     public static final float MAX_YAW = 60.0f;
+    private static final TintColor TINT_COLOR = new TintColor(230, 204, 240);
 
     public FlingerModule() {
-        super();
+        super(CompiledFlingerModule::new);
     }
 
     @Override
@@ -38,12 +37,7 @@ public class FlingerModule extends DropperModule {
     }
 
     @Override
-    public CompiledModule compile(TileEntityItemRouter tileEntityItemRouter, ItemStack stack) {
-        return new CompiledFlingerModule(tileEntityItemRouter, stack);
-    }
-
-    @Override
     public TintColor getItemTint() {
-        return new TintColor(230, 204, 240);
+        return TINT_COLOR;
     }
 }

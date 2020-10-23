@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
@@ -9,7 +8,6 @@ import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandle
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule2;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -22,13 +20,11 @@ import java.util.List;
 import static me.desht.modularrouters.util.MiscUtil.asFormattable;
 
 public class ExtruderModule2 extends ItemModule implements IRangedModule {
-    public ExtruderModule2() {
-        super(ModItems.defaultProps());
-    }
 
-    @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledExtruderModule2(router, stack);
+    private static final TintColor TINT_COLOR = new TintColor(227, 174, 27);
+
+    public ExtruderModule2() {
+        super(ModItems.defaultProps(), CompiledExtruderModule2::new);
     }
 
     @Override
@@ -71,6 +67,6 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(227, 174, 27);
+        return TINT_COLOR;
     }
 }

@@ -20,6 +20,7 @@ public class Filter implements Predicate<ItemStack> {
 
     private final Flags flags;
     private final List<IItemMatcher> matchers = Lists.newArrayList();
+    private final List<ItemStack> rawStacks = Lists.newArrayList();
     private final boolean matchAll;
 
     public Filter() {
@@ -27,7 +28,7 @@ public class Filter implements Predicate<ItemStack> {
         matchAll = false;
     }
 
-    public Filter(ItemStack moduleStack) {
+    public Filter(ItemStack moduleStack, boolean storeRaw) {
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
             matchAll = ModuleHelper.isMatchAll(moduleStack);
@@ -38,6 +39,9 @@ public class Filter implements Predicate<ItemStack> {
                     IItemMatcher matcher = createMatcher(filterStack, moduleStack);
                     if (matcher != null) {
                         matchers.add(matcher);
+                    }
+                    if (storeRaw) {
+                        rawStacks.add(filterStack);
                     }
                 }
             }
@@ -54,6 +58,10 @@ public class Filter implements Predicate<ItemStack> {
             return moduleStack.getItem() instanceof ItemModule ?
                     ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(filterStack) : null;
         }
+    }
+
+    public List<ItemStack> getRawStacks() {
+        return rawStacks;
     }
 
     /**

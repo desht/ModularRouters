@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
@@ -9,7 +8,6 @@ import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule2;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import net.minecraft.inventory.container.ContainerType;
@@ -22,8 +20,11 @@ import net.minecraftforge.fluids.FluidUtil;
 import java.util.List;
 
 public class FluidModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
+
+    private static final TintColor TINT_COLOR = new TintColor(64, 224, 255);
+
     public FluidModule2() {
-        super(ModItems.defaultProps());
+        super(ModItems.defaultProps(), CompiledFluidModule2::new);
     }
 
     @Override
@@ -76,13 +77,8 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     }
 
     @Override
-    public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
-        return new CompiledFluidModule2(router, stack);
-    }
-
-    @Override
     public TintColor getItemTint() {
-        return new TintColor(64, 224, 255);
+        return TINT_COLOR;
     }
 
     @Override
