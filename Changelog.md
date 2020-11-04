@@ -4,6 +4,14 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.16.3 / 1.16.4
+
+### 7.2.0 (4 Nov 2020)
+* Added the Creative Module
+  * Creative-only module which just adds items it sees in the module filter to the router's buffer, a way to infinitely produce items
+* Support for Minecraft 1.16.4, which appears to be very much compatible with 1.16.3.
+  * This release will run on both 1.16.3 and 1.16.4
+
 ## Minecraft 1.16.3
 
 ### 7.1.1 (22 Oct 2020)
