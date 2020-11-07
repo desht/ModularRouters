@@ -35,6 +35,7 @@ import net.minecraftforge.eventbus.api.Event;
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_ACTION_TYPE = "ActionType";
@@ -120,7 +121,7 @@ public class CompiledActivatorModule extends CompiledModule {
                 didWork = doActivateBlock(router, world, fakePlayer);
                 break;
             case USE_ITEM:
-                didWork = doUseItem(router, world, pos, fakePlayer);
+                didWork = doUseItem(router, computeItemUseContext(fakePlayer, router.getPos()));
                 break;
             case USE_ITEM_ON_ENTITY:
                 didWork = doUseItemOnEntity(router, fakePlayer);
@@ -130,6 +131,52 @@ public class CompiledActivatorModule extends CompiledModule {
         if (didWork) dropExtraItems(router, fakePlayer);
 
         return didWork;
+    }
+
+    private ItemUseContext computeItemUseContext(FakePlayer fakePlayer, BlockPos routerPos) {
+        BlockPos targetPos = routerPos.offset(getFacing());
+        ServerWorld world = fakePlayer.getServerWorld();
+        Vector3d centre = Vector3d.copyCentered(routerPos);
+        Vector3d fpVec = new Vector3d(centre.getX() + getFacing().getXOffset() * 0.501, centre.getY() + getFacing().getYOffset() * 0.501, centre.getZ() + getFacing().getZOffset() * 0.501);
+        switch (lookDirection) {
+            case LEVEL:
+                if (world.isAirBlock(targetPos)) {
+                    BlockPos newPos = null;
+                    for (int i = 0; i < 4; i++) {
+                        BlockPos p = targetPos.offset(getFacing(), i);
+                        if (!world.isAirBlock(p)) {
+                            newPos = p;
+                            break;
+                        }
+                    }
+                    targetPos = newPos == null ? targetPos.offset(getFacing(), 3) : newPos.offset(getFacing().getOpposite());
+                }
+                break;
+            case ABOVE:
+                targetPos = targetPos.up();
+                fpVec = fpVec.add(0, 1, 0);
+                break;
+            case BELOW:
+                targetPos = targetPos.down();
+                fpVec = fpVec.add(0, -1, 0);
+                break;
+        }
+
+        for (Direction dir : Direction.values()) {
+            if (dir.equals(getFacing())) continue;
+            BlockPos newTarget = targetPos.offset(dir);
+            if (!world.isAirBlock(newTarget)) {
+                fpVec = Vector3d.copyCentered(targetPos);
+                targetPos = newTarget;
+                break;
+            }
+        }
+
+        VoxelShape shape = world.getBlockState(targetPos).getShape(world, targetPos);
+        Vector3d targetVec = shape.isEmpty() ? Vector3d.copyCentered(targetPos) : shape.getBoundingBox().getCenter().add(Vector3d.copy(targetPos));
+        BlockRayTraceResult brtr = world.rayTraceBlocks(new RayTraceContext(fpVec, targetVec, BlockMode.OUTLINE, FluidMode.NONE, fakePlayer));
+
+        return new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr);
     }
 
     private boolean doUseItemOnEntity(TileEntityItemRouter router, FakePlayer fakePlayer) {
@@ -185,43 +232,27 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    private boolean doUseItem(TileEntityItemRouter router, World world, BlockPos pos, PlayerEntity fakePlayer) {
-        BlockPos targetPos = pos.offset(getFacing());
-        Direction hitFace = getHitFace();
-        switch (lookDirection) {
-            case LEVEL:
-                for (int i = 0; i < 4 && world.isAirBlock(targetPos); i++) {
-                    targetPos = targetPos.offset(getFacing());
-                }
-                break;
-            case ABOVE:
-                targetPos = targetPos.up();
-                break;
-            case BELOW:
-                targetPos = targetPos.down();
-                break;
-        }
+    private boolean doUseItem(TileEntityItemRouter router, ItemUseContext ctx) {
+        PlayerEntity player = Objects.requireNonNull(ctx.getPlayer());
 
-        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, Hand.MAIN_HAND, targetPos, hitFace);
+        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(player, Hand.MAIN_HAND, ctx.getPos(), ctx.getFace());
         if (event.isCanceled() || event.getUseItem() == Event.Result.DENY) {
             return false;
         }
 
-        ItemStack stack = fakePlayer.getHeldItemMainhand();
-        BlockRayTraceResult rtr = rayTrace(world, fakePlayer, targetPos);
-        ItemUseContext ctx = new ItemUseContext(fakePlayer, Hand.MAIN_HAND, rtr);
+        ItemStack stack = ctx.getItem();
         ActionResultType ret = stack.onItemUseFirst(ctx);
         if (ret != ActionResultType.PASS) {
             return ret.isSuccessOrConsume();
         }
 
-        if (stack.isEmpty() || fakePlayer.getCooldownTracker().hasCooldown(stack.getItem())) {
+        if (stack.isEmpty() || player.getCooldownTracker().hasCooldown(stack.getItem())) {
             return false;
         }
 
         ActionResultType result;
 
-        if (stack.getItem() instanceof BlockItem && !fakePlayer.canUseCommandBlock()) {
+        if (stack.getItem() instanceof BlockItem && !ctx.getPlayer().canUseCommandBlock()) {
             Block block = ((BlockItem)stack.getItem()).getBlock();
             if (block instanceof CommandBlockBlock || block instanceof StructureBlock) {
                 return false;
@@ -233,14 +264,14 @@ public class CompiledActivatorModule extends CompiledModule {
 
             result = stack.onItemUse(ctx);
             if (result == ActionResultType.PASS) {
-                ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(world, fakePlayer, Hand.MAIN_HAND);
-                fakePlayer.setHeldItem(Hand.MAIN_HAND, rightClickResult.getResult());
+                ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(player.world, player, Hand.MAIN_HAND);
+                ctx.getPlayer().setHeldItem(Hand.MAIN_HAND, rightClickResult.getResult());
             }
-            if (fakePlayer.getHeldItem(Hand.MAIN_HAND).isEmpty()) {
-                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(fakePlayer, copyBeforeUse, Hand.MAIN_HAND);
+            if (ctx.getPlayer().getHeldItem(Hand.MAIN_HAND).isEmpty()) {
+                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(ctx.getPlayer(), copyBeforeUse, Hand.MAIN_HAND);
             }
 
-            router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
+            router.setBufferItemStack(player.getHeldItemMainhand());
             return true;
         } else {
             return false;
@@ -260,7 +291,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
         if (event.getUseBlock() != Event.Result.DENY) {
             BlockState state = world.getBlockState(targetPos);
-            BlockRayTraceResult rtr = rayTrace(world, fakePlayer, targetPos);
+            BlockRayTraceResult rtr = rayTrace(world, fakePlayer.getEyePosition(1f), targetPos);
             if (rtr.getPos().equals(targetPos) && state.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, rtr).isSuccessOrConsume()) {
                 router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;
@@ -314,11 +345,11 @@ public class CompiledActivatorModule extends CompiledModule {
         return sneaking;
     }
 
-    private static BlockRayTraceResult rayTrace(World worldIn, PlayerEntity player, BlockPos targetPos) {
+    private static BlockRayTraceResult rayTrace(World worldIn, Vector3d srcVec, BlockPos targetPos) {
         VoxelShape shape = worldIn.getBlockState(targetPos).getShape(worldIn, targetPos);
         Vector3d vec2 = shape.isEmpty() ? Vector3d.copyCentered(targetPos) : shape.getBoundingBox().getCenter().add(Vector3d.copy(targetPos));
         return worldIn.rayTraceBlocks(new RayTraceContext(
-                player.getEyePosition(1f), vec2, BlockMode.OUTLINE, FluidMode.NONE, player)
+                srcVec, vec2, BlockMode.OUTLINE, FluidMode.NONE, null)
         );
     }
 }
