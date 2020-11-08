@@ -60,9 +60,15 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     public enum LookDirection {
-        LEVEL,
-        ABOVE,
-        BELOW;
+        LEVEL(Vector3d.ZERO),
+        ABOVE(new Vector3d(0, 1, 0)),
+        BELOW(new Vector3d(0, -1, 0));
+
+        private final Vector3d offsetVec;
+
+        LookDirection(Vector3d offsetVec) {
+            this.offsetVec = offsetVec;
+        }
 
         public String getTranslationKey() {
             return "modularrouters.itemText.activator.direction." + toString();
@@ -283,7 +289,7 @@ public class CompiledActivatorModule extends CompiledModule {
         if (targetPos == null) {
             return false;
         }
-        Direction hitFace = getHitFace();
+        Direction hitFace = getFacing().getOpposite();
 
         PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(fakePlayer, Hand.MAIN_HAND, targetPos, hitFace);
         if (event.isCanceled() || event.getUseItem() == Event.Result.DENY) {
@@ -291,7 +297,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
         if (event.getUseBlock() != Event.Result.DENY) {
             BlockState state = world.getBlockState(targetPos);
-            BlockRayTraceResult rtr = rayTrace(world, fakePlayer.getEyePosition(1f), targetPos);
+            BlockRayTraceResult rtr = rayTrace(world, fakePlayer.getEyePosition(1f).add(lookDirection.offsetVec), targetPos);
             if (rtr.getPos().equals(targetPos) && state.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, rtr).isSuccessOrConsume()) {
                 router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
                 return true;
@@ -316,17 +322,6 @@ public class CompiledActivatorModule extends CompiledModule {
                 return router.getPos().offset(getFacing()).down();
         }
         return null;
-    }
-
-    private Direction getHitFace() {
-        switch (lookDirection) {
-            case ABOVE:
-                return Direction.DOWN;
-            case BELOW:
-                return Direction.UP;
-            default:
-                return getFacing().getOpposite();
-        }
     }
 
     public ActionType getActionType() {
