@@ -87,22 +87,22 @@ repositories {
         name = "tterrag maven"
         url = "http://maven.tterrag.com/"
     }
-    maven {
-        name = "guideapi/hwyla"
-        url = 'http://tehnut.info/maven/'
-    }
-    maven {
-        name = "tesla"
-        url = "http://maven.mcmoddev.com"
-    }
+//    maven {
+//        name = "guideapi/hwyla"
+//        url = 'http://tehnut.info/maven/'
+//    }
+//    maven {
+//        name = "tesla"
+//        url = "http://maven.mcmoddev.com"
+//    }
     maven {
         name = "JEI"
         url = "http://dvs1.progwml6.com/files/maven"
     }
-    maven {
-        name = "CoFH Maven"
-        url = "http://maven.covers1624.net"
-    }
+//    maven {
+//        name = "CoFH Maven"
+//        url = "http://maven.covers1624.net"
+//    }
     maven {
         name = "K-4u Mod maven"
         url = "https://modmaven.k-4u.nl/"
@@ -112,9 +112,13 @@ repositories {
         url = 'http://maven.blamejared.com/'
     }
     maven {
-        name = 'Patchouli'
+        name = 'HWYLA'
         url = 'http://www.cursemaven.com/'
     }
+//    maven {
+//        name = 'Patchouli'
+//        url = 'http://www.cursemaven.com/'
+//    }
 //    maven {
 //        name = 'Gigaherz mappings'
 //        url 'http://dogforce-games.com/maven'
@@ -123,13 +127,13 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
-    compile fg.deobf("curse.maven:hwyla:${hwyla_curse_id}")
+    compile fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
 //    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
 //    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
     compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}:api")
     runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}")
-    compileOnly fg.deobf("mezz.jei:jei-1.16.2:${config.jei_version}:api")
-    runtime fg.deobf("mezz.jei:jei-1.16.2:${config.jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}:api")
+    runtime fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
