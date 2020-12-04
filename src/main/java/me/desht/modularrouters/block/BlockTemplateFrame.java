@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -18,7 +19,7 @@ import javax.annotation.Nullable;
 
 public class BlockTemplateFrame extends BlockCamo {
     public BlockTemplateFrame() {
-        super(Properties.create(Material.GLASS));
+        super(Properties.create(Material.GLASS).setAllowsSpawn((state, world, pos, entityType) -> false));
     }
 
     @Nullable
