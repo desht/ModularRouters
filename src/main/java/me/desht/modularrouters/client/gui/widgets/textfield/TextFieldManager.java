@@ -3,6 +3,7 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import me.desht.modularrouters.client.gui.widgets.IManagedTextFields;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 
@@ -39,6 +40,7 @@ public class TextFieldManager {
                 return true;
             }
         }
+        focus(-1);
         return false;
     }
 
@@ -54,11 +56,11 @@ public class TextFieldManager {
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
          if (keyCode == GLFW.GLFW_KEY_TAB) {
+             boolean wasTextfieldFocused = isFocused();
              cycleFocus(Screen.hasShiftDown() ? -1 : 1);
+             return wasTextfieldFocused;
         } else if (isFocused() && textFields.get(focusedField).getVisible()) {
             return textFields.get(focusedField).keyPressed(keyCode, scanCode, modifiers);
-            // avoid closing window while text field focused
-//            return keyCode == GLFW.GLFW_KEY_E;
         }
         return false;
     }
@@ -87,17 +89,18 @@ public class TextFieldManager {
     }
 
     private void cycleFocus(int dir) {
-        int f = focusedField;
+        int f = focusedField, c = 0;
         int oldF = f;
 
         do {
             f += dir;
+            c++;
             if (f < 0) {
                 f = textFields.size() - 1;
             } else if (f >= textFields.size()) {
                 f = 0;
             }
-        } while (!textFields.get(f).getVisible() && f != focusedField);
+        } while (c < textFields.size() && !textFields.get(f).getVisible() && f != focusedField);
 
         if (f != oldF) {
             focus(f);
@@ -122,15 +125,6 @@ public class TextFieldManager {
         } else {
             tf.setSelectionPos(tf.getCursorPosition());
         }
-//        if (ordinal == textFields.size() - 1) {
-//            focusedField = -1;
-//            for (TextFieldWidgetMR t : textFields) {
-//                if (t.isFocused()) {
-//                    focusedField = t.getOrdinal();
-//                    break;
-//                }
-//            }
-//        }
     }
 
     public TextFieldManager clear() {
@@ -138,5 +132,4 @@ public class TextFieldManager {
         focusedField = -1;
         return this;
     }
-
 }

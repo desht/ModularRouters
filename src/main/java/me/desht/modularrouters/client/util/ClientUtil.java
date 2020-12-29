@@ -34,4 +34,8 @@ public class ClientUtil {
         // which resets any formatting each time
         return new StringTextComponent(I18n.format(key, args));
     }
+
+    public static boolean isInvKey(int keyCode) {
+        return keyCode == Minecraft.getInstance().gameSettings.keyBindInventory.getKey().getKeyCode();
+    }
 }

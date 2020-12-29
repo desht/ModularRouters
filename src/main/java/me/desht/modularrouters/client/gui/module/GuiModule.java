@@ -13,6 +13,7 @@ import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.button.*;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.MRConfig;
@@ -34,12 +35,14 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -138,7 +141,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addButton(redstoneButton = new RedstoneBehaviourButton(this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
-        addButton(regulatorTextField = buildRegulationTextField(createTextFieldManager()));
+        addButton(regulatorTextField = buildRegulationTextField(getOrCreateTextFieldManager()));
 
         addButton(regulatorTooltipButton = new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
 
@@ -249,8 +252,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        String title = moduleItemStack.getDisplayName().getString() + (routerPos != null ? " " + I18n.format("modularrouters.guiText.label.installed") : "");
-        this.font.drawString(matrixStack, title, this.xSize / 2f - this.font.getStringWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
+        ITextComponent title = moduleItemStack.getDisplayName().deepCopy().appendString(routerPos != null ? " " + I18n.format("modularrouters.guiText.label.installed") : "");
+        this.font.func_243248_b(matrixStack, title, this.xSize / 2f - this.font.getStringPropertyWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
@@ -276,7 +279,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (keyCode == GLFW.GLFW_KEY_E && !isFocused())) && routerPos != null) {
+        int invBinding = Minecraft.getInstance().gameSettings.keyBindInventory.getKey().getKeyCode();
+        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode) && !isFocused())) && routerPos != null) {
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()

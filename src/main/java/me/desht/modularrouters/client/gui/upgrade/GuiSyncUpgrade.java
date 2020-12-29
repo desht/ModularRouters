@@ -49,7 +49,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-        TextFieldManager manager = getTextFieldManager().clear();
+        TextFieldManager manager = getOrCreateTextFieldManager().clear();
         IntegerTextField intField = new IntegerTextField(manager, font,
                 xPos + 77, yPos + 27, 25, 16, Range.between(0, MRConfig.Common.Router.baseTickRate - 1));
         intField.setResponder((str) -> {

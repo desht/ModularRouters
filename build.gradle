@@ -87,22 +87,10 @@ repositories {
         name = "tterrag maven"
         url = "http://maven.tterrag.com/"
     }
-//    maven {
-//        name = "guideapi/hwyla"
-//        url = 'http://tehnut.info/maven/'
-//    }
-//    maven {
-//        name = "tesla"
-//        url = "http://maven.mcmoddev.com"
-//    }
     maven {
         name = "JEI"
         url = "http://dvs1.progwml6.com/files/maven"
     }
-//    maven {
-//        name = "CoFH Maven"
-//        url = "http://maven.covers1624.net"
-//    }
     maven {
         name = "K-4u Mod maven"
         url = "https://modmaven.k-4u.nl/"
@@ -115,14 +103,6 @@ repositories {
         name = 'HWYLA'
         url = 'http://www.cursemaven.com/'
     }
-//    maven {
-//        name = 'Patchouli'
-//        url = 'http://www.cursemaven.com/'
-//    }
-//    maven {
-//        name = 'Gigaherz mappings'
-//        url 'http://dogforce-games.com/maven'
-//    }
 }
 
 dependencies {

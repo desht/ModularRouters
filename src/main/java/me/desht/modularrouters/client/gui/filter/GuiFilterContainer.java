@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
@@ -44,7 +45,7 @@ abstract class GuiFilterContainer extends GuiContainerBase<ContainerSmartFilter>
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == GLFW.GLFW_KEY_E)) {
+        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || ClientUtil.isInvKey(keyCode))) {
             // Intercept ESC/E and immediately reopen the previous GUI, if any
             if (closeGUI()) return true;
         }

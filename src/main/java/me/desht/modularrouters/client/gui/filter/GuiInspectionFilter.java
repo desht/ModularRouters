@@ -86,7 +86,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         }
         updateDeleteButtonVisibility();
 
-        TextFieldManager manager = getTextFieldManager().clear();
+        TextFieldManager manager = getOrCreateTextFieldManager().clear();
         valueTextField = new IntegerTextField(manager, font, xPos + 120, yPos + 28, 20, 14, Range.between(0, 100)) {
             @Override
             public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -121,7 +121,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
 
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        font.func_243248_b(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.getStringPropertyWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);

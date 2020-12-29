@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.gui.filter;
 
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
@@ -10,23 +11,24 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncableGui {
-    protected final String title;
+    protected final ITextComponent title;
     final MFLocator locator;
 
     GuiFilterScreen(ItemStack filterStack, MFLocator locator) {
         super(filterStack.getDisplayName());
         this.locator = locator;
 
-        this.title = filterStack.getDisplayName().getString();
+        this.title = filterStack.getDisplayName();
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || (keyCode == GLFW.GLFW_KEY_E) && (!hasTextFieldManager() || !getTextFieldManager().isFocused())) {
-            // Intercept ESC/E and immediately reopen the previous GUI, if any
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode)) && (!hasTextFieldManager() || !getOrCreateTextFieldManager().isFocused())) {
+            // Intercept ESC/<inv> and immediately reopen the previous GUI, if any
             if (closeGUI()) return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);

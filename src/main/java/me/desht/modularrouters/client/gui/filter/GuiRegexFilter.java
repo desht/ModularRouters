@@ -45,7 +45,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-        TextFieldManager manager = getTextFieldManager().clear();
+        TextFieldManager manager = getOrCreateTextFieldManager().clear();
         regexTextField = new RegexTextField(this, 1, font, xPos + 10, yPos + 27, 144, 18);
         regexTextField.useGuiTextBackground();
 
@@ -77,7 +77,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(textureLocation);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        font.func_243248_b(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringPropertyWidth(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
@@ -107,7 +107,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
             Pattern.compile(regex);
             sendAddStringMessage("String", regex);
             regexTextField.setText("");
-            getTextFieldManager().focus(0);
+            getOrCreateTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
             minecraft.player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
@@ -133,7 +133,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         private final GuiRegexFilter parent;
 
         RegexTextField(GuiRegexFilter parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
-            super(parent.getTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
+            super(parent.getOrCreateTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
             setMaxStringLength(40);
         }

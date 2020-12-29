@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
 
-public abstract class GuiScreenBase extends Screen {
+public abstract class GuiScreenBase extends Screen implements IManagedTextFields {
     private TextFieldManager textFieldManager;
     private int delayTicks;
 
@@ -14,7 +14,8 @@ public abstract class GuiScreenBase extends Screen {
         super(displayName);
     }
 
-    protected TextFieldManager getTextFieldManager() {
+    @Override
+    public TextFieldManager getOrCreateTextFieldManager() {
         if (textFieldManager == null) {
             textFieldManager = new TextFieldManager(this);
         }

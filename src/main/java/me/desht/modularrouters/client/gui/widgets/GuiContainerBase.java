@@ -10,21 +10,16 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
-public abstract class GuiContainerBase<T extends Container> extends ContainerScreen<T> implements IResyncableGui {
+public abstract class GuiContainerBase<T extends Container> extends ContainerScreen<T> implements IResyncableGui, IManagedTextFields {
     private TextFieldManager textFieldManager;
 
     public GuiContainerBase(T container, PlayerInventory inv, ITextComponent displayName) {
         super(container, inv, displayName);
     }
 
-    protected TextFieldManager createTextFieldManager() {
-        textFieldManager = new TextFieldManager(this);
-        return textFieldManager;
-    }
-
-    protected TextFieldManager getOrCreateTextFieldManager() {
-        if (textFieldManager == null) textFieldManager = createTextFieldManager();
-
+    @Override
+    public TextFieldManager getOrCreateTextFieldManager() {
+        if (textFieldManager == null) textFieldManager = new TextFieldManager(this);
         return textFieldManager;
     }
 
