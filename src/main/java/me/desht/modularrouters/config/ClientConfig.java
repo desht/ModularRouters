@@ -4,6 +4,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
     public class Misc {
+        ForgeConfigSpec.BooleanValue heldRouterShowsCamoRouters;
         ForgeConfigSpec.BooleanValue alwaysShowModuleSettings;
         ForgeConfigSpec.BooleanValue moduleGuiBackgroundTint;
         ForgeConfigSpec.BooleanValue renderFlyingItems;
@@ -22,6 +23,9 @@ public class ClientConfig {
         misc.renderFlyingItems = builder.comment("Should items being transferred be rendered in-world? Looks good, but many items may incur an FPS hit.")
                 .translation("gui.config.renderFlyingItems")
                 .define("renderFlyingItems", true);
+        misc.heldRouterShowsCamoRouters = builder.comment("When holding an Item Router, should nearby camouflaged routers be highlighted?")
+                .translation("gui.config.heldRouterShowsCamoRouters")
+                .define("heldRouterShowsCamoRouters", true);
         builder.pop();
     }
 }

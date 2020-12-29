@@ -6,6 +6,7 @@ public class MRConfig {
             public static boolean alwaysShowModuleSettings;
             public static boolean moduleGuiBackgroundTint;
             public static boolean renderFlyingItems;
+            public static boolean heldRouterShowsCamoRouters;
         }
     }
 

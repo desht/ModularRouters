@@ -14,6 +14,7 @@ public class ConfigHelper {
         MRConfig.Client.Misc.alwaysShowModuleSettings = client.misc.alwaysShowModuleSettings.get();
         MRConfig.Client.Misc.moduleGuiBackgroundTint = client.misc.moduleGuiBackgroundTint.get();
         MRConfig.Client.Misc.renderFlyingItems = client.misc.renderFlyingItems.get();
+        MRConfig.Client.Misc.heldRouterShowsCamoRouters = client.misc.heldRouterShowsCamoRouters.get();
 
         ModularRouters.LOGGER.info("Client config re-baked");
     }

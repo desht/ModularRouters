@@ -25,12 +25,12 @@ public class CamouflageUpgrade extends ItemUpgrade {
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
-        CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
-        if (tag != null && tag.contains(NBT_STATE_NAME)) {
-            list.add(ClientUtil.xlate("modularrouters.itemText.camouflage.held")
-                    .appendString(TextFormatting.AQUA.toString())
-                    .append(getCamoStateDisplayName(itemstack)));
-        }
+//        CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
+//        if (tag != null && tag.contains(NBT_STATE_NAME)) {
+//            list.add(ClientUtil.xlate("modularrouters.itemText.camouflage.held")
+//                    .appendString(TextFormatting.AQUA.toString())
+//                    .append(getCamoStateDisplayName(itemstack)));
+//        }
     }
 
     @Override
@@ -51,7 +51,11 @@ public class CamouflageUpgrade extends ItemUpgrade {
 
     private static ITextComponent getCamoStateDisplayName(ItemStack stack) {
         BlockState state = getCamoState(stack);
-        return state != null ? new ItemStack(state.getBlock().asItem()).getDisplayName() : new StringTextComponent("<?>");
+        return state != null ? getCamoStateDisplayName(state) : new StringTextComponent("<?>");
+    }
+
+    private static ITextComponent getCamoStateDisplayName(BlockState camoState) {
+        return new ItemStack(camoState.getBlock().asItem()).getDisplayName();
     }
 
     @Override
@@ -67,7 +71,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
                 player.sendStatusMessage(new TranslationTextComponent("modularrouters.itemText.camouflage.held")
                         .appendString(TextFormatting.AQUA.toString())
                         .append(getCamoStateDisplayName(stack))
-                        .mergeStyle(TextFormatting.YELLOW), false);
+                        .mergeStyle(TextFormatting.YELLOW), true);
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
@@ -77,6 +81,17 @@ public class CamouflageUpgrade extends ItemUpgrade {
             return ActionResultType.FAIL;
         }
         return ActionResultType.PASS;
+    }
+
+    @Override
+    public ITextComponent getDisplayName(ItemStack stack) {
+        BlockState camoState = getCamoState(stack);
+        ITextComponent disp = super.getDisplayName(stack);
+        if (camoState != null) {
+            return disp.deepCopy().appendString(": ").append(getCamoStateDisplayName(camoState)).mergeStyle(TextFormatting.YELLOW);
+        } else {
+            return disp;
+        }
     }
 
     private static boolean isBlockOKForCamo(BlockState state) {

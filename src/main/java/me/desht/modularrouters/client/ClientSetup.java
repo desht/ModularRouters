@@ -6,6 +6,7 @@ import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.filter.*;
 import me.desht.modularrouters.client.gui.module.*;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
+import me.desht.modularrouters.client.render.area.CamoRenderer;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.item_beam.ItemBeamTileRenderer;
 import me.desht.modularrouters.core.ModBlocks;
@@ -36,6 +37,7 @@ public class ClientSetup {
         FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
         MinecraftForge.EVENT_BUS.register(ModuleTargetRenderer.class);
         MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
+        MinecraftForge.EVENT_BUS.register(CamoRenderer.getInstance());
     }
 
     @SubscribeEvent
