@@ -7,6 +7,7 @@ import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -29,7 +30,7 @@ public enum CamoRenderer {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
         PlayerEntity player = Minecraft.getInstance().player;
-        if (!MRConfig.Client.Misc.heldRouterShowsCamoRouters || player == null || player.getHeldItemMainhand().getItem() != ModBlocks.ITEM_ROUTER.get().asItem()) {
+        if (!MRConfig.Client.Misc.heldRouterShowsCamoRouters || player == null || !playerHoldingRouter(player)) {
             lastPlayerPos = null;
             return;
         }
@@ -42,6 +43,11 @@ public enum CamoRenderer {
         matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
         highlightCamoRouters(matrixStack, buffer, player);
         matrixStack.pop();
+    }
+
+    private static boolean playerHoldingRouter(PlayerEntity player) {
+        Item router = ModBlocks.ITEM_ROUTER.get().asItem();
+        return player.getHeldItemMainhand().getItem() == router || player.getHeldItemOffhand().getItem() == router;
     }
 
     private void highlightCamoRouters(MatrixStack matrixStack, IRenderTypeBuffer.Impl buffer, PlayerEntity player) {

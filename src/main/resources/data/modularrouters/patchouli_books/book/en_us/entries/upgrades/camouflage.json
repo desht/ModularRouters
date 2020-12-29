@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "This upgrade allows you to disguise the router as another block. $(thing)Sneak+Right-click/$ the module against a block to record that block on the camouflage upgrade. When inserted into a router, that router will take on the appearance of the recorded block."
+      "text": "This upgrade allows you to disguise the router as another block. $(thing)Sneak+Right-click/$ the module against a block to record that block on the camouflage upgrade. When inserted into a router, that router will take on the appearance of the recorded block.$(p)Note: holding an $(thing)Item Router/$ will highlight any nearby camouflaged routers."
     },
     {
       "type": "crafting",
