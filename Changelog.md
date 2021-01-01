@@ -6,6 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
+### 7.3.0 (unreleased)
+* Holding an Item Router in main or offhand now highlights nearby (<16 blocks) camouflaged Item Routers - https://github.com/desht/ModularRouters/issues/100
+  * Can be disabled in client config: `heldRouterShowsCamoRouters`
+* Fixed lockup when closing module GUI's if inventory key is rebound to Tab - https://github.com/desht/ModularRouters/issues/102
+* Some more Activator Module fixes (particularly when the module is set to look up or down) - https://github.com/desht/ModularRouters/issues/95
+
 ### 7.2.0 (4 Nov 2020)
 * Added the Creative Module
   * Creative-only module which just adds items it sees in the module filter to the router's buffer, a way to infinitely produce items
