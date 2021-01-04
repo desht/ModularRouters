@@ -6,11 +6,17 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
-### 7.3.0 (unreleased)
+### 7.3.0 (4 Jan 2021)
+* A full texture update for the mod, courtesy of texyure artist Ridanisaurus!
+  * This is a new set of 16x16 textures with a nice Minecrafty feel; integrates much more naturally with vanilla textures (IMHO)
 * Holding an Item Router in main or offhand now highlights nearby (<16 blocks) camouflaged Item Routers - https://github.com/desht/ModularRouters/issues/100
   * Can be disabled in client config: `heldRouterShowsCamoRouters`
 * Fixed lockup when closing module GUI's if inventory key is rebound to Tab - https://github.com/desht/ModularRouters/issues/102
 * Some more Activator Module fixes (particularly when the module is set to look up or down) - https://github.com/desht/ModularRouters/issues/95
+* Fixed Activator Module crashes in activating blocks/items (crashes could be from another mod) taking down the whole server - https://github.com/desht/ModularRouters/issues/107
+  * Any such crashes are now intercepted and the block/item in question is blacklisted from activation until the next server restart
+* Updated the Regex Filter Patchouli manual page to make it clear that regex matches happen against item *registry* names, not *display* names
+  * Remember, you can use F3+H to show any item's registry name in the item tooltip
 
 ### 7.2.0 (4 Nov 2020)
 * Added the Creative Module
