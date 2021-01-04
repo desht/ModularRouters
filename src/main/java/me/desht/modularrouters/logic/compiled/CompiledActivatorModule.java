@@ -13,6 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -33,9 +34,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_ACTION_TYPE = "ActionType";
@@ -48,6 +47,9 @@ public class CompiledActivatorModule extends CompiledModule {
     private final EntityMode entityMode;
     private final boolean sneaking;
     private int entityIdx;
+
+    private static final Set<Item> itemBlacklist = new HashSet<>();
+    private static final Set<Block> blockBlacklist = new HashSet<>();
 
     public enum ActionType {
         ACTIVATE_BLOCK,
@@ -241,45 +243,54 @@ public class CompiledActivatorModule extends CompiledModule {
     private boolean doUseItem(TileEntityItemRouter router, ItemUseContext ctx) {
         PlayerEntity player = Objects.requireNonNull(ctx.getPlayer());
 
+        ItemStack stack = ctx.getItem();
+        if (itemBlacklist.contains(stack.getItem())) return false;
+
         PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(player, Hand.MAIN_HAND, ctx.getPos(), ctx.getFace());
         if (event.isCanceled() || event.getUseItem() == Event.Result.DENY) {
             return false;
         }
 
-        ItemStack stack = ctx.getItem();
-        ActionResultType ret = stack.onItemUseFirst(ctx);
-        if (ret != ActionResultType.PASS) {
-            return ret.isSuccessOrConsume();
-        }
+        try {
+            ActionResultType ret = stack.onItemUseFirst(ctx);
+            if (ret != ActionResultType.PASS) {
+                return ret.isSuccessOrConsume();
+            }
 
-        if (stack.isEmpty() || player.getCooldownTracker().hasCooldown(stack.getItem())) {
-            return false;
-        }
-
-        ActionResultType result;
-
-        if (stack.getItem() instanceof BlockItem && !ctx.getPlayer().canUseCommandBlock()) {
-            Block block = ((BlockItem)stack.getItem()).getBlock();
-            if (block instanceof CommandBlockBlock || block instanceof StructureBlock) {
+            if (stack.isEmpty() || player.getCooldownTracker().hasCooldown(stack.getItem())) {
                 return false;
             }
-        }
 
-        if (event.getUseItem() != Event.Result.DENY) {
-            ItemStack copyBeforeUse = stack.copy();
+            ActionResultType result;
 
-            result = stack.onItemUse(ctx);
-            if (result == ActionResultType.PASS) {
-                ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(player.world, player, Hand.MAIN_HAND);
-                ctx.getPlayer().setHeldItem(Hand.MAIN_HAND, rightClickResult.getResult());
-            }
-            if (ctx.getPlayer().getHeldItem(Hand.MAIN_HAND).isEmpty()) {
-                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(ctx.getPlayer(), copyBeforeUse, Hand.MAIN_HAND);
+            if (stack.getItem() instanceof BlockItem && !ctx.getPlayer().canUseCommandBlock()) {
+                Block block = ((BlockItem) stack.getItem()).getBlock();
+                if (block instanceof CommandBlockBlock || block instanceof StructureBlock) {
+                    return false;
+                }
             }
 
-            router.setBufferItemStack(player.getHeldItemMainhand());
-            return true;
-        } else {
+            if (event.getUseItem() != Event.Result.DENY) {
+                ItemStack copyBeforeUse = stack.copy();
+
+                result = stack.onItemUse(ctx);
+                if (result == ActionResultType.PASS) {
+                    ActionResult<ItemStack> rightClickResult = stack.getItem().onItemRightClick(player.world, player, Hand.MAIN_HAND);
+                    ctx.getPlayer().setHeldItem(Hand.MAIN_HAND, rightClickResult.getResult());
+                }
+                if (ctx.getPlayer().getHeldItem(Hand.MAIN_HAND).isEmpty()) {
+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(ctx.getPlayer(), copyBeforeUse, Hand.MAIN_HAND);
+                }
+
+                router.setBufferItemStack(player.getHeldItemMainhand());
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            ModularRouters.LOGGER.error("Attempting to use item {} threw an exception. Blacklisting this item for the Activator Module until next server restart!", stack);
+            ModularRouters.LOGGER.error("Stacktrace:", e);
+            itemBlacklist.add(stack.getItem());
             return false;
         }
     }
@@ -297,10 +308,17 @@ public class CompiledActivatorModule extends CompiledModule {
         }
         if (event.getUseBlock() != Event.Result.DENY) {
             BlockState state = world.getBlockState(targetPos);
-            BlockRayTraceResult rtr = rayTrace(world, fakePlayer.getEyePosition(1f).add(lookDirection.offsetVec), targetPos);
-            if (rtr.getPos().equals(targetPos) && state.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, rtr).isSuccessOrConsume()) {
-                router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
-                return true;
+            if (blockBlacklist.contains(state.getBlock())) return false;
+            try {
+                BlockRayTraceResult rtr = rayTrace(world, fakePlayer.getEyePosition(1f).add(lookDirection.offsetVec), targetPos);
+                if (rtr.getPos().equals(targetPos) && state.onBlockActivated(world, fakePlayer, Hand.MAIN_HAND, rtr).isSuccessOrConsume()) {
+                    router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
+                    return true;
+                }
+            } catch (Exception e) {
+                ModularRouters.LOGGER.error("Attempting to activate block {} @ {} threw an exception. Blacklisting this block for the Activator Module until next server restart!", state, targetPos);
+                ModularRouters.LOGGER.error("Stacktrace:", e);
+                blockBlacklist.add(state.getBlock());
             }
         }
         return false;
