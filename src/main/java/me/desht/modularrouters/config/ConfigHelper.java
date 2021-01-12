@@ -1,6 +1,10 @@
 package me.desht.modularrouters.config;
 
 import me.desht.modularrouters.ModularRouters;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 //@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigHelper {
@@ -46,6 +50,8 @@ public class ConfigHelper {
         MRConfig.Common.Module.extruderSound = common.module.extruderSound.get();
         MRConfig.Common.Module.extruderPushEntities = common.module.extruderPushEntities.get();
         MRConfig.Common.Module.breakerHarvestLevelLimit = common.module.breakerHarvestLevelLimit.get();
+        MRConfig.Common.Module.activatorEntityBlacklist = common.module.activatorEntityBlacklist.get()
+                .stream().map(resourceName -> new ResourceLocation(resourceName.toLowerCase(Locale.ROOT))).collect(Collectors.toSet());
 
         MRConfig.Common.Router.baseTickRate = common.router.baseTickRate.get();
         MRConfig.Common.Router.ticksPerUpgrade = common.router.ticksPerUpgrade.get();

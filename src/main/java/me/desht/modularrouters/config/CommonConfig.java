@@ -1,8 +1,11 @@
 package me.desht.modularrouters.config;
 
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+
+import java.util.List;
 
 public class CommonConfig {
     public class Module {
@@ -29,6 +32,7 @@ public class CommonConfig {
         BooleanValue extruderSound;
         BooleanValue extruderPushEntities;
         BooleanValue breakerHarvestLevelLimit;
+        ForgeConfigSpec.ConfigValue<List<String>> activatorEntityBlacklist;
     }
 
     public static class Router {
@@ -116,6 +120,9 @@ public class CommonConfig {
         module.breakerHarvestLevelLimit = builder.comment("Should Breaker & Extruder Mk1 Modules respect the harvest level of the pickaxe used to craft them? (e.g. craft with an Iron Pickaxe => can't break Obsidian")
                 .translation("gui.config.breakerHarvestLevelLimit")
                 .define("breakerHarvestLevelLimit", true);
+        module.activatorEntityBlacklist = builder.comment("List of entity types which the Activator Module (in entity mode) should never attempt to interact with. Any entity which opens a GUI when right-clicked, like Villagers, should be added here, especially if it prevents player interaction.")
+                .translation("gui.config.activatorEntityBlacklist")
+                .define("activatorEntityBlacklist", Lists.newArrayList("minecraft:villager", "minecraft:wandering_trader"));
         builder.pop();
 
         builder.push("Router");

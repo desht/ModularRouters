@@ -1,5 +1,9 @@
 package me.desht.modularrouters.config;
 
+import net.minecraft.util.ResourceLocation;
+
+import java.util.Set;
+
 public class MRConfig {
     public static class Client {
         public static class Misc {
@@ -35,6 +39,7 @@ public class MRConfig {
             public static boolean extruderSound;
             public static boolean extruderPushEntities;
             public static boolean breakerHarvestLevelLimit;
+            public static Set<ResourceLocation> activatorEntityBlacklist;
         }
 
         public static class Router {

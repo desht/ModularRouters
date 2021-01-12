@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.FakePlayerManager;
 import me.desht.modularrouters.util.FakePlayerManager.RouterFakePlayer;
 import me.desht.modularrouters.util.MiscUtil;
@@ -206,7 +207,7 @@ public class CompiledActivatorModule extends CompiledModule {
         AxisAlignedBB box = new AxisAlignedBB(pos.offset(face))
                 .expand(face.getXOffset() * 3, face.getYOffset() * 3, face.getZOffset() * 3);
 
-        List<Entity> l = router.getWorld().getEntitiesWithinAABB(Entity.class, box);
+        List<Entity> l = router.getWorld().getEntitiesWithinAABB(Entity.class, box, this::passesBlacklist);
         if (l.isEmpty()) {
             return null;
         }
@@ -224,6 +225,10 @@ public class CompiledActivatorModule extends CompiledModule {
             default:
                 return null;
         }
+    }
+
+    private boolean passesBlacklist(Entity e) {
+        return !MRConfig.Common.Module.activatorEntityBlacklist.contains(e.getType().getRegistryName());
     }
 
     private void dropExtraItems(TileEntityItemRouter router, PlayerEntity fakePlayer) {
