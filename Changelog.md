@@ -6,6 +6,13 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
+### 7.3.1 (21 Jan 2021)
+* Fixed crash (intermod compat issue) when placing block with Extruder Mk2 and Mimic Augment
+* Activator Module in Entity mode now ignores Villagers and Wandering Traders
+  * Activating them locks up their GUI, making it impossible to trade with them
+  * Entity blacklist is editable in config: see `activatorEntityBlacklist` in modularrouters-common.toml
+* Corrected Regex Filter tooltip: make it clear that regex filters are applied to the item's *registry name*, not its display name
+
 ### 7.3.0 (4 Jan 2021)
 * A full texture update for the mod, courtesy of texyure artist Ridanisaurus!
   * This is a new set of 16x16 textures with a nice Minecrafty feel; integrates much more naturally with vanilla textures (IMHO)

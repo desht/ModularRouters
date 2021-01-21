@@ -1,16 +1,22 @@
 {
   "homepage" : "https://minecraft.curseforge.com/projects/modular-routers",
   "promos" : {
-    "1.16.4-recommended" : "7.3.0",
-    "1.16.4-latest" : "7.3.0",
+    "1.16.5-recommended" : "7.3.1",
+    "1.16.5-latest" : "7.3.1",
+    "1.16.4-recommended" : "7.3.1",
+    "1.16.4-latest" : "7.3.1",
     "1.16.3-recommended" : "7.3.0",
     "1.16.3-latest" : "7.3.0",
     "1.16.1-recommended" : "7.0.2",
     "1.16.1-latest" : "7.0.2"
   },
+  "1.16.5" : {
+    "7.3.1": "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#731-21-jan-2021"
+  },
   "1.16.4" : {
-    "7.2.0": "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#720-4-nov-2020",
-    "7.3.0": "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#730-4-jan-2021"
+    "7.3.1": "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#731-21-jan-2021",
+    "7.3.0": "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#730-4-jan-2021",
+    "7.2.0": "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#720-4-nov-2020"
   },
   "1.16.3" : {
     "7.2.0" : "https://github.com/desht/ModularRouters/blob/MC1.16-master/Changelog.md#720-4-nov-2020",
