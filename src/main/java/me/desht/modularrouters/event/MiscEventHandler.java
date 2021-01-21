@@ -7,6 +7,7 @@ import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.item.module.ItemModule;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -14,6 +15,11 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber
 public class MiscEventHandler {
+    // as per javadoc for PlayerEvent.BreakSpeed, a Y val of -1 indicates an unknown pos
+    // pos is more irrelevant than unknown here, but should at least indicate to other mods
+    // not to do anything with it if they also handle PlayerEvent.BreakSpeed
+    private static final BlockPos UNKNOWN = new BlockPos(0, -1, 0);
+
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
         if (event.getPos() != null) {
@@ -22,7 +28,8 @@ public class MiscEventHandler {
                 TileEntityTemplateFrame.getTemplateFrame(event.getPlayer().getEntityWorld(), event.getPos()).ifPresent(te -> {
                     if (te.getCamouflage() != null && te.extendedMimic()) {
                         BlockState camoState = te.getCamouflage();
-                        event.setNewSpeed(event.getPlayer().getDigSpeed(camoState, null));
+                        // note: passing getPos() here would cause an infinite event loop
+                        event.setNewSpeed(event.getPlayer().getDigSpeed(camoState, UNKNOWN));
                     }
                 });
             }
