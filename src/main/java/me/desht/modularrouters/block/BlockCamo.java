@@ -41,7 +41,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         ICamouflageable camo = getCamoState(world, pos);
-        return camo == null || !camo.extendedMimic() ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
+        return camo == null || !camo.extendedMimic() || isBlacklisted(camo.getCamouflage()) ? super.getLightValue(state, world, pos) : camo.getCamouflage().getLightValue(world, pos);
     }
 
     @Override
@@ -140,6 +140,12 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
 
     protected VoxelShape getUncamouflagedRaytraceShape(BlockState state, IBlockReader reader, BlockPos pos) {
         return VoxelShapes.empty();
+    }
+
+    private boolean isBlacklisted(BlockState camouflage) {
+        // C&B chiseled blocks also have some camo functionality, and this can cause a recursive loop
+        // https://github.com/desht/ModularRouters/issues/116
+        return camouflage.getBlock().getRegistryName().toString().startsWith("chiselsandbits:chiseled_");
     }
 
 //    @Nonnull
