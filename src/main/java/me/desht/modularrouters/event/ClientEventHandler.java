@@ -1,5 +1,6 @@
 package me.desht.modularrouters.event;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.ValidateModuleMessage;
@@ -10,7 +11,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ModularRouters.MODID)
 public class ClientEventHandler {
     @SubscribeEvent
     public static void clientTick(TickEvent.ClientTickEvent event) {

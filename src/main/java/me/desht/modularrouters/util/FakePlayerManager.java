@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class FakePlayerManager {
     private static final GameProfile GAME_PROFILE = new GameProfile(UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()), "[" + ModularRouters.MODNAME + "]");
     private static WeakReference<RouterFakePlayer> theFakePlayer = new WeakReference<>(null);

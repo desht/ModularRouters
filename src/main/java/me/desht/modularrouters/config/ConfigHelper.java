@@ -6,7 +6,6 @@ import net.minecraft.util.ResourceLocation;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-//@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigHelper {
     private static net.minecraftforge.fml.config.ModConfig clientConfig;
     private static net.minecraftforge.fml.config.ModConfig commonConfig;

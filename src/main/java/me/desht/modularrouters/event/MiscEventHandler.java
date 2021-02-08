@@ -1,5 +1,6 @@
 package me.desht.modularrouters.event;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockTemplateFrame;
 import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
 import me.desht.modularrouters.container.handler.AugmentHandler;
@@ -13,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class MiscEventHandler {
     // as per javadoc for PlayerEvent.BreakSpeed, a Y val of -1 indicates an unknown pos
     // pos is more irrelevant than unknown here, but should at least indicate to other mods

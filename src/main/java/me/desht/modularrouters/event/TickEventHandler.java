@@ -1,11 +1,12 @@
 package me.desht.modularrouters.event;
 
+import me.desht.modularrouters.ModularRouters;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class TickEventHandler {
 
     public static long TickCounter = 0;
