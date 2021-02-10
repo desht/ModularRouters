@@ -161,7 +161,7 @@ public class ModuleTargetRenderer {
     }
 
     static class CompiledPosition {
-        Map<BlockPos, FaceAndColour> positions = new HashMap<>();
+        private final Map<BlockPos, FaceAndColour> positions = new HashMap<>();
 
         CompiledPosition(ItemStack stack, IPositionProvider provider) {
             List<ModuleTarget> targets = provider.getStoredPositions(stack);

@@ -39,7 +39,7 @@ public class ModLootTableProvider extends LootTableProvider {
         // TODO
     }
 
-    private class BlockLootTable extends BlockLootTables {
+    private static class BlockLootTable extends BlockLootTables {
         @Override
         protected void addTables() {
             Block router = ModBlocks.ITEM_ROUTER.get();

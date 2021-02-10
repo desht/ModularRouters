@@ -9,8 +9,7 @@ public enum RouterRedstoneBehaviour {
             case LOW: return !powered;
             case HIGH: return powered;
             case PULSE: return pulsed;
-            case NEVER: return false;
-            default: return false;
+            default: return false;  // including NEVER
         }
     }
 

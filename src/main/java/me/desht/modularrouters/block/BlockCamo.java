@@ -68,18 +68,6 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
         return camo == null || !camo.extendedMimic() ? super.getPlayerRelativeBlockHardness(state, player, worldIn, pos) : camo.getCamouflage().getPlayerRelativeBlockHardness(player, worldIn, pos);
     }
 
-//    @Override
-//    public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
-//        ICamouflageable camo = getCamoState(worldIn, pos);
-//        return camo == null || !camo.extendedMimic() ? super.getBlockHardness(blockState, worldIn, pos) : camo.getCamouflage().getBlockHardness(worldIn, pos);
-//    }
-//
-//    @Override
-//    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-//        ICamouflageable camo = getCamoState(worldIn, pos);
-//        return camo == null || !camo.extendedMimic() ? super.isNormalCube(state, worldIn, pos) : camo.getCamouflage().isNormalCube(worldIn, pos);
-//    }
-
     @Override
     public float getExplosionResistance(BlockState state, IBlockReader world, BlockPos pos, Explosion explosion) {
         ICamouflageable camo = getCamoState(world, pos);

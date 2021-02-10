@@ -19,10 +19,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
@@ -84,7 +81,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
         CompoundNBT compound = stack.getTag();
         if (compound != null && compound.contains(NBT_PLAYERS)) {
             CompoundNBT p = compound.getCompound(NBT_PLAYERS);
-            return Sets.newHashSet(p.keySet().stream().map(p::getString).sorted().collect(Collectors.toList()));
+            return p.keySet().stream().map(p::getString).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
         } else {
             return Collections.emptySet();
         }

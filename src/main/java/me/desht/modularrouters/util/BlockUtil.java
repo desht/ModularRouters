@@ -59,6 +59,7 @@ public class BlockUtil {
     }
 
     private static BlockState getCocoaBeanState(BlockItemUseContext ctx) {
+        if (ctx.getPlayer() == null) return null;
         // try to find a jungle log in any horizontal direction
         for (Direction f : HORIZONTALS) {
             BlockState state = ctx.getWorld().getBlockState(ctx.getPos().offset(f));

@@ -106,15 +106,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                     return Direction.UP;
                 case DOWN:
                     return Direction.DOWN;
-                case FRONT:
-                    return current;
                 case LEFT:
                     return current.rotateY();
                 case BACK:
                     return current.getOpposite();
                 case RIGHT:
                     return current.rotateYCCW();
-                default:
+                default: // including FRONT
                     return current;
             }
         }
@@ -254,9 +252,8 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA)));
-            EnchantmentHelper.getEnchantments(pick).forEach((ench, level) -> {
-                list.add(new StringTextComponent("\u25b6 ").append(ench.getDisplayName(level).copyRaw().mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.YELLOW));
-            });
+            EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
+                    list.add(new StringTextComponent("\u25b6 ").append(ench.getDisplayName(level).copyRaw().mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.YELLOW)));
         }
     }
 

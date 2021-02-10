@@ -8,7 +8,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import java.util.List;
 
 public class CommonConfig {
-    public class Module {
+    public static class Module {
         IntValue sender1BaseRange;
         IntValue sender1MaxRange;
         IntValue sender2BaseRange;

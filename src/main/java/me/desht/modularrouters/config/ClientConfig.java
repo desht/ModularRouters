@@ -3,7 +3,7 @@ package me.desht.modularrouters.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
-    public class Misc {
+    public static class Misc {
         ForgeConfigSpec.BooleanValue heldRouterShowsCamoRouters;
         ForgeConfigSpec.BooleanValue alwaysShowModuleSettings;
         ForgeConfigSpec.BooleanValue moduleGuiBackgroundTint;

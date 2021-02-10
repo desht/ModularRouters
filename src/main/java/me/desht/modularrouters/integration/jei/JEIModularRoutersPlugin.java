@@ -15,15 +15,6 @@ public class JEIModularRoutersPlugin implements IModPlugin {
         return RL("default");
     }
 
-//    @Override
-//    public void registerRecipes(IRecipeRegistration registration) {
-//    }
-
-//    @Override
-//    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-//        registration.getCraftingCategory().addCategoryExtension(ResetModuleRecipe.class, SpecialRecipeCategoryExtension::new);
-//    }
-
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGhostIngredientHandler(GuiModule.class, new GuiModuleGhost());

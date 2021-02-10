@@ -33,21 +33,4 @@ public class FilterGuiFactory {
             Minecraft.getInstance().displayGuiScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));
         }
     }
-
-//    public static Screen createGuiForFilter(MFLocator locator) {
-//        ItemStack filterStack = locator.getTargetItem(Minecraft.getInstance().player);
-//
-//        if (filterStack.getItem() instanceof ItemSmartFilter && !((ItemSmartFilter)filterStack.getItem()).hasContainer()) {
-//            try {
-//                ItemSmartFilter filter = (ItemSmartFilter) filterStack.getItem();
-//                Class<? extends Screen> clazz = filter.getGuiClass();
-//                Constructor<? extends Screen> ctor = clazz.getConstructor(ItemStack.class, MFLocator.class);
-//                return ctor.newInstance(filterStack, locator);
-//            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-//                e.printStackTrace();
-//                return null;
-//            }
-//        }
-//        return null;
-//    }
 }

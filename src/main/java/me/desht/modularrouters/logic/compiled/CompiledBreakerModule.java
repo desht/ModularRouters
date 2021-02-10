@@ -18,15 +18,11 @@ import net.minecraftforge.common.util.Constants;
 import javax.annotation.Nonnull;
 
 public class CompiledBreakerModule extends CompiledModule {
-    private final boolean silkTouch;
-    private final int fortune;
     private final ItemStack pickaxe;
 
     public CompiledBreakerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-        fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
         pickaxe = ((IPickaxeUser) stack.getItem()).getPickaxe(stack);
 
         // backwards compat

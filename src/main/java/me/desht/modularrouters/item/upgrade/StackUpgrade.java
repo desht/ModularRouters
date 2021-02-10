@@ -10,10 +10,6 @@ import java.util.List;
 
 public class StackUpgrade extends ItemUpgrade {
     @Override
-    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
-    }
-
-    @Override
     public Object[] getExtraUsageParams() {
         TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
         int itemsPerTick = router == null ? 1 : router.getItemsPerTick();

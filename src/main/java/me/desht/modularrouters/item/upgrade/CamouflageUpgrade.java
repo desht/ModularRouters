@@ -23,16 +23,6 @@ public class CamouflageUpgrade extends ItemUpgrade {
     public static final String NBT_STATE_NAME = "BlockStateName";
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
-//        CompoundNBT tag = itemstack.getChildTag(ModularRouters.MODID);
-//        if (tag != null && tag.contains(NBT_STATE_NAME)) {
-//            list.add(ClientUtil.xlate("modularrouters.itemText.camouflage.held")
-//                    .appendString(TextFormatting.AQUA.toString())
-//                    .append(getCamoStateDisplayName(itemstack)));
-//        }
-    }
-
-    @Override
     public void onCompiled(ItemStack stack, TileEntityItemRouter router) {
         super.onCompiled(stack, router);
 

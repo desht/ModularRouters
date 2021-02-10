@@ -11,7 +11,7 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
 
     public ItemStackCyclerButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, T initialVal, ISendToServer dataSyncer) {
         super(x, y, width, height, null, flat, button -> {
-            ((ItemStackCyclerButton) button).cycle(!Screen.hasShiftDown());
+            ((ItemStackCyclerButton<?>) button).cycle(!Screen.hasShiftDown());
             dataSyncer.sendToServer();
         });
         state = initialVal;
@@ -39,6 +39,7 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
             } else if (b < 0) {
                 b = len - 1;
             }
+            //noinspection unchecked
             newState = (T) state.getClass().getEnumConstants()[b];
         } while (!isApplicable(newState) && b != state.ordinal());
 

@@ -49,7 +49,6 @@ public class ContainerModFilter extends ContainerSmartFilter {
         }
     }
 
-    @Nullable
     @Override
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack stack;
@@ -74,7 +73,6 @@ public class ContainerModFilter extends ContainerSmartFilter {
         return ItemStack.EMPTY;
     }
 
-    @Nullable
     @Override
     public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         switch (clickTypeIn) {

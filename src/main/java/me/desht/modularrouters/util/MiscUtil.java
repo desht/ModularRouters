@@ -104,13 +104,11 @@ public class MiscUtil {
         switch (facing) {
             case NORTH:
                 return 180;
-            case SOUTH:
-                return 0;
             case WEST:
                 return 90;
             case EAST:
                 return -90;
-            default:
+            default: // including SOUTH
                 return 0;
         }
     }

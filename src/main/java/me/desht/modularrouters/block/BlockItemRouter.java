@@ -122,7 +122,7 @@ public class BlockItemRouter extends BlockCamo {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
-        if (stack.hasTag() && stack.getTag().getCompound("BlockEntityTag") != null) {
+        if (stack.hasTag()) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
             tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.routerConfigured")
                     .mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
