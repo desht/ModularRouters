@@ -5,6 +5,8 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
+import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
+import me.desht.modularrouters.item.module.ItemModule.Termination;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -17,6 +19,7 @@ import javax.annotation.Nonnull;
  */
 public class ModuleHelper {
     public static final String NBT_FLAGS = "Flags";
+    public static final String NBT_DIRECTION = "Direction";
     public static final String NBT_REDSTONE_MODE = "RedstoneMode";
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
     public static final String NBT_FILTER = "ModuleFilter";
@@ -26,15 +29,33 @@ public class ModuleHelper {
     @Nonnull
     public static CompoundNBT validateNBT(ItemStack stack) {
         CompoundNBT compound = stack.getOrCreateChildTag(ModularRouters.MODID);
-        if (compound.getTagId(NBT_FLAGS) != Constants.NBT.TAG_BYTE) {
-            byte flags = 0x0;
-            for (ModuleFlags b : ModuleFlags.values()) {
-                if (b.getDefaultValue()) {
-                    flags |= b.getMask();
+        if (compound.getTagId(NBT_FLAGS) == Constants.NBT.TAG_BYTE) {
+            // migrate old-format flags (encoded into a byte) to modern flexible format
+            byte b = compound.getByte(NBT_FLAGS);
+            for (ModuleFlags flag : ModuleFlags.values()) {
+                if (flag != ModuleFlags.TERMINATE) { // termination is now handled as a tri-state
+                    compound.putBoolean(flag.getName(), (b & flag.getMask()) != 0);
                 }
             }
-            compound.putByte(NBT_FLAGS, flags);
+            compound.putString(ModuleFlags.TERMINATE.getName(), (b & ModuleFlags.TERMINATE.getMask()) != 0 ? Termination.NOT_RAN.toString() : Termination.NONE.toString());
+
+            RelativeDirection rDir = RelativeDirection.values()[(b & 0x70) >> 4];
+            compound.putString(NBT_DIRECTION, rDir.toString());
+
+            compound.remove(NBT_FLAGS);
+
+            ModularRouters.LOGGER.info("migrated module NBT for " + stack + " to new format");
         }
+
+//        if (compound.getTagId(NBT_FLAGS) != Constants.NBT.TAG_BYTE) {
+//            byte flags = 0x0;
+//            for (ModuleFlags b : ModuleFlags.values()) {
+//                if (b.getDefaultValue()) {
+//                    flags |= b.getMask();
+//                }
+//            }
+//            compound.putByte(NBT_FLAGS, flags);
+//        }
         if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
             compound.put(NBT_FILTER, new CompoundNBT());
         }
@@ -57,21 +78,34 @@ public class ModuleHelper {
         return checkFlag(stack, ModuleFlags.IGNORE_TAGS);
     }
 
-    public static boolean terminates(ItemStack stack) {
-        return checkFlag(stack, ModuleFlags.TERMINATE);
-    }
-
     public static boolean checkFlag(ItemStack stack, ModuleFlags flag) {
-        CompoundNBT compound = validateNBT(stack);
-        return (compound.getByte(NBT_FLAGS) & flag.getMask()) != 0x0;
+        CompoundNBT tag = validateNBT(stack);
+        return tag.contains(flag.getName(), Constants.NBT.TAG_BYTE) ? tag.getBoolean(flag.getName()) : flag.getDefaultValue();
     }
 
-    public static ItemModule.RelativeDirection getDirectionFromNBT(ItemStack stack) {
+    public static Termination getTermination(ItemStack stack) {
+        CompoundNBT compound = validateNBT(stack);
+        try {
+            return compound.contains(ModuleFlags.TERMINATE.getName(), Constants.NBT.TAG_STRING) ?
+                    Termination.valueOf(compound.getString(ModuleFlags.TERMINATE.getName())) :
+                    Termination.NONE;
+        } catch (IllegalArgumentException e) {
+            compound.putString(ModuleFlags.TERMINATE.getName(), Termination.NONE.toString());
+            return Termination.NONE;
+        }
+    }
+
+    public static RelativeDirection getDirectionFromNBT(ItemStack stack) {
         if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isDirectional()) {
             CompoundNBT compound = validateNBT(stack);
-            return ItemModule.RelativeDirection.values()[(compound.getByte(NBT_FLAGS) & 0x70) >> 4];
+            try {
+                return RelativeDirection.valueOf(compound.getString(NBT_DIRECTION));
+            } catch (IllegalArgumentException e) {
+                compound.putString(NBT_DIRECTION, RelativeDirection.NONE.toString());
+                return RelativeDirection.NONE;
+            }
         } else {
-            return ItemModule.RelativeDirection.NONE;
+            return RelativeDirection.NONE;
         }
     }
 

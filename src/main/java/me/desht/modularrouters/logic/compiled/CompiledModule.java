@@ -33,7 +33,7 @@ public abstract class CompiledModule {
     private final RelativeDirection direction;
     private final List<ModuleTarget> targets;
     private final RouterRedstoneBehaviour behaviour;
-    private final boolean termination;
+    private final ItemModule.Termination termination;
     private final Direction facing;
     private final Direction routerFacing;
     private final int regulationAmount;
@@ -61,7 +61,7 @@ public abstract class CompiledModule {
         rangeSquared = range * range;
         targets = setupTargets(router, stack);
         filter = new Filter(stack, shouldStoreRawFilterItems());
-        termination = ModuleHelper.terminates(stack);
+        termination = ModuleHelper.getTermination(stack);
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
@@ -113,7 +113,7 @@ public abstract class CompiledModule {
 
     public boolean hasTarget() { return targets != null && !targets.isEmpty(); }
 
-    public boolean termination() {
+    public ItemModule.Termination termination() {
         return termination;
     }
 

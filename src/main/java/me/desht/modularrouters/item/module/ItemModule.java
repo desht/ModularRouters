@@ -56,19 +56,21 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {
-        BLACKLIST(true, 0x1),
-        IGNORE_DAMAGE(false, 0x2),
-        IGNORE_NBT(true, 0x4),
-        IGNORE_TAGS(true, 0x8),
-        TERMINATE(false, 0x80);
+        BLACKLIST(true, 0x1, "F_blacklist"),
+        IGNORE_DAMAGE(false, 0x2, "F_ignoreDamage"),
+        IGNORE_NBT(true, 0x4, "F_ignoreNBT"),
+        IGNORE_TAGS(true, 0x8, "F_ignoreTags"),
+        TERMINATE(false, 0x80, "F_termination");
 
         private final boolean defaultValue;
 
-        private byte mask;
+        private final byte mask;  // TODO legacy - remove in 1.17
+        private final String name;
 
-        ModuleFlags(boolean defaultValue, int mask) {
+        ModuleFlags(boolean defaultValue, int mask, String name) {
             this.defaultValue = defaultValue;
             this.mask = (byte) mask;
+            this.name = name;
         }
 
         public boolean getDefaultValue() {
@@ -76,6 +78,10 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         }
         public byte getMask() {
             return mask;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
@@ -116,7 +122,16 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         public int getMask() {
             return mask;
         }
+    }
 
+    public enum Termination {
+        NONE,
+        RAN,
+        NOT_RAN;
+
+        public String getTranslationKey() {
+            return "modularrouters.guiText.tooltip.terminate." + toString();
+        }
     }
 
     final BiFunction<TileEntityItemRouter, ItemStack, ? extends CompiledModule> compiler;
@@ -212,15 +227,16 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                                 String.join(" | ",
                                         formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
                                         formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
-                                        formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack)),
-                                        formatFlag("TERMINATE", !ModuleHelper.terminates(itemstack))
+                                        formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack))
                                 )
                 )
         );
+
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
         list.add(xlate("modularrouters.itemText.misc.match").appendString(": ")
                 .append(xlate("modularrouters.itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
                         .mergeStyle(TextFormatting.AQUA)));
+
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
             int curRange = rm.getCurrentRange(itemstack);
@@ -229,6 +245,12 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                     TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
             list.add(xlate("modularrouters.itemText.misc.rangeInfo", col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
         }
+
+        Termination termination = ModuleHelper.getTermination(itemstack);
+        if (termination != Termination.NONE) {
+            list.add(xlate(termination.getTranslationKey() + ".header").mergeStyle(TextFormatting.YELLOW));
+        }
+
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA)));
@@ -296,7 +318,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                     .append(xlate("modularrouters.itemText.misc.noItems").mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            itemListHeader(itemstack).mergeStyle(TextFormatting.YELLOW).appendString(": ");
+            list.add(itemListHeader(itemstack).mergeStyle(TextFormatting.YELLOW).appendString(": "));
             list.addAll(l2);
         }
     }

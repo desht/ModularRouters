@@ -308,12 +308,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 Arrays.fill(newSignalType, SignalType.NONE);
             }
             for (CompiledModule cm : compiledModules) {
-                if (cm != null && cm.hasTarget() && cm.shouldRun(powered, pulsed) && cm.execute(this)) {
-                    newActive = true;
-                    if (cm.termination()) {
+                if (cm != null && cm.hasTarget() && cm.shouldRun(powered, pulsed))
+                    if (cm.execute(this)) {
+                        newActive = true;
+                        if (cm.termination() == ItemModule.Termination.RAN) {
+                            break;
+                        }
+                    } else if (cm.termination() == ItemModule.Termination.NOT_RAN) {
                         break;
                     }
-                }
             }
             if (prevCanEmit || canEmit) {
                 handleRedstoneEmission();

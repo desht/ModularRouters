@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
@@ -23,8 +24,10 @@ import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
 import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
+import me.desht.modularrouters.item.module.ItemModule.Termination;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
+import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
@@ -35,14 +38,12 @@ import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -56,7 +57,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class GuiModule extends GuiContainerBase<ContainerModule> implements IContainerListener, IMouseOverHelpProvider, ISendToServer {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
@@ -90,6 +96,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private MouseOverHelp.Button mouseOverHelpButton;
     private TexturedToggleButton matchAllButton;
     IntegerTextField regulatorTextField;
+    private TerminationButton terminationButton;
 
     public GuiModule(ContainerModule container, PlayerInventory inventory, ITextComponent displayName) {
         super(container, inventory, displayName);
@@ -123,7 +130,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addToggleButton(ModuleFlags.IGNORE_DAMAGE, 7, 93);
         addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
         addToggleButton(ModuleFlags.IGNORE_TAGS, 25, 93);
-        addToggleButton(ModuleFlags.TERMINATE, 45, 93);
+//        addToggleButton(ModuleFlags.TERMINATE, 45, 93);
+        terminationButton = addButton(new TerminationButton(guiLeft + 45, guiTop + 93, ModuleHelper.getTermination(moduleItemStack)));
         addButton(matchAllButton = new MatchAllButton(guiLeft + 45, guiTop + 75, matchAll));
 
         if (module.isDirectional()) {
@@ -227,15 +235,22 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
      * @return the message data NBT
      */
     protected CompoundNBT buildMessageData() {
-        byte flags = (byte) (facing.ordinal() << 4);
-        for (ModuleFlags setting : ModuleFlags.values()) {
-            if (getToggleButton(setting).isToggled()) {
-                flags |= setting.getMask();
-            }
-        }
+//        byte flags = (byte) (facing.ordinal() << 4);
+//        for (ModuleFlags setting : ModuleFlags.values()) {
+//            if (getToggleButton(setting).isToggled()) {
+//                flags |= setting.getMask();
+//            }
+//        }
         RouterRedstoneBehaviour behaviour = redstoneButton == null ? RouterRedstoneBehaviour.ALWAYS : redstoneButton.getState();
         CompoundNBT compound = new CompoundNBT();
-        compound.putByte(ModuleHelper.NBT_FLAGS, flags);
+        for (ModuleFlags flag : ModuleFlags.values()) {
+            if (flag != ModuleFlags.TERMINATE) {  // terminate now handled as a tri-state
+                compound.putBoolean(flag.getName(), getToggleButton(flag).isToggled());
+            }
+        }
+        compound.putString(ModuleFlags.TERMINATE.getName(), terminationButton.getState().toString());
+        compound.putString(ModuleHelper.NBT_DIRECTION, facing.toString());
+//        compound.putByte(ModuleHelper.NBT_FLAGS, flags);
         compound.putByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
         compound.putInt(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
         compound.putBoolean(ModuleHelper.NBT_MATCH_ALL, matchAllButton.isToggled());
@@ -279,7 +294,6 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        int invBinding = Minecraft.getInstance().gameSettings.keyBindInventory.getKey().getKeyCode();
         if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode) && !isFocused())) && routerPos != null) {
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
@@ -314,7 +328,6 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             } else {
                 // no container, just open the client-side GUI directly
                 FilterGuiFactory.openFilterGui(locator);
-//                minecraft.displayGuiScreen(FilterGuiFactory.createGuiForFilter(locator));
             }
         } else if (hand != null) {
             // module is in player's hand
@@ -324,7 +337,6 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             } else {
                 // no container, just open the client-side GUI directly
                 FilterGuiFactory.openFilterGui(locator);
-//                minecraft.displayGuiScreen(FilterGuiFactory.createGuiForFilter(locator));
             }
         }
         return true;
@@ -479,6 +491,41 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         @Override
         protected int getTextureY() {
             return 16;
+        }
+    }
+
+    private class TerminationButton extends TexturedCyclerButton<Termination> {
+        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+
+        public TerminationButton(int x, int y, Termination initialVal) {
+            super(x, y, 16, 16, initialVal, GuiModule.this);
+
+            for (Termination termination : Termination.values()) {
+                List<ITextComponent> l = new ArrayList<>();
+                l.add(xlate(termination.getTranslationKey() + ".header"));
+                MiscUtil.appendMultilineText(l, TextFormatting.GRAY, termination.getTranslationKey());
+                tooltips.add(l);
+            }
+        }
+
+        @Override
+        public List<ITextComponent> getTooltip() {
+            return tooltips.get(getState().ordinal());
+        }
+
+        @Override
+        protected int getTextureX() {
+            switch (getState()) {
+                case NONE: return 128;
+                case NOT_RAN: return 224;
+                case RAN: return 144;
+                default: throw new IllegalArgumentException("unknown value");
+            }
+        }
+
+        @Override
+        protected int getTextureY() {
+            return 32;
         }
     }
 }
