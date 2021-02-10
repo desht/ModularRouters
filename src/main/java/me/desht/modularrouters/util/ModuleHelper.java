@@ -25,6 +25,7 @@ public class ModuleHelper {
     public static final String NBT_FILTER = "ModuleFilter";
     public static final String NBT_AUGMENTS = "Augments";
     public static final String NBT_MATCH_ALL = "MatchAll";
+    public static final String NBT_TERMINATION = "Termination";
 
     @Nonnull
     public static CompoundNBT validateNBT(ItemStack stack) {
@@ -33,11 +34,10 @@ public class ModuleHelper {
             // migrate old-format flags (encoded into a byte) to modern flexible format
             byte b = compound.getByte(NBT_FLAGS);
             for (ModuleFlags flag : ModuleFlags.values()) {
-                if (flag != ModuleFlags.TERMINATE) { // termination is now handled as a tri-state
-                    compound.putBoolean(flag.getName(), (b & flag.getMask()) != 0);
-                }
+                compound.putBoolean(flag.getName(), (b & flag.getMask()) != 0);
             }
-            compound.putString(ModuleFlags.TERMINATE.getName(), (b & ModuleFlags.TERMINATE.getMask()) != 0 ? Termination.NOT_RAN.toString() : Termination.NONE.toString());
+            // 0x80 was the mask bit for the old termination flag
+            compound.putString(ModuleHelper.NBT_TERMINATION, (b & 0x80) != 0 ? Termination.RAN.toString() : Termination.NONE.toString());
 
             RelativeDirection rDir = RelativeDirection.values()[(b & 0x70) >> 4];
             compound.putString(NBT_DIRECTION, rDir.toString());
@@ -46,16 +46,6 @@ public class ModuleHelper {
 
             ModularRouters.LOGGER.info("migrated module NBT for " + stack + " to new format");
         }
-
-//        if (compound.getTagId(NBT_FLAGS) != Constants.NBT.TAG_BYTE) {
-//            byte flags = 0x0;
-//            for (ModuleFlags b : ModuleFlags.values()) {
-//                if (b.getDefaultValue()) {
-//                    flags |= b.getMask();
-//                }
-//            }
-//            compound.putByte(NBT_FLAGS, flags);
-//        }
         if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
             compound.put(NBT_FILTER, new CompoundNBT());
         }
@@ -86,16 +76,16 @@ public class ModuleHelper {
     public static Termination getTermination(ItemStack stack) {
         CompoundNBT compound = validateNBT(stack);
         try {
-            return compound.contains(ModuleFlags.TERMINATE.getName(), Constants.NBT.TAG_STRING) ?
-                    Termination.valueOf(compound.getString(ModuleFlags.TERMINATE.getName())) :
+            return compound.contains(ModuleHelper.NBT_TERMINATION, Constants.NBT.TAG_STRING) ?
+                    Termination.valueOf(compound.getString(ModuleHelper.NBT_TERMINATION)) :
                     Termination.NONE;
         } catch (IllegalArgumentException e) {
-            compound.putString(ModuleFlags.TERMINATE.getName(), Termination.NONE.toString());
+            compound.putString(ModuleHelper.NBT_TERMINATION, Termination.NONE.toString());
             return Termination.NONE;
         }
     }
 
-    public static RelativeDirection getDirectionFromNBT(ItemStack stack) {
+    public static RelativeDirection getRelativeDirection(ItemStack stack) {
         if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isDirectional()) {
             CompoundNBT compound = validateNBT(stack);
             try {
@@ -110,8 +100,7 @@ public class ModuleHelper {
     }
 
     public static int getRegulatorAmount(ItemStack itemstack) {
-        CompoundNBT compound = validateNBT(itemstack);
-        return compound.getInt(NBT_REGULATOR_AMOUNT);
+        return validateNBT(itemstack).getInt(NBT_REGULATOR_AMOUNT);
     }
 
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
@@ -128,14 +117,12 @@ public class ModuleHelper {
         }
     }
 
-
     public static int getRangeModifier(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
         return counter.getAugmentCount(ModItems.RANGE_UP_AUGMENT.get()) - counter.getAugmentCount(ModItems.RANGE_DOWN_AUGMENT.get());
     }
 
     public static boolean isMatchAll(ItemStack stack) {
-        CompoundNBT compound = validateNBT(stack);
-        return compound.getBoolean(NBT_MATCH_ALL);
+        return validateNBT(stack).getBoolean(NBT_MATCH_ALL);
     }
 }

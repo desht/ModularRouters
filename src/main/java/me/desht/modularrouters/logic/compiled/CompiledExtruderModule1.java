@@ -106,7 +106,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
                 PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.getPosX(), entity.getPosY(), entity.getPosZ(), 32, world.getDimensionKey());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
-                        new PushEntityMessage(entity, v.x, v.y, v.z));
+                        new PushEntityMessage(entity, v));
             }
         }
     }

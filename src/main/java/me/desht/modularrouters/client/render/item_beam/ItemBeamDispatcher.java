@@ -1,18 +1,5 @@
 package me.desht.modularrouters.client.render.item_beam;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 public enum ItemBeamDispatcher {
     INSTANCE;
 

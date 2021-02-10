@@ -15,10 +15,7 @@ import java.util.function.Supplier;
  * send the player a message.
  */
 public class ValidateModuleMessage {
-    private Hand hand;
-
-    public ValidateModuleMessage() {
-    }
+    private final Hand hand;
 
     public ValidateModuleMessage(Hand hand) {
         this.hand = hand;

@@ -15,11 +15,8 @@ import java.util.function.Supplier;
  * Sent by client when a module filter slot is updated via JEI
  */
 public class ModuleFilterMessage {
-    private int slot;
-    private ItemStack stack;
-
-    public ModuleFilterMessage() {
-    }
+    private final int slot;
+    private final ItemStack stack;
 
     public ModuleFilterMessage(int slot, ItemStack stack) {
         this.slot = slot;

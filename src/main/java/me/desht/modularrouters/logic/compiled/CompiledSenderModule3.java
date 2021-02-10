@@ -31,7 +31,7 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
             Direction facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().getDimensionKey());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
-                    new ItemBeamMessage(router, router.getPos().offset(facing, 2), false, stack, PARTICLE_COLOR.getRGB(), router.getTickRate()).withFadeout());
+                    new ItemBeamMessage(router, router.getPos().offset(facing, 2), false, stack, PARTICLE_COLOR.getRGB(), router.getTickRate(), true));
         }
     }
 }

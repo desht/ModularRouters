@@ -27,7 +27,6 @@ import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.item.module.ItemModule.Termination;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
 import me.desht.modularrouters.network.OpenGuiMessage;
@@ -58,7 +57,6 @@ import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,7 +107,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
         this.module = (ItemModule) moduleItemStack.getItem();
 
-        this.facing = ModuleHelper.getDirectionFromNBT(moduleItemStack);
+        this.facing = ModuleHelper.getRelativeDirection(moduleItemStack);
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
         this.matchAll = ModuleHelper.isMatchAll(moduleItemStack);
@@ -235,22 +233,13 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
      * @return the message data NBT
      */
     protected CompoundNBT buildMessageData() {
-//        byte flags = (byte) (facing.ordinal() << 4);
-//        for (ModuleFlags setting : ModuleFlags.values()) {
-//            if (getToggleButton(setting).isToggled()) {
-//                flags |= setting.getMask();
-//            }
-//        }
         RouterRedstoneBehaviour behaviour = redstoneButton == null ? RouterRedstoneBehaviour.ALWAYS : redstoneButton.getState();
         CompoundNBT compound = new CompoundNBT();
         for (ModuleFlags flag : ModuleFlags.values()) {
-            if (flag != ModuleFlags.TERMINATE) {  // terminate now handled as a tri-state
-                compound.putBoolean(flag.getName(), getToggleButton(flag).isToggled());
-            }
+            compound.putBoolean(flag.getName(), getToggleButton(flag).isToggled());
         }
-        compound.putString(ModuleFlags.TERMINATE.getName(), terminationButton.getState().toString());
+        compound.putString(ModuleHelper.NBT_TERMINATION, terminationButton.getState().toString());
         compound.putString(ModuleHelper.NBT_DIRECTION, facing.toString());
-//        compound.putByte(ModuleHelper.NBT_FLAGS, flags);
         compound.putByte(ModuleHelper.NBT_REDSTONE_MODE, (byte) behaviour.ordinal());
         compound.putInt(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
         compound.putBoolean(ModuleHelper.NBT_MATCH_ALL, matchAllButton.isToggled());

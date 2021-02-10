@@ -23,15 +23,12 @@ import java.util.function.Supplier;
  * The filter could be in a player's hand, or in a module (which may or may not be in a router...)
  */
 public class FilterSettingsMessage {
-    private Operation op;
-    private CompoundNBT payload;
-    private MFLocator locator;
+    private final Operation op;
+    private final CompoundNBT payload;
+    private final MFLocator locator;
 
     public enum Operation {
         CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG
-    }
-
-    public FilterSettingsMessage() {
     }
 
     public FilterSettingsMessage(Operation op, MFLocator locator, CompoundNBT payload) {
@@ -44,7 +41,6 @@ public class FilterSettingsMessage {
         op = Operation.values()[buf.readByte()];
         locator = MFLocator.fromBuffer(buf);
         payload = buf.readCompoundTag();
-
     }
 
     public void toBytes(PacketBuffer buf) {

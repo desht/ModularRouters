@@ -4,6 +4,7 @@ import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -14,33 +15,24 @@ import java.util.function.Supplier;
  * Sent by server so clients promptly update an entity's velocity when it gets shoved by an extruded block.
  */
 public class PushEntityMessage {
-    private int id;
-    private double x;
-    private double y;
-    private double z;
+    private final int id;
+    private final Vector3d vec;
 
-    public PushEntityMessage() {
-    }
-
-    public PushEntityMessage(Entity entity, double x, double y, double z) {
+    public PushEntityMessage(Entity entity, Vector3d vec) {
         this.id = entity.getEntityId();
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.vec = vec;
     }
 
     public PushEntityMessage(PacketBuffer buf) {
         id = buf.readInt();
-        x = buf.readDouble();
-        y = buf.readDouble();
-        z = buf.readDouble();
+        vec = new Vector3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
     public void toBytes(PacketBuffer buf) {
         buf.writeInt(id);
-        buf.writeDouble(x);
-        buf.writeDouble(y);
-        buf.writeDouble(z);
+        buf.writeDouble(vec.x);
+        buf.writeDouble(vec.y);
+        buf.writeDouble(vec.z);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -48,9 +40,7 @@ public class PushEntityMessage {
             World w = ClientUtil.theClientWorld();
             Entity entity = w.getEntityByID(id);
             if (entity != null) {
-                entity.setMotion(x, y, z);
-//                entity.onGround = false;
-//                entity.collided = false;
+                entity.setMotion(vec.x, vec.y, vec.z);
                 entity.collidedHorizontally = false;
                 entity.collidedVertically = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);

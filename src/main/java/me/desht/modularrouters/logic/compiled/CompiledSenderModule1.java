@@ -9,7 +9,6 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -64,7 +63,7 @@ public class CompiledSenderModule1 extends CompiledModule {
             Vector3d vec1 = Vector3d.copyCentered(router.getPos());
             PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().getDimensionKey());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
-                    new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate()));
+                    new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate(), false));
         }
     }
 

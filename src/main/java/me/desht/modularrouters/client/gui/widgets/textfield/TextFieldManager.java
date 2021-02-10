@@ -3,7 +3,6 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-import me.desht.modularrouters.client.gui.widgets.IManagedTextFields;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 

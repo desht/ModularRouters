@@ -17,12 +17,9 @@ import java.util.function.Supplier;
  * Sent by server to sync router settings when GUI is opened
  */
 public class RouterSettingsMessage {
-    private boolean eco;
-    private RouterRedstoneBehaviour redstoneBehaviour;
-    private BlockPos pos;
-
-    public RouterSettingsMessage() {
-    }
+    private final boolean eco;
+    private final RouterRedstoneBehaviour redstoneBehaviour;
+    private final BlockPos pos;
 
     public RouterSettingsMessage(TileEntityItemRouter router) {
         this.pos = router.getPos();

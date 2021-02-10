@@ -17,16 +17,13 @@ import java.util.function.Supplier;
  * Sent by server to play an item beam between a router and another inventory
  */
 public class ItemBeamMessage {
-    private boolean reversed;
-    private int duration;
-    private BlockPos pos1;
-    private BlockPos pos2;
-    private ItemStack stack;
-    private int color;
-    private boolean itemFade;
-
-    public ItemBeamMessage() {
-    }
+    private final boolean reversed;
+    private final int duration;
+    private final BlockPos pos1;
+    private final BlockPos pos2;
+    private final ItemStack stack;
+    private final int color;
+    private final boolean itemFade;
 
     public ItemBeamMessage(PacketBuffer buf) {
         reversed = buf.readBoolean();
@@ -47,19 +44,14 @@ public class ItemBeamMessage {
      * @param color beam color
      * @param duration duration, in ticks
      */
-    public ItemBeamMessage(TileEntity te, BlockPos other, boolean reversed, ItemStack stack, int color, int duration) {
+    public ItemBeamMessage(TileEntity te, BlockPos other, boolean reversed, ItemStack stack, int color, int duration, boolean itemFade) {
         this.reversed = reversed;
         this.pos1 = te.getPos();
         this.pos2 = other;
         this.stack = stack;
         this.color = color;
-        this.itemFade = false;
+        this.itemFade = itemFade;
         this.duration = duration;
-    }
-
-    public ItemBeamMessage withFadeout() {
-        this.itemFade = true;
-        return this;
     }
 
     public void toBytes(PacketBuffer buf) {

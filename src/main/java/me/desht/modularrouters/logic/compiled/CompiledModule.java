@@ -55,7 +55,7 @@ public abstract class CompiledModule {
 
         module = (ItemModule) stack.getItem();
         augmentCounter = new AugmentCounter(stack);
-        direction = ModuleHelper.getDirectionFromNBT(stack);
+        direction = ModuleHelper.getRelativeDirection(stack);
         range = module instanceof IRangedModule ?
                 ((IRangedModule) module).getCurrentRange(getRangeModifier()) : 0;
         rangeSquared = range * range;

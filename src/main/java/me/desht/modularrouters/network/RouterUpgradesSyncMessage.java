@@ -17,11 +17,8 @@ import java.util.function.Supplier;
  * Various GUI messages/tooltips/etc. depend on knowing what upgrades the router has
  */
 public class RouterUpgradesSyncMessage {
-    private BlockPos pos;
-    private ItemStackHandler handler;
-
-    public RouterUpgradesSyncMessage() {
-    }
+    private final BlockPos pos;
+    private final ItemStackHandler handler;
 
     public RouterUpgradesSyncMessage(TileEntityItemRouter router) {
         pos = router.getPos();
@@ -47,8 +44,7 @@ public class RouterUpgradesSyncMessage {
         ctx.get().enqueueWork(() -> {
             World w = ClientUtil.theClientWorld();
             if (w != null) {
-                TileEntityItemRouter.getRouterAt(w, pos)
-                        .ifPresent(router -> router.setUpgradesFrom(handler));
+                TileEntityItemRouter.getRouterAt(w, pos).ifPresent(router -> router.setUpgradesFrom(handler));
             }
         });
         ctx.get().setPacketHandled(true);

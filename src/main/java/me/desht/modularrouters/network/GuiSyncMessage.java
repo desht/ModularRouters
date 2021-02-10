@@ -14,10 +14,7 @@ import java.util.function.Supplier;
  * Sent when a filter is changed server-side which requires an open GUI to re-read its settings.
  */
 public class GuiSyncMessage {
-    private ItemStack newStack;
-
-    public GuiSyncMessage() {
-    }
+    private final ItemStack newStack;
 
     public GuiSyncMessage(ItemStack newStack) {
         this.newStack = newStack;

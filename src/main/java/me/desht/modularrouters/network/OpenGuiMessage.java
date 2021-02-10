@@ -31,12 +31,8 @@ public class OpenGuiMessage {
         FILTER_INSTALLED
     }
 
-    private Operation operation;
-    private MFLocator locator;
-
-    @SuppressWarnings("unused")
-    public OpenGuiMessage() {
-    }
+    private final Operation operation;
+    private final MFLocator locator;
 
     private OpenGuiMessage(Operation operation, MFLocator locator) {
         this.operation = operation;

@@ -59,8 +59,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         BLACKLIST(true, 0x1, "F_blacklist"),
         IGNORE_DAMAGE(false, 0x2, "F_ignoreDamage"),
         IGNORE_NBT(true, 0x4, "F_ignoreNBT"),
-        IGNORE_TAGS(true, 0x8, "F_ignoreTags"),
-        TERMINATE(false, 0x80, "F_termination");
+        IGNORE_TAGS(true, 0x8, "F_ignoreTags");
 
         private final boolean defaultValue;
 
@@ -76,6 +75,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         public boolean getDefaultValue() {
             return defaultValue;
         }
+
         public byte getMask() {
             return mask;
         }
@@ -214,7 +214,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     protected void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
         if (isDirectional()) {
-            RelativeDirection dir = ModuleHelper.getDirectionFromNBT(itemstack);
+            RelativeDirection dir = ModuleHelper.getRelativeDirection(itemstack);
             IFormattableTextComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
                     "modularrouters.guiText.tooltip.allDirections" : "modularrouters.guiText.tooltip." + dir.toString());
             list.add(xlate("modularrouters.guiText.label.direction")

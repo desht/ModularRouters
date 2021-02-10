@@ -15,11 +15,8 @@ import java.util.function.Supplier;
  * Sent by client when a new tuning value is entered via Sync Upgrade GUI
  */
 public class SyncUpgradeSettingsMessage {
-    private int tunedValue;
-    private Hand hand;
-
-    public SyncUpgradeSettingsMessage() {
-    }
+    private final int tunedValue;
+    private final Hand hand;
 
     public SyncUpgradeSettingsMessage(int tunedValue, Hand hand) {
         this.tunedValue = tunedValue;
@@ -39,9 +36,11 @@ public class SyncUpgradeSettingsMessage {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             PlayerEntity player = ctx.get().getSender();
-            ItemStack held = player.getHeldItem(hand);
-            if (held.getItem() instanceof SyncUpgrade) {
-                SyncUpgrade.setTunedValue(held, tunedValue);
+            if (player != null) {
+                ItemStack held = player.getHeldItem(hand);
+                if (held.getItem() instanceof SyncUpgrade) {
+                    SyncUpgrade.setTunedValue(held, tunedValue);
+                }
             }
         });
         ctx.get().setPacketHandled(true);

@@ -19,12 +19,8 @@ import java.util.function.Supplier;
  * Sent by client when a player updates a module's settings via its GUI.
  */
 public class ModuleSettingsMessage {
-    private MFLocator locator;
-    private CompoundNBT payload;
-
-    @SuppressWarnings("unused")
-    public ModuleSettingsMessage() {
-    }
+    private final MFLocator locator;
+    private final CompoundNBT payload;
 
     ModuleSettingsMessage(PacketBuffer buf) {
         locator = MFLocator.fromBuffer(buf);

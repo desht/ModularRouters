@@ -20,7 +20,7 @@ public class ElementModule implements IElement {
     public ElementModule(ItemStack stack) {
         Validate.isTrue(stack.getItem() instanceof ItemModule, "provided item stack is not an ItemModule!");
         this.stack = stack;
-        this.dir = ModuleHelper.getDirectionFromNBT(stack);
+        this.dir = ModuleHelper.getRelativeDirection(stack);
     }
 
     public ElementModule(ByteBuf buf) {
