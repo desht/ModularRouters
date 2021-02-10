@@ -77,7 +77,7 @@ public class ContainerExtruder2Module extends ContainerModule {
             return true;  // non-block items are allowed - they act as spacers
         }
         Block b = ((BlockItem) stack.getItem()).getBlock();
-        return b.getDefaultState().getRenderType() == BlockRenderType.MODEL;
+        return b.getDefaultState().getRenderType() == BlockRenderType.MODEL && !b.getRegistryName().getNamespace().equals("chiselsandbits");
     }
 
     public static class TemplateHandler extends BaseModuleHandler {
