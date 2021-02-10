@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import io.netty.buffer.ByteBuf;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
@@ -64,10 +63,9 @@ public class OpenGuiMessage {
         return new OpenGuiMessage(Operation.FILTER_INSTALLED, locator);
     }
 
-    public void toBytes(ByteBuf buf) {
-        PacketBuffer pb = new PacketBuffer(buf);
-        pb.writeByte(operation.ordinal());
-        locator.writeBuf(pb);
+    public void toBytes(PacketBuffer buf) {
+        buf.writeByte(operation.ordinal());
+        locator.writeBuf(buf);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
