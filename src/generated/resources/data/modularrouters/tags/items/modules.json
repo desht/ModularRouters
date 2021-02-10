@@ -3,6 +3,7 @@
   "values": [
     "modularrouters:activator_module",
     "modularrouters:breaker_module",
+    "modularrouters:creative_module",
     "modularrouters:detector_module",
     "modularrouters:distributor_module",
     "modularrouters:dropper_module",

@@ -65,7 +65,7 @@ public class ModularRouters {
             DataGenerator generator = event.getGenerator();
             if (event.includeServer()) {
                 generator.addProvider(new ModRecipeProvider(generator));
-                generator.addProvider(new ModItemTagsProvider(generator));
+                generator.addProvider(new ModItemTagsProvider(generator, event.getExistingFileHelper()));
                 generator.addProvider(new ModLootTableProvider(generator));
             }
         }
