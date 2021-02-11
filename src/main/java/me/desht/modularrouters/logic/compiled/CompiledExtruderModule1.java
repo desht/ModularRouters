@@ -9,6 +9,7 @@ import me.desht.modularrouters.network.PushEntityMessage;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -20,7 +21,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
@@ -55,7 +55,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             // try to extend
             BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
-            BlockState state = BlockUtil.tryPlaceAsBlock(toPlace, world, placePos, getFacing(), getRouterFacing());
+            BlockState state = BlockUtil.tryPlaceAsBlock(router, toPlace, world, placePos, getFacing());
             if (state != null) {
                 router.extractBuffer(1);
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
@@ -72,12 +72,12 @@ public class CompiledExtruderModule1 extends CompiledModule {
             BlockPos breakPos = router.getPos().offset(getFacing(), distance);
             BlockState oldState = world.getBlockState(breakPos);
             Block oldBlock = oldState.getBlock();
-            if (world.isAirBlock(breakPos) /*|| oldBlock instanceof BlockLiquid*/ || oldBlock instanceof IFluidBlock) {
+            if (world.isAirBlock(breakPos) || oldBlock instanceof FlowingFluidBlock) {
                 // nothing there? continue to retract anyway...
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
             }
-            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(world, breakPos, getFilter(), pickaxe);
+            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(router, world, breakPos, getFilter(), pickaxe);
             if (dropResult.isBlockBroken()) {
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());

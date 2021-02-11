@@ -1,6 +1,7 @@
 package me.desht.modularrouters.block.tile;
 
 import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.BlockItemRouter;
@@ -17,12 +18,15 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.fake_player.FakeNetHandlerPlayerServer;
+import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,6 +49,7 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -63,6 +68,11 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class TileEntityItemRouter extends TileEntity implements ITickableTileEntity, ICamouflageable, INamedContainerProvider {
+    public static final GameProfile DEFAULT_FAKEPLAYER_PROFILE = new GameProfile(
+            UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()),
+            "[" + ModularRouters.MODNAME + "]"
+    );
+
     private static final int N_MODULE_SLOTS = 9;
     private static final int N_UPGRADE_SLOTS = 5;
     private static final int N_BUFFER_SLOTS = 1;
@@ -123,6 +133,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     public final List<ItemBeam> beams = new ArrayList<>(); // client only
     private AxisAlignedBB cachedRenderAABB;
+
+    private RouterFakePlayer fakePlayer;
 
     public TileEntityItemRouter() {
         super(ModTileEntities.ITEM_ROUTER.get());
@@ -271,6 +283,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             counter++;
             pulseCounter++;
 
+            if (fakePlayer != null) fakePlayer.getCooldownTracker().tick();
+
             if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
                 // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
                 // however, we do need to turn the state inactive after a short time if we were set active by a pulse
@@ -293,6 +307,31 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 }
             }
         }
+    }
+
+    public RouterFakePlayer getFakePlayer() {
+        if (!(getWorld() instanceof ServerWorld)) return null;
+
+        if (fakePlayer == null) {
+            fakePlayer = new RouterFakePlayer((ServerWorld) getWorld(), getOwner());
+            fakePlayer.connection = new FakeNetHandlerPlayerServer(world.getServer(), fakePlayer);
+            fakePlayer.world = world;
+            fakePlayer.inventory.currentItem = 0;  // held item always in slot 0
+            fakePlayer.setRawPosition(pos.getX(), pos.getY(), pos.getZ());
+        }
+        return fakePlayer;
+    }
+
+    private GameProfile getOwner() {
+        for (int i = 0; i < getUpgrades().getSlots(); i++) {
+            ItemStack stack = getUpgrades().getStackInSlot(i);
+            if (stack.getItem() instanceof SecurityUpgrade) {
+                String name = ((SecurityUpgrade) stack.getItem()).getOwnerName(stack);
+                UUID id = ((SecurityUpgrade) stack.getItem()).getOwnerID(stack);
+                return new GameProfile(id, name);
+            }
+        }
+        return DEFAULT_FAKEPLAYER_PROFILE;
     }
 
     private void executeModules(boolean pulsed) {
@@ -463,6 +502,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             fluidTransferRate = Math.min(MRConfig.Common.Router.fluidMaxTransferRate,
                     MRConfig.Common.Router.fluidBaseTransferRate + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * MRConfig.Common.Router.mBperFluidUpgade);
             if (!world.isRemote) {
+                fakePlayer = null; // in case security upgrades change
                 int mufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
                 if (prevMufflers != mufflers) {
                     world.setBlockState(pos, getBlockState().with(BlockItemRouter.ACTIVE, active && mufflers < 3), Constants.BlockFlags.BLOCK_UPDATE);

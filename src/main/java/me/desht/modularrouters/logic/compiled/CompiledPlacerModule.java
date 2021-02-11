@@ -28,7 +28,7 @@ public class CompiledPlacerModule extends CompiledModule {
         }
         World world = router.getWorld();
         BlockPos pos = getTarget().gPos.getPos();
-        BlockState newState = BlockUtil.tryPlaceAsBlock(toPlace, world, pos, getFacing(), getRouterFacing());
+        BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, world, pos, getFacing());
         if (newState != null) {
             if (MRConfig.Common.Module.placerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
                 world.playEvent(2001, pos, Block.getStateId(newState));

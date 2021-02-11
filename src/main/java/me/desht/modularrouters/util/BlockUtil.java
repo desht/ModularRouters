@@ -1,5 +1,6 @@
 package me.desht.modularrouters.util;
 
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.block.Block;
@@ -21,6 +22,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.items.IItemHandler;
+import org.jline.utils.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -89,13 +91,12 @@ public class BlockUtil {
      * @param world   the world
      * @param pos     position in the world to place at
      * @param facing direction the placer is facing
-     * @param horizFacing fallback direction if the block to be placed only supports horizontal rotations
      * @return the new block state if successful, null otherwise
      */
-    public static BlockState tryPlaceAsBlock(ItemStack toPlace, World world, BlockPos pos, Direction facing, Direction horizFacing) {
+    public static BlockState tryPlaceAsBlock(TileEntityItemRouter router, ItemStack toPlace, World world, BlockPos pos, Direction facing) {
         BlockState currentState = world.getBlockState(pos);
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
+        FakePlayer fakePlayer = router.getFakePlayer();
         fakePlayer.rotationYaw = getYawFromFacing(facing);
         fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
 
@@ -125,12 +126,11 @@ public class BlockUtil {
         return null;
     }
 
-    public static boolean tryPlaceBlock(BlockState newState, World world, BlockPos pos) {
+    public static boolean tryPlaceBlock(TileEntityItemRouter router, BlockState newState, World world, BlockPos pos) {
         if (!(world instanceof ServerWorld) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
         BlockSnapshot snap = BlockSnapshot.create(world.getDimensionKey(), world, pos);
-        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
+        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), router.getFakePlayer());
         MinecraftForge.EVENT_BUS.post(event);
         return !event.isCanceled() && world.setBlockState(pos, newState);
     }
@@ -146,7 +146,7 @@ public class BlockUtil {
      * @param pickaxe   the pickaxe to use to break block
      * @return a drop result object
      */
-    public static BreakResult tryBreakBlock(World world, BlockPos pos, Filter filter, ItemStack pickaxe) {
+    public static BreakResult tryBreakBlock(TileEntityItemRouter router, World world, BlockPos pos, Filter filter, ItemStack pickaxe) {
         if (!(world instanceof ServerWorld)) return BreakResult.NOT_BROKEN;
         ServerWorld serverWorld = (ServerWorld) world;
 
@@ -157,7 +157,7 @@ public class BlockUtil {
             return BreakResult.NOT_BROKEN;
         }
 
-        FakePlayer fakePlayer = FakePlayerManager.getFakePlayer(serverWorld, pos);
+        FakePlayer fakePlayer = router.getFakePlayer();
         fakePlayer.setHeldItem(Hand.MAIN_HAND, pickaxe);
         if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.canHarvestBlock(state, fakePlayer, world, pos)) {
             return BreakResult.NOT_BROKEN;

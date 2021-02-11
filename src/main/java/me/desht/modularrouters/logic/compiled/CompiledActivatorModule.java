@@ -3,8 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
-import me.desht.modularrouters.util.FakePlayerManager;
-import me.desht.modularrouters.util.FakePlayerManager.RouterFakePlayer;
+import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -115,7 +114,7 @@ public class CompiledActivatorModule extends CompiledModule {
         World world = router.getWorld();
         BlockPos pos = router.getPos();
 
-        RouterFakePlayer fakePlayer = FakePlayerManager.getFakePlayer((ServerWorld) world, pos);
+        RouterFakePlayer fakePlayer = router.getFakePlayer();
         Vector3d centre = Vector3d.copyCentered(pos);
         // place the fake player just outside the router, on the correct face
         fakePlayer.setPosition(centre.getX() + getFacing().getXOffset() * 0.501, centre.getY() + getFacing().getYOffset() * 0.501, centre.getZ() + getFacing().getZOffset() * 0.501);

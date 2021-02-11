@@ -56,7 +56,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
             } else {
                 BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
                 BlockState state = ModBlocks.TEMPLATE_FRAME.get().getDefaultState();
-                if (BlockUtil.tryPlaceBlock(state, world, placePos)) {
+                if (BlockUtil.tryPlaceBlock(router, state, world, placePos)) {
                     TileEntityTemplateFrame.getTemplateFrame(world, placePos).ifPresent(te -> {
                         te.setCamouflage(blockList.get(distance), getFacing(), getRouterFacing());
                         te.setExtendedMimic(mimic);

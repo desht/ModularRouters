@@ -40,7 +40,7 @@ public class CompiledBreakerModule extends CompiledModule {
             }
             BlockPos pos = getTarget().gPos.getPos();
             BlockState oldState = world.getBlockState(pos);
-            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(world, pos, getFilter(), pickaxe);
+            BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(router, world, pos, getFilter(), pickaxe);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
                 if (MRConfig.Common.Module.breakerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
