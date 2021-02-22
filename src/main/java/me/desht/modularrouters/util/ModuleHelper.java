@@ -26,6 +26,7 @@ public class ModuleHelper {
     public static final String NBT_AUGMENTS = "Augments";
     public static final String NBT_MATCH_ALL = "MatchAll";
     public static final String NBT_TERMINATION = "Termination";
+    private static final String NBT_RR_COUNTER = "RoundRobinCounter";
 
     @Nonnull
     public static CompoundNBT validateNBT(ItemStack stack) {
@@ -124,5 +125,14 @@ public class ModuleHelper {
 
     public static boolean isMatchAll(ItemStack stack) {
         return validateNBT(stack).getBoolean(NBT_MATCH_ALL);
+    }
+
+    public static void setRoundRobinCounter(ItemStack moduleStack, int counter) {
+        CompoundNBT tag = validateNBT(moduleStack);
+        tag.putInt(NBT_RR_COUNTER, counter);
+    }
+
+    public static int getRoundRobinCounter(ItemStack moduleStack) {
+        return validateNBT(moduleStack).getInt(NBT_RR_COUNTER);
     }
 }

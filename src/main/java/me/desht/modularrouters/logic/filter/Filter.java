@@ -12,7 +12,9 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.Validate;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class Filter implements Predicate<ItemStack> {
@@ -22,13 +24,18 @@ public class Filter implements Predicate<ItemStack> {
     private final List<IItemMatcher> matchers = Lists.newArrayList();
     private final List<ItemStack> rawStacks = Lists.newArrayList();
     private final boolean matchAll;
+    private final boolean roundRobin;
+    private int rrCounter = 0;
 
     public Filter() {
         flags = Flags.DEFAULT_FLAGS;
         matchAll = false;
+        roundRobin = false;
     }
 
-    public Filter(ItemStack moduleStack, boolean storeRaw) {
+    public Filter(ItemStack moduleStack, boolean storeRaw, boolean roundRobin) {
+        this.roundRobin = roundRobin;
+        this.rrCounter = roundRobin ? ModuleHelper.getRoundRobinCounter(moduleStack) : 0;
         if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
             matchAll = ModuleHelper.isMatchAll(moduleStack);
@@ -37,9 +44,7 @@ public class Filter implements Predicate<ItemStack> {
                 ItemStack filterStack = filterHandler.getStackInSlot(i);
                 if (!filterStack.isEmpty()) {
                     IItemMatcher matcher = createMatcher(filterStack, moduleStack);
-                    if (matcher != null) {
-                        matchers.add(matcher);
-                    }
+                    matchers.add(matcher);
                     if (storeRaw) {
                         rawStacks.add(filterStack);
                     }
@@ -51,12 +56,12 @@ public class Filter implements Predicate<ItemStack> {
         }
     }
 
+    @Nonnull
     private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack) {
         if (filterStack.getItem() instanceof ItemSmartFilter) {
             return ((ItemSmartFilter) filterStack.getItem()).compile(filterStack, moduleStack);
         } else {
-            return moduleStack.getItem() instanceof ItemModule ?
-                    ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(filterStack) : null;
+            return ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(filterStack);
         }
     }
 
@@ -76,16 +81,28 @@ public class Filter implements Predicate<ItemStack> {
             return false;
         }
 
-        for (IItemMatcher matcher : matchers) {
-            boolean matchedOne = matcher.matchItem(stack, flags);
-            if (!matchAll && matchedOne || matchAll && !matchedOne) {
-                return matchAll == flags.isBlacklist();
+        if (roundRobin && !matchers.isEmpty()) {
+            // just match against a single item in the filter
+            return matchers.get(rrCounter).matchItem(stack, flags) != flags.isBlacklist();
+        } else {
+            // match against everything in the filter (either match any or match all)
+            for (IItemMatcher matcher : matchers) {
+                boolean matchedOne = matcher.matchItem(stack, flags);
+                if (!matchAll && matchedOne || matchAll && !matchedOne) {
+                    return matchAll == flags.isBlacklist();
+                }
             }
+
+            // no matches: test succeeds if this is a blacklist, fails if a whitelist
+            return matchAll != flags.isBlacklist();
         }
+    }
 
-        // no matches: test succeeds if this is a blacklist, fails if a whitelist
-        return matchAll != flags.isBlacklist();
-
+    public Optional<Integer> cycleRoundRobin() {
+        if (roundRobin && ++rrCounter >= matchers.size()) {
+            rrCounter = 0;
+        }
+        return roundRobin ? Optional.of(rrCounter) : Optional.empty();
     }
 
     public boolean testFluid(Fluid fluid) {

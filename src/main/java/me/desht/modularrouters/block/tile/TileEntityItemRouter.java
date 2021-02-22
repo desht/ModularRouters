@@ -25,6 +25,7 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.MiscUtil;
+import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.fake_player.FakeNetHandlerPlayerServer;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import net.minecraft.block.BlockState;
@@ -100,7 +101,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private final ItemStackHandler modulesHandler = new ModuleHandler();
     private final ItemStackHandler upgradesHandler = new UpgradeHandler();
 
-    private final List<CompiledModule> compiledModules = new ArrayList<>();
+    private final List<CompiledIndexedModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private int tickRate = MRConfig.Common.Router.baseTickRate;
     private int itemsPerTick = 1;
@@ -346,9 +347,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 Arrays.fill(newRedstoneLevels, 0);
                 Arrays.fill(newSignalType, SignalType.NONE);
             }
-            for (CompiledModule cm : compiledModules) {
+            for (CompiledIndexedModule cim : compiledModules) {
+                CompiledModule cm = cim.compiledModule;
                 if (cm != null && cm.hasTarget() && cm.shouldRun(powered, pulsed))
                     if (cm.execute(this)) {
+                        cm.getFilter().cycleRoundRobin().ifPresent(counter -> {
+                            ItemStack moduleStack = modulesHandler.getStackInSlot(cim.index);
+                            ModuleHelper.setRoundRobinCounter(moduleStack, counter);
+                        });
                         newActive = true;
                         if (cm.termination() == ItemModule.Termination.RAN) {
                             break;
@@ -463,15 +469,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if ((recompileNeeded & COMPILE_MODULES) != 0) {
             setHasPulsedModules(false);
             byte newSidesOpen = 0;
-            for (CompiledModule cm : compiledModules) {
-                cm.cleanup(this);
+            for (CompiledIndexedModule cim : compiledModules) {
+                cim.compiledModule.cleanup(this);
             }
             compiledModules.clear();
             for (int i = 0; i < N_MODULE_SLOTS; i++) {
                 ItemStack stack = modulesHandler.getStackInSlot(i);
                 if (stack.getItem() instanceof ItemModule) {
                     CompiledModule cms = ((ItemModule) stack.getItem()).compile(this, stack);
-                    compiledModules.add(cms);
+                    compiledModules.add(new CompiledIndexedModule(cms, i));
                     cms.onCompiled(this);
                     newSidesOpen |= cms.getDirection().getMask();
                 }
@@ -774,8 +780,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public void notifyModules() {
-        for (CompiledModule cm : compiledModules) {
-            cm.onNeighbourChange(this);
+        for (CompiledIndexedModule cim : compiledModules) {
+            cim.compiledModule.onNeighbourChange(this);
         }
     }
 
@@ -885,6 +891,16 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
             if (!(stack.getItem() instanceof ItemUpgrade)) return 0;
             return ((ItemUpgrade) stack.getItem()).getStackLimit(slot);
+        }
+    }
+
+    private static class CompiledIndexedModule {
+        final CompiledModule compiledModule;
+        final int index;
+
+        private CompiledIndexedModule(CompiledModule compiledModule, int index) {
+            this.compiledModule = compiledModule;
+            this.index = index;
         }
     }
 }

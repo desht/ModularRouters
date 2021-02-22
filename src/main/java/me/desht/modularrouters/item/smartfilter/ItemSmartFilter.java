@@ -21,6 +21,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public abstract class ItemSmartFilter extends ItemBase {
         super(ModItems.defaultProps());
     }
 
+    @Nonnull
     public abstract IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack);
 
     /**

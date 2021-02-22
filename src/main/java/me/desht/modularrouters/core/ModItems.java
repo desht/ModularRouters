@@ -57,6 +57,7 @@ public class ModItems {
     public static final RegistryObject<Item> SYNC_UPGRADE = register("sync_upgrade", SyncUpgrade::new);
 
     public static final RegistryObject<Item> FAST_PICKUP_AUGMENT = register("fast_pickup_augment", FastPickupAugment::new);
+    public static final RegistryObject<Item> FILTER_ROUND_ROBIN_AUGMENT = register("filter_round_robin_augment", FilterRoundRobinAugment::new);
     public static final RegistryObject<Item> MIMIC_AUGMENT = register("mimic_augment", MimicAugment::new);
     public static final RegistryObject<Item> PICKUP_DELAY_AUGMENT = register("pickup_delay_augment", PickupDelayAugment::new);
     public static final RegistryObject<Item> PUSHING_AUGMENT = register("pushing_augment", PushingAugment::new);

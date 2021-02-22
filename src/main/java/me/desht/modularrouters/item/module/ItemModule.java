@@ -185,6 +185,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
      * @param stack the item to be matched
      * @return an item matcher object
      */
+    @Nonnull
     public IItemMatcher getFilterItemMatcher(ItemStack stack) {
         return new SimpleItemMatcher(stack);
     }

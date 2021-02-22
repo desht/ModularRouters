@@ -110,6 +110,10 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.AUGMENT_CORE.get(), Items.FISHING_ROD
         ).build(consumer);
 
+        shapeless(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
+                ModItems.AUGMENT_CORE.get(), Items.CLOCK
+        ).build(consumer);
+
         shapeless(ModItems.STACK_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), ModItems.STACK_UPGRADE.get()
         ).build(consumer);

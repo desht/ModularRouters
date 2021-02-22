@@ -60,7 +60,7 @@ public abstract class CompiledModule {
                 ((IRangedModule) module).getCurrentRange(getRangeModifier()) : 0;
         rangeSquared = range * range;
         targets = setupTargets(router, stack);
-        filter = new Filter(stack, shouldStoreRawFilterItems());
+        filter = new Filter(stack, shouldStoreRawFilterItems(), augmentCounter.getAugmentCount(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get()) > 0);
         termination = ModuleHelper.getTermination(stack);
         behaviour = ModuleHelper.getRedstoneBehaviour(stack);
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
@@ -78,7 +78,7 @@ public abstract class CompiledModule {
     public abstract boolean execute(@Nonnull TileEntityItemRouter router);
 
     @Nonnull
-    Filter getFilter() {
+    public Filter getFilter() {
         return filter;
     }
 
