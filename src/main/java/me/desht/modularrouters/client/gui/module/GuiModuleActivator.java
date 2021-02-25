@@ -23,8 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GuiModuleActivator extends GuiModule {
-    private static final ItemStack BLOCK_STACK = new ItemStack(Blocks.DISPENSER);
-    private static final ItemStack ITEM_STACK = new ItemStack(Items.BOW);
+    private static final ItemStack ITEM_STACK = new ItemStack(Items.FLINT_AND_STEEL);
     private static final ItemStack ENTITY_STACK = new ItemStack(Items.PLAYER_HEAD);
 
     private LookDirectionButton lookDirectionButton;
@@ -42,7 +41,7 @@ public class GuiModuleActivator extends GuiModule {
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, moduleItemStack);
 
-        ItemStack[] stacks = new ItemStack[] { BLOCK_STACK, ITEM_STACK, ENTITY_STACK };
+        ItemStack[] stacks = new ItemStack[] { ITEM_STACK, ENTITY_STACK };
         addButton(actionTypeButton = new ActionTypeButton(guiLeft + 167, guiTop + 20, 16, 16, true, stacks, cam.getActionType()));
         addButton(sneakButton = new SneakButton(guiLeft + 167, guiTop + 40, cam.isSneaking()));
         addButton(lookDirectionButton = new LookDirectionButton(guiLeft + 167, guiTop + 60, 16, 16, cam.getLookDirection()));
@@ -53,6 +52,7 @@ public class GuiModuleActivator extends GuiModule {
         getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 18, guiLeft + 183, guiTop + 37, "modularrouters.guiText.popup.activator.action");
         getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 39, guiLeft + 183, guiTop + 56, "modularrouters.guiText.popup.activator.sneak");
         getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 59, guiLeft + 183, guiTop + 76, "modularrouters.guiText.popup.activator.look", guiContainer -> lookDirectionButton.visible);
+        getMouseOverHelp().addHelpRegion(guiLeft + 130, guiTop + 59, guiLeft + 183, guiTop + 76, "modularrouters.guiText.popup.activator.look", guiContainer -> entityModeButton.visible);
     }
 
     @Override
