@@ -329,7 +329,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             if (stack.getItem() instanceof SecurityUpgrade) {
                 String name = ((SecurityUpgrade) stack.getItem()).getOwnerName(stack);
                 UUID id = ((SecurityUpgrade) stack.getItem()).getOwnerID(stack);
-                return new GameProfile(id, name);
+                if (id != null || name != null) {
+                    return new GameProfile(id, name);
+                }
             }
         }
         return DEFAULT_FAKEPLAYER_PROFILE;
