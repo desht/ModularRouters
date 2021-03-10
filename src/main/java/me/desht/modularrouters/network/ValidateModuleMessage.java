@@ -33,7 +33,7 @@ public class ValidateModuleMessage {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
             if (player != null) {
-                ItemStack stack = player.getHeldItem(hand);
+                ItemStack stack = player.getItemInHand(hand);
                 if (stack.getItem() instanceof TargetedModule) {
                     ((TargetedModule) stack.getItem()).doModuleValidation(stack, player);
                 }

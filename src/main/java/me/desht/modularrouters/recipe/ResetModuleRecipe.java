@@ -19,8 +19,8 @@ public class ResetModuleRecipe extends SpecialRecipe {
     @Override
     public boolean matches(CraftingInventory inv, World wrldIn) {
         ItemModule module = null;
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
                 if (module != null || !(stack.getItem() instanceof ItemModule)) {
                     return false;
@@ -32,10 +32,10 @@ public class ResetModuleRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack moduleStack = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (stack.getItem() instanceof ItemModule) {
                 moduleStack = stack;
                 break;
@@ -56,7 +56,7 @@ public class ResetModuleRecipe extends SpecialRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 

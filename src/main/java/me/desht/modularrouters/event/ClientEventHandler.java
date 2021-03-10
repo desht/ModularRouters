@@ -22,7 +22,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getWorld().isRemote && event.getItemStack().getItem() instanceof TargetedModule) {
+        if (event.getWorld().isClientSide && event.getItemStack().getItem() instanceof TargetedModule) {
             PacketHandler.NETWORK.sendToServer(new ValidateModuleMessage(event.getHand()));
             event.setCanceled(true);
         }
@@ -30,7 +30,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        if (event.getWorld().isRemote && event.getItemStack().getItem() instanceof TargetedModule) {
+        if (event.getWorld().isClientSide && event.getItemStack().getItem() instanceof TargetedModule) {
             PacketHandler.NETWORK.sendToServer(new ValidateModuleMessage(event.getHand()));
         }
     }

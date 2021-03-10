@@ -17,6 +17,8 @@ import javax.annotation.Nonnull;
 
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 public class BufferHandler extends ItemStackHandler {
     private final TileEntityItemRouter router;
     private boolean hasFluidCap;
@@ -41,12 +43,12 @@ public class BufferHandler extends ItemStackHandler {
 
         if (newFluidCap != hasFluidCap || newEnergyCap != hasEnergyCap) {
             // in case any pipes/cables need to connect/disconnect
-            router.getWorld().notifyNeighborsOfStateChange(router.getPos(), ModBlocks.ITEM_ROUTER.get());
+            router.getLevel().updateNeighborsAt(router.getBlockPos(), ModBlocks.ITEM_ROUTER.get());
         }
         hasFluidCap = newFluidCap;
         hasEnergyCap = newEnergyCap;
 
-        router.markDirty();  // will also update comparator output
+        router.setChanged();  // will also update comparator output
     }
 
     @Override

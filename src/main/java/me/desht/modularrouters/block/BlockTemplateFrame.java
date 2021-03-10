@@ -16,9 +16,11 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class BlockTemplateFrame extends BlockCamo {
     public BlockTemplateFrame() {
-        super(Properties.create(Material.GLASS).setAllowsSpawn((state, world, pos, entityType) -> false));
+        super(Properties.of(Material.GLASS).isValidSpawn((state, world, pos, entityType) -> false));
     }
 
     @Nullable
@@ -32,11 +34,11 @@ public class BlockTemplateFrame extends BlockCamo {
         ICamouflageable camo = getCamoState(world, pos);
         if (camo == null) return super.getPickBlock(state, target, world, pos, player);
         ItemStack stack = new ItemStack(camo.getCamouflage().getBlock().asItem());
-        return stack.setDisplayName(stack.getDisplayName().copyRaw().appendString("..?"));
+        return stack.setHoverName(stack.getHoverName().plainCopy().append("..?"));
     }
 
     @Override
     public VoxelShape getUncamouflagedShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext ctx) {
-        return VoxelShapes.fullCube();
+        return VoxelShapes.block();
     }
 }

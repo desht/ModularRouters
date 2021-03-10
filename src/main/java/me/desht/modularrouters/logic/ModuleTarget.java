@@ -55,11 +55,11 @@ public class ModuleTarget {
     }
 
     public boolean isSameWorld(World world) {
-        return gPos.getDimension() == world.getDimensionKey();
+        return gPos.dimension() == world.dimension();
     }
 
     public boolean isSameWorld(ModuleTarget dst) {
-        return gPos.getDimension() == dst.gPos.getDimension();
+        return gPos.dimension() == dst.gPos.dimension();
     }
 
     /**
@@ -90,10 +90,10 @@ public class ModuleTarget {
      * @return a (lazy optional) item handler
      */
     private LazyOptional<IItemHandler> getItemHandlerFor(World w) {
-        BlockPos pos = gPos.getPos();
-        if (w == null || !w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4))
+        BlockPos pos = gPos.pos();
+        if (w == null || !w.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4))
             return LazyOptional.empty();
-        TileEntity te = w.getTileEntity(pos);
+        TileEntity te = w.getBlockEntity(pos);
         return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
     }
 
@@ -116,7 +116,7 @@ public class ModuleTarget {
     }
 
     public ITextComponent getTextComponent() {
-        return new TranslationTextComponent(blockTranslationKey).mergeStyle(TextFormatting.WHITE)
-                .append(new StringTextComponent(" @ " + toString()).mergeStyle(TextFormatting.AQUA));
+        return new TranslationTextComponent(blockTranslationKey).withStyle(TextFormatting.WHITE)
+                .append(new StringTextComponent(" @ " + toString()).withStyle(TextFormatting.AQUA));
     }
 }

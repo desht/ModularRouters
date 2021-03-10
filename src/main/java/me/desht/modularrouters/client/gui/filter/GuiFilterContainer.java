@@ -23,17 +23,17 @@ abstract class GuiFilterContainer extends GuiContainerBase<ContainerSmartFilter>
 
         this.hand = container.getLocator().hand;
         this.filterStack = container.getFilterStack();
-        this.title = filterStack.getDisplayName().getString();
+        this.title = filterStack.getHoverName().getString();
     }
 
     boolean closeGUI() {
         // need to re-open module GUI for module in router slot <moduleSlotIndex>
-        MFLocator locator = container.getLocator();
+        MFLocator locator = menu.getLocator();
         if (locator.routerPos != null) {
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (hand != null) {
-            ItemStack stack = getMinecraft().player.getHeldItem(hand);
+            ItemStack stack = getMinecraft().player.getItemInHand(hand);
             if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));

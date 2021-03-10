@@ -40,6 +40,6 @@ public class ModBlocks {
     }
 
     private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block, final ItemGroup itemGroup) {
-        return () -> new BlockItem(block.get(), new Item.Properties().group(itemGroup));
+        return () -> new BlockItem(block.get(), new Item.Properties().tab(itemGroup));
     }
 }

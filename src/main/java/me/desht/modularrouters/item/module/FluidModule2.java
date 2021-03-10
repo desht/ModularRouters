@@ -29,7 +29,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
 
     @Override
     protected boolean isValidTarget(ItemUseContext ctx) {
-        return !ctx.getWorld().isAirBlock(ctx.getPos());
+        return !ctx.getLevel().isEmptyBlock(ctx.getClickedPos());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
 
     @Override
     protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
-        return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getDisplayName());
+        return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getHoverName());
     }
 
     @Override

@@ -33,13 +33,13 @@ public class SyncUpgrade extends ItemUpgrade {
 
     public static int getTunedValue(ItemStack stack) {
         if (!(stack.getItem() instanceof SyncUpgrade) || !stack.hasTag()) return 0;
-        CompoundNBT tag = stack.getChildTag(ModularRouters.MODID);
+        CompoundNBT tag = stack.getTagElement(ModularRouters.MODID);
         return tag == null ? 0 : tag.getInt(NBT_TUNING);
     }
 
     public static void setTunedValue(ItemStack stack, int newValue) {
         if (stack.getItem() instanceof SyncUpgrade) {
-            stack.getOrCreateChildTag(ModularRouters.MODID).putInt(NBT_TUNING, newValue);
+            stack.getOrCreateTagElement(ModularRouters.MODID).putInt(NBT_TUNING, newValue);
         }
     }
 
@@ -49,15 +49,15 @@ public class SyncUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (world.isRemote && !player.isSteppingCarefully()) {
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (world.isClientSide && !player.isSteppingCarefully()) {
             GuiSyncUpgrade.openSyncGui(stack, hand);
         } else if (player.isSteppingCarefully()) {
-            if (!world.isRemote) {
-                setTunedValue(stack, world.rand.nextInt(MRConfig.Common.Router.baseTickRate));
+            if (!world.isClientSide) {
+                setTunedValue(stack, world.random.nextInt(MRConfig.Common.Router.baseTickRate));
             } else {
-                player.sendStatusMessage(ClientUtil.xlate("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
+                player.displayClientMessage(ClientUtil.xlate("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
         }

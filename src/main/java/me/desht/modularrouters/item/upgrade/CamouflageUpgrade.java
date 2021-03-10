@@ -30,11 +30,11 @@ public class CamouflageUpgrade extends ItemUpgrade {
     }
 
     private static void setCamoState(ItemStack stack, BlockState camoState) {
-        stack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_STATE_NAME, NBTUtil.writeBlockState(camoState));
+        stack.getOrCreateTagElement(ModularRouters.MODID).put(NBT_STATE_NAME, NBTUtil.writeBlockState(camoState));
     }
 
     private static BlockState getCamoState(ItemStack stack) {
-        CompoundNBT tag = stack.getChildTag(ModularRouters.MODID);
+        CompoundNBT tag = stack.getTagElement(ModularRouters.MODID);
         return tag != null ? NBTUtil.readBlockState(tag.getCompound(NBT_STATE_NAME)) : null;
     }
 
@@ -44,28 +44,28 @@ public class CamouflageUpgrade extends ItemUpgrade {
     }
 
     private static ITextComponent getCamoStateDisplayName(BlockState camoState) {
-        return new ItemStack(camoState.getBlock().asItem()).getDisplayName();
+        return new ItemStack(camoState.getBlock().asItem()).getHoverName();
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext ctx) {
+    public ActionResultType useOn(ItemUseContext ctx) {
         PlayerEntity player = ctx.getPlayer();
         assert player != null;
-        ItemStack stack = ctx.getItem();
+        ItemStack stack = ctx.getItemInHand();
 
-        BlockState state = ctx.getWorld().getBlockState(ctx.getPos());
+        BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
-            if (!ctx.getWorld().isRemote) {
-                player.sendStatusMessage(new TranslationTextComponent("modularrouters.itemText.camouflage.held")
-                        .appendString(TextFormatting.AQUA.toString())
+            if (!ctx.getLevel().isClientSide) {
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.itemText.camouflage.held")
+                        .append(TextFormatting.AQUA.toString())
                         .append(getCamoStateDisplayName(stack))
-                        .mergeStyle(TextFormatting.YELLOW), true);
+                        .withStyle(TextFormatting.YELLOW), true);
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
             return ActionResultType.SUCCESS;
-        } else if (ctx.getWorld().isRemote) {
+        } else if (ctx.getLevel().isClientSide) {
             player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
             return ActionResultType.FAIL;
         }
@@ -73,11 +73,11 @@ public class CamouflageUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
+    public ITextComponent getName(ItemStack stack) {
         BlockState camoState = getCamoState(stack);
-        ITextComponent disp = super.getDisplayName(stack);
+        ITextComponent disp = super.getName(stack);
         if (camoState != null) {
-            return disp.deepCopy().appendString(": ").append(getCamoStateDisplayName(camoState)).mergeStyle(TextFormatting.YELLOW);
+            return disp.copy().append(": ").append(getCamoStateDisplayName(camoState)).withStyle(TextFormatting.YELLOW);
         } else {
             return disp;
         }
@@ -85,7 +85,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
 
     private static boolean isBlockOKForCamo(BlockState state) {
         // trying to camo a router as itself = recursion hell
-        return state.getRenderType() == BlockRenderType.MODEL && state.getBlock() != ModBlocks.ITEM_ROUTER.get()
+        return state.getRenderShape() == BlockRenderType.MODEL && state.getBlock() != ModBlocks.ITEM_ROUTER.get()
                 && !state.getBlock().getRegistryName().getNamespace().equals("chiselsandbits");
     }
 }

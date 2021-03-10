@@ -28,10 +28,10 @@ public class GuiModuleDistributor extends GuiModule {
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, moduleItemStack);
 
-        addButton(new TooltipButton(guiLeft + 130, guiTop + 23));
-        addButton(sb = new StrategyButton(guiLeft + 147, guiTop + 23, 16, 16, cdm.getDistributionStrategy()));
+        addButton(new TooltipButton(leftPos + 130, topPos + 23));
+        addButton(sb = new StrategyButton(leftPos + 147, topPos + 23, 16, 16, cdm.getDistributionStrategy()));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 21, guiLeft + 165, guiTop + 41,
+        getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 21, leftPos + 165, topPos + 41,
                 "modularrouters.guiText.popup.distributor.strategy");
     }
 

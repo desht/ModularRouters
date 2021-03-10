@@ -50,13 +50,13 @@ public class ContainerModule extends ContainerMRBase {
         super(type, windowId);
 
         this.locator = locator;
-        this.router = locator.getRouter(inv.player.world).orElse(null);
+        this.router = locator.getRouter(inv.player.level).orElse(null);
         assert router != null || locator.hand != null;
 
         ItemStack moduleStack = locator.getModuleStack(inv.player);
         this.filterHandler = new ModuleFilterHandler(moduleStack, router);
         this.augmentHandler = new AugmentHandler(moduleStack, router);
-        this.currentSlot = inv.currentItem + HOTBAR_START;
+        this.currentSlot = inv.selected + HOTBAR_START;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {
@@ -99,35 +99,35 @@ public class ContainerModule extends ContainerMRBase {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
-        Slot srcSlot = inventorySlots.get(index);
+    public ItemStack quickMoveStack(PlayerEntity player, int index) {
+        Slot srcSlot = slots.get(index);
 
-        if (srcSlot != null && srcSlot.getHasStack()) {
+        if (srcSlot != null && srcSlot.hasItem()) {
             if (index < AUGMENT_START) {
                 // shift-clicking in a filter slot: clear it from the filter
-                srcSlot.putStack(ItemStack.EMPTY);
+                srcSlot.set(ItemStack.EMPTY);
             } else if (index < AUGMENT_START + ItemAugment.SLOTS) {
                 // shift-clicking in augment slots
-                ItemStack stackInSlot = srcSlot.getStack();
-                if (!mergeItemStack(stackInSlot, INV_START, HOTBAR_END + 1, false)) {
+                ItemStack stackInSlot = srcSlot.getItem();
+                if (!moveItemStackTo(stackInSlot, INV_START, HOTBAR_END + 1, false)) {
                     return ItemStack.EMPTY;
                 }
-                srcSlot.putStack(stackInSlot);
-                detectAndSendChanges();
+                srcSlot.set(stackInSlot);
+                broadcastChanges();
             } else if (index <= HOTBAR_END) {
                 // shift-clicking in player inventory
-                ItemStack stackInSlot = srcSlot.getStack();
+                ItemStack stackInSlot = srcSlot.getItem();
                 if (stackInSlot.getItem() instanceof ItemAugment && augmentHandler.getHolderStack().getCount() == 1) {
                     // copy augment items into one of the augment slots if possible
-                    if (!mergeItemStack(stackInSlot, AUGMENT_START, AUGMENT_START + ItemAugment.SLOTS, false)) {
+                    if (!moveItemStackTo(stackInSlot, AUGMENT_START, AUGMENT_START + ItemAugment.SLOTS, false)) {
                         return ItemStack.EMPTY;
                     }
-                    detectAndSendChanges();
+                    broadcastChanges();
                 } else {
                     // copy it into the filter (if not already present)
                     // but don't remove it from player inventory
@@ -137,7 +137,7 @@ public class ContainerModule extends ContainerMRBase {
                     int firstFree = -1;
                     for (i = 0; i < Filter.FILTER_SIZE; i++) {
                         ItemStack stack0 = filterHandler.getStackInSlot(i);
-                        if (ItemStack.areItemsEqual(stack0, stack)) {
+                        if (ItemStack.isSame(stack0, stack)) {
                             firstFree = i;
                             break;
                         } else if (firstFree < 0 && stack0.isEmpty() && filterHandler.isItemValid(i, stack)) {
@@ -145,8 +145,8 @@ public class ContainerModule extends ContainerMRBase {
                         }
                     }
                     if (firstFree >= 0) {
-                        inventorySlots.get(firstFree).putStack(stack);
-                        srcSlot.putStack(stackInSlot);
+                        slots.get(firstFree).set(stack);
+                        srcSlot.set(stackInSlot);
                     }
                 }
             } else {
@@ -157,7 +157,7 @@ public class ContainerModule extends ContainerMRBase {
     }
 
     @Override
-    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         boolean forceUpdate = false;
 
         if (slot > HOTBAR_END) {
@@ -176,10 +176,10 @@ public class ContainerModule extends ContainerMRBase {
                     return ItemStack.EMPTY;
                 }
                 if (slot >= 0 && slot < Filter.FILTER_SIZE) {
-                    Slot s = inventorySlots.get(slot);
-                    ItemStack stackOnCursor = player.inventory.getItemStack();
+                    Slot s = slots.get(slot);
+                    ItemStack stackOnCursor = player.inventory.getCarried();
                     if (stackOnCursor.isEmpty() || isItemOKForFilter(stackOnCursor, slot)) {
-                        s.putStack(stackOnCursor.isEmpty() ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stackOnCursor, 1));
+                        s.set(stackOnCursor.isEmpty() ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stackOnCursor, 1));
                     }
                     return ItemStack.EMPTY;
                 } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
@@ -192,11 +192,11 @@ public class ContainerModule extends ContainerMRBase {
                     forceUpdate = true;
                 }
         }
-        ItemStack ret = super.slotClick(slot, dragType, clickTypeIn, player);
+        ItemStack ret = super.clicked(slot, dragType, clickTypeIn, player);
         if (forceUpdate) {
             // force item handler's onContentsChanged() to be called
-            inventorySlots.get(slot).putStack(inventorySlots.get(slot).getStack());
-            detectAndSendChanges();
+            slots.get(slot).set(slots.get(slot).getItem());
+            broadcastChanges();
         }
         return ret;
     }
@@ -214,7 +214,7 @@ public class ContainerModule extends ContainerMRBase {
     }
 
     @Override
-    public boolean canDragIntoSlot(Slot p_94531_1_) {
+    public boolean canDragTo(Slot p_94531_1_) {
         return false;
     }
 }

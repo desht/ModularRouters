@@ -41,7 +41,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), windowId, invPlayer, loc);
 
         this.handler = new BulkFilterHandler(filterStack, router);
-        this.currentSlot = invPlayer.currentItem + HOTBAR_START;
+        this.currentSlot = invPlayer.selected + HOTBAR_START;
 
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
@@ -67,7 +67,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         }
         handler.save();
 
-        if (getRouter() != null && !getRouter().getWorld().isRemote) {
+        if (getRouter() != null && !getRouter().getLevel().isClientSide) {
             getRouter().recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
         }
     }
@@ -95,7 +95,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         }
         handler.save();
 
-        if (getRouter() != null && !getRouter().getWorld().isRemote) {
+        if (getRouter() != null && !getRouter().getLevel().isClientSide) {
             getRouter().recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
         }
 
@@ -103,31 +103,31 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack stack;
-        Slot srcSlot = inventorySlots.get(index);
+        Slot srcSlot = slots.get(index);
 
-        if (srcSlot != null && srcSlot.getHasStack()) {
-            ItemStack stackInSlot = srcSlot.getStack();
+        if (srcSlot != null && srcSlot.hasItem()) {
+            ItemStack stackInSlot = srcSlot.getItem();
             stack = stackInSlot.copy();
             stack.setCount(1);
 
             if (index < handler.getSlots()) {
                 // shift-clicking in a filter slot: clear it from the filter
-                srcSlot.putStack(ItemStack.EMPTY);
+                srcSlot.set(ItemStack.EMPTY);
             } else if (index >= handler.getSlots()) {
                 // shift-clicking in player inventory: copy it into the filter (if not already present)
                 // but don't remove it from player inventory
                 int freeSlot;
                 for (freeSlot = 0; freeSlot < handler.getSlots(); freeSlot++) {
                     ItemStack stack0 = handler.getStackInSlot(freeSlot);
-                    if (stack0.isEmpty() || ItemStack.areItemStacksEqual(stack0, stack)) {
+                    if (stack0.isEmpty() || ItemStack.matches(stack0, stack)) {
                         break;
                     }
                 }
                 if (freeSlot < handler.getSlots()) {
-                    inventorySlots.get(freeSlot).putStack(stack);
-                    srcSlot.putStack(stackInSlot);
+                    slots.get(freeSlot).set(stack);
+                    srcSlot.set(stackInSlot);
                 }
             }
         }
@@ -135,7 +135,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
@@ -144,14 +144,14 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
                     return ItemStack.EMPTY;
                 }
                 if (slot < handler.getSlots() && slot >= 0) {
-                    Slot s = inventorySlots.get(slot);
-                    ItemStack stackOnCursor = player.inventory.getItemStack();
+                    Slot s = slots.get(slot);
+                    ItemStack stackOnCursor = player.inventory.getCarried();
                     if (!stackOnCursor.isEmpty()) {
                         ItemStack stack1 = stackOnCursor.copy();
                         stack1.setCount(1);
-                        s.putStack(stack1);
+                        s.set(stack1);
                     } else {
-                        s.putStack(ItemStack.EMPTY);
+                        s.set(ItemStack.EMPTY);
                     }
                     return ItemStack.EMPTY;
                 }
@@ -160,6 +160,6 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
                     return ItemStack.EMPTY;
                 }
         }
-        return super.slotClick(slot, dragType, clickTypeIn, player);
+        return super.clicked(slot, dragType, clickTypeIn, player);
     }
 }

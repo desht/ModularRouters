@@ -54,6 +54,8 @@ import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {
         BLACKLIST(true, 0x1, "F_blacklist"),
@@ -107,11 +109,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                 case DOWN:
                     return Direction.DOWN;
                 case LEFT:
-                    return current.rotateY();
+                    return current.getClockWise();
                 case BACK:
                     return current.getOpposite();
                 case RIGHT:
-                    return current.rotateYCCW();
+                    return current.getCounterClockWise();
                 default: // including FRONT
                     return current;
             }
@@ -192,14 +194,14 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
-        super.addInformation(stack, world, list, flag);
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.appendHoverText(stack, world, list, flag);
 
         TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
         if (router != null) {
-            Slot slot = ((GuiItemRouter) Minecraft.getInstance().currentScreen).getSlotUnderMouse();
+            Slot slot = ((GuiItemRouter) Minecraft.getInstance().screen).getSlotUnderMouse();
             if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
-                String s = ClientSetup.keybindConfigure.getKey().getTranslationKey();
+                String s = ClientSetup.keybindConfigure.getKey().getName();
                 list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
             }
         }
@@ -218,11 +220,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                     "modularrouters.guiText.tooltip.allDirections" : "modularrouters.guiText.tooltip." + dir.toString());
             list.add(xlate("modularrouters.guiText.label.direction")
                     .append(new StringTextComponent(": "))
-                    .append(itc.mergeStyle(TextFormatting.AQUA)));
+                    .append(itc.withStyle(TextFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
         list.add(new StringTextComponent(
-                        I18n.format("modularrouters.itemText.misc.flags") + ": " +
+                        I18n.get("modularrouters.itemText.misc.flags") + ": " +
                                 String.join(" | ",
                                         formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
                                         formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
@@ -232,9 +234,9 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         );
 
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
-        list.add(xlate("modularrouters.itemText.misc.match").appendString(": ")
+        list.add(xlate("modularrouters.itemText.misc.match").append(": ")
                 .append(xlate("modularrouters.itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
-                        .mergeStyle(TextFormatting.AQUA)));
+                        .withStyle(TextFormatting.AQUA)));
 
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
@@ -247,14 +249,14 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
         Termination termination = ModuleHelper.getTermination(itemstack);
         if (termination != Termination.NONE) {
-            list.add(xlate(termination.getTranslationKey() + ".header").mergeStyle(TextFormatting.YELLOW));
+            list.add(xlate(termination.getTranslationKey() + ".header").withStyle(TextFormatting.YELLOW));
         }
 
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
-            list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getDisplayName().copyRaw().mergeStyle(TextFormatting.AQUA)));
+            list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(TextFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
-                    list.add(new StringTextComponent("\u25b6 ").append(ench.getDisplayName(level).copyRaw().mergeStyle(TextFormatting.AQUA)).mergeStyle(TextFormatting.YELLOW)));
+                    list.add(new StringTextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(TextFormatting.AQUA)).withStyle(TextFormatting.YELLOW)));
         }
     }
 
@@ -265,7 +267,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             int n = c.getAugmentCount(augment);
             if (n > 0) {
                 ItemStack augmentStack = new ItemStack(augment);
-                String s = augmentStack.getDisplayName().getString();
+                String s = augmentStack.getHoverName().getString();
                 if (n > 1) s = n + " x " + s;
                 s += TextFormatting.AQUA + augment.getExtraInfo(n, stack);
                 toAdd.add(new StringTextComponent(" \u2022 " + TextFormatting.DARK_GREEN + s));
@@ -279,17 +281,17 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     public String getDirectionString(RelativeDirection dir) {
         return isOmniDirectional() && dir == RelativeDirection.NONE ?
-                I18n.format("modularrouters.guiText.tooltip.allDirections") :
-                I18n.format("modularrouters.guiText.tooltip." + dir.toString());
+                I18n.get("modularrouters.guiText.tooltip.allDirections") :
+                I18n.get("modularrouters.guiText.tooltip." + dir.toString());
     }
 
     private String formatFlag(String key, boolean flag) {
-        String text = I18n.format("modularrouters.itemText.misc." + key);
+        String text = I18n.get("modularrouters.itemText.misc." + key);
         return (flag ? TextFormatting.DARK_GRAY : TextFormatting.AQUA) + text + TextFormatting.RESET;
     }
 
     protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
-        return stack.getDisplayName();
+        return stack.getHoverName();
     }
 
     protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
@@ -304,30 +306,30 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             if (s.getItem() instanceof ItemSmartFilter) {
                 int size = ((ItemSmartFilter) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(new StringTextComponent(" \u2022 ").append(s.getDisplayName().copyRaw().appendString(suffix))
-                        .mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC));
+                l2.add(new StringTextComponent(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
+                        .withStyle(TextFormatting.AQUA, TextFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new StringTextComponent(" \u2022 ").append(getFilterItemDisplayName(s).copyRaw()
-                        .mergeStyle(TextFormatting.AQUA)));
+                l2.add(new StringTextComponent(" \u2022 ").append(getFilterItemDisplayName(s).plainCopy()
+                        .withStyle(TextFormatting.AQUA)));
             }
         }
         if (l2.isEmpty()) {
-            list.add(itemListHeader(itemstack).mergeStyle(TextFormatting.YELLOW).appendString(": ")
-                    .append(xlate("modularrouters.itemText.misc.noItems").mergeStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
+            list.add(itemListHeader(itemstack).withStyle(TextFormatting.YELLOW).append(": ")
+                    .append(xlate("modularrouters.itemText.misc.noItems").withStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(itemListHeader(itemstack).mergeStyle(TextFormatting.YELLOW).appendString(": "));
+            list.add(itemListHeader(itemstack).withStyle(TextFormatting.YELLOW).append(": "));
             list.addAll(l2);
         }
     }
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         ModuleHelper.validateNBT(stack);
         if (!player.isSteppingCarefully()) {
-            if (!world.isRemote) {
+            if (!world.isClientSide) {
                 MFLocator locator = MFLocator.heldModule(hand);
                 NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, locator), locator::writeBuf);
             }
@@ -338,7 +340,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         if (stack.getItem() instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) stack.getItem()).getPickaxe(stack);
             return !pick.isEmpty() && !EnchantmentHelper.getEnchantments(pick).isEmpty();
@@ -370,7 +372,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
         @Override
         public ITextComponent getDisplayName() {
-            return moduleStack.getDisplayName();
+            return moduleStack.getHoverName();
         }
 
         @Nullable

@@ -30,8 +30,8 @@ public class ModuleHelper {
 
     @Nonnull
     public static CompoundNBT validateNBT(ItemStack stack) {
-        CompoundNBT compound = stack.getOrCreateChildTag(ModularRouters.MODID);
-        if (compound.getTagId(NBT_FLAGS) == Constants.NBT.TAG_BYTE) {
+        CompoundNBT compound = stack.getOrCreateTagElement(ModularRouters.MODID);
+        if (compound.getTagType(NBT_FLAGS) == Constants.NBT.TAG_BYTE) {
             // migrate old-format flags (encoded into a byte) to modern flexible format
             byte b = compound.getByte(NBT_FLAGS);
             for (ModuleFlags flag : ModuleFlags.values()) {
@@ -47,7 +47,7 @@ public class ModuleHelper {
 
             ModularRouters.LOGGER.info("migrated module NBT for " + stack + " to new format");
         }
-        if (compound.getTagId(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
+        if (compound.getTagType(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
             compound.put(NBT_FILTER, new CompoundNBT());
         }
         return compound;

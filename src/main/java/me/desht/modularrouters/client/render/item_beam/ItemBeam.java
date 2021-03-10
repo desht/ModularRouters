@@ -34,7 +34,7 @@ public class ItemBeam {
     }
 
     public AxisAlignedBB getAABB() {
-        return new AxisAlignedBB(startPos.getX(), startPos.getY(), startPos.getZ(), endPos.getX(), endPos.getY(), endPos.getZ());
+        return new AxisAlignedBB(startPos.x(), startPos.y(), startPos.z(), endPos.x(), endPos.y(), endPos.z());
     }
 
     public void tick() {

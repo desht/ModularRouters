@@ -83,13 +83,13 @@ public class ModItems {
 
     static final ItemGroup MR_CREATIVE_TAB = new ItemGroup(ModularRouters.MODID) {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(ModBlocks.ITEM_ROUTER.get());
         }
     };
 
     public static Item.Properties defaultProps() {
-        return new Item.Properties().group(MR_CREATIVE_TAB);
+        return new Item.Properties().tab(MR_CREATIVE_TAB);
     }
 
     public interface ITintable {

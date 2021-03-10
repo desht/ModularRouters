@@ -57,7 +57,7 @@ public class CompiledVacuumModule extends CompiledModule {
         fastPickup = getAugmentCount(ModItems.FAST_PICKUP_AUGMENT.get()) > 0;
         xpMode = getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0;
 
-        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
+        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             xpCollectionType = XPCollectionType.values()[compound.getInt(NBT_XP_FLUID_TYPE)];
             autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
@@ -97,7 +97,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         fluidReceiver = null;
         for (Direction face : Direction.values()) {
-            TileEntity te = router.getWorld().getTileEntity(router.getPos().offset(face));
+            TileEntity te = router.getLevel().getBlockEntity(router.getBlockPos().relative(face));
             if (te != null) {
                 te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()).ifPresent(handler -> {
                     if (handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
@@ -117,15 +117,15 @@ public class CompiledVacuumModule extends CompiledModule {
 
         ItemStack bufferStack = router.getBuffer().getStackInSlot(0);
 
-        BlockPos centrePos = getTarget().gPos.getPos();
+        BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
-        List<ItemEntity> items = router.getWorld().getEntitiesWithinAABB(ItemEntity.class,
-                new AxisAlignedBB(centrePos.add(-range, -range, -range), centrePos.add(range + 1, range + 1, range + 1)));
+        List<ItemEntity> items = router.getLevel().getEntitiesOfClass(ItemEntity.class,
+                new AxisAlignedBB(centrePos.offset(-range, -range, -range), centrePos.offset(range + 1, range + 1, range + 1)));
 
         int toPickUp = getItemsPerTick(router);
 
         for (ItemEntity item : items) {
-            if (!item.isAlive() || (!fastPickup && item.cannotPickup())) {
+            if (!item.isAlive() || (!fastPickup && item.hasPickUpDelay())) {
                 continue;
             }
             ItemStack stackOnGround = item.getItem();
@@ -144,7 +144,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     item.remove();
                 }
                 if (inserted > 0 && MRConfig.Common.Module.vacuumParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-                    ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.CLOUD, item.getPosX(), item.getPosY() + 0.25, item.getPosZ(), 2, 0.0, 0.0, 0.0, 0.0);
+                    ((ServerWorld) router.getLevel()).sendParticles(ParticleTypes.CLOUD, item.getX(), item.getY() + 0.25, item.getZ(), 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {
                     break;
@@ -155,10 +155,10 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private boolean handleXpMode(TileEntityItemRouter router) {
-        BlockPos centrePos = getTarget().gPos.getPos();
+        BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
-        List<ExperienceOrbEntity> orbs = router.getWorld().getEntitiesWithinAABB(ExperienceOrbEntity.class,
-                new AxisAlignedBB(centrePos).grow(range));
+        List<ExperienceOrbEntity> orbs = router.getLevel().getEntitiesOfClass(ExperienceOrbEntity.class,
+                new AxisAlignedBB(centrePos).inflate(range));
         if (orbs.isEmpty()) {
             return false;
         }
@@ -187,25 +187,25 @@ public class CompiledVacuumModule extends CompiledModule {
 
         int initialSpaceForXp = spaceForXp;
         for (ExperienceOrbEntity orb : orbs) {
-            if (orb.getXpValue() > spaceForXp) {
+            if (orb.getValue() > spaceForXp) {
                 break;
             }
             if (xpCollectionType.isSolid()) {
-                xpBuffered += orb.getXpValue();
+                xpBuffered += orb.getValue();
                 if (xpBuffered > xpCollectionType.getXpRatio()) {
                     int count = xpBuffered / xpCollectionType.getXpRatio();
                     ItemStack stack = ItemHandlerHelper.copyStackWithSize(xpCollectionType.getIcon(), count);
                     ItemStack excess = router.insertBuffer(stack);
                     xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
                     if (!excess.isEmpty()) {
-                        InventoryUtils.dropItems(router.getWorld(), Vector3d.copyCentered(router.getPos()), excess);
+                        InventoryUtils.dropItems(router.getLevel(), Vector3d.atCenterOf(router.getBlockPos()), excess);
                     }
                 }
             } else {
                 boolean filledAll = lazyFluidHandler.map(xpHandler -> doFluidXPFill(orb, xpHandler)).orElse(false);
                 if (!filledAll) spaceForXp = 0;
             }
-            spaceForXp -= orb.getXpValue();
+            spaceForXp -= orb.getValue();
             orb.remove();
         }
 
@@ -213,7 +213,7 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private boolean doFluidXPFill(ExperienceOrbEntity orb, IFluidHandler xpHandler) {
-        FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getXpValue() * xpCollectionType.getXpRatio() + xpBuffered);
+        FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getValue() * xpCollectionType.getXpRatio() + xpBuffered);
         int filled = xpHandler.fill(xpStack, IFluidHandler.FluidAction.EXECUTE);
         if (filled < xpStack.getAmount()) {
             // tank is too full to store entire amount...
@@ -247,7 +247,7 @@ public class CompiledVacuumModule extends CompiledModule {
         ItemModule.RelativeDirection dir = getDirection();
         int offset = dir == ItemModule.RelativeDirection.NONE ? 0 : getRange() + 1;
         Direction facing = router.getAbsoluteFacing(dir);
-        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getWorld(), router.getPos().offset(facing, offset));
+        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getLevel(), router.getBlockPos().relative(facing, offset));
         return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 

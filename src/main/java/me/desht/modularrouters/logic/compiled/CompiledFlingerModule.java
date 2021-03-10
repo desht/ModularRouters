@@ -47,9 +47,9 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         if (fired && MRConfig.Common.Module.flingerEffects) {
             ModuleTarget target = getTarget();
             int n = Math.round(speed * 5);
-            BlockPos pos = target.gPos.getPos();
+            BlockPos pos = target.gPos.pos();
             if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-                ((ServerWorld) router.getWorld()).spawnParticle(ParticleTypes.LARGE_SMOKE,
+                ((ServerWorld) router.getLevel()).sendParticles(ParticleTypes.LARGE_SMOKE,
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
@@ -96,7 +96,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         double y = Math.sin(pitchRad);
         double z = -(Math.sin(yawRad) * Math.cos(pitchRad));  // north is negative Z
 
-        item.setMotion(x * speed, y * speed, z * speed);
+        item.setDeltaMovement(x * speed, y * speed, z * speed);
     }
 
     private float yawFromFacing(Direction absoluteFacing) {

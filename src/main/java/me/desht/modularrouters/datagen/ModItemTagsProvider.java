@@ -25,7 +25,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     }
 
     @Override
-    protected void registerTags() {
+    protected void addTags() {
         for (RegistryObject<Item> ro : ModItems.ITEMS.getEntries()) {
             if (ro.get() instanceof ItemModule) {
                 addItemsToTag(ModularRoutersTags.Items.MODULES, ro);
@@ -41,7 +41,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @SafeVarargs
     private final void addItemsToTag(ITag.INamedTag<Item> tag, Supplier<? extends IItemProvider>... items) {
-        getOrCreateBuilder(tag).add(Arrays.stream(items).map(Supplier::get).map(IItemProvider::asItem).toArray(Item[]::new));
+        tag(tag).add(Arrays.stream(items).map(Supplier::get).map(IItemProvider::asItem).toArray(Item[]::new));
     }
 
     @Override

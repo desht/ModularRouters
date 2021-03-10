@@ -17,8 +17,8 @@ public class FloatTextField extends TextFieldWidgetMR {
         this.min = min;
         this.max = max;
 
-        setMaxStringLength(5);
-        setValidator(input -> {
+        setMaxLength(5);
+        setFilter(input -> {
             if (input == null || input.isEmpty() || input.equals("-")) {
                 return true;  // treat as numeric zero
             }
@@ -60,7 +60,7 @@ public class FloatTextField extends TextFieldWidgetMR {
 
     public void setValue(float newVal) {
         if (newVal >= min && newVal <= max) {
-            setText(String.format(precStr, newVal));
+            setValue(String.format(precStr, newVal));
         }
     }
 
@@ -76,21 +76,21 @@ public class FloatTextField extends TextFieldWidgetMR {
         }
         float val;
         try {
-            val = Float.parseFloat(getText());
+            val = Float.parseFloat(getValue());
         } catch (NumberFormatException e) {
             val = min;
         }
         float newVal = Math.max(min, Math.min(max, val + adj));
         if (newVal != val) {
-            setText("");
-            writeText(String.format(precStr, newVal));
+            setValue("");
+            insertText(String.format(precStr, newVal));
         }
         return true;
     }
 
-    public float getValue() {
+    public float getFloatValue() {
         try {
-            return Float.parseFloat(getText());
+            return Float.parseFloat(getValue());
         } catch (NumberFormatException e) {
             return 0f;
         }

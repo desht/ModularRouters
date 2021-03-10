@@ -40,7 +40,7 @@ public class RouterDataProvider implements IServerDataProvider<TileEntity> {
             }
         }
         CompoundNBT upgrades = new CompoundNBT();
-        counts.forEach((k, v) -> upgrades.putInt(k.getTranslationKey(), v));
+        counts.forEach((k, v) -> upgrades.putInt(k.getDescriptionId(), v));
         return upgrades;
     }
 }

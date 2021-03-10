@@ -19,6 +19,8 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class ItemBase extends Item {
     public ItemBase(Properties props) {
         super(props);
@@ -26,17 +28,17 @@ public abstract class ItemBase extends Item {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         if (world == null) return;
 
-        ITextComponent text = ClientSetup.keybindModuleInfo.func_238171_j_();
+        ITextComponent text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage();
 
-        if (ClientSetup.keybindModuleInfo.isKeyDown()) {
+        if (ClientSetup.keybindModuleInfo.isDown()) {
             addUsageInformation(stack, list);
         } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             if (ClientUtil.thisScreenPassesEvents()) {
-                // func_240701_a_() = applyTextStyles()
+                // withStyle() = applyTextStyles()
                 list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
             }
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {

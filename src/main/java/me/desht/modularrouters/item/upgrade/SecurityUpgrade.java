@@ -66,7 +66,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
 
         if (compound.contains(NBT_PLAYERS)) {
             CompoundNBT p = compound.getCompound(NBT_PLAYERS);
-            res.addAll(p.keySet().stream().map(UUID::fromString).collect(Collectors.toList()));
+            res.addAll(p.getAllKeys().stream().map(UUID::fromString).collect(Collectors.toList()));
         }
         return res;
     }
@@ -81,7 +81,7 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
         CompoundNBT compound = stack.getTag();
         if (compound != null && compound.contains(NBT_PLAYERS)) {
             CompoundNBT p = compound.getCompound(NBT_PLAYERS);
-            return p.keySet().stream().map(p::getString).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+            return p.getAllKeys().stream().map(p::getString).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
         } else {
             return Collections.emptySet();
         }
@@ -124,27 +124,27 @@ public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (!player.getEntityWorld().isRemote && player.isSteppingCarefully()) {
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!player.getCommandSenderWorld().isClientSide && player.isSteppingCarefully()) {
             setOwner(stack, player);
-            player.sendStatusMessage(new TranslationTextComponent("modularrouters.itemText.security.owner", player.getDisplayName().getString()), false);
-            return ActionResult.resultSuccess(stack);
+            player.displayClientMessage(new TranslationTextComponent("modularrouters.itemText.security.owner", player.getDisplayName().getString()), false);
+            return ActionResult.success(stack);
         }
-        return ActionResult.resultPass(stack);
+        return ActionResult.pass(stack);
     }
 
     @Override
-    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
+    public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
         if (entity instanceof PlayerEntity) {
             PlayerEntity targetPlayer = (PlayerEntity)entity;
-            String id = targetPlayer.getUniqueID().toString();
+            String id = targetPlayer.getUUID().toString();
             String name = targetPlayer.getDisplayName().toString();
             Result res = player.isSteppingCarefully() ? removePlayer(stack, id) : addPlayer(stack, id, name);
-            if (player.world.isRemote) {
+            if (player.level.isClientSide) {
                 player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
             } else {
-                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.security." + res.toString(), name), false);
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.security." + res.toString(), name), false);
             }
             return ActionResultType.SUCCESS;
         }

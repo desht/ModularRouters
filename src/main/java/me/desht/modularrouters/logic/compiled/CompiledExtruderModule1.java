@@ -49,11 +49,11 @@ public class CompiledExtruderModule1 extends CompiledModule {
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
         boolean extend = shouldExtend(router);
-        World world = router.getWorld();
+        World world = router.getLevel();
 
         if (extend && !router.isBufferEmpty() && distance < getRange() && isRegulationOK(router, false)) {
             // try to extend
-            BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
+            BlockPos placePos = router.getBlockPos().relative(getFacing(), distance + 1);
             ItemStack toPlace = router.peekBuffer(1);
             BlockState state = BlockUtil.tryPlaceAsBlock(router, toPlace, world, placePos, getFacing());
             if (state != null) {
@@ -64,15 +64,15 @@ public class CompiledExtruderModule1 extends CompiledModule {
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                 }
-                tryPushEntities(router.getWorld(), placePos, getFacing());
+                tryPushEntities(router.getLevel(), placePos, getFacing());
                 return true;
             }
         } else if (!extend && distance > 0 && isRegulationOK(router, true)) {
             // try to retract
-            BlockPos breakPos = router.getPos().offset(getFacing(), distance);
+            BlockPos breakPos = router.getBlockPos().relative(getFacing(), distance);
             BlockState oldState = world.getBlockState(breakPos);
             Block oldBlock = oldState.getBlock();
-            if (world.isAirBlock(breakPos) || oldBlock instanceof FlowingFluidBlock) {
+            if (world.isEmptyBlock(breakPos) || oldBlock instanceof FlowingFluidBlock) {
                 // nothing there? continue to retract anyway...
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
@@ -96,15 +96,15 @@ public class CompiledExtruderModule1 extends CompiledModule {
         if (!MRConfig.Common.Module.extruderPushEntities) {
             return;
         }
-        Vector3d v = Vector3d.copy(facing.getDirectionVec()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
-        for (Entity entity : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(placePos))) {
-            if (entity.getPushReaction() != PushReaction.IGNORE) {
-                entity.setMotion(v);
+        Vector3d v = Vector3d.atLowerCornerOf(facing.getNormal()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);
+        for (Entity entity : world.getEntitiesOfClass(Entity.class, new AxisAlignedBB(placePos))) {
+            if (entity.getPistonPushReaction() != PushReaction.IGNORE) {
+                entity.setDeltaMovement(v);
                 entity.setOnGround(false);
-                entity.collidedHorizontally = false;
-                entity.collidedVertically = false;
+                entity.horizontalCollision = false;
+                entity.verticalCollision = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
-                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.getPosX(), entity.getPosY(), entity.getPosZ(), 32, world.getDimensionKey());
+                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(entity.getX(), entity.getY(), entity.getZ(), 32, world.dimension());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                         new PushEntityMessage(entity, v));
             }

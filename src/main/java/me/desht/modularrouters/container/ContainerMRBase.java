@@ -18,7 +18,7 @@ public abstract class ContainerMRBase extends Container {
      * ItemStackHandler#onContentsChanged() never gets called in this case, which is no good for us.
      * Also, modified to properly honour slot/stack limits (important for upgrade limits)
      */
-    protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+    protected boolean moveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
         boolean flag = false;
         int i = startIndex;
         if (reverseDirection) {
@@ -35,23 +35,23 @@ public abstract class ContainerMRBase extends Container {
                     break;
                 }
 
-                Slot slot = this.inventorySlots.get(i);
-                ItemStack itemstack = slot.getStack();
-                if (!itemstack.isEmpty() && areItemsAndTagsEqual(stack, itemstack)) {
+                Slot slot = this.slots.get(i);
+                ItemStack itemstack = slot.getItem();
+                if (!itemstack.isEmpty() && consideredTheSameItem(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
                     // modified HERE
-                    int maxSize = Math.min(slot.getItemStackLimit(itemstack), Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize()));
+                    int maxSize = Math.min(slot.getMaxStackSize(itemstack), Math.min(slot.getMaxStackSize(), stack.getMaxStackSize()));
 //                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
                     if (j <= maxSize) {
                         stack.setCount(0);
                         itemstack.setCount(j);
-                        slot.putStack(itemstack);   // <- modified HERE
+                        slot.set(itemstack);   // <- modified HERE
 //                        slot.onSlotChanged();
                         flag = true;
                     } else if (itemstack.getCount() < maxSize) {
                         stack.shrink(maxSize - itemstack.getCount());
                         itemstack.setCount(maxSize);
-                        slot.putStack(itemstack);   // <- modified HERE
+                        slot.set(itemstack);   // <- modified HERE
 //                        slot.onSlotChanged();
                         flag = true;
                     }
@@ -81,15 +81,15 @@ public abstract class ContainerMRBase extends Container {
                     break;
                 }
 
-                Slot slot1 = this.inventorySlots.get(i);
-                ItemStack itemstack1 = slot1.getStack();
-                if (itemstack1.isEmpty() && slot1.isItemValid(stack)) {
+                Slot slot1 = this.slots.get(i);
+                ItemStack itemstack1 = slot1.getItem();
+                if (itemstack1.isEmpty() && slot1.mayPlace(stack)) {
                     // modified HERE
-                    int limit = Math.min(slot1.getSlotStackLimit(), slot1.getItemStackLimit(stack));
+                    int limit = Math.min(slot1.getMaxStackSize(), slot1.getMaxStackSize(stack));
                     if (stack.getCount() > limit) {
-                        slot1.putStack(stack.split(limit));
+                        slot1.set(stack.split(limit));
                     } else {
-                        slot1.putStack(stack.split(stack.getCount()));
+                        slot1.set(stack.split(stack.getCount()));
                     }
 //                    if (stack.getCount() > slot1.getSlotStackLimit()) {
 //                        slot1.putStack(stack.split(slot1.getSlotStackLimit()));
@@ -97,7 +97,7 @@ public abstract class ContainerMRBase extends Container {
 //                        slot1.putStack(stack.split(stack.getCount()));
 //                    }
 
-                    slot1.onSlotChanged();
+                    slot1.setChanged();
                     flag = true;
                     break;
                 }

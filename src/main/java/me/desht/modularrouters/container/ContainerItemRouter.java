@@ -47,7 +47,7 @@ public class ContainerItemRouter extends ContainerMRBase {
     public ContainerItemRouter(int windowId, PlayerInventory invPlayer, BlockPos routerPos) {
         super(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), windowId);
 
-        Optional<TileEntityItemRouter> o = TileEntityItemRouter.getRouterAt(invPlayer.player.world, routerPos);
+        Optional<TileEntityItemRouter> o = TileEntityItemRouter.getRouterAt(invPlayer.player.level, routerPos);
         this.router = o.orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
 
         // player's hotbar
@@ -78,18 +78,18 @@ public class ContainerItemRouter extends ContainerMRBase {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
-        return router.getWorld().getTileEntity(router.getPos()) == router
-                && Vector3d.copyCentered(router.getPos()).squareDistanceTo(player.getPositionVec()) <= 64;
+    public boolean stillValid(PlayerEntity player) {
+        return router.getLevel().getBlockEntity(router.getBlockPos()) == router
+                && Vector3d.atCenterOf(router.getBlockPos()).distanceToSqr(player.position()) <= 64;
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity player, int sourceSlotIndex) {
-        Slot sourceSlot = inventorySlots.get(sourceSlotIndex);
-        if (sourceSlot == null || !sourceSlot.getHasStack()) {
+    public ItemStack quickMoveStack(PlayerEntity player, int sourceSlotIndex) {
+        Slot sourceSlot = slots.get(sourceSlotIndex);
+        if (sourceSlot == null || !sourceSlot.hasItem()) {
             return ItemStack.EMPTY;
         }
-        ItemStack sourceStack = sourceSlot.getStack();
+        ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
         // Check if the slot clicked is one of the vanilla container slots
@@ -97,23 +97,23 @@ public class ContainerItemRouter extends ContainerMRBase {
             // This is a vanilla container slot so merge the stack into the appropriate part of the router's inventory
             if (sourceStack.getItem() instanceof ItemModule) {
                 // shift-clicked a module: see if there's a free module slot
-                if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
+                if (!moveItemStackTo(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (sourceStack.getItem() instanceof ItemUpgrade) {
                 // shift-clicked an upgrade: see if there's a free upgrade slot
-                if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + UPGRADE_SLOT_START, TE_FIRST_SLOT + UPGRADE_SLOT_END + 1, false)) {
+                if (!moveItemStackTo(sourceStack, TE_FIRST_SLOT + UPGRADE_SLOT_START, TE_FIRST_SLOT + UPGRADE_SLOT_END + 1, false)) {
                     return ItemStack.EMPTY;
                 }
             } else {
                 // try to merge item into the router's buffer slot
-                if (!mergeItemStack(sourceStack, TE_FIRST_SLOT + BUFFER_SLOT, TE_FIRST_SLOT + BUFFER_SLOT + 1, false)) {
+                if (!moveItemStackTo(sourceStack, TE_FIRST_SLOT + BUFFER_SLOT, TE_FIRST_SLOT + BUFFER_SLOT + 1, false)) {
                     return ItemStack.EMPTY;
                 }
             }
         } else if (sourceSlotIndex < TE_FIRST_SLOT + TE_LAST_SLOT) {
             // This is a router slot, so merge the stack into the players inventory
-            if (!mergeItemStack(sourceStack, 0, TE_FIRST_SLOT - 1, false)) {
+            if (!moveItemStackTo(sourceStack, 0, TE_FIRST_SLOT - 1, false)) {
                 return ItemStack.EMPTY;
             }
         } else {
@@ -123,9 +123,9 @@ public class ContainerItemRouter extends ContainerMRBase {
 
         // If stack size == 0 (the entire stack was moved) set slot contents to null
         if (sourceStack.isEmpty()) {
-            sourceSlot.putStack(ItemStack.EMPTY);
+            sourceSlot.set(ItemStack.EMPTY);
         } else {
-            sourceSlot.onSlotChanged();
+            sourceSlot.setChanged();
         }
 
         sourceSlot.onTake(player, sourceStack);

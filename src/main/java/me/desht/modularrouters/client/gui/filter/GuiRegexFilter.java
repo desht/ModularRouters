@@ -56,7 +56,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         }
 
         addButton(new Buttons.AddButton(xPos + 155, yPos + 23, button -> {
-            if (!regexTextField.getText().isEmpty()) addRegex();
+            if (!regexTextField.getValue().isEmpty()) addRegex();
         }));
 
         deleteButtons.clear();
@@ -74,18 +74,18 @@ public class GuiRegexFilter extends GuiFilterScreen {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
 
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(textureLocation);
+        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        minecraft.getTextureManager().bind(textureLocation);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.func_243248_b(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringPropertyWidth(title) / 2f, yPos + 6, 0x404040);
+        font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - font.width(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            font.drawString(matrixStack, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
+            font.draw(matrixStack, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         if (!errorMsg.isEmpty()) {
-            font.drawString(matrixStack, errorMsg, xPos + 8, yPos + 170, 0x804040);
+            font.draw(matrixStack, errorMsg, xPos + 8, yPos + 170, 0x804040);
         }
 
         super.render(matrixStack, mouseX, mouseY, partialTicks);
@@ -103,15 +103,15 @@ public class GuiRegexFilter extends GuiFilterScreen {
 
     private void addRegex() {
         try {
-            String regex = regexTextField.getText();
+            String regex = regexTextField.getValue();
             Pattern.compile(regex);
             sendAddStringMessage("String", regex);
-            regexTextField.setText("");
+            regexTextField.setValue("");
             getOrCreateTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
             minecraft.player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
-            errorMsg = I18n.format("modularrouters.guiText.label.regexError");
+            errorMsg = I18n.get("modularrouters.guiText.label.regexError");
             errorTimer = 60;
         }
     }
@@ -135,7 +135,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         RegexTextField(GuiRegexFilter parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
             super(parent.getOrCreateTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
-            setMaxStringLength(40);
+            setMaxLength(40);
         }
 
         @Override
@@ -152,7 +152,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
             if (mouseX >= this.x && mouseX < this.x + this.width && mouseY >= this.y && mouseY < this.y + this.height) {
                 if (mouseButton == 1) {
-                    setText("");  // right click clears field
+                    setValue("");  // right click clears field
                 }
             }
             return super.mouseClicked(mouseX, mouseY, mouseButton);

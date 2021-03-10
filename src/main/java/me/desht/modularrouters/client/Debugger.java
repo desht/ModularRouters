@@ -12,7 +12,7 @@ public class Debugger {
      */
     @OnlyIn(Dist.CLIENT)
     public static boolean ungrabMouse() {
-        Minecraft.getInstance().mouseHelper.ungrabMouse();
+        Minecraft.getInstance().mouseHandler.releaseMouse();
         return true;
     }
 }

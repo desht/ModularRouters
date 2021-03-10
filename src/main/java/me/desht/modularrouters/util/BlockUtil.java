@@ -37,9 +37,9 @@ public class BlockUtil {
     private static BlockState getPlaceableState(BlockItemUseContext ctx) {
         try {
             BlockState res = null;
-            World world = ctx.getWorld();
-            BlockPos pos = ctx.getPos();
-            Item item = ctx.getItem().getItem();
+            World world = ctx.getLevel();
+            BlockPos pos = ctx.getClickedPos();
+            Item item = ctx.getItemInHand().getItem();
             if (item instanceof BlockItem) {
                 Block block = ((BlockItem) item).getBlock();
                 res = block.getStateForPlacement(ctx);
@@ -49,7 +49,7 @@ public class BlockUtil {
                 // special handling for cocoa bean planting
                 res = getCocoaBeanState(ctx);
             }
-            if (res != null && !res.isValidPosition(world, pos)) {
+            if (res != null && !res.canSurvive(world, pos)) {
                 res = null;
             }
             return res;
@@ -64,9 +64,9 @@ public class BlockUtil {
         if (ctx.getPlayer() == null) return null;
         // try to find a jungle log in any horizontal direction
         for (Direction f : HORIZONTALS) {
-            BlockState state = ctx.getWorld().getBlockState(ctx.getPos().offset(f));
+            BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos().relative(f));
             if (state.getBlock() == Blocks.JUNGLE_LOG) {
-                ctx.getPlayer().rotationYaw = getYawFromFacing(f);  // fake player must face the jungle log
+                ctx.getPlayer().yRot = getYawFromFacing(f);  // fake player must face the jungle log
                 return Blocks.COCOA.getStateForPlacement(ctx);
             }
         }
@@ -97,28 +97,28 @@ public class BlockUtil {
         BlockState currentState = world.getBlockState(pos);
 
         FakePlayer fakePlayer = router.getFakePlayer();
-        fakePlayer.rotationYaw = getYawFromFacing(facing);
-        fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
+        fakePlayer.yRot = getYawFromFacing(facing);
+        fakePlayer.setItemInHand(Hand.MAIN_HAND, toPlace);
 
-        float hitX = (float) (fakePlayer.getPosX() - pos.getX());
-        float hitY = (float) (fakePlayer.getPosY() - pos.getY());
-        float hitZ = (float) (fakePlayer.getPosZ() - pos.getZ());
+        float hitX = (float) (fakePlayer.getX() - pos.getX());
+        float hitY = (float) (fakePlayer.getY() - pos.getY());
+        float hitZ = (float) (fakePlayer.getZ() - pos.getZ());
         BlockRayTraceResult brtr = new BlockRayTraceResult(new Vector3d(hitX, hitY, hitZ), facing, pos, false);
         BlockItemUseContext ctx = new BlockItemUseContext(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
-        if (!currentState.isReplaceable(ctx)) {
+        if (!currentState.canBeReplaced(ctx)) {
             return null;
         }
 
         BlockState newState = getPlaceableState(ctx);
         if (newState != null) {
-            BlockSnapshot snap = BlockSnapshot.create(world.getDimensionKey(), world, pos);
-            fakePlayer.setHeldItem(Hand.MAIN_HAND, toPlace);
-            BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), fakePlayer);
+            BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
+            fakePlayer.setItemInHand(Hand.MAIN_HAND, toPlace);
+            BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
-            if (!event.isCanceled() && world.setBlockState(pos, newState)) {
-                fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-                BlockItem.setTileEntityNBT(world, fakePlayer, pos, toPlace);
-                newState.getBlock().onBlockPlacedBy(world, pos, newState, fakePlayer, toPlace);
+            if (!event.isCanceled() && world.setBlockAndUpdate(pos, newState)) {
+                fakePlayer.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                BlockItem.updateCustomBlockEntityTag(world, fakePlayer, pos, toPlace);
+                newState.getBlock().setPlacedBy(world, pos, newState, fakePlayer, toPlace);
                 return newState;
             }
         }
@@ -129,10 +129,10 @@ public class BlockUtil {
     public static boolean tryPlaceBlock(TileEntityItemRouter router, BlockState newState, World world, BlockPos pos) {
         if (!(world instanceof ServerWorld) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
 
-        BlockSnapshot snap = BlockSnapshot.create(world.getDimensionKey(), world, pos);
-        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.getDefaultState(), router.getFakePlayer());
+        BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
+        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), router.getFakePlayer());
         MinecraftForge.EVENT_BUS.post(event);
-        return !event.isCanceled() && world.setBlockState(pos, newState);
+        return !event.isCanceled() && world.setBlockAndUpdate(pos, newState);
     }
 
     /**
@@ -153,17 +153,17 @@ public class BlockUtil {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (block.isAir(state, world, pos) || state.getBlockHardness(world, pos) < 0 || block instanceof FlowingFluidBlock) {
+        if (block.isAir(state, world, pos) || state.getDestroySpeed(world, pos) < 0 || block instanceof FlowingFluidBlock) {
             return BreakResult.NOT_BROKEN;
         }
 
         FakePlayer fakePlayer = router.getFakePlayer();
-        fakePlayer.setHeldItem(Hand.MAIN_HAND, pickaxe);
+        fakePlayer.setItemInHand(Hand.MAIN_HAND, pickaxe);
         if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.canHarvestBlock(state, fakePlayer, world, pos)) {
             return BreakResult.NOT_BROKEN;
         }
 
-        List<ItemStack> allDrops = Block.getDrops(world.getBlockState(pos), serverWorld, pos, world.getTileEntity(pos), fakePlayer, pickaxe);
+        List<ItemStack> allDrops = Block.getDrops(world.getBlockState(pos), serverWorld, pos, world.getBlockEntity(pos), fakePlayer, pickaxe);
         Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
@@ -177,7 +177,7 @@ public class BlockUtil {
     }
 
     public static String getBlockName(World w, BlockPos pos) {
-        return w == null ? "" : w.getBlockState(pos).getBlock().getTranslationKey();
+        return w == null ? "" : w.getBlockState(pos).getBlock().getDescriptionId();
     }
 
     public static class BreakResult {
@@ -211,11 +211,11 @@ public class BlockUtil {
             for (ItemStack drop : getFilteredDrops(true)) {
                 ItemStack excess = handler.insertItem(0, drop, false);
                 if (!excess.isEmpty()) {
-                    InventoryUtils.dropItems(world, Vector3d.copyCentered(pos), excess);
+                    InventoryUtils.dropItems(world, Vector3d.atCenterOf(pos), excess);
                 }
             }
             for (ItemStack drop : getFilteredDrops(false)) {
-                InventoryUtils.dropItems(world, Vector3d.copyCentered(pos), drop);
+                InventoryUtils.dropItems(world, Vector3d.atCenterOf(pos), drop);
             }
         }
     }

@@ -186,9 +186,9 @@ public abstract class CompiledModule {
             return null;
         }
         Direction facing = router.getAbsoluteFacing(direction);
-        BlockPos pos = router.getPos().offset(facing);
-        String blockName = BlockUtil.getBlockName(router.getWorld(), pos);
-        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getWorld(), pos);
+        BlockPos pos = router.getBlockPos().relative(facing);
+        String blockName = BlockUtil.getBlockName(router.getLevel(), pos);
+        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getLevel(), pos);
         return Collections.singletonList(new ModuleTarget(gPos, facing.getOpposite(), blockName));
     }
 

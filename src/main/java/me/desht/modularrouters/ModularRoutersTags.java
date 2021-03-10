@@ -13,11 +13,11 @@ public class ModularRoutersTags {
         public static final ITag.INamedTag<Item> FILTERS = modTag("filters");
 
         private static ITag.INamedTag<Item> modTag(String name) {
-            return ItemTags.makeWrapperTag(new ResourceLocation(ModularRouters.MODID, name).toString());
+            return ItemTags.bind(new ResourceLocation(ModularRouters.MODID, name).toString());
         }
 
         private static ITag.INamedTag<Item> forgeTag(String name) {
-            return ItemTags.makeWrapperTag(new ResourceLocation("forge", name).toString());
+            return ItemTags.bind(new ResourceLocation("forge", name).toString());
         }
     }
 

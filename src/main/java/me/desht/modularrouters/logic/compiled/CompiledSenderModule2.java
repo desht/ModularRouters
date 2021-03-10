@@ -15,7 +15,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
 
     @Override
     protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
-        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
+        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getLevel().isClientSide));
     }
 
     @Override
@@ -25,13 +25,13 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
             return PositionedItemHandler.INVALID;
         }
 
-        return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.getPos(), h))
+        return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.pos(), h))
                 .orElse(PositionedItemHandler.INVALID);
     }
 
     private boolean validate(TileEntityItemRouter router, ModuleTarget target) {
         if (!isRangeLimited()) return true;
-        return target.isSameWorld(router.getWorld()) && router.getPos().distanceSq(target.gPos.getPos()) <= getRangeSquared();
+        return target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared();
     }
 
     @Override

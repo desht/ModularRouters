@@ -60,8 +60,8 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vector3d vec1 = Vector3d.copyCentered(router.getPos());
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().getDimensionKey());
+            Vector3d vec1 = Vector3d.atCenterOf(router.getBlockPos());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getLevel().dimension());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate(), false));
         }
@@ -74,21 +74,21 @@ public class CompiledSenderModule1 extends CompiledModule {
     PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
         ModuleTarget target = getEffectiveTarget(router);
         if (target != null) {
-            return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.getPos(), h)).orElse(PositionedItemHandler.INVALID);
+            return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.pos(), h)).orElse(PositionedItemHandler.INVALID);
         }
         return PositionedItemHandler.INVALID;
     }
 
     @Override
     public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
-        BlockPos p0 = getTarget().gPos.getPos();
+        BlockPos p0 = getTarget().gPos.pos();
         BlockPos.Mutable pos = new BlockPos.Mutable(p0.getX(), p0.getY(), p0.getZ());
         Direction face = getTarget().face;
-        World world = router.getWorld();
+        World world = router.getLevel();
         for (int i = 1; i <= getRange(); i++) {
-            TileEntity te = world.getTileEntity(pos);
+            TileEntity te = world.getBlockEntity(pos);
             if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getTarget().face).isPresent()) {
-                GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos.toImmutable());
+                GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos.immutable());
                 return new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
             } else if (!isPassable(world, pos, face)) {
                 return null;
@@ -100,7 +100,7 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     private boolean isPassable(World w, BlockPos pos, Direction face) {
         BlockState state = w.getBlockState(pos);
-        return !MiscUtil.blockHasSolidSide(state, w, pos, face.getOpposite()) || !state.isOpaqueCube(w, pos);
+        return !MiscUtil.blockHasSolidSide(state, w, pos, face.getOpposite()) || !state.isSolidRender(w, pos);
     }
 
     static class PositionedItemHandler {

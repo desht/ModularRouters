@@ -34,7 +34,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     public CompiledDistributorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
+        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             distributionStrategy = DistributionStrategy.values()[compound.getInt(NBT_STRATEGY)];
             if (distributionStrategy == DistributionStrategy.FURTHEST_FIRST) {
@@ -51,7 +51,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
-        Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.getWorld().isRemote);
+        Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.getLevel().isClientSide);
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
         l.sort(Comparator.comparingDouble(o -> calcDist(o, router)));
@@ -59,8 +59,8 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     private static double calcDist(ModuleTarget tgt, TileEntity te) {
-        double distance = tgt.gPos.getPos().distanceSq(te.getPos());
-        if (!tgt.isSameWorld(te.getWorld())) {
+        double distance = tgt.gPos.pos().distSqr(te.getBlockPos());
+        if (!tgt.isSameWorld(te.getLevel())) {
             distance += 100000000;  // cross-dimension penalty
         }
         return distance;
@@ -87,7 +87,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 }
                 break;
             case RANDOM:
-                int r = router.getWorld().rand.nextInt(getTargets().size());
+                int r = router.getLevel().random.nextInt(getTargets().size());
                 res = getTargets().get(r);
                 break;
             case NEAREST_FIRST:

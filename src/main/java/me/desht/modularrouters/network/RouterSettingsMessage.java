@@ -22,7 +22,7 @@ public class RouterSettingsMessage {
     private final BlockPos pos;
 
     public RouterSettingsMessage(TileEntityItemRouter router) {
-        this.pos = router.getPos();
+        this.pos = router.getBlockPos();
         this.redstoneBehaviour = router.getRedstoneBehaviour();
         this.eco = router.getEcoMode();
     }
@@ -41,7 +41,7 @@ public class RouterSettingsMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            World w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getServerWorld();
+            World w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getLevel();
             TileEntityItemRouter.getRouterAt(w, pos).ifPresent(router -> {
                 router.setRedstoneBehaviour(redstoneBehaviour);
                 router.setEcoMode(eco);

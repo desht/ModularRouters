@@ -19,7 +19,7 @@ public class PushEntityMessage {
     private final Vector3d vec;
 
     public PushEntityMessage(Entity entity, Vector3d vec) {
-        this.id = entity.getEntityId();
+        this.id = entity.getId();
         this.vec = vec;
     }
 
@@ -38,11 +38,11 @@ public class PushEntityMessage {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             World w = ClientUtil.theClientWorld();
-            Entity entity = w.getEntityByID(id);
+            Entity entity = w.getEntity(id);
             if (entity != null) {
-                entity.setMotion(vec.x, vec.y, vec.z);
-                entity.collidedHorizontally = false;
-                entity.collidedVertically = false;
+                entity.setDeltaMovement(vec.x, vec.y, vec.z);
+                entity.horizontalCollision = false;
+                entity.verticalCollision = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
             }
         });

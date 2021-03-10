@@ -29,7 +29,7 @@ public class ItemBeamMessage {
         reversed = buf.readBoolean();
         pos1 = buf.readBlockPos();
         pos2 = buf.readBlockPos();
-        stack = buf.readItemStack();
+        stack = buf.readItem();
         color = buf.readInt();
         itemFade = buf.readBoolean();
         duration = buf.readVarInt();
@@ -46,7 +46,7 @@ public class ItemBeamMessage {
      */
     public ItemBeamMessage(TileEntity te, BlockPos other, boolean reversed, ItemStack stack, int color, int duration, boolean itemFade) {
         this.reversed = reversed;
-        this.pos1 = te.getPos();
+        this.pos1 = te.getBlockPos();
         this.pos2 = other;
         this.stack = stack;
         this.color = color;
@@ -58,7 +58,7 @@ public class ItemBeamMessage {
         buf.writeBoolean(reversed);
         buf.writeBlockPos(pos1);
         buf.writeBlockPos(pos2);
-        buf.writeItemStack(stack);
+        buf.writeItem(stack);
         buf.writeInt(color);
         buf.writeBoolean(itemFade);
         buf.writeVarInt(duration);

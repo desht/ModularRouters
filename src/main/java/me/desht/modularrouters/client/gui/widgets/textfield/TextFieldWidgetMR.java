@@ -26,8 +26,8 @@ public class TextFieldWidgetMR extends TextFieldWidget {
      */
     public void useGuiTextBackground() {
         setTextColor(0xffffffff);
-        setDisabledTextColour(0xffffffff);
-        setEnableBackgroundDrawing(false);
+        setTextColorUneditable(0xffffffff);
+        setBordered(false);
     }
 
     public void onMouseWheel(int direction) {}

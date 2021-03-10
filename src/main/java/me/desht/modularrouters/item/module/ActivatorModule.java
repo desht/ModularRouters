@@ -25,23 +25,23 @@ public class ActivatorModule extends ItemModule {
         super.addSettingsInformation(stack, list);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
-        list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.action").appendString(": ")
-                .mergeStyle(TextFormatting.YELLOW)
+        list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.action").append(": ")
+                .withStyle(TextFormatting.YELLOW)
                 .append(ClientUtil.xlate("modularrouters.itemText.activator.action." + cam.getActionType())
-                        .mergeStyle(TextFormatting.AQUA)));
+                        .withStyle(TextFormatting.AQUA)));
         if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
-            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.lookDirection").appendString(": ")
-                    .mergeStyle(TextFormatting.YELLOW)
+            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.lookDirection").append(": ")
+                    .withStyle(TextFormatting.YELLOW)
                     .append(ClientUtil.xlate("modularrouters.itemText.activator.direction." + cam.getLookDirection())
-                            .mergeStyle(TextFormatting.AQUA)));
+                            .withStyle(TextFormatting.AQUA)));
         } else {
-            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.entityMode").appendString(": ")
-                    .mergeStyle(TextFormatting.YELLOW)
+            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.entityMode").append(": ")
+                    .withStyle(TextFormatting.YELLOW)
                     .append(ClientUtil.xlate("modularrouters.itemText.activator.entityMode." + cam.getEntityMode())
-                            .mergeStyle(TextFormatting.AQUA)));
+                            .withStyle(TextFormatting.AQUA)));
         }
         if (cam.isSneaking()) {
-            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.sneak").mergeStyle(TextFormatting.YELLOW));
+            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.sneak").withStyle(TextFormatting.YELLOW));
         }
     }
 

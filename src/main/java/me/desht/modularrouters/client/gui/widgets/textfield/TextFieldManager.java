@@ -21,8 +21,8 @@ public class TextFieldManager {
     }
 
     public void drawTextFields(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        GlStateManager.disableLighting();
-        GlStateManager.disableBlend();
+        GlStateManager._disableLighting();
+        GlStateManager._disableBlend();
         textFields.forEach(tf -> tf.renderButton(matrixStack, mouseX, mouseY, partialTicks));
     }
 
@@ -46,7 +46,7 @@ public class TextFieldManager {
     public boolean mouseScrolled(double wheel) {
         if (wheel == 0) {
             return false;
-        } else if (isFocused() && textFields.get(focusedField).getVisible()) {
+        } else if (isFocused() && textFields.get(focusedField).isVisible()) {
             textFields.get(focusedField).onMouseWheel(wheel < 0 ? -1 : 1);
             return true;
         }
@@ -58,7 +58,7 @@ public class TextFieldManager {
              boolean wasTextfieldFocused = isFocused();
              cycleFocus(Screen.hasShiftDown() ? -1 : 1);
              return wasTextfieldFocused;
-        } else if (isFocused() && textFields.get(focusedField).getVisible()) {
+        } else if (isFocused() && textFields.get(focusedField).isVisible()) {
             return textFields.get(focusedField).keyPressed(keyCode, scanCode, modifiers);
         }
         return false;
@@ -66,7 +66,7 @@ public class TextFieldManager {
 
 
     public boolean charTyped(char c, int modifiers) {
-        return isFocused() && textFields.get(focusedField).getVisible()
+        return isFocused() && textFields.get(focusedField).isVisible()
                 && textFields.get(focusedField).charTyped(c, modifiers);
     }
 
@@ -99,14 +99,14 @@ public class TextFieldManager {
             } else if (f >= textFields.size()) {
                 f = 0;
             }
-        } while (c < textFields.size() && !textFields.get(f).getVisible() && f != focusedField);
+        } while (c < textFields.size() && !textFields.get(f).isVisible() && f != focusedField);
 
         if (f != oldF) {
             focus(f);
-            textFields.get(f).setCursorPositionEnd();
-            textFields.get(f).setSelectionPos(0);
+            textFields.get(f).moveCursorToEnd();
+            textFields.get(f).setHighlightPos(0);
             if (oldF >= 0 && oldF < textFields.size()) {
-                textFields.get(oldF).setSelectionPos(textFields.get(oldF).getCursorPosition());
+                textFields.get(oldF).setHighlightPos(textFields.get(oldF).getCursorPosition());
             }
         }
     }
@@ -119,10 +119,10 @@ public class TextFieldManager {
         TextFieldWidgetMR tf = textFields.get(ordinal);
         if (newFocus) {
             focus(ordinal);
-            tf.setCursorPositionEnd();
-            tf.setSelectionPos(0);
+            tf.moveCursorToEnd();
+            tf.setHighlightPos(0);
         } else {
-            tf.setSelectionPos(tf.getCursorPosition());
+            tf.setHighlightPos(tf.getCursorPosition());
         }
     }
 

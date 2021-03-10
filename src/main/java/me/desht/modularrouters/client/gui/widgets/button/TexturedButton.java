@@ -13,6 +13,8 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 public abstract class TexturedButton extends ExtendedButton implements ITooltipButton {
     static final ResourceLocation TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/widgets.png");
 
@@ -26,7 +28,7 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
     @Override
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            Minecraft.getInstance().getTextureManager().bindTexture(TEXTURE);
+            Minecraft.getInstance().getTextureManager().bind(TEXTURE);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getYImage(this.isHovered);

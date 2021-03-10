@@ -12,8 +12,8 @@ public class RouterFakePlayer extends FakePlayer {
     }
 
     @Override
-    public Vector3d getPositionVec() {
-        return new Vector3d(getPosX(), getPosY(), getPosZ());
+    public Vector3d position() {
+        return new Vector3d(getX(), getY(), getZ());
     }
 
     @Override
@@ -22,7 +22,7 @@ public class RouterFakePlayer extends FakePlayer {
     }
 
     @Override
-    public double getPosYEye() {
-        return getPosY();
+    public double getEyeY() {
+        return getY();
     }
 }

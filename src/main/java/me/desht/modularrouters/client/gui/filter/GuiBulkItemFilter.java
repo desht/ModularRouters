@@ -23,6 +23,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 public class GuiBulkItemFilter extends GuiFilterContainer {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
 
@@ -34,43 +36,43 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     public GuiBulkItemFilter(ContainerSmartFilter container, PlayerInventory inventory, ITextComponent displayName) {
         super(container, inventory, displayName);
 
-        this.xSize = GUI_WIDTH;
-        this.ySize = GUI_HEIGHT;
+        this.imageWidth = GUI_WIDTH;
+        this.imageHeight = GUI_HEIGHT;
     }
 
     @Override
     public void init() {
         super.init();
 
-        addButton(new ClearButton(guiLeft + 8, guiTop + 130,
-                p -> PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.CLEAR_ALL, container.getLocator(), null))
+        addButton(new ClearButton(leftPos + 8, topPos + 130,
+                p -> PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.CLEAR_ALL, menu.getLocator(), null))
         ));
 
-        MFLocator locator = container.getLocator();
+        MFLocator locator = menu.getLocator();
         if (locator.filterSlot >= 0) {
             // in a module; add a back button to go back to module gui
-            addButton(new BackButton(guiLeft + 2, guiTop + 2, p -> closeGUI()));
+            addButton(new BackButton(leftPos + 2, topPos + 2, p -> closeGUI()));
         }
 
         if (locator.routerSlot >= 0 && locator.routerPos != null) {
             // in a module in a router; add buttons to merge/load the module's target inventory
             ItemStack moduleStack = locator.getModuleStack(Minecraft.getInstance().player);
-            TileEntityItemRouter router = container.getRouter();
+            TileEntityItemRouter router = menu.getRouter();
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
-            if (target.getItemHandler(minecraft.world).isPresent()) {
-                addButton(new MergeButton(guiLeft + 28, guiTop + 130, target.toString(),
-                        I18n.format(target.blockTranslationKey), p -> {
+            if (target.getItemHandler(minecraft.level).isPresent()) {
+                addButton(new MergeButton(leftPos + 28, topPos + 130, target.toString(),
+                        I18n.get(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                                Operation.MERGE, container.getLocator(), target.toNBT()));
+                                Operation.MERGE, menu.getLocator(), target.toNBT()));
                     }
                 }));
-                addButton(new LoadButton(guiLeft + 48, guiTop + 130, target.toString(),
-                        I18n.format(target.blockTranslationKey), p -> {
+                addButton(new LoadButton(leftPos + 48, topPos + 130, target.toString(),
+                        I18n.get(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
-                                Operation.LOAD, container.getLocator(), target.toNBT()));
+                                Operation.LOAD, menu.getLocator(), target.toNBT()));
                     }
                 }));
             }
@@ -78,14 +80,14 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, 8, 0x404040);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, 8, 0x404040);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        minecraft.getTextureManager().bindTexture(textureLocation);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        minecraft.getTextureManager().bind(textureLocation);
+        blit(matrixStack, leftPos, topPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }
 
     @Override

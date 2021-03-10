@@ -7,6 +7,8 @@ import me.desht.modularrouters.client.util.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 public class ItemStackButton extends TexturedButton {
     private final ItemStack renderStack;
     private final boolean flat;
@@ -25,7 +27,7 @@ public class ItemStackButton extends TexturedButton {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             Minecraft mc = Minecraft.getInstance();
-            mc.getTextureManager().bindTexture(TEXTURE);
+            mc.getTextureManager().bind(TEXTURE);
 //            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getYImage(this.isHovered);

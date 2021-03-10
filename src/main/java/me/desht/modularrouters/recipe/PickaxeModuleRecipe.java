@@ -35,8 +35,8 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     public boolean matches(CraftingInventory inv, World worldIn) {
         if (!super.matches(inv, worldIn)) return false;
 
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) || stack.getItem() instanceof IPickaxeUser) {
                 return true;
             }
@@ -45,10 +45,10 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack pick = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE)) {
                 pick = stack;
                 break;
@@ -58,7 +58,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
             }
         }
         if (!pick.isEmpty()) {
-            ItemStack result = super.getCraftingResult(inv);
+            ItemStack result = super.assemble(inv);
             return ((IPickaxeUser) result.getItem()).setPickaxe(result, pick);
         } else {
             return ItemStack.EMPTY;
@@ -71,8 +71,8 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         }
 
         private static NonNullList<Ingredient> ingredients() {
-            return NonNullList.from(Ingredient.EMPTY,
-                    Ingredient.fromItems(ModItems.BLANK_MODULE.get()),
+            return NonNullList.of(Ingredient.EMPTY,
+                    Ingredient.of(ModItems.BLANK_MODULE.get()),
                     new PickaxeIngredient()
             );
         }
@@ -89,10 +89,10 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         }
 
         private static NonNullList<Ingredient> ingredients() {
-            return NonNullList.from(Ingredient.EMPTY,
-                    Ingredient.fromItems(ModItems.BLANK_MODULE.get()),
-                    Ingredient.fromItems(ModItems.PLACER_MODULE.get()),
-                    Ingredient.fromItems(ModItems.BREAKER_MODULE.get())
+            return NonNullList.of(Ingredient.EMPTY,
+                    Ingredient.of(ModItems.BLANK_MODULE.get()),
+                    Ingredient.of(ModItems.PLACER_MODULE.get()),
+                    Ingredient.of(ModItems.BREAKER_MODULE.get())
             );
         }
 
@@ -117,7 +117,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         @Override
         public boolean test(@Nullable ItemStack stack) {
             // should match anything that claims to be a pickaxe
-            return stack != null && stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) && stack.getDamage() == 0;
+            return stack != null && stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) && stack.getDamageValue() == 0;
         }
     }
 }

@@ -37,11 +37,11 @@ public class GuiModuleVacuum extends GuiModule {
         CompiledVacuumModule vac = new CompiledVacuumModule(null, moduleItemStack);
 
         ItemStack[] icons = Arrays.stream(XPCollectionType.values()).map(XPCollectionType::getIcon).toArray(ItemStack[]::new);
-        addButton(xpb = new XPTypeButton(guiLeft + 170, guiTop + 28, 16, 16, true, icons, vac.getXPCollectionType()));
-        addButton(ejb = new EjectButton(guiLeft + 167, guiTop + 48, vac.isAutoEjecting()));
+        addButton(xpb = new XPTypeButton(leftPos + 170, topPos + 28, 16, 16, true, icons, vac.getXPCollectionType()));
+        addButton(ejb = new EjectButton(leftPos + 167, topPos + 48, vac.isAutoEjecting()));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 24, guiLeft + 187, guiTop + 45, "modularrouters.guiText.popup.xpVacuum", guiContainer -> xpb.visible);
-        getMouseOverHelp().addHelpRegion(guiLeft + 125, guiTop + 46, guiLeft + 187, guiTop + 65, "modularrouters.guiText.popup.xpVacuum.eject", guiContainer -> xpb.visible);
+        getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 24, leftPos + 187, topPos + 45, "modularrouters.guiText.popup.xpVacuum", guiContainer -> xpb.visible);
+        getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 46, leftPos + 187, topPos + 65, "modularrouters.guiText.popup.xpVacuum.eject", guiContainer -> xpb.visible);
     }
 
     @Override
@@ -53,21 +53,21 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderLabels(matrixStack, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
+            font.draw(matrixStack, I18n.get("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                font.draw(matrixStack, I18n.get("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            this.blit(matrixStack,guiLeft + 168, guiTop + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
+            this.blit(matrixStack,leftPos + 168, topPos + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
         }
     }
 
@@ -87,8 +87,8 @@ public class GuiModuleVacuum extends GuiModule {
 
             for (XPCollectionType type : XPCollectionType.values()) {
                 StringTextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId()));
-                IFormattableTextComponent title = type.getDisplayName().copyRaw();
-                tips.add(ImmutableList.of(title, modName.mergeStyle(TextFormatting.BLUE, TextFormatting.ITALIC)));
+                IFormattableTextComponent title = type.getDisplayName().plainCopy();
+                tips.add(ImmutableList.of(title, modName.withStyle(TextFormatting.BLUE, TextFormatting.ITALIC)));
             }
         }
 

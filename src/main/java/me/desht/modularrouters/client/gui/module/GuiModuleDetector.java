@@ -36,7 +36,7 @@ public class GuiModuleDetector extends GuiModule {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        intField = new IntegerTextField(manager, font, guiLeft + 152, guiTop + 19, 20, 12, Range.between(0, 15));
+        intField = new IntegerTextField(manager, font, leftPos + 152, topPos + 19, 20, 12, Range.between(0, 15));
         intField.setValue(cdm.getSignalLevel());
         intField.setResponder((str) -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);
@@ -46,29 +46,29 @@ public class GuiModuleDetector extends GuiModule {
 
         ITextComponent label = ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
-        addButton(new Button(guiLeft + 138, guiTop + 33, 40, 20, label, button -> {
+        addButton(new Button(leftPos + 138, topPos + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
             button.setMessage(ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
             GuiModuleDetector.this.sendToServer();
         }));
 
-        addButton(new TooltipButton(guiLeft + 132, guiTop + 15, 16, 16, redstoneStack));
+        addButton(new TooltipButton(leftPos + 132, topPos + 15, 16, 16, redstoneStack));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 129, guiTop + 14, guiLeft + 172, guiTop + 31, "modularrouters.guiText.popup.detector.signalLevel");
-        getMouseOverHelp().addHelpRegion(guiLeft + 135, guiTop + 31, guiLeft + 180, guiTop + 54, "modularrouters.guiText.popup.detector.weakStrong");
+        getMouseOverHelp().addHelpRegion(leftPos + 129, topPos + 14, leftPos + 172, topPos + 31, "modularrouters.guiText.popup.detector.signalLevel");
+        getMouseOverHelp().addHelpRegion(leftPos + 135, topPos + 31, leftPos + 180, topPos + 54, "modularrouters.guiText.popup.detector.weakStrong");
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         // text entry field background - super has already bound the correct texture
-        this.blit(matrixStack, guiLeft + 148, guiTop + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
+        this.blit(matrixStack, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
     }
 
     @Override
     protected CompoundNBT buildMessageData() {
         CompoundNBT compound = super.buildMessageData();
-        compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) intField.getValue());
+        compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) intField.getIntValue());
         compound.putBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
         return compound;
     }

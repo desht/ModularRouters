@@ -50,12 +50,12 @@ public class CompiledActivatorModule extends CompiledModule {
 
 
     private final Set<String> BLOCK_METHODS = ImmutableSet.of(
-            "onBlockActivated", "func_227031_a_"
+            "onBlockActivated", "use"
     );
     private final Set<String> ITEM_METHODS = ImmutableSet.of(
             "onItemUseFirst", // forge method, no SRG nam
-            "onItemUse", "func_195939_a",
-            "onItemRightClick", "func_77659_a"
+            "onItemUse", "useOn",
+            "onItemRightClick", "use"
     );
     private static final Set<Item> itemBlacklist = new HashSet<>();
     private static final Set<Block> blockBlacklist = new HashSet<>();
@@ -86,8 +86,8 @@ public class CompiledActivatorModule extends CompiledModule {
 
         BlockPos offset(BlockPos pos, int dist) {
             switch (this) {
-                case ABOVE: return pos.offset(Direction.UP, dist);
-                case BELOW: return pos.offset(Direction.DOWN, dist);
+                case ABOVE: return pos.relative(Direction.UP, dist);
+                case BELOW: return pos.relative(Direction.DOWN, dist);
                 default: return pos;
             }
         }
@@ -110,7 +110,7 @@ public class CompiledActivatorModule extends CompiledModule {
     public CompiledActivatorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
+        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             if (compound.contains(NBT_ACTION_TYPE_OLD)) {
                 actionType = ActionType.fromOldOrdinal(compound.getInt(NBT_ACTION_TYPE_OLD));
@@ -138,31 +138,31 @@ public class CompiledActivatorModule extends CompiledModule {
         if (!stack.isEmpty() && !getFilter().test(stack)) {
             return false;
         }
-        World world = router.getWorld();
-        BlockPos pos = router.getPos();
+        World world = router.getLevel();
+        BlockPos pos = router.getBlockPos();
 
         RouterFakePlayer fakePlayer = router.getFakePlayer();
-        Vector3d centre = Vector3d.copyCentered(pos);
+        Vector3d centre = Vector3d.atCenterOf(pos);
         // place the fake player just outside the router, on the correct face
-        fakePlayer.setPosition(centre.getX() + getFacing().getXOffset() * 0.501, centre.getY() + getFacing().getYOffset() * 0.501, centre.getZ() + getFacing().getZOffset() * 0.501);
-        fakePlayer.setSneaking(sneaking);
-        fakePlayer.setHeldItem(Hand.MAIN_HAND, stack);
+        fakePlayer.setPos(centre.x() + getFacing().getStepX() * 0.501, centre.y() + getFacing().getStepY() * 0.501, centre.z() + getFacing().getStepZ() * 0.501);
+        fakePlayer.setShiftKeyDown(sneaking);
+        fakePlayer.setItemInHand(Hand.MAIN_HAND, stack);
 
         boolean didWork = false;
         if (actionType == ActionType.USE_ITEM_ON_ENTITY) {
             didWork = doUseItemOnEntity(router, fakePlayer);
         } else {
-            fakePlayer.rotationYaw = MiscUtil.getYawFromFacing(getFacing());
-            fakePlayer.rotationPitch = getFacing().getAxis() == Direction.Axis.Y ? getFacing().getYOffset() * -90 : lookDirection.pitch;
+            fakePlayer.yRot = MiscUtil.getYawFromFacing(getFacing());
+            fakePlayer.xRot = getFacing().getAxis() == Direction.Axis.Y ? getFacing().getStepY() * -90 : lookDirection.pitch;
             BlockRayTraceResult brtr = doRayTrace(pos, fakePlayer);
-            BlockState state = world.getBlockState(brtr.getPos());
+            BlockState state = world.getBlockState(brtr.getBlockPos());
             if (brtr.getType() != RayTraceResult.Type.MISS && blockBlacklist.contains(state.getBlock())) {
                 return false;
             }
             try {
-                didWork = fakePlayer.interactionManager.func_219441_a(fakePlayer, world, stack, Hand.MAIN_HAND, brtr).isSuccessOrConsume();
+                didWork = fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, Hand.MAIN_HAND, brtr).consumesAction();
                 if (!didWork) {
-                    didWork = fakePlayer.interactionManager.processRightClick(fakePlayer, world, stack, Hand.MAIN_HAND).isSuccessOrConsume();
+                    didWork = fakePlayer.gameMode.useItem(fakePlayer, world, stack, Hand.MAIN_HAND).consumesAction();
                 }
             } catch (Exception e) {
                 handleBlacklisting(stack, state, e);
@@ -170,7 +170,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
 
         if (didWork) {
-            router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
+            router.setBufferItemStack(fakePlayer.getMainHandItem());
             dropExtraItems(router, fakePlayer);
         }
 
@@ -196,21 +196,21 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private BlockRayTraceResult doRayTrace(BlockPos routerPos, FakePlayer fp) {
-        Vector3d fpVec = fp.getPositionVec();
+        Vector3d fpVec = fp.position();
         double reachDist = getPlayerReachDistance(fp);
         for (int i = 1; i < reachDist; i++) {
-            BlockPos targetPos = lookDirection.offset(routerPos.offset(getFacing(), i), i);
-            if (fp.world.isAirBlock(targetPos)) continue;
-            VoxelShape shape = fp.world.getBlockState(targetPos).getShape(fp.world, targetPos);
-            Vector3d targetVec = shape.isEmpty() ? Vector3d.copyCentered(targetPos) : shape.toBoundingBoxList().get(0).getCenter().add(Vector3d.copy(targetPos));
-            BlockRayTraceResult res = fp.world.rayTraceBlocks(new RayTraceContext(
+            BlockPos targetPos = lookDirection.offset(routerPos.relative(getFacing(), i), i);
+            if (fp.level.isEmptyBlock(targetPos)) continue;
+            VoxelShape shape = fp.level.getBlockState(targetPos).getShape(fp.level, targetPos);
+            Vector3d targetVec = shape.isEmpty() ? Vector3d.atCenterOf(targetPos) : shape.toAabbs().get(0).getCenter().add(Vector3d.atLowerCornerOf(targetPos));
+            BlockRayTraceResult res = fp.level.clip(new RayTraceContext(
                     fpVec, targetVec, BlockMode.OUTLINE, FluidMode.SOURCE_ONLY, null)
             );
             if (res.getType() == RayTraceResult.Type.BLOCK) {
                 return res;
             }
         }
-        return BlockRayTraceResult.createMiss(fpVec.add(fp.getLookVec()), getFacing().getOpposite(), routerPos.offset(getFacing()));
+        return BlockRayTraceResult.miss(fpVec.add(fp.getLookAngle()), getFacing().getOpposite(), routerPos.relative(getFacing()));
     }
 
     private double getPlayerReachDistance(PlayerEntity player) {
@@ -227,8 +227,8 @@ public class CompiledActivatorModule extends CompiledModule {
             return false;
         }
         ActionResultType result = fakePlayer.interactOn(entity, Hand.MAIN_HAND);
-        if (result.isSuccessOrConsume()) {
-            router.setBufferItemStack(fakePlayer.getHeldItemMainhand());
+        if (result.consumesAction()) {
+            router.setBufferItemStack(fakePlayer.getMainHandItem());
             return true;
         }
         return false;
@@ -236,23 +236,23 @@ public class CompiledActivatorModule extends CompiledModule {
 
     private Entity findEntity(TileEntityItemRouter router) {
         Direction face = getFacing();
-        final BlockPos pos = router.getPos();
-        AxisAlignedBB box = new AxisAlignedBB(pos.offset(face))
-                .expand(face.getXOffset() * 3, face.getYOffset() * 3, face.getZOffset() * 3);
+        final BlockPos pos = router.getBlockPos();
+        AxisAlignedBB box = new AxisAlignedBB(pos.relative(face))
+                .expandTowards(face.getStepX() * 3, face.getStepY() * 3, face.getStepZ() * 3);
 
-        List<Entity> l = router.getWorld().getEntitiesWithinAABB(Entity.class, box, this::passesBlacklist);
+        List<Entity> l = router.getLevel().getEntitiesOfClass(Entity.class, box, this::passesBlacklist);
         if (l.isEmpty()) {
             return null;
         }
 
         switch (entityMode) {
             case RANDOM:
-                return l.get(router.getWorld().rand.nextInt(l.size()));
+                return l.get(router.getLevel().random.nextInt(l.size()));
             case NEAREST:
-                l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())));
+                l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())));
                 return l.get(0);
             case ROUND_ROBIN:
-                l.sort(Comparator.comparingDouble(o -> o.getDistanceSq(pos.getX(), pos.getY(), pos.getZ())));
+                l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())));
                 entityIdx = (entityIdx + 1) % l.size();
                 return l.get(entityIdx);
             default:
@@ -268,12 +268,12 @@ public class CompiledActivatorModule extends CompiledModule {
         // any items added to the fake player's inventory from using the held item need to be dropped into
         // the world, since the router has no access to them, and the player would otherwise lose them
         // e.g. milking a cow with a stack of buckets in the router slot
-        NonNullList<ItemStack> inv = fakePlayer.inventory.mainInventory;
-        Vector3d where = Vector3d.copyCentered(router.getPos().offset(getFacing()));
+        NonNullList<ItemStack> inv = fakePlayer.inventory.items;
+        Vector3d where = Vector3d.atCenterOf(router.getBlockPos().relative(getFacing()));
         // start at slot 1, since slot 0 is always used for the fake player's held item, which doesn't get dropped
         for (int i = 1; i < inv.size() && !inv.get(i).isEmpty(); i++) {
-            ItemEntity item = new ItemEntity(router.getWorld(), where.getX(), where.getY(), where.getZ(), inv.get(i));
-            router.getWorld().addEntity(item);
+            ItemEntity item = new ItemEntity(router.getLevel(), where.x(), where.y(), where.z(), inv.get(i));
+            router.getLevel().addFreshEntity(item);
             inv.set(i, ItemStack.EMPTY);
         }
     }

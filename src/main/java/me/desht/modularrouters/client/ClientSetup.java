@@ -55,9 +55,9 @@ public class ClientSetup {
 
     private static void registerKeyBindings() {
         keybindConfigure = new KeyBinding("key.modularrouters.configure", KeyConflictContext.GUI,
-                InputMappings.getInputByCode(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
+                InputMappings.getKey(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
         keybindModuleInfo = new KeyBinding("key.modularrouters.moduleInfo", KeyConflictContext.GUI,
-                InputMappings.getInputByCode(GLFW.GLFW_KEY_I, -1), "key.modularrouters.category");
+                InputMappings.getKey(GLFW.GLFW_KEY_I, -1), "key.modularrouters.category");
 
         ClientRegistry.registerKeyBinding(keybindConfigure);
         ClientRegistry.registerKeyBinding(keybindModuleInfo);
@@ -70,19 +70,19 @@ public class ClientSetup {
     }
 
     private static void registerScreenFactories() {
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), GuiItemRouter::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), GuiItemRouter::new);
 
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), GuiModule::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), GuiModuleActivator::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), GuiModuleDetector::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), GuiModuleDistributor::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), GuiModuleExtruder2::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_FLINGER.get(), GuiModuleFlinger::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_FLUID.get(), GuiModuleFluid::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_PLAYER.get(), GuiModulePlayer::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MODULE_VACUUM.get(), GuiModuleVacuum::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), GuiModule::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), GuiModuleActivator::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), GuiModuleDetector::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), GuiModuleDistributor::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), GuiModuleExtruder2::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_FLINGER.get(), GuiModuleFlinger::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_FLUID.get(), GuiModuleFluid::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_PLAYER.get(), GuiModulePlayer::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_VACUUM.get(), GuiModuleVacuum::new);
 
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), GuiBulkItemFilter::new);
-        ScreenManager.registerFactory(ModContainerTypes.CONTAINER_MOD_FILTER.get(), GuiModFilter::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), GuiBulkItemFilter::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MOD_FILTER.get(), GuiModFilter::new);
     }
 }

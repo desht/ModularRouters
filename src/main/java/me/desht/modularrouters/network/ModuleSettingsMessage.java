@@ -24,7 +24,7 @@ public class ModuleSettingsMessage {
 
     ModuleSettingsMessage(PacketBuffer buf) {
         locator = MFLocator.fromBuffer(buf);
-        payload = buf.readCompoundTag();
+        payload = buf.readNbt();
     }
 
     public ModuleSettingsMessage(MFLocator locator, CompoundNBT payload) {
@@ -34,7 +34,7 @@ public class ModuleSettingsMessage {
 
     public void toBytes(PacketBuffer buf) {
         locator.writeBuf(buf);
-        buf.writeCompoundTag(payload);
+        buf.writeNbt(payload);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -45,11 +45,11 @@ public class ModuleSettingsMessage {
 
                 if (moduleStack.getItem() instanceof ItemModule) {
                     CompoundNBT compound = ModuleHelper.validateNBT(moduleStack);
-                    for (String key : payload.keySet()) {
+                    for (String key : payload.getAllKeys()) {
                         compound.put(key, payload.get(key));
                     }
                     if (locator.routerPos != null) {
-                        TileEntityItemRouter.getRouterAt(player.getEntityWorld(), locator.routerPos)
+                        TileEntityItemRouter.getRouterAt(player.getCommandSenderWorld(), locator.routerPos)
                                 .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
                     }
                 } else {

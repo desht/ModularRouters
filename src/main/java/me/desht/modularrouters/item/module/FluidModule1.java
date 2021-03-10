@@ -52,7 +52,7 @@ public class FluidModule1 extends ItemModule {
 
     @Override
     protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
-        return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getDisplayName());
+        return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getHoverName());
     }
 
     @Override
@@ -88,7 +88,7 @@ public class FluidModule1 extends ItemModule {
 
     static void addFluidModuleInformation(ItemStack stack, List<ITextComponent> list) {
         CompiledFluidModule1 cfm = new CompiledFluidModule1(null, stack);
-        String dir = I18n.format("modularrouters.itemText.fluid.direction." + cfm.getFluidDirection());
+        String dir = I18n.get("modularrouters.itemText.fluid.direction." + cfm.getFluidDirection());
         list.add(xlate("modularrouters.itemText.fluid.direction", dir));
         list.add(xlate("modularrouters.itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
     }

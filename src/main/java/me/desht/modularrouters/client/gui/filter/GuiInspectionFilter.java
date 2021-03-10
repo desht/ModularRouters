@@ -108,10 +108,10 @@ public class GuiInspectionFilter extends GuiFilterScreen {
 
     private void addEntry() {
         if (currentOp != InspectionOp.NONE && currentSubject != InspectionSubject.NONE) {
-            int val = valueTextField.getValue();
+            int val = valueTextField.getIntValue();
             String s = Joiner.on(" ").join(currentSubject, currentOp, val);
             sendAddStringMessage("Comparison", s);
-            valueTextField.setText("");
+            valueTextField.setValue("");
         }
     }
 
@@ -119,13 +119,13 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
 
-        minecraft.getTextureManager().bindTexture(textureLocation);
+        minecraft.getTextureManager().bind(textureLocation);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.func_243248_b(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.getStringPropertyWidth(title) / 2f, yPos + 6, 0x404040);
+        font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.width(title) / 2f, yPos + 6, 0x404040);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
-            font.drawString(matrixStack, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
+            font.draw(matrixStack, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         super.render(matrixStack, mouseX, mouseY, partialTicks);

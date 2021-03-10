@@ -68,19 +68,19 @@ public class    BulkItemFilter extends ItemSmartFilter {
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext ctx) {
-        World world = ctx.getWorld();
+    public ActionResultType useOn(ItemUseContext ctx) {
+        World world = ctx.getLevel();
         PlayerEntity player = ctx.getPlayer();
-        ItemStack stack = ctx.getItem();
-        if (world.isRemote) {
+        ItemStack stack = ctx.getItemInHand();
+        if (world.isClientSide) {
             return ActionResultType.SUCCESS;
         } else if (player != null && player.isSteppingCarefully()) {
-            return InventoryUtils.getInventory(world, ctx.getPos(), ctx.getFace()).map(handler -> {
+            return InventoryUtils.getInventory(world, ctx.getClickedPos(), ctx.getClickedFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
-                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getDisplayName()), false);
-                world.playSound(null, ctx.getPos(), ModSounds.SUCCESS.get(), SoundCategory.MASTER, 1.0f, 1.0f);
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
+                world.playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundCategory.MASTER, 1.0f, 1.0f);
                 return ActionResultType.SUCCESS;
-            }).orElse(super.onItemUse(ctx));
+            }).orElse(super.useOn(ctx));
         } else {
             return ActionResultType.PASS;
         }
@@ -88,11 +88,11 @@ public class    BulkItemFilter extends ItemSmartFilter {
 
     @Override
     public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
-        if (!(player.openContainer instanceof ContainerBulkItemFilter)) {
+        if (!(player.containerMenu instanceof ContainerBulkItemFilter)) {
             return null;
         }
 
-        ContainerBulkItemFilter con = (ContainerBulkItemFilter) player.openContainer;
+        ContainerBulkItemFilter con = (ContainerBulkItemFilter) player.containerMenu;
         Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
         switch (message.getOp()) {
             case CLEAR_ALL:
@@ -129,7 +129,7 @@ public class    BulkItemFilter extends ItemSmartFilter {
 
         BulkFilterHandler handler = new BulkFilterHandler(filterStack, null);
         int slot = 0;
-        Comparator<ItemStack> comp = (o1, o2) -> o1.getDisplayName().toString().compareTo(o2.getDisplayName().getString());
+        Comparator<ItemStack> comp = (o1, o2) -> o1.getHoverName().toString().compareTo(o2.getHoverName().getString());
         for (ItemStack stack : stacks.stream().sorted(comp).collect(Collectors.toList())) {
             handler.setStackInSlot(slot++, stack);
         }

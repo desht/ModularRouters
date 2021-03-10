@@ -34,7 +34,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     public static Optional<TileEntityTemplateFrame> getTemplateFrame(IBlockReader world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getBlockEntity(pos);
         return te instanceof TileEntityTemplateFrame ? Optional.of((TileEntityTemplateFrame) te) : Optional.empty();
     }
 
@@ -68,25 +68,25 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
-        super.read(state, compound);
+    public void load(BlockState state, CompoundNBT compound) {
+        super.load(state, compound);
         camouflage = getCamoStateFromNBT(compound);
         extendedMimic = compound.getBoolean(NBT_MIMIC);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        compound = super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        compound = super.save(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
         return getNBTFromCamoState(compound, camouflage);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        camouflage = getCamoStateFromNBT(pkt.getNbtCompound());
-        extendedMimic = pkt.getNbtCompound().getBoolean("Mimic");
-        if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
-            getWorld().getChunkProvider().getLightManager().checkBlock(pos);
+        camouflage = getCamoStateFromNBT(pkt.getTag());
+        extendedMimic = pkt.getTag().getBoolean("Mimic");
+        if (camouflage != null && extendedMimic && camouflage.getLightEmission() > 0) {
+            getLevel().getChunkSource().getLightEngine().checkBlock(worldPosition);
         }
     }
 
@@ -96,26 +96,26 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
 
         camouflage = getCamoStateFromNBT(tag);
         extendedMimic = tag.getBoolean("Mimic");
-        if (camouflage != null && extendedMimic && camouflage.getLightValue() > 0) {
+        if (camouflage != null && extendedMimic && camouflage.getLightEmission() > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
-            Scheduler.client().schedule(() -> getWorld().getChunkProvider().getLightManager().checkBlock(pos), 1L);
+            Scheduler.client().schedule(() -> getLevel().getChunkSource().getLightEngine().checkBlock(worldPosition), 1L);
         }
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, -1, getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, -1, getUpdateTag());
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT compound = new CompoundNBT();
 
-        compound.putInt("x", pos.getX());
-        compound.putInt("y", pos.getY());
-        compound.putInt("z", pos.getZ());
+        compound.putInt("x", worldPosition.getX());
+        compound.putInt("y", worldPosition.getY());
+        compound.putInt("z", worldPosition.getZ());
         compound.putBoolean("Mimic", extendedMimic);
 
         return getNBTFromCamoState(compound, camouflage);
@@ -137,13 +137,13 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
 
     public void setCamouflage(ItemStack itemStack, Direction facing, Direction routerFacing) {
         if (itemStack.getItem() instanceof BlockItem) {
-            camouflage = ((BlockItem) itemStack.getItem()).getBlock().getDefaultState();
+            camouflage = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
             if (camouflage.hasProperty(BlockStateProperties.AXIS)) {
-                camouflage = camouflage.with(BlockStateProperties.AXIS, facing.getAxis());
+                camouflage = camouflage.setValue(BlockStateProperties.AXIS, facing.getAxis());
             } else if (camouflage.hasProperty(BlockStateProperties.FACING)) {
-                camouflage = camouflage.with(BlockStateProperties.FACING, facing);
+                camouflage = camouflage.setValue(BlockStateProperties.FACING, facing);
             } else if (camouflage.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-                camouflage = camouflage.with(BlockStateProperties.HORIZONTAL_FACING,
+                camouflage = camouflage.setValue(BlockStateProperties.HORIZONTAL_FACING,
                         facing.getAxis() == Direction.Axis.Y ? routerFacing : facing);
             }
         }

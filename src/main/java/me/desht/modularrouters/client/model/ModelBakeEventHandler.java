@@ -21,8 +21,8 @@ public class ModelBakeEventHandler {
     }
 
     private static void override(ModelBakeEvent event, Block block, Function<IBakedModel, CamouflagingModel> f) {
-        for (BlockState state : block.getStateContainer().getValidStates()) {
-            ModelResourceLocation loc = BlockModelShapes.getModelLocation(state);
+        for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+            ModelResourceLocation loc = BlockModelShapes.stateToModelLocation(state);
             IBakedModel model = event.getModelRegistry().get(loc);
             if (model != null) {
                 event.getModelRegistry().put(loc, f.apply(model));

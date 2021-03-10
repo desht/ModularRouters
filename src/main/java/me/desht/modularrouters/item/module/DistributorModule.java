@@ -29,8 +29,8 @@ public class DistributorModule extends SenderModule2 {
         super.addSettingsInformation(itemstack, list);
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, itemstack);
-        list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy").appendString(": ").mergeStyle(TextFormatting.YELLOW)
-                .append(ClientUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).mergeStyle(TextFormatting.AQUA));
+        list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy").append(": ").withStyle(TextFormatting.YELLOW)
+                .append(ClientUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).withStyle(TextFormatting.AQUA));
     }
 
     @Override

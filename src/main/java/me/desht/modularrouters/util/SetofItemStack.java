@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 
 import static me.desht.modularrouters.logic.filter.Filter.Flags;
 
+import it.unimi.dsi.fastutil.Hash.Strategy;
+import me.desht.modularrouters.logic.filter.Filter.Flags;
+
 public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
 
     private static class ItemStackHashingStrategy implements Strategy<ItemStack> {
@@ -25,8 +28,8 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
 
         @Override
         public int hashCode(ItemStack object) {
-            int hashCode = Item.getIdFromItem(object.getItem());
-            if (!filterFlags.isIgnoreDamage()) hashCode += 37 * object.getDamage();
+            int hashCode = Item.getId(object.getItem());
+            if (!filterFlags.isIgnoreDamage()) hashCode += 37 * object.getDamageValue();
             if (!filterFlags.isIgnoreNBT() && object.hasTag()) hashCode += 37 * object.getTag().hashCode();
             return hashCode;
         }
@@ -35,7 +38,7 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
         public boolean equals(ItemStack o1, ItemStack o2) {
             return (o1 == o2) || !(o1 == null || o2 == null)
                     && o1.getItem() == o2.getItem()
-                    && (filterFlags.isIgnoreDamage() || o1.getDamage() == o2.getDamage())
+                    && (filterFlags.isIgnoreDamage() || o1.getDamageValue() == o2.getDamageValue())
                     && (filterFlags.isIgnoreNBT() || !o1.hasTag() || o1.getTag().equals(o2.getTag()));
         }
     }
@@ -66,7 +69,7 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
     // matches by mod, then by display name
     private static final Comparator<? super ItemStack> compareStacks = Comparator
             .comparing((ItemStack stack) -> namespace(stack.getItem()))
-            .thenComparing(stack -> stack.getDisplayName().getString());
+            .thenComparing(stack -> stack.getHoverName().getString());
 
     private static String namespace(IForgeRegistryEntry<?> entry) {
         return entry.getRegistryName() == null ? "?" : entry.getRegistryName().getNamespace();

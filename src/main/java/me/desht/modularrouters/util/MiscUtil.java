@@ -33,15 +33,15 @@ public class MiscUtil {
     private static final int WRAP_LENGTH = 45;
 
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
-        for (String s : I18n.format(key, args).split(Pattern.quote("${br}"))) {
+        for (String s : I18n.get(key, args).split(Pattern.quote("${br}"))) {
             for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\n")) {
-                result.add(new StringTextComponent(s1).mergeStyle(formatting));
+                result.add(new StringTextComponent(s1).withStyle(formatting));
             }
         }
     }
 
     public static IFormattableTextComponent asFormattable(ITextComponent component) {
-        return component instanceof IFormattableTextComponent ? (IFormattableTextComponent) component : component.copyRaw();
+        return component instanceof IFormattableTextComponent ? (IFormattableTextComponent) component : component.plainCopy();
     }
 
     public static List<String> wrapString(String text) {
@@ -93,7 +93,7 @@ public class MiscUtil {
     }
 
     public static String locToString(GlobalPos pos) {
-        return locToString(pos.getDimension().getLocation(), pos.getPos());
+        return locToString(pos.dimension().location(), pos.pos());
     }
 
     public static ResourceLocation RL(String name) {
@@ -119,26 +119,26 @@ public class MiscUtil {
 
     public static CompoundNBT serializeGlobalPos(GlobalPos globalPos) {
         CompoundNBT tag = new CompoundNBT();
-        tag.put("pos", net.minecraft.nbt.NBTUtil.writeBlockPos(globalPos.getPos()));
-        tag.putString("dim", globalPos.getDimension().getLocation().toString());
+        tag.put("pos", net.minecraft.nbt.NBTUtil.writeBlockPos(globalPos.pos()));
+        tag.putString("dim", globalPos.dimension().location().toString());
         return tag;
     }
 
     public static GlobalPos deserializeGlobalPos(CompoundNBT tag) {
-        RegistryKey<World> worldKey = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(tag.getString("dim")));
-        return GlobalPos.getPosition(worldKey, NBTUtil.readBlockPos(tag.getCompound("pos")));
+        RegistryKey<World> worldKey = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dim")));
+        return GlobalPos.of(worldKey, NBTUtil.readBlockPos(tag.getCompound("pos")));
     }
 
     public static ServerWorld getWorldForGlobalPos(GlobalPos pos) {
-        return ServerLifecycleHooks.getCurrentServer().getWorld(pos.getDimension());
+        return ServerLifecycleHooks.getCurrentServer().getLevel(pos.dimension());
     }
 
     public static GlobalPos makeGlobalPos(World w, BlockPos pos) {
-        return GlobalPos.getPosition(w.getDimensionKey(), pos);
+        return GlobalPos.of(w.dimension(), pos);
     }
 
     // this method from Block went missing in 1.16.2
     public static boolean blockHasSolidSide(BlockState state, IBlockReader worldIn, BlockPos pos, Direction side) {
-        return Block.doesSideFillSquare(state.getRenderShape(worldIn, pos), side);
+        return Block.isFaceFull(state.getBlockSupportShape(worldIn, pos), side);
     }
 }

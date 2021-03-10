@@ -51,14 +51,14 @@ public class CompiledPlayerModule extends CompiledModule {
     public CompiledPlayerModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
+        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             playerName = ((PlayerModule) stack.getItem()).getOwnerName(stack);
             playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);
             operation = Operation.values()[compound.getInt(NBT_OPERATION)];
             section = Section.values()[compound.getInt(NBT_SECTION)];
-            if (router != null && !router.getWorld().isRemote) {
-                PlayerEntity player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerId);
+            if (router != null && !router.getLevel().isClientSide) {
+                PlayerEntity player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
                 playerRef = new WeakReference<>(player);
             } else {
                 playerRef = new WeakReference<>(null);
@@ -120,14 +120,14 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer().getUniqueID().equals(playerId)) {
+        if (event.getPlayer().getUUID().equals(playerId)) {
             playerRef = new WeakReference<>(event.getPlayer());
         }
     }
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getPlayer().getUniqueID().equals(playerId)) {
+        if (event.getPlayer().getUUID().equals(playerId)) {
             playerRef = new WeakReference<>(null);
         }
     }
@@ -135,7 +135,7 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public void onCompiled(TileEntityItemRouter router) {
         super.onCompiled(router);
-        if (!router.getWorld().isRemote) {
+        if (!router.getLevel().isClientSide) {
             MinecraftForge.EVENT_BUS.register(this);
         }
     }
@@ -143,7 +143,7 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public void cleanup(TileEntityItemRouter router) {
         super.cleanup(router);
-        if (!router.getWorld().isRemote) {
+        if (!router.getLevel().isClientSide) {
             MinecraftForge.EVENT_BUS.unregister(this);
         }
     }
@@ -175,7 +175,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     private int getSlotForArmorItem(ItemStack stack) {
-        switch (MobEntity.getSlotForItemStack(stack)) {
+        switch (MobEntity.getEquipmentSlotForItem(stack)) {
             case HEAD: return 3;
             case CHEST: return 2;
             case LEGS: return 1;
@@ -190,14 +190,14 @@ public class CompiledPlayerModule extends CompiledModule {
             case MAIN_NO_HOTBAR: return new PlayerMainInvNoHotbarWrapper(player.inventory);
             case ARMOR: return new PlayerArmorInvWrapper(player.inventory);
             case OFFHAND: return new PlayerOffhandInvWrapper(player.inventory);
-            case ENDER: return new InvWrapper(player.getInventoryEnderChest());
+            case ENDER: return new InvWrapper(player.getEnderChestInventory());
             default: return null;
         }
     }
 
     public static class PlayerMainInvNoHotbarWrapper extends RangedWrapper {
         PlayerMainInvNoHotbarWrapper(PlayerInventory inv) {
-            super(new InvWrapper(inv), PlayerInventory.getHotbarSize(), inv.mainInventory.size());
+            super(new InvWrapper(inv), PlayerInventory.getSelectionSize(), inv.items.size());
         }
     }
 }

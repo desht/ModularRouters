@@ -25,31 +25,31 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
         shaped(ModBlocks.ITEM_ROUTER.get(), 4, Items.IRON_INGOT,
                 "IBI/BMB/IBI",
                 'I', Tags.Items.INGOTS_IRON,
                 'M', ModItems.BLANK_MODULE.get(),
                 'B', Items.IRON_BARS
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.BLANK_MODULE.get(), 6, Items.REDSTONE,
                 " R /PPP/GGG",
                 'R', Tags.Items.DUSTS_REDSTONE,
                 'P', Items.PAPER,
                 'G', Tags.Items.NUGGETS_GOLD
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.BLANK_UPGRADE.get(), 4, Items.LAPIS_LAZULI,
                 "PPG/PLG/ PG",
                 'P', Items.PAPER,
                 'L', Tags.Items.GEMS_LAPIS,
                 'G', Tags.Items.NUGGETS_GOLD
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.AUGMENT_CORE.get(), 4, ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), ModItems.BLANK_UPGRADE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         // augments
         shaped(ModItems.REGULATOR_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
@@ -57,128 +57,128 @@ public class ModRecipeProvider extends RecipeProvider {
                 'Q', Tags.Items.GEMS_QUARTZ,
                 'M', ModItems.AUGMENT_CORE.get(),
                 'C', Items.COMPARATOR
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.MIMIC_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), Tags.Items.OBSIDIAN, Tags.Items.DUSTS_REDSTONE, Tags.Items.DUSTS_GLOWSTONE
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.REDSTONE_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 " T /RMR/ T ",
                 'M', ModItems.AUGMENT_CORE.get(),
                 'R', Tags.Items.DUSTS_REDSTONE,
                 'T', Items.REDSTONE_TORCH
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.XP_VACUUM_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), Items.SOUL_SAND
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.RANGE_DOWN_AUGMENT.get(), 4, ModItems.AUGMENT_CORE.get(),
                 " S /QMQ/ Q ",
                 'M', ModItems.AUGMENT_CORE.get(),
                 'Q', Tags.Items.GEMS_QUARTZ,
                 'S', Tags.Items.RODS_WOODEN
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.RANGE_DOWN_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.RANGE_UP_AUGMENT.get()
-        ).build(consumer, RL("range_down_from_up"));
+        ).save(consumer, RL("range_down_from_up"));
 
         shaped(ModItems.RANGE_UP_AUGMENT.get(), 4, ModItems.AUGMENT_CORE.get(),
                 " Q /QMQ/ S ",
                 'S', Tags.Items.RODS_WOODEN,
                 'Q', Tags.Items.GEMS_QUARTZ,
                 'M', ModItems.AUGMENT_CORE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.RANGE_UP_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.RANGE_DOWN_AUGMENT.get()
-        ).build(consumer, RL("range_up_from_down"));
+        ).save(consumer, RL("range_up_from_down"));
 
         shaped(ModItems.PUSHING_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 "PMP",
                 'P', Items.PISTON,
                 'M', ModItems.AUGMENT_CORE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.PICKUP_DELAY_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), Tags.Items.SLIMEBALLS
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.FAST_PICKUP_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), Items.FISHING_ROD
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), Items.CLOCK
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.STACK_AUGMENT.get(), ModItems.AUGMENT_CORE.get(),
                 ModItems.AUGMENT_CORE.get(), ModItems.STACK_UPGRADE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         // modules
-        CustomRecipeBuilder.customRecipe(ModRecipes.EXTRUDER_MODULE_1.get())
-                .build(consumer, RL("extruder_module_1").toString());
+        CustomRecipeBuilder.special(ModRecipes.EXTRUDER_MODULE_1.get())
+                .save(consumer, RL("extruder_module_1").toString());
 
         shaped(ModItems.FLUID_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 " C /GMG",
                 'G', Tags.Items.GLASS,
                 'C', Items.CAULDRON,
                 'M', ModItems.BLANK_MODULE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.FLUID_MODULE_2.get(), ModItems.FLUID_MODULE.get(),
                 ModItems.FLUID_MODULE.get(), Items.PRISMARINE_SHARD
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.FLUID_MODULE_2.get(), 4, ModItems.FLUID_MODULE.get(),
                 ModItems.FLUID_MODULE.get(), ModItems.FLUID_MODULE.get(),
                 ModItems.FLUID_MODULE.get(), ModItems.FLUID_MODULE.get(),
                 Items.PRISMARINE_SHARD
-        ).build(consumer, RL("fluid_module_2_x4"));
+        ).save(consumer, RL("fluid_module_2_x4"));
 
         shapeless(ModItems.SENDER_MODULE_1.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.BOW, ItemTags.ARROWS
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.SENDER_MODULE_3.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.SENDER_MODULE_2.get(), Items.END_STONE, Items.ENDER_CHEST
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.DISTRIBUTOR_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 " S /SMS",
                 'M', ModItems.BLANK_MODULE.get(),
                 'S', ModItems.SENDER_MODULE_2.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.SENDER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.SENDER_MODULE_1.get(), Items.ENDER_PEARL
-        ).build(consumer);
+        ).save(consumer);
 
-        CustomRecipeBuilder.customRecipe(ModRecipes.BREAKER_MODULE.get())
-                .build(consumer, RL("breaker_module").toString());
+        CustomRecipeBuilder.special(ModRecipes.BREAKER_MODULE.get())
+                .save(consumer, RL("breaker_module").toString());
 
         shapeless(ModItems.DROPPER_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.DROPPER
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.EXTRUDER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Tags.Items.CHESTS_WOODEN
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.FLINGER_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.DROPPER_MODULE.get(), Items.GUNPOWDER
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.DETECTOR_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.COMPARATOR
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.PLACER_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.DISPENSER, Items.DIRT
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.PLAYER_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 " H /SZP/ C ",
@@ -187,11 +187,11 @@ public class ModRecipeProvider extends RecipeProvider {
                 'Z', Items.WITHER_SKELETON_SKULL,
                 'H', Items.DIAMOND_HELMET,
                 'S', ModItems.SENDER_MODULE_3.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.PULLER_MODULE_1.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.STICKY_PISTON
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.SENDER_MODULE_2.get(), 4, ModItems.BLANK_MODULE.get(),
                 ModItems.SENDER_MODULE_1.get(),
@@ -199,15 +199,15 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.SENDER_MODULE_1.get(),
                 ModItems.SENDER_MODULE_1.get(),
                 Items.ENDER_PEARL
-        ).build(consumer, RL("sender_module_2_x4"));
+        ).save(consumer, RL("sender_module_2_x4"));
 
         shapeless(ModItems.PULLER_MODULE_2.get(), 4, ModItems.BLANK_MODULE.get(),
                 ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), Items.ENDER_PEARL
-        ).build(consumer, RL("puller_module_2_x4"));
+        ).save(consumer, RL("puller_module_2_x4"));
 
         shapeless(ModItems.VACUUM_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.HOPPER, Items.ENDER_EYE
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.ACTIVATOR_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 "RLR/DMD/RQR",
@@ -216,26 +216,26 @@ public class ModRecipeProvider extends RecipeProvider {
                 'R', Tags.Items.DUSTS_REDSTONE,
                 'M', ModItems.BLANK_MODULE.get(),
                 'L', Items.LEVER
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.PULLER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.PULLER_MODULE_1.get(), Items.ENDER_PEARL
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.VOID_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.LAVA_BUCKET
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.SENDER_MODULE_1.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.PISTON
-        ).build(consumer, RL("sender_module_1_alt"));
+        ).save(consumer, RL("sender_module_1_alt"));
 
         // upgrades
         shaped(ModItems.MUFFLER_UPGRADE.get(), 4, ModItems.BLANK_UPGRADE.get(),
                 " W /WBW/ W ",
                 'W', ItemTags.WOOL,
                 'B', ModItems.BLANK_UPGRADE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.SECURITY_UPGRADE.get(), ModItems.BLANK_UPGRADE.get(),
                 " Q /NBN/ R ",
@@ -243,7 +243,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 'N', Tags.Items.NUGGETS_GOLD,
                 'R', Tags.Items.DUSTS_REDSTONE,
                 'Q', Tags.Items.GEMS_QUARTZ
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.SPEED_UPGRADE.get(), 3, ModItems.BLANK_UPGRADE.get(),
                 "RIR/NBN/GZG",
@@ -253,25 +253,25 @@ public class ModRecipeProvider extends RecipeProvider {
                 'B', ModItems.BLANK_UPGRADE.get(),
                 'N', Tags.Items.NUGGETS_GOLD,
                 'Z', Tags.Items.RODS_BLAZE
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.BLAST_UPGRADE.get(), ModItems.BLANK_UPGRADE.get(),
                 "IOI/OBO/IOI",
                 'O', Tags.Items.OBSIDIAN,
                 'I', Items.IRON_BARS,
                 'B', ModItems.BLANK_UPGRADE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.CAMOUFLAGE_UPGRADE.get(), ModItems.BLANK_UPGRADE.get(),
                 ModItems.BLANK_UPGRADE.get(), Tags.Items.DYES_RED, Tags.Items.DYES_GREEN, Tags.Items.DYES_BLUE
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.FLUID_UPGRADE.get(), 3, ModItems.BLANK_UPGRADE.get(),
                 " U /GBG",
                 'G', Tags.Items.GLASS,
                 'U', Items.BUCKET,
                 'B', ModItems.BLANK_UPGRADE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.SYNC_UPGRADE.get(), 16, ModItems.BLANK_UPGRADE.get(),
                 "RST/RBR",
@@ -279,11 +279,11 @@ public class ModRecipeProvider extends RecipeProvider {
                 'T', Items.REDSTONE_TORCH,
                 'B', ModItems.BLANK_UPGRADE.get(),
                 'R', Tags.Items.DUSTS_REDSTONE
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.STACK_UPGRADE.get(), ModItems.BLANK_UPGRADE.get(),
                 ModItems.BLANK_UPGRADE.get(), ItemTags.STONE_BRICKS, Tags.Items.INGOTS_BRICK
-        ).build(consumer);
+        ).save(consumer);
 
         // filters
         shaped(ModItems.BULK_ITEM_FILTER.get(), ModItems.BLANK_MODULE.get(),
@@ -292,25 +292,25 @@ public class ModRecipeProvider extends RecipeProvider {
                 'D', Tags.Items.GEMS_DIAMOND,
                 'I', Tags.Items.INGOTS_IRON,
                 'M', ModItems.BLANK_MODULE.get()
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.MOD_FILTER.get(), ModItems.BULK_ITEM_FILTER.get(),
                 ModItems.BULK_ITEM_FILTER.get(), Items.REPEATER, Items.REDSTONE_TORCH
-        ).build(consumer);
+        ).save(consumer);
 
         shaped(ModItems.INSPECTION_FILTER.get(), ModItems.BULK_ITEM_FILTER.get(),
                 "EBE/ P ",
                 'B', ModItems.BULK_ITEM_FILTER.get(),
                 'P', Items.PAPER,
                 'E', Items.SPIDER_EYE
-        ).build(consumer);
+        ).save(consumer);
 
         shapeless(ModItems.REGEX_FILTER.get(), ModItems.BULK_ITEM_FILTER.get(),
                 ModItems.BULK_ITEM_FILTER.get(), Items.COMPARATOR
-        ).build(consumer);
+        ).save(consumer);
 
-        CustomRecipeBuilder.customRecipe(ModRecipes.MODULE_RESET.get()).build(consumer, RL("reset_module").toString());
-        CustomRecipeBuilder.customRecipe(ModRecipes.GUIDE_BOOK.get()).build(consumer, RL("guide_book").toString());
+        CustomRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
+        CustomRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get()).save(consumer, RL("guide_book").toString());
     }
 
     private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
@@ -318,22 +318,22 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, int count, T required, String pattern, Object... keys) {
-        ShapedRecipeBuilder b = ShapedRecipeBuilder.shapedRecipe(result, count);
-        Arrays.stream(pattern.split("/")).forEach(b::patternLine);
+        ShapedRecipeBuilder b = ShapedRecipeBuilder.shaped(result, count);
+        Arrays.stream(pattern.split("/")).forEach(b::pattern);
         for (int i = 0; i < keys.length; i += 2) {
             Object v = keys[i + 1];
             if (v instanceof ITag.INamedTag<?>) {
                 //noinspection unchecked
-                b.key((Character) keys[i], (ITag.INamedTag<Item>) v);
+                b.define((Character) keys[i], (ITag.INamedTag<Item>) v);
             } else if (v instanceof IItemProvider) {
-                b.key((Character) keys[i], (IItemProvider) v);
+                b.define((Character) keys[i], (IItemProvider) v);
             } else if (v instanceof Ingredient) {
-                b.key((Character) keys[i], (Ingredient) v);
+                b.define((Character) keys[i], (Ingredient) v);
             } else {
                 throw new IllegalArgumentException("bad type for recipe ingredient " + v);
             }
         }
-        b.addCriterion("has_" + safeName(required), hasItem(required));
+        b.unlockedBy("has_" + safeName(required), has(required));
         return b;
     }
 
@@ -342,20 +342,20 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
-        ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapelessRecipe(result, count);
+        ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapeless(result, count);
         for (Object v : ingredients) {
             if (v instanceof ITag.INamedTag<?>) {
                 //noinspection unchecked
-                b.addIngredient((ITag.INamedTag<Item>) v);
+                b.requires((ITag.INamedTag<Item>) v);
             } else if (v instanceof IItemProvider) {
-                b.addIngredient((IItemProvider) v);
+                b.requires((IItemProvider) v);
             } else if (v instanceof Ingredient) {
-                b.addIngredient((Ingredient) v);
+                b.requires((Ingredient) v);
             } else {
                 throw new IllegalArgumentException("bad type for recipe ingredient " + v);
             }
         }
-        b.addCriterion("has_" + safeName(required), hasItem(required));
+        b.unlockedBy("has_" + safeName(required), has(required));
         return b;
     }
 

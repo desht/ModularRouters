@@ -32,7 +32,7 @@ public abstract class GuiScreenBase extends Screen implements IManagedTextFields
         if (textFieldManager != null) textFieldManager.drawTextFields(matrixStack, mouseX, mouseY, partialTicks);
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(mouseX, mouseY) && button instanceof ITooltipButton)
-                .forEach(button -> func_243308_b(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
+                .forEach(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
     }
 
     @Override
@@ -80,12 +80,12 @@ public abstract class GuiScreenBase extends Screen implements IManagedTextFields
     }
 
     @Override
-    public void onClose() {
+    public void removed() {
         if (delayTicks > 0) {
             // flush pending changes
             sendSettingsToServer();
         }
-        super.onClose();
+        super.removed();
     }
 
     protected final void sendSettingsDelayed(int delayTicks) {

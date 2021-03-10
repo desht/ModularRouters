@@ -111,8 +111,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
         this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
         this.matchAll = ModuleHelper.isMatchAll(moduleItemStack);
-        this.xSize = GUI_WIDTH;
-        this.ySize = GUI_HEIGHT;
+        this.imageWidth = GUI_WIDTH;
+        this.imageHeight = GUI_HEIGHT;
         this.mouseOverHelp = new MouseOverHelp(this);
 
         this.passEvents = true;
@@ -129,8 +129,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
         addToggleButton(ModuleFlags.IGNORE_TAGS, 25, 93);
 //        addToggleButton(ModuleFlags.TERMINATE, 45, 93);
-        terminationButton = addButton(new TerminationButton(guiLeft + 45, guiTop + 93, ModuleHelper.getTermination(moduleItemStack)));
-        addButton(matchAllButton = new MatchAllButton(guiLeft + 45, guiTop + 75, matchAll));
+        terminationButton = addButton(new TerminationButton(leftPos + 45, topPos + 93, ModuleHelper.getTermination(moduleItemStack)));
+        addButton(matchAllButton = new MatchAllButton(leftPos + 45, topPos + 75, matchAll));
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -142,9 +142,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        addButton(mouseOverHelpButton = new MouseOverHelp.Button(guiLeft + 175, guiTop + 1));
+        addButton(mouseOverHelpButton = new MouseOverHelp.Button(leftPos + 175, topPos + 1));
 
-        addButton(redstoneButton = new RedstoneBehaviourButton(this.guiLeft + 170, this.guiTop + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
+        addButton(redstoneButton = new RedstoneBehaviourButton(this.leftPos + 170, this.topPos + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
         addButton(regulatorTextField = buildRegulationTextField(getOrCreateTextFieldManager()));
@@ -152,17 +152,17 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addButton(regulatorTooltipButton = new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
 
         if (routerPos != null) {
-            addButton(new BackButton(guiLeft + 2, guiTop + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()))));
+            addButton(new BackButton(leftPos + 2, topPos + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
         }
 
-        mouseOverHelp.addHelpRegion(guiLeft + 7, guiTop + 16, guiLeft + 60, guiTop + 69, "modularrouters.guiText.popup.filter");
-        mouseOverHelp.addHelpRegion(guiLeft + 5, guiTop + 73, guiLeft + 62, guiTop + 110, "modularrouters.guiText.popup.filterControl");
-        mouseOverHelp.addHelpRegion(guiLeft + 68, guiTop + 16, guiLeft + 121, guiTop + 69, module.isDirectional() ? "modularrouters.guiText.popup.direction" : "modularrouters.guiText.popup.noDirection");
-        mouseOverHelp.addHelpRegion(guiLeft + 77, guiTop + 74, guiLeft + 112, guiTop + 109, "modularrouters.guiText.popup.augments");
+        mouseOverHelp.addHelpRegion(leftPos + 7, topPos + 16, leftPos + 60, topPos + 69, "modularrouters.guiText.popup.filter");
+        mouseOverHelp.addHelpRegion(leftPos + 5, topPos + 73, leftPos + 62, topPos + 110, "modularrouters.guiText.popup.filterControl");
+        mouseOverHelp.addHelpRegion(leftPos + 68, topPos + 16, leftPos + 121, topPos + 69, module.isDirectional() ? "modularrouters.guiText.popup.direction" : "modularrouters.guiText.popup.noDirection");
+        mouseOverHelp.addHelpRegion(leftPos + 77, topPos + 74, leftPos + 112, topPos + 109, "modularrouters.guiText.popup.augments");
     }
 
     protected IntegerTextField buildRegulationTextField(TextFieldManager manager) {
-        IntegerTextField tf = new IntegerTextField(manager, font, guiLeft + 166, guiTop + 75, 20, 12, Range.between(0, 64));
+        IntegerTextField tf = new IntegerTextField(manager, font, leftPos + 166, topPos + 75, 20, 12, Range.between(0, 64));
         tf.setValue(regulatorAmount);
         tf.setResponder((str) -> {
             regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);
@@ -173,8 +173,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @SubscribeEvent
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-        getContainer().removeListener(this);
-        getContainer().addListener(this);
+        getMenu().removeSlotListener(this);
+        getMenu().addSlotListener(this);
         setupButtonVisibility();
     }
 
@@ -193,12 +193,12 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
-        toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.guiLeft + x, this.guiTop + y, ModuleHelper.checkFlag(moduleItemStack, flag));
+        toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.leftPos + x, this.topPos + y, ModuleHelper.checkFlag(moduleItemStack, flag));
         addButton(toggleButtons[flag.ordinal()]);
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
-        directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.guiLeft + x, this.guiTop + y, dir == facing);
+        directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.leftPos + x, this.topPos + y, dir == facing);
         addButton(directionButtons[dir.ordinal()]);
     }
 
@@ -222,7 +222,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     @Override
     public void sendToServer() {
-        PacketHandler.NETWORK.sendToServer(new ModuleSettingsMessage(container.getLocator(), buildMessageData()));
+        PacketHandler.NETWORK.sendToServer(new ModuleSettingsMessage(menu.getLocator(), buildMessageData()));
     }
 
     /**
@@ -255,19 +255,19 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        ITextComponent title = moduleItemStack.getDisplayName().deepCopy().appendString(routerPos != null ? " " + I18n.format("modularrouters.guiText.label.installed") : "");
-        this.font.func_243248_b(matrixStack, title, this.xSize / 2f - this.font.getStringPropertyWidth(title) / 2f, 5, getFgColor(module.getItemTint()));
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        ITextComponent title = moduleItemStack.getHoverName().copy().append(routerPos != null ? " " + I18n.get("modularrouters.guiText.label.installed") : "");
+        this.font.draw(matrixStack, title, this.imageWidth / 2f - this.font.width(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         TintColor c = getGuiBackgroundTint();
         RenderSystem.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
-        minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
+        minecraft.getTextureManager().bind(GUI_TEXTURE);
+        blit(matrixStack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
         if (!module.isDirectional()) {
-            blit(matrixStack, guiLeft + 69, guiTop + 17, 204, 0, 52, 52);
+            blit(matrixStack, leftPos + 69, topPos + 17, 204, 0, 52, 52);
         }
     }
 
@@ -287,9 +287,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
-            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(container.getLocator()));
+            PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()));
             return true;
-        } else if (ClientSetup.keybindConfigure.getKey().getKeyCode() == keyCode) {
+        } else if (ClientSetup.keybindConfigure.getKey().getValue() == keyCode) {
             // trying to configure an installed smart filter, we're done
             return handleFilterConfig();
         } else {
@@ -304,11 +304,11 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     private boolean handleFilterConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || !(slot.getStack().getItem() instanceof ItemSmartFilter) || slot.slotNumber < 0 || slot.slotNumber >= Filter.FILTER_SIZE) {
+        if (slot == null || !(slot.getItem().getItem() instanceof ItemSmartFilter) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
             return false;
         }
-        int filterSlotIndex = slot.slotNumber;
-        ItemSmartFilter filter = (ItemSmartFilter) slot.getStack().getItem();
+        int filterSlotIndex = slot.index;
+        ItemSmartFilter filter = (ItemSmartFilter) slot.getItem().getItem();
         if (routerPos != null) {
             // module is installed in a router
             MFLocator locator = MFLocator.filterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex);
@@ -332,23 +332,23 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void removed() {
+        super.removed();
         if (sendDelay > 0) {
             sendToServer();  // ensure no delayed updates get lost
         }
     }
 
     Optional<TileEntityItemRouter> getItemRouter() {
-        return routerPos != null ? TileEntityItemRouter.getRouterAt(Minecraft.getInstance().world, routerPos) : Optional.empty();
+        return routerPos != null ? TileEntityItemRouter.getRouterAt(Minecraft.getInstance().level, routerPos) : Optional.empty();
     }
 
     @Override
-    public void sendAllContents(Container containerToSend, NonNullList<ItemStack> itemsList) {
+    public void refreshContainer(Container containerToSend, NonNullList<ItemStack> itemsList) {
     }
 
     @Override
-    public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
+    public void slotChanged(Container containerToSend, int slotInd, ItemStack stack) {
         if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + ItemAugment.SLOTS) {
             augmentCounter.refresh(moduleItemStack);
             setupButtonVisibility();
@@ -356,7 +356,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    public void sendWindowProperty(Container containerIn, int varToUpdate, int newValue) {
+    public void setContainerData(Container containerIn, int varToUpdate, int newValue) {
     }
 
     private static final int THRESHOLD = 129;
@@ -433,8 +433,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
             this.direction = dir;
             StringTextComponent dirStr = new StringTextComponent(module.getDirectionString(dir));
-            tooltip1.add(dirStr.mergeStyle(TextFormatting.GRAY));
-            tooltip2.add(dirStr.mergeStyle(TextFormatting.YELLOW));
+            tooltip1.add(dirStr.withStyle(TextFormatting.GRAY));
+            tooltip2.add(dirStr.withStyle(TextFormatting.YELLOW));
         }
 
         @Override

@@ -37,7 +37,7 @@ public class InspectionFilter extends ItemSmartFilter {
         super.addExtraInformation(itemstack, list);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.YELLOW + I18n.format("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
             for (Comparison c : comparisonList.items) {
                 list.add(new StringTextComponent(TextFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
             }
@@ -45,7 +45,7 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     public static ComparisonList getComparisonList(ItemStack filterStack) {
-        CompoundNBT compound = filterStack.getChildTag(ModularRouters.MODID);
+        CompoundNBT compound = filterStack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             boolean matchAll = compound.getBoolean(NBT_MATCH_ALL);
             List<Comparison> l = Lists.newArrayList();
@@ -61,7 +61,7 @@ public class InspectionFilter extends ItemSmartFilter {
 
     private void setComparisonList(ItemStack filterStack, ComparisonList comparisonList) {
         ListNBT l = comparisonList.items.stream().map(comp -> StringNBT.valueOf(comp.toString())).collect(Collectors.toCollection(ListNBT::new));
-        CompoundNBT compound = filterStack.getOrCreateChildTag(ModularRouters.MODID);
+        CompoundNBT compound = filterStack.getOrCreateTagElement(ModularRouters.MODID);
         compound.putBoolean(NBT_MATCH_ALL, comparisonList.isMatchAll());
         compound.put(NBT_ITEMS, l);
     }

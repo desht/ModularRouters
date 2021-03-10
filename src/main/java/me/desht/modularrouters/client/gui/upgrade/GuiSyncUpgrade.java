@@ -33,15 +33,15 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     private final Hand hand;
 
     public GuiSyncUpgrade(ItemStack upgradeStack, Hand hand) {
-        super(upgradeStack.getDisplayName());
+        super(upgradeStack.getHoverName());
 
-        this.title = upgradeStack.getDisplayName().getString();
+        this.title = upgradeStack.getHoverName().getString();
         this.tunedValue = SyncUpgrade.getTunedValue(upgradeStack);
         this.hand = hand;
     }
 
     public static void openSyncGui(ItemStack stack, Hand hand) {
-        Minecraft.getInstance().displayGuiScreen(new GuiSyncUpgrade(stack, hand));
+        Minecraft.getInstance().setScreen(new GuiSyncUpgrade(stack, hand));
     }
 
     @Override
@@ -58,8 +58,8 @@ public class GuiSyncUpgrade extends GuiScreenBase {
         });
         intField.setValue(tunedValue);
         intField.useGuiTextBackground();
-        intField.setFocused2(true);
-        setListener(intField);
+        intField.setFocus(true);
+        setFocused(intField);
 
         addButton(new TooltipButton(xPos + 55, yPos + 24, 16, 16));
 
@@ -70,9 +70,9 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
 
-        minecraft.getTextureManager().bindTexture(textureLocation);
+        minecraft.getTextureManager().bind(textureLocation);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.drawString(matrixStack, title, xPos + GUI_WIDTH / 2f - font.getStringWidth(title) / 2f, yPos + 6, 0x404040);
+        font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - font.width(title) / 2f, yPos + 6, 0x404040);
 
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }

@@ -88,7 +88,7 @@ public class XPCollection {
         }
 
         public ITextComponent getDisplayName() {
-            return getIconForResource(this).getDisplayName();
+            return getIconForResource(this).getHoverName();
         }
     }
 }

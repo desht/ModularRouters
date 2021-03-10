@@ -21,21 +21,21 @@ public class CompiledPullerModule2 extends CompiledPullerModule1 {
 
     @Override
     protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
-        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
+        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getLevel().isClientSide));
     }
 
     @Override
     boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
         return target != null
-                && target.isSameWorld(router.getWorld())
-                && router.getPos().distanceSq(target.gPos.getPos()) <= getRangeSquared();
+                && target.isSameWorld(router.getLevel())
+                && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared();
     }
 
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vector3d vec1 = Vector3d.copyCentered(router.getPos());
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getWorld().getDimensionKey());
+            Vector3d vec1 = Vector3d.atCenterOf(router.getBlockPos());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getLevel().dimension());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
                     new ItemBeamMessage(router, targetPos, true, stack, 0x6080FF, router.getTickRate(), false));
         }

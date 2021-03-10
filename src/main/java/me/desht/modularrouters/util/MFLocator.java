@@ -87,15 +87,15 @@ public class MFLocator {
     public ItemStack getTargetItem(PlayerEntity player) {
         if (itemType == ItemType.MODULE) {
             if (hand != null) {
-                return player.getHeldItem(hand).getItem() instanceof ItemModule ? player.getHeldItem(hand) : ItemStack.EMPTY;
+                return player.getItemInHand(hand).getItem() instanceof ItemModule ? player.getItemInHand(hand) : ItemStack.EMPTY;
             } else if (routerPos != null && routerSlot >= 0) {
-                return getInstalledModule(player.world);
+                return getInstalledModule(player.level);
             }
         } else if (itemType == ItemType.FILTER) {
             if (hand != null) {
-                return getFilterForStack(player.getHeldItem(hand));
+                return getFilterForStack(player.getItemInHand(hand));
             } else if (routerPos != null && routerSlot >= 0) {
-                return getFilterForStack(getInstalledModule(player.world));
+                return getFilterForStack(getInstalledModule(player.level));
             }
         }
         return ItemStack.EMPTY;
@@ -104,9 +104,9 @@ public class MFLocator {
     @Nonnull
     public ItemStack getModuleStack(PlayerEntity player) {
         if (hand != null) {
-            return player.getHeldItem(hand).getItem() instanceof ItemModule ? player.getHeldItem(hand) : ItemStack.EMPTY;
+            return player.getItemInHand(hand).getItem() instanceof ItemModule ? player.getItemInHand(hand) : ItemStack.EMPTY;
         } else if (routerPos != null) {
-            return getInstalledModule(player.world);
+            return getInstalledModule(player.level);
         } else {
             return ItemStack.EMPTY;
         }

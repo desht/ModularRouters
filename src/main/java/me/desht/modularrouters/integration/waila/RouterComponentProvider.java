@@ -24,12 +24,12 @@ public class RouterComponentProvider implements IComponentProvider {
             } else {
                 MiscUtil.appendMultilineText(tooltip, TextFormatting.WHITE,"modularrouters.itemText.misc.moduleCount", data.getInt("ModuleCount"));
                 CompoundNBT upgrades = data.getCompound("Upgrades");
-                for (String k : upgrades.keySet()) {
-                    tooltip.add(new TranslationTextComponent("modularrouters.itemText.misc.upgradeCount", I18n.format(k), upgrades.getInt(k)));
+                for (String k : upgrades.getAllKeys()) {
+                    tooltip.add(new TranslationTextComponent("modularrouters.itemText.misc.upgradeCount", I18n.get(k), upgrades.getInt(k)));
                 }
                 RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.values()[data.getInt("RedstoneMode")];
                 tooltip.add(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone.label")
-                        .appendString(": " + TextFormatting.AQUA)
+                        .append(": " + TextFormatting.AQUA)
                         .append(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone." + rrb))
                 );
                 if (data.getBoolean("EcoMode")) {

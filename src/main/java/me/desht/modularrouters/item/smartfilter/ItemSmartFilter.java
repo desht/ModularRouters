@@ -66,13 +66,13 @@ public abstract class ItemSmartFilter extends ItemBase {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         ItemSmartFilter filter = (ItemSmartFilter) stack.getItem();
         MFLocator loc = MFLocator.heldFilter(hand);
-        if (!world.isRemote && filter.hasContainer()) {
+        if (!world.isClientSide && filter.hasContainer()) {
             NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, loc), loc::writeBuf);
-        } else if (world.isRemote && !hasContainer()) {
+        } else if (world.isClientSide && !hasContainer()) {
             FilterGuiFactory.openFilterGui(loc);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
@@ -89,7 +89,7 @@ public abstract class ItemSmartFilter extends ItemBase {
 
         @Override
         public ITextComponent getDisplayName() {
-            return filterStack.getDisplayName();
+            return filterStack.getHoverName();
         }
 
         @Nullable

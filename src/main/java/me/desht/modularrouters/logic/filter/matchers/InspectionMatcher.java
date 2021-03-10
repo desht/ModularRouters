@@ -107,8 +107,8 @@ public class InspectionMatcher implements IItemMatcher {
         public String asLocalizedText() {
             if (subject == null || op == null) return "<?>";
             return Joiner.on(" ").join(
-                    I18n.format("modularrouters.guiText.label.inspectionSubject." + subject),
-                    I18n.format("modularrouters.guiText.label.inspectionOp." + op),
+                    I18n.get("modularrouters.guiText.label.inspectionSubject." + subject),
+                    I18n.get("modularrouters.guiText.label.inspectionOp." + op),
                     target + subject.getDisplaySuffix()
             );
         }
@@ -132,7 +132,7 @@ public class InspectionMatcher implements IItemMatcher {
                     return Optional.empty();
                 case DURABILITY:
                     return stack.getMaxDamage() > 0 ?
-                            Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage())) :
+                            Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamageValue(), stack.getMaxDamage())) :
                             Optional.empty();
                 case FLUID:
                     return getFluidPercent(stack);
@@ -148,8 +148,8 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private Optional<Integer> getFoodValue(ItemStack stack) {
-            if (stack.getItem().isFood()) {
-                return Optional.of(stack.getItem().getFood().getHealing());
+            if (stack.getItem().isEdible()) {
+                return Optional.of(stack.getItem().getFoodProperties().getNutrition());
             } else {
                 return Optional.empty();
             }

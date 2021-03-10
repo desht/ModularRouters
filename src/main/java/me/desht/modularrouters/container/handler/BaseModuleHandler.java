@@ -22,7 +22,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         this.router = router;
         this.tagName = tagName;
 
-        deserializeNBT(holderStack.getOrCreateChildTag(ModularRouters.MODID).getCompound(tagName));
+        deserializeNBT(holderStack.getOrCreateTagElement(ModularRouters.MODID).getCompound(tagName));
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * @return number of items in the filter
      */
     public static int getFilterSize(ItemStack holderStack, String tagName) {
-        CompoundNBT tag = holderStack.getChildTag(ModularRouters.MODID);
+        CompoundNBT tag = holderStack.getTagElement(ModularRouters.MODID);
         if (tag != null  && tag.contains(tagName)) {
             ModuleFilterHandler handler = new ModuleFilterHandler(holderStack, null);
             int n = 0;
@@ -70,7 +70,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * Save the contents of the item handler onto the holder item stack's NBT
      */
     public void save() {
-        holderStack.getOrCreateChildTag(ModularRouters.MODID).put(tagName, serializeNBT());
+        holderStack.getOrCreateTagElement(ModularRouters.MODID).put(tagName, serializeNBT());
     }
 
     public static class BulkFilterHandler extends BaseModuleHandler {

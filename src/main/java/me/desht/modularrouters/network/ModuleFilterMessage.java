@@ -25,20 +25,20 @@ public class ModuleFilterMessage {
 
     public ModuleFilterMessage(PacketBuffer buffer) {
         slot = buffer.readByte();
-        stack = buffer.readItemStack();
+        stack = buffer.readItem();
     }
 
     public void toBytes(PacketBuffer buffer) {
         buffer.writeByte(slot);
-        buffer.writeItemStack(stack);
+        buffer.writeItem(stack);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             PlayerEntity player = ctx.get().getSender();
-            Container c = player.openContainer;
-            if (c instanceof ContainerModule && slot >= 0 && slot < c.inventorySlots.size() && c.getSlot(slot) instanceof FilterSlot) {
-                c.getSlot(slot).putStack(stack);
+            Container c = player.containerMenu;
+            if (c instanceof ContainerModule && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
+                c.getSlot(slot).set(stack);
             }
         });
         ctx.get().setPacketHandled(true);

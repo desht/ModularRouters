@@ -24,9 +24,9 @@ public class MiscEventHandler {
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
         if (event.getPos() != null) {
-            BlockState state = event.getPlayer().getEntityWorld().getBlockState(event.getPos());
+            BlockState state = event.getPlayer().getCommandSenderWorld().getBlockState(event.getPos());
             if (state.getBlock() instanceof BlockTemplateFrame) {
-                TileEntityTemplateFrame.getTemplateFrame(event.getPlayer().getEntityWorld(), event.getPos()).ifPresent(te -> {
+                TileEntityTemplateFrame.getTemplateFrame(event.getPlayer().getCommandSenderWorld(), event.getPos()).ifPresent(te -> {
                     if (te.getCamouflage() != null && te.extendedMimic()) {
                         BlockState camoState = te.getCamouflage();
                         // note: passing getPos() here would cause an infinite event loop
@@ -46,8 +46,8 @@ public class MiscEventHandler {
         } else if (stack.getItem() instanceof ItemModule) {
             // if self-crafting a module to reset it; retrieve any augments in the module
             ItemStack moduleStack = ItemStack.EMPTY;
-            for (int i = 0; i < event.getInventory().getSizeInventory(); i++) {
-                ItemStack s = event.getInventory().getStackInSlot(i);
+            for (int i = 0; i < event.getInventory().getContainerSize(); i++) {
+                ItemStack s = event.getInventory().getItem(i);
                 if (!s.isEmpty()) {
                     if (s.getItem() == event.getCrafting().getItem()) {
                         moduleStack = s;

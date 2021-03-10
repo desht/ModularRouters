@@ -60,24 +60,24 @@ public class BlockItemRouter extends BlockCamo {
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");
 
     public BlockItemRouter() {
-        super(Block.Properties.create(Material.IRON)
-                .hardnessAndResistance(HARDNESS, BLAST_RESISTANCE)
+        super(Block.Properties.of(Material.METAL)
+                .strength(HARDNESS, BLAST_RESISTANCE)
                 .sound(SoundType.METAL)
-                .notSolid());
-        setDefaultState(this.getStateContainer().getBaseState()
-                .with(FACING, Direction.NORTH).with(ACTIVE, false).with(CAN_EMIT, false));
+                .noOcclusion());
+        registerDefaultState(this.getStateDefinition().any()
+                .setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(CAN_EMIT, false));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING, ACTIVE, CAN_EMIT);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext ctx) {
-        Direction enumfacing = (ctx.getPlayer() == null) ? ctx.getFace() : Direction.fromAngle(ctx.getPlayer().rotationYaw).getOpposite();
-        return this.getDefaultState().with(FACING, enumfacing);
+        Direction enumfacing = (ctx.getPlayer() == null) ? ctx.getClickedFace() : Direction.fromYRot(ctx.getPlayer().yRot).getOpposite();
+        return this.defaultBlockState().setValue(FACING, enumfacing);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BlockItemRouter extends BlockCamo {
 
     @Override
     public VoxelShape getUncamouflagedShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext ctx) {
-        return VoxelShapes.fullCube();
+        return VoxelShapes.block();
     }
 
     @Nullable
@@ -97,23 +97,23 @@ public class BlockItemRouter extends BlockCamo {
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             TileEntityItemRouter.getRouterAt(world, pos).ifPresent(router -> {
                 InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
-                world.updateComparatorOutputLevel(pos, this);
-                super.onReplaced(state, world, pos, newState, isMoving);
+                world.updateNeighbourForOutputSignal(pos, this);
+                super.onRemove(state, world, pos, newState, isMoving);
             });
         }
     }
 
     @Override
-    public boolean hasComparatorInputOverride(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    public int getComparatorInputOverride(BlockState blockState, World world, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState blockState, World world, BlockPos pos) {
         return TileEntityItemRouter.getRouterAt(world, pos)
                 .map(router -> ItemHandlerHelper.calcRedstoneFromInventory(router.getBuffer()))
                 .orElse(0);
@@ -121,11 +121,11 @@ public class BlockItemRouter extends BlockCamo {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
+    public void appendHoverText(ItemStack stack, @Nullable IBlockReader player, List<ITextComponent> tooltip, ITooltipFlag advanced) {
         if (stack.hasTag()) {
             CompoundNBT compound = stack.getTag().getCompound("BlockEntityTag");
             tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.routerConfigured")
-                    .mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
+                    .withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<ITextComponent> moduleText = new ArrayList<>();
                 ItemStackHandler modulesHandler = new ItemStackHandler(9);
@@ -134,14 +134,14 @@ public class BlockItemRouter extends BlockCamo {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
                         moduleText.add(new StringTextComponent("\u2022 ")
-                                .append(moduleStack.getDisplayName())
-                                .mergeStyle(TextFormatting.AQUA)
+                                .append(moduleStack.getHoverName())
+                                .withStyle(TextFormatting.AQUA)
                         );
                     }
                 }
                 if (!moduleText.isEmpty()) {
                     tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.moduleCount",
-                            moduleText.size()).mergeStyle(TextFormatting.YELLOW));
+                            moduleText.size()).withStyle(TextFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
             }
@@ -155,13 +155,13 @@ public class BlockItemRouter extends BlockCamo {
                     if (!upgradeStack.isEmpty()) {
                         nUpgrades += upgradeStack.getCount();
                         upgradeText.add(new StringTextComponent("\u2022 " + upgradeStack.getCount() + " x ")
-                                .append(upgradeStack.getDisplayName())
-                                .mergeStyle(TextFormatting.AQUA)
+                                .append(upgradeStack.getHoverName())
+                                .withStyle(TextFormatting.AQUA)
                         );
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.upgradeCount", nUpgrades).mergeStyle(TextFormatting.YELLOW));
+                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.upgradeCount", nUpgrades).withStyle(TextFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
@@ -169,10 +169,10 @@ public class BlockItemRouter extends BlockCamo {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
                     tooltip.add(ClientUtil.xlate("modularrouters.guiText.tooltip.redstone.label")
-                            .appendString(": ")
-                            .mergeStyle(TextFormatting.YELLOW)
+                            .append(": ")
+                            .withStyle(TextFormatting.YELLOW)
                             .append(ClientUtil.xlate("modularrouters.guiText.tooltip.redstone." + rrb)
-                                    .mergeStyle(TextFormatting.RED))
+                                    .withStyle(TextFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
                 }
@@ -181,16 +181,16 @@ public class BlockItemRouter extends BlockCamo {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
         if (!player.isSteppingCarefully()) {
             return TileEntityItemRouter.getRouterAt(world, pos).map(router -> {
-                if (router.isPermitted(player) && !world.isRemote) {
+                if (router.isPermitted(player) && !world.isClientSide) {
                     // TODO combine into one packet?
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterSettingsMessage(router));
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(router));
                     NetworkHooks.openGui((ServerPlayerEntity) player, router, pos);
-                } else if (!router.isPermitted(player) && world.isRemote) {
-                    player.sendStatusMessage(ClientUtil.xlate("modularrouters.chatText.security.accessDenied"), false);
+                } else if (!router.isPermitted(player) && world.isClientSide) {
+                    player.displayClientMessage(ClientUtil.xlate("modularrouters.chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
                 return ActionResultType.SUCCESS;
@@ -200,23 +200,23 @@ public class BlockItemRouter extends BlockCamo {
     }
 
     @Override
-    public boolean canProvidePower(BlockState state) {
-        return state.get(BlockItemRouter.CAN_EMIT);
+    public boolean isSignalSource(BlockState state) {
+        return state.getValue(BlockItemRouter.CAN_EMIT);
     }
 
     @Override
-    public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+    public int getSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         return TileEntityItemRouter.getRouterAt(blockAccess, pos).map(router -> {
             int l = router.getRedstoneLevel(side, false);
-            return l < 0 ? super.getWeakPower(blockState, blockAccess, pos, side) : l;
+            return l < 0 ? super.getSignal(blockState, blockAccess, pos, side) : l;
         }).orElse(0);
     }
 
     @Override
-    public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+    public int getDirectSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         return TileEntityItemRouter.getRouterAt(blockAccess, pos).map(router -> {
             int l = router.getRedstoneLevel(side, true);
-            return l < 0 ? super.getStrongPower(blockState, blockAccess, pos, side) : l;
+            return l < 0 ? super.getDirectSignal(blockState, blockAccess, pos, side) : l;
         }).orElse(0);
     }
 

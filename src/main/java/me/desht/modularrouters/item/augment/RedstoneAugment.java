@@ -15,6 +15,6 @@ public class RedstoneAugment extends ItemAugment {
     @Override
     public String getExtraInfo(int c, ItemStack moduleStack) {
         RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(moduleStack);
-        return " - " + I18n.format("modularrouters.guiText.tooltip.redstone." + rrb.toString());
+        return " - " + I18n.get("modularrouters.guiText.tooltip.redstone." + rrb.toString());
     }
 }

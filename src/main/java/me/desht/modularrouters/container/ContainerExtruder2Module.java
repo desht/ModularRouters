@@ -36,23 +36,23 @@ public class ContainerExtruder2Module extends ContainerModule {
 
     @Override
     protected void transferStackInExtraSlot(PlayerEntity player, int index) {
-        inventorySlots.get(index).putStack(ItemStack.EMPTY);
+        slots.get(index).set(ItemStack.EMPTY);
     }
 
     @Override
     protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        Slot s = inventorySlots.get(slot);
-        ItemStack stackOnCursor = player.inventory.getItemStack();
-        ItemStack stackInSlot = s.getStack().copy();
+        Slot s = slots.get(slot);
+        ItemStack stackOnCursor = player.inventory.getCarried();
+        ItemStack stackInSlot = s.getItem().copy();
         if (clickTypeIn == ClickType.QUICK_MOVE) {
-            s.putStack(ItemStack.EMPTY);  // shift-left-click clears the slot
-        } else if (!stackOnCursor.isEmpty() && !ItemStack.areItemsEqual(stackInSlot, stackOnCursor) && s.isItemValid(stackOnCursor)) {
+            s.set(ItemStack.EMPTY);  // shift-left-click clears the slot
+        } else if (!stackOnCursor.isEmpty() && !ItemStack.isSame(stackInSlot, stackOnCursor) && s.mayPlace(stackOnCursor)) {
             // placing a new item in the template buffer
             ItemStack stack1 = stackOnCursor.copy();
             if (dragType == 1) {
                 stack1.setCount(1);
             }
-            s.putStack(stack1);
+            s.set(stack1);
         } else {
             if (!stackInSlot.isEmpty()) {
                 if (dragType == 1) {
@@ -62,8 +62,8 @@ public class ContainerExtruder2Module extends ContainerModule {
                     // left-click decrements the stack size
                     stackInSlot.shrink(1);
                 }
-                s.putStack(stackInSlot);
-                s.onSlotChanged();  // need explicit call here
+                s.set(stackInSlot);
+                s.setChanged();  // need explicit call here
             }
         }
         return ItemStack.EMPTY;
@@ -77,7 +77,7 @@ public class ContainerExtruder2Module extends ContainerModule {
             return true;  // non-block items are allowed - they act as spacers
         }
         Block b = ((BlockItem) stack.getItem()).getBlock();
-        return b.getDefaultState().getRenderType() == BlockRenderType.MODEL && !b.getRegistryName().getNamespace().equals("chiselsandbits");
+        return b.defaultBlockState().getRenderShape() == BlockRenderType.MODEL && !b.getRegistryName().getNamespace().equals("chiselsandbits");
     }
 
     public static class TemplateHandler extends BaseModuleHandler {

@@ -34,17 +34,17 @@ public class CompiledBreakerModule extends CompiledModule {
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
         if (isRegulationOK(router, true)) {
-            World world = router.getWorld();
+            World world = router.getLevel();
             if (!(world instanceof ServerWorld)) {
                 return false;
             }
-            BlockPos pos = getTarget().gPos.getPos();
+            BlockPos pos = getTarget().gPos.pos();
             BlockState oldState = world.getBlockState(pos);
             BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(router, world, pos, getFilter(), pickaxe);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
                 if (MRConfig.Common.Module.breakerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
-                    world.playEvent(Constants.WorldEvents.BREAK_BLOCK_EFFECTS, pos, Block.getStateId(oldState));
+                    world.levelEvent(Constants.WorldEvents.BREAK_BLOCK_EFFECTS, pos, Block.getId(oldState));
                 }
                 return true;
             }

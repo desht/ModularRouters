@@ -36,14 +36,14 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
 
         RenderType layer = MinecraftForgeClient.getRenderLayer();
         if (layer == null) {
-            layer = RenderType.getSolid(); // workaround for when this isn't set (digging, etc.)
+            layer = RenderType.solid(); // workaround for when this isn't set (digging, etc.)
         }
-        if (camoState == null && layer == RenderType.getSolid()) {
+        if (camoState == null && layer == RenderType.solid()) {
             // No camo
             return baseModel.getQuads(state, side, rand, modelData);
         } else if (camoState != null && RenderTypeLookup.canRenderInLayer(camoState, layer)) {
             // Steal camo's model
-            IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(camoState);
+            IBakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(camoState);
             return model.getQuads(camoState, side, rand, modelData);
         } else {
             // Not rendering in this layer
@@ -52,8 +52,8 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
-        return baseModel.isAmbientOcclusion();
+    public boolean useAmbientOcclusion() {
+        return baseModel.useAmbientOcclusion();
     }
 
     @Override
@@ -62,18 +62,18 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
-        return baseModel.isBuiltInRenderer();
+    public boolean isCustomRenderer() {
+        return baseModel.isCustomRenderer();
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return baseModel.getParticleTexture();
+    public TextureAtlasSprite getParticleIcon() {
+        return baseModel.getParticleIcon();
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
-        return baseModel.getItemCameraTransforms();
+    public ItemCameraTransforms getTransforms() {
+        return baseModel.getTransforms();
     }
 
     @Override
@@ -82,7 +82,7 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean usesBlockLight() {
         return false;
     }
 

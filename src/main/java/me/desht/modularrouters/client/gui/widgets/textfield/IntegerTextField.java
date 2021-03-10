@@ -21,7 +21,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
 
         setRange(range);
 
-        setValidator(this::validate);
+        setFilter(this::validate);
     }
 
     private boolean validate(String input) {
@@ -53,11 +53,11 @@ public class IntegerTextField extends TextFieldWidgetMR {
 
     public void setRange(Range<Integer> range) {
         this.range = range;
-        if (!range.contains(getValue())) {
-            setValue(MathHelper.clamp(getValue(), range.getMinimum(), range.getMaximum()));
+        if (!range.contains(getIntValue())) {
+            setValue(MathHelper.clamp(getIntValue(), range.getMinimum(), range.getMaximum()));
 //            setCursorPosition(1);
         }
-        setMaxStringLength(Math.max(Integer.toString(range.getMinimum()).length(), Integer.toString(range.getMaximum()).length()));
+        setMaxLength(Math.max(Integer.toString(range.getMinimum()).length(), Integer.toString(range.getMaximum()).length()));
     }
 
     @Override
@@ -67,14 +67,14 @@ public class IntegerTextField extends TextFieldWidgetMR {
 
     public void setValue(int val) {
         if (range.contains(val)) {
-            setText(Integer.toString(val));
+            setValue(Integer.toString(val));
         }
     }
 
-    public int getValue() {
+    public int getIntValue() {
         int val;
         try {
-            val = Integer.parseInt(getText());
+            val = Integer.parseInt(getValue());
         } catch (NumberFormatException e) {
             val = range.getMinimum();
         }
@@ -102,10 +102,10 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     private boolean adjustField(int adj) {
-        int newVal = MathHelper.clamp(getValue() + adj, range.getMinimum(), range.getMaximum());
-        if (newVal != getValue()) {
-            setText("");
-            writeText(Integer.toString(newVal));
+        int newVal = MathHelper.clamp(getIntValue() + adj, range.getMinimum(), range.getMaximum());
+        if (newVal != getIntValue()) {
+            setValue("");
+            insertText(Integer.toString(newVal));
         }
         return true;
     }

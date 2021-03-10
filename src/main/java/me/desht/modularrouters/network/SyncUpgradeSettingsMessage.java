@@ -37,7 +37,7 @@ public class SyncUpgradeSettingsMessage {
         ctx.get().enqueueWork(() -> {
             PlayerEntity player = ctx.get().getSender();
             if (player != null) {
-                ItemStack held = player.getHeldItem(hand);
+                ItemStack held = player.getItemInHand(hand);
                 if (held.getItem() instanceof SyncUpgrade) {
                     SyncUpgrade.setTunedValue(held, tunedValue);
                 }

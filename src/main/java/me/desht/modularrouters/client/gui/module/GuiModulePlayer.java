@@ -47,19 +47,19 @@ public class GuiModulePlayer extends GuiModule {
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
 
-        addButton(secButton = new SectionButton(guiLeft + 169, guiTop + 32, 16, 16, true, STACKS, cpm.getSection()));
-        addButton(opButton = new OperationButton(guiLeft + 148, guiTop + 32, cpm.getOperation()));
+        addButton(secButton = new SectionButton(leftPos + 169, topPos + 32, 16, 16, true, STACKS, cpm.getSection()));
+        addButton(opButton = new OperationButton(leftPos + 148, topPos + 32, cpm.getOperation()));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 127, guiTop + 29, guiLeft + 187, guiTop + 50, "modularrouters.guiText.popup.player.control");
+        getMouseOverHelp().addHelpRegion(leftPos + 127, topPos + 29, leftPos + 187, topPos + 50, "modularrouters.guiText.popup.player.control");
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, guiLeft + 167, guiTop + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
+        this.blit(matrixStack, leftPos + 167, topPos + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
 
-        GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, guiLeft + 128, guiTop + 32, "");
+        GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, leftPos + 128, topPos + 32, "");
     }
 
     @Override

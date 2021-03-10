@@ -46,7 +46,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
     @Override
     public boolean execute(@Nonnull TileEntityItemRouter router) {
         boolean extend = shouldExtend(router);
-        World world = router.getWorld();
+        World world = router.getLevel();
 
         if (extend && distance < blockList.size()) {
             // try to extend
@@ -54,27 +54,27 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 // non-block item; it's a spacer so just skip over
                 router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
             } else {
-                BlockPos placePos = router.getPos().offset(getFacing(), distance + 1);
-                BlockState state = ModBlocks.TEMPLATE_FRAME.get().getDefaultState();
+                BlockPos placePos = router.getBlockPos().relative(getFacing(), distance + 1);
+                BlockState state = ModBlocks.TEMPLATE_FRAME.get().defaultBlockState();
                 if (BlockUtil.tryPlaceBlock(router, state, world, placePos)) {
                     TileEntityTemplateFrame.getTemplateFrame(world, placePos).ifPresent(te -> {
                         te.setCamouflage(blockList.get(distance), getFacing(), getRouterFacing());
                         te.setExtendedMimic(mimic);
                         if (mimic) {
                             // in case we're mimicking a redstone emitter
-                            world.notifyNeighborsOfStateChange(placePos, state.getBlock());
+                            world.updateNeighborsAt(placePos, state.getBlock());
                         }
                     });
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                     router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
-                    tryPushEntities(router.getWorld(), placePos, getFacing());
+                    tryPushEntities(router.getLevel(), placePos, getFacing());
                     return true;
                 }
             }
         } else if (!extend && distance > 0) {
-            BlockPos breakPos = router.getPos().offset(getFacing(), distance);
+            BlockPos breakPos = router.getBlockPos().relative(getFacing(), distance);
             BlockState oldState = world.getBlockState(breakPos);
             router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
             if (okToBreak(oldState, world, breakPos)) {

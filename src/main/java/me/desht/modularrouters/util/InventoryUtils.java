@@ -40,15 +40,15 @@ public class InventoryUtils {
                     itemStack.shrink(stackSize);
 
                     float motionScale = 0.05f;
-                    entityitem.setMotion(random.nextGaussian() * (double) motionScale, random.nextGaussian() * (double) motionScale + 0.2, random.nextGaussian() * (double) motionScale);
-                    world.addEntity(entityitem);
+                    entityitem.setDeltaMovement(random.nextGaussian() * (double) motionScale, random.nextGaussian() * (double) motionScale + 0.2, random.nextGaussian() * (double) motionScale);
+                    world.addFreshEntity(entityitem);
                 }
             }
         }
     }
 
     public static LazyOptional<IItemHandler> getInventory(World world, BlockPos pos, @Nullable Direction side) {
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getBlockEntity(pos);
         return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
     }
 
@@ -84,9 +84,9 @@ public class InventoryUtils {
      * @return true if the entity was spawned, false otherwise
      */
     public static boolean dropItems(World world, Vector3d pos, ItemStack stack) {
-        if (!world.isRemote) {
-            ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-            return world.addEntity(item);
+        if (!world.isClientSide) {
+            ItemEntity item = new ItemEntity(world, pos.x(), pos.y(), pos.z(), stack);
+            return world.addFreshEntity(item);
         }
         return true;
     }
@@ -105,7 +105,7 @@ public class InventoryUtils {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                boolean match = matchMeta ? stack.isItemEqual(toCount) : stack.isItemEqualIgnoreDurability(toCount);
+                boolean match = matchMeta ? stack.sameItem(toCount) : stack.sameItemStackIgnoreDurability(toCount);
                 if (match) {
                     count += stack.getCount();
                 }

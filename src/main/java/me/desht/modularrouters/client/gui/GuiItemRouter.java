@@ -46,8 +46,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     public GuiItemRouter(ContainerItemRouter container, PlayerInventory inventoryPlayer, ITextComponent displayName) {
         super(container, inventoryPlayer, displayName);
 
-        this.xSize = GUI_WIDTH;
-        this.ySize = GUI_HEIGHT;
+        this.imageWidth = GUI_WIDTH;
+        this.imageHeight = GUI_HEIGHT;
         this.router = container.getRouter();
 
         this.passEvents = true;
@@ -57,31 +57,31 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     public void init() {
         super.init();
 
-        addButton(rrb = new RedstoneBehaviourButton(this.guiLeft + 152, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
-        addButton(reb = new RouterEcoButton(this.guiLeft + 132, this.guiTop + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
+        addButton(rrb = new RedstoneBehaviourButton(this.leftPos + 152, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
+        addButton(reb = new RouterEcoButton(this.leftPos + 132, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
     }
 
     // drawGuiContainerForegroundLayer
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        String title = I18n.format("block.modularrouters.item_router");
-        font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("modularrouters.guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
-        font.drawString(matrixStack, I18n.format("container.inventory"), 8, this.ySize - 96 + 4, 0xFF404040);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        String title = I18n.get("block.modularrouters.item_router");
+        font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, I18n.get("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040);
     }
 
     // drawGuiContainerBackgroundLayer
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float v, int i, int i1) {
-        getMinecraft().getTextureManager().bindTexture(textureLocation);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+    protected void renderBg(MatrixStack matrixStack, float v, int i, int i1) {
+        getMinecraft().getTextureManager().bind(textureLocation);
+        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return ClientSetup.keybindConfigure.getKey().getKeyCode() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
+        return ClientSetup.keybindConfigure.getKey().getValue() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
@@ -91,10 +91,10 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     private boolean handleModuleConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || !(slot.getStack().getItem() instanceof ItemModule) || slot.slotNumber < MODULE_START || slot.slotNumber > MODULE_END) {
+        if (slot == null || !(slot.getItem().getItem() instanceof ItemModule) || slot.index < MODULE_START || slot.index > MODULE_END) {
             return false;
         }
-        MFLocator locator = MFLocator.moduleInRouter(router.getPos(), slot.slotNumber - MODULE_START);
+        MFLocator locator = MFLocator.moduleInRouter(router.getBlockPos(), slot.index - MODULE_START);
         PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
         return true;
     }
@@ -124,7 +124,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         @Override
         public List<ITextComponent> getTooltip() {
             return MiscUtil.wrapStringAsTextComponent(
-                    I18n.format("modularrouters.guiText.tooltip.eco." + isToggled(),
+                    I18n.get("modularrouters.guiText.tooltip.eco." + isToggled(),
                             MRConfig.Common.Router.ecoTimeout / 20.f,
                             MRConfig.Common.Router.lowPowerTickRate / 20.f)
             );

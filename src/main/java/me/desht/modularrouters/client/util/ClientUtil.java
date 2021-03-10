@@ -10,28 +10,28 @@ import net.minecraft.world.World;
 
 public class ClientUtil {
     public static World theClientWorld() {
-        return Minecraft.getInstance().world;
+        return Minecraft.getInstance().level;
     }
 
     public static TileEntityItemRouter getOpenItemRouter() {
-        if (Minecraft.getInstance().currentScreen instanceof GuiItemRouter) {
-            return ((GuiItemRouter) Minecraft.getInstance().currentScreen).router;
+        if (Minecraft.getInstance().screen instanceof GuiItemRouter) {
+            return ((GuiItemRouter) Minecraft.getInstance().screen).router;
         } else {
             return null;
         }
     }
 
     public static boolean thisScreenPassesEvents() {
-        return Minecraft.getInstance().currentScreen == null || Minecraft.getInstance().currentScreen.passEvents;
+        return Minecraft.getInstance().screen == null || Minecraft.getInstance().screen.passEvents;
     }
 
     public static IFormattableTextComponent xlate(String key, Object... args) {
         // not using TranslationTextComponent here because each argument starts a separate child component,
         // which resets any formatting each time
-        return new StringTextComponent(I18n.format(key, args));
+        return new StringTextComponent(I18n.get(key, args));
     }
 
     public static boolean isInvKey(int keyCode) {
-        return keyCode == Minecraft.getInstance().gameSettings.keyBindInventory.getKey().getKeyCode();
+        return keyCode == Minecraft.getInstance().options.keyInventory.getKey().getValue();
     }
 }

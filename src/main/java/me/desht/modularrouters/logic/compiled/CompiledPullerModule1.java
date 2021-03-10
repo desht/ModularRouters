@@ -25,7 +25,7 @@ public class CompiledPullerModule1 extends CompiledModule {
                 ItemStack taken = transferToRouter(handler, router);
                 if (!taken.isEmpty()) {
                     if (MRConfig.Common.Module.pullerParticles) {
-                        playParticles(router,  getTarget().gPos.getPos(), taken);
+                        playParticles(router,  getTarget().gPos.pos(), taken);
                     }
                     return true;
                 }

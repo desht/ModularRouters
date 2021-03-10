@@ -36,8 +36,8 @@ public class GuiModFilter extends GuiFilterContainer {
     public GuiModFilter(ContainerSmartFilter container, PlayerInventory inv, ITextComponent displayName) {
         super(container, inv, displayName);
 
-        this.xSize = GUI_WIDTH;
-        this.ySize = GUI_HEIGHT;
+        this.imageWidth = GUI_WIDTH;
+        this.imageHeight = GUI_HEIGHT;
 
         mods.addAll(ModFilter.getModList(filterStack));
         mods.forEach(s -> ModularRouters.LOGGER.info("mod: " + s));
@@ -47,23 +47,23 @@ public class GuiModFilter extends GuiFilterContainer {
     public void init() {
         super.init();
 
-        if (container.getLocator().filterSlot >= 0) {
-            addButton(new BackButton(guiLeft - 12, guiTop, p -> closeGUI()));
+        if (menu.getLocator().filterSlot >= 0) {
+            addButton(new BackButton(leftPos - 12, topPos, p -> closeGUI()));
         }
-        addButton(new Buttons.AddButton(guiLeft + 154, guiTop + 19, p -> {
+        addButton(new Buttons.AddButton(leftPos + 154, topPos + 19, p -> {
             if (!modId.isEmpty()) {
                 CompoundNBT ext = new CompoundNBT();
                 ext.putString("ModId", modId);
-                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ADD_STRING, container.getLocator(), ext));
-                getContainer().inventorySlots.get(0).putStack(ItemStack.EMPTY);
+                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ADD_STRING, menu.getLocator(), ext));
+                getMenu().slots.get(0).set(ItemStack.EMPTY);
             }
         }));
         deleteButtons.clear();
         for (int i = 0; i < ModFilter.MAX_SIZE; i++) {
-            DeleteButton b = new DeleteButton(guiLeft + 8, guiTop + 44 + i * 19, i, button -> {
+            DeleteButton b = new DeleteButton(leftPos + 8, topPos + 44 + i * 19, i, button -> {
                 CompoundNBT ext = new CompoundNBT();
                 ext.putInt("Pos", ((DeleteButton) button).getId());
-                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.REMOVE_AT, container.getLocator(), ext));
+                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.REMOVE_AT, menu.getLocator(), ext));
             });
             addButton(b);
             deleteButtons.add(b);
@@ -78,17 +78,17 @@ public class GuiModFilter extends GuiFilterContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        String title = filterStack.getDisplayName().getString() + (container.getRouter() != null ? I18n.format("modularrouters.guiText.label.installed") : "");
-        font.drawString(matrixStack, title, this.xSize / 2f - font.getStringWidth(title) / 2f, 8, 0x404040);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        String title = filterStack.getHoverName().getString() + (menu.getRouter() != null ? I18n.get("modularrouters.guiText.label.installed") : "");
+        font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, 8, 0x404040);
 
         if (!modName.isEmpty()) {
-            font.drawString(matrixStack, modName, 29, 23, 0x404040);
+            font.draw(matrixStack, modName, 29, 23, 0x404040);
         }
 
         for (int i = 0; i < mods.size(); i++) {
             String mod = ModNameCache.getModName(mods.get(i));
-            font.drawString(matrixStack, mod, 28, 47 + i * 19, 0x404080);
+            font.draw(matrixStack, mod, 28, 47 + i * 19, 0x404080);
         }
     }
 
@@ -96,10 +96,10 @@ public class GuiModFilter extends GuiFilterContainer {
     public void tick() {
         super.tick();
 
-        ItemStack inSlot = getContainer().getInventory().get(0);
+        ItemStack inSlot = getMenu().getItems().get(0);
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             modId = modName = "";
-        } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !inSlot.isItemEqualIgnoreDurability(prevInSlot))) {
+        } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !inSlot.sameItemStackIgnoreDurability(prevInSlot))) {
             modId = inSlot.getItem().getRegistryName().getNamespace();
             modName = ModNameCache.getModName(modId);
         }
@@ -107,9 +107,9 @@ public class GuiModFilter extends GuiFilterContainer {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        minecraft.getTextureManager().bindTexture(TEXTURE_LOCATION);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        minecraft.getTextureManager().bind(TEXTURE_LOCATION);
+        blit(matrixStack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override

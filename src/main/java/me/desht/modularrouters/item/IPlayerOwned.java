@@ -30,7 +30,7 @@ public interface IPlayerOwned {
         CompoundNBT compound = stack.getOrCreateTag();
         ListNBT owner = new ListNBT();
         owner.add(StringNBT.valueOf(player.getDisplayName().getString()));
-        owner.add(StringNBT.valueOf(player.getUniqueID().toString()));
+        owner.add(StringNBT.valueOf(player.getUUID().toString()));
         compound.put(NBT_OWNER, owner);
         stack.setTag(compound);
     }

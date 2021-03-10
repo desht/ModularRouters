@@ -15,14 +15,14 @@ public class GuiModuleExtruder2 extends GuiModule {
     public void init() {
         super.init();
 
-        addButton(new InfoButton(guiLeft + 173, guiTop + 70, "extruder2.template"));
+        addButton(new InfoButton(leftPos + 173, topPos + 70, "extruder2.template"));
 
-        getMouseOverHelp().addHelpRegion(guiLeft + 128, guiTop + 16, guiLeft + 181, guiTop + 69, "modularrouters.guiText.popup.extruder2.template");
+        getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 16, leftPos + 181, topPos + 69, "modularrouters.guiText.popup.extruder2.template");
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-        this.blit(matrixStack, guiLeft + 128, guiTop + 16, 202, 52, 54, 54);
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+        this.blit(matrixStack, leftPos + 128, topPos + 16, 202, 52, 54, 54);
     }
 }

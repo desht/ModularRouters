@@ -36,7 +36,7 @@ class TOPInfoProvider {
 
                 probeInfo.text(new StringTextComponent(TextFormatting.YELLOW.toString())
                         .append(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone.label"))
-                        .appendString(TextFormatting.WHITE + ": ")
+                        .append(TextFormatting.WHITE + ": ")
                         .append(new TranslationTextComponent(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {

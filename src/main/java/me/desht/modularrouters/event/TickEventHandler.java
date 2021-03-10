@@ -13,7 +13,7 @@ public class TickEventHandler {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.world.getDimensionKey() == World.OVERWORLD && event.phase == TickEvent.Phase.END) {
+        if (event.world.dimension() == World.OVERWORLD && event.phase == TickEvent.Phase.END) {
             TickCounter++;
         }
     }

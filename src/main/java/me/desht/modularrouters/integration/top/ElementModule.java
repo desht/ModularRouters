@@ -25,7 +25,7 @@ public class ElementModule implements IElement {
 
     public ElementModule(ByteBuf buf) {
         PacketBuffer pb = new PacketBuffer(buf);
-        this.stack = pb.readItemStack();
+        this.stack = pb.readItem();
         this.dir = ItemModule.RelativeDirection.values()[pb.readByte()];
     }
 
@@ -47,7 +47,7 @@ public class ElementModule implements IElement {
 
     @Override
     public void toBytes(PacketBuffer buffer) {
-        buffer.writeItemStack(stack);
+        buffer.writeItem(stack);
         buffer.writeByte(dir.ordinal());
     }
 

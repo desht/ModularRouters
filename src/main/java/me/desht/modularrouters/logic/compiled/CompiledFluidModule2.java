@@ -15,6 +15,6 @@ public class CompiledFluidModule2 extends CompiledFluidModule1 {
 
     @Override
     List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
-        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getWorld().isRemote));
+        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getLevel().isClientSide));
     }
 }

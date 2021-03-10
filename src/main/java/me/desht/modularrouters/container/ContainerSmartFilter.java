@@ -17,11 +17,11 @@ public abstract class ContainerSmartFilter extends ContainerMRBase {
 
         this.locator = locator;
         this.filterStack = locator.getTargetItem(inv.player);
-        this.router = locator.getRouter(inv.player.world).orElse(null);
+        this.router = locator.getRouter(inv.player.level).orElse(null);
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         return true;
     }
 

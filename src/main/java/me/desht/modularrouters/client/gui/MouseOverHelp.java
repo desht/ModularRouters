@@ -37,15 +37,15 @@ public class MouseOverHelp {
     }
 
     public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<ContainerScreen<?>> showPredicate) {
-        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.format(key), 35), showPredicate));
+        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.get(key), 35), showPredicate));
     }
 
     private void onMouseOver(MatrixStack matrixStack, int mouseX, int mouseY) {
         if (active) {
             HelpRegion region = getRegionAt(mouseX, mouseY);
             if (region != null) {
-                showPopupBox(matrixStack, screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
-                showPopupBox(matrixStack, screen, Minecraft.getInstance().fontRenderer, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
+                showPopupBox(matrixStack, screen, Minecraft.getInstance().font, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
+                showPopupBox(matrixStack, screen, Minecraft.getInstance().font, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
             }
         }
     }
@@ -64,9 +64,9 @@ public class MouseOverHelp {
 
         if (helpText != null && !helpText.isEmpty()) {
             boxWidth = 0;
-            boxHeight = helpText.size() * fontRenderer.FONT_HEIGHT;
+            boxHeight = helpText.size() * fontRenderer.lineHeight;
             for (String s : helpText) {
-                boxWidth = Math.max(boxWidth, fontRenderer.getStringWidth(s));
+                boxWidth = Math.max(boxWidth, fontRenderer.width(s));
             }
             // enlarge box width & height for a text margin
             int xOff = rect.getX() - screen.getGuiLeft() < screen.getXSize() / 2 ? rect.getWidth() + 10 : -(boxWidth + TEXT_MARGIN + 10);
@@ -85,7 +85,7 @@ public class MouseOverHelp {
         int x2 = x1 + actualRect.getWidth();
         int y2 = y1 + actualRect.getHeight();
 
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(0, 0, 300);
         AbstractGui.fill(matrixStack, x1, y1, x2, y2, bgColor);
         AbstractGui.fill(matrixStack, x1, y1, x2, y1 + 1, borderColor);
@@ -95,12 +95,12 @@ public class MouseOverHelp {
 
         if (helpText != null) {
             for (String s : helpText) {
-                fontRenderer.drawString(matrixStack, s, x1 + TEXT_MARGIN / 2f, y1 + TEXT_MARGIN / 2f, textColor);
-                y1 += fontRenderer.FONT_HEIGHT;
+                fontRenderer.draw(matrixStack, s, x1 + TEXT_MARGIN / 2f, y1 + TEXT_MARGIN / 2f, textColor);
+                y1 += fontRenderer.lineHeight;
             }
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     public static class HelpRegion {
@@ -132,8 +132,8 @@ public class MouseOverHelp {
     public static class Button extends TexturedToggleButton {
         public Button(int x, int y) {
             super(x, y, 16, 16, false, null);
-            tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("modularrouters.guiText.tooltip.mouseOverHelp.false")));
-            tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.format("modularrouters.guiText.tooltip.mouseOverHelp.true")));
+            tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.get("modularrouters.guiText.tooltip.mouseOverHelp.false")));
+            tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.get("modularrouters.guiText.tooltip.mouseOverHelp.true")));
         }
 
         @Override

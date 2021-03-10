@@ -17,6 +17,6 @@ public class RegulatorAugment extends ItemAugment {
     public String getExtraInfo(int c, ItemStack moduleStack) {
         int amount = ModuleHelper.getRegulatorAmount(moduleStack);
         String key = ((ItemModule) moduleStack.getItem()).getRegulatorTranslationKey(moduleStack);
-        return " - " + I18n.format(key, amount);
+        return " - " + I18n.get(key, amount);
     }
 }

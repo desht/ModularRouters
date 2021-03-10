@@ -27,11 +27,11 @@ public class CompiledSenderModule3 extends CompiledSenderModule2 {
     @Override
     protected void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vector3d vec = Vector3d.copyCentered(router.getPos());
+            Vector3d vec = Vector3d.atCenterOf(router.getBlockPos());
             Direction facing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getWorld().getDimensionKey());
+            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, 32, router.getLevel().dimension());
             PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
-                    new ItemBeamMessage(router, router.getPos().offset(facing, 2), false, stack, PARTICLE_COLOR.getRGB(), router.getTickRate(), true));
+                    new ItemBeamMessage(router, router.getBlockPos().relative(facing, 2), false, stack, PARTICLE_COLOR.getRGB(), router.getTickRate(), true));
         }
     }
 }

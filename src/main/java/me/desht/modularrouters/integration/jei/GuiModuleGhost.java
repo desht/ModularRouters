@@ -14,12 +14,14 @@ import net.minecraftforge.fluids.FluidUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
+
 public class GuiModuleGhost implements IGhostIngredientHandler<GuiModule> {
     @Override
     public <I> List<Target<I>> getTargets(GuiModule gui, I ingredient, boolean doStart) {
         List<Target<I>> res = new ArrayList<>();
-        for (int i = 0; i < gui.getContainer().inventorySlots.size(); i++) {
-            Slot s = gui.getContainer().getSlot(i);
+        for (int i = 0; i < gui.getMenu().slots.size(); i++) {
+            Slot s = gui.getMenu().getSlot(i);
             if (s instanceof FilterSlot) {
                 res.add(new ItemTarget<>(gui, s));
             }
@@ -42,17 +44,17 @@ public class GuiModuleGhost implements IGhostIngredientHandler<GuiModule> {
 
         @Override
         public Rectangle2d getArea() {
-            return new Rectangle2d(slot.xPos + gui.getGuiLeft(), slot.yPos + gui.getGuiTop(), 16, 16);
+            return new Rectangle2d(slot.x + gui.getGuiLeft(), slot.y + gui.getGuiTop(), 16, 16);
         }
 
         @Override
         public void accept(I stack) {
             if (stack instanceof ItemStack) {
-                PacketHandler.NETWORK.sendToServer(new ModuleFilterMessage(slot.slotNumber, (ItemStack) stack));
+                PacketHandler.NETWORK.sendToServer(new ModuleFilterMessage(slot.index, (ItemStack) stack));
             } else if (stack instanceof FluidStack) {
                 ItemStack bucket = FluidUtil.getFilledBucket((FluidStack) stack);
                 if (!bucket.isEmpty()) {
-                    PacketHandler.NETWORK.sendToServer(new ModuleFilterMessage(slot.slotNumber, bucket));
+                    PacketHandler.NETWORK.sendToServer(new ModuleFilterMessage(slot.index, bucket));
                 }
             }
         }

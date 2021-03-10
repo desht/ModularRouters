@@ -26,12 +26,12 @@ public class CompiledPlacerModule extends CompiledModule {
         if (!getFilter().test(toPlace)) {
             return false;
         }
-        World world = router.getWorld();
-        BlockPos pos = getTarget().gPos.getPos();
+        World world = router.getLevel();
+        BlockPos pos = getTarget().gPos.pos();
         BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, world, pos, getFacing());
         if (newState != null) {
             if (MRConfig.Common.Module.placerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
-                world.playEvent(2001, pos, Block.getStateId(newState));
+                world.levelEvent(2001, pos, Block.getId(newState));
             }
             router.extractBuffer(1);
             return true;

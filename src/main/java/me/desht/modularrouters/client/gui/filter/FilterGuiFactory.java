@@ -30,7 +30,7 @@ public class FilterGuiFactory {
                 && !((ItemSmartFilter) filterStack.getItem()).hasContainer()
                 && REGISTRY.containsKey(filterStack.getItem()))
         {
-            Minecraft.getInstance().displayGuiScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));
+            Minecraft.getInstance().setScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));
         }
     }
 }

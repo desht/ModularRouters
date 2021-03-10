@@ -48,17 +48,17 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext ctx) {
+    public ActionResultType useOn(ItemUseContext ctx) {
         if (ctx.getPlayer() != null && ctx.getPlayer().isCrouching()) {
             if (isValidTarget(ctx)) {
                 if (getMaxTargets() == 1) {
-                    handleSingleTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
+                    handleSingleTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
                 } else {
-                    handleMultiTarget(ctx.getItem(), ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), ctx.getFace());
+                    handleMultiTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
                 }
                 return ActionResultType.SUCCESS;
             } else {
-                return super.onItemUse(ctx);
+                return super.useOn(ctx);
             }
         } else {
             return ActionResultType.PASS;
@@ -66,23 +66,23 @@ public abstract class TargetedModule extends ItemModule {
     }
 
     protected boolean isValidTarget(ItemUseContext ctx) {
-        return InventoryUtils.getInventory(ctx.getWorld(), ctx.getPos(), ctx.getFace()).isPresent();
+        return InventoryUtils.getInventory(ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace()).isPresent();
     }
 
     private void handleSingleTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
                 IFormattableTextComponent msg = new TranslationTextComponent("modularrouters.chatText.misc.targetSet").append(tgt.getTextComponent());
-                player.sendStatusMessage(msg.mergeStyle(TextFormatting.YELLOW), true);
+                player.displayClientMessage(msg.withStyle(TextFormatting.YELLOW), true);
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
             }
         }
     }
 
     private void handleMultiTarget(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction face) {
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             boolean removing = false;
             String invName = BlockUtil.getBlockName(world, pos);
             GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos);
@@ -91,16 +91,16 @@ public abstract class TargetedModule extends ItemModule {
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
-                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
-                        .append(tgt.getTextComponent()).mergeStyle(TextFormatting.YELLOW), true);
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
+                        .append(tgt.getTextComponent()).withStyle(TextFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetAdded", targets.size(), getMaxTargets())
-                        .append(tgt.getTextComponent()).mergeStyle(TextFormatting.YELLOW), true);
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetAdded", targets.size(), getMaxTargets())
+                        .append(tgt.getTextComponent()).withStyle(TextFormatting.YELLOW), true);
             } else {
                 // too many targets already
-                player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.tooManyTargets", getMaxTargets())
-                        .mergeStyle(TextFormatting.RED), true);
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.misc.tooManyTargets", getMaxTargets())
+                        .withStyle(TextFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundCategory.BLOCKS, 1.0f, 1.3f);
                 return;
             }
@@ -131,14 +131,14 @@ public abstract class TargetedModule extends ItemModule {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                ITextComponent msg = asFormattable(target.getTextComponent()).mergeStyle(TextFormatting.WHITE);
+                ITextComponent msg = asFormattable(target.getTextComponent()).withStyle(TextFormatting.WHITE);
                 list.add(msg);
                 TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(xlate(val.translationKey()).mergeStyle(val.getColor()));
+                        list.add(xlate(val.translationKey()).withStyle(val.getColor()));
                     }
                 }
             }
@@ -147,10 +147,10 @@ public abstract class TargetedModule extends ItemModule {
 
     @Override
     public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
-        if (!world.isRemote && getTarget(stack) != null && getMaxTargets() == 1) {
+        if (!world.isClientSide && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            world.playSound(null, new BlockPos(player.getPositionVec()), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
-            player.sendStatusMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetCleared").mergeStyle(TextFormatting.YELLOW), true);
+            world.playSound(null, new BlockPos(player.position()), ModSounds.SUCCESS.get(), SoundCategory.BLOCKS, 1.0f, 1.1f);
+            player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.misc.targetCleared").withStyle(TextFormatting.YELLOW), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
@@ -164,7 +164,7 @@ public abstract class TargetedModule extends ItemModule {
      * @param face clicked face of the target
      */
     private static void setTarget(ItemStack stack, World world, BlockPos pos, Direction face) {
-        if (world.isRemote) {
+        if (world.isClientSide) {
             ModularRouters.LOGGER.warn("TargetModule.setTarget() should not be called client-side!");
             return;
         }
@@ -197,8 +197,8 @@ public abstract class TargetedModule extends ItemModule {
      * @return targeting data
      */
     public static ModuleTarget getTarget(ItemStack stack, boolean checkBlockName) {
-        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
-        if (compound != null && compound.getTagId(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
+        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
+        if (compound != null && compound.getTagType(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
             ModuleTarget target = ModuleTarget.fromNBT(compound.getCompound(NBT_TARGET));
             if (checkBlockName) {
                 ModuleTarget newTarget = updateTargetBlockName(stack, target);
@@ -219,8 +219,8 @@ public abstract class TargetedModule extends ItemModule {
     public static Set<ModuleTarget> getTargets(ItemStack stack, boolean checkBlockName) {
         Set<ModuleTarget> result = Sets.newHashSet();
 
-        CompoundNBT compound = stack.getChildTag(ModularRouters.MODID);
-        if (compound != null && compound.getTagId(NBT_MULTI_TARGET) == Constants.NBT.TAG_LIST) {
+        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
+        if (compound != null && compound.getTagType(NBT_MULTI_TARGET) == Constants.NBT.TAG_LIST) {
             ListNBT list = compound.getList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 ModuleTarget target = ModuleTarget.fromNBT(list.getCompound(i));
@@ -247,8 +247,8 @@ public abstract class TargetedModule extends ItemModule {
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {
         ServerWorld w = MiscUtil.getWorldForGlobalPos(target.gPos);
-        BlockPos pos = target.gPos.getPos();
-        if (w != null && w.getChunkProvider().chunkExists(pos.getX() >> 4, pos.getZ() >> 4)) {
+        BlockPos pos = target.gPos.pos();
+        if (w != null && w.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             String invName = BlockUtil.getBlockName(w, pos);
             if (!target.blockTranslationKey.equals(invName)) {
                 setTarget(stack, w, pos, target.face);
@@ -265,7 +265,7 @@ public abstract class TargetedModule extends ItemModule {
      * @param player the player holding the module
      */
     public void doModuleValidation(ItemStack stack, ServerPlayerEntity player) {
-        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getEntityWorld(), new BlockPos(player.getPositionVec())));
+        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getCommandSenderWorld(), new BlockPos(player.position())));
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
                 getTargets(stack, true) :
                 Sets.newHashSet(getTarget(stack, true));
@@ -273,8 +273,8 @@ public abstract class TargetedModule extends ItemModule {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
                 IFormattableTextComponent msg = MiscUtil.asFormattable(target.getTextComponent())
-                        .appendString(" ").append(new TranslationTextComponent(v.translationKey()).mergeStyle(v.getColor()));
-                player.sendStatusMessage(msg, false);
+                        .append(" ").append(new TranslationTextComponent(v.translationKey()).withStyle(v.getColor()));
+                player.displayClientMessage(msg, false);
             }
         }
     }
@@ -289,7 +289,7 @@ public abstract class TargetedModule extends ItemModule {
      * @return the validation result
      */
     private TargetValidation validateTarget(ItemStack moduleStack, ModuleTarget src, ModuleTarget dst, boolean validateBlocks) {
-        if (isRangeLimited() && (!src.isSameWorld(dst) || src.gPos.getPos().distanceSq(dst.gPos.getPos()) > maxDistanceSq(moduleStack))) {
+        if (isRangeLimited() && (!src.isSameWorld(dst) || src.gPos.pos().distSqr(dst.gPos.pos()) > maxDistanceSq(moduleStack))) {
             return TargetValidation.OUT_OF_RANGE;
         }
 
@@ -298,10 +298,10 @@ public abstract class TargetedModule extends ItemModule {
         // we can't reliably validate chunk loading or inventory presence on the client (for tooltip generation)
         if (validateBlocks) {
             ServerWorld w = MiscUtil.getWorldForGlobalPos(dst.gPos);
-            if (w == null || !w.getChunkProvider().chunkExists(dst.gPos.getPos().getX() >> 4, dst.gPos.getPos().getZ() >> 4)) {
+            if (w == null || !w.getChunkSource().hasChunk(dst.gPos.pos().getX() >> 4, dst.gPos.pos().getZ() >> 4)) {
                 return TargetValidation.NOT_LOADED;
             }
-            if (w.getTileEntity(dst.gPos.getPos()) == null) {
+            if (w.getBlockEntity(dst.gPos.pos()) == null) {
                 return TargetValidation.NOT_INVENTORY;
             }
         }

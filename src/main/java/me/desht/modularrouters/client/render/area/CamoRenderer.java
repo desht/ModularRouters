@@ -35,27 +35,27 @@ public enum CamoRenderer {
             return;
         }
 
-        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         MatrixStack matrixStack = event.getMatrixStack();
 
-        matrixStack.push();
-        Vector3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        matrixStack.pushPose();
+        Vector3d projectedView = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
         highlightCamoRouters(matrixStack, buffer, player);
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     private static boolean playerHoldingRouter(PlayerEntity player) {
         Item router = ModBlocks.ITEM_ROUTER.get().asItem();
-        return player.getHeldItemMainhand().getItem() == router || player.getHeldItemOffhand().getItem() == router;
+        return player.getMainHandItem().getItem() == router || player.getOffhandItem().getItem() == router;
     }
 
     private void highlightCamoRouters(MatrixStack matrixStack, IRenderTypeBuffer.Impl buffer, PlayerEntity player) {
-        if (lastPlayerPos == null || camoPositionShower == null || player.getDistanceSq(lastPlayerPos.getX(), lastPlayerPos.getY(), lastPlayerPos.getZ()) > 9) {
-            lastPlayerPos = player.getPosition();
-            Set<BlockPos> s = player.getEntityWorld().loadedTileEntityList.stream()
-                    .filter(te -> te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null && te.getPos().distanceSq(lastPlayerPos) < 256)
-                    .map(TileEntity::getPos)
+        if (lastPlayerPos == null || camoPositionShower == null || player.distanceToSqr(lastPlayerPos.getX(), lastPlayerPos.getY(), lastPlayerPos.getZ()) > 9) {
+            lastPlayerPos = player.blockPosition();
+            Set<BlockPos> s = player.getCommandSenderWorld().blockEntityList.stream()
+                    .filter(te -> te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null && te.getBlockPos().distSqr(lastPlayerPos) < 256)
+                    .map(TileEntity::getBlockPos)
                     .collect(Collectors.toSet());
             camoPositionShower = new AreaRenderer(s, 0x408080FF, 0.75f);
         }

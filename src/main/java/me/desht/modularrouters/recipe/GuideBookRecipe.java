@@ -22,7 +22,7 @@ public class GuideBookRecipe extends ShapelessRecipe {
 
     public GuideBookRecipe(ResourceLocation idIn) {
         super(idIn, "", makeGuideBook(),
-                NonNullList.from(Ingredient.EMPTY, Ingredient.fromItems(Items.BOOK), Ingredient.fromItems(ModItems.BLANK_MODULE.get()))
+                NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BOOK), Ingredient.of(ModItems.BLANK_MODULE.get()))
         );
     }
 

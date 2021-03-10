@@ -32,7 +32,7 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: config.mcp_mappings
+    mappings channel: 'official', version: config.mc_version
     //accessTransformer = file('my_at.cfg')
     runs {
         client {
@@ -115,7 +115,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}:api")
     runtime fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
+//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
 }
 

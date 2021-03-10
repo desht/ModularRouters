@@ -28,16 +28,16 @@ public class CompiledDropperModule extends CompiledModule {
                 return false;
             }
             ItemStack toDrop = router.peekBuffer(nItems);
-            BlockPos pos = getTarget().gPos.getPos();
+            BlockPos pos = getTarget().gPos.pos();
             Direction face = getTarget().face;
-            ItemEntity item = new ItemEntity(router.getWorld(),
-                    pos.getX() + 0.5 + 0.2 * face.getXOffset(),
-                    pos.getY() + 0.5 + 0.2 * face.getYOffset(),
-                    pos.getZ() + 0.5 + 0.2 * face.getZOffset(),
+            ItemEntity item = new ItemEntity(router.getLevel(),
+                    pos.getX() + 0.5 + 0.2 * face.getStepX(),
+                    pos.getY() + 0.5 + 0.2 * face.getStepY(),
+                    pos.getZ() + 0.5 + 0.2 * face.getStepZ(),
                     toDrop);
-            item.setPickupDelay(pickupDelay);
+            item.setPickUpDelay(pickupDelay);
             setupItemVelocity(router, item);
-            router.getWorld().addEntity(item);
+            router.getLevel().addFreshEntity(item);
             router.extractBuffer(toDrop.getCount());
             return true;
         } else {
@@ -46,6 +46,6 @@ public class CompiledDropperModule extends CompiledModule {
     }
 
     void setupItemVelocity(TileEntityItemRouter router, ItemEntity item) {
-        item.setMotion(0, 0, 0);
+        item.setDeltaMovement(0, 0, 0);
     }
 }

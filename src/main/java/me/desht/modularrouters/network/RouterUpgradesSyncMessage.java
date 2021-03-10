@@ -21,7 +21,7 @@ public class RouterUpgradesSyncMessage {
     private final ItemStackHandler handler;
 
     public RouterUpgradesSyncMessage(TileEntityItemRouter router) {
-        pos = router.getPos();
+        pos = router.getBlockPos();
         IItemHandler upgradesHandler = router.getUpgrades();
         handler = new ItemStackHandler(upgradesHandler.getSlots());
         for (int i = 0; i < upgradesHandler.getSlots(); i++) {
@@ -32,12 +32,12 @@ public class RouterUpgradesSyncMessage {
     public RouterUpgradesSyncMessage(PacketBuffer buf) {
         pos = buf.readBlockPos();
         handler = new ItemStackHandler();
-        handler.deserializeNBT(buf.readCompoundTag());
+        handler.deserializeNBT(buf.readNbt());
     }
 
     public void toBytes(PacketBuffer buf) {
         buf.writeBlockPos(pos);
-        buf.writeCompoundTag(handler.serializeNBT());
+        buf.writeNbt(handler.serializeNBT());
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

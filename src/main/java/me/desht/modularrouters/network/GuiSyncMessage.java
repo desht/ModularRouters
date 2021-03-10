@@ -21,17 +21,17 @@ public class GuiSyncMessage {
     }
 
     public GuiSyncMessage(PacketBuffer buf) {
-        newStack = buf.readItemStack();
+        newStack = buf.readItem();
     }
 
     public void toBytes(PacketBuffer buf) {
-        buf.writeItemStack(newStack);
+        buf.writeItem(newStack);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            if (Minecraft.getInstance().currentScreen instanceof IResyncableGui) {
-                ((IResyncableGui) Minecraft.getInstance().currentScreen).resync(newStack);
+            if (Minecraft.getInstance().screen instanceof IResyncableGui) {
+                ((IResyncableGui) Minecraft.getInstance().screen).resync(newStack);
             }
         });
         ctx.get().setPacketHandled(true);

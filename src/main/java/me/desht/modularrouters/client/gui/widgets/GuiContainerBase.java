@@ -32,9 +32,9 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
         }
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(x, y) && button instanceof ITooltipButton)
-                .forEach(button -> func_243308_b(matrixStack, ((ITooltipButton) button).getTooltip(), x, y));
+                .forEach(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), x, y));
 
-        this.renderHoveredTooltip(matrixStack, x, y);
+        this.renderTooltip(matrixStack, x, y);
     }
 
     @Override

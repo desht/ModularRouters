@@ -19,10 +19,10 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
     final MFLocator locator;
 
     GuiFilterScreen(ItemStack filterStack, MFLocator locator) {
-        super(filterStack.getDisplayName());
+        super(filterStack.getHoverName());
         this.locator = locator;
 
-        this.title = filterStack.getDisplayName();
+        this.title = filterStack.getHoverName();
     }
 
     @Override
@@ -40,7 +40,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
             PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (locator.hand != null) {
-            ItemStack stack = getMinecraft().player.getHeldItem(locator.hand);
+            ItemStack stack = getMinecraft().player.getItemInHand(locator.hand);
             if (stack.getItem() instanceof ItemModule) {
                 // need to re-open module GUI for module in player's hand
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));

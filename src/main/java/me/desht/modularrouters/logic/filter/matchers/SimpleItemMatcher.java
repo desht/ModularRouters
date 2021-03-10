@@ -18,7 +18,7 @@ public class SimpleItemMatcher implements IItemMatcher {
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (filterStack.getItem() == stack.getItem()) {
             return (flags.isIgnoreDamage() || matchDamage(stack, filterStack))
-                    && (flags.isIgnoreNBT() || ItemStack.areItemStackTagsEqual(stack, filterStack));
+                    && (flags.isIgnoreNBT() || ItemStack.tagMatches(stack, filterStack));
         } else if (flags.matchTags()) {
             return getTagMatcher().match(stack);
         } else {
@@ -34,6 +34,6 @@ public class SimpleItemMatcher implements IItemMatcher {
 
     private boolean matchDamage(ItemStack stack1, ItemStack stack2) {
         // items are already checked to be the same, only interested in durability here
-        return !stack1.isDamageable() || stack1.getDamage() == stack2.getDamage();
+        return !stack1.isDamageableItem() || stack1.getDamageValue() == stack2.getDamageValue();
     }
 }

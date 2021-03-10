@@ -27,8 +27,8 @@ public class ModuleTargetRenderer {
     @SubscribeEvent
     public static void clientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START && Minecraft.getInstance().player != null) {
-            ItemStack curItem = Minecraft.getInstance().player.getHeldItemMainhand();
-            if (!ItemStack.areItemStacksEqual(curItem, lastStack)) {
+            ItemStack curItem = Minecraft.getInstance().player.getMainHandItem();
+            if (!ItemStack.matches(curItem, lastStack)) {
                 lastStack = curItem.copy();
                 IPositionProvider positionProvider = getPositionProvider(curItem);
                 if (positionProvider != null) {
@@ -43,15 +43,15 @@ public class ModuleTargetRenderer {
     @SubscribeEvent
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (compiledPos != null) {
-            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             MatrixStack matrixStack = event.getMatrixStack();
 
-            matrixStack.push();
+            matrixStack.pushPose();
 
-            Vector3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+            Vector3d projectedView = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
             render(buffer, matrixStack, compiledPos);
-            matrixStack.pop();
+            matrixStack.popPose();
         }
     }
 
@@ -67,9 +67,9 @@ public class ModuleTargetRenderer {
         float start = (1 - BOX_SIZE) / 2.0f;
 
         for (BlockPos pos : cp.getPositions()) {
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.translate(pos.getX() + start, pos.getY() + start, pos.getZ() + start);
-            Matrix4f posMat = matrixStack.getLast().getMatrix();
+            Matrix4f posMat = matrixStack.last().pose();
             int color = cp.getColour(pos);
             int r = (color & 0xFF0000) >> 16;
             int g = (color & 0xFF00) >> 8;
@@ -79,80 +79,80 @@ public class ModuleTargetRenderer {
             IVertexBuilder faceBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             alpha = getFaceAlpha(cp, pos, Direction.NORTH);
-            faceBuilder.pos(posMat,0, 0, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat,0, 0, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
 
             alpha = getFaceAlpha(cp, pos, Direction.SOUTH);
-            faceBuilder.pos(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
 
             alpha = getFaceAlpha(cp, pos, Direction.WEST);
-            faceBuilder.pos(posMat, 0, 0, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, 0, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
 
             alpha = getFaceAlpha(cp, pos, Direction.EAST);
-            faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
 
             alpha = getFaceAlpha(cp, pos, Direction.DOWN);
-            faceBuilder.pos(posMat, 0, 0, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, 0, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
 
             alpha = getFaceAlpha(cp, pos, Direction.UP);
-            faceBuilder.pos(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
-            faceBuilder.pos(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
+            faceBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
 
             RenderSystem.disableDepthTest();
-            buffer.finish(ModRenderTypes.BLOCK_HILIGHT_FACE);
+            buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             IVertexBuilder lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
-            lineBuilder.pos(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, 0, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(64, 64, 64, 80).endVertex();
 
-            lineBuilder.pos(posMat, BOX_SIZE, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
 
-            lineBuilder.pos(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
 
-            lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, 0, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(64, 64, 64, 80).endVertex();
 
-            lineBuilder.pos(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, 0, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(64, 64, 64, 80).endVertex();
 
-            lineBuilder.pos(posMat, 0, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
-            lineBuilder.pos(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
+            lineBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();
 
             RenderSystem.disableDepthTest();
-            buffer.finish(ModRenderTypes.BLOCK_HILIGHT_LINE);
+            buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
-            matrixStack.pop();
+            matrixStack.popPose();
         }
     }
 
@@ -167,8 +167,8 @@ public class ModuleTargetRenderer {
             List<ModuleTarget> targets = provider.getStoredPositions(stack);
             for (int i = 0; i < targets.size(); i++) {
                 ModuleTarget target = targets.get(i);
-                if (target.isSameWorld(Minecraft.getInstance().world)) {
-                    BlockPos pos = target.gPos.getPos();
+                if (target.isSameWorld(Minecraft.getInstance().level)) {
+                    BlockPos pos = target.gPos.pos();
                     if (positions.containsKey(pos)) {
                         positions.get(pos).faces.set(target.face.ordinal());
                     } else {
@@ -185,7 +185,7 @@ public class ModuleTargetRenderer {
         }
 
         boolean checkFace(BlockPos pos, Direction face) {
-            return positions.containsKey(pos) && positions.get(pos).faces.get(face.getIndex());
+            return positions.containsKey(pos) && positions.get(pos).faces.get(face.get3DDataValue());
         }
 
         int getColour(BlockPos pos) {

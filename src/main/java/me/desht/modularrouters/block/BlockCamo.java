@@ -18,9 +18,11 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 
 //@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
-    private static final VoxelShape ALMOST_FULL = makeCuboidShape(0.1, 0.1, 0.1, 15.99, 15.99, 15.99);
+    private static final VoxelShape ALMOST_FULL = box(0.1, 0.1, 0.1, 15.99, 15.99, 15.99);
 
     BlockCamo(Properties props) {
         super(props);
@@ -45,27 +47,27 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     }
 
     @Override
-    public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public VoxelShape getInteractionShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
         ICamouflageable camo = getCamoState(worldIn, pos);
-        return camo == null ? getUncamouflagedRaytraceShape(state, worldIn, pos) : camo.getCamouflage().getRaytraceShape(worldIn, pos, ISelectionContext.dummy());
+        return camo == null ? getUncamouflagedRaytraceShape(state, worldIn, pos) : camo.getCamouflage().getVisualShape(worldIn, pos, ISelectionContext.empty());
     }
 
     @Override
-    public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
         ICamouflageable camo = getCamoState(worldIn, pos);
-        return camo == null ? getUncamouflagedRenderShape(state, worldIn, pos) : camo.getCamouflage().getRenderShape(worldIn, pos);
+        return camo == null ? getUncamouflagedRenderShape(state, worldIn, pos) : camo.getCamouflage().getBlockSupportShape(worldIn, pos);
     }
 
     @Override
-    public int getOpacity(BlockState state, IBlockReader world, BlockPos pos) {
+    public int getLightBlock(BlockState state, IBlockReader world, BlockPos pos) {
         ICamouflageable camo = getCamoState(world, pos);
-        return camo == null ? super.getOpacity(state, world, pos) : camo.getCamouflage().getOpacity(world, pos);
+        return camo == null ? super.getLightBlock(state, world, pos) : camo.getCamouflage().getLightBlock(world, pos);
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+    public float getDestroyProgress(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
         ICamouflageable camo = getCamoState(worldIn, pos);
-        return camo == null || !camo.extendedMimic() ? super.getPlayerRelativeBlockHardness(state, player, worldIn, pos) : camo.getCamouflage().getPlayerRelativeBlockHardness(player, worldIn, pos);
+        return camo == null || !camo.extendedMimic() ? super.getDestroyProgress(state, player, worldIn, pos) : camo.getCamouflage().getDestroyProgress(player, worldIn, pos);
     }
 
     @Override
@@ -84,25 +86,25 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
 
     ICamouflageable getCamoState(IBlockReader blockAccess, BlockPos pos) {
         if (blockAccess == null || pos == null) return null;
-        TileEntity te = blockAccess.getTileEntity(pos);
+        TileEntity te = blockAccess.getBlockEntity(pos);
         return te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null ? (ICamouflageable) te : null;
     }
 
     @Override
-    public boolean canProvidePower(BlockState state) {
+    public boolean isSignalSource(BlockState state) {
         return true;
     }
 
     @Override
-    public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+    public int getSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         ICamouflageable camo = getCamoState(blockAccess, pos);
-        return camo == null || !camo.extendedMimic() ? super.getWeakPower(blockState, blockAccess, pos, side) : camo.getCamouflage().getWeakPower(blockAccess, pos, side);
+        return camo == null || !camo.extendedMimic() ? super.getSignal(blockState, blockAccess, pos, side) : camo.getCamouflage().getSignal(blockAccess, pos, side);
     }
 
     @Override
-    public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+    public int getDirectSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         ICamouflageable camo = getCamoState(blockAccess, pos);
-        return camo == null || !camo.extendedMimic() ? super.getWeakPower(blockState, blockAccess, pos, side) : camo.getCamouflage().getStrongPower(blockAccess, pos, side);
+        return camo == null || !camo.extendedMimic() ? super.getSignal(blockState, blockAccess, pos, side) : camo.getCamouflage().getDirectSignal(blockAccess, pos, side);
     }
 
     @Nullable
@@ -123,7 +125,7 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     }
 
     protected VoxelShape getUncamouflagedRenderShape(BlockState state, IBlockReader reader, BlockPos pos) {
-        return getUncamouflagedShape(state, reader, pos, ISelectionContext.dummy());
+        return getUncamouflagedShape(state, reader, pos, ISelectionContext.empty());
     }
 
     protected VoxelShape getUncamouflagedRaytraceShape(BlockState state, IBlockReader reader, BlockPos pos) {

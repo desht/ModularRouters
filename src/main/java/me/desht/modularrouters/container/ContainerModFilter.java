@@ -50,42 +50,42 @@ public class ContainerModFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack stack;
-        Slot slot = inventorySlots.get(index);
+        Slot slot = slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stackInSlot = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stackInSlot = slot.getItem();
             stack = stackInSlot.copy();
             stack.setCount(1);
 
             if (index == 0) {
                 // shift-clicking in the ghost slot: clear it from the filter
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else if (index >= 1) {
                 // shift-clicking in player inventory: copy it into the ghost slot
                 // but don't remove it from playerpack inventory
-                Slot s = inventorySlots.get(0);
-                s.putStack(stack);
-                slot.putStack(stackInSlot);
+                Slot s = slots.get(0);
+                s.set(stack);
+                slot.set(stackInSlot);
             }
         }
         return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
                 if (slot == 0) {
-                    Slot s = inventorySlots.get(slot);
-                    if (!player.inventory.getItemStack().isEmpty()) {
-                        ItemStack stack1 = player.inventory.getItemStack().copy();
+                    Slot s = slots.get(slot);
+                    if (!player.inventory.getCarried().isEmpty()) {
+                        ItemStack stack1 = player.inventory.getCarried().copy();
                         stack1.setCount(1);
-                        s.putStack(stack1);
+                        s.set(stack1);
                     } else {
-                        s.putStack(ItemStack.EMPTY);
+                        s.set(ItemStack.EMPTY);
                     }
                     return ItemStack.EMPTY;
                 }
@@ -94,6 +94,6 @@ public class ContainerModFilter extends ContainerSmartFilter {
                     return ItemStack.EMPTY;
                 }
         }
-        return super.slotClick(slot, dragType, clickTypeIn, player);
+        return super.clicked(slot, dragType, clickTypeIn, player);
     }
 }

@@ -40,13 +40,13 @@ public class FilterSettingsMessage {
     public FilterSettingsMessage(PacketBuffer buf) {
         op = Operation.values()[buf.readByte()];
         locator = MFLocator.fromBuffer(buf);
-        payload = buf.readCompoundTag();
+        payload = buf.readNbt();
     }
 
     public void toBytes(PacketBuffer buf) {
         buf.writeByte(op.ordinal());
         locator.writeBuf(buf);
-        buf.writeCompoundTag(payload);
+        buf.writeNbt(payload);
     }
 
     public Operation getOp() {
@@ -79,20 +79,20 @@ public class FilterSettingsMessage {
             ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
-                TileEntityItemRouter router = locator.getRouter(player.world).orElse(null);
+                TileEntityItemRouter router = locator.getRouter(player.level).orElse(null);
                 ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, router);
                 filterHandler.setStackInSlot(locator.filterSlot, filterStack);
                 filterHandler.save();
                 if (locator.hand != null) {
-                    player.setHeldItem(locator.hand, filterHandler.getHolderStack());
+                    player.setItemInHand(locator.hand, filterHandler.getHolderStack());
                 } else if (router != null) {
                     router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
                 }
             }
             if (response != null) {
                 // send to any nearby players in case they also have the GUI open
-                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(player.getPosX(), player.getPosY(), player.getPosZ(),
-                        8, player.getEntityWorld().getDimensionKey());
+                PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
+                        8, player.getCommandSenderWorld().dimension());
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp), response);
             }
         }

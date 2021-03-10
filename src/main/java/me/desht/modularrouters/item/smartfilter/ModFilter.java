@@ -35,7 +35,7 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     public static List<String> getModList(ItemStack filterStack) {
-        CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
+        CompoundNBT tag = filterStack.getTagElement(ModularRouters.MODID);
         if (tag != null) {
             ListNBT items = tag.getList(NBT_MODS, Constants.NBT.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
@@ -50,13 +50,13 @@ public class ModFilter extends ItemSmartFilter {
 
     private static void setModList(ItemStack filterStack, List<String> mods) {
         ListNBT list = mods.stream().map(StringNBT::valueOf).collect(Collectors.toCollection(ListNBT::new));
-        filterStack.getOrCreateChildTag(ModularRouters.MODID).put(NBT_MODS, list);
+        filterStack.getOrCreateTagElement(ModularRouters.MODID).put(NBT_MODS, list);
     }
 
     @Override
     public void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
         super.addExtraInformation(stack, list);
-        if (stack.getChildTag(ModularRouters.MODID) != null) {
+        if (stack.getTagElement(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", l.size()));
             list.addAll(l.stream()
@@ -109,7 +109,7 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     @Override
-    public int getSize(ItemStack filterStack) {CompoundNBT tag = filterStack.getChildTag(ModularRouters.MODID);
+    public int getSize(ItemStack filterStack) {CompoundNBT tag = filterStack.getTagElement(ModularRouters.MODID);
         return tag != null ? tag.getList(NBT_MODS, Constants.NBT.TAG_STRING).size() : 0;
     }
 }

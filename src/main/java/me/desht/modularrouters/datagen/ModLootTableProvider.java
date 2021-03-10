@@ -43,19 +43,19 @@ public class ModLootTableProvider extends LootTableProvider {
         @Override
         protected void addTables() {
             Block router = ModBlocks.ITEM_ROUTER.get();
-            LootPool.Builder builder = LootPool.builder()
+            LootPool.Builder builder = LootPool.lootPool()
                     .name(router.getRegistryName().getPath())
-                    .acceptCondition(SurvivesExplosion.builder())
-                    .rolls(ConstantRange.of(1))
-                    .addEntry(ItemLootEntry.builder(router)
-                            .acceptFunction(CopyName.builder(CopyName.Source.BLOCK_ENTITY))
-                            .acceptFunction(CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY)
-                                    .addOperation("Modules", "BlockEntityTag.Modules", CopyNbt.Action.REPLACE)
-                                    .addOperation("Upgrades", "BlockEntityTag.Upgrades", CopyNbt.Action.REPLACE)
-                                    .addOperation("Redstone", "BlockEntityTag.Redstone", CopyNbt.Action.REPLACE))
-                            .acceptFunction(SetContents.builderIn()
-                                    .addLootEntry(DynamicLootEntry.func_216162_a(ShulkerBoxBlock.CONTENTS))));
-            registerLootTable(router, LootTable.builder().addLootPool(builder));
+                    .when(SurvivesExplosion.survivesExplosion())
+                    .setRolls(ConstantRange.exactly(1))
+                    .add(ItemLootEntry.lootTableItem(router)
+                            .apply(CopyName.copyName(CopyName.Source.BLOCK_ENTITY))
+                            .apply(CopyNbt.copyData(CopyNbt.Source.BLOCK_ENTITY)
+                                    .copy("Modules", "BlockEntityTag.Modules", CopyNbt.Action.REPLACE)
+                                    .copy("Upgrades", "BlockEntityTag.Upgrades", CopyNbt.Action.REPLACE)
+                                    .copy("Redstone", "BlockEntityTag.Redstone", CopyNbt.Action.REPLACE))
+                            .apply(SetContents.setContents()
+                                    .withEntry(DynamicLootEntry.dynamicEntry(ShulkerBoxBlock.CONTENTS))));
+            add(router, LootTable.lootTable().withPool(builder));
         }
 
         @Override

@@ -75,7 +75,7 @@ public class OpenGuiMessage {
                 switch (operation) {
                     case ROUTER:
                         // item router GUI
-                        locator.getRouter(player.getEntityWorld())
+                        locator.getRouter(player.getCommandSenderWorld())
                                 .ifPresent(router -> NetworkHooks.openGui(player, router, locator.routerPos));
                         break;
                     case MODULE_HELD:
@@ -84,7 +84,7 @@ public class OpenGuiMessage {
                         break;
                     case MODULE_INSTALLED:
                         // module installed in a router
-                        locator.getRouter(player.getEntityWorld())
+                        locator.getRouter(player.getCommandSenderWorld())
                                 .ifPresent(router -> NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf));
                         break;
                     case FILTER_HELD:
@@ -93,7 +93,7 @@ public class OpenGuiMessage {
                         break;
                     case FILTER_INSTALLED:
                         // filter is in a module in a router
-                        locator.getRouter(player.getEntityWorld())
+                        locator.getRouter(player.getCommandSenderWorld())
                                 .ifPresent(router -> NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf));
                         break;
                 }
