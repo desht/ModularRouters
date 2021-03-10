@@ -59,7 +59,10 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (textFieldManager != null && textFieldManager.keyPressed(keyCode, scanCode, modifiers)) {
+        if (keyCode == 256) {
+            this.minecraft.player.closeContainer();
+        }
+        if (textFieldManager != null && (textFieldManager.keyPressed(keyCode, scanCode, modifiers) || textFieldManager.isFocused())) {
             return true;
         } else {
             return super.keyPressed(keyCode, scanCode, modifiers);
