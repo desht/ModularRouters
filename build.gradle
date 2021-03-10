@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle'
 ext.configFile = file('gradle.properties')
 ext.config = parseConfig(configFile)
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' 
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 version = config.mc_version + "-" + config.mod_version
 group = "me.desht"
@@ -133,7 +133,7 @@ jar {
                     "Specification-Vendor": "desht",
                     "Specification-Version": "32.0", // We are version 1 of the modlauncher specification
                     "Implementation-Title": project.name,
-                    "Implementation-Version": "${version}",
+                    "Implementation-Version": "${archiveVersion}",
                     "Implementation-Vendor" :"desht",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
