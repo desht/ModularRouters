@@ -60,9 +60,9 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            Vector3d vec1 = Vector3d.atCenterOf(router.getBlockPos());
-            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getLevel().dimension());
-            PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp),
+//            Vector3d vec1 = Vector3d.atCenterOf(router.getBlockPos());
+//            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getLevel().dimension());
+            PacketHandler.NETWORK.send(PacketDistributor.TRACKING_CHUNK.with(() -> router.getLevel().getChunkAt(router.getBlockPos())),
                     new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate(), false));
         }
     }

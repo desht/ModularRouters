@@ -3,19 +3,27 @@ package me.desht.modularrouters.logic.compiled;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
+import me.desht.modularrouters.network.ItemBeamMessage;
+import me.desht.modularrouters.network.PacketHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 public class CompiledDistributorModule extends CompiledSenderModule2 {
     public static final String NBT_STRATEGY = "DistStrategy";
+    public static final String NBT_PULLING = "Pulling";
 
     public enum DistributionStrategy {
         ROUND_ROBIN,
@@ -30,6 +38,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     private final DistributionStrategy distributionStrategy;
     private int nextTarget = 0;
+    private boolean pulling = false;
 
     public CompiledDistributorModule(TileEntityItemRouter router, ItemStack stack) {
         super(router, stack);
@@ -40,13 +49,53 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
             if (distributionStrategy == DistributionStrategy.FURTHEST_FIRST) {
                 nextTarget = getTargets().size() - 1;
             }
+            pulling = compound.getBoolean(NBT_PULLING);
         } else {
             distributionStrategy = DistributionStrategy.ROUND_ROBIN;
         }
     }
 
+    @Override
+    public boolean execute(@Nonnull TileEntityItemRouter router) {
+        return pulling ? executePull(router) : super.execute(router);
+    }
+
+    private boolean executePull(TileEntityItemRouter router) {
+        if (router.isBufferFull()) return false;
+
+        ModuleTarget tgt = getEffectiveTarget(router);
+        if (tgt == null) return false;
+        return tgt.getItemHandler().map(handler -> {
+            ItemStack taken = transferToRouter(handler, tgt.gPos.pos(), router);
+            if (!taken.isEmpty()) {
+                if (MRConfig.Common.Module.pullerParticles) {
+                    playParticles(router, tgt.gPos.pos(), taken);
+                }
+                return true;
+            }
+            return false;
+        }).orElse(false);
+    }
+
+    public boolean isPulling() {
+        return pulling;
+    }
+
     public DistributionStrategy getDistributionStrategy() {
         return distributionStrategy;
+    }
+
+    @Override
+    void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
+        if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
+            PacketHandler.NETWORK.send(PacketDistributor.TRACKING_CHUNK.with(() -> router.getLevel().getChunkAt(router.getBlockPos())),
+                    new ItemBeamMessage(router, targetPos, isPulling(), stack, getBeamColor(), router.getTickRate(), false));
+        }
+    }
+
+    @Override
+    protected int getBeamColor() {
+        return isPulling() ? 0x6080FF :  super.getBeamColor();
     }
 
     @Override
@@ -61,7 +110,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     private static double calcDist(ModuleTarget tgt, TileEntity te) {
         double distance = tgt.gPos.pos().distSqr(te.getBlockPos());
         if (!tgt.isSameWorld(te.getLevel())) {
-            distance += 100000000;  // cross-dimension penalty
+            distance += 100_000_000;  // cross-dimension penalty
         }
         return distance;
     }

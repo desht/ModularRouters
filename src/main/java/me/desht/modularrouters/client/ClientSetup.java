@@ -13,10 +13,13 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModTileEntities;
+import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +29,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
+
+import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
@@ -45,12 +50,25 @@ public class ClientSetup {
             setupRenderLayers();
             registerScreenFactories();
             registerKeyBindings();
+            registerItemModelOverrides();
 
             ClientRegistry.bindTileEntityRenderer(ModTileEntities.ITEM_ROUTER.get(), ItemBeamTileRenderer::new);
         });
 
         FilterGuiFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), GuiInspectionFilter::new);
         FilterGuiFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), GuiRegexFilter::new);
+    }
+
+    private static void registerItemModelOverrides() {
+        ItemModelsProperties.register(ModItems.DISTRIBUTOR_MODULE.get(), RL("mode"), (stack, world, entity) -> {
+            if (entity != null) {
+                CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
+                if (compound != null) {
+                    return compound.getBoolean(CompiledDistributorModule.NBT_PULLING) ? 1f : 0f;
+                }
+            }
+            return 0f;
+        });
     }
 
     private static void registerKeyBindings() {

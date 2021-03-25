@@ -1,5 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
@@ -25,7 +27,9 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class CompiledModule {
     private final Filter filter;
@@ -41,6 +45,7 @@ public abstract class CompiledModule {
     private final int range, rangeSquared;
 
     private int lastMatchPos = 0;
+    private final Map<BlockPos,Integer> lastMatchPosMap = new Object2IntOpenHashMap<>();
 
     /**
      * Base constructor for compiled modules.  This can be called for both installed and uninstalled modules;
@@ -158,8 +163,8 @@ public abstract class CompiledModule {
      * @param size size of the inventory being searched
      * @return the last position including offset, and wrapped to start of inventory if necessary
      */
-    private int getLastMatchPos(int offset, int size) {
-        int pos = lastMatchPos + offset;
+    private int getLastMatchPos(BlockPos key, int offset, int size) {
+        int pos = (key == null ? lastMatchPos : lastMatchPosMap.getOrDefault(key, 0)) + offset;
         while (pos >= size) pos -= size;
         return pos;
     }
@@ -169,8 +174,11 @@ public abstract class CompiledModule {
      *
      * @param lastMatchPos last matched position
      */
-    private void setLastMatchPos(int lastMatchPos) {
-        this.lastMatchPos = lastMatchPos;
+    private void setLastMatchPos(BlockPos key, int lastMatchPos) {
+        if (key == null)
+            this.lastMatchPos = lastMatchPos;
+        else
+            lastMatchPosMap.put(key, lastMatchPos);
     }
 
     /**
@@ -202,25 +210,26 @@ public abstract class CompiledModule {
      * items attempted depends on the router's stack upgrades.
      *
      * @param handler the item handler
-     * @param router  the router
+     * @param key the handler's position, may be null - used as a key for search pos caching
+     * @param router the router
      * @return items actually transferred
      */
-    ItemStack transferToRouter(IItemHandler handler, TileEntityItemRouter router) {
+    ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, TileEntityItemRouter router) {
         CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
-        ItemStack wanted = findItemToPull(router, handler, getItemsPerTick(router), count);
+        ItemStack wanted = findItemToPull(router, handler, key, getItemsPerTick(router), count);
         if (wanted.isEmpty()) {
             return ItemStack.EMPTY;
         }
 
         ItemStack transferred = ItemStack.EMPTY;
         for (int i = 0; i < handler.getSlots(); i++) {
-            int pos = getLastMatchPos(i, handler.getSlots());
+            int pos = getLastMatchPos(key, i, handler.getSlots());
             ItemStack toPull = handler.extractItem(pos, wanted.getCount(), true);
             if (toPull.isEmpty()) {
                 // we'd found an item to pull but it looks like this handler doesn't allow us to extract it
                 // give up, but advance the last match pos so we don't get stuck trying this slot forever
-                setLastMatchPos((pos + 1) % handler.getSlots());
+                setLastMatchPos(key, (pos + 1) % handler.getSlots());
                 return ItemStack.EMPTY;
             }
             if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
@@ -230,7 +239,7 @@ public abstract class CompiledModule {
                 transferred = handler.extractItem(pos, inserted, false);
                 wanted.shrink(inserted);
                 if (wanted.isEmpty() || router.isBufferFull()) {
-                    setLastMatchPos(handler.getStackInSlot(pos).isEmpty() ? (pos + 1) % handler.getSlots() : pos);
+                    setLastMatchPos(key, handler.getStackInSlot(pos).isEmpty() ? (pos + 1) % handler.getSlots() : pos);
                     return transferred;
                 }
             }
@@ -238,7 +247,7 @@ public abstract class CompiledModule {
         return transferred;
     }
 
-    private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, int nToTake, CountedItemStacks count) {
+    private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, BlockPos key, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
             // something in the router - try to pull more of that
@@ -246,10 +255,10 @@ public abstract class CompiledModule {
         } else if (stackInRouter.isEmpty()) {
             // router empty - just pull the next item that passes the filter
             for (int i = 0; i < handler.getSlots(); i++) {
-                int pos = getLastMatchPos(i, handler.getSlots());
+                int pos = getLastMatchPos(key, i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
                 if (getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
-                    setLastMatchPos(pos);
+                    setLastMatchPos(key, pos);
                     return ItemHandlerHelper.copyStackWithSize(stack, nToTake);
                 }
             }

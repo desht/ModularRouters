@@ -21,10 +21,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -131,7 +128,7 @@ public abstract class TargetedModule extends ItemModule {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                ITextComponent msg = asFormattable(target.getTextComponent()).withStyle(TextFormatting.WHITE);
+                ITextComponent msg = new StringTextComponent("\u25b6 ").append(asFormattable(target.getTextComponent()).withStyle(TextFormatting.WHITE));
                 list.add(msg);
                 TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
                 if (router != null) {

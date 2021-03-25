@@ -99,10 +99,17 @@ repositories {
         name = 'Patchouli'
         url = 'http://maven.blamejared.com/'
     }
+//    maven {
+//        name = 'HWYLA'
+//        url = 'http://www.cursemaven.com/'
+//    }
     maven {
-        name = 'HWYLA'
-        url = 'http://www.cursemaven.com/'
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
+
 }
 
 dependencies {

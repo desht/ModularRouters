@@ -22,7 +22,7 @@ public class CompiledPullerModule1 extends CompiledModule {
             ModuleTarget target = getTarget();
             if (target == null) return false;
             return getTarget().getItemHandler().map(handler -> {
-                ItemStack taken = transferToRouter(handler, router);
+                ItemStack taken = transferToRouter(handler, null, router);
                 if (!taken.isEmpty()) {
                     if (MRConfig.Common.Module.pullerParticles) {
                         playParticles(router,  getTarget().gPos.pos(), taken);

@@ -87,7 +87,7 @@ public class CompiledPlayerModule extends CompiledModule {
         switch (operation) {
             case EXTRACT:
                 if (bufferStack.getCount() < bufferStack.getMaxStackSize()) {
-                    ItemStack taken = transferToRouter(itemHandler, router);
+                    ItemStack taken = transferToRouter(itemHandler, null, router);
                     return !taken.isEmpty();
                 }
                 break;
