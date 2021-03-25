@@ -45,7 +45,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
 
         // slots for the (ghost) filter items
         for (int i = 0; i < handler.getSlots(); i++) {
-            addSlot(new SlotItemHandler(handler, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)));
+            addSlot(new FilterSlot(handler, i, 8 + SLOT_X_SPACING * (i % 9), 19 + SLOT_Y_SPACING * (i / 9)));
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
@@ -136,29 +136,27 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
 
     @Override
     public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        switch (clickTypeIn) {
-            case PICKUP:
-                // normal left-click
-                if (router == null && slot == currentSlot) {
-                    // no messing with the module that triggered this container's creation
-                    return ItemStack.EMPTY;
+        if (clickTypeIn == ClickType.PICKUP) {// normal left-click
+            if (router == null && slot == currentSlot) {
+                // no messing with the module that triggered this container's creation
+                return ItemStack.EMPTY;
+            }
+            if (slot < handler.getSlots() && slot >= 0) {
+                Slot s = slots.get(slot);
+                ItemStack stackOnCursor = player.inventory.getCarried();
+                if (!stackOnCursor.isEmpty()) {
+                    ItemStack stack1 = stackOnCursor.copy();
+                    stack1.setCount(1);
+                    s.set(stack1);
+                } else {
+                    s.set(ItemStack.EMPTY);
                 }
-                if (slot < handler.getSlots() && slot >= 0) {
-                    Slot s = slots.get(slot);
-                    ItemStack stackOnCursor = player.inventory.getCarried();
-                    if (!stackOnCursor.isEmpty()) {
-                        ItemStack stack1 = stackOnCursor.copy();
-                        stack1.setCount(1);
-                        s.set(stack1);
-                    } else {
-                        s.set(ItemStack.EMPTY);
-                    }
-                    return ItemStack.EMPTY;
-                }
-            case THROW:
-                if (slot < handler.getSlots() && slot >= 0) {
-                    return ItemStack.EMPTY;
-                }
+                return ItemStack.EMPTY;
+            }
+        }
+        if (slot < handler.getSlots() && slot >= 0) {
+            // allow nothing else!
+            return ItemStack.EMPTY;
         }
         return super.clicked(slot, dragType, clickTypeIn, player);
     }
