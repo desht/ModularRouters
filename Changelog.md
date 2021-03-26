@@ -6,6 +6,28 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
+### 7.4.0 (26 Mar 2021)
+* Activator Module rework
+  * No longer any separate Item/Block modes (just activate item or right-click entity)
+  * Now acts just as if an ordinary player right-clicks an item, using same vanilla logic
+  * Tests indicate it Does The Right Thing (tm), but there is a possibility of some subtle behaviour changes from older releases - worth checking your Activators to be sure they're still doing what you think!
+* Distributor Modules can now run in reverse, i.e. pulling items from multiple inventories
+  * Configure this in the module GUI
+  * Default is to send items, as before
+* Security Upgrades now make router fake players (e.g. for Activator/Placer/Breaker modules) run with the same game profile as the Security Upgrade's owner (i.e. you!)
+  * This can be very useful if the Item Router is to run in a protected area (e.g. FTB Chunks)
+* Added new Filter Round Robin Augment
+  * When installed in a module, the module picks a single item from its filter in turn to filter on, in a round-robin fashion, advancing each time the module executes
+  * This is instead of the default behaviour of just filtering on any item in the filter
+* The Termination button in module GUI's is now a tri-state instead of a toggle:
+  * Off: subsequent modules always run
+  * T+: subsequent modules run IFF this module did some work
+  * T-: subsequent modules run IFF this module did NOT do any work
+* Blacklisted Chisels & Bits blocks from being used as Router or Extruder Mk2 camouflage (they tend to cause crashes when used as camo)  
+* Fixed item dupe bug with Bulk Filter GUI
+* Fixed typing into the regulation field (when using Regulator Augment) not properly updating the module
+* Fixed server crash related to unconfigured Security Upgrades (e.g. pulled straight from JEI)  
+
 ### 7.3.1 (21 Jan 2021)
 * Fixed crash (intermod compat issue) when placing block with Extruder Mk2 and Mimic Augment
 * Activator Module in Entity mode now ignores Villagers and Wandering Traders
@@ -14,7 +36,7 @@ Changes are in reverse chronological order; newest changes at the top.
 * Corrected Regex Filter tooltip: make it clear that regex filters are applied to the item's *registry name*, not its display name
 
 ### 7.3.0 (4 Jan 2021)
-* A full texture update for the mod, courtesy of texyure artist Ridanisaurus!
+* A full texture update for the mod, courtesy of texture artist Ridanisaurus!
   * This is a new set of 16x16 textures with a nice Minecrafty feel; integrates much more naturally with vanilla textures (IMHO)
 * Holding an Item Router in main or offhand now highlights nearby (<16 blocks) camouflaged Item Routers - https://github.com/desht/ModularRouters/issues/100
   * Can be disabled in client config: `heldRouterShowsCamoRouters`
