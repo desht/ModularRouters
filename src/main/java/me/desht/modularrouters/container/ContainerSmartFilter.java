@@ -22,7 +22,7 @@ public abstract class ContainerSmartFilter extends ContainerMRBase {
 
     @Override
     public boolean stillValid(PlayerEntity playerIn) {
-        return true;
+        return router == null || !router.isRemoved();
     }
 
     public MFLocator getLocator() {

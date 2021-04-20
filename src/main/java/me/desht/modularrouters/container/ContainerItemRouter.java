@@ -79,8 +79,7 @@ public class ContainerItemRouter extends ContainerMRBase {
 
     @Override
     public boolean stillValid(PlayerEntity player) {
-        return router.getLevel().getBlockEntity(router.getBlockPos()) == router
-                && Vector3d.atCenterOf(router.getBlockPos()).distanceToSqr(player.position()) <= 64;
+        return !router.isRemoved() && Vector3d.atCenterOf(router.getBlockPos()).distanceToSqr(player.position()) <= 64;
     }
 
     @Override

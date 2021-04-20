@@ -100,7 +100,7 @@ public class ContainerModule extends ContainerMRBase {
 
     @Override
     public boolean stillValid(PlayerEntity playerIn) {
-        return true;
+        return router == null || !router.isRemoved();
     }
 
     @Override
