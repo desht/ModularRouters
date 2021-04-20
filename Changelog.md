@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
+### 7.4.1 (unreleased)
+* Fixed GUI's getting locked up if another player breaks a router while a GUI is open
+* Fixed missing recipe for the Filter Round Robin Augment
+
 ### 7.4.0 (26 Mar 2021)
 * Activator Module rework
   * No longer any separate Item/Block modes (just activate item or right-click entity)
