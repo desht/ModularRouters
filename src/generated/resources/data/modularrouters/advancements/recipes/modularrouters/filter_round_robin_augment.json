@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "modularrouters:filter_round_robin_augment"
+    ]
+  },
+  "criteria": {
+    "has_augment_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "modularrouters:augment_core"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "modularrouters:filter_round_robin_augment"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_augment_core",
+      "has_the_recipe"
+    ]
+  ]
+}
