@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "modularrouters:block/template_frame"
+    }
+  }
+}

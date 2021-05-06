@@ -3,9 +3,7 @@ package me.desht.modularrouters;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.*;
-import me.desht.modularrouters.datagen.ModItemTagsProvider;
-import me.desht.modularrouters.datagen.ModLootTableProvider;
-import me.desht.modularrouters.datagen.ModRecipeProvider;
+import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.PacketHandler;
@@ -67,6 +65,10 @@ public class ModularRouters {
                 generator.addProvider(new ModRecipeProvider(generator));
                 generator.addProvider(new ModItemTagsProvider(generator, event.getExistingFileHelper()));
                 generator.addProvider(new ModLootTableProvider(generator));
+            }
+            if (event.includeClient()) {
+                generator.addProvider(new ModBlockStateProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(new ModItemModelProvider(generator, event.getExistingFileHelper()));
             }
         }
     }

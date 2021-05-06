@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "modularrouters:item/augment/augment_layer0",
+    "layer1": "modularrouters:item/augment/range_down_augment"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "modularrouters:item/upgrade/upgrade_layer0",
+    "layer1": "modularrouters:item/upgrade/upgrade_layer1"
+  }
+}

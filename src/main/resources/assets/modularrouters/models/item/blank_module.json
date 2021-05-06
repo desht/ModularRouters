@@ -1,7 +1,0 @@
-{
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "modularrouters:item/module/module_layer0",
-		"layer1": "modularrouters:item/module/module_layer1"
-	}
-}
