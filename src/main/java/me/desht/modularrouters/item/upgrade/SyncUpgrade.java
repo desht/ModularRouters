@@ -14,6 +14,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -56,8 +57,8 @@ public class SyncUpgrade extends ItemUpgrade {
         } else if (player.isSteppingCarefully()) {
             if (!world.isClientSide) {
                 setTunedValue(stack, world.random.nextInt(MRConfig.Common.Router.baseTickRate));
+                player.displayClientMessage(new TranslationTextComponent("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
             } else {
-                player.displayClientMessage(ClientUtil.xlate("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }
         }
