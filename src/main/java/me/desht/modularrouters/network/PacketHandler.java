@@ -1,7 +1,15 @@
 package me.desht.modularrouters.network;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
@@ -20,27 +28,42 @@ public class PacketHandler {
     }
     
     public static void setupNetwork() {
-        NETWORK.registerMessage(nextId(), RouterSettingsMessage.class,
-                RouterSettingsMessage::toBytes, RouterSettingsMessage::new, RouterSettingsMessage::handle);
-        NETWORK.registerMessage(nextId(), ItemBeamMessage.class,
-                ItemBeamMessage::toBytes, ItemBeamMessage::new, ItemBeamMessage::handle);
-        NETWORK.registerMessage(nextId(), ModuleSettingsMessage.class,
-                ModuleSettingsMessage::toBytes, ModuleSettingsMessage::new, ModuleSettingsMessage::handle);
-        NETWORK.registerMessage(nextId(), FilterSettingsMessage.class,
-                FilterSettingsMessage::toBytes, FilterSettingsMessage::new, FilterSettingsMessage::handle);
-        NETWORK.registerMessage(nextId(), OpenGuiMessage.class,
-                OpenGuiMessage::toBytes, OpenGuiMessage::new, OpenGuiMessage::handle);
-        NETWORK.registerMessage(nextId(), GuiSyncMessage.class,
-                GuiSyncMessage::toBytes, GuiSyncMessage::new, GuiSyncMessage::handle);
-        NETWORK.registerMessage(nextId(), SyncUpgradeSettingsMessage.class,
-                SyncUpgradeSettingsMessage::toBytes, SyncUpgradeSettingsMessage::new, SyncUpgradeSettingsMessage::handle);
-        NETWORK.registerMessage(nextId(), PushEntityMessage.class,
-                PushEntityMessage::toBytes, PushEntityMessage::new, PushEntityMessage::handle);
-        NETWORK.registerMessage(nextId(), RouterUpgradesSyncMessage.class,
-                RouterUpgradesSyncMessage::toBytes, RouterUpgradesSyncMessage::new, RouterUpgradesSyncMessage::handle);
-        NETWORK.registerMessage(nextId(), ValidateModuleMessage.class,
-                ValidateModuleMessage::toBytes, ValidateModuleMessage::new, ValidateModuleMessage::handle);
-        NETWORK.registerMessage(nextId(), ModuleFilterMessage.class,
-                ModuleFilterMessage::toBytes, ModuleFilterMessage::new, ModuleFilterMessage::handle);
+        register(RouterSettingsMessage.class,
+                RouterSettingsMessage::toBytes, RouterSettingsMessage::new, RouterSettingsMessage::handle,
+                null);  // bidirectional
+        register(ItemBeamMessage.class,
+                ItemBeamMessage::toBytes, ItemBeamMessage::new, ItemBeamMessage::handle,
+                NetworkDirection.PLAY_TO_CLIENT);
+        register(ModuleSettingsMessage.class,
+                ModuleSettingsMessage::toBytes, ModuleSettingsMessage::new, ModuleSettingsMessage::handle,
+                NetworkDirection.PLAY_TO_SERVER);
+        register(FilterSettingsMessage.class,
+                FilterSettingsMessage::toBytes, FilterSettingsMessage::new, FilterSettingsMessage::handle,
+                NetworkDirection.PLAY_TO_SERVER);
+        register(OpenGuiMessage.class,
+                OpenGuiMessage::toBytes, OpenGuiMessage::new, OpenGuiMessage::handle,
+                NetworkDirection.PLAY_TO_SERVER);
+        register(GuiSyncMessage.class,
+                GuiSyncMessage::toBytes, GuiSyncMessage::new, GuiSyncMessage::handle,
+                NetworkDirection.PLAY_TO_CLIENT);
+        register(SyncUpgradeSettingsMessage.class,
+                SyncUpgradeSettingsMessage::toBytes, SyncUpgradeSettingsMessage::new, SyncUpgradeSettingsMessage::handle,
+                NetworkDirection.PLAY_TO_SERVER);
+        register(PushEntityMessage.class,
+                PushEntityMessage::toBytes, PushEntityMessage::new, PushEntityMessage::handle,
+                NetworkDirection.PLAY_TO_CLIENT);
+        register(RouterUpgradesSyncMessage.class,
+                RouterUpgradesSyncMessage::toBytes, RouterUpgradesSyncMessage::new, RouterUpgradesSyncMessage::handle,
+                NetworkDirection.PLAY_TO_CLIENT);
+        register(ValidateModuleMessage.class,
+                ValidateModuleMessage::toBytes, ValidateModuleMessage::new, ValidateModuleMessage::handle,
+                NetworkDirection.PLAY_TO_SERVER);
+        register(ModuleFilterMessage.class,
+                ModuleFilterMessage::toBytes, ModuleFilterMessage::new, ModuleFilterMessage::handle,
+                NetworkDirection.PLAY_TO_SERVER);
+    }
+
+    private static <MSG> void register(Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer, NetworkDirection direction) {
+        NETWORK.registerMessage(nextId(), messageType, encoder, decoder, messageConsumer, Optional.ofNullable(direction));
     }
 }
