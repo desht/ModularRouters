@@ -57,7 +57,7 @@ public class MFLocator {
     }
 
     public static MFLocator fromBuffer(PacketBuffer buf) {
-        ItemType type = ItemType.values()[buf.readByte()];
+        ItemType type = buf.readEnum(ItemType.class);
         Hand hand = null;
         BlockPos routerPos = null;
         int routerSlot  = -1;
@@ -65,20 +65,20 @@ public class MFLocator {
             routerPos = buf.readBlockPos();
             routerSlot = buf.readByte();
         } else {
-            hand = buf.readBoolean() ? Hand.MAIN_HAND : Hand.OFF_HAND;
+            hand = buf.readEnum(Hand.class);
         }
         int filterSlot = buf.readByte();
         return new MFLocator(type, hand, routerPos, routerSlot, filterSlot);
     }
 
     public void writeBuf(PacketBuffer buf) {
-        buf.writeByte(itemType.ordinal());
+        buf.writeEnum(itemType);
         buf.writeBoolean(routerPos != null);
         if (routerPos != null) {
             buf.writeBlockPos(routerPos);
             buf.writeByte(routerSlot);
         } else {
-            buf.writeBoolean(hand == Hand.MAIN_HAND);
+            buf.writeEnum(hand);
         }
         buf.writeByte(filterSlot);
     }

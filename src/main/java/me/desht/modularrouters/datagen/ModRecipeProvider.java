@@ -285,6 +285,14 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.BLANK_UPGRADE.get(), ItemTags.STONE_BRICKS, Tags.Items.INGOTS_BRICK
         ).save(consumer);
 
+        shaped(ModItems.ENERGY_UPGRADE.get(), ModItems.BLANK_UPGRADE.get(),
+                "QRQ/ B /QGQ",
+                'R', Tags.Blocks.STORAGE_BLOCKS_REDSTONE,
+                'B', ModItems.BLANK_UPGRADE.get(),
+                'G', Tags.Items.INGOTS_GOLD,
+                'Q', Tags.Items.GEMS_QUARTZ
+        ).save(consumer);
+
         // filters
         shaped(ModItems.BULK_ITEM_FILTER.get(), ModItems.BLANK_MODULE.get(),
                 "IGI/MDM/IGI",

@@ -51,6 +51,8 @@ public class MRConfig {
             public static int fluidBaseTransferRate;
             public static int fluidMaxTransferRate;
             public static int mBperFluidUpgade;
+            public static int fePerEnergyUpgrade;
+            public static int feXferPerEnergyUpgrade;
         }
     }
 }

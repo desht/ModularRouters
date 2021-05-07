@@ -22,6 +22,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.text.WordUtils;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -34,9 +35,7 @@ public class MiscUtil {
 
     public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
         for (String s : I18n.get(key, args).split(Pattern.quote("${br}"))) {
-            for (String s1 : WordUtils.wrap(s, WRAP_LENGTH).split("\n")) {
-                result.add(new StringTextComponent(s1).withStyle(formatting));
-            }
+            result.add(new StringTextComponent(s).withStyle(formatting));
         }
     }
 
@@ -50,6 +49,10 @@ public class MiscUtil {
 
     public static List<ITextComponent> wrapStringAsTextComponent(String text) {
         return wrapString(text, WRAP_LENGTH).stream().map(StringTextComponent::new).collect(Collectors.toList());
+    }
+
+    public static String commify(int n) {
+        return NumberFormat.getNumberInstance().format(n);
     }
 
     public static List<String> wrapString(String text, int maxCharPerLine) {

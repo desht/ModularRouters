@@ -3,6 +3,14 @@ package me.desht.modularrouters.logic;
 public enum RouterRedstoneBehaviour {
     ALWAYS, LOW, HIGH, NEVER, PULSE;
 
+    public static RouterRedstoneBehaviour forValue(String string) {
+        try {
+            return RouterRedstoneBehaviour.valueOf(string);
+        } catch (IllegalArgumentException e) {
+            return ALWAYS;
+        }
+    }
+
     public boolean shouldRun(boolean powered, boolean pulsed) {
         switch (this) {
             case ALWAYS: return true;

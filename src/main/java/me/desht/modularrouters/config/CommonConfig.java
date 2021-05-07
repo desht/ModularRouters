@@ -1,5 +1,6 @@
 package me.desht.modularrouters.config;
 
+import com.electronwill.nightconfig.core.ConfigSpec;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -44,6 +45,8 @@ public class CommonConfig {
         IntValue fluidBaseTransferRate;
         IntValue fluidMaxTransferRate;
         IntValue mBperFluidUpgade;
+        IntValue fePerEnergyUpgrade;
+        IntValue feXferPerEnergyUpgrade;
     }
 
     public final Module module = new Module();
@@ -150,6 +153,12 @@ public class CommonConfig {
         router.mBperFluidUpgade = builder.comment("Fluid transfer rate increase per Fluid Transfer Upgrade")
                 .translation("gui.config.mBperFluidUpgade")
                 .defineInRange("mBperFluidUpgade", 10, 1, Integer.MAX_VALUE);
+        router.fePerEnergyUpgrade = builder.comment("FE capacity per Energy Upgrade")
+                .translation("gui.config.fePerEnergyUpgrade")
+                .defineInRange("fePerEnergyUpgrade", 50_000, 1, Integer.MAX_VALUE);
+        router.feXferPerEnergyUpgrade = builder.comment("FE transfer rate (FE/t) per Energy Upgrade")
+                .translation("gui.config.feXferPerEnergyUpgrade")
+                .defineInRange("feXferPerEnergyUpgrade", 1000, 1, Integer.MAX_VALUE);
         builder.pop();
     }
 }

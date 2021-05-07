@@ -1,5 +1,6 @@
 package me.desht.modularrouters.core;
 
+import com.electronwill.nightconfig.core.ConfigSpec;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.item.augment.*;
@@ -49,6 +50,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> BLAST_UPGRADE = register("blast_upgrade", BlastUpgrade::new);
     public static final RegistryObject<Item> CAMOUFLAGE_UPGRADE = register("camouflage_upgrade", CamouflageUpgrade::new);
+    public static final RegistryObject<Item> ENERGY_UPGRADE = register("energy_upgrade", EnergyUpgrade::new);
     public static final RegistryObject<Item> FLUID_UPGRADE = register("fluid_upgrade", FluidUpgrade::new);
     public static final RegistryObject<Item> MUFFLER_UPGRADE = register("muffler_upgrade", MufflerUpgrade::new);
     public static final RegistryObject<Item> SECURITY_UPGRADE = register("security_upgrade", SecurityUpgrade::new);
@@ -72,6 +74,7 @@ public class ModItems {
     public static final RegistryObject<Item> INSPECTION_FILTER = register("inspection_filter", InspectionFilter::new);
     public static final RegistryObject<Item> MOD_FILTER = register("mod_filter", ModFilter::new);
     public static final RegistryObject<Item> REGEX_FILTER = register("regex_filter", RegexFilter::new);
+
 
     private static <T extends Item> RegistryObject<T> register(final String name, final Supplier<T> sup) {
         return ITEMS.register(name, sup);

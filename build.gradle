@@ -82,8 +82,15 @@ minecraft {
     }
 }
 
+// All jar files from this folder will be added automatically as runtime mod dependencies
+def extraModsDir = "extra-mods-${mc_version}"
+
 repositories {
     jcenter { }
+    flatDir {
+        name "extra-mods"
+        dir file(extraModsDir)
+    }
     maven { // TOP
         name = "tterrag maven"
         url = "http://maven.tterrag.com/"
@@ -125,6 +132,16 @@ dependencies {
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
 //    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
+
+    // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
+    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
+        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
+        def versionSep = basename.lastIndexOf('-')
+        assert versionSep != -1
+        def artifactId = basename.substring(0, versionSep)
+        def version = basename.substring(versionSep + 1)
+        runtimeOnly fg.deobf("extra-mods:$artifactId:$version")
+    }
 }
 
 static def parseConfig(File config) {

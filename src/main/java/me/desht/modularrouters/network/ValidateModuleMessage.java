@@ -22,11 +22,11 @@ public class ValidateModuleMessage {
     }
 
     public ValidateModuleMessage(PacketBuffer buf) {
-        hand = buf.readBoolean() ? Hand.MAIN_HAND : Hand.OFF_HAND;
+        hand = buf.readEnum(Hand.class);
     }
 
     public void toBytes(PacketBuffer buf) {
-        buf.writeBoolean(hand == Hand.MAIN_HAND);
+        buf.writeEnum(hand);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

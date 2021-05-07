@@ -25,12 +25,12 @@ public class SyncUpgradeSettingsMessage {
 
     public SyncUpgradeSettingsMessage(PacketBuffer buf) {
         tunedValue = buf.readInt();
-        hand = buf.readBoolean() ? Hand.MAIN_HAND : Hand.OFF_HAND;
+        hand = buf.readEnum(Hand.class);
     }
 
     public void toBytes(PacketBuffer buf) {
         buf.writeInt(tunedValue);
-        buf.writeBoolean(hand == Hand.MAIN_HAND);
+        buf.writeEnum(hand);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {

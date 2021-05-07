@@ -2,6 +2,7 @@ package me.desht.modularrouters.item;
 
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.screen.Screen;
@@ -38,7 +39,6 @@ public abstract class ItemBase extends Item {
         } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             if (ClientUtil.thisScreenPassesEvents()) {
-                // withStyle() = applyTextStyles()
                 list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
             }
         } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {

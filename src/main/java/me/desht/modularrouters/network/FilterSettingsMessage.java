@@ -38,13 +38,13 @@ public class FilterSettingsMessage {
     }
 
     public FilterSettingsMessage(PacketBuffer buf) {
-        op = Operation.values()[buf.readByte()];
+        op = buf.readEnum(Operation.class);
         locator = MFLocator.fromBuffer(buf);
         payload = buf.readNbt();
     }
 
     public void toBytes(PacketBuffer buf) {
-        buf.writeByte(op.ordinal());
+        buf.writeEnum(op);
         locator.writeBuf(buf);
         buf.writeNbt(payload);
     }

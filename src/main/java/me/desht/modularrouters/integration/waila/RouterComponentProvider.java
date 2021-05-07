@@ -14,26 +14,33 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+
 public class RouterComponentProvider implements IComponentProvider {
     @Override
     public void appendBody(List<ITextComponent> tooltip, IDataAccessor accessor, IPluginConfig config) {
         CompoundNBT data = accessor.getServerData();
         if (accessor.getTileEntity() instanceof TileEntityItemRouter) {
             if (data.getBoolean("Denied")) {
-                tooltip.add(new TranslationTextComponent("modularrouters.chatText.security.accessDenied"));
+                tooltip.add(xlate("modularrouters.chatText.security.accessDenied"));
             } else {
-                MiscUtil.appendMultilineText(tooltip, TextFormatting.WHITE,"modularrouters.itemText.misc.moduleCount", data.getInt("ModuleCount"));
+                if (data.getInt("ModuleCount") > 0) {
+                    MiscUtil.appendMultilineText(tooltip, TextFormatting.WHITE, "modularrouters.itemText.misc.moduleCount", data.getInt("ModuleCount"));
+                }
                 CompoundNBT upgrades = data.getCompound("Upgrades");
-                for (String k : upgrades.getAllKeys()) {
-                    tooltip.add(new TranslationTextComponent("modularrouters.itemText.misc.upgradeCount", I18n.get(k), upgrades.getInt(k)));
+                if (!upgrades.isEmpty()) {
+                    tooltip.add(xlate("modularrouters.itemText.misc.upgrades"));
+                    for (String k : upgrades.getAllKeys()) {
+                        tooltip.add(xlate("modularrouters.itemText.misc.upgradeCount", upgrades.getInt(k), I18n.get(k)));
+                    }
                 }
                 RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.values()[data.getInt("RedstoneMode")];
-                tooltip.add(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone.label")
+                tooltip.add(xlate("modularrouters.guiText.tooltip.redstone.label")
                         .append(": " + TextFormatting.AQUA)
-                        .append(new TranslationTextComponent("modularrouters.guiText.tooltip.redstone." + rrb))
+                        .append(xlate("modularrouters.guiText.tooltip.redstone." + rrb))
                 );
                 if (data.getBoolean("EcoMode")) {
-                    tooltip.add(new TranslationTextComponent("modularrouters.itemText.misc.ecoMode"));
+                    tooltip.add(xlate("modularrouters.itemText.misc.ecoMode"));
                 }
             }
         }

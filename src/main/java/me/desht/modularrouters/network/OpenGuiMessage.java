@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.util.MFLocator;
@@ -9,7 +8,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -39,7 +37,7 @@ public class OpenGuiMessage {
     }
 
     OpenGuiMessage(PacketBuffer buf) {
-        operation = Operation.values()[buf.readByte()];
+        operation = buf.readEnum(Operation.class);
         locator = MFLocator.fromBuffer(buf);
     }
 
@@ -64,7 +62,7 @@ public class OpenGuiMessage {
     }
 
     public void toBytes(PacketBuffer buf) {
-        buf.writeByte(operation.ordinal());
+        buf.writeEnum(operation);
         locator.writeBuf(buf);
     }
 

@@ -60,6 +60,8 @@ public class ConfigHelper {
         MRConfig.Common.Router.fluidBaseTransferRate = common.router.fluidBaseTransferRate.get();
         MRConfig.Common.Router.fluidMaxTransferRate = common.router.fluidMaxTransferRate.get();
         MRConfig.Common.Router.mBperFluidUpgade = common.router.mBperFluidUpgade.get();
+        MRConfig.Common.Router.fePerEnergyUpgrade = common.router.fePerEnergyUpgrade.get();
+        MRConfig.Common.Router.feXferPerEnergyUpgrade = common.router.feXferPerEnergyUpgrade.get();
 
         ModularRouters.LOGGER.info("Common config re-baked");
     }

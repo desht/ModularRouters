@@ -9,6 +9,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.IntArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.items.IItemHandler;
@@ -39,6 +41,7 @@ public class ContainerItemRouter extends ContainerMRBase {
     private static final int TE_LAST_SLOT = TE_FIRST_SLOT + UPGRADE_SLOT_END;
 
     private final TileEntityItemRouter router;
+    public final TileEntityItemRouter.TrackedEnergy data;
 
     public ContainerItemRouter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
         this(windowId, invPlayer, extraData.readBlockPos());
@@ -49,6 +52,8 @@ public class ContainerItemRouter extends ContainerMRBase {
 
         Optional<TileEntityItemRouter> o = TileEntityItemRouter.getRouterAt(invPlayer.player.level, routerPos);
         this.router = o.orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
+
+        data = router.trackedEnergy;
 
         // player's hotbar
         for (int x = 0; x < 9; x++) {
@@ -75,6 +80,8 @@ public class ContainerItemRouter extends ContainerMRBase {
         for (int slot = 0; slot < router.getUpgradeSlotCount(); slot++) {
             addSlot(new SlotItemHandler(router.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
+
+        addDataSlots(data);
     }
 
     @Override

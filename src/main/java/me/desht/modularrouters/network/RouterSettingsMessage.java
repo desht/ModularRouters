@@ -17,26 +17,30 @@ import java.util.function.Supplier;
  * Sent by server to sync router settings when GUI is opened
  */
 public class RouterSettingsMessage {
-    private final boolean eco;
+    private final boolean ecoMode;
     private final RouterRedstoneBehaviour redstoneBehaviour;
+    private final TileEntityItemRouter.EnergyDirection energyDirection;
     private final BlockPos pos;
 
     public RouterSettingsMessage(TileEntityItemRouter router) {
         this.pos = router.getBlockPos();
         this.redstoneBehaviour = router.getRedstoneBehaviour();
-        this.eco = router.getEcoMode();
+        this.ecoMode = router.getEcoMode();
+        this.energyDirection = router.getEnergyDirection();
     }
 
     RouterSettingsMessage(PacketBuffer buffer) {
         pos = buffer.readBlockPos();
         redstoneBehaviour = RouterRedstoneBehaviour.values()[buffer.readByte()];
-        eco = buffer.readBoolean();
+        ecoMode = buffer.readBoolean();
+        energyDirection = buffer.readEnum(TileEntityItemRouter.EnergyDirection.class);
     }
 
     public void toBytes(PacketBuffer byteBuf) {
         byteBuf.writeBlockPos(pos);
         byteBuf.writeByte(redstoneBehaviour.ordinal());
-        byteBuf.writeBoolean(eco);
+        byteBuf.writeBoolean(ecoMode);
+        byteBuf.writeEnum(energyDirection);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -44,7 +48,8 @@ public class RouterSettingsMessage {
             World w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getLevel();
             TileEntityItemRouter.getRouterAt(w, pos).ifPresent(router -> {
                 router.setRedstoneBehaviour(redstoneBehaviour);
-                router.setEcoMode(eco);
+                router.setEcoMode(ecoMode);
+                router.setEnergyDirection(energyDirection);
             });
         });
         ctx.get().setPacketHandled(true);
