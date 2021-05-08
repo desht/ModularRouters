@@ -23,8 +23,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
-
 public class GuiBulkItemFilter extends GuiFilterContainer {
     private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
 
@@ -60,7 +58,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             TileEntityItemRouter router = menu.getRouter();
             CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
-            if (target.getItemHandler(minecraft.level).isPresent()) {
+            if (target.hasItemHandlerClientSide()) {
                 addButton(new MergeButton(leftPos + 28, topPos + 130, target.toString(),
                         I18n.get(target.blockTranslationKey), p -> {
                     if (target != null) {
