@@ -19,6 +19,7 @@ import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.IHasContainer;
+import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
@@ -26,6 +27,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -126,6 +129,13 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         router.setEcoMode(ecoButton.isToggled());
         router.setEnergyDirection(energyDirButton.getState());
         PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
+    }
+
+    public Collection<Rectangle2d> getExtraArea() {
+        // for JEI's benefit
+        return router.getEnergyCapacity() > 0 ?
+                Collections.singletonList(new Rectangle2d(leftPos - 27, topPos, 32, 100)) :
+                Collections.emptyList();
     }
 
     private class EcoButton extends TexturedToggleButton {

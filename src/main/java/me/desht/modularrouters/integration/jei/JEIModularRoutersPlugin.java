@@ -18,5 +18,7 @@ public class JEIModularRoutersPlugin implements IModPlugin {
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGhostIngredientHandler(GuiModule.class, new GuiModuleGhost());
+
+        registration.addGlobalGuiHandler(new ExtraGuiAreaHandler());
     }
 }
