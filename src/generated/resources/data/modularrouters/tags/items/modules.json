@@ -7,6 +7,8 @@
     "modularrouters:detector_module",
     "modularrouters:distributor_module",
     "modularrouters:dropper_module",
+    "modularrouters:energy_distributor_module",
+    "modularrouters:energy_output_module",
     "modularrouters:extruder_module_1",
     "modularrouters:extruder_module_2",
     "modularrouters:flinger_module",

@@ -1053,7 +1053,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             return capacity;
         }
 
-        public void setEnergyStored(int energyStored) {
+        void setEnergyStored(int energyStored) {
             // only called client side for gui sync purposes
             this.energy = Math.min(energyStored, capacity);
         }
@@ -1082,10 +1082,6 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         @Override
         public int getCount() {
             return 2;
-        }
-
-        public int getEnergy() {
-            return get(0) + (get(1) << 16);
         }
     }
 }

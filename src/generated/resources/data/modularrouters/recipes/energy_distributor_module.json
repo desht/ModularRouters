@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "modularrouters:energy_output_module"
+    },
+    {
+      "item": "modularrouters:distributor_module"
+    }
+  ],
+  "result": {
+    "item": "modularrouters:energy_distributor_module"
+  }
+}

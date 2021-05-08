@@ -14,7 +14,7 @@ public class ContainerModules {
     }
 
     public static ContainerModule createDistributorContainer(int windowId, PlayerInventory inv, PacketBuffer extra) {
-        return new ContainerModule(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), windowId, inv, extra);
+        return new ContainerModule(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), windowId, inv, extra);
     }
 
     public static ContainerExtruder2Module createExtruder2Container(int windowId, PlayerInventory inv, PacketBuffer extra) {

@@ -1,6 +1,5 @@
 package me.desht.modularrouters.core;
 
-import com.electronwill.nightconfig.core.ConfigSpec;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.item.augment.*;
@@ -33,6 +32,8 @@ public class ModItems {
     public static final RegistryObject<Item> DETECTOR_MODULE = register("detector_module", DetectorModule::new);
     public static final RegistryObject<Item> DISTRIBUTOR_MODULE = register("distributor_module", DistributorModule::new);
     public static final RegistryObject<Item> DROPPER_MODULE = register("dropper_module", DropperModule::new);
+    public static final RegistryObject<Item> ENERGY_DISTRIBUTOR_MODULE = register("energy_distributor_module", EnergyDistributorModule::new);
+    public static final RegistryObject<Item> ENERGY_OUTPUT_MODULE = register("energy_output_module", EnergyOutputModule::new);
     public static final RegistryObject<Item> EXTRUDER_MODULE_1 = register("extruder_module_1", ExtruderModule1::new);
     public static final RegistryObject<Item> EXTRUDER_MODULE_2 = register("extruder_module_2", ExtruderModule2::new);
     public static final RegistryObject<Item> FLINGER_MODULE = register("flinger_module", FlingerModule::new);

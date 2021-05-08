@@ -38,6 +38,6 @@ public class EnergyUpgrade extends ItemUpgrade {
 
     @Override
     public int getStackLimit(int slot) {
-        return 20;
+        return 64;
     }
 }

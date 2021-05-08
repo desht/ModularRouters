@@ -285,6 +285,18 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.BLANK_UPGRADE.get(), ItemTags.STONE_BRICKS, Tags.Items.INGOTS_BRICK
         ).save(consumer);
 
+        shaped(ModItems.ENERGY_OUTPUT_MODULE.get(), ModItems.BLANK_MODULE.get(),
+                " R /GBG/ Q ",
+                'R', Tags.Blocks.STORAGE_BLOCKS_REDSTONE,
+                'B', ModItems.BLANK_UPGRADE.get(),
+                'G', Tags.Items.INGOTS_GOLD,
+                'Q', Tags.Items.GEMS_QUARTZ
+        ).save(consumer);
+
+        shapeless(ModItems.ENERGY_DISTRIBUTOR_MODULE.get(), ModItems.BLANK_MODULE.get(),
+                ModItems.ENERGY_OUTPUT_MODULE.get(), ModItems.DISTRIBUTOR_MODULE.get()
+        ).save(consumer);
+
         shaped(ModItems.ENERGY_UPGRADE.get(), ModItems.BLANK_UPGRADE.get(),
                 "QRQ/ B /QGQ",
                 'R', Tags.Blocks.STORAGE_BLOCKS_REDSTONE,
