@@ -91,4 +91,10 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     public int getRenderColor(int index) {
         return 0x8040E0FF;
     }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.fluidModule2EnergyCost;
+    }
+
 }

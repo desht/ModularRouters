@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
@@ -39,5 +40,10 @@ public class FlingerModule extends DropperModule {
     @Override
     public TintColor getItemTint() {
         return TINT_COLOR;
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.flingerModuleEnergyCost;
     }
 }

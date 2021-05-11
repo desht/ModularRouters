@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -71,5 +72,10 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
     @Override
     public TintColor getItemTint() {
         return TINT_COLOR;
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.playerModuleEnergyCost;
     }
 }

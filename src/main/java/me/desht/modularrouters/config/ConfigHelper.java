@@ -63,6 +63,28 @@ public class ConfigHelper {
         MRConfig.Common.Router.fePerEnergyUpgrade = common.router.fePerEnergyUpgrade.get();
         MRConfig.Common.Router.feXferPerEnergyUpgrade = common.router.feXferPerEnergyUpgrade.get();
 
+        MRConfig.Common.EnergyCosts.activatorModuleEnergyCost = common.energyCosts.activatorModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.breakerModuleEnergyCost = common.energyCosts.breakerModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.detectorModuleEnergyCost = common.energyCosts.detectorModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.distributorModuleEnergyCost = common.energyCosts.distributorModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.dropperModuleEnergyCost = common.energyCosts.dropperModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.energydistributorModuleEnergyCost = common.energyCosts.energydistributorModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.energyoutputModuleEnergyCost = common.energyCosts.energyoutputModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.extruderModule1EnergyCost = common.energyCosts.extruderModule1EnergyCost.get();
+        MRConfig.Common.EnergyCosts.extruderModule2EnergyCost = common.energyCosts.extruderModule2EnergyCost.get();
+        MRConfig.Common.EnergyCosts.flingerModuleEnergyCost = common.energyCosts.flingerModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.fluidModuleEnergyCost = common.energyCosts.fluidModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.fluidModule2EnergyCost = common.energyCosts.fluidModule2EnergyCost.get();
+        MRConfig.Common.EnergyCosts.placerModuleEnergyCost = common.energyCosts.placerModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.playerModuleEnergyCost = common.energyCosts.playerModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.pullerModule1EnergyCost = common.energyCosts.pullerModule1EnergyCost.get();
+        MRConfig.Common.EnergyCosts.pullerModule2EnergyCost = common.energyCosts.pullerModule2EnergyCost.get();
+        MRConfig.Common.EnergyCosts.senderModule1EnergyCost = common.energyCosts.senderModule1EnergyCost.get();
+        MRConfig.Common.EnergyCosts.senderModule2EnergyCost = common.energyCosts.senderModule2EnergyCost.get();
+        MRConfig.Common.EnergyCosts.senderModule3EnergyCost = common.energyCosts.senderModule3EnergyCost.get();
+        MRConfig.Common.EnergyCosts.vacuumModuleEnergyCost = common.energyCosts.vacuumModuleEnergyCost.get();
+        MRConfig.Common.EnergyCosts.voidModuleEnergyCost = common.energyCosts.voidModuleEnergyCost.get();
+
         ModularRouters.LOGGER.info("Common config re-baked");
     }
 }

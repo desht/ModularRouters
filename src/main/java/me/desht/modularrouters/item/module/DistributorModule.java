@@ -1,7 +1,9 @@
 package me.desht.modularrouters.item.module;
 
+import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -41,8 +43,7 @@ public class DistributorModule extends SenderModule2 {
 
     @Override
     public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        Set<ModuleTarget> targets = TargetedModule.getTargets(stack, false);
-        return new ArrayList<>(targets);
+        return ImmutableList.copyOf(TargetedModule.getTargets(stack, false));
     }
 
     @Override
@@ -58,5 +59,10 @@ public class DistributorModule extends SenderModule2 {
     @Override
     public int getRenderColor(int index) {
         return 0x80B0FF90;
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.distributorModuleEnergyCost;
     }
 }

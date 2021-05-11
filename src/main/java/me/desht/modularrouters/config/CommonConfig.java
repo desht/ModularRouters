@@ -1,6 +1,5 @@
 package me.desht.modularrouters.config;
 
-import com.electronwill.nightconfig.core.ConfigSpec;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -49,8 +48,33 @@ public class CommonConfig {
         IntValue feXferPerEnergyUpgrade;
     }
 
+    public static class EnergyCosts {
+        IntValue activatorModuleEnergyCost;
+        IntValue breakerModuleEnergyCost;
+        IntValue detectorModuleEnergyCost;
+        IntValue distributorModuleEnergyCost;
+        IntValue dropperModuleEnergyCost;
+        IntValue energydistributorModuleEnergyCost;
+        IntValue energyoutputModuleEnergyCost;
+        IntValue extruderModule1EnergyCost;
+        IntValue extruderModule2EnergyCost;
+        IntValue flingerModuleEnergyCost;
+        IntValue fluidModuleEnergyCost;
+        IntValue fluidModule2EnergyCost;
+        IntValue placerModuleEnergyCost;
+        IntValue playerModuleEnergyCost;
+        IntValue pullerModule1EnergyCost;
+        IntValue pullerModule2EnergyCost;
+        IntValue senderModule1EnergyCost;
+        IntValue senderModule2EnergyCost;
+        IntValue senderModule3EnergyCost;
+        IntValue vacuumModuleEnergyCost;
+        IntValue voidModuleEnergyCost;
+    }
+
     public final Module module = new Module();
     public final Router router = new Router();
+    public final EnergyCosts energyCosts = new EnergyCosts();
 
     CommonConfig(ForgeConfigSpec.Builder builder) {
         builder.push("Module");
@@ -159,6 +183,72 @@ public class CommonConfig {
         router.feXferPerEnergyUpgrade = builder.comment("FE transfer rate (FE/t) per Energy Upgrade")
                 .translation("gui.config.feXferPerEnergyUpgrade")
                 .defineInRange("feXferPerEnergyUpgrade", 1000, 1, Integer.MAX_VALUE);
+        builder.pop();
+
+        builder.push("Energy Costs");
+        energyCosts.activatorModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Activator Module")
+                .translation("modularrouters.gui.config.activatorModuleEnergyCost")
+                .defineInRange("activatorModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.breakerModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Breaker Module")
+                .translation("modularrouters.gui.config.breakerModuleEnergyCost")
+                .defineInRange("breakerModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.detectorModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Detector Module")
+                .translation("modularrouters.gui.config.detectorModuleEnergyCost")
+                .defineInRange("detectorModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.distributorModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Distributor Module")
+                .translation("modularrouters.gui.config.distributorModuleEnergyCost")
+                .defineInRange("distributorModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.dropperModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Dropper Module")
+                .translation("modularrouters.gui.config.dropperModuleEnergyCost")
+                .defineInRange("dropperModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.energydistributorModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Energy Distributor Module")
+                .translation("modularrouters.gui.config.energydistributorModuleEnergyCost")
+                .defineInRange("energydistributorModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.energyoutputModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Energy Output Module")
+                .translation("modularrouters.gui.config.energyoutputModuleEnergyCost")
+                .defineInRange("energyoutputModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.extruderModule1EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Extruder Module Mk1")
+                .translation("modularrouters.gui.config.extruderModule1EnergyCost")
+                .defineInRange("extruderModule1EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.extruderModule2EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Extruder Module Mk2")
+                .translation("modularrouters.gui.config.extruderModule2EnergyCost")
+                .defineInRange("extruderModule2EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.flingerModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Flinger Module")
+                .translation("modularrouters.gui.config.flingerModuleEnergyCost")
+                .defineInRange("flingerModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.fluidModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Fluid Module Mk1")
+                .translation("modularrouters.gui.config.fluidModuleEnergyCost")
+                .defineInRange("fluidModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.fluidModule2EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Fluid Module Mk2")
+                .translation("modularrouters.gui.config.fluidModule2EnergyCost")
+                .defineInRange("fluidModule2EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.placerModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Placer Module")
+                .translation("modularrouters.gui.config.placerModuleEnergyCost")
+                .defineInRange("placerModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.playerModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Player Module")
+                .translation("modularrouters.gui.config.playerModuleEnergyCost")
+                .defineInRange("playerModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.pullerModule1EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Puller Module Mk1")
+                .translation("modularrouters.gui.config.pullerModule1EnergyCost")
+                .defineInRange("pullerModule1EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.pullerModule2EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Puller Module Mk2")
+                .translation("modularrouters.gui.config.pullerModule2EnergyCost")
+                .defineInRange("pullerModule2EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.senderModule1EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Sender Module Mk1")
+                .translation("modularrouters.gui.config.senderModule1EnergyCost")
+                .defineInRange("senderModule1EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.senderModule2EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Sender Module Mk2")
+                .translation("modularrouters.gui.config.senderModule2EnergyCost")
+                .defineInRange("senderModule2EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.senderModule3EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Sender Module Mk3")
+                .translation("modularrouters.gui.config.senderModule3EnergyCost")
+                .defineInRange("senderModule3EnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.vacuumModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Vacuum Module")
+                .translation("modularrouters.gui.config.vacuumModuleEnergyCost")
+                .defineInRange("vacuumModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.voidModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Void Module")
+                .translation("modularrouters.gui.config.voidModuleEnergyCost")
+                .defineInRange("voidModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
         builder.pop();
     }
 }

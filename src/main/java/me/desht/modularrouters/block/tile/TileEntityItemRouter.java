@@ -388,12 +388,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             }
             for (CompiledIndexedModule cim : compiledModules) {
                 CompiledModule cm = cim.compiledModule;
-                if (cm != null && cm.hasTarget() && cm.shouldRun(powered, pulsed))
+                if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed))
                     if (cm.execute(this)) {
                         cm.getFilter().cycleRoundRobin().ifPresent(counter -> {
                             ItemStack moduleStack = modulesHandler.getStackInSlot(cim.index);
                             ModuleHelper.setRoundRobinCounter(moduleStack, counter);
                         });
+                        getEnergyStorage().extractEnergy(cm.getEnergyCost(), false);
                         newActive = true;
                         if (cm.termination() == ItemModule.Termination.RAN) {
                             break;

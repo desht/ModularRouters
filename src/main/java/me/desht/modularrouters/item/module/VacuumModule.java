@@ -68,4 +68,9 @@ public class VacuumModule extends ItemModule implements IRangedModule {
     public TintColor getItemTint() {
         return TINT_COLOR;
     }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.vacuumModuleEnergyCost;
+    }
 }

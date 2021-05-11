@@ -54,8 +54,6 @@ import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-import net.minecraft.item.Item.Properties;
-
 public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {
         BLACKLIST(true, 0x1, "F_blacklist"),
@@ -258,7 +256,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
                     list.add(new StringTextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(TextFormatting.AQUA)).withStyle(TextFormatting.YELLOW)));
         }
+
+        if (getEnergyCost() != 0) {
+            list.add(xlate("modularrouters.itemText.misc.energyUsage", getEnergyCost()));
+        }
     }
+
+    public abstract int getEnergyCost();
 
     private void addAugmentInformation(ItemStack stack, List<ITextComponent> list) {
         AugmentCounter c = new AugmentCounter(stack);

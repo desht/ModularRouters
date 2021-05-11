@@ -50,4 +50,9 @@ public class PullerModule2 extends TargetedModule implements IRangedModule, IPos
     public int getRenderColor(int index) {
         return 0x808080FF;
     }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.pullerModule2EnergyCost;
+    }
 }

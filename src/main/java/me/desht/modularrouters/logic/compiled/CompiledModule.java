@@ -305,4 +305,8 @@ public abstract class CompiledModule {
 
     public void onNeighbourChange(TileEntityItemRouter router) {
     }
+
+    public int getEnergyCost() {
+        return module.getEnergyCost();
+    }
 }

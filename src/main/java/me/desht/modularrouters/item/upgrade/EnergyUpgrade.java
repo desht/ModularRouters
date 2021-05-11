@@ -13,9 +13,11 @@ import java.util.List;
 import static me.desht.modularrouters.util.MiscUtil.commify;
 
 public class EnergyUpgrade extends ItemUpgrade {
+    private static final TintColor TINT_COLOR = new TintColor(128, 128, 128);
+
     @Override
     public TintColor getItemTint() {
-        return new TintColor(192, 32, 32);
+        return TINT_COLOR;
     }
 
     @Override

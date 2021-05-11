@@ -5,6 +5,7 @@ import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
@@ -32,7 +33,8 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
         }
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(x, y) && button instanceof ITooltipButton)
-                .forEach(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), x, y));
+                .findFirst()
+                .ifPresent(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), x, y));
 
         this.renderTooltip(matrixStack, x, y);
     }

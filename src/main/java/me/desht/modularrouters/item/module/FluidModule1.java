@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -60,6 +61,11 @@ public class FluidModule1 extends ItemModule {
         super.addExtraInformation(stack, list);
 
         addFluidModuleInformation(stack, list);
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.fluidModuleEnergyCost;
     }
 
     @Override

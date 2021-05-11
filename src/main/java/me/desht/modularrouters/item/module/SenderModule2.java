@@ -57,4 +57,9 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
     public int getRenderColor(int index) {
         return 0x8095FF5D;
     }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.senderModule2EnergyCost;
+    }
 }

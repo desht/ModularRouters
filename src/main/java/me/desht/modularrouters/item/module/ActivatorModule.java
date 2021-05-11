@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -43,6 +44,11 @@ public class ActivatorModule extends ItemModule {
         if (cam.isSneaking()) {
             list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.sneak").withStyle(TextFormatting.YELLOW));
         }
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.activatorModuleEnergyCost;
     }
 
     @Override

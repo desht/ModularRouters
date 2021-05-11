@@ -32,7 +32,8 @@ public abstract class GuiScreenBase extends Screen implements IManagedTextFields
         if (textFieldManager != null) textFieldManager.drawTextFields(matrixStack, mouseX, mouseY, partialTicks);
         this.buttons.stream()
                 .filter(button -> button.isMouseOver(mouseX, mouseY) && button instanceof ITooltipButton)
-                .forEach(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
+                .findFirst()
+                .ifPresent(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
     }
 
     @Override

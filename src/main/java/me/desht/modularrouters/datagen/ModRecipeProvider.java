@@ -288,7 +288,7 @@ public class ModRecipeProvider extends RecipeProvider {
         shaped(ModItems.ENERGY_OUTPUT_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 " R /GBG/ Q ",
                 'R', Tags.Blocks.STORAGE_BLOCKS_REDSTONE,
-                'B', ModItems.BLANK_UPGRADE.get(),
+                'B', ModItems.BLANK_MODULE.get(),
                 'G', Tags.Items.INGOTS_GOLD,
                 'Q', Tags.Items.GEMS_QUARTZ
         ).save(consumer);

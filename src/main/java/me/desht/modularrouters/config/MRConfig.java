@@ -54,5 +54,29 @@ public class MRConfig {
             public static int fePerEnergyUpgrade;
             public static int feXferPerEnergyUpgrade;
         }
+
+        public static class EnergyCosts {
+            public static int activatorModuleEnergyCost;
+            public static int breakerModuleEnergyCost;
+            public static int detectorModuleEnergyCost;
+            public static int distributorModuleEnergyCost;
+            public static int dropperModuleEnergyCost;
+            public static int energydistributorModuleEnergyCost;
+            public static int energyoutputModuleEnergyCost;
+            public static int extruderModule1EnergyCost;
+            public static int extruderModule2EnergyCost;
+            public static int flingerModuleEnergyCost;
+            public static int fluidModuleEnergyCost;
+            public static int fluidModule2EnergyCost;
+            public static int placerModuleEnergyCost;
+            public static int playerModuleEnergyCost;
+            public static int pullerModule1EnergyCost;
+            public static int pullerModule2EnergyCost;
+            public static int senderModule1EnergyCost;
+            public static int senderModule2EnergyCost;
+            public static int senderModule3EnergyCost;
+            public static int vacuumModuleEnergyCost;
+            public static int voidModuleEnergyCost;
+        }
     }
 }

@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -40,6 +41,11 @@ public class DetectorModule extends ItemModule {
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
         list.add(ClientUtil.xlate("modularrouters.itemText.misc.redstoneLevel",
                 ds.getSignalLevel(), I18n.get("modularrouters.itemText.misc.strongSignal." + ds.isStrongSignal())));
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return MRConfig.Common.EnergyCosts.detectorModuleEnergyCost;
     }
 
     @Override

@@ -26,6 +26,11 @@ public class CreativeModule extends ItemModule {
     }
 
     @Override
+    public int getEnergyCost() {
+        return 0;
+    }
+
+    @Override
     protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
         return xlate("modularrouters.itemText.misc.itemList");
     }

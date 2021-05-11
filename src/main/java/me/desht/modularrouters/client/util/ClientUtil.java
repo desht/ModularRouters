@@ -15,7 +15,7 @@ public class ClientUtil {
 
     public static TileEntityItemRouter getOpenItemRouter() {
         if (Minecraft.getInstance().screen instanceof GuiItemRouter) {
-            return ((GuiItemRouter) Minecraft.getInstance().screen).router;
+            return ((GuiItemRouter) Minecraft.getInstance().screen).getMenu().getRouter();
         } else {
             return null;
         }
