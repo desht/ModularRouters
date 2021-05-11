@@ -41,7 +41,9 @@ minecraft {
             property 'forge.logging.markers', 'CONFIG'
             // recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.disableRefMap', 'true'
+//            property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             ideaModule "${project.name}.main"
             workingDirectory project.file('run').canonicalPath
             mods {
@@ -130,7 +132,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}:api")
     runtime fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
-//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
     compile "com.google.errorprone:error_prone_annotations:2.0.15"
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
