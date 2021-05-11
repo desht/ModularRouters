@@ -1027,6 +1027,20 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             return super.canReceive() && getRedstoneBehaviour().shouldRun(getRedstonePower() > 0, false);
         }
 
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            int n = super.receiveEnergy(maxReceive, simulate);
+            if (n != 0 && !simulate) setChanged();
+            return n;
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            int n = super.extractEnergy(maxExtract, simulate);
+            if (n != 0 && !simulate) setChanged();
+            return n;
+        }
+
         void updateForEnergyUpgrades(int nEnergyUpgrades) {
             int oldCapacity = capacity;
             capacity = MRConfig.Common.Router.fePerEnergyUpgrade * nEnergyUpgrades;
@@ -1081,20 +1095,22 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public class TrackedEnergy implements IIntArray {
         @Override
         public int get(int idx) {
+            int res = 0;
             if (idx == 0) {
-                return energyStorage.getEnergyStored() & 0xFFFF;
+                res = energyStorage.getEnergyStored() & 0x0000FFFF;
             } else if (idx == 1) {
-                return (energyStorage.getEnergyStored() & 0xFFFF0000) >> 16;
+                res = (energyStorage.getEnergyStored() & 0xFFFF0000) >> 16;
             }
-            return 0;
+            return res;
         }
 
         @Override
         public void set(int idx, int val) {
+            if (val < 0) val += 65536;  // due to int->short conversion silliness in SWindowPropertyPacket
             if (idx == 0) {
-                energyStorage.setEnergyStored((energyStorage.getEnergyStored()) & 0xFFFF0000 | val);
+                energyStorage.setEnergyStored(energyStorage.getEnergyStored() & 0xFFFF0000 | val);
             } else if (idx == 1) {
-                energyStorage.setEnergyStored((energyStorage.getEnergyStored()) & 0xFFFF | (val << 16));
+                energyStorage.setEnergyStored(energyStorage.getEnergyStored() & 0x0000FFFF | val << 16);
             }
         }
 
