@@ -1,6 +1,7 @@
 package me.desht.modularrouters.util;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import me.desht.modularrouters.logic.filter.Filter.Flags;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -11,11 +12,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static me.desht.modularrouters.logic.filter.Filter.Flags;
-
-import it.unimi.dsi.fastutil.Hash.Strategy;
-import me.desht.modularrouters.logic.filter.Filter.Flags;
 
 public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
 

@@ -8,9 +8,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.OptionalDouble;
 
-import net.minecraft.client.renderer.RenderState.LineState;
-import net.minecraft.client.renderer.RenderState.TransparencyState;
-
 public class ModRenderTypes extends RenderType {
     public ModRenderTypes(String name, VertexFormat format, int drawMode, int bufferSize, boolean useDelegate, boolean needsSorting, Runnable pre, Runnable post) {
         super(name, format, drawMode, bufferSize, useDelegate, needsSorting, pre, post);

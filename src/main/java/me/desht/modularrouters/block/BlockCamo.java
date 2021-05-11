@@ -17,9 +17,6 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-//@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
-import net.minecraft.block.AbstractBlock.Properties;
-
 public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
     private static final VoxelShape ALMOST_FULL = box(0.1, 0.1, 0.1, 15.99, 15.99, 15.99);

@@ -13,8 +13,6 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
-
 public abstract class TexturedButton extends ExtendedButton implements ITooltipButton {
     static final ResourceLocation TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/widgets.png");
 

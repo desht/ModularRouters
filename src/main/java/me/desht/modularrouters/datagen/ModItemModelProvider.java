@@ -1,7 +1,6 @@
 package me.desht.modularrouters.datagen;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;

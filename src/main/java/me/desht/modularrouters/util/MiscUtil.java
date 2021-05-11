@@ -20,7 +20,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.apache.commons.lang3.text.WordUtils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

@@ -14,8 +14,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
-
 public class GuiModuleGhost implements IGhostIngredientHandler<GuiModule> {
     @Override
     public <I> List<Target<I>> getTargets(GuiModule gui, I ingredient, boolean doStart) {

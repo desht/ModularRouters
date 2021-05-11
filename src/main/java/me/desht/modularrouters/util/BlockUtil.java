@@ -22,7 +22,6 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.items.IItemHandler;
-import org.jline.utils.Log;
 
 import java.util.Collections;
 import java.util.List;

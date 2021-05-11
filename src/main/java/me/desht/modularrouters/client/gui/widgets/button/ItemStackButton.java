@@ -7,8 +7,6 @@ import me.desht.modularrouters.client.util.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
-
 public class ItemStackButton extends TexturedButton {
     private final ItemStack renderStack;
     private final boolean flat;

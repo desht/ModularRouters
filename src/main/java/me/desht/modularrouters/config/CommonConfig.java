@@ -1,7 +1,6 @@
 package me.desht.modularrouters.config;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;

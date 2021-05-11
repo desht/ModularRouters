@@ -17,8 +17,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.util.List;
-
 public class CamouflageUpgrade extends ItemUpgrade {
     public static final String NBT_STATE_NAME = "BlockStateName";
 

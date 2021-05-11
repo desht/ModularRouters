@@ -2,7 +2,6 @@ package me.desht.modularrouters.item;
 
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,8 +18,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
-
-import net.minecraft.item.Item.Properties;
 
 public abstract class ItemBase extends Item {
     public ItemBase(Properties props) {

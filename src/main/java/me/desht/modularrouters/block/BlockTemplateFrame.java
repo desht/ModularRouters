@@ -16,8 +16,6 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 public class BlockTemplateFrame extends BlockCamo {
     public BlockTemplateFrame() {
         super(Properties.of(Material.GLASS).isValidSpawn((state, world, pos, entityType) -> false));

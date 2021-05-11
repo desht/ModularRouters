@@ -2,8 +2,6 @@ package me.desht.modularrouters.client.gui.filter;
 
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
-
 class Buttons {
     static class AddButton extends TexturedButton {
         AddButton(int x, int y, IPressable pressable) {
