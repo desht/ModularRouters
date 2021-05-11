@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "While Item Routers can't handle fluids directly (they don't have an internal tank), they can manipulate fluids if there is a (single) fluid container item in the buffer. This includes buckets and any fluid containers added by other mods."
+      "text": "While Routers can't handle fluids directly (they don't have an internal tank), they can manipulate fluids if there is a (single) fluid container item in the buffer. This includes buckets and any fluid containers added by other mods."
     },
     {
       "type": "text",
@@ -13,11 +13,11 @@
     },
     {
       "type": "text",
-      "text": "The GUI also allows the maximum transfer rate to be set. Note this is the maximum that will be $(italic)attempted/$, and is still limited by the router's overall transfer rate, which is 1 bucket per second, and the transfer rate of the external fluid or fluid container.$(p)The Fluid Module's filter slots will only accept fluid-containing items, and will filter by the contained fluid, not by the container item."
+      "text": "The GUI also allows the maximum transfer rate to be set. Note this is the maximum that will be $(italic)attempted/$, and is still limited by the Router's overall transfer rate, which is 1 bucket per second, and the transfer rate of the external fluid or fluid container.$(p)The Fluid Module's filter slots will only accept fluid-containing items, and will filter by the contained fluid, not by the container item."
     },
     {
       "type": "text",
-      "text": "Adding $(l:upgrades/speed)Speed Upgrades/$ will not transfer fluids any faster, only more often. A router with 9 speed upgrades will still only transfer 1 bucket per second, just more often and in smaller quantities. To increase the overall transfer rate, add $(l:upgrades/fluid)Fluid Transfer Upgrades/$.$(p)Be very careful tinkering with Fluid Module settings if the router holds any dangerous fluids, such as a lava bucket. The router will not hesitate to pour lava over you if you get it wrong..."
+      "text": "Adding $(l:upgrades/speed)Speed Upgrades/$ will not transfer fluids any faster, only more often. A Router with 9 speed upgrades will still only transfer 1 bucket per second, just more often and in smaller quantities. To increase the overall transfer rate, add $(l:upgrades/fluid)Fluid Transfer Upgrades/$.$(p)Be very careful tinkering with Fluid Module settings if the router holds any dangerous fluids, such as a lava bucket. The router will not hesitate to pour lava over you if you get it wrong..."
     },
     {
       "type": "text",

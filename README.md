@@ -2,8 +2,8 @@
 
 ### Description
 
-Modular Routers is a Forge mod which adds one block: the Item Router, and several routing modules and upgrades.  The
-Item Router has a single-slot buffer to hold items, and does nothing by itself, other than to execute (in order) any
+Modular Routers is a Forge mod which adds one block: the Modular Router, and several routing modules and upgrades.  The
+Modular Router has a single-slot buffer to hold items, and does nothing by itself, other than to execute (in order) any
 modules installed in it.  These modules define the behaviour - moving items around, pulling from adjacent inventories,
 placing/dropping items & blocks in the world, etc.
 

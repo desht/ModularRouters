@@ -1,11 +1,11 @@
 {
-  "name": "Item Router",
+  "name": "Modular Router",
   "icon": "modularrouters:item_router",
   "category": "intro",
   "pages": [
     {
       "type": "text",
-      "text": "The $(item)Item Router/$ is the central block of the routing system.  By itself, it does nothing other than serve as a one-slot inventory (which can be piped into and out of by hoppers and other mod piping systems).$(p)To do anything useful with a router, however, you need to install one or more (up to nine) $(l:intro/modules)Modules/$."
+      "text": "The $(item)Modular Router/$ is the central block of the routing system.  By itself, it does nothing other than serve as a one-slot inventory (which can be piped into and out of by hoppers and other mod piping systems).$(p)To do anything useful with a router, however, you need to install one or more (up to nine) $(l:intro/modules)Modules/$."
     },
     {
       "type": "text",

@@ -1,39 +1,39 @@
 {
-  "name": "Item Router",
+  "name": "Modular Router",
   "icon": "modularrouters:item_router",
   "category": "router",
   "pages": [
     {
       "type": "text",
-      "text": "The $(thing)Item Router/$ is core of the system. It is responsible for executing all the modules plugged into it, moving items, blocks and fluids around in various ways."
+      "text": "The $(thing)Modular Router/$ is core of the system. It is responsible for executing all the modules plugged into it, moving items, blocks and fluids around in various ways."
     },
     {
       "type": "image",
       "images": [
         "modularrouters:textures/patchouli/router_gui.png"
       ],
-      "text": "$(italic)An Item Router GUI with several modules and upgrades installed",
+      "text": "$(italic)An Modular Router GUI with several modules and upgrades installed",
       "border": true
     },
     {
       "type": "text",
       "title": "1. The Buffer",
-      "text": "The $(thing)Item Router/$ has a one-slot buffer, able to hold up to stack of items. This buffer is exposed as a normal inventory, so it can be interacted with via $(item)Hoppers/$ and other mod piping systems.$(p)In addition, a $(item)Comparator/$ placed against the router will measure the slot's fullness as expected."
+      "text": "The $(thing)Modular Router/$ has a one-slot buffer, able to hold up to stack of items. This buffer is exposed as a normal inventory, so it can be interacted with via $(item)Hoppers/$ and other mod piping systems.$(p)In addition, a $(item)Comparator/$ placed against the router will measure the slot's fullness as expected."
     },
     {
       "type": "text",
       "title": "2. Module Slots",
-      "text": "The $(thing)Item Router/$ has nine slots for $(l:intro/modules)modules/$. Each time the router runs (between 1 and 10 times per second depending on Speed Upgrades), it will $(thing)execute/$ each module in turn, from left to right.$(p)You can configure installed modules without removing them from the router by pressing $(4)$(bold)[$(k:modularrouters.configure)]/$ while hovering over it, or $(thing)Middle-Clicking/$ the module in the GUI."
+      "text": "The $(thing)Modular Router/$ has nine slots for $(l:intro/modules)modules/$. Each time the router runs (between 1 and 10 times per second depending on Speed Upgrades), it will $(thing)execute/$ each module in turn, from left to right.$(p)You can configure installed modules without removing them from the router by pressing $(4)$(bold)[$(k:modularrouters.configure)]/$ while hovering over it, or $(thing)Middle-Clicking/$ the module in the GUI."
     },
     {
       "type": "text",
       "title": "3. Upgrade Slots",
-      "text": "The $(thing)Item Router/$ has five slots for $(l:intro/upgrades)upgrades/$. Upgrades enhance the router's functionality in various ways; for example, each inserted $(l:upgrades/speed)Speed Upgrade/$ makes the router tick a little faster, while each $(l:upgrades/stack)Stack Upgrade/$ allows it to handle more items in each operation."
+      "text": "The $(thing)Modular Router/$ has five slots for $(l:intro/upgrades)upgrades/$. Upgrades enhance the router's functionality in various ways; for example, each inserted $(l:upgrades/speed)Speed Upgrade/$ makes the router tick a little faster, while each $(l:upgrades/stack)Stack Upgrade/$ allows it to handle more items in each operation."
     },
     {
       "type": "text",
       "title": "4. Redstone Control",
-      "text": "The $(thing)Item Router/$ has some flexibility over how it responds to redstone input, controlled by the top-right button:$(li)Default: always run, regardless of redstone signal$(li)Only run when there is $(italic)no/$ redstone signal$(li)Only run when there $(italic)is/$ a redstone signal$(li)Never run$(li)Run $(italic)once/$ when a redstone pulse is received (any signal higher than previously)."
+      "text": "The $(thing)Modular Router/$ has some flexibility over how it responds to redstone input, controlled by the top-right button:$(li)Default: always run, regardless of redstone signal$(li)Only run when there is $(italic)no/$ redstone signal$(li)Only run when there $(italic)is/$ a redstone signal$(li)Never run$(li)Run $(italic)once/$ when a redstone pulse is received (any signal higher than previously)."
     },
     {
       "type": "text",

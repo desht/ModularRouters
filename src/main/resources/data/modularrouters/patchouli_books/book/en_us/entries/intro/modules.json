@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "$(thing)Modules/$ are inserted into an $(l:intro/item_router)Item Router/$ and tell the router what to do. There are 20 different module types, each of which has a specific function.  All modules have some characteristics in common, however:$(li)All modules have 9 $(thing)filter slots/$ to control which item(s) a module will process.$(li)Many modules have a defined $(thing)direction/$, relative to the router's facing."
+      "text": "$(thing)Modules/$ are inserted into an $(l:intro/item_router)Modular Router/$ and tell the router what to do. There are 20 different module types, each of which has a specific function.  All modules have some characteristics in common, however:$(li)All modules have 9 $(thing)filter slots/$ to control which item(s) a module will process.$(li)Many modules have a defined $(thing)direction/$, relative to the router's facing."
     },
     {
       "type": "text",

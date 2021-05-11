@@ -10,7 +10,7 @@
       "tag": "forge:storage_blocks/redstone"
     },
     "B": {
-      "item": "modularrouters:blank_upgrade"
+      "item": "modularrouters:blank_module"
     },
     "G": {
       "tag": "forge:ingots/gold"

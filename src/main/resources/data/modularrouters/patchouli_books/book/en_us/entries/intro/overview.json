@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "Welcome to Modular Routers!$(p)This is a highly flexible mod for moving items around the world in various ways.  With a single block - the $(thing)Item Router/$ - and one or more plug-in $(thing)modules/$, you can pull items from any inventory, send them to other inventories near & far, place items as blocks, break blocks, drop items into the world, sort items, and much more."
+      "text": "Welcome to Modular Routers!$(p)This is a highly flexible mod for moving items around the world in various ways.  With a single block - the $(thing)Modular Router/$ - and one or more plug-in $(thing)modules/$, you can pull items from any inventory, send them to other inventories near & far, place items as blocks, break blocks, drop items into the world, sort items, and much more."
     },
     {
       "type": "image",
