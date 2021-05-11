@@ -11,7 +11,7 @@
       "type": "spotlight",
       "item": "modularrouters:override_card",
       "anchor": "override",
-      "text": "See $(l:upgrades/security)Security Upgrade/$."
+      "text": "See $(l:upgrades/security#override)Security Upgrade/$."
     },
     {
       "type": "crafting",

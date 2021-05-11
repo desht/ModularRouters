@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "This module can be added to any module which handles $(italic)items/$ (as opposed to $(italic)blocks/$ or $(italic)fluids/$).$(p)Adding Stack Augments to a module increases the number of items it can process per tick; each Stack Augment doubles the number of items, up to a maximum of the item's natural stack size (64 for most items)."
+      "text": "This module can be added to any module which handles $(italic)items/$ (as opposed to $(italic)blocks/$, $(italic)fluids/$ or $(italic)energy/$).$(p)Adding Stack Augments to a module increases the number of items it can process per tick; each Stack Augment doubles the number of items, up to a maximum of the item's natural stack size (64 for most items)."
     },
     {
       "type": "text",

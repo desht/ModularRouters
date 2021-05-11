@@ -13,7 +13,7 @@
     },
     {
       "type": "text",
-      "text": "For items which don't have the inspected property at all, the returned value will always be 0, e.g. a piece of $(item)Cobblestone/$ has a food value of 0.$(p)This filter can be useful to automatically pull out damaged or discharged items for repair/recharging, etc."
+      "text": "For items which don't have the inspected property at all, the returned value will always be -1, e.g. a piece of $(item)Cobblestone/$ has a durability value of -1. This is distinct from a 0 return, since a tool with <1% durability remaining would return a value of 0.$(p)This filter can be useful to automatically pull out damaged or discharged items for repair/recharging, etc."
     },
     {
       "type": "crafting",

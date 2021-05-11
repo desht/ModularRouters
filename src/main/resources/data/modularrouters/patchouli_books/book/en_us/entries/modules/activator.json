@@ -24,7 +24,7 @@
     },
     {
       "type": "text",
-      "text": "The Activator has a range of about 4 blocks, similar to what an actual player has. The module can also be configured to look $(bold)above/$ or $(bold)below/$ (default is straight ahead). In this case, it will $(italic)only/$ affect the block directly above or below the block in module's $(l:intro/modules#direction)configured direction/$.$(p)The module can also be configured to simulate $(bold)sneaking/$, which may modify the activation behaviour for some items/blocks/entities."
+      "text": "The Activator has a range of about 4 blocks, similar to what an actual player has. The module can also be configured to look $(thing)Above/$ or $(thing)Below/$ (default is $(thing)Level/$).$(p)$(thing)Above/$ is particularly handy for planting things on top of a solid block beside or above the router, while $(thing)Below/$ is useful when you want to target the ground directly adjacent to the router, rather than a more distant block."
     },
     {
       "type": "crafting",
