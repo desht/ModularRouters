@@ -70,7 +70,7 @@ public class VacuumModule extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.vacuumModuleEnergyCost;
     }
 }

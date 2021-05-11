@@ -1,6 +1,7 @@
 package me.desht.modularrouters.config;
 
 import com.google.common.collect.Lists;
+import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
@@ -50,6 +51,7 @@ public class CommonConfig {
 
     public static class EnergyCosts {
         IntValue activatorModuleEnergyCost;
+        IntValue activatorModuleEnergyCostAttack;
         IntValue breakerModuleEnergyCost;
         IntValue detectorModuleEnergyCost;
         IntValue distributorModuleEnergyCost;
@@ -186,9 +188,12 @@ public class CommonConfig {
         builder.pop();
 
         builder.push("Energy Costs");
-        energyCosts.activatorModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Activator Module")
+        energyCosts.activatorModuleEnergyCost = builder.comment("Energy cost (FE) to run one right-click operation for the Activator Module")
                 .translation("modularrouters.gui.config.activatorModuleEnergyCost")
                 .defineInRange("activatorModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.activatorModuleEnergyCostAttack = builder.comment("Energy cost (FE) to run one left-click (attack) operation for the Activator Module")
+                .translation("modularrouters.gui.config.activatorModuleEnergyCostAttack")
+                .defineInRange("activatorModuleEnergyCostAttack", 150, 0, Integer.MAX_VALUE);
         energyCosts.breakerModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Breaker Module")
                 .translation("modularrouters.gui.config.breakerModuleEnergyCost")
                 .defineInRange("breakerModuleEnergyCost", 0, 0, Integer.MAX_VALUE);

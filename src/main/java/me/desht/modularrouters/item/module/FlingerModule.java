@@ -43,7 +43,7 @@ public class FlingerModule extends DropperModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.flingerModuleEnergyCost;
     }
 }

@@ -26,7 +26,7 @@ public class CreativeModule extends ItemModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return 0;
     }
 

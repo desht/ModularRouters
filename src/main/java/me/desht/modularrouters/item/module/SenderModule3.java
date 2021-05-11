@@ -47,7 +47,7 @@ public class SenderModule3 extends TargetedModule implements IPositionProvider {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.senderModule3EnergyCost;
     }
 }

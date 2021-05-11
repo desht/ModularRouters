@@ -1,6 +1,5 @@
 package me.desht.modularrouters.logic.compiled;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.core.ModItems;
@@ -27,7 +26,6 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -307,6 +305,10 @@ public abstract class CompiledModule {
     }
 
     public int getEnergyCost() {
-        return module.getEnergyCost();
+        return module.getEnergyCost(ItemStack.EMPTY);
+    }
+
+    public boolean careAboutItemAttributes() {
+        return false;
     }
 }

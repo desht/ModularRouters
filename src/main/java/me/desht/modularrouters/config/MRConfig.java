@@ -57,6 +57,7 @@ public class MRConfig {
 
         public static class EnergyCosts {
             public static int activatorModuleEnergyCost;
+            public static int activatorModuleEnergyCostAttack;
             public static int breakerModuleEnergyCost;
             public static int detectorModuleEnergyCost;
             public static int distributorModuleEnergyCost;

@@ -4,14 +4,18 @@ import com.google.common.collect.ImmutableSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -27,7 +31,6 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
-import org.jline.utils.Log;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
@@ -61,8 +64,15 @@ public class CompiledActivatorModule extends CompiledModule {
     private static final Set<Block> blockBlacklist = new HashSet<>();
 
     public enum ActionType {
-        ITEM_OR_BLOCK,
-        USE_ITEM_ON_ENTITY;
+        ITEM_OR_BLOCK(false),
+        USE_ITEM_ON_ENTITY(true),
+        ATTACK_ENTITY(true);
+
+        private final boolean entity;
+
+        ActionType(boolean entity) {
+            this.entity = entity;
+        }
 
         public String getTranslationKey() {
             return "modularrouters.itemText.activator.action." + toString();
@@ -70,6 +80,10 @@ public class CompiledActivatorModule extends CompiledModule {
 
         public static ActionType fromOldOrdinal(int ord) {
             return ord == 2 ? USE_ITEM_ON_ENTITY : ITEM_OR_BLOCK;
+        }
+
+        public boolean isEntityTarget() {
+            return entity;
         }
     }
 
@@ -138,35 +152,25 @@ public class CompiledActivatorModule extends CompiledModule {
         if (!stack.isEmpty() && !getFilter().test(stack)) {
             return false;
         }
-        World world = router.getLevel();
-        BlockPos pos = router.getBlockPos();
 
         RouterFakePlayer fakePlayer = router.getFakePlayer();
-        Vector3d centre = Vector3d.atCenterOf(pos);
+        Vector3d centre = Vector3d.atCenterOf(router.getBlockPos());
         // place the fake player just outside the router, on the correct face
         fakePlayer.setPos(centre.x() + getFacing().getStepX() * 0.501, centre.y() + getFacing().getStepY() * 0.501, centre.z() + getFacing().getStepZ() * 0.501);
         fakePlayer.setShiftKeyDown(sneaking);
         fakePlayer.setItemInHand(Hand.MAIN_HAND, stack);
 
         boolean didWork = false;
-        if (actionType == ActionType.USE_ITEM_ON_ENTITY) {
-            didWork = doUseItemOnEntity(router, fakePlayer);
-        } else {
-            fakePlayer.yRot = MiscUtil.getYawFromFacing(getFacing());
-            fakePlayer.xRot = getFacing().getAxis() == Direction.Axis.Y ? getFacing().getStepY() * -90 : lookDirection.pitch;
-            BlockRayTraceResult brtr = doRayTrace(pos, fakePlayer);
-            BlockState state = world.getBlockState(brtr.getBlockPos());
-            if (brtr.getType() != RayTraceResult.Type.MISS && blockBlacklist.contains(state.getBlock())) {
-                return false;
-            }
-            try {
-                didWork = fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, Hand.MAIN_HAND, brtr).consumesAction();
-                if (!didWork) {
-                    didWork = fakePlayer.gameMode.useItem(fakePlayer, world, stack, Hand.MAIN_HAND).consumesAction();
-                }
-            } catch (Exception e) {
-                handleBlacklisting(stack, state, e);
-            }
+        switch (actionType) {
+            case ITEM_OR_BLOCK:
+                didWork = doUseItem(router, fakePlayer);
+                break;
+            case USE_ITEM_ON_ENTITY:
+                didWork = doUseItemOnEntity(router, fakePlayer);
+                break;
+            case ATTACK_ENTITY:
+                didWork = doAttackEntity(router, fakePlayer);
+                break;
         }
 
         if (didWork) {
@@ -175,6 +179,26 @@ public class CompiledActivatorModule extends CompiledModule {
         }
 
         return didWork;
+    }
+
+    private boolean doUseItem(TileEntityItemRouter router, FakePlayer fakePlayer) {
+        BlockPos pos = router.getBlockPos();
+        World world = router.getLevel();
+        ItemStack stack = router.getBufferItemStack();
+        fakePlayer.yRot = MiscUtil.getYawFromFacing(getFacing());
+        fakePlayer.xRot = getFacing().getAxis() == Direction.Axis.Y ? getFacing().getStepY() * -90 : lookDirection.pitch;
+        BlockRayTraceResult brtr = doRayTrace(pos, fakePlayer);
+        BlockState state = world.getBlockState(brtr.getBlockPos());
+        if (brtr.getType() != RayTraceResult.Type.MISS && blockBlacklist.contains(state.getBlock())) {
+            return false;
+        }
+        try {
+            return fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, Hand.MAIN_HAND, brtr).consumesAction()
+                    || fakePlayer.gameMode.useItem(fakePlayer, world, stack, Hand.MAIN_HAND).consumesAction();
+        } catch (Exception e) {
+            handleBlacklisting(stack, state, e);
+            return false;
+        }
     }
 
     private void handleBlacklisting(ItemStack stack, BlockState state, Exception e) {
@@ -221,8 +245,18 @@ public class CompiledActivatorModule extends CompiledModule {
         return 4.5D;
     }
 
+    private boolean doAttackEntity(TileEntityItemRouter router, RouterFakePlayer fakePlayer) {
+        LivingEntity entity = findEntity(router, LivingEntity.class);
+        if (entity == null || entity instanceof PlayerEntity && router.getUpgradeCount(ModItems.SECURITY_UPGRADE.get()) > 0 && router.isPermitted((PlayerEntity) entity)) {
+            return false;
+        }
+        fakePlayer.lookAt(EntityAnchorArgument.Type.EYES, entity.position());
+        fakePlayer.attack(entity);
+        return true;
+    }
+
     private boolean doUseItemOnEntity(TileEntityItemRouter router, FakePlayer fakePlayer) {
-        Entity entity = findEntity(router);
+        Entity entity = findEntity(router, Entity.class);
         if (entity == null) {
             return false;
         }
@@ -234,13 +268,14 @@ public class CompiledActivatorModule extends CompiledModule {
         return false;
     }
 
-    private Entity findEntity(TileEntityItemRouter router) {
+    private <T extends Entity> T findEntity(TileEntityItemRouter router, Class<T> cls) {
         Direction face = getFacing();
         final BlockPos pos = router.getBlockPos();
-        AxisAlignedBB box = new AxisAlignedBB(pos.relative(face))
-                .expandTowards(face.getStepX() * 3, face.getStepY() * 3, face.getStepZ() * 3);
-
-        List<Entity> l = router.getLevel().getEntitiesOfClass(Entity.class, box, this::passesBlacklist);
+        Vector3d vec = Vector3d.atCenterOf(pos);
+        AxisAlignedBB box = new AxisAlignedBB(vec, vec)
+                .move(face.getStepX() * 2.5, face.getStepY() * 2.5, face.getStepZ() * 2.5)
+                .inflate(2.0);
+        List<T> l = router.getLevel().getEntitiesOfClass(cls, box, this::passesBlacklist);
         if (l.isEmpty()) {
             return null;
         }
@@ -292,5 +327,17 @@ public class CompiledActivatorModule extends CompiledModule {
 
     public boolean isSneaking() {
         return sneaking;
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return actionType == ActionType.ATTACK_ENTITY ?
+                MRConfig.Common.EnergyCosts.activatorModuleEnergyCostAttack :
+                MRConfig.Common.EnergyCosts.activatorModuleEnergyCost;
+    }
+
+    @Override
+    public boolean careAboutItemAttributes() {
+        return actionType == ActionType.ATTACK_ENTITY;
     }
 }

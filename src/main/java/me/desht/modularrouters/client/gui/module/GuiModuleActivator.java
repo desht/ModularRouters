@@ -25,6 +25,7 @@ import java.util.List;
 public class GuiModuleActivator extends GuiModule {
     private static final ItemStack ITEM_STACK = new ItemStack(Items.FLINT_AND_STEEL);
     private static final ItemStack ENTITY_STACK = new ItemStack(Items.PLAYER_HEAD);
+    private static final ItemStack ATTACK_STACK = new ItemStack(Items.IRON_SWORD);
 
     private LookDirectionButton lookDirectionButton;
     private ActionTypeButton actionTypeButton;
@@ -41,13 +42,13 @@ public class GuiModuleActivator extends GuiModule {
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, moduleItemStack);
 
-        ItemStack[] stacks = new ItemStack[] { ITEM_STACK, ENTITY_STACK };
+        ItemStack[] stacks = new ItemStack[] { ITEM_STACK, ENTITY_STACK, ATTACK_STACK };
         addButton(actionTypeButton = new ActionTypeButton(leftPos + 167, topPos + 20, 16, 16, true, stacks, cam.getActionType()));
         addButton(sneakButton = new SneakButton(leftPos + 167, topPos + 40, cam.isSneaking()));
         addButton(lookDirectionButton = new LookDirectionButton(leftPos + 167, topPos + 60, 16, 16, cam.getLookDirection()));
         addButton(entityModeButton = new EntityModeButton(leftPos + 167, topPos + 60, 16, 16, cam.getEntityMode()));
-        lookDirectionButton.visible = cam.getActionType() != ActionType.USE_ITEM_ON_ENTITY;
-        entityModeButton.visible = cam.getActionType() == ActionType.USE_ITEM_ON_ENTITY;
+        lookDirectionButton.visible = !cam.getActionType().isEntityTarget();
+        entityModeButton.visible = cam.getActionType().isEntityTarget();
 
         getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 18, leftPos + 183, topPos + 37, "modularrouters.guiText.popup.activator.action");
         getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 39, leftPos + 183, topPos + 56, "modularrouters.guiText.popup.activator.sneak");
@@ -68,10 +69,10 @@ public class GuiModuleActivator extends GuiModule {
 
         font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040);
         font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
-        if (actionTypeButton.getState() != ActionType.USE_ITEM_ON_ENTITY) {
-            font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
-        } else {
+        if (actionTypeButton.getState().isEntityTarget()) {
             font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
+        } else {
+            font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
         }
     }
 
@@ -79,8 +80,8 @@ public class GuiModuleActivator extends GuiModule {
     public void tick() {
         super.tick();
 
-        lookDirectionButton.visible = actionTypeButton.getState() != ActionType.USE_ITEM_ON_ENTITY;
-        entityModeButton.visible = actionTypeButton.getState() == ActionType.USE_ITEM_ON_ENTITY;
+        lookDirectionButton.visible = !actionTypeButton.getState().isEntityTarget();
+        entityModeButton.visible = actionTypeButton.getState().isEntityTarget();
     }
 
     @Override

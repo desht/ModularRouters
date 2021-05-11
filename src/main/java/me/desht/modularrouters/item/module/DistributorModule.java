@@ -14,9 +14,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DistributorModule extends SenderModule2 {
 
@@ -62,7 +60,7 @@ public class DistributorModule extends SenderModule2 {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.distributorModuleEnergyCost;
     }
 }

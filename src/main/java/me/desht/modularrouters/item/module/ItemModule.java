@@ -257,12 +257,13 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                     list.add(new StringTextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(TextFormatting.AQUA)).withStyle(TextFormatting.YELLOW)));
         }
 
-        if (getEnergyCost() != 0) {
-            list.add(xlate("modularrouters.itemText.misc.energyUsage", getEnergyCost()));
+        int energy = getEnergyCost(itemstack);
+        if (energy != 0) {
+            list.add(xlate("modularrouters.itemText.misc.energyUsage", energy));
         }
     }
 
-    public abstract int getEnergyCost();
+    public abstract int getEnergyCost(ItemStack stack);
 
     private void addAugmentInformation(ItemStack stack, List<ITextComponent> list) {
         AugmentCounter c = new AugmentCounter(stack);

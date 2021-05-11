@@ -25,7 +25,7 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.energydistributorModuleEnergyCost;
     }
 

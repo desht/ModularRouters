@@ -59,7 +59,7 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.senderModule2EnergyCost;
     }
 }

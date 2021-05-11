@@ -64,7 +64,7 @@ public class FluidModule1 extends ItemModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.fluidModuleEnergyCost;
     }
 

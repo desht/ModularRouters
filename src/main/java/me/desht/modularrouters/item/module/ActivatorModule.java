@@ -30,7 +30,7 @@ public class ActivatorModule extends ItemModule {
                 .withStyle(TextFormatting.YELLOW)
                 .append(ClientUtil.xlate("modularrouters.itemText.activator.action." + cam.getActionType())
                         .withStyle(TextFormatting.AQUA)));
-        if (cam.getActionType() != CompiledActivatorModule.ActionType.USE_ITEM_ON_ENTITY) {
+        if (!cam.getActionType().isEntityTarget()) {
             list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.lookDirection").append(": ")
                     .withStyle(TextFormatting.YELLOW)
                     .append(ClientUtil.xlate("modularrouters.itemText.activator.direction." + cam.getLookDirection())
@@ -47,8 +47,11 @@ public class ActivatorModule extends ItemModule {
     }
 
     @Override
-    public int getEnergyCost() {
-        return MRConfig.Common.EnergyCosts.activatorModuleEnergyCost;
+    public int getEnergyCost(ItemStack stack) {
+        CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
+        return cam.getActionType() == CompiledActivatorModule.ActionType.ATTACK_ENTITY ?
+                MRConfig.Common.EnergyCosts.activatorModuleEnergyCostAttack :
+                MRConfig.Common.EnergyCosts.activatorModuleEnergyCost;
     }
 
     @Override

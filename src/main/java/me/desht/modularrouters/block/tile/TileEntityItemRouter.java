@@ -143,6 +143,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
     private boolean executing;       // are we currently executing modules?
+    private boolean careAboutItemAttributes;  // whether to bother transferring item attributes to fake player
 
     public final List<ItemBeam> beams = new ArrayList<>(); // client only
     private AxisAlignedBB cachedRenderAABB;
@@ -307,7 +308,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             counter++;
             pulseCounter++;
 
-            if (fakePlayer != null) fakePlayer.getCooldowns().tick();
+            if (fakePlayer != null) {
+                fakePlayer.tick();
+                fakePlayer.getCooldowns().tick();
+            }
 
             if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
                 // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
@@ -360,7 +364,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if (!(getLevel() instanceof ServerWorld)) return null;
 
         if (fakePlayer == null) {
-            fakePlayer = new RouterFakePlayer((ServerWorld) getLevel(), getOwner());
+            fakePlayer = new RouterFakePlayer(this, (ServerWorld) getLevel(), getOwner());
             fakePlayer.connection = new FakeNetHandlerPlayerServer(level.getServer(), fakePlayer);
             fakePlayer.level = level;
             fakePlayer.inventory.selected = 0;  // held item always in slot 0
@@ -491,6 +495,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 .build();
     }
 
+    public boolean caresAboutItemAttributes() {
+        return careAboutItemAttributes;
+    }
+
     /**
      * Compile installed modules & upgrades etc. into internal data for faster execution.  Only called
      * server-side (although compileUpgrades() can be called clientside when upgrades are sync'd)
@@ -522,6 +530,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 cim.compiledModule.cleanup(this);
             }
             compiledModules.clear();
+            careAboutItemAttributes = false;
             for (int i = 0; i < N_MODULE_SLOTS; i++) {
                 ItemStack stack = modulesHandler.getStackInSlot(i);
                 if (stack.getItem() instanceof ItemModule) {
@@ -529,6 +538,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                     compiledModules.add(new CompiledIndexedModule(cms, i));
                     cms.onCompiled(this);
                     newSidesOpen |= cms.getDirection().getMask();
+                    if (cms.careAboutItemAttributes()) careAboutItemAttributes = true;
                 }
             }
             setSidesOpen(newSidesOpen);

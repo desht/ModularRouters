@@ -71,7 +71,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.extruderModule2EnergyCost;
     }
 }

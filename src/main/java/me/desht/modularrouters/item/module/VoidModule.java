@@ -4,6 +4,7 @@ import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledVoidModule;
+import net.minecraft.item.ItemStack;
 
 public class VoidModule extends ItemModule {
 
@@ -25,7 +26,7 @@ public class VoidModule extends ItemModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.voidModuleEnergyCost;
     }
 }

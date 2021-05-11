@@ -27,7 +27,7 @@ public class DropperModule extends ItemModule {
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.dropperModuleEnergyCost;
     }
 }

@@ -121,7 +121,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         for (int i = MODULE_START; i < MODULE_END; i++) {
             ItemStack stack = menu.getSlot(i).getItem();
             if (stack.getItem() instanceof ItemModule) {
-                energyUsage += ((ItemModule) stack.getItem()).getEnergyCost();
+                energyUsage += ((ItemModule) stack.getItem()).getEnergyCost(stack);
             }
         }
 

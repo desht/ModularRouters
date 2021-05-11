@@ -93,7 +93,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.fluidModule2EnergyCost;
     }
 

@@ -52,7 +52,7 @@ public class PullerModule2 extends TargetedModule implements IRangedModule, IPos
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.pullerModule2EnergyCost;
     }
 }

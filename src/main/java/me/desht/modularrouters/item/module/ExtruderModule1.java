@@ -26,7 +26,7 @@ public class ExtruderModule1 extends ItemModule implements IRangedModule, IPicka
     }
 
     @Override
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         return MRConfig.Common.EnergyCosts.extruderModule1EnergyCost;
     }
 
