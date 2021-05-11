@@ -229,7 +229,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
         @Override
         public List<ITextComponent> getTooltip() {
-            if (energyUsage < menu.getRouter().getEnergyStorage().getEnergyStored()) return Collections.emptyList();
+            if (energyUsage <= menu.getRouter().getEnergyStorage().getEnergyStored()) return Collections.emptyList();
             return menu.getRouter().getEnergyCapacity() > 0 ?
                     GuiUtil.xlateAndSplit("modularrouters.itemText.misc.energyWarning") :
                     GuiUtil.xlateAndSplit("modularrouters.itemText.misc.energyWarning.noBuffer");

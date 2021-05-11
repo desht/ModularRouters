@@ -219,13 +219,41 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private BlockRayTraceResult doRayTrace(BlockPos routerPos, FakePlayer fp) {
-        Vector3d fpVec = fp.position();
-        double reachDist = getPlayerReachDistance(fp);
-        for (int i = 1; i < reachDist; i++) {
-            BlockPos targetPos = lookDirection.offset(routerPos.relative(getFacing(), i), i);
+        Vector3d fpVec = fp.position(); // ray trace starts at this point
+
+        int xOff = getFacing().getStepX();
+        int yOff = getFacing().getStepY();
+        int zOff = getFacing().getStepZ();
+
+        BlockPos.Mutable targetPos = routerPos.relative(getFacing()).mutable();
+        if (lookDirection != LookDirection.LEVEL
+                && Block.isShapeFullBlock(fp.level.getBlockState(targetPos).getShape(fp.level, targetPos)))
+        {
+            // small QoL kludge: if module faces horizontally AND is blocked on that side AND module looks above/below,
+            // move the fake player pos above or below that block and target the top or bottom face as appropriate
+            if (lookDirection == LookDirection.ABOVE) {
+                fpVec = Vector3d.atCenterOf(targetPos).add(0, 1, 0);
+                yOff = -1;
+            } else if (lookDirection == LookDirection.BELOW) {
+                fpVec = Vector3d.atCenterOf(targetPos).add(0, -1, 0);
+                yOff = 1;
+            }
+        } else {
+            if (lookDirection == LookDirection.ABOVE) {
+                targetPos.move(Direction.UP);
+                yOff = 1;
+            } else if (lookDirection == LookDirection.BELOW) {
+                targetPos.move(Direction.DOWN);
+                yOff = -1;
+            }
+        }
+
+        double reachDist = Math.pow(getPlayerReachDistance(fp), 2);
+        for (; targetPos.distSqr(routerPos) <= reachDist; targetPos.move(xOff, yOff, zOff)) {
             if (fp.level.isEmptyBlock(targetPos)) continue;
             VoxelShape shape = fp.level.getBlockState(targetPos).getShape(fp.level, targetPos);
-            Vector3d targetVec = shape.isEmpty() ? Vector3d.atCenterOf(targetPos) : shape.toAabbs().get(0).getCenter().add(Vector3d.atLowerCornerOf(targetPos));
+            if (shape.isEmpty()) continue;
+            Vector3d targetVec = shape.toAabbs().get(0).getCenter().add(Vector3d.atLowerCornerOf(targetPos));
             BlockRayTraceResult res = fp.level.clip(new RayTraceContext(
                     fpVec, targetVec, BlockMode.OUTLINE, FluidMode.SOURCE_ONLY, null)
             );
@@ -233,6 +261,7 @@ public class CompiledActivatorModule extends CompiledModule {
                 return res;
             }
         }
+
         return BlockRayTraceResult.miss(fpVec.add(fp.getLookAngle()), getFacing().getOpposite(), routerPos.relative(getFacing()));
     }
 
