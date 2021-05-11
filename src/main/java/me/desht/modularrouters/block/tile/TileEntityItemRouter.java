@@ -95,6 +95,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public static final String NBT_REDSTONE_MODE = "Redstone";
     private static final String NBT_ENERGY = "EnergyBuffer";
     private static final String NBT_ENERGY_DIR = "EnergyDirection";
+    private static final String NBT_ENERGY_UPGRADES = "EnergyUpgrades";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -175,6 +176,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         if (camouflage != null) {
             compound.put(CamouflageUpgrade.NBT_STATE_NAME, NBTUtil.writeBlockState(camouflage));
         }
+
+        // energy upgrade count sync'd so clientside TE knows if neighbouring cables should be able to connect
+        int nEnergy = getUpgradeCount(ModItems.ENERGY_UPGRADE.get());
+        if (nEnergy > 0) {
+            compound.putInt(NBT_ENERGY_UPGRADES, nEnergy);
+        }
         return compound;
     }
 
@@ -195,13 +202,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     private void processClientSync(CompoundNBT compound) {
-        // called client-side
+        // called client-side on receipt of NBT
 
         if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
             setCamouflage(NBTUtil.readBlockState(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }
+
+        energyStorage.updateForEnergyUpgrades(compound.getInt(NBT_ENERGY_UPGRADES));
     }
 
     @Nonnull
@@ -548,7 +557,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             fluidTransferRate = Math.min(MRConfig.Common.Router.fluidMaxTransferRate,
                     MRConfig.Common.Router.fluidBaseTransferRate + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * MRConfig.Common.Router.mBperFluidUpgade);
 
-            energyStorage.updateForEnergyUpgrades();
+            energyStorage.updateForEnergyUpgrades(getUpgradeCount(ModItems.ENERGY_UPGRADE.get()));
             if (!level.isClientSide) {
                 fakePlayer = null; // in case security upgrades change
                 int mufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
@@ -1008,10 +1017,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             return super.canReceive() && getRedstoneBehaviour().shouldRun(getRedstonePower() > 0, false);
         }
 
-        void updateForEnergyUpgrades() {
-            int upgrades = getUpgradeCount(ModItems.ENERGY_UPGRADE.get());
+        void updateForEnergyUpgrades(int nEnergyUpgrades) {
             int oldCapacity = capacity;
-            capacity = MRConfig.Common.Router.fePerEnergyUpgrade * upgrades;
+            capacity = MRConfig.Common.Router.fePerEnergyUpgrade * nEnergyUpgrades;
             if (energy > capacity) {
                 // now not enough capacity - stow the excess energy
                 excess += energy - capacity;
@@ -1023,7 +1031,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 excess -= toMove;
                 energy += toMove;
             }
-            maxExtract = maxReceive = MRConfig.Common.Router.feXferPerEnergyUpgrade * upgrades;
+            maxExtract = maxReceive = MRConfig.Common.Router.feXferPerEnergyUpgrade * nEnergyUpgrades;
             if (oldCapacity == 0 && capacity != 0 || oldCapacity != 0 && capacity == 0) {
                 // in case any pipes/cables need to connect/disconnect
                 getLevel().updateNeighborsAt(getBlockPos(), ModBlocks.ITEM_ROUTER.get());
