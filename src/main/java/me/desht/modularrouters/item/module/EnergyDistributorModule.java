@@ -8,6 +8,9 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -42,6 +45,12 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
     @Override
     public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
         return ImmutableList.copyOf(TargetedModule.getTargets(stack, false));
+    }
+
+    @Override
+    protected boolean isValidTarget(ItemUseContext ctx) {
+        TileEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+        return te != null && te.getCapability(CapabilityEnergy.ENERGY, ctx.getClickedFace()).isPresent();
     }
 
     @Override
