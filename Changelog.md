@@ -6,10 +6,37 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
-### 7.4.1 (unreleased)
+### 7.5.0 (unreleased)
+* New Upgrade: the Energy Upgrade!
+  * Gives the router an internal energy buffer; each upgrade adds 50,000 FE capacity and 1,000 FE transfer per router tick
+  * Can have up to 64 in a router
+* New Modules: Energy Output and Energy Distributor!
+  * Energy Output can push FE to an adjacent energy-receiving block
+  * Energy Distributor can wirelessly push FE to up to 8 nearby energy-receiving blocks
+  * Speed Upgrades increase transfer rate for these modules
+* Modules can now be configured to require FE to run (on a per-module basis)
+  * See "Energy Costs" section in `modularrouters-common.toml`
+  * All modules have a default cost of 0 FE, as before (but see Activator Module changes below)
+  * Could be useful for modpack makers, e.g. for expert-level packs
+* Activator Module now has an "Attack Entity" mode!
+  * Router will use the item in the buffer (or empty hand) to attack nearby entities
+  * This costs FE by default: 150 FE per attack
+  * Speed Upgrades will speed up attacks, BUT weapon cooldowns still apply so don't overuse Speed Upgrades!
+  * A Security Upgrade will protect the owner and any whitelisted players from being attacked
+* Routers are now called "Modular Router" in-game instead of "Item Router"
+  * Since they can handle more than just items...
+  * Internal registry name is still `modularrouters:item_router`, so no compat problems for existing worlds; this is just a cosmetic change
 * Fixed GUI's getting locked up if another player breaks a router while a GUI is open
 * Fixed missing recipe for the Filter Round Robin Augment
-
+* Fixed sneak-right-clicking Sync Upgrade displaying the previous sync value, not the new one
+* Inspection Filter: return -1 for "missing" properties instead of 0
+  * e.g. for durability tests, a durability of <1% returns 0, but an item without durability (e.g. Cobblestone) returns -1
+  * this fixes a problem where nearly broken items couldn't be distinguished from items without durability 
+* A few Activator Module raytracing tweaks for more intuitive use of Above & Below look modes
+  * In particular, routers can now plant things on top of a solid block next to or above the router with Look Above mode
+  * In 7.4.0 this required Look Below and only worked for blocks horizontally adjacent, which was very unintuitive
+* Lots of updates to the Patchouli manual to reflect new and updated functionality
+  
 ### 7.4.0 (26 Mar 2021)
 * Activator Module rework
   * No longer any separate Item/Block modes (just activate item or right-click entity)
