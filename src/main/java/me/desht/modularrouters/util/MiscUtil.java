@@ -91,7 +91,8 @@ public class MiscUtil {
     }
 
     public static String locToString(ResourceLocation dim, BlockPos pos) {
-        return String.format("%s [%d,%d,%d]", dim.toString(), pos.getX(), pos.getY(), pos.getZ());
+        String s = dim.getNamespace().equals("minecraft") ? dim.getPath() : dim.toString();
+        return String.format("%s [%d,%d,%d]", s, pos.getX(), pos.getY(), pos.getZ());
     }
 
     public static String locToString(GlobalPos pos) {

@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.client.render.item_beam.ItemBeam;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
@@ -23,8 +22,10 @@ import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import me.desht.modularrouters.network.ItemBeamMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
+import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.fake_player.FakeNetHandlerPlayerServer;
@@ -145,7 +146,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private boolean executing;       // are we currently executing modules?
     private boolean careAboutItemAttributes;  // whether to bother transferring item attributes to fake player
 
-    public final List<ItemBeam> beams = new ArrayList<>(); // client only
+    public final List<BeamData> beams = new ArrayList<>(); // client-side: beams being rendered
+    public final List<BeamData> pendingBeams = new ArrayList<>(); // server-side: beams to be sent to client
+
     private AxisAlignedBB cachedRenderAABB;
 
     private RouterFakePlayer fakePlayer;
@@ -293,8 +296,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     @Override
     public void tick() {
         if (getLevel().isClientSide) {
-            for (Iterator<ItemBeam> iterator = beams.iterator(); iterator.hasNext(); ) {
-                ItemBeam beam = iterator.next();
+            for (Iterator<BeamData> iterator = beams.iterator(); iterator.hasNext(); ) {
+                BeamData beam = iterator.next();
                 beam.tick();
                 if (beam.isExpired()) {
                     iterator.remove();
@@ -415,6 +418,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                     } else if (cm.termination() == ItemModule.Termination.NOT_RAN) {
                         break;
                     }
+            }
+            if (!pendingBeams.isEmpty()) {
+                PacketHandler.NETWORK.send(PacketDistributor.TRACKING_CHUNK.with(() -> getLevel().getChunkAt(getBlockPos())),
+                        new ItemBeamMessage(this, pendingBeams));
+                pendingBeams.clear();
             }
             if (prevCanEmit || canEmit) {
                 handleRedstoneEmission();
@@ -895,14 +903,18 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public AxisAlignedBB getRenderBoundingBox() {
         if (cachedRenderAABB == null) {
             cachedRenderAABB = super.getRenderBoundingBox();
-            beams.forEach(beam -> cachedRenderAABB = cachedRenderAABB.minmax(beam.getAABB()));
+            beams.forEach(beam -> cachedRenderAABB = cachedRenderAABB.minmax(beam.getAABB(getBlockPos())));
         }
         return cachedRenderAABB;
     }
 
-    public void addItemBeam(ItemBeam itemBeam) {
-        beams.add(itemBeam);
-        cachedRenderAABB = null;
+    public void addItemBeam(BeamData beamData) {
+        if (getLevel().isClientSide) {
+            beams.add(beamData);
+            cachedRenderAABB = null;
+        } else {
+            pendingBeams.add(beamData);
+        }
     }
 
     public int getEnergyCapacity() {

@@ -1,14 +1,15 @@
 package me.desht.modularrouters.network;
 
+import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.client.render.item_beam.ItemBeam;
 import me.desht.modularrouters.client.util.ClientUtil;
-import net.minecraft.item.ItemStack;
+import me.desht.modularrouters.util.BeamData;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -17,59 +18,40 @@ import java.util.function.Supplier;
  * Sent by server to play an item beam between a router and another inventory
  */
 public class ItemBeamMessage {
-    private final boolean reversed;
-    private final int duration;
     private final BlockPos pos1;
-    private final BlockPos pos2;
-    private final ItemStack stack;
-    private final int color;
-    private final boolean itemFade;
-
-    public ItemBeamMessage(PacketBuffer buf) {
-        reversed = buf.readBoolean();
-        pos1 = buf.readBlockPos();
-        pos2 = buf.readBlockPos();
-        stack = buf.readItem();
-        color = buf.readInt();
-        itemFade = buf.readBoolean();
-        duration = buf.readVarInt();
-    }
+    private final List<BeamData> beams;
 
     /**
      * Create a new beam message
      * @param te the tile entity responsible for the rendering
-     * @param other other end of the beam
-     * @param reversed if true, items flow from other->te; if false, items flow from te->other
-     * @param stack the item to render
-     * @param color beam color
-     * @param duration duration, in ticks
+     * @param beams the beams(s) to send
      */
-    public ItemBeamMessage(TileEntity te, BlockPos other, boolean reversed, ItemStack stack, int color, int duration, boolean itemFade) {
-        this.reversed = reversed;
+    public ItemBeamMessage(TileEntity te, List<BeamData> beams) {
         this.pos1 = te.getBlockPos();
-        this.pos2 = other;
-        this.stack = stack;
-        this.color = color;
-        this.itemFade = itemFade;
-        this.duration = duration;
+        this.beams = beams;
+    }
+
+    public ItemBeamMessage(PacketBuffer buf) {
+        pos1 = buf.readBlockPos();
+        ImmutableList.Builder<BeamData> builder = ImmutableList.builder();
+        int n = buf.readVarInt();
+        for (int i = 0; i < n; i++) {
+            builder.add(new BeamData(buf, pos1));
+        }
+        this.beams = builder.build();
     }
 
     public void toBytes(PacketBuffer buf) {
-        buf.writeBoolean(reversed);
         buf.writeBlockPos(pos1);
-        buf.writeBlockPos(pos2);
-        buf.writeItem(stack);
-        buf.writeInt(color);
-        buf.writeBoolean(itemFade);
-        buf.writeVarInt(duration);
+        buf.writeVarInt(beams.size());
+        beams.forEach(beam -> beam.toBytes(buf, pos1));
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> TileEntityItemRouter.getRouterAt(ClientUtil.theClientWorld(), pos1).ifPresent(te -> {
-            BlockPos start = reversed ? pos2 : pos1;
-            BlockPos   end = reversed ? pos1 : pos2;
-            te.addItemBeam(new ItemBeam(start, end, reversed, stack, color, Math.max(5, duration + 1), itemFade));
+            beams.forEach(te::addItemBeam);
         }));
         ctx.get().setPacketHandled(true);
     }
+
 }

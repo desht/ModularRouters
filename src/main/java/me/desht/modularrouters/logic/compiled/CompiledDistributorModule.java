@@ -7,16 +7,15 @@ import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.network.ItemBeamMessage;
-import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.util.BeamData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +23,7 @@ import java.util.Set;
 public class CompiledDistributorModule extends CompiledSenderModule2 {
     public static final String NBT_STRATEGY = "DistStrategy";
     public static final String NBT_PULLING = "Pulling";
+    private final List<BeamData> beams = new ArrayList<>();
 
     public enum DistributionStrategy {
         ROUND_ROBIN,
@@ -88,8 +88,8 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     @Override
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-            PacketHandler.NETWORK.send(PacketDistributor.TRACKING_CHUNK.with(() -> router.getLevel().getChunkAt(router.getBlockPos())),
-                    new ItemBeamMessage(router, targetPos, isPulling(), stack, getBeamColor(), router.getTickRate(), false));
+            BeamData data = new BeamData(router.getTickRate(), targetPos, stack, getBeamColor());
+            router.addItemBeam(isPulling() ? data.reverseItems() : data);
         }
     }
 

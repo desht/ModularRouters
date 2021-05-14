@@ -1,9 +1,12 @@
 package me.desht.modularrouters.client.util;
 
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -33,5 +36,9 @@ public class ClientUtil {
 
     public static boolean isInvKey(int keyCode) {
         return keyCode == Minecraft.getInstance().options.keyInventory.getKey().getValue();
+    }
+
+    public static IVertexBuilder posF(IVertexBuilder builder, Matrix4f posMat, Vector3d vec) {
+        return builder.vertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z);
     }
 }

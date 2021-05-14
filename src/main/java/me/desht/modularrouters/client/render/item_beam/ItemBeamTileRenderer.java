@@ -4,10 +4,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.render.ModRenderTypes;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -17,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
@@ -33,28 +35,27 @@ public class ItemBeamTileRenderer extends TileEntityRenderer<TileEntityItemRoute
         matrixStack.pushPose();
         matrixStack.translate(0.5, 0.5, 0.5);
 
-        for (ItemBeam beam: te.beams) {
+        Vector3d routerVec = Vector3d.atCenterOf(te.getBlockPos());
+        for (BeamData beam: te.beams) {
             matrixStack.pushPose();
-            if (beam.reversed) {
-                matrixStack.translate(-beam.endPos.x(), -beam.endPos.y(), -beam.endPos.z());
-            } else {
-                matrixStack.translate(-beam.startPos.x(), -beam.startPos.y(), -beam.startPos.z());
-            }
-            float progress = (beam.ticksLived + partialTicks) / beam.lifeTime;
+            matrixStack.translate(-routerVec.x(), -routerVec.y(), -routerVec.z());
+            Vector3d startPos = beam.getStart(routerVec);
+            Vector3d endPos = beam.getEnd(routerVec);
+            float progress = beam.getProgress(partialTicks);
             if (MRConfig.Client.Misc.renderFlyingItems) {
-                renderFlyingItem(beam, matrixStack, buffer, progress);
+                renderFlyingItem(beam, matrixStack, buffer, progress, startPos, endPos);
             }
-            renderBeamLine(beam, matrixStack, buffer, progress);
+            renderBeamLine(beam, matrixStack, buffer, progress, startPos, endPos);
             matrixStack.popPose();
         }
 
         matrixStack.popPose();
     }
 
-    private void renderFlyingItem(ItemBeam beam, MatrixStack matrixStack, IRenderTypeBuffer buffer, float progress) {
-        float ix = MathHelper.lerp(progress, beam.startPos.x(), beam.endPos.x());
-        float iy = MathHelper.lerp(progress, beam.startPos.y(), beam.endPos.y());
-        float iz = MathHelper.lerp(progress, beam.startPos.z(), beam.endPos.z());
+    private void renderFlyingItem(BeamData beam, MatrixStack matrixStack, IRenderTypeBuffer buffer, float progress, Vector3d startPos, Vector3d endPos) {
+        double ix = MathHelper.lerp(progress, startPos.x(), endPos.x());
+        double iy = MathHelper.lerp(progress, startPos.y(), endPos.y());
+        double iz = MathHelper.lerp(progress, startPos.z(), endPos.z());
         BlockPos pos = new BlockPos(ix, iy, iz);
         World world = Minecraft.getInstance().level;
         VoxelShape shape = world.getBlockState(pos).getCollisionShape(world, pos);
@@ -62,37 +63,37 @@ public class ItemBeamTileRenderer extends TileEntityRenderer<TileEntityItemRoute
             matrixStack.pushPose();
             matrixStack.translate(ix, iy - 0.15, iz);
             matrixStack.mulPose(ROTATION.rotationDegrees(progress * 360));
-            if (beam.itemFade) {
+            if (beam.isItemFade()) {
                 matrixStack.scale(1.25f - progress, 1.25f - progress, 1.25f - progress);
                 if (progress > 0.9) {
-                    world.addParticle(ParticleTypes.PORTAL, beam.endPos.x(), beam.endPos.y(), beam.endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
+                    world.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
                 }
             }
-            int light = WorldRenderer.getLightColor(world, pos);
             Minecraft.getInstance().getItemRenderer()
-                    .renderStatic(beam.renderItem, TransformType.GROUND, light, OverlayTexture.NO_OVERLAY, matrixStack, buffer);
+                    .renderStatic(beam.getStack(), TransformType.GROUND, 0x00F000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer);
             matrixStack.popPose();
         }
     }
 
-    private void renderBeamLine(ItemBeam beam, MatrixStack matrixStack, IRenderTypeBuffer buffer, float progress) {
-        int alpha = (int)((1 - Math.abs(progress - 0.5)) * 32 + 16);
-
+    private void renderBeamLine(BeamData beam, MatrixStack matrixStack, IRenderTypeBuffer buffer, float progress, Vector3d startPos, Vector3d endPos) {
+        int alpha = (int) (MathHelper.sin((Minecraft.getInstance().level.getGameTime() % 20) / 20f * 3.1415927f) * 128 + 32);
+        int[] colors = beam.getRGB();
         Matrix4f positionMatrix = matrixStack.last().pose();
         IVertexBuilder builder = buffer.getBuffer(ModRenderTypes.BEAM_LINE_THICK);
-        builder.vertex(positionMatrix, beam.startPos.x(), beam.startPos.y(), beam.startPos.z())
-                .color(beam.colors[0], beam.colors[1], beam.colors[2], alpha)
+        ClientUtil.posF(builder, positionMatrix, startPos)
+                .color(colors[0], colors[1], colors[2], alpha)
                 .endVertex();
-        builder.vertex(positionMatrix, beam.endPos.x(), beam.endPos.y(), beam.endPos.z())
-                .color(beam.colors[0], beam.colors[1], beam.colors[2], alpha)
+        ClientUtil.posF(builder, positionMatrix, endPos)
+                .color(colors[0], colors[1], colors[2], alpha)
                 .endVertex();
 
         IVertexBuilder builder2 = buffer.getBuffer(ModRenderTypes.BEAM_LINE_THIN);
-        builder2.vertex(positionMatrix, beam.startPos.x(), beam.startPos.y(), beam.startPos.z())
-                .color(beam.colors[0], beam.colors[1], beam.colors[2], alpha * 2)
+        ClientUtil.posF(builder2, positionMatrix, startPos)
+                .color(colors[0], colors[1], colors[2], 192)
                 .endVertex();
-        builder2.vertex(positionMatrix, beam.endPos.x(), beam.endPos.y(), beam.endPos.z())
-                .color(beam.colors[0], beam.colors[1], beam.colors[2], alpha * 2)
+        ClientUtil.posF(builder2, positionMatrix, endPos)
+                .color(colors[0], colors[1], colors[2], 192)
                 .endVertex();
     }
+
 }

@@ -4,8 +4,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.network.ItemBeamMessage;
-import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
@@ -16,7 +15,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -59,10 +57,7 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-//            Vector3d vec1 = Vector3d.atCenterOf(router.getBlockPos());
-//            PacketDistributor.TargetPoint tp = new PacketDistributor.TargetPoint(vec1.x, vec1.y, vec1.z, 32, router.getLevel().dimension());
-            PacketHandler.NETWORK.send(PacketDistributor.TRACKING_CHUNK.with(() -> router.getLevel().getChunkAt(router.getBlockPos())),
-                    new ItemBeamMessage(router, targetPos, false, stack, getBeamColor(), router.getTickRate(), false));
+            router.addItemBeam(new BeamData(router.getTickRate(), targetPos, stack, getBeamColor()));
         }
     }
 

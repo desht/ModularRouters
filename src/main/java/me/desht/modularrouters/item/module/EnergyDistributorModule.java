@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class EnergyDistributorModule extends TargetedModule implements IRangedModule, IPositionProvider {
-    private static final TintColor TINT_COLOR = new TintColor(128, 128, 128);
+    private static final TintColor TINT_COLOR = new TintColor(54, 1, 61);
 
     public EnergyDistributorModule() {
         super(ModItems.defaultProps(), CompiledEnergyDistributorModule::new);
@@ -25,7 +25,7 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
 
     @Override
     public TintColor getItemTint() {
-        return TINT_COLOR;
+        return new TintColor(79, 9, 90);
     }
 
     @Override
