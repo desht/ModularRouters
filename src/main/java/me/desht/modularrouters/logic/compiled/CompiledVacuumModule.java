@@ -4,6 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
+import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -59,7 +60,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
-            xpCollectionType = XPCollectionType.values()[compound.getInt(NBT_XP_FLUID_TYPE)];
+            xpCollectionType = XPCollection.getXPType(compound.getInt(NBT_XP_FLUID_TYPE));
             autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
 
             if (xpMode) {

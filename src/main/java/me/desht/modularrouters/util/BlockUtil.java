@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -169,6 +170,11 @@ public class BlockUtil {
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 world.removeBlock(pos, false);
+                if (MRConfig.Common.Router.blockBreakXPDrops && breakEvent.getExpToDrop() > 0) {
+                    Vector3d vec = Vector3d.atCenterOf(pos);
+                    ExperienceOrbEntity xpOrb = new ExperienceOrbEntity(world, vec.x, vec.y, vec.z, breakEvent.getExpToDrop());
+                    world.addFreshEntity(xpOrb);
+                }
                 return new BreakResult(true, groups);
             }
         }

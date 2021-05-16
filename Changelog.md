@@ -26,6 +26,8 @@ Changes are in reverse chronological order; newest changes at the top.
 * Routers are now called "Modular Router" in-game instead of "Item Router"
   * Since they can handle more than just items...
   * Internal registry name is still `modularrouters:item_router`, so no compat problems for existing worlds; this is just a cosmetic change
+* Breaker and Extruder Mk1 modules will now drop XP orbs if the block being broken drops XP (as various ores do)
+  * Can be disabled in config if previous behaviour is preferred: see `blockBreakXPDrops`
 * Fixed GUI's getting locked up if another player breaks a router while a GUI is open
 * Fixed missing recipe for the Filter Round Robin Augment
 * Fixed sneak-right-clicking Sync Upgrade displaying the previous sync value, not the new one

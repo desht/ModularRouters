@@ -53,6 +53,7 @@ public class MRConfig {
             public static int mBperFluidUpgade;
             public static int fePerEnergyUpgrade;
             public static int feXferPerEnergyUpgrade;
+            public static boolean blockBreakXPDrops;
         }
 
         public static class EnergyCosts {

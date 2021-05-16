@@ -36,6 +36,7 @@ public class CommonConfig {
     }
 
     public static class Router {
+        BooleanValue blockBreakXPDrops;
         IntValue baseTickRate;
         IntValue ticksPerUpgrade;
         IntValue hardMinTickRate;
@@ -184,6 +185,9 @@ public class CommonConfig {
         router.feXferPerEnergyUpgrade = builder.comment("FE transfer rate (FE/t) per Energy Upgrade")
                 .translation("gui.config.feXferPerEnergyUpgrade")
                 .defineInRange("feXferPerEnergyUpgrade", 1000, 1, Integer.MAX_VALUE);
+        router.blockBreakXPDrops = builder.comment("Should block-breaking modules drop XP where appropriate? (ore mining etc.)")
+                .translation("gui.config.blockBreakXPDrops")
+                .define("blockBreakXPDrops", true);
         builder.pop();
 
         builder.push("Energy Costs");

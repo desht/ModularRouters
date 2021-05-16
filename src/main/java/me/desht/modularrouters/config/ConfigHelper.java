@@ -62,6 +62,7 @@ public class ConfigHelper {
         MRConfig.Common.Router.mBperFluidUpgade = common.router.mBperFluidUpgade.get();
         MRConfig.Common.Router.fePerEnergyUpgrade = common.router.fePerEnergyUpgrade.get();
         MRConfig.Common.Router.feXferPerEnergyUpgrade = common.router.feXferPerEnergyUpgrade.get();
+        MRConfig.Common.Router.blockBreakXPDrops = common.router.blockBreakXPDrops.get();
 
         MRConfig.Common.EnergyCosts.activatorModuleEnergyCost = common.energyCosts.activatorModuleEnergyCost.get();
         MRConfig.Common.EnergyCosts.activatorModuleEnergyCostAttack = common.energyCosts.activatorModuleEnergyCostAttack.get();

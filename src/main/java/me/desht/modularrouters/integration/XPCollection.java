@@ -37,6 +37,14 @@ public class XPCollection {
         return ICONS[type.ordinal()];
     }
 
+    public static XPCollectionType getXPType(int type) {
+        XPCollectionType xpType = XPCollectionType.values()[type];
+        if (!xpType.isAvailable()) {
+            xpType = XPCollectionType.BOTTLE_O_ENCHANTING;
+        }
+        return xpType;
+    }
+
     public enum XPCollectionType {
         // note: bottles o' enchanting are randomly worth 3-11 experience, so let's use an average of 7
         SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
