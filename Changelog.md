@@ -6,7 +6,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
-### 7.5.0 (unreleased)
+### 7.5.0 (19 May 2021)
 * New Upgrade: the Energy Upgrade!
   * Gives the router an internal energy buffer; each upgrade adds 50,000 FE capacity and 1,000 FE transfer per router tick
   * Can have up to 64 in a router
