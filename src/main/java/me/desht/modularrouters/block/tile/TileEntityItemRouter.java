@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
@@ -937,7 +938,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         return energyDirection;
     }
 
-    public enum EnergyDirection {
+    public enum EnergyDirection implements IHasTranslationKey {
         FROM_ROUTER("from_router"),
         TO_ROUTER("to_router"),
         NONE("none");
@@ -956,6 +957,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             }
         }
 
+        @Override
         public String getTranslationKey() {
             return "modularrouters.guiText.tooltip.energy." + text;
         }

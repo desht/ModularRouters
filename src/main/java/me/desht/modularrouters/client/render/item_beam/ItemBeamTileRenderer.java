@@ -64,8 +64,9 @@ public class ItemBeamTileRenderer extends TileEntityRenderer<TileEntityItemRoute
             matrixStack.translate(ix, iy - 0.15, iz);
             matrixStack.mulPose(ROTATION.rotationDegrees(progress * 360));
             if (beam.isItemFade()) {
-                matrixStack.scale(1.25f - progress, 1.25f - progress, 1.25f - progress);
-                if (progress > 0.9) {
+                matrixStack.translate(0, 0.15, 0);
+                matrixStack.scale(1.15f - progress, 1.15f - progress, 1.15f - progress);
+                if (progress > 0.95 && world.random.nextInt(3) == 0) {
                     world.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
                 }
             }

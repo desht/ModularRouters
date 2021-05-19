@@ -19,7 +19,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class GuiModuleActivator extends GuiModule {
     private static final ItemStack ITEM_STACK = new ItemStack(Items.FLINT_AND_STEEL);
@@ -94,29 +96,29 @@ public class GuiModuleActivator extends GuiModule {
     }
 
     private class ActionTypeButton extends ItemStackCyclerButton<ActionType> {
-        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+        private final Map<ActionType, List<ITextComponent>> tooltips = new EnumMap<>(ActionType.class);
 
         ActionTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, ActionType initialVal) {
             super(x, y, width, height, flat, stacks, initialVal, GuiModuleActivator.this);
 
             for (ActionType actionType : ActionType.values()) {
-                tooltips.add(Collections.singletonList(ClientUtil.xlate(actionType.getTranslationKey())));
+                tooltips.put(actionType, Collections.singletonList(ClientUtil.xlate(actionType.getTranslationKey())));
             }
         }
 
         @Override
         public List<ITextComponent> getTooltip() {
-            return tooltips.get(getState().ordinal());
+            return tooltips.get(getState());
         }
     }
 
     private class LookDirectionButton extends TexturedCyclerButton<LookDirection> {
-        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+        private final Map<LookDirection, List<ITextComponent>> tooltips = new EnumMap<>(LookDirection.class);
 
         LookDirectionButton(int x, int y, int width, int height, LookDirection initialVal) {
             super(x, y, width, height, initialVal, GuiModuleActivator.this);
             for (LookDirection dir : LookDirection.values()) {
-                tooltips.add(Collections.singletonList(ClientUtil.xlate(dir.getTranslationKey())));
+                tooltips.put(dir, Collections.singletonList(ClientUtil.xlate(dir.getTranslationKey())));
             }
         }
 
@@ -132,7 +134,7 @@ public class GuiModuleActivator extends GuiModule {
 
         @Override
         public List<ITextComponent> getTooltip() {
-            return tooltips.get(getState().ordinal());
+            return tooltips.get(getState());
         }
     }
 

@@ -57,6 +57,7 @@ import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,8 +90,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     private RedstoneBehaviourButton redstoneButton;
     private RegulatorTooltipButton regulatorTooltipButton;
-    private final DirectionButton[] directionButtons = new DirectionButton[RelativeDirection.values().length];
-    private final ModuleToggleButton[] toggleButtons = new ModuleToggleButton[ModuleFlags.values().length];
+    private final EnumMap<RelativeDirection,DirectionButton> directionButtons = new EnumMap<>(RelativeDirection.class);
+    private final EnumMap<ModuleFlags,ModuleToggleButton> toggleButtons = new EnumMap<>(ModuleFlags.class);
     private MouseOverHelp.Button mouseOverHelpButton;
     private TexturedToggleButton matchAllButton;
     IntegerTextField regulatorTextField;
@@ -193,13 +194,13 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
-        toggleButtons[flag.ordinal()] = new ModuleToggleButton(flag, this.leftPos + x, this.topPos + y, ModuleHelper.checkFlag(moduleItemStack, flag));
-        addButton(toggleButtons[flag.ordinal()]);
+        toggleButtons.put(flag, new ModuleToggleButton(flag, this.leftPos + x, this.topPos + y, ModuleHelper.checkFlag(moduleItemStack, flag)));
+        addButton(toggleButtons.get(flag));
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
-        directionButtons[dir.ordinal()] = new DirectionButton(dir, module, this.leftPos + x, this.topPos + y, dir == facing);
-        addButton(directionButtons[dir.ordinal()]);
+        directionButtons.put(dir, new DirectionButton(dir, module, this.leftPos + x, this.topPos + y, dir == facing));
+        addButton(directionButtons.get(dir));
     }
 
     @Override
@@ -236,7 +237,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         RouterRedstoneBehaviour behaviour = redstoneButton == null ? RouterRedstoneBehaviour.ALWAYS : redstoneButton.getState();
         CompoundNBT compound = new CompoundNBT();
         for (ModuleFlags flag : ModuleFlags.values()) {
-            compound.putBoolean(flag.getName(), getToggleButton(flag).isToggled());
+            compound.putBoolean(flag.getName(), toggleButtons.get(flag).isToggled());
         }
         compound.putString(ModuleHelper.NBT_TERMINATION, terminationButton.getState().toString());
         compound.putString(ModuleHelper.NBT_DIRECTION, facing.toString());
@@ -244,14 +245,6 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         compound.putInt(ModuleHelper.NBT_REGULATOR_AMOUNT, regulatorAmount);
         compound.putBoolean(ModuleHelper.NBT_MATCH_ALL, matchAllButton.isToggled());
         return compound;
-    }
-
-    private ModuleToggleButton getToggleButton(ModuleFlags flags) {
-        return toggleButtons[flags.ordinal()];
-    }
-
-    private DirectionButton getDirectionButton(RelativeDirection direction) {
-        return directionButtons[direction.ordinal()];
     }
 
     @Override
@@ -404,23 +397,23 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private class ModuleToggleButton extends TexturedToggleButton {
-        private final int flagId;
+        private final ModuleFlags flag;
 
         ModuleToggleButton(ModuleFlags flag, int x, int y, boolean toggled) {
             super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
-            this.flagId = flag.ordinal();
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + ModuleFlags.values()[flagId] + ".1");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + ModuleFlags.values()[flagId] + ".2");
+            this.flag = flag;
+            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".1");
+            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".2");
         }
 
         @Override
         protected int getTextureX() {
-            return this.flagId * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
+            return flag.ordinal() * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
         }
 
         @Override
         protected int getTextureY() {
-            return 32;
+            return flag.getTextureY();
         }
     }
 
@@ -439,12 +432,12 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
         @Override
         protected int getTextureX() {
-            return direction.ordinal() * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
+            return direction.getTextureX(isToggled());
         }
 
         @Override
         protected int getTextureY() {
-            return 48;
+            return direction.getTextureY();
         }
 
         public RelativeDirection getDirection() {
@@ -454,7 +447,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         @Override
         public void onPress() {
             for (RelativeDirection dir : RelativeDirection.values()) {
-                DirectionButton db = getDirectionButton(dir);
+                DirectionButton db = directionButtons.get(dir);
                 db.setToggled(false);
                 if (db == this) {
                     facing = db.getDirection();

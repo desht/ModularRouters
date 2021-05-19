@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "This augment can be added to any module which has a range (Sender $(l:modules/sender_1)Mk1/$ / $(l:modules/sender_2)Mk2/$, Puller $(l:modules/puller_1)Mk1/$ / $(l:modules/puller_2)Mk2/$, Extruder $(l:modules/extruder_1)Mk1/$ / $(l:modules/extruder_2)Mk2/$, $(l:modules/fluid_2)Fluid Mk2/$, $(l:modules/vacuum)Vacuum/$).($p)It can be stacked; each augment will reduce the range of the module by one block.$(p)This is probably only useful in conjunction with the $(l:modules/vacuum)Vacuum Module/$, to control the range it scans for items."
+      "text": "This augment can be added to any module which has a range (Sender $(l:modules/sender_1)Mk1/$ / $(l:modules/sender_2)Mk2/$, Puller $(l:modules/puller_1)Mk1/$ / $(l:modules/puller_2)Mk2/$, Extruder $(l:modules/extruder_1)Mk1/$ / $(l:modules/extruder_2)Mk2/$, $(l:modules/fluid_2)Fluid Mk2/$, $(l:modules/vacuum)Vacuum/$).$(p)It can be stacked; each augment will reduce the range of the module by one block.$(p)This is probably only useful in conjunction with the $(l:modules/vacuum)Vacuum Module/$, to control the range it scans for items."
     },
     {
       "type": "crafting",

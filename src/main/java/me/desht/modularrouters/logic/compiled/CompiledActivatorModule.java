@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import com.google.common.collect.ImmutableSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.MiscUtil;
@@ -62,7 +63,7 @@ public class CompiledActivatorModule extends CompiledModule {
     private static final Set<Item> itemBlacklist = new HashSet<>();
     private static final Set<Block> blockBlacklist = new HashSet<>();
 
-    public enum ActionType {
+    public enum ActionType implements IHasTranslationKey {
         ITEM_OR_BLOCK(false),
         USE_ITEM_ON_ENTITY(true),
         ATTACK_ENTITY(true);
@@ -73,8 +74,9 @@ public class CompiledActivatorModule extends CompiledModule {
             this.entity = entity;
         }
 
+        @Override
         public String getTranslationKey() {
-            return "modularrouters.itemText.activator.action." + toString();
+            return "modularrouters.itemText.activator.action." + this;
         }
 
         public static ActionType fromOldOrdinal(int ord) {
@@ -86,7 +88,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    public enum LookDirection {
+    public enum LookDirection implements IHasTranslationKey {
         LEVEL(0f),
         ABOVE(-45f),
         BELOW(45f);
@@ -105,18 +107,20 @@ public class CompiledActivatorModule extends CompiledModule {
             }
         }
 
+        @Override
         public String getTranslationKey() {
-            return "modularrouters.itemText.activator.direction." + toString();
+            return "modularrouters.itemText.activator.direction." + this;
         }
     }
 
-    public enum EntityMode {
+    public enum EntityMode implements IHasTranslationKey {
         NEAREST,
         RANDOM,
         ROUND_ROBIN;
 
+        @Override
         public String getTranslationKey() {
-            return "modularrouters.itemText.activator.entityMode." + toString();
+            return "modularrouters.itemText.activator.entityMode." + this;
         }
     }
 

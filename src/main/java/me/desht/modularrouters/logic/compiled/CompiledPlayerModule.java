@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.entity.MobEntity;
@@ -24,21 +25,23 @@ public class CompiledPlayerModule extends CompiledModule {
     public static final String NBT_OPERATION = "Operation";
     public static final String NBT_SECTION = "Section";
 
-    public enum Operation {
+    public enum Operation implements IHasTranslationKey {
         EXTRACT, INSERT;
 
         public String getSymbol() { return this == INSERT ? "⟹" : "⟸"; }
 
+        @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.label.playerOp." + toString();
+            return "modularrouters.guiText.label.playerOp." + this;
         }
     }
 
-    public enum Section {
+    public enum Section implements IHasTranslationKey {
         MAIN, MAIN_NO_HOTBAR, ARMOR, OFFHAND, ENDER;
 
+        @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.label.playerSect." + toString();
+            return "modularrouters.guiText.label.playerSect." + this;
         }
     }
 

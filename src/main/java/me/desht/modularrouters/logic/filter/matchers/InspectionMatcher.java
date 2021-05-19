@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.base.Joiner;
+import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -114,7 +115,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
     }
 
-    public enum InspectionSubject {
+    public enum InspectionSubject implements IHasTranslationKey {
         NONE,
         DURABILITY,
         FLUID,
@@ -122,6 +123,7 @@ public class InspectionMatcher implements IItemMatcher {
         ENCHANT,
         FOOD;
 
+        @Override
         public String getTranslationKey() {
             return "modularrouters.guiText.label.inspectionSubject." + toString();
         }
@@ -205,7 +207,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
     }
 
-    public enum InspectionOp {
+    public enum InspectionOp implements IHasTranslationKey {
         NONE,
         GT,
         LT,
@@ -214,6 +216,7 @@ public class InspectionMatcher implements IItemMatcher {
         EQ,
         NE;
 
+        @Override
         public String getTranslationKey() {
             return "modularrouters.guiText.label.inspectionOp." + toString();
         }

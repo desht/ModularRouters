@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
@@ -25,12 +26,13 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     public static final String NBT_PULLING = "Pulling";
     private final List<BeamData> beams = new ArrayList<>();
 
-    public enum DistributionStrategy {
+    public enum DistributionStrategy implements IHasTranslationKey {
         ROUND_ROBIN,
         RANDOM,
         NEAREST_FIRST,
         FURTHEST_FIRST;
 
+        @Override
         public String getTranslationKey() {
             return "modularrouters.itemText.distributor.strategy." + this.toString();
         }

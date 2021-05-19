@@ -12,8 +12,6 @@ import net.minecraft.network.PacketBuffer;
 import org.apache.commons.lang3.Validate;
 
 public class ElementModule implements IElement {
-    private static final String ARROWS = " ▼▲◀▶▣▤";
-
     private final ItemStack stack;
     private final ItemModule.RelativeDirection dir;
 
@@ -31,8 +29,7 @@ public class ElementModule implements IElement {
 
     @Override
     public void render(MatrixStack matrixStack, int x, int y) {
-        String dirStr = String.valueOf(ARROWS.charAt(dir.ordinal()));
-        GuiUtil.renderItemStack(matrixStack, Minecraft.getInstance(), stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2, dirStr);
+        GuiUtil.renderItemStack(matrixStack, Minecraft.getInstance(), stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2, dir.getSymbol());
     }
 
     @Override

@@ -9,32 +9,35 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 public class XPCollection {
-    private static final boolean[] AVAILABLE = new boolean[XPCollectionType.values().length];
-    private static final ItemStack[] ICONS = new ItemStack[XPCollectionType.values().length];
+    private static final Set<XPCollectionType> AVAILABLE = EnumSet.noneOf(XPCollectionType.class);
+    private static final Map<XPCollectionType, ItemStack> ICONS = new EnumMap<>(XPCollectionType.class);
 
     public static void detectXPTypes() {
-        Arrays.fill(ICONS, null);  // null is OK here; it means "not queried yet"
+        ICONS.clear();
 
         for (XPCollectionType type : XPCollectionType.values()) {
-            AVAILABLE[type.ordinal()] = !getIconForResource(type).isEmpty();
+            if (!getIconForResource(type).isEmpty()) AVAILABLE.add(type);
         }
     }
 
     private static ItemStack getIconForResource(XPCollectionType type) {
-        if (ICONS[type.ordinal()] == null) {
+        if (!ICONS.containsKey(type)) {
             if (type.isSolid()) {
-                ICONS[type.ordinal()] = new ItemStack(ForgeRegistries.ITEMS.getValue(type.getRegistryName()));
+                ICONS.put(type, new ItemStack(ForgeRegistries.ITEMS.getValue(type.getRegistryName())));
             } else {
                 Fluid fluid = ForgeRegistries.FLUIDS.getValue(type.getRegistryName());
-                ICONS[type.ordinal()] = fluid == null || fluid == Fluids.EMPTY ?
+                ICONS.put(type, fluid == null || fluid == Fluids.EMPTY ?
                         ItemStack.EMPTY :
-                        FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
+                        FluidUtil.getFilledBucket(new FluidStack(fluid, 1000)));
             }
         }
-        return ICONS[type.ordinal()];
+        return ICONS.getOrDefault(type, ItemStack.EMPTY);
     }
 
     public static XPCollectionType getXPType(int type) {
@@ -88,7 +91,7 @@ public class XPCollection {
         }
 
         public boolean isAvailable() {
-            return AVAILABLE[this.ordinal()];
+            return AVAILABLE.contains(this);
         }
 
         public ItemStack getIcon() {

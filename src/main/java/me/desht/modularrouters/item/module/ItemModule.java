@@ -5,6 +5,7 @@ import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.ContainerModule;
@@ -56,20 +57,21 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
     public enum ModuleFlags {
-        BLACKLIST(true, 0x1, "F_blacklist"),
-        IGNORE_DAMAGE(false, 0x2, "F_ignoreDamage"),
-        IGNORE_NBT(true, 0x4, "F_ignoreNBT"),
-        IGNORE_TAGS(true, 0x8, "F_ignoreTags");
+        BLACKLIST(true, 0x1, "F_blacklist", 0),
+        IGNORE_DAMAGE(false, 0x2, "F_ignoreDamage", 32),
+        IGNORE_NBT(true, 0x4, "F_ignoreNBT", 64),
+        IGNORE_TAGS(true, 0x8, "F_ignoreTags", 96);
 
         private final boolean defaultValue;
-
         private final byte mask;  // TODO legacy - remove in 1.17
         private final String name;
+        private final int textureX;
 
-        ModuleFlags(boolean defaultValue, int mask, String name) {
+        ModuleFlags(boolean defaultValue, int mask, String name, int textureX) {
             this.defaultValue = defaultValue;
             this.mask = (byte) mask;
             this.name = name;
+            this.textureX = textureX;
         }
 
         public boolean getDefaultValue() {
@@ -83,21 +85,32 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         public String getName() {
             return name;
         }
+
+        public int getTextureX(boolean toggled) {
+            return textureX + (toggled ? 16 : 0);
+        }
+
+        public int getTextureY() {
+            return 32;
+        }
     }
 
     // Direction relative to the facing of the router this module is installed in
     public enum RelativeDirection {
-        NONE(0x00),
-        DOWN(0x01),
-        UP(0x02),
-        LEFT(0x04),
-        RIGHT(0x08),
-        FRONT(0x10),
-        BACK(0x20);
+        NONE(0x00, " "),
+        DOWN(0x01, "▼"),
+        UP(0x02, "▲"),
+        LEFT(0x04, "◀"),
+        RIGHT(0x08, "▶"),
+        FRONT(0x10, "▣"),
+        BACK(0x20, "▤");
 
         private final int mask;
-        RelativeDirection(int mask) {
+        private final String symbol;
+
+        RelativeDirection(int mask, String symbol) {
             this.mask = mask;
+            this.symbol = symbol;
         }
 
         public Direction toAbsolute(Direction current) {
@@ -117,18 +130,31 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             }
         }
 
+        public String getSymbol() {
+            return symbol;
+        }
+
         public int getMask() {
             return mask;
         }
+
+        public int getTextureX(boolean toggled) {
+            return ordinal() * 32 + (toggled ? 16 : 0);
+        }
+
+        public int getTextureY() {
+            return 48;
+        }
     }
 
-    public enum Termination {
+    public enum Termination implements IHasTranslationKey {
         NONE,
         RAN,
         NOT_RAN;
 
+        @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.tooltip.terminate." + toString();
+            return "modularrouters.guiText.tooltip.terminate." + this;
         }
     }
 

@@ -32,6 +32,7 @@ public class ModuleHelper {
     public static CompoundNBT validateNBT(ItemStack stack) {
         CompoundNBT compound = stack.getOrCreateTagElement(ModularRouters.MODID);
         if (compound.getTagType(NBT_FLAGS) == Constants.NBT.TAG_BYTE) {
+            // TODO get rid of this in 1.17
             // migrate old-format flags (encoded into a byte) to modern flexible format
             byte b = compound.getByte(NBT_FLAGS);
             for (ModuleFlags flag : ModuleFlags.values()) {

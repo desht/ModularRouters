@@ -25,7 +25,7 @@
     {
       "type": "text",
       "title": "Transfer Rates",
-      "text": "It is important to note that stated transfer rates on tooltips are in FE per ($italic)router tick/$, which is not the same as FE/t. A Router's tick rate depends on its $(l:upgrades/speed)Speed Upgrades/$; with no Speed Upgrades, a router tick is every 20 server ticks. Therefore, the overall transfer rate may be lower than you expect."
+      "text": "It is important to note that stated transfer rates on tooltips are in FE per $(italic)router tick/$, which is not the same as FE/t. A Router's tick rate depends on its $(l:upgrades/speed)Speed Upgrades/$; with no Speed Upgrades, a router tick is every 20 server ticks. Therefore, the overall transfer rate may be lower than you might expect."
     },
     {
       "type": "crafting",

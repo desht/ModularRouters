@@ -50,6 +50,9 @@ public class Filter implements Predicate<ItemStack> {
                     }
                 }
             }
+            if (roundRobin && rrCounter >= matchers.size()) {
+                rrCounter = 0;
+            }
         } else {
             flags = Flags.DEFAULT_FLAGS;
             matchAll = false;
@@ -141,13 +144,6 @@ public class Filter implements Predicate<ItemStack> {
             ignoreTags = ModuleFlags.IGNORE_TAGS.getDefaultValue();
         }
 
-        public Flags(byte mask) {
-            blacklist = (mask & ModuleFlags.BLACKLIST.getMask()) != 0;
-            ignoreDamage = (mask & ModuleFlags.IGNORE_DAMAGE.getMask()) != 0;
-            ignoreNBT = (mask & ModuleFlags.IGNORE_NBT.getMask()) != 0;
-            ignoreTags = (mask & ModuleFlags.IGNORE_TAGS.getMask()) != 0;
-        }
-
         public boolean isBlacklist() {
             return blacklist;
         }
@@ -162,14 +158,6 @@ public class Filter implements Predicate<ItemStack> {
 
         public boolean matchTags() {
             return !ignoreTags;
-        }
-
-        public static Flags with(ModuleFlags... flags) {
-            byte mask = 0;
-            for (ModuleFlags flag : flags) {
-                mask |= flag.getMask();
-            }
-            return new Flags(mask);
         }
     }
 }
