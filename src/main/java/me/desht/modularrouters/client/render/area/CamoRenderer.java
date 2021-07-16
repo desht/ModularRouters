@@ -51,13 +51,16 @@ public enum CamoRenderer {
     }
 
     private void highlightCamoRouters(MatrixStack matrixStack, IRenderTypeBuffer.Impl buffer, PlayerEntity player) {
-        if (lastPlayerPos == null || camoPositionShower == null || player.distanceToSqr(lastPlayerPos.getX(), lastPlayerPos.getY(), lastPlayerPos.getZ()) > 9) {
+        // re-detect all nearby camo'd routers within 16 blocks if player has moved more than 3 blocks since last detection run
+        if (lastPlayerPos == null || camoPositionShower == null
+                || player.distanceToSqr(lastPlayerPos.getX(), lastPlayerPos.getY(), lastPlayerPos.getZ()) > 9) {
             lastPlayerPos = player.blockPosition();
-            Set<BlockPos> s = player.getCommandSenderWorld().blockEntityList.stream()
-                    .filter(te -> te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null && te.getBlockPos().distSqr(lastPlayerPos) < 256)
+            Set<BlockPos> camoPosSet = player.getCommandSenderWorld().blockEntityList.stream()
+                    .filter(ICamouflageable::isCamouflaged)
                     .map(TileEntity::getBlockPos)
+                    .filter(pos -> pos.distSqr(lastPlayerPos) < 256)
                     .collect(Collectors.toSet());
-            camoPositionShower = new AreaRenderer(s, 0x408080FF, 0.75f);
+            camoPositionShower = new AreaRenderer(camoPosSet, 0x408080FF, 0.75f);
         }
         if (camoPositionShower != null) {
             camoPositionShower.render(matrixStack, buffer);

@@ -39,7 +39,7 @@ public class ColorHandlers {
         event.getBlockColors().register((state, reader, pos, tintIndex) -> {
             if (pos == null || reader == null) return -1;
             TileEntity te = reader.getBlockEntity(pos);
-            if (te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null) {
+            if (ICamouflageable.isCamouflaged(te)) {
                 return event.getBlockColors().getColor(((ICamouflageable) te).getCamouflage(), te.getLevel(), pos, tintIndex);
             } else {
                 return 0xffffff;
