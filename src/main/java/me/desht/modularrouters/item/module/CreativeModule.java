@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class CreativeModule extends ItemModule {
+public class CreativeModule extends ModuleItem {
     private static final TintColor TINT_COLOR = new TintColor(187, 38, 185);
 
     public CreativeModule() {

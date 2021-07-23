@@ -56,7 +56,7 @@ public class ClientSetup {
 //            ClientRegistry.bindTileEntityRenderer(ModBlockEntities.ITEM_ROUTER.get(), ItemBeamTileRenderer::new);
         });
 
-        BlockEntityRenderers.register(ModBlockEntities.ITEM_ROUTER.get(), ItemBeamTileRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.MODULAR_ROUTER.get(), ItemBeamTileRenderer::new);
         FilterGuiFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), GuiInspectionFilter::new);
         FilterGuiFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), GuiRegexFilter::new);
     }
@@ -85,7 +85,7 @@ public class ClientSetup {
 
     private static void setupRenderLayers() {
         // due to camouflage requirements, these need to render in any layer
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.ITEM_ROUTER.get(), renderType -> true);
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.MODULAR_ROUTER.get(), renderType -> true);
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.TEMPLATE_FRAME.get(), renderType -> true);
     }
 

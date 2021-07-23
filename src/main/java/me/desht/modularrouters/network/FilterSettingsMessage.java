@@ -2,7 +2,7 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.nbt.CompoundTag;
@@ -75,8 +75,8 @@ public class FilterSettingsMessage {
     private void processPacket(ServerPlayer player) {
         ItemStack moduleStack = locator.getModuleStack(player);
         ItemStack filterStack = locator.getTargetItem(player);
-        if (filterStack.getItem() instanceof ItemSmartFilter) {
-            ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
+        if (filterStack.getItem() instanceof SmartFilterItem) {
+            SmartFilterItem sf = (SmartFilterItem) filterStack.getItem();
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
                 ModularRouterBlockEntity router = locator.getRouter(player.level).orElse(null);

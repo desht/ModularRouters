@@ -44,7 +44,7 @@ import static me.desht.modularrouters.util.MiscUtil.asFormattable;
 /**
  * Represents a module with a specific target block or blocks (blockpos stored in itemstack NBT).
  */
-public abstract class TargetedModule extends ItemModule {
+public abstract class TargetedModule extends ModuleItem {
     private static final String NBT_TARGET = "Target";
     private static final String NBT_MULTI_TARGET = "MultiTarget";
 

@@ -1,9 +1,10 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModContainerTypes;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,8 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-
-import java.util.Optional;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -48,8 +47,8 @@ public class ContainerItemRouter extends ContainerMRBase {
     public ContainerItemRouter(int windowId, Inventory invPlayer, BlockPos routerPos) {
         super(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), windowId);
 
-        Optional<ModularRouterBlockEntity> o = ModularRouterBlockEntity.getRouterAt(invPlayer.player.level, routerPos);
-        this.router = o.orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
+        this.router = invPlayer.player.level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get())
+                .orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
 
         data = router.trackedEnergy;
 
@@ -99,12 +98,12 @@ public class ContainerItemRouter extends ContainerMRBase {
         // Check if the slot clicked is one of the vanilla container slots
         if (sourceSlotIndex < TE_FIRST_SLOT) {
             // This is a vanilla container slot so merge the stack into the appropriate part of the router's inventory
-            if (sourceStack.getItem() instanceof ItemModule) {
+            if (sourceStack.getItem() instanceof ModuleItem) {
                 // shift-clicked a module: see if there's a free module slot
                 if (!moveItemStackTo(sourceStack, TE_FIRST_SLOT + MODULE_SLOT_START, TE_FIRST_SLOT + MODULE_SLOT_END + 1, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (sourceStack.getItem() instanceof ItemUpgrade) {
+            } else if (sourceStack.getItem() instanceof UpgradeItem) {
                 // shift-clicked an upgrade: see if there's a free upgrade slot
                 if (!moveItemStackTo(sourceStack, TE_FIRST_SLOT + UPGRADE_SLOT_START, TE_FIRST_SLOT + UPGRADE_SLOT_END + 1, false)) {
                     return ItemStack.EMPTY;

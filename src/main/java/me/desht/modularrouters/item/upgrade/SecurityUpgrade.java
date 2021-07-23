@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SecurityUpgrade extends ItemUpgrade implements IPlayerOwned {
+public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
     private static final String NBT_PLAYERS = "Players";
     private static final int MAX_PLAYERS = 6;
 

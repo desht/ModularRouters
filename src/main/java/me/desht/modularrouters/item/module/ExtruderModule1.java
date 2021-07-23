@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class ExtruderModule1 extends ItemModule implements IRangedModule, IPickaxeUser {
+public class ExtruderModule1 extends ModuleItem implements IRangedModule, IPickaxeUser {
 
     private static final TintColor TINT_COLOR = new TintColor(227, 174, 27);
 

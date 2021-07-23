@@ -2,8 +2,8 @@ package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -16,10 +16,10 @@ public class AugmentHandler extends ItemStackHandler {
     private final ModularRouterBlockEntity router;
 
     public AugmentHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
-        super(ItemAugment.SLOTS);
+        super(AugmentItem.SLOTS);
         this.router = router;
 
-        Validate.isTrue(holderStack.getItem() instanceof ItemModule, "holder stack must be a module!");
+        Validate.isTrue(holderStack.getItem() instanceof ModuleItem, "holder stack must be a module!");
 
         this.holderStack = holderStack;
         deserializeNBT(holderStack.getOrCreateTagElement(ModularRouters.MODID).getCompound(ModuleHelper.NBT_AUGMENTS));
@@ -31,10 +31,9 @@ public class AugmentHandler extends ItemStackHandler {
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        if (!(stack.getItem() instanceof ItemAugment)) return false;
+        if (!(stack.getItem() instanceof AugmentItem augment)) return false;
 
-        ItemAugment augment = (ItemAugment) stack.getItem();
-        if (augment.getMaxAugments((ItemModule) holderStack.getItem()) == 0) return false;
+        if (augment.getMaxAugments((ModuleItem) holderStack.getItem()) == 0) return false;
 
         // can't have the same augment in multiple slots
         for (int i = 0; i < getSlots(); i++) {
@@ -46,9 +45,8 @@ public class AugmentHandler extends ItemStackHandler {
 
     @Override
     protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-        if (stack.getItem() instanceof ItemAugment) {
-            ItemAugment augment = (ItemAugment) stack.getItem();
-            return augment.getMaxAugments((ItemModule) holderStack.getItem());
+        if (stack.getItem() instanceof AugmentItem augment) {
+            return augment.getMaxAugments((ModuleItem) holderStack.getItem());
         }
         return 0;
     }

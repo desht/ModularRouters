@@ -19,8 +19,8 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public abstract class ItemBase extends Item {
-    public ItemBase(Properties props) {
+public abstract class MRBaseItem extends Item {
+    public MRBaseItem(Properties props) {
         super(props);
     }
 

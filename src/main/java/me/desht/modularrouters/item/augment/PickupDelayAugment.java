@@ -1,15 +1,15 @@
 package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.item.module.DropperModule;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
 
-public class PickupDelayAugment extends ItemAugment {
+public class PickupDelayAugment extends AugmentItem {
     public static final int TICKS_PER_AUGMENT = 10;
 
     @Override
-    public int getMaxAugments(ItemModule moduleType) {
+    public int getMaxAugments(ModuleItem moduleType) {
         return moduleType instanceof DropperModule ? 20 : 0;  // includes flinger module
     }
 

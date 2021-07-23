@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class SyncUpgrade extends ItemUpgrade {
+public class SyncUpgrade extends UpgradeItem {
     private static final String NBT_TUNING = "Tuning";
 
     @Override

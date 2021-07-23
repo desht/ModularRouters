@@ -6,7 +6,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule1;
 import net.minecraft.world.item.ItemStack;
 
-public class PullerModule1 extends ItemModule {
+public class PullerModule1 extends ModuleItem {
 
     private static final TintColor TINT_COLOR = new TintColor(192, 192, 255);
 

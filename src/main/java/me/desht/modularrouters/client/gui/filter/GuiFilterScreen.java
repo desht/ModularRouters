@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.gui.filter;
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.OpenGuiMessage;
@@ -41,7 +41,7 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
             return true;
         } else if (locator.hand != null) {
             ItemStack stack = getMinecraft().player.getItemInHand(locator.hand);
-            if (stack.getItem() instanceof ItemModule) {
+            if (stack.getItem() instanceof ModuleItem) {
                 // need to re-open module GUI for module in player's hand
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInHand(locator));
                 return true;

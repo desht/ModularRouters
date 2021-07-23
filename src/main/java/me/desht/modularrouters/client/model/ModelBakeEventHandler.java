@@ -16,7 +16,7 @@ public class ModelBakeEventHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        override(event, ModBlocks.ITEM_ROUTER.get(), CamouflagingModel.RouterModel::new);
+        override(event, ModBlocks.MODULAR_ROUTER.get(), CamouflagingModel.RouterModel::new);
         override(event, ModBlocks.TEMPLATE_FRAME.get(), CamouflagingModel.TemplateFrameModel::new);
     }
 

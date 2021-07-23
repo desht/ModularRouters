@@ -32,7 +32,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class    BulkItemFilter extends ItemSmartFilter {
+public class    BulkItemFilter extends SmartFilterItem {
     public static final int FILTER_SIZE = 54;
 
     @Override

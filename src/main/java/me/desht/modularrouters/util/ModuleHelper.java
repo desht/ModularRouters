@@ -2,11 +2,11 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
-import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
-import me.desht.modularrouters.item.module.ItemModule.Termination;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.module.ModuleItem.ModuleFlags;
+import me.desht.modularrouters.item.module.ModuleItem.RelativeDirection;
+import me.desht.modularrouters.item.module.ModuleItem.Termination;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -88,7 +88,7 @@ public class ModuleHelper {
     }
 
     public static RelativeDirection getRelativeDirection(ItemStack stack) {
-        if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isDirectional()) {
+        if (stack.getItem() instanceof ModuleItem && ((ModuleItem) stack.getItem()).isDirectional()) {
             CompoundTag compound = validateNBT(stack);
             try {
                 return RelativeDirection.valueOf(compound.getString(NBT_DIRECTION));
@@ -106,7 +106,7 @@ public class ModuleHelper {
     }
 
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
-        ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
+        AugmentItem.AugmentCounter counter = new AugmentItem.AugmentCounter(stack);
         if (counter.getAugmentCount(ModItems.REDSTONE_AUGMENT.get()) > 0) {
             CompoundTag compound = validateNBT(stack);
             try {
@@ -120,7 +120,7 @@ public class ModuleHelper {
     }
 
     public static int getRangeModifier(ItemStack stack) {
-        ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
+        AugmentItem.AugmentCounter counter = new AugmentItem.AugmentCounter(stack);
         return counter.getAugmentCount(ModItems.RANGE_UP_AUGMENT.get()) - counter.getAugmentCount(ModItems.RANGE_DOWN_AUGMENT.get());
     }
 

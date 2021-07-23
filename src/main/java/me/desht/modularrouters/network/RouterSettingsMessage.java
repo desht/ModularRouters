@@ -2,6 +2,7 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,7 +47,7 @@ public class RouterSettingsMessage {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Level w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getLevel();
-            ModularRouterBlockEntity.getRouterAt(w, pos).ifPresent(router -> {
+            w.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
                 router.setRedstoneBehaviour(redstoneBehaviour);
                 router.setEcoMode(ecoMode);
                 router.setEnergyDirection(energyDirection);

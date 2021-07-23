@@ -3,10 +3,10 @@ package me.desht.modularrouters.logic.compiled;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
+import me.desht.modularrouters.item.augment.AugmentItem.AugmentCounter;
 import me.desht.modularrouters.item.module.IRangedModule;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.module.ModuleItem.RelativeDirection;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
@@ -31,11 +31,11 @@ import java.util.Map;
 
 public abstract class CompiledModule {
     private final Filter filter;
-    private final ItemModule module;
+    private final ModuleItem module;
     private final RelativeDirection direction;
     private final List<ModuleTarget> targets;
     private final RouterRedstoneBehaviour behaviour;
-    private final ItemModule.Termination termination;
+    private final ModuleItem.Termination termination;
     private final Direction facing;
     private final Direction routerFacing;
     private final int regulationAmount;
@@ -54,9 +54,9 @@ public abstract class CompiledModule {
      * @param stack item stack of the module item being compiled
      */
     CompiledModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
-        Validate.isTrue(stack.getItem() instanceof ItemModule, "expected module item, got " + stack);
+        Validate.isTrue(stack.getItem() instanceof ModuleItem, "expected module item, got " + stack);
 
-        module = (ItemModule) stack.getItem();
+        module = (ModuleItem) stack.getItem();
         augmentCounter = new AugmentCounter(stack);
         direction = ModuleHelper.getRelativeDirection(stack);
         range = module instanceof IRangedModule ?
@@ -116,7 +116,7 @@ public abstract class CompiledModule {
 
     public boolean hasTarget() { return targets != null && !targets.isEmpty(); }
 
-    public ItemModule.Termination termination() {
+    public ModuleItem.Termination termination() {
         return termination;
     }
 

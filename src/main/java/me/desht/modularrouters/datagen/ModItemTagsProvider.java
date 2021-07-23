@@ -3,10 +3,10 @@ package me.desht.modularrouters.datagen;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.ModularRoutersTags;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
+import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -27,13 +27,13 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     @Override
     protected void addTags() {
         for (RegistryObject<Item> ro : ModItems.ITEMS.getEntries()) {
-            if (ro.get() instanceof ItemModule) {
+            if (ro.get() instanceof ModuleItem) {
                 addItemsToTag(ModularRoutersTags.Items.MODULES, ro);
-            } else if (ro.get() instanceof ItemUpgrade) {
+            } else if (ro.get() instanceof UpgradeItem) {
                 addItemsToTag(ModularRoutersTags.Items.UPGRADES, ro);
-            } else if (ro.get() instanceof ItemAugment) {
+            } else if (ro.get() instanceof AugmentItem) {
                 addItemsToTag(ModularRoutersTags.Items.AUGMENTS, ro);
-            } else if (ro.get() instanceof ItemSmartFilter) {
+            } else if (ro.get() instanceof SmartFilterItem) {
                 addItemsToTag(ModularRoutersTags.Items.FILTERS, ro);
             }
         }

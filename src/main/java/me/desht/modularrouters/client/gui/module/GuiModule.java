@@ -19,13 +19,14 @@ import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
-import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
-import me.desht.modularrouters.item.module.ItemModule.Termination;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.module.ModuleItem.ModuleFlags;
+import me.desht.modularrouters.item.module.ModuleItem.RelativeDirection;
+import me.desht.modularrouters.item.module.ModuleItem.Termination;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.network.ModuleSettingsMessage;
@@ -76,7 +77,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
     private static final int BUTTON_HEIGHT = 16;
 
     final ItemStack moduleItemStack;
-    private final ItemModule module;
+    private final ModuleItem module;
     private final BlockPos routerPos;
     private final int moduleSlotIndex;
     private final InteractionHand hand;
@@ -84,7 +85,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
     private int sendDelay;
     private int regulatorAmount;
     private final MouseOverHelp mouseOverHelp;
-    final ItemAugment.AugmentCounter augmentCounter;
+    final AugmentItem.AugmentCounter augmentCounter;
     private final boolean matchAll;
 
     private RedstoneBehaviourButton redstoneButton;
@@ -105,11 +106,11 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
         this.routerPos = locator.routerPos;
         this.moduleItemStack = locator.getModuleStack(inventory.player);
 
-        this.module = (ItemModule) moduleItemStack.getItem();
+        this.module = (ModuleItem) moduleItemStack.getItem();
 
         this.facing = ModuleHelper.getRelativeDirection(moduleItemStack);
         this.regulatorAmount = ModuleHelper.getRegulatorAmount(moduleItemStack);
-        this.augmentCounter = new ItemAugment.AugmentCounter(moduleItemStack);
+        this.augmentCounter = new AugmentItem.AugmentCounter(moduleItemStack);
         this.matchAll = ModuleHelper.isMatchAll(moduleItemStack);
         this.imageWidth = GUI_WIDTH;
         this.imageHeight = GUI_HEIGHT;
@@ -295,11 +296,11 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
 
     private boolean handleFilterConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || !(slot.getItem().getItem() instanceof ItemSmartFilter) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
+        if (slot == null || !(slot.getItem().getItem() instanceof SmartFilterItem) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
             return false;
         }
         int filterSlotIndex = slot.index;
-        ItemSmartFilter filter = (ItemSmartFilter) slot.getItem().getItem();
+        SmartFilterItem filter = (SmartFilterItem) slot.getItem().getItem();
         if (routerPos != null) {
             // module is installed in a router
             MFLocator locator = MFLocator.filterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex);
@@ -331,7 +332,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
     }
 
     Optional<ModularRouterBlockEntity> getItemRouter() {
-        return routerPos != null ? ModularRouterBlockEntity.getRouterAt(Minecraft.getInstance().level, routerPos) : Optional.empty();
+        return routerPos != null ? Minecraft.getInstance().level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get()) : Optional.empty();
     }
 
 //    @Override
@@ -340,7 +341,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
 
     @Override
     public void slotChanged(AbstractContainerMenu containerToSend, int slotInd, ItemStack stack) {
-        if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + ItemAugment.SLOTS) {
+        if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + AugmentItem.SLOTS) {
             augmentCounter.refresh(moduleItemStack);
             setupButtonVisibility();
         }
@@ -419,7 +420,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
         private static final int DIRECTION_GROUP = 1;
         private final RelativeDirection direction;
 
-        DirectionButton(RelativeDirection dir, ItemModule module, int x, int y, boolean toggled) {
+        DirectionButton(RelativeDirection dir, ModuleItem module, int x, int y, boolean toggled) {
             super(DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
 
             this.direction = dir;

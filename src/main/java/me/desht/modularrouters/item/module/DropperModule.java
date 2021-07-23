@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiFunction;
 
-public class DropperModule extends ItemModule {
+public class DropperModule extends ModuleItem {
     private static final TintColor TINT_COLOR = new TintColor(230, 204, 240);
 
     public DropperModule() {

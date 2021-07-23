@@ -2,10 +2,10 @@ package me.desht.modularrouters.datagen;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
+import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -37,7 +37,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         for (Item item : ForgeRegistries.ITEMS.getValues()) {
             String name = item.getRegistryName().getPath();
-            if (item instanceof ItemModule) {
+            if (item instanceof ModuleItem) {
                 if (item == ModItems.DISTRIBUTOR_MODULE.get()) {
                     // special case; distributor module has a model override based on its mode
                     ModelFile distributorPull = simpleItemVariant(ModItems.DISTRIBUTOR_MODULE.get(), "_pull",
@@ -55,16 +55,16 @@ public class ModItemModelProvider extends ItemModelProvider {
                             modid("item/module/module_layer1"),
                             modid("item/module/" + name));
                 }
-            } else if (item instanceof ItemUpgrade) {
+            } else if (item instanceof UpgradeItem) {
                 simpleItem(item,
                         modid("item/upgrade/upgrade_layer0"),
                         modid("item/upgrade/upgrade_layer1"),
                         modid("item/upgrade/" + name));
-            } else if (item instanceof ItemAugment) {
+            } else if (item instanceof AugmentItem) {
                 simpleItem(item,
                         modid("item/augment/augment_layer0"),
                         modid("item/augment/" + name));
-            } else if (item instanceof ItemSmartFilter) {
+            } else if (item instanceof SmartFilterItem) {
                 simpleItem(item, modid("item/filter/" + name));
             }
         }

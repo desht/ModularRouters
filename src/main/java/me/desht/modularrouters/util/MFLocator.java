@@ -2,8 +2,9 @@ package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.core.ModBlockEntities;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
@@ -87,7 +88,7 @@ public class MFLocator {
     public ItemStack getTargetItem(Player player) {
         if (itemType == ItemType.MODULE) {
             if (hand != null) {
-                return player.getItemInHand(hand).getItem() instanceof ItemModule ? player.getItemInHand(hand) : ItemStack.EMPTY;
+                return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
             } else if (routerPos != null && routerSlot >= 0) {
                 return getInstalledModule(player.level);
             }
@@ -104,7 +105,7 @@ public class MFLocator {
     @Nonnull
     public ItemStack getModuleStack(Player player) {
         if (hand != null) {
-            return player.getItemInHand(hand).getItem() instanceof ItemModule ? player.getItemInHand(hand) : ItemStack.EMPTY;
+            return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
         } else if (routerPos != null) {
             return getInstalledModule(player.level);
         } else {
@@ -113,7 +114,7 @@ public class MFLocator {
     }
 
     public Optional<ModularRouterBlockEntity> getRouter(Level world) {
-        return routerPos == null ? Optional.empty() : ModularRouterBlockEntity.getRouterAt(world, routerPos);
+        return routerPos == null ? Optional.empty() : world.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get());
     }
 
     @Nonnull
@@ -123,9 +124,9 @@ public class MFLocator {
 
     @Nonnull
     private ItemStack getFilterForStack(@Nonnull ItemStack stack) {
-        if (stack.getItem() instanceof ItemSmartFilter) {
+        if (stack.getItem() instanceof SmartFilterItem) {
             return stack;
-        } else if (stack.getItem() instanceof ItemModule && filterSlot >= 0) {
+        } else if (stack.getItem() instanceof ModuleItem && filterSlot >= 0) {
             return new BaseModuleHandler.ModuleFilterHandler(stack, null).getStackInSlot(filterSlot);
         } else {
             return ItemStack.EMPTY;

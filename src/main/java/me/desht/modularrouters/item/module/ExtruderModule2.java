@@ -19,7 +19,7 @@ import java.util.List;
 
 import static me.desht.modularrouters.util.MiscUtil.asFormattable;
 
-public class ExtruderModule2 extends ItemModule implements IRangedModule {
+public class ExtruderModule2 extends ModuleItem implements IRangedModule {
 
     private static final TintColor TINT_COLOR = new TintColor(227, 174, 27);
 

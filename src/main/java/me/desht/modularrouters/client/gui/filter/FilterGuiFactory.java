@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -26,8 +26,8 @@ public class FilterGuiFactory {
      */
     public static void openFilterGui(MFLocator locator) {
         ItemStack filterStack = locator.getTargetItem(Minecraft.getInstance().player);
-        if (filterStack.getItem() instanceof ItemSmartFilter
-                && !((ItemSmartFilter) filterStack.getItem()).hasContainer()
+        if (filterStack.getItem() instanceof SmartFilterItem smartFilterItem
+                && !smartFilterItem.hasContainer()
                 && REGISTRY.containsKey(filterStack.getItem()))
         {
             Minecraft.getInstance().setScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));

@@ -20,7 +20,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RegexFilter extends ItemSmartFilter {
+public class RegexFilter extends SmartFilterItem {
     private static final String NBT_REGEX = "Regex";
     public static final int MAX_SIZE = 6;
 

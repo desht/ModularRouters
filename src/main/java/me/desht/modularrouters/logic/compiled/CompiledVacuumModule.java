@@ -6,7 +6,7 @@ import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
@@ -246,8 +246,8 @@ public class CompiledVacuumModule extends CompiledModule {
         if (router == null) {
             return null;
         }
-        ItemModule.RelativeDirection dir = getDirection();
-        int offset = dir == ItemModule.RelativeDirection.NONE ? 0 : getRange() + 1;
+        ModuleItem.RelativeDirection dir = getDirection();
+        int offset = dir == ModuleItem.RelativeDirection.NONE ? 0 : getRange() + 1;
         Direction facing = router.getAbsoluteFacing(dir);
         GlobalPos gPos = MiscUtil.makeGlobalPos(router.getLevel(), router.getBlockPos().relative(facing, offset));
         return Collections.singletonList(new ModuleTarget(gPos, facing));

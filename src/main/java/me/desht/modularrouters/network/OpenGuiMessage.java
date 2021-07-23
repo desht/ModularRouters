@@ -1,7 +1,7 @@
 package me.desht.modularrouters.network;
 
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -78,21 +78,21 @@ public class OpenGuiMessage {
                         break;
                     case MODULE_HELD:
                         // module held in player's hand
-                        NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf);
+                        NetworkHooks.openGui(player, new ModuleItem.ContainerProvider(player, locator), locator::writeBuf);
                         break;
                     case MODULE_INSTALLED:
                         // module installed in a router
                         locator.getRouter(player.getCommandSenderWorld())
-                                .ifPresent(router -> NetworkHooks.openGui(player, new ItemModule.ContainerProvider(player, locator), locator::writeBuf));
+                                .ifPresent(router -> NetworkHooks.openGui(player, new ModuleItem.ContainerProvider(player, locator), locator::writeBuf));
                         break;
                     case FILTER_HELD:
                         // filter is in a module in player's hand
-                        NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf);
+                        NetworkHooks.openGui(player, new SmartFilterItem.ContainerProvider(player, locator), locator::writeBuf);
                         break;
                     case FILTER_INSTALLED:
                         // filter is in a module in a router
                         locator.getRouter(player.getCommandSenderWorld())
-                                .ifPresent(router -> NetworkHooks.openGui(player, new ItemSmartFilter.ContainerProvider(player, locator), locator::writeBuf));
+                                .ifPresent(router -> NetworkHooks.openGui(player, new SmartFilterItem.ContainerProvider(player, locator), locator::writeBuf));
                         break;
                 }
             }

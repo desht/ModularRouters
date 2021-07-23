@@ -2,6 +2,7 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.core.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
@@ -44,7 +45,7 @@ public class RouterUpgradesSyncMessage {
         ctx.get().enqueueWork(() -> {
             Level w = ClientUtil.theClientWorld();
             if (w != null) {
-                ModularRouterBlockEntity.getRouterAt(w, pos).ifPresent(router -> router.setUpgradesFrom(handler));
+                w.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> router.setUpgradesFrom(handler));
             }
         });
         ctx.get().setPacketHandled(true);

@@ -1,14 +1,14 @@
 package me.desht.modularrouters.item.augment;
 
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
 
-public class RedstoneAugment extends ItemAugment {
+public class RedstoneAugment extends AugmentItem {
     @Override
-    public int getMaxAugments(ItemModule moduleType) {
+    public int getMaxAugments(ModuleItem moduleType) {
         return 1;
     }
 

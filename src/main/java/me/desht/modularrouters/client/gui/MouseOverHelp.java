@@ -124,8 +124,8 @@ public class MouseOverHelp {
     public static void drawMouseOver(GuiContainerEvent.DrawForeground event) {
         // using an event ensures this is done after all subclass drawing is done
         // otherwise help region highlights can obscure text
-        if (event.getGuiContainer() instanceof IMouseOverHelpProvider) {
-            ((IMouseOverHelpProvider) event.getGuiContainer()).getMouseOverHelp().onMouseOver(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
+        if (event.getGuiContainer() instanceof IMouseOverHelpProvider provider) {
+            provider.getMouseOverHelp().onMouseOver(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
         }
     }
 

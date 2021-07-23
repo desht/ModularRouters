@@ -25,7 +25,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ModFilter extends ItemSmartFilter {
+public class ModFilter extends SmartFilterItem {
     private static final String NBT_MODS = "Mods";
     public static final int MAX_SIZE = 6;
 

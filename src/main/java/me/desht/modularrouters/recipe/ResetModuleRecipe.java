@@ -2,7 +2,7 @@ package me.desht.modularrouters.recipe;
 
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.IPickaxeUser;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -18,14 +18,14 @@ public class ResetModuleRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingContainer inv, Level wrldIn) {
-        ItemModule module = null;
+        ModuleItem module = null;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
-                if (module != null || !(stack.getItem() instanceof ItemModule)) {
+                if (module != null || !(stack.getItem() instanceof ModuleItem)) {
                     return false;
                 }
-                module = (ItemModule) stack.getItem();
+                module = (ModuleItem) stack.getItem();
             }
         }
         return module != null;
@@ -36,7 +36,7 @@ public class ResetModuleRecipe extends CustomRecipe {
         ItemStack moduleStack = ItemStack.EMPTY;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (stack.getItem() instanceof ItemModule) {
+            if (stack.getItem() instanceof ModuleItem) {
                 moduleStack = stack;
                 break;
             }

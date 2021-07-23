@@ -22,7 +22,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InspectionFilter extends ItemSmartFilter {
+public class InspectionFilter extends SmartFilterItem {
     private static final String NBT_MATCH_ALL = "MatchAll";
     private static final String NBT_ITEMS = "Items";
     public static final int MAX_SIZE = 6;

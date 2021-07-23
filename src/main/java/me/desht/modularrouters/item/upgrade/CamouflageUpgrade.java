@@ -17,7 +17,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CamouflageUpgrade extends ItemUpgrade {
+public class CamouflageUpgrade extends UpgradeItem {
     public static final String NBT_STATE_NAME = "BlockStateName";
 
     @Override
@@ -83,7 +83,7 @@ public class CamouflageUpgrade extends ItemUpgrade {
 
     private static boolean isBlockOKForCamo(BlockState state) {
         // trying to camo a router as itself = recursion hell
-        return state.getRenderShape() == RenderShape.MODEL && state.getBlock() != ModBlocks.ITEM_ROUTER.get()
+        return state.getRenderShape() == RenderShape.MODEL && state.getBlock() != ModBlocks.MODULAR_ROUTER.get()
                 && !state.getBlock().getRegistryName().getNamespace().equals("chiselsandbits");
     }
 }

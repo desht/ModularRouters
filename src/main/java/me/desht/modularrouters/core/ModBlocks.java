@@ -18,7 +18,7 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModularRouters.MODID);
     public static final DeferredRegister<Item> ITEMS = ModItems.ITEMS;
 
-    public static final RegistryObject<ModularRouterBlock> ITEM_ROUTER = register("item_router", ModularRouterBlock::new);
+    public static final RegistryObject<ModularRouterBlock> MODULAR_ROUTER = register("modular_router", ModularRouterBlock::new);
     public static final RegistryObject<TemplateFrameBlock> TEMPLATE_FRAME = registerNoItem("template_frame", TemplateFrameBlock::new);
 
     private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup) {

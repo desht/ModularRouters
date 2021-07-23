@@ -2,8 +2,8 @@ package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.ItemBase;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.MRBaseItem;
+import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class ItemAugment extends ItemBase {
+public abstract class AugmentItem extends MRBaseItem {
     public static final int SLOTS = 4;
 
-    public ItemAugment() {
+    public AugmentItem() {
         super(ModItems.defaultProps());
     }
 
@@ -28,7 +28,7 @@ public abstract class ItemAugment extends ItemBase {
     protected void addExtraInformation(ItemStack stack, List<Component> list) {
     }
 
-    public abstract int getMaxAugments(ItemModule moduleType);
+    public abstract int getMaxAugments(ModuleItem moduleType);
 
     public String getExtraInfo(int c, ItemStack moduleStack) {
         return "";
@@ -42,21 +42,21 @@ public abstract class ItemAugment extends ItemBase {
         }
 
         public void refresh(ItemStack moduleStack) {
-            Validate.isTrue(moduleStack.getItem() instanceof ItemModule, "item is not a ItemModule: " + moduleStack);
+            Validate.isTrue(moduleStack.getItem() instanceof ModuleItem, "item is not a ItemModule: " + moduleStack);
 
             AugmentHandler h = new AugmentHandler(moduleStack, null);
             counts.clear();
             for (int i = 0; i < h.getSlots(); i++) {
                 ItemStack augmentStack = h.getStackInSlot(i);
-                if (augmentStack.getItem() instanceof ItemAugment) {
+                if (augmentStack.getItem() instanceof AugmentItem) {
                     ResourceLocation k = augmentStack.getItem().getRegistryName();
                     counts.put(k, counts.getOrDefault(k, 0) + augmentStack.getCount());
                 }
             }
         }
 
-        public Collection<ItemAugment> getAugments() {
-            return counts.keySet().stream().map(ForgeRegistries.ITEMS::getValue).map(i -> (ItemAugment)i).collect(Collectors.toList());
+        public Collection<AugmentItem> getAugments() {
+            return counts.keySet().stream().map(ForgeRegistries.ITEMS::getValue).map(i -> (AugmentItem)i).collect(Collectors.toList());
         }
 
         public int getAugmentCount(Item type) {

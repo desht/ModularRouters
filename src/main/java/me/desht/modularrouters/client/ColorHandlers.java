@@ -18,10 +18,10 @@ public class ColorHandlers {
     @SubscribeEvent
     public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
         for (RegistryObject<Item> item : ModItems.ITEMS.getEntries()) {
-            if (item.get() instanceof ModItems.ITintable) {
+            if (item.get() instanceof ModItems.ITintable tintable) {
                 event.getItemColors().register((stack, tintIndex) -> switch (tintIndex) {
                     case 0, 2 -> TintColor.WHITE.getRGB();
-                    case 1 -> ((ModItems.ITintable) stack.getItem()).getItemTint().getRGB();
+                    case 1 -> tintable.getItemTint().getRGB();
                     default -> TintColor.BLACK.getRGB();  // shouldn't get here
                 }, item.get());
             }
@@ -38,6 +38,6 @@ public class ColorHandlers {
             } else {
                 return 0xffffff;
             }
-        }, ModBlocks.ITEM_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
+        }, ModBlocks.MODULAR_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
     }
 }

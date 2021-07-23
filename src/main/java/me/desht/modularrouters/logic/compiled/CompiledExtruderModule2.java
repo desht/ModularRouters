@@ -1,8 +1,8 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.block.tile.TemplateFrameBlockEntity;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.BlockUtil;
@@ -57,7 +57,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 BlockPos placePos = router.getBlockPos().relative(getFacing(), distance + 1);
                 BlockState state = ModBlocks.TEMPLATE_FRAME.get().defaultBlockState();
                 if (BlockUtil.tryPlaceBlock(router, state, world, placePos)) {
-                    TemplateFrameBlockEntity.getTemplateFrame(world, placePos).ifPresent(te -> {
+                    world.getBlockEntity(placePos, ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
                         te.setCamouflage(blockList.get(distance), getFacing(), getRouterFacing());
                         te.setExtendedMimic(mimic);
                         if (mimic) {

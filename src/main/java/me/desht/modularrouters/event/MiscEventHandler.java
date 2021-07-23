@@ -2,10 +2,10 @@ package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.TemplateFrameBlock;
-import me.desht.modularrouters.block.tile.TemplateFrameBlockEntity;
 import me.desht.modularrouters.container.handler.AugmentHandler;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.item.IPlayerOwned;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +26,7 @@ public class MiscEventHandler {
         if (event.getPos() != null) {
             BlockState state = event.getPlayer().getCommandSenderWorld().getBlockState(event.getPos());
             if (state.getBlock() instanceof TemplateFrameBlock) {
-                TemplateFrameBlockEntity.getTemplateFrame(event.getPlayer().getCommandSenderWorld(), event.getPos()).ifPresent(te -> {
+                event.getPlayer().getCommandSenderWorld().getBlockEntity(event.getPos(), ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
                     if (te.getCamouflage() != null && te.extendedMimic()) {
                         BlockState camoState = te.getCamouflage();
                         // note: passing getPos() here would cause an infinite event loop
@@ -40,10 +40,10 @@ public class MiscEventHandler {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         ItemStack stack = event.getCrafting();
-        if (event.getCrafting().getItem() instanceof IPlayerOwned) {
+        if (event.getCrafting().getItem() instanceof IPlayerOwned playerOwned) {
             // player-owned items get tagged with the creator's name & ID
-            ((IPlayerOwned) stack.getItem()).setOwner(stack, event.getPlayer());
-        } else if (stack.getItem() instanceof ItemModule) {
+            playerOwned.setOwner(stack, event.getPlayer());
+        } else if (stack.getItem() instanceof ModuleItem) {
             // if self-crafting a module to reset it; retrieve any augments in the module
             ItemStack moduleStack = ItemStack.EMPTY;
             for (int i = 0; i < event.getInventory().getContainerSize(); i++) {

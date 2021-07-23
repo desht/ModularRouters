@@ -4,9 +4,9 @@ import me.desht.modularrouters.item.module.*;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
 
-public class StackAugment extends ItemAugment {
+public class StackAugment extends AugmentItem {
     @Override
-    public int getMaxAugments(ItemModule moduleType) {
+    public int getMaxAugments(ModuleItem moduleType) {
         return moduleType instanceof DetectorModule
                 || moduleType instanceof ExtruderModule1 || moduleType instanceof ExtruderModule2
                 || moduleType instanceof BreakerModule || moduleType instanceof PlacerModule

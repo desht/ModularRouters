@@ -41,7 +41,7 @@ public class BufferHandler extends ItemStackHandler {
 
         if (newFluidCap != hasFluidCap || newEnergyCap != hasEnergyCap) {
             // in case any pipes/cables need to connect/disconnect
-            router.getLevel().updateNeighborsAt(router.getBlockPos(), ModBlocks.ITEM_ROUTER.get());
+            router.getLevel().updateNeighborsAt(router.getBlockPos(), ModBlocks.MODULAR_ROUTER.get());
         }
         hasFluidCap = newFluidCap;
         hasEnergyCap = newEnergyCap;

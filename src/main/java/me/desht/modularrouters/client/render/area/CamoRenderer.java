@@ -47,7 +47,7 @@ public enum CamoRenderer {
     }
 
     private static boolean playerHoldingRouter(Player player) {
-        Item router = ModBlocks.ITEM_ROUTER.get().asItem();
+        Item router = ModBlocks.MODULAR_ROUTER.get().asItem();
         return player.getMainHandItem().getItem() == router || player.getOffhandItem().getItem() == router;
     }
 

@@ -11,7 +11,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -20,7 +19,6 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflageable {
     private static final String NBT_CAMO_NAME = "CamouflageName";
@@ -31,11 +29,6 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
 
     public TemplateFrameBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.TEMPLATE_FRAME.get(), pos, state);
-    }
-
-    public static Optional<TemplateFrameBlockEntity> getTemplateFrame(BlockGetter world, BlockPos pos) {
-        BlockEntity te = world.getBlockEntity(pos);
-        return te instanceof TemplateFrameBlockEntity ? Optional.of((TemplateFrameBlockEntity) te) : Optional.empty();
     }
 
     @Override

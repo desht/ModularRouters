@@ -33,7 +33,7 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class GuiModuleFluid extends GuiModule {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
-    private static final ItemStack routerStack = new ItemStack(ModBlocks.ITEM_ROUTER.get());
+    private static final ItemStack routerStack = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
     private static final ItemStack waterStack = new ItemStack(Items.WATER_BUCKET);
 
     private ForceEmptyButton forceEmptyButton;

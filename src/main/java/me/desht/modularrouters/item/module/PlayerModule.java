@@ -21,7 +21,7 @@ import net.minecraft.world.item.context.UseOnContext;
 
 import java.util.List;
 
-public class PlayerModule extends ItemModule implements IPlayerOwned {
+public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
     private static final TintColor TINT_COLOR = new TintColor(255, 208, 144);
 

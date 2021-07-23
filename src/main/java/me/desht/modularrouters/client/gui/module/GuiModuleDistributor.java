@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GuiModuleDistributor extends GuiModule {
-    private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.ITEM_ROUTER.get());
+    private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
 
     private StrategyButton sb;
     private DirectionButton db;

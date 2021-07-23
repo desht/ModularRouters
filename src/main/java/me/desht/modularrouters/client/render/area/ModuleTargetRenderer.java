@@ -56,11 +56,7 @@ public class ModuleTargetRenderer {
     }
 
     private static IPositionProvider getPositionProvider(ItemStack stack) {
-        if (stack.getItem() instanceof IPositionProvider) {
-            return (IPositionProvider) stack.getItem();
-        } else {
-            return null;
-        }
+        return stack.getItem() instanceof IPositionProvider pp ? pp : null;
     }
 
     private static void render(MultiBufferSource.BufferSource buffer, PoseStack matrixStack, ModuleTargetRenderer.CompiledPosition cp) {

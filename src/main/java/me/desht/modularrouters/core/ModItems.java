@@ -88,7 +88,7 @@ public class ModItems {
     static final CreativeModeTab MR_CREATIVE_TAB = new CreativeModeTab(ModularRouters.MODID) {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModBlocks.ITEM_ROUTER.get());
+            return new ItemStack(ModBlocks.MODULAR_ROUTER.get());
         }
     };
 

@@ -6,7 +6,7 @@ import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule2;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -50,7 +50,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     @Override
     public boolean isItemValidForFilter(ItemStack stack) {
         // only fluid-holding items or a smart filter item can go into a fluid module's filter
-        if (stack.isEmpty() || stack.getItem() instanceof ItemSmartFilter) return true;
+        if (stack.isEmpty() || stack.getItem() instanceof SmartFilterItem) return true;
         if (stack.getCount() > 1) return false;
 
         return FluidUtil.getFluidContained(stack).map(fluidStack -> !fluidStack.isEmpty()).orElse(false);

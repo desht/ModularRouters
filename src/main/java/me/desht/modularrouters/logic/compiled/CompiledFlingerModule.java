@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.core.BlockPos;
@@ -73,7 +73,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
 
     @Override
     protected void setupItemVelocity(ModularRouterBlockEntity router, ItemEntity item) {
-        Direction routerFacing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
+        Direction routerFacing = router.getAbsoluteFacing(ModuleItem.RelativeDirection.FRONT);
         float basePitch = 0.0f;
         float baseYaw;
         switch (getDirection()) {

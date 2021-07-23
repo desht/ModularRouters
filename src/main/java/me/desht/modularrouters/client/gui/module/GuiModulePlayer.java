@@ -28,7 +28,7 @@ public class GuiModulePlayer extends GuiModule {
     private static final ItemStack ARMOUR_STACK = new ItemStack(Items.DIAMOND_CHESTPLATE);
     private static final ItemStack OFFHAND_STACK = new ItemStack(Items.SHIELD);
     private static final ItemStack ENDER_STACK = new ItemStack(Blocks.ENDER_CHEST);
-    private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.ITEM_ROUTER.get());
+    private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
 
     private static final ItemStack[] STACKS = new ItemStack[] {
             MAIN_INV_STACK, MAIN_NO_HOTBAR_INV_STACK, ARMOUR_STACK, OFFHAND_STACK, ENDER_STACK

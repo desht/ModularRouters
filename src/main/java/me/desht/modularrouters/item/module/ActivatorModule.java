@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class ActivatorModule extends ItemModule {
+public class ActivatorModule extends ModuleItem {
     private static final TintColor TINT_COLOR = new TintColor(255, 255, 195);
 
     public ActivatorModule() {

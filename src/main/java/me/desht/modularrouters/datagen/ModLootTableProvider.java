@@ -50,7 +50,7 @@ public class ModLootTableProvider extends LootTableProvider {
     private static class BlockLootTable extends BlockLoot {
         @Override
         protected void addTables() {
-            Block router = ModBlocks.ITEM_ROUTER.get();
+            Block router = ModBlocks.MODULAR_ROUTER.get();
             LootPool.Builder builder = LootPool.lootPool()
                     .name(router.getRegistryName().getPath())
                     .when(ExplosionCondition.survivesExplosion())
@@ -68,7 +68,7 @@ public class ModLootTableProvider extends LootTableProvider {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return Collections.singletonList(ModBlocks.ITEM_ROUTER.get());
+            return Collections.singletonList(ModBlocks.MODULAR_ROUTER.get());
         }
     }
 }

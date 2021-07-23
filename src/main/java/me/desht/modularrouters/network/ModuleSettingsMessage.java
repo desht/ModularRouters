@@ -2,7 +2,8 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.core.ModBlockEntities;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -43,13 +44,13 @@ public class ModuleSettingsMessage {
             if (player != null) {
                 ItemStack moduleStack = locator.getModuleStack(player);
 
-                if (moduleStack.getItem() instanceof ItemModule) {
+                if (moduleStack.getItem() instanceof ModuleItem) {
                     CompoundTag compound = ModuleHelper.validateNBT(moduleStack);
                     for (String key : payload.getAllKeys()) {
                         compound.put(key, payload.get(key));
                     }
                     if (locator.routerPos != null) {
-                        ModularRouterBlockEntity.getRouterAt(player.getCommandSenderWorld(), locator.routerPos)
+                        player.getCommandSenderWorld().getBlockEntity(locator.routerPos, ModBlockEntities.MODULAR_ROUTER.get())
                                 .ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES));
                     }
                 } else {

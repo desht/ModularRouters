@@ -5,7 +5,7 @@ import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
 
-public class SpeedUpgrade extends ItemUpgrade {
+public class SpeedUpgrade extends UpgradeItem {
     @Override
     public Object[] getExtraUsageParams() {
         int maxUseful = (int) Math.ceil((MRConfig.Common.Router.baseTickRate - MRConfig.Common.Router.hardMinTickRate) / (double) MRConfig.Common.Router.ticksPerUpgrade);

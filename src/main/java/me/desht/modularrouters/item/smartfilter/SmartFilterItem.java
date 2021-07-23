@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.smartfilter;
 import me.desht.modularrouters.client.gui.filter.FilterGuiFactory;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.ItemBase;
+import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class ItemSmartFilter extends ItemBase {
-    public ItemSmartFilter() {
+public abstract class SmartFilterItem extends MRBaseItem {
+    public SmartFilterItem() {
         super(ModItems.defaultProps());
     }
 
@@ -68,7 +68,7 @@ public abstract class ItemSmartFilter extends ItemBase {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        ItemSmartFilter filter = (ItemSmartFilter) stack.getItem();
+        SmartFilterItem filter = (SmartFilterItem) stack.getItem();
         MFLocator loc = MFLocator.heldFilter(hand);
         if (!world.isClientSide && filter.hasContainer()) {
             NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(player, loc), loc::writeBuf);
@@ -95,7 +95,7 @@ public abstract class ItemSmartFilter extends ItemBase {
         @Nullable
         @Override
         public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-            return ((ItemSmartFilter) filterStack.getItem()).createContainer(windowId, playerInventory, loc);
+            return ((SmartFilterItem) filterStack.getItem()).createContainer(windowId, playerInventory, loc);
         }
     }
 }

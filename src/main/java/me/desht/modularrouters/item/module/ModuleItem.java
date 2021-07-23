@@ -12,10 +12,10 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.ItemBase;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.MRBaseItem;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.augment.AugmentItem.AugmentCounter;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
@@ -55,7 +55,7 @@ import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public abstract class ItemModule extends ItemBase implements ModItems.ITintable {
+public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintable {
     public enum ModuleFlags {
         BLACKLIST(true, 0x1, "F_blacklist", 0),
         IGNORE_DAMAGE(false, 0x2, "F_ignoreDamage", 32),
@@ -160,7 +160,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     final BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler;
 
-    public ItemModule(Properties props, BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler) {
+    public ModuleItem(Properties props, BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler) {
         super(props);
         this.compiler = compiler;
     }
@@ -294,7 +294,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     private void addAugmentInformation(ItemStack stack, List<Component> list) {
         AugmentCounter c = new AugmentCounter(stack);
         List<Component> toAdd = Lists.newArrayList();
-        for (ItemAugment augment : c.getAugments()) {
+        for (AugmentItem augment : c.getAugments()) {
             int n = c.getAugmentCount(augment);
             if (n > 0) {
                 ItemStack augmentStack = new ItemStack(augment);
@@ -334,8 +334,8 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack, null);
         for (int i = 0; i < filterHandler.getSlots(); i++) {
             ItemStack s = filterHandler.getStackInSlot(i);
-            if (s.getItem() instanceof ItemSmartFilter) {
-                int size = ((ItemSmartFilter) s.getItem()).getSize(s);
+            if (s.getItem() instanceof SmartFilterItem) {
+                int size = ((SmartFilterItem) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
                 l2.add(new TextComponent(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
                         .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
@@ -409,7 +409,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         @Nullable
         @Override
         public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-            return ((ItemModule)moduleStack.getItem()).createContainer(windowId, playerInventory, loc);
+            return ((ModuleItem)moduleStack.getItem()).createContainer(windowId, playerInventory, loc);
         }
     }
 }

@@ -22,7 +22,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        String routerName = ModBlocks.ITEM_ROUTER.get().getRegistryName().getPath();
+        String routerName = ModBlocks.MODULAR_ROUTER.get().getRegistryName().getPath();
         models().withExistingParent(routerName,"block/block")
                 .texture("back", modid("block/%s_back", routerName))
                 .texture("side", modid("block/%s_side", routerName))
@@ -42,7 +42,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         ModelFile routerOn = models().withExistingParent(routerName + "_on", modid("block/%s", routerName))
                 .texture("front", modid("block/%s_front_active", routerName));
 
-        VariantBlockStateBuilder.PartialBlockstate builder = getVariantBuilder(ModBlocks.ITEM_ROUTER.get()).partialState();
+        VariantBlockStateBuilder.PartialBlockstate builder = getVariantBuilder(ModBlocks.MODULAR_ROUTER.get()).partialState();
         for (Direction d : HORIZONTALS) {
             builder.with(ModularRouterBlock.ACTIVE, false).with(ModularRouterBlock.FACING, d)
                     .setModels(new ConfiguredModel(routerOff, 0, getYRotation(d), false));
@@ -52,7 +52,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         simpleBlock(ModBlocks.TEMPLATE_FRAME.get());
 
-        simpleBlockItem(ModBlocks.ITEM_ROUTER.get(), routerOff);
+        simpleBlockItem(ModBlocks.MODULAR_ROUTER.get(), routerOff);
     }
 
     private int getYRotation(Direction d) {

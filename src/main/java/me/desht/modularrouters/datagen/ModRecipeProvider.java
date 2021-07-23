@@ -27,7 +27,7 @@ public class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
-        shaped(ModBlocks.ITEM_ROUTER.get(), 4, Items.IRON_INGOT,
+        shaped(ModBlocks.MODULAR_ROUTER.get(), 4, Items.IRON_INGOT,
                 "IBI/BMB/IBI",
                 'I', Tags.Items.INGOTS_IRON,
                 'M', ModItems.BLANK_MODULE.get(),

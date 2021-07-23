@@ -13,7 +13,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterSettingsMessage;
@@ -120,8 +120,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         energyUsage = 0;
         for (int i = MODULE_START; i < MODULE_END; i++) {
             ItemStack stack = menu.getSlot(i).getItem();
-            if (stack.getItem() instanceof ItemModule) {
-                energyUsage += ((ItemModule) stack.getItem()).getEnergyCost(stack);
+            if (stack.getItem() instanceof ModuleItem moduleItem) {
+                energyUsage += moduleItem.getEnergyCost(stack);
             }
         }
 
@@ -136,7 +136,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     private boolean handleModuleConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || !(slot.getItem().getItem() instanceof ItemModule) || slot.index < MODULE_START || slot.index > MODULE_END) {
+        if (slot == null || !(slot.getItem().getItem() instanceof ModuleItem) || slot.index < MODULE_START || slot.index > MODULE_END) {
             return false;
         }
         MFLocator locator = MFLocator.moduleInRouter(menu.getRouter().getBlockPos(), slot.index - MODULE_START);

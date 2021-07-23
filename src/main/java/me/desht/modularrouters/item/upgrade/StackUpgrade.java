@@ -4,7 +4,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 
-public class StackUpgrade extends ItemUpgrade {
+public class StackUpgrade extends UpgradeItem {
     @Override
     public Object[] getExtraUsageParams() {
         ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();

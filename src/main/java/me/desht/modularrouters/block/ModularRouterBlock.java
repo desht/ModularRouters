@@ -2,6 +2,7 @@ package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
@@ -98,7 +99,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
     @Override
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            ModularRouterBlockEntity.getRouterAt(world, pos).ifPresent(router -> {
+            world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
                 InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
                 world.updateNeighbourForOutputSignal(pos, this);
                 super.onRemove(state, world, pos, newState, isMoving);
@@ -113,7 +114,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
 
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos pos) {
-        return ModularRouterBlockEntity.getRouterAt(world, pos)
+        return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
                 .map(router -> ItemHandlerHelper.calcRedstoneFromInventory(router.getBuffer()))
                 .orElse(0);
     }
@@ -182,7 +183,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockRayTraceResult) {
         if (!player.isSteppingCarefully()) {
-            return ModularRouterBlockEntity.getRouterAt(world, pos).map(router -> {
+            return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).map(router -> {
                 if (router.isPermitted(player) && !world.isClientSide) {
                     // TODO combine into one packet?
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterSettingsMessage(router));
@@ -205,7 +206,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        return ModularRouterBlockEntity.getRouterAt(blockAccess, pos).map(router -> {
+        return blockAccess.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).map(router -> {
             int l = router.getRedstoneLevel(side, false);
             return l < 0 ? super.getSignal(blockState, blockAccess, pos, side) : l;
         }).orElse(0);
@@ -213,7 +214,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
 
     @Override
     public int getDirectSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        return ModularRouterBlockEntity.getRouterAt(blockAccess, pos).map(router -> {
+        return blockAccess.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).map(router -> {
             int l = router.getRedstoneLevel(side, true);
             return l < 0 ? super.getDirectSignal(blockState, blockAccess, pos, side) : l;
         }).orElse(0);
@@ -226,7 +227,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
 
     @Override
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean b) {
-        ModularRouterBlockEntity.getRouterAt(worldIn, pos).ifPresent(router -> {
+        worldIn.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
             router.checkForRedstonePulse();
             router.notifyModules();
         });
@@ -234,14 +235,14 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
 
     @Override
     public boolean canEntityDestroy(BlockState state, BlockGetter world, BlockPos pos, Entity entity) {
-        return ModularRouterBlockEntity.getRouterAt(world, pos)
+        return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
                 .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) <= 0 && super.canEntityDestroy(state, world, pos, entity))
                 .orElse(true);
     }
 
     @Override
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
-        return ModularRouterBlockEntity.getRouterAt(world, pos)
+        return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
                 .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) > 0 ? 20000f : BLAST_RESISTANCE)
                 .orElse(0f);
     }

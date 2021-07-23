@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class FluidUpgrade extends ItemUpgrade {
+public class FluidUpgrade extends UpgradeItem {
     @Override
     public Object[] getExtraUsageParams() {
         return new Object[] { MRConfig.Common.Router.mBperFluidUpgade };

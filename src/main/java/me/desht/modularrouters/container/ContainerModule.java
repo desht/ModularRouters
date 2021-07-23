@@ -4,8 +4,8 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
-import me.desht.modularrouters.item.augment.ItemAugment;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,7 +23,7 @@ import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
 public class ContainerModule extends ContainerMRBase {
     public static final int AUGMENT_START = Filter.FILTER_SIZE;
-    private static final int INV_START = AUGMENT_START + ItemAugment.SLOTS;
+    private static final int INV_START = AUGMENT_START + AugmentItem.SLOTS;
     private static final int INV_END = INV_START + 26;
     private static final int HOTBAR_START = INV_END + 1;
     private static final int HOTBAR_END = HOTBAR_START + 8;
@@ -64,7 +64,7 @@ public class ContainerModule extends ContainerMRBase {
         }
 
         // slots for the augments
-        for (int i = 0; i < ItemAugment.SLOTS; i++) {
+        for (int i = 0; i < AugmentItem.SLOTS; i++) {
             addSlot(new SlotItemHandler(augmentHandler, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)));
         }
 
@@ -111,7 +111,7 @@ public class ContainerModule extends ContainerMRBase {
             if (index < AUGMENT_START) {
                 // shift-clicking in a filter slot: clear it from the filter
                 srcSlot.set(ItemStack.EMPTY);
-            } else if (index < AUGMENT_START + ItemAugment.SLOTS) {
+            } else if (index < AUGMENT_START + AugmentItem.SLOTS) {
                 // shift-clicking in augment slots
                 ItemStack stackInSlot = srcSlot.getItem();
                 if (!moveItemStackTo(stackInSlot, INV_START, HOTBAR_END + 1, false)) {
@@ -122,9 +122,9 @@ public class ContainerModule extends ContainerMRBase {
             } else if (index <= HOTBAR_END) {
                 // shift-clicking in player inventory
                 ItemStack stackInSlot = srcSlot.getItem();
-                if (stackInSlot.getItem() instanceof ItemAugment && augmentHandler.getHolderStack().getCount() == 1) {
+                if (stackInSlot.getItem() instanceof AugmentItem && augmentHandler.getHolderStack().getCount() == 1) {
                     // copy augment items into one of the augment slots if possible
-                    if (!moveItemStackTo(stackInSlot, AUGMENT_START, AUGMENT_START + ItemAugment.SLOTS, false)) {
+                    if (!moveItemStackTo(stackInSlot, AUGMENT_START, AUGMENT_START + AugmentItem.SLOTS, false)) {
                         return ItemStack.EMPTY;
                     }
                     broadcastChanges();
@@ -164,7 +164,7 @@ public class ContainerModule extends ContainerMRBase {
             slotClickExtraSlot(slot, dragType, clickTypeIn, player);
             return;
         }
-        if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() > 1) {
+        if (slot >= AUGMENT_START && slot < AUGMENT_START + AugmentItem.SLOTS && augmentHandler.getHolderStack().getCount() > 1) {
             // prevent augment dupe
             return;
         }
@@ -183,13 +183,13 @@ public class ContainerModule extends ContainerMRBase {
                         s.set(stackOnCursor.isEmpty() ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stackOnCursor, 1));
                     }
                     return;
-                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + AugmentItem.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     forceUpdate = true;
                 }
             case THROW:
                 if (slot >= 0 && slot < Filter.FILTER_SIZE) {
                     return;
-                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
+                } else if (slot >= AUGMENT_START && slot < AUGMENT_START + AugmentItem.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     forceUpdate = true;
                 }
         }
@@ -204,7 +204,7 @@ public class ContainerModule extends ContainerMRBase {
     private boolean isItemOKForFilter(ItemStack stack, int slot) {
         if (filterHandler.isItemValid(slot, stack)) {
             for (int i = 0; i < filterHandler.getSlots(); i++) {
-                if (filterHandler.getStackInSlot(i).getItem() == stack.getItem() && !(stack.getItem() instanceof ItemSmartFilter)) {
+                if (filterHandler.getStackInSlot(i).getItem() == stack.getItem() && !(stack.getItem() instanceof SmartFilterItem)) {
                     return false;
                 }
             }

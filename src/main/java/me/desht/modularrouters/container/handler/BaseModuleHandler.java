@@ -2,7 +2,7 @@ package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -86,7 +86,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
 
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-            return ((ItemModule) getHolderStack().getItem()).isItemValidForFilter(stack);
+            return ((ModuleItem) getHolderStack().getItem()).isItemValidForFilter(stack);
         }
     }
 }

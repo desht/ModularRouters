@@ -11,6 +11,6 @@ public interface ICamouflageable {
     default void setExtendedMimic(boolean mimic) {}
 
     static boolean isCamouflaged(BlockEntity te) {
-        return te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null;
+        return te instanceof ICamouflageable c && c.getCamouflage() != null;
     }
 }

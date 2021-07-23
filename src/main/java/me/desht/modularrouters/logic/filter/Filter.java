@@ -2,9 +2,9 @@ package me.desht.modularrouters.logic.filter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
-import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.module.ModuleItem.ModuleFlags;
+import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -36,7 +36,7 @@ public class Filter implements Predicate<ItemStack> {
     public Filter(ItemStack moduleStack, boolean storeRaw, boolean roundRobin) {
         this.roundRobin = roundRobin;
         this.rrCounter = roundRobin ? ModuleHelper.getRoundRobinCounter(moduleStack) : 0;
-        if (moduleStack.getItem() instanceof ItemModule && moduleStack.hasTag()) {
+        if (moduleStack.getItem() instanceof ModuleItem && moduleStack.hasTag()) {
             flags = new Flags(moduleStack);
             matchAll = ModuleHelper.isMatchAll(moduleStack);
             ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, null);
@@ -61,10 +61,10 @@ public class Filter implements Predicate<ItemStack> {
 
     @Nonnull
     private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack) {
-        if (filterStack.getItem() instanceof ItemSmartFilter) {
-            return ((ItemSmartFilter) filterStack.getItem()).compile(filterStack, moduleStack);
+        if (filterStack.getItem() instanceof SmartFilterItem) {
+            return ((SmartFilterItem) filterStack.getItem()).compile(filterStack, moduleStack);
         } else {
-            return ((ItemModule) moduleStack.getItem()).getFilterItemMatcher(filterStack);
+            return ((ModuleItem) moduleStack.getItem()).getFilterItemMatcher(filterStack);
         }
     }
 
@@ -130,7 +130,7 @@ public class Filter implements Predicate<ItemStack> {
         private final boolean ignoreTags;
 
         public Flags(ItemStack moduleStack) {
-            Validate.isTrue(moduleStack.getItem() instanceof ItemModule);
+            Validate.isTrue(moduleStack.getItem() instanceof ModuleItem);
             blacklist = ModuleHelper.isBlacklist(moduleStack);
             ignoreDamage = ModuleHelper.ignoreDamage(moduleStack);
             ignoreNBT = ModuleHelper.ignoreNBT(moduleStack);

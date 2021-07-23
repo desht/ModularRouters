@@ -15,11 +15,11 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.event.TickEventHandler;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule1;
-import me.desht.modularrouters.item.module.ItemModule;
-import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
+import me.desht.modularrouters.item.module.ModuleItem;
+import me.desht.modularrouters.item.module.ModuleItem.RelativeDirection;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
 import me.desht.modularrouters.item.upgrade.SecurityUpgrade;
+import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -54,7 +54,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -159,7 +158,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private RouterFakePlayer fakePlayer;
 
     public ModularRouterBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ITEM_ROUTER.get(), pos, state);
+        super(ModBlockEntities.MODULAR_ROUTER.get(), pos, state);
     }
 
     public IItemHandler getBuffer() {
@@ -432,9 +431,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private GameProfile getOwner() {
         for (int i = 0; i < getUpgrades().getSlots(); i++) {
             ItemStack stack = getUpgrades().getStackInSlot(i);
-            if (stack.getItem() instanceof SecurityUpgrade) {
-                String name = ((SecurityUpgrade) stack.getItem()).getOwnerName(stack);
-                UUID id = ((SecurityUpgrade) stack.getItem()).getOwnerID(stack);
+            if (stack.getItem() instanceof SecurityUpgrade securityUpgrade) {
+                String name = securityUpgrade.getOwnerName(stack);
+                UUID id = securityUpgrade.getOwnerID(stack);
                 if (id != null || name != null) {
                     return new GameProfile(id, name);
                 }
@@ -465,10 +464,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                         });
                         getEnergyStorage().extractEnergy(cm.getEnergyCost(), false);
                         newActive = true;
-                        if (cm.termination() == ItemModule.Termination.RAN) {
+                        if (cm.termination() == ModuleItem.Termination.RAN) {
                             break;
                         }
-                    } else if (cm.termination() == ItemModule.Termination.NOT_RAN) {
+                    } else if (cm.termination() == ModuleItem.Termination.NOT_RAN) {
                         break;
                     }
             }
@@ -594,8 +593,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             careAboutItemAttributes = false;
             for (int i = 0; i < N_MODULE_SLOTS; i++) {
                 ItemStack stack = modulesHandler.getStackInSlot(i);
-                if (stack.getItem() instanceof ItemModule) {
-                    CompiledModule cms = ((ItemModule) stack.getItem()).compile(this, stack);
+                if (stack.getItem() instanceof ModuleItem moduleItem) {
+                    CompiledModule cms = moduleItem.compile(this, stack);
                     compiledModules.add(new CompiledIndexedModule(cms, i));
                     cms.onCompiled(this);
                     newSidesOpen |= cms.getDirection().getMask();
@@ -616,9 +615,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             tunedSyncValue = -1;
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
-                if (stack.getItem() instanceof ItemUpgrade) {
+                if (stack.getItem() instanceof UpgradeItem upgradeItem) {
                     upgradeCount.put(stack.getItem().getRegistryName(), getUpgradeCount(stack.getItem()) + stack.getCount());
-                    ((ItemUpgrade) stack.getItem()).onCompiled(stack, this);
+                    upgradeItem.onCompiled(stack, this);
                 }
             }
 
@@ -641,11 +640,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     private void notifyWatchingPlayers() {
-        for (Player player : level.getEntitiesOfClass(Player.class, new AABB(getBlockPos()).inflate(5))) {
-            if (player.containerMenu instanceof ContainerItemRouter) {
-                if (((ContainerItemRouter) player.containerMenu).getRouter() == this) {
-                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(this));
-                }
+        for (Player player : level.players()) {
+            if (player.containerMenu instanceof ContainerItemRouter c && c.getRouter() == this) {
+                PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(this));
             }
         }
     }
@@ -890,11 +887,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return extData;
     }
 
-    public static Optional<ModularRouterBlockEntity> getRouterAt(BlockGetter world, BlockPos routerPos) {
-        BlockEntity te = world.getBlockEntity(routerPos);
-        return te instanceof ModularRouterBlockEntity ? Optional.of((ModularRouterBlockEntity) te) : Optional.empty();
-    }
-
     public void playSound(Player player, BlockPos pos, SoundEvent sound, SoundSource category, float volume, float pitch) {
         if (getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
             getLevel().playSound(player, pos, sound, category, volume, pitch);
@@ -1040,13 +1032,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     class ModuleHandler extends RouterItemHandler {
         ModuleHandler() {
-            super(ModularRouterBlockEntity.COMPILE_MODULES, getModuleSlotCount(), s -> s.getItem() instanceof ItemModule);
+            super(ModularRouterBlockEntity.COMPILE_MODULES, getModuleSlotCount(), s -> s.getItem() instanceof ModuleItem);
         }
     }
 
     class UpgradeHandler extends RouterItemHandler {
         UpgradeHandler() {
-            super(ModularRouterBlockEntity.COMPILE_UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof ItemUpgrade);
+            super(ModularRouterBlockEntity.COMPILE_UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof UpgradeItem);
         }
 
         @Override
@@ -1060,8 +1052,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-            if (!(stack.getItem() instanceof ItemUpgrade)) return 0;
-            return ((ItemUpgrade) stack.getItem()).getStackLimit(slot);
+            if (!(stack.getItem() instanceof UpgradeItem)) return 0;
+            return ((UpgradeItem) stack.getItem()).getStackLimit(slot);
         }
     }
 
@@ -1117,7 +1109,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             maxExtract = maxReceive = MRConfig.Common.Router.feXferPerEnergyUpgrade * nEnergyUpgrades;
             if (oldCapacity == 0 && capacity != 0 || oldCapacity != 0 && capacity == 0) {
                 // in case any pipes/cables need to connect/disconnect
-                getLevel().updateNeighborsAt(getBlockPos(), ModBlocks.ITEM_ROUTER.get());
+                getLevel().updateNeighborsAt(getBlockPos(), ModBlocks.MODULAR_ROUTER.get());
             }
         }
 

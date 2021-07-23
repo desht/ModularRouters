@@ -14,8 +14,8 @@ import java.util.function.Supplier;
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ModularRouters.MODID);
 
-    public static final RegistryObject<BlockEntityType<ModularRouterBlockEntity>> ITEM_ROUTER
-            = register("item_router", () -> new BlockEntityType<>(ModularRouterBlockEntity::new, ImmutableSet.of(ModBlocks.ITEM_ROUTER.get()), null));
+    public static final RegistryObject<BlockEntityType<ModularRouterBlockEntity>> MODULAR_ROUTER
+            = register("modular_router", () -> new BlockEntityType<>(ModularRouterBlockEntity::new, ImmutableSet.of(ModBlocks.MODULAR_ROUTER.get()), null));
     public static final RegistryObject<BlockEntityType<TemplateFrameBlockEntity>> TEMPLATE_FRAME
             = register("template_frame", () -> new BlockEntityType<>(TemplateFrameBlockEntity::new, ImmutableSet.of(ModBlocks.TEMPLATE_FRAME.get()), null));
 

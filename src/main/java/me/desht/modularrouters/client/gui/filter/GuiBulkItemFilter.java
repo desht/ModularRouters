@@ -8,7 +8,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.container.ContainerSmartFilter;
-import me.desht.modularrouters.item.module.ItemModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -57,7 +57,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
             // in a module in a router; add buttons to merge/load the module's target inventory
             ItemStack moduleStack = locator.getModuleStack(Minecraft.getInstance().player);
             ModularRouterBlockEntity router = menu.getRouter();
-            CompiledModule cm = ((ItemModule) moduleStack.getItem()).compile(router, moduleStack);
+            CompiledModule cm = ((ModuleItem) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
             if (target.hasItemHandlerClientSide()) {
                 addRenderableWidget(new MergeButton(leftPos + 28, topPos + 130, target.toString(),

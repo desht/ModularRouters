@@ -6,7 +6,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule1;
 import net.minecraft.world.item.ItemStack;
 
-public class SenderModule1 extends ItemModule implements IRangedModule {
+public class SenderModule1 extends ModuleItem implements IRangedModule {
 
     private static final TintColor TINT_COLOR = new TintColor(221, 255, 163);
 

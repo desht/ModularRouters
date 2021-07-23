@@ -1,7 +1,7 @@
 package me.desht.modularrouters.integration.waila;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.item.upgrade.ItemUpgrade;
+import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +31,7 @@ public class RouterDataProvider /*implements IServerDataProvider<BlockEntity>*/ 
         Map<Item, Integer> counts = new HashMap<>();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
-            if (stack.getItem() instanceof ItemUpgrade) {
+            if (stack.getItem() instanceof UpgradeItem) {
                 counts.put(stack.getItem(), counts.getOrDefault(stack.getItem(), 0) + stack.getCount());
             }
         }
