@@ -2,7 +2,7 @@ package me.desht.modularrouters.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.gui.GuiItemRouter;
+import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.filter.*;
 import me.desht.modularrouters.client.gui.module.*;
@@ -57,8 +57,8 @@ public class ClientSetup {
         });
 
         BlockEntityRenderers.register(ModBlockEntities.MODULAR_ROUTER.get(), ItemBeamTileRenderer::new);
-        FilterGuiFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), GuiInspectionFilter::new);
-        FilterGuiFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), GuiRegexFilter::new);
+        FilterScreenFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), InspectionFilterScreen::new);
+        FilterScreenFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), RegexFilterScreen::new);
     }
 
     private static void registerItemModelOverrides() {
@@ -90,19 +90,19 @@ public class ClientSetup {
     }
 
     private static void registerScreenFactories() {
-        MenuScreens.register(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), GuiItemRouter::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), ModularRouterScreen::new);
 
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), GuiModule::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), GuiModuleActivator::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), GuiModuleDetector::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), GuiModuleDistributor::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), GuiModuleExtruder2::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_FLINGER.get(), GuiModuleFlinger::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_FLUID.get(), GuiModuleFluid::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_PLAYER.get(), GuiModulePlayer::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_VACUUM.get(), GuiModuleVacuum::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), AbstractModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), ActivatorModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), DetectorModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), DistributorModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), ExtruderModule2Screen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_FLINGER.get(), FlingerModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_FLUID.get(), FluidModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_PLAYER.get(), PlayerModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_VACUUM.get(), VacuumModuleScreen::new);
 
-        MenuScreens.register(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), GuiBulkItemFilter::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MOD_FILTER.get(), GuiModFilter::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), BulkItemFilterScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MOD_FILTER.get(), ModFilterScreen::new);
     }
 }

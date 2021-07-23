@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.WidgetEnergy;
 import me.desht.modularrouters.client.gui.widgets.button.RedstoneBehaviourButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
@@ -12,7 +11,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.config.MRConfig;
-import me.desht.modularrouters.container.ContainerItemRouter;
+import me.desht.modularrouters.container.ContainerModularRouter;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
@@ -39,7 +38,7 @@ import static me.desht.modularrouters.client.util.ClientUtil.theClientWorld;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
-public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> implements ISendToServer, MenuAccess<ContainerItemRouter> {
+public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModularRouter> implements ISendToServer, MenuAccess<ContainerModularRouter> {
     private static final ResourceLocation TEXTURE_LOCATION = RL("textures/gui/router.png");
 
     private static final int LABEL_YPOS = 5;
@@ -51,8 +50,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     private static final int BUTTON_HEIGHT = 16;
     private static final int BUTTON_WIDTH = 16;
 
-    private static final int MODULE_START = ContainerItemRouter.TE_FIRST_SLOT + ContainerItemRouter.MODULE_SLOT_START;
-    private static final int MODULE_END = ContainerItemRouter.TE_FIRST_SLOT + ContainerItemRouter.MODULE_SLOT_END;
+    private static final int MODULE_START = ContainerModularRouter.TE_FIRST_SLOT + ContainerModularRouter.MODULE_SLOT_START;
+    private static final int MODULE_END = ContainerModularRouter.TE_FIRST_SLOT + ContainerModularRouter.MODULE_SLOT_END;
 
     private RedstoneBehaviourButton redstoneBehaviourButton;
     private EcoButton ecoButton;
@@ -61,7 +60,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     private EnergyWarningButton energyWarning;
     private int energyUsage;
 
-    public GuiItemRouter(ContainerItemRouter container, Inventory inventoryPlayer, Component displayName) {
+    public ModularRouterScreen(ContainerModularRouter container, Inventory inventoryPlayer, Component displayName) {
         super(container, inventoryPlayer, displayName);
 
         this.imageWidth = GUI_WIDTH;
@@ -86,11 +85,11 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        String title = I18n.get("block.modularrouters.item_router");
+        String title = I18n.get("block.modularrouters.modular_router");
         font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, LABEL_YPOS, 0xFF404040);
         font.draw(matrixStack, I18n.get("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.upgrades"), ContainerItemRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.modules"), ContainerItemRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.upgrades"), ContainerModularRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.modules"), ContainerModularRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
         font.draw(matrixStack, I18n.get("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040);
     }
 
@@ -128,7 +127,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         boolean hasEnergyUpgrade = menu.getRouter().getEnergyCapacity() > 0;
         energyWidget.visible = hasEnergyUpgrade;
         energyDirButton.visible = hasEnergyUpgrade
-                && getMenu().getSlot(ContainerItemRouter.TE_FIRST_SLOT).getItem().getCapability(CapabilityEnergy.ENERGY).isPresent();
+                && getMenu().getSlot(ContainerModularRouter.TE_FIRST_SLOT).getItem().getCapability(CapabilityEnergy.ENERGY).isPresent();
 
         energyWarning.x = hasEnergyUpgrade ? leftPos - 22 : leftPos + 4;
 
@@ -163,7 +162,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     private class EcoButton extends TexturedToggleButton {
         EcoButton(int x, int y, int width, int height, boolean initialVal) {
-            super(x, y, width, height, initialVal, GuiItemRouter.this);
+            super(x, y, width, height, initialVal, ModularRouterScreen.this);
         }
 
         @Override
@@ -188,7 +187,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     private class EnergyDirectionButton extends TexturedCyclerButton<ModularRouterBlockEntity.EnergyDirection> {
         public EnergyDirectionButton(int x, int y, ModularRouterBlockEntity.EnergyDirection initialVal) {
-            super(x, y, 14, 14, initialVal, GuiItemRouter.this);
+            super(x, y, 14, 14, initialVal, ModularRouterScreen.this);
         }
 
         @Override

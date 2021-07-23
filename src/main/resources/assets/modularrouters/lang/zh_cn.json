@@ -1,5 +1,5 @@
 {
-   "block.modularrouters.item_router": "物品路由器",
+   "block.modularrouters.modular_router": "物品路由器",
    "block.modularrouters.template_frame": "模板框架方块",
    "item.modularrouters.activator_module": "执行模块",
    "item.modularrouters.augment_core": "拓展核心",

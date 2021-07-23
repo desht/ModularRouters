@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item.smartfilter;
 
-import me.desht.modularrouters.client.gui.filter.FilterGuiFactory;
+import me.desht.modularrouters.client.gui.filter.FilterScreenFactory;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
@@ -73,7 +73,7 @@ public abstract class SmartFilterItem extends MRBaseItem {
         if (!world.isClientSide && filter.hasContainer()) {
             NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(player, loc), loc::writeBuf);
         } else if (world.isClientSide && !hasContainer()) {
-            FilterGuiFactory.openFilterGui(loc);
+            FilterScreenFactory.openFilterGui(loc);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }

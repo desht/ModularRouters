@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import me.desht.modularrouters.client.gui.IResyncableGui;
-import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
+import me.desht.modularrouters.client.gui.AbstractMRScreen;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -14,11 +14,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncableGui {
+public abstract class AbstractFilterScreen extends AbstractMRScreen implements IResyncableGui {
     protected final Component title;
     final MFLocator locator;
 
-    GuiFilterScreen(ItemStack filterStack, MFLocator locator) {
+    AbstractFilterScreen(ItemStack filterStack, MFLocator locator) {
         super(filterStack.getHoverName());
         this.locator = locator;
 

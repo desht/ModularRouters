@@ -22,11 +22,11 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 
-public class GuiModuleVacuum extends GuiModule {
+public class VacuumModuleScreen extends AbstractModuleScreen {
     private XPTypeButton xpb;
     private EjectButton ejb;
 
-    public GuiModuleVacuum(ContainerModule container, Inventory inv, Component displayName) {
+    public VacuumModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -83,7 +83,7 @@ public class GuiModuleVacuum extends GuiModule {
         private final List<List<Component>> tips = Lists.newArrayList();
 
         XPTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, XPCollectionType initialVal) {
-            super(x, y, width, height, flat, stacks, initialVal, GuiModuleVacuum.this);
+            super(x, y, width, height, flat, stacks, initialVal, VacuumModuleScreen.this);
 
             for (XPCollectionType type : XPCollectionType.values()) {
                 TextComponent modName = new TextComponent(ModNameCache.getModName(type.getModId()));
@@ -112,7 +112,7 @@ public class GuiModuleVacuum extends GuiModule {
 
     private class EjectButton extends TexturedToggleButton {
         EjectButton(int x, int y, boolean initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModuleVacuum.this);
+            super(x, y, 16, 16, initialVal, VacuumModuleScreen.this);
         }
 
         @Override

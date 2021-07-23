@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "back": "modularrouters:block/item_router_back",
-    "side": "modularrouters:block/item_router_side",
-    "top": "modularrouters:block/item_router_top",
-    "bottom": "modularrouters:block/item_router_bottom",
-    "particle": "modularrouters:block/item_router_other"
+    "back": "modularrouters:block/modular_router_back",
+    "side": "modularrouters:block/modular_router_side",
+    "top": "modularrouters:block/modular_router_top",
+    "bottom": "modularrouters:block/modular_router_bottom",
+    "particle": "modularrouters:block/modular_router_other"
   },
   "elements": [
     {

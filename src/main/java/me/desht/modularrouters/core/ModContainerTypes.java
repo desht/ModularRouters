@@ -13,8 +13,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ModContainerTypes {
     public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, ModularRouters.MODID);
 
-    public static final RegistryObject<MenuType<ContainerItemRouter>> CONTAINER_ITEM_ROUTER
-            = register("item_router", ContainerItemRouter::new);
+    public static final RegistryObject<MenuType<ContainerModularRouter>> CONTAINER_ITEM_ROUTER
+            = register("modular_router", ContainerModularRouter::new);
 
     public static final RegistryObject<MenuType<ContainerModule>> CONTAINER_MODULE_BASIC
             = register("module_basic", ContainerModule::new);

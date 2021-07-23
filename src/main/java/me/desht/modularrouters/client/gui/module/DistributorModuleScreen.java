@@ -23,13 +23,13 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Collections;
 import java.util.List;
 
-public class GuiModuleDistributor extends GuiModule {
+public class DistributorModuleScreen extends AbstractModuleScreen {
     private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
 
     private StrategyButton sb;
     private DirectionButton db;
 
-    public GuiModuleDistributor(ContainerModule container, Inventory inv, Component displayText) {
+    public DistributorModuleScreen(ContainerModule container, Inventory inv, Component displayText) {
         super(container, inv, displayText);
     }
 
@@ -68,7 +68,7 @@ public class GuiModuleDistributor extends GuiModule {
         private final List<List<Component>> tooltips = Lists.newArrayList();
 
         StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
-            super(x, y, width, height, initialVal, GuiModuleDistributor.this);
+            super(x, y, width, height, initialVal, DistributorModuleScreen.this);
             for (DistributionStrategy strategy : DistributionStrategy.values()) {
                 tooltips.add(Collections.singletonList(ClientUtil.xlate(strategy.getTranslationKey())));
             }
@@ -92,7 +92,7 @@ public class GuiModuleDistributor extends GuiModule {
 
     private class DirectionButton extends TexturedToggleButton {
         public DirectionButton(int x, int y, boolean initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModuleDistributor.this);
+            super(x, y, 16, 16, initialVal, DistributorModuleScreen.this);
 
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.itemText.fluid.direction.OUT");
             MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.itemText.fluid.direction.IN");

@@ -2,8 +2,9 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "name": "item_router",
-      "rolls": 1,
+      "name": "modular_router",
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -43,14 +44,15 @@
               ]
             }
           ],
-          "name": "modularrouters:item_router"
+          "name": "modularrouters:modular_router"
         }
       ],
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
+      ],
+      "functions": []
     }
   ]
 }

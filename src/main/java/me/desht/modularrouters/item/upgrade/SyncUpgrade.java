@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.gui.upgrade.GuiSyncUpgrade;
+import me.desht.modularrouters.client.gui.upgrade.SyncUpgradeScreen;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
@@ -53,7 +53,7 @@ public class SyncUpgrade extends UpgradeItem {
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (world.isClientSide && !player.isSteppingCarefully()) {
-            GuiSyncUpgrade.openSyncGui(stack, hand);
+            SyncUpgradeScreen.openSyncGui(stack, hand);
         } else if (player.isSteppingCarefully()) {
             if (!world.isClientSide) {
                 setTunedValue(stack, world.random.nextInt(MRConfig.Common.Router.baseTickRate));

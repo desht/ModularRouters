@@ -1,5 +1,5 @@
 ﻿{
-   "block.modularrouters.item_router" : "Маршрутизатор",
+   "block.modularrouters.modular_router" : "Маршрутизатор",
    "block.modularrouters.template_frame" : "Рамка Шаблона",
    "item.modularrouters.activator_module" : "Модуль: Активатор",
    "item.modularrouters.augment_core" : "Ядро дополнения",

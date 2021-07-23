@@ -2,7 +2,7 @@ package me.desht.modularrouters.client.gui.upgrade;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.gui.widgets.GuiScreenBase;
+import me.desht.modularrouters.client.gui.AbstractMRScreen;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.Range;
 
-public class GuiSyncUpgrade extends GuiScreenBase {
+public class SyncUpgradeScreen extends AbstractMRScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/sync_upgrade.png");
     private static final ItemStack clockStack = new ItemStack(Items.CLOCK);
     private static final int GUI_WIDTH = 176;
@@ -33,7 +33,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     private int tunedValue;
     private final InteractionHand hand;
 
-    public GuiSyncUpgrade(ItemStack upgradeStack, InteractionHand hand) {
+    public SyncUpgradeScreen(ItemStack upgradeStack, InteractionHand hand) {
         super(upgradeStack.getHoverName());
 
         this.title = upgradeStack.getHoverName().getString();
@@ -42,7 +42,7 @@ public class GuiSyncUpgrade extends GuiScreenBase {
     }
 
     public static void openSyncGui(ItemStack stack, InteractionHand hand) {
-        Minecraft.getInstance().setScreen(new GuiSyncUpgrade(stack, hand));
+        Minecraft.getInstance().setScreen(new SyncUpgradeScreen(stack, hand));
     }
 
     @Override

@@ -1,17 +1,18 @@
-package me.desht.modularrouters.client.gui.widgets;
+package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.desht.modularrouters.client.gui.widgets.IManagedTextFields;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public abstract class GuiScreenBase extends Screen implements IManagedTextFields {
+public abstract class AbstractMRScreen extends Screen implements IManagedTextFields {
     private TextFieldManager textFieldManager;
     private int delayTicks;
 
-    protected GuiScreenBase(Component displayName) {
+    protected AbstractMRScreen(Component displayName) {
         super(displayName);
     }
 

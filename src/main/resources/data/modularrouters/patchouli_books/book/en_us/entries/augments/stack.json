@@ -9,7 +9,7 @@
     },
     {
       "type": "text",
-      "text": "If the $(l:router/item_router)router/$ also has $(l:upgrades/stack)Stack Upgrades/$ installed, the module's Stack Augments will override that; e.g. if a router has 6 Stack Upgrades, and a module has 2 Stack Augments, the module will process 4 items per tick, not 64."
+      "text": "If the $(l:router/modular_router)router/$ also has $(l:upgrades/stack)Stack Upgrades/$ installed, the module's Stack Augments will override that; e.g. if a router has 6 Stack Upgrades, and a module has 2 Stack Augments, the module will process 4 items per tick, not 64."
     },
     {
       "type": "crafting",

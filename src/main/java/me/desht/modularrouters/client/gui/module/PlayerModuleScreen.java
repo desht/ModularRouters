@@ -22,7 +22,7 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class GuiModulePlayer extends GuiModule {
+public class PlayerModuleScreen extends AbstractModuleScreen {
     private static final ItemStack MAIN_INV_STACK = new ItemStack(Blocks.CHEST);
     private static final ItemStack MAIN_NO_HOTBAR_INV_STACK = new ItemStack(Blocks.BARREL);
     private static final ItemStack ARMOUR_STACK = new ItemStack(Items.DIAMOND_CHESTPLATE);
@@ -37,7 +37,7 @@ public class GuiModulePlayer extends GuiModule {
     private SectionButton secButton;
     private OperationButton opButton;
 
-    public GuiModulePlayer(ContainerModule container, Inventory inv, Component displayName) {
+    public PlayerModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -74,7 +74,7 @@ public class GuiModulePlayer extends GuiModule {
         private final List<List<Component>> tips = Lists.newArrayList();
 
         SectionButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, Section initialVal) {
-            super(x, y, width, height, flat, stacks, initialVal, GuiModulePlayer.this);
+            super(x, y, width, height, flat, stacks, initialVal, PlayerModuleScreen.this);
             for (Section sect : Section.values()) {
                 tips.add(Collections.singletonList(xlate(sect.getTranslationKey())));
             }
@@ -90,7 +90,7 @@ public class GuiModulePlayer extends GuiModule {
         private final List<List<Component>> tooltips = Lists.newArrayList();
 
         OperationButton(int x, int y, Operation initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModulePlayer.this);
+            super(x, y, 16, 16, initialVal, PlayerModuleScreen.this);
 
             for (Operation op : Operation.values()) {
                 tooltips.add(Collections.singletonList(xlate(op.getTranslationKey())));

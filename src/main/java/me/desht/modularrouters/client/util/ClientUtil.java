@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.util;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.gui.GuiItemRouter;
+import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.MutableComponent;
@@ -17,8 +17,8 @@ public class ClientUtil {
     }
 
     public static ModularRouterBlockEntity getOpenItemRouter() {
-        if (Minecraft.getInstance().screen instanceof GuiItemRouter) {
-            return ((GuiItemRouter) Minecraft.getInstance().screen).getMenu().getRouter();
+        if (Minecraft.getInstance().screen instanceof ModularRouterScreen) {
+            return ((ModularRouterScreen) Minecraft.getInstance().screen).getMenu().getRouter();
         } else {
             return null;
         }

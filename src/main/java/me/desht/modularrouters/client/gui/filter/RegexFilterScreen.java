@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-public class GuiRegexFilter extends GuiFilterScreen {
+public class RegexFilterScreen extends AbstractFilterScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/regexfilter.png");
 
     private static final int GUI_WIDTH = 176;
@@ -34,7 +34,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
     private final List<String> regexList = Lists.newArrayList();
     private final List<Buttons.DeleteButton> deleteButtons = Lists.newArrayList();
 
-    public GuiRegexFilter(ItemStack filterStack, MFLocator locator) {
+    public RegexFilterScreen(ItemStack filterStack, MFLocator locator) {
         super(filterStack, locator);
 
         regexList.addAll(RegexFilter.getRegexList(filterStack));
@@ -127,9 +127,9 @@ public class GuiRegexFilter extends GuiFilterScreen {
     }
 
     private static class RegexTextField extends TextFieldWidgetMR {
-        private final GuiRegexFilter parent;
+        private final RegexFilterScreen parent;
 
-        RegexTextField(GuiRegexFilter parent, int componentId, Font fontrendererObj, int x, int y, int par5Width, int par6Height) {
+        RegexTextField(RegexFilterScreen parent, int componentId, Font fontrendererObj, int x, int y, int par5Width, int par6Height) {
             super(parent.getOrCreateTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
             setMaxLength(40);

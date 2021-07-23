@@ -23,7 +23,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public class GuiModuleActivator extends GuiModule {
+public class ActivatorModuleScreen extends AbstractModuleScreen {
     private static final ItemStack ITEM_STACK = new ItemStack(Items.FLINT_AND_STEEL);
     private static final ItemStack ENTITY_STACK = new ItemStack(Items.PLAYER_HEAD);
     private static final ItemStack ATTACK_STACK = new ItemStack(Items.IRON_SWORD);
@@ -33,7 +33,7 @@ public class GuiModuleActivator extends GuiModule {
     private EntityModeButton entityModeButton;
     private SneakButton sneakButton;
 
-    public GuiModuleActivator(ContainerModule container, Inventory inv, Component displayName) {
+    public ActivatorModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -99,7 +99,7 @@ public class GuiModuleActivator extends GuiModule {
         private final Map<ActionType, List<Component>> tooltips = new EnumMap<>(ActionType.class);
 
         ActionTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, ActionType initialVal) {
-            super(x, y, width, height, flat, stacks, initialVal, GuiModuleActivator.this);
+            super(x, y, width, height, flat, stacks, initialVal, ActivatorModuleScreen.this);
 
             for (ActionType actionType : ActionType.values()) {
                 tooltips.put(actionType, Collections.singletonList(ClientUtil.xlate(actionType.getTranslationKey())));
@@ -116,7 +116,7 @@ public class GuiModuleActivator extends GuiModule {
         private final Map<LookDirection, List<Component>> tooltips = new EnumMap<>(LookDirection.class);
 
         LookDirectionButton(int x, int y, int width, int height, LookDirection initialVal) {
-            super(x, y, width, height, initialVal, GuiModuleActivator.this);
+            super(x, y, width, height, initialVal, ActivatorModuleScreen.this);
             for (LookDirection dir : LookDirection.values()) {
                 tooltips.put(dir, Collections.singletonList(ClientUtil.xlate(dir.getTranslationKey())));
             }
@@ -140,7 +140,7 @@ public class GuiModuleActivator extends GuiModule {
 
     private class SneakButton extends TexturedToggleButton {
         SneakButton(int x, int y, boolean initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModuleActivator.this);
+            super(x, y, 16, 16, initialVal, ActivatorModuleScreen.this);
         }
 
         @Override
@@ -158,7 +158,7 @@ public class GuiModuleActivator extends GuiModule {
         private final List<List<Component>> tooltips = Lists.newArrayList();
 
         EntityModeButton(int x, int y, int width, int height, EntityMode initialVal) {
-            super(x, y, width, height, initialVal, GuiModuleActivator.this);
+            super(x, y, width, height, initialVal, ActivatorModuleScreen.this);
             for (EntityMode mode : EntityMode.values()) {
                 tooltips.add(Collections.singletonList(ClientUtil.xlate(mode.getTranslationKey())));
             }

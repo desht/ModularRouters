@@ -1,6 +1,0 @@
-{
-  "parent": "modularrouters:block/item_router",
-  "textures": {
-    "front": "modularrouters:block/item_router_front_active"
-  }
-}

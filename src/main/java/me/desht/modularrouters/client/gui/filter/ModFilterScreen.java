@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class GuiModFilter extends GuiFilterContainer {
+public class ModFilterScreen extends AbstractFilterContainerScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/modfilter.png");
 
     private static final int GUI_WIDTH = 176;
@@ -34,7 +34,7 @@ public class GuiModFilter extends GuiFilterContainer {
     private String modId = "";
     private String modName = "";
 
-    public GuiModFilter(ContainerSmartFilter container, Inventory inv, Component displayName) {
+    public ModFilterScreen(ContainerSmartFilter container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
 
         this.imageWidth = GUI_WIDTH;

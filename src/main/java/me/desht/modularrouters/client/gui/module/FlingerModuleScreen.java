@@ -15,12 +15,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public class GuiModuleFlinger extends GuiModule {
+public class FlingerModuleScreen extends AbstractModuleScreen {
     private FloatTextField speedField;
     private FloatTextField pitchField;
     private FloatTextField yawField;
 
-    public GuiModuleFlinger(ContainerModule container, Inventory inv, Component displayName) {
+    public FlingerModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

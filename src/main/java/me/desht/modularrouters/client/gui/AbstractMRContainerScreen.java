@@ -1,7 +1,8 @@
-package me.desht.modularrouters.client.gui.widgets;
+package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.IResyncableGui;
+import me.desht.modularrouters.client.gui.widgets.IManagedTextFields;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -11,10 +12,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class GuiContainerBase<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IResyncableGui, IManagedTextFields {
+public abstract class AbstractMRContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IResyncableGui, IManagedTextFields {
     private TextFieldManager textFieldManager;
 
-    public GuiContainerBase(T container, Inventory inv, Component displayName) {
+    public AbstractMRContainerScreen(T container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

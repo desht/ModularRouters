@@ -7,7 +7,7 @@ import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.MRConfig;
-import me.desht.modularrouters.container.ContainerItemRouter;
+import me.desht.modularrouters.container.ContainerModularRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
@@ -641,7 +641,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private void notifyWatchingPlayers() {
         for (Player player : level.players()) {
-            if (player.containerMenu instanceof ContainerItemRouter c && c.getRouter() == this) {
+            if (player.containerMenu instanceof ContainerModularRouter c && c.getRouter() == this) {
                 PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(this));
             }
         }
@@ -917,13 +917,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.modularrouters.item_router");
+        return new TranslatableComponent("block.modularrouters.modular_router");
     }
 
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-        return new ContainerItemRouter(windowId, playerInventory, this.getBlockPos());
+        return new ContainerModularRouter(windowId, playerInventory, this.getBlockPos());
     }
 
     public GlobalPos getGlobalPos() {

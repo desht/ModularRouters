@@ -12,7 +12,7 @@
       "type": "image",
       "text": "$(italic)Think of it like a super-configurable Hopper on steroids.../$",
       "images": [
-        "modularrouters:textures/patchouli/item_router.png"
+        "modularrouters:textures/patchouli/modular_router.png"
       ],
       "border": "true"
     }

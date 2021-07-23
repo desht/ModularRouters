@@ -40,7 +40,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
         String s = String.format(ChatFormatting.YELLOW + "%s: " + ChatFormatting.AQUA + "%s %s %s",
                 I18n.get("modularrouters.itemText.misc.operation"),
-                I18n.get("block.modularrouters.item_router"),
+                I18n.get("block.modularrouters.modular_router"),
                 cpm.getOperation().getSymbol(),
                 I18n.get("modularrouters.guiText.label.playerSect." + cpm.getSection()));
         list.add(new TextComponent(s));

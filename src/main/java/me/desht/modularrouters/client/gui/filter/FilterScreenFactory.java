@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class FilterGuiFactory {
+public class FilterScreenFactory {
     private static final Map<Item, BiFunction<ItemStack,MFLocator,? extends Screen>> REGISTRY = new HashMap<>();
 
     public static void registerGuiHandler(Item filter, BiFunction<ItemStack,MFLocator,? extends Screen> factory) {

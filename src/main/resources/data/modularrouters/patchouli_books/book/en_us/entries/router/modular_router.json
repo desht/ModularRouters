@@ -1,6 +1,6 @@
 {
   "name": "Modular Router",
-  "icon": "modularrouters:item_router",
+  "icon": "modularrouters:modular_router",
   "category": "router",
   "pages": [
     {
@@ -47,7 +47,7 @@
     },
     {
       "type": "crafting",
-      "recipe": "modularrouters:item_router"
+      "recipe": "modularrouters:modular_router"
     }
   ]
 }

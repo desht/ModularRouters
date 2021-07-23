@@ -24,7 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class GuiBulkItemFilter extends GuiFilterContainer {
+public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
 
     private static final int GUI_WIDTH = 176;
@@ -32,7 +32,7 @@ public class GuiBulkItemFilter extends GuiFilterContainer {
 
     private ModuleTarget target;
 
-    public GuiBulkItemFilter(ContainerSmartFilter container, Inventory inventory, Component displayName) {
+    public BulkItemFilterScreen(ContainerSmartFilter container, Inventory inventory, Component displayName) {
         super(container, inventory, displayName);
 
         this.imageWidth = GUI_WIDTH;

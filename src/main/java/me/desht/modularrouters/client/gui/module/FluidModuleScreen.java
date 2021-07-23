@@ -31,7 +31,7 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class GuiModuleFluid extends GuiModule {
+public class FluidModuleScreen extends AbstractModuleScreen {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
     private static final ItemStack routerStack = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
     private static final ItemStack waterStack = new ItemStack(Items.WATER_BUCKET);
@@ -41,7 +41,7 @@ public class GuiModuleFluid extends GuiModule {
     private FluidDirectionButton fluidDirButton;
     private IntegerTextField maxTransferField;
 
-    public GuiModuleFluid(ContainerModule container, Inventory inv, Component displayName) {
+    public FluidModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -154,7 +154,7 @@ public class GuiModuleFluid extends GuiModule {
         private final List<List<Component>> tooltips = Lists.newArrayList();
 
         FluidDirectionButton(int x, int y, FluidDirection initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
+            super(x, y, 16, 16, initialVal, FluidModuleScreen.this);
             for (FluidDirection dir : FluidDirection.values()) {
                 tooltips.add(Collections.singletonList(xlate(dir.getTranslationKey())));
             }
@@ -178,7 +178,7 @@ public class GuiModuleFluid extends GuiModule {
 
     private class ForceEmptyButton extends TexturedToggleButton {
         ForceEmptyButton(int x, int y, boolean initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
+            super(x, y, 16, 16, initialVal, FluidModuleScreen.this);
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.false");
             MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.true");
         }

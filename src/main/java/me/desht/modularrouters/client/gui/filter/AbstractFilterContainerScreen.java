@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.client.gui.AbstractMRContainerScreen;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.module.ModuleItem;
@@ -13,12 +13,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-abstract class GuiFilterContainer extends GuiContainerBase<ContainerSmartFilter> {
+abstract class AbstractFilterContainerScreen extends AbstractMRContainerScreen<ContainerSmartFilter> {
     protected final InteractionHand hand;
     protected final String title;
     protected final ItemStack filterStack;
 
-    GuiFilterContainer(ContainerSmartFilter container, Inventory inv, Component displayName) {
+    AbstractFilterContainerScreen(ContainerSmartFilter container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
 
         this.hand = container.getLocator().hand;

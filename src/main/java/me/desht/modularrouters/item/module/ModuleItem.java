@@ -3,11 +3,11 @@ package me.desht.modularrouters.item.module;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.gui.GuiItemRouter;
+import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.container.ContainerItemRouter;
+import me.desht.modularrouters.container.ContainerModularRouter;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
@@ -223,8 +223,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
         ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
         if (router != null) {
-            Slot slot = ((GuiItemRouter) Minecraft.getInstance().screen).getSlotUnderMouse();
-            if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
+            Slot slot = ((ModularRouterScreen) Minecraft.getInstance().screen).getSlotUnderMouse();
+            if (slot instanceof ContainerModularRouter.InstalledModuleSlot) {
                 String s = ClientSetup.keybindConfigure.getKey().getName();
                 list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
             }

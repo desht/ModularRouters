@@ -18,13 +18,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.Range;
 
-public class GuiModuleDetector extends GuiModule {
+public class DetectorModuleScreen extends AbstractModuleScreen {
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
 
     private boolean isStrong;
     private IntegerTextField intField;
 
-    public GuiModuleDetector(ContainerModule container, Inventory inv, Component displayName) {
+    public DetectorModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -49,7 +49,7 @@ public class GuiModuleDetector extends GuiModule {
         addRenderableWidget(new Button(leftPos + 138, topPos + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
             button.setMessage(ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
-            GuiModuleDetector.this.sendToServer();
+            DetectorModuleScreen.this.sendToServer();
         }));
 
         addRenderableWidget(new TooltipButton(leftPos + 132, topPos + 15, 16, 16, redstoneStack));

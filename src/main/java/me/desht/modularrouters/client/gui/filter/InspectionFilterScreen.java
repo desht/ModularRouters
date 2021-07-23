@@ -29,7 +29,7 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class GuiInspectionFilter extends GuiFilterScreen {
+public class InspectionFilterScreen extends AbstractFilterScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
 
     private static final int GUI_WIDTH = 176;
@@ -43,7 +43,7 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     private final List<Buttons.DeleteButton> deleteButtons = new ArrayList<>();
     private Button matchButton;
 
-    public GuiInspectionFilter(ItemStack filterStack, MFLocator locator) {
+    public InspectionFilterScreen(ItemStack filterStack, MFLocator locator) {
         super(filterStack, locator);
 
         comparisonList = InspectionFilter.getComparisonList(filterStack);

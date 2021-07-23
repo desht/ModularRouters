@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "modularrouters:blank_module"
+            "items": [
+              "modularrouters:blank_module"
+            ]
           }
         ]
       }

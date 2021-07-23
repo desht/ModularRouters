@@ -6,8 +6,8 @@ import me.desht.modularrouters.container.ContainerModule;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public class GuiModuleExtruder2 extends GuiModule {
-    public GuiModuleExtruder2(ContainerModule container, Inventory inv, Component displayName) {
+public class ExtruderModule2Screen extends AbstractModuleScreen {
+    public ExtruderModule2Screen(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

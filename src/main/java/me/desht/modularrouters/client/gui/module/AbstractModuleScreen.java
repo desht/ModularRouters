@@ -8,8 +8,8 @@ import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
-import me.desht.modularrouters.client.gui.filter.FilterGuiFactory;
-import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
+import me.desht.modularrouters.client.gui.filter.FilterScreenFactory;
+import me.desht.modularrouters.client.gui.AbstractMRContainerScreen;
 import me.desht.modularrouters.client.gui.widgets.button.*;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -63,7 +63,7 @@ import java.util.Optional;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class GuiModule extends GuiContainerBase<ContainerModule> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
+public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerModule> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
 
     // locations of extra textures on the gui module texture sheet
@@ -97,7 +97,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
     IntegerTextField regulatorTextField;
     private TerminationButton terminationButton;
 
-    public GuiModule(ContainerModule container, Inventory inventory, Component displayName) {
+    public AbstractModuleScreen(ContainerModule container, Inventory inventory, Component displayName) {
         super(container, inventory, displayName);
 
         MFLocator locator = container.getLocator();
@@ -308,7 +308,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
-                FilterGuiFactory.openFilterGui(locator);
+                FilterScreenFactory.openFilterGui(locator);
             }
         } else if (hand != null) {
             // module is in player's hand
@@ -317,7 +317,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInHeldModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
-                FilterGuiFactory.openFilterGui(locator);
+                FilterScreenFactory.openFilterGui(locator);
             }
         }
         return true;
@@ -399,7 +399,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
         private final ModuleFlags flag;
 
         ModuleToggleButton(ModuleFlags flag, int x, int y, boolean toggled) {
-            super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
+            super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, AbstractModuleScreen.this);
             this.flag = flag;
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".1");
             MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".2");
@@ -421,7 +421,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
         private final RelativeDirection direction;
 
         DirectionButton(RelativeDirection dir, ModuleItem module, int x, int y, boolean toggled) {
-            super(DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
+            super(DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, AbstractModuleScreen.this);
 
             this.direction = dir;
             TextComponent dirStr = new TextComponent(module.getDirectionString(dir));
@@ -459,7 +459,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
 
     private class MatchAllButton extends TexturedToggleButton {
         MatchAllButton(int x, int y, boolean toggled) {
-            super(x, y, 16, 16, toggled, GuiModule.this);
+            super(x, y, 16, 16, toggled, AbstractModuleScreen.this);
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.false");
             MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.true");
         }
@@ -479,7 +479,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements Cont
         private final List<List<Component>> tooltips = Lists.newArrayList();
 
         public TerminationButton(int x, int y, Termination initialVal) {
-            super(x, y, 16, 16, initialVal, GuiModule.this);
+            super(x, y, 16, 16, initialVal, AbstractModuleScreen.this);
 
             for (Termination termination : Termination.values()) {
                 List<Component> l = new ArrayList<>();
