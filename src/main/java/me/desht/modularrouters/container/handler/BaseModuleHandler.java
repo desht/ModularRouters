@@ -1,22 +1,22 @@
 package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public abstract class BaseModuleHandler extends GhostItemHandler {
     private final ItemStack holderStack;
-    private final TileEntityItemRouter router;
+    private final ModularRouterBlockEntity router;
     private final String tagName;
 
-    public BaseModuleHandler(ItemStack holderStack, TileEntityItemRouter router, int size, String tagName) {
+    public BaseModuleHandler(ItemStack holderStack, ModularRouterBlockEntity router, int size, String tagName) {
         super(size);
         this.holderStack = holderStack;
         this.router = router;
@@ -39,7 +39,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         save();
 
         if (router != null) {
-            router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
         }
     }
 
@@ -51,7 +51,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * @return number of items in the filter
      */
     public static int getFilterSize(ItemStack holderStack, String tagName) {
-        CompoundNBT tag = holderStack.getTagElement(ModularRouters.MODID);
+        CompoundTag tag = holderStack.getTagElement(ModularRouters.MODID);
         if (tag != null  && tag.contains(tagName)) {
             ModuleFilterHandler handler = new ModuleFilterHandler(holderStack, null);
             int n = 0;
@@ -74,13 +74,13 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
     }
 
     public static class BulkFilterHandler extends BaseModuleHandler {
-        public BulkFilterHandler(ItemStack holderStack, TileEntityItemRouter router) {
+        public BulkFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
             super(holderStack, router, BulkItemFilter.FILTER_SIZE, ModuleHelper.NBT_FILTER);
         }
     }
 
     public static class ModuleFilterHandler extends BaseModuleHandler {
-        public ModuleFilterHandler(ItemStack holderStack, TileEntityItemRouter router) {
+        public ModuleFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
             super(holderStack, router, Filter.FILTER_SIZE, ModuleHelper.NBT_FILTER);
         }
 

@@ -1,17 +1,17 @@
 package me.desht.modularrouters.network;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.function.Supplier;
@@ -24,26 +24,26 @@ import java.util.function.Supplier;
  */
 public class FilterSettingsMessage {
     private final Operation op;
-    private final CompoundNBT payload;
+    private final CompoundTag payload;
     private final MFLocator locator;
 
     public enum Operation {
         CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG
     }
 
-    public FilterSettingsMessage(Operation op, MFLocator locator, CompoundNBT payload) {
+    public FilterSettingsMessage(Operation op, MFLocator locator, CompoundTag payload) {
         this.op = op;
         this.locator = locator;
         this.payload = payload;
     }
 
-    public FilterSettingsMessage(PacketBuffer buf) {
+    public FilterSettingsMessage(FriendlyByteBuf buf) {
         op = buf.readEnum(Operation.class);
         locator = MFLocator.fromBuffer(buf);
         payload = buf.readNbt();
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeEnum(op);
         locator.writeBuf(buf);
         buf.writeNbt(payload);
@@ -53,7 +53,7 @@ public class FilterSettingsMessage {
         return op;
     }
 
-    public CompoundNBT getPayload() {
+    public CompoundTag getPayload() {
         return payload;
     }
 
@@ -64,7 +64,7 @@ public class FilterSettingsMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 processPacket(player);
             }
@@ -72,21 +72,21 @@ public class FilterSettingsMessage {
         ctx.get().setPacketHandled(true);
     }
 
-    private void processPacket(ServerPlayerEntity player) {
+    private void processPacket(ServerPlayer player) {
         ItemStack moduleStack = locator.getModuleStack(player);
         ItemStack filterStack = locator.getTargetItem(player);
         if (filterStack.getItem() instanceof ItemSmartFilter) {
             ItemSmartFilter sf = (ItemSmartFilter) filterStack.getItem();
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
-                TileEntityItemRouter router = locator.getRouter(player.level).orElse(null);
+                ModularRouterBlockEntity router = locator.getRouter(player.level).orElse(null);
                 ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, router);
                 filterHandler.setStackInSlot(locator.filterSlot, filterStack);
                 filterHandler.save();
                 if (locator.hand != null) {
                     player.setItemInHand(locator.hand, filterHandler.getHolderStack());
                 } else if (router != null) {
-                    router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+                    router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
                 }
             }
             if (response != null) {

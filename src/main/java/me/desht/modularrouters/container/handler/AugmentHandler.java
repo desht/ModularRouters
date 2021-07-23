@@ -1,11 +1,11 @@
 package me.desht.modularrouters.container.handler;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.Validate;
 
@@ -13,9 +13,9 @@ import javax.annotation.Nonnull;
 
 public class AugmentHandler extends ItemStackHandler {
     private final ItemStack holderStack;
-    private final TileEntityItemRouter router;
+    private final ModularRouterBlockEntity router;
 
-    public AugmentHandler(ItemStack holderStack, TileEntityItemRouter router) {
+    public AugmentHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
         super(ItemAugment.SLOTS);
         this.router = router;
 
@@ -61,7 +61,7 @@ public class AugmentHandler extends ItemStackHandler {
     private void save() {
         holderStack.getOrCreateTagElement(ModularRouters.MODID).put(ModuleHelper.NBT_AUGMENTS, serializeNBT());
         if (router != null) {
-            router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
         }
     }
 }

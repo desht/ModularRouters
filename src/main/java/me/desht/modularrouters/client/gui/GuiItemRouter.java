@@ -1,8 +1,8 @@
 package me.desht.modularrouters.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import com.mojang.blaze3d.vertex.PoseStack;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.widgets.GuiContainerBase;
 import me.desht.modularrouters.client.gui.widgets.WidgetEnergy;
@@ -19,16 +19,16 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.Collection;
@@ -39,7 +39,7 @@ import static me.desht.modularrouters.client.util.ClientUtil.theClientWorld;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
-public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> implements ISendToServer, IHasContainer<ContainerItemRouter> {
+public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> implements ISendToServer, MenuAccess<ContainerItemRouter> {
     private static final ResourceLocation TEXTURE_LOCATION = RL("textures/gui/router.png");
 
     private static final int LABEL_YPOS = 5;
@@ -61,7 +61,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     private EnergyWarningButton energyWarning;
     private int energyUsage;
 
-    public GuiItemRouter(ContainerItemRouter container, PlayerInventory inventoryPlayer, ITextComponent displayName) {
+    public GuiItemRouter(ContainerItemRouter container, Inventory inventoryPlayer, Component displayName) {
         super(container, inventoryPlayer, displayName);
 
         this.imageWidth = GUI_WIDTH;
@@ -74,18 +74,18 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     public void init() {
         super.init();
 
-        TileEntityItemRouter router = menu.getRouter();
+        ModularRouterBlockEntity router = menu.getRouter();
 
-        addButton(redstoneBehaviourButton = new RedstoneBehaviourButton(this.leftPos + 152, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
-        addButton(ecoButton = new EcoButton(this.leftPos + 132, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
-        addButton(energyDirButton = new EnergyDirectionButton(this.leftPos - 8, this.topPos + 40, router.getEnergyDirection()));
-        addButton(energyWidget = new WidgetEnergy(this.leftPos - 22, this.topPos + 15, router.getEnergyStorage()));
-        addButton(energyWarning = new EnergyWarningButton(this.leftPos + 4, this.topPos + 4));
+        addRenderableWidget(redstoneBehaviourButton = new RedstoneBehaviourButton(this.leftPos + 152, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
+        addRenderableWidget(ecoButton = new EcoButton(this.leftPos + 132, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
+        addRenderableWidget(energyDirButton = new EnergyDirectionButton(this.leftPos - 8, this.topPos + 40, router.getEnergyDirection()));
+        addRenderableWidget(energyWidget = new WidgetEnergy(this.leftPos - 22, this.topPos + 15, router.getEnergyStorage()));
+        addRenderableWidget(energyWarning = new EnergyWarningButton(this.leftPos + 4, this.topPos + 4));
         energyWidget.visible = energyDirButton.visible = router.getEnergyCapacity() > 0;
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         String title = I18n.get("block.modularrouters.item_router");
         font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, LABEL_YPOS, 0xFF404040);
         font.draw(matrixStack, I18n.get("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
@@ -95,8 +95,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float v, int i, int i1) {
-        getMinecraft().getTextureManager().bind(TEXTURE_LOCATION);
+    protected void renderBg(PoseStack matrixStack, float v, int i, int i1) {
+        GuiUtil.bindTexture(TEXTURE_LOCATION);
         blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
         if (menu.getRouter().getEnergyCapacity() > 0) {
             blit(matrixStack, leftPos - 27, topPos, 180, 0, 32, 100);
@@ -114,8 +114,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
+        super.containerTick();
 
         energyUsage = 0;
         for (int i = MODULE_START; i < MODULE_END; i++) {
@@ -146,7 +146,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
 
     @Override
     public void sendToServer() {
-        TileEntityItemRouter router = menu.getRouter();
+        ModularRouterBlockEntity router = menu.getRouter();
 
         router.setRedstoneBehaviour(redstoneBehaviourButton.getState());
         router.setEcoMode(ecoButton.isToggled());
@@ -154,10 +154,10 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
     }
 
-    public Collection<Rectangle2d> getExtraArea() {
+    public Collection<Rect2i> getExtraArea() {
         // for JEI's benefit
         return menu.getRouter().getEnergyCapacity() > 0 ?
-                Collections.singletonList(new Rectangle2d(leftPos - 27, topPos, 32, 100)) :
+                Collections.singletonList(new Rect2i(leftPos - 27, topPos, 32, 100)) :
                 Collections.emptyList();
     }
 
@@ -177,7 +177,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return MiscUtil.wrapStringAsTextComponent(
                     I18n.get("modularrouters.guiText.tooltip.eco." + isToggled(),
                             MRConfig.Common.Router.ecoTimeout / 20.f,
@@ -186,8 +186,8 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         }
     }
 
-    private class EnergyDirectionButton extends TexturedCyclerButton<TileEntityItemRouter.EnergyDirection> {
-        public EnergyDirectionButton(int x, int y, TileEntityItemRouter.EnergyDirection initialVal) {
+    private class EnergyDirectionButton extends TexturedCyclerButton<ModularRouterBlockEntity.EnergyDirection> {
+        public EnergyDirectionButton(int x, int y, ModularRouterBlockEntity.EnergyDirection initialVal) {
             super(x, y, 14, 14, initialVal, GuiItemRouter.this);
         }
 
@@ -212,12 +212,12 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return ImmutableList.of(
                     xlate(getState().getTranslationKey()),
                     xlate("modularrouters.guiText.tooltip.energy.rate",
                             MiscUtil.commify(menu.getRouter().getEnergyXferRate()))
-                            .withStyle(TextFormatting.GRAY)
+                            .withStyle(ChatFormatting.GRAY)
             );
         }
     }
@@ -228,7 +228,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             if (energyUsage <= menu.getRouter().getEnergyStorage().getEnergyStored()) return Collections.emptyList();
             return menu.getRouter().getEnergyCapacity() > 0 ?
                     GuiUtil.xlateAndSplit("modularrouters.itemText.misc.energyWarning") :
@@ -236,7 +236,7 @@ public class GuiItemRouter extends GuiContainerBase<ContainerItemRouter> impleme
         }
 
         @Override
-        public void playDownSound(SoundHandler p_230988_1_) {
+        public void playDownSound(SoundManager p_230988_1_) {
         }
 
         @Override

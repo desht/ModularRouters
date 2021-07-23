@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.util.GuiUtil;
@@ -10,12 +10,12 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ public class GuiModulePlayer extends GuiModule {
     private SectionButton secButton;
     private OperationButton opButton;
 
-    public GuiModulePlayer(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+    public GuiModulePlayer(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -47,14 +47,14 @@ public class GuiModulePlayer extends GuiModule {
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
 
-        addButton(secButton = new SectionButton(leftPos + 169, topPos + 32, 16, 16, true, STACKS, cpm.getSection()));
-        addButton(opButton = new OperationButton(leftPos + 148, topPos + 32, cpm.getOperation()));
+        addRenderableWidget(secButton = new SectionButton(leftPos + 169, topPos + 32, 16, 16, true, STACKS, cpm.getSection()));
+        addRenderableWidget(opButton = new OperationButton(leftPos + 148, topPos + 32, cpm.getOperation()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 127, topPos + 29, leftPos + 187, topPos + 50, "modularrouters.guiText.popup.player.control");
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         this.blit(matrixStack, leftPos + 167, topPos + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
@@ -63,15 +63,15 @@ public class GuiModulePlayer extends GuiModule {
     }
 
     @Override
-    protected CompoundNBT buildMessageData() {
-        CompoundNBT compound = super.buildMessageData();
+    protected CompoundTag buildMessageData() {
+        CompoundTag compound = super.buildMessageData();
         compound.putInt(CompiledPlayerModule.NBT_OPERATION, opButton.getState().ordinal());
         compound.putInt(CompiledPlayerModule.NBT_SECTION, secButton.getState().ordinal());
         return compound;
     }
 
     private class SectionButton extends ItemStackCyclerButton<Section> {
-        private final List<List<ITextComponent>> tips = Lists.newArrayList();
+        private final List<List<Component>> tips = Lists.newArrayList();
 
         SectionButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, Section initialVal) {
             super(x, y, width, height, flat, stacks, initialVal, GuiModulePlayer.this);
@@ -81,13 +81,13 @@ public class GuiModulePlayer extends GuiModule {
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return tips.get(getState().ordinal());
         }
     }
 
     private class OperationButton extends TexturedCyclerButton<Operation> {
-        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+        private final List<List<Component>> tooltips = Lists.newArrayList();
 
         OperationButton(int x, int y, Operation initialVal) {
             super(x, y, 16, 16, initialVal, GuiModulePlayer.this);
@@ -108,7 +108,7 @@ public class GuiModulePlayer extends GuiModule {
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
     }

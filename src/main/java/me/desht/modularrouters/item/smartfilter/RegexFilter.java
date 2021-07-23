@@ -7,14 +7,14 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -25,9 +25,9 @@ public class RegexFilter extends ItemSmartFilter {
     public static final int MAX_SIZE = 6;
 
     public static List<String> getRegexList(ItemStack filterStack) {
-        CompoundNBT tag = filterStack.getTagElement(ModularRouters.MODID);
+        CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         if (tag != null) {
-            ListNBT items = tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING);
+            ListTag items = tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
             for (int i = 0; i < items.size(); i++) {
                 res.add(items.getString(i));
@@ -39,18 +39,18 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     private static void setRegexList(ItemStack filterStack, List<String> regex) {
-        ListNBT list = regex.stream().map(StringNBT::valueOf).collect(Collectors.toCollection(ListNBT::new));
+        ListTag list = regex.stream().map(StringTag::valueOf).collect(Collectors.toCollection(ListTag::new));
         filterStack.getOrCreateTagElement(ModularRouters.MODID).put(NBT_REGEX, list);
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
         super.addExtraInformation(itemstack, list);
-        CompoundNBT compound = itemstack.getTag();
+        CompoundTag compound = itemstack.getTag();
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", l.size()));
-            list.addAll(l.stream().map(s -> " \u2022 " + TextFormatting.AQUA + "/" + s + "/").map(StringTextComponent::new).collect(Collectors.toList()));
+            list.addAll(l.stream().map(s -> " \u2022 " + ChatFormatting.AQUA + "/" + s + "/").map(TextComponent::new).collect(Collectors.toList()));
         } else {
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", 0));
         }
@@ -67,7 +67,7 @@ public class RegexFilter extends ItemSmartFilter {
     }
 
     @Override
-    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
         switch (message.getOp()) {
             case ADD_STRING:
@@ -97,7 +97,7 @@ public class RegexFilter extends ItemSmartFilter {
 
     @Override
     public int getSize(ItemStack filterStack) {
-        CompoundNBT tag = filterStack.getTagElement(ModularRouters.MODID);
+        CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         return tag != null ? tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING).size() : 0;
     }
 }

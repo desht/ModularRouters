@@ -1,22 +1,22 @@
 package me.desht.modularrouters;
 
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
 
 public class ModularRoutersTags {
     public static class Items {
-        public static final ITag.INamedTag<Item> MODULES = modTag("modules");
-        public static final ITag.INamedTag<Item> UPGRADES = modTag("upgrades");
-        public static final ITag.INamedTag<Item> AUGMENTS = modTag("augments");
-        public static final ITag.INamedTag<Item> FILTERS = modTag("filters");
+        public static final Tag.Named<Item> MODULES = modTag("modules");
+        public static final Tag.Named<Item> UPGRADES = modTag("upgrades");
+        public static final Tag.Named<Item> AUGMENTS = modTag("augments");
+        public static final Tag.Named<Item> FILTERS = modTag("filters");
 
-        private static ITag.INamedTag<Item> modTag(String name) {
+        private static Tag.Named<Item> modTag(String name) {
             return ItemTags.bind(new ResourceLocation(ModularRouters.MODID, name).toString());
         }
 
-        private static ITag.INamedTag<Item> forgeTag(String name) {
+        private static Tag.Named<Item> forgeTag(String name) {
             return ItemTags.bind(new ResourceLocation("forge", name).toString());
         }
     }

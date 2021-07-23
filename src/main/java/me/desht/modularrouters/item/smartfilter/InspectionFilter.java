@@ -8,15 +8,15 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Compariso
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -33,23 +33,23 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
         super.addExtraInformation(itemstack, list);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
+            list.add(new TextComponent(ChatFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
             for (Comparison c : comparisonList.items) {
-                list.add(new StringTextComponent(TextFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
+                list.add(new TextComponent(ChatFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
             }
         }
     }
 
     public static ComparisonList getComparisonList(ItemStack filterStack) {
-        CompoundNBT compound = filterStack.getTagElement(ModularRouters.MODID);
+        CompoundTag compound = filterStack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             boolean matchAll = compound.getBoolean(NBT_MATCH_ALL);
             List<Comparison> l = Lists.newArrayList();
-            ListNBT items = compound.getList(NBT_ITEMS, Constants.NBT.TAG_STRING);
+            ListTag items = compound.getList(NBT_ITEMS, Constants.NBT.TAG_STRING);
             for (int i = 0; i < items.size(); i++) {
                 l.add(Comparison.fromString(items.getString(i)));
             }
@@ -60,14 +60,14 @@ public class InspectionFilter extends ItemSmartFilter {
     }
 
     private void setComparisonList(ItemStack filterStack, ComparisonList comparisonList) {
-        ListNBT l = comparisonList.items.stream().map(comp -> StringNBT.valueOf(comp.toString())).collect(Collectors.toCollection(ListNBT::new));
-        CompoundNBT compound = filterStack.getOrCreateTagElement(ModularRouters.MODID);
+        ListTag l = comparisonList.items.stream().map(comp -> StringTag.valueOf(comp.toString())).collect(Collectors.toCollection(ListTag::new));
+        CompoundTag compound = filterStack.getOrCreateTagElement(ModularRouters.MODID);
         compound.putBoolean(NBT_MATCH_ALL, comparisonList.isMatchAll());
         compound.put(NBT_ITEMS, l);
     }
 
     @Override
-    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         ComparisonList comparisonList = getComparisonList(filterStack);
 
         switch (message.getOp()) {

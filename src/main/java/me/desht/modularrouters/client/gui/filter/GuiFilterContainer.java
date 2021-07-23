@@ -7,18 +7,18 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 abstract class GuiFilterContainer extends GuiContainerBase<ContainerSmartFilter> {
-    protected final Hand hand;
+    protected final InteractionHand hand;
     protected final String title;
     protected final ItemStack filterStack;
 
-    GuiFilterContainer(ContainerSmartFilter container, PlayerInventory inv, ITextComponent displayName) {
+    GuiFilterContainer(ContainerSmartFilter container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
 
         this.hand = container.getLocator().hand;

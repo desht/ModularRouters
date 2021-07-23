@@ -1,19 +1,19 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import net.minecraft.item.ItemStack;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CompiledEnergyOutputModule extends CompiledModule {
-    public CompiledEnergyOutputModule(@Nullable TileEntityItemRouter router, ItemStack stack) {
+    public CompiledEnergyOutputModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (getTarget() == null) return false;
 
         return router.getCapability(CapabilityEnergy.ENERGY)

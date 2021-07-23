@@ -10,11 +10,11 @@ import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -27,24 +27,24 @@ public class VacuumModule extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_VACUUM.get();
     }
 
     @Override
-    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
 
         CompiledVacuumModule cvm = new CompiledVacuumModule(null, itemstack);
         if (cvm.isXpMode()) {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
-            ITextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId())).withStyle(TextFormatting.BLUE);
-            ITextComponent title = type.getDisplayName().plainCopy().withStyle(TextFormatting.AQUA);
+            Component modName = new TextComponent(ModNameCache.getModName(type.getModId())).withStyle(ChatFormatting.BLUE);
+            Component title = type.getDisplayName().plainCopy().withStyle(ChatFormatting.AQUA);
             list.add(ClientUtil.xlate("modularrouters.guiText.label.xpVacuum")
-                    .append(": ").withStyle(TextFormatting.YELLOW)
+                    .append(": ").withStyle(ChatFormatting.YELLOW)
                     .append(title).append(" - ").append(modName));
             if (cvm.isAutoEjecting() && !type.isSolid()) {
-                list.add(MiscUtil.settingsStr(TextFormatting.GREEN.toString(), ClientUtil.xlate("modularrouters.guiText.tooltip.xpVacuum.ejectFluid")));
+                list.add(MiscUtil.settingsStr(ChatFormatting.GREEN.toString(), ClientUtil.xlate("modularrouters.guiText.tooltip.xpVacuum.ejectFluid")));
             }
         }
     }

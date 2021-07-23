@@ -1,25 +1,25 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
 
 public class CompiledSenderModule2 extends CompiledSenderModule1 {
-    public CompiledSenderModule2(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledSenderModule2(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         return Collections.singletonList(TargetedModule.getTarget(stack, !router.getLevel().isClientSide));
     }
 
     @Override
-    protected PositionedItemHandler findTargetInventory(TileEntityItemRouter router) {
+    protected PositionedItemHandler findTargetInventory(ModularRouterBlockEntity router) {
         ModuleTarget target = getEffectiveTarget(router);
         if (target == null || !validate(router, target)) {
             return PositionedItemHandler.INVALID;
@@ -29,7 +29,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
                 .orElse(PositionedItemHandler.INVALID);
     }
 
-    private boolean validate(TileEntityItemRouter router, ModuleTarget target) {
+    private boolean validate(ModularRouterBlockEntity router, ModuleTarget target) {
         if (!isRangeLimited()) return true;
         return target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared();
     }
@@ -44,7 +44,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
     }
 
     @Override
-    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(ModularRouterBlockEntity router) {
         return getTarget();
     }
 }

@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.filter.matchers;
 
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.ItemTagMatcher;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.Validate;
 
 public class SimpleItemMatcher implements IItemMatcher {

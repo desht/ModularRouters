@@ -1,14 +1,14 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import me.desht.modularrouters.client.util.GuiUtil;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmlclient.gui.widget.ExtendedButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,18 +16,17 @@ import java.util.List;
 public abstract class TexturedButton extends ExtendedButton implements ITooltipButton {
     static final ResourceLocation TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/widgets.png");
 
-    protected final List<ITextComponent> tooltip1;
+    protected final List<Component> tooltip1;
 
-    public TexturedButton(int x, int y, int width, int height, IPressable pressable) {
-        super(x, y, width, height, StringTextComponent.EMPTY, pressable);
+    public TexturedButton(int x, int y, int width, int height, OnPress pressable) {
+        super(x, y, width, height, TextComponent.EMPTY, pressable);
         this.tooltip1 = new ArrayList<>();
     }
 
     @Override
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            Minecraft.getInstance().getTextureManager().bind(TEXTURE);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GuiUtil.bindTexture(TEXTURE);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getYImage(this.isHovered);
             RenderSystem.enableBlend();
@@ -48,7 +47,7 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
 
     protected abstract int getTextureY();
 
-    public List<ITextComponent> getTooltip() {
+    public List<Component> getTooltip() {
         return tooltip1;
     }
 }

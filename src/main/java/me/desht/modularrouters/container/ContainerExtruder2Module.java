@@ -1,18 +1,18 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 
 import javax.annotation.Nonnull;
 
@@ -21,11 +21,11 @@ import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 public class ContainerExtruder2Module extends ContainerModule {
     private static final int TEMPLATE_SLOTS = 9;
 
-    ContainerExtruder2Module(int windowId, PlayerInventory inv, PacketBuffer extra) {
+    ContainerExtruder2Module(int windowId, Inventory inv, FriendlyByteBuf extra) {
         this(windowId, inv, MFLocator.fromBuffer(extra));
     }
 
-    public ContainerExtruder2Module(int windowId, PlayerInventory inv, MFLocator locator) {
+    public ContainerExtruder2Module(int windowId, Inventory inv, MFLocator locator) {
         super(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), windowId, inv, locator);
 
         TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player), router);
@@ -35,14 +35,14 @@ public class ContainerExtruder2Module extends ContainerModule {
     }
 
     @Override
-    protected void transferStackInExtraSlot(PlayerEntity player, int index) {
+    protected void transferStackInExtraSlot(Player player, int index) {
         slots.get(index).set(ItemStack.EMPTY);
     }
 
     @Override
-    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
         Slot s = slots.get(slot);
-        ItemStack stackOnCursor = player.inventory.getCarried();
+        ItemStack stackOnCursor = getCarried();
         ItemStack stackInSlot = s.getItem().copy();
         if (clickTypeIn == ClickType.QUICK_MOVE) {
             s.set(ItemStack.EMPTY);  // shift-left-click clears the slot
@@ -77,13 +77,13 @@ public class ContainerExtruder2Module extends ContainerModule {
             return true;  // non-block items are allowed - they act as spacers
         }
         Block b = ((BlockItem) stack.getItem()).getBlock();
-        return b.defaultBlockState().getRenderShape() == BlockRenderType.MODEL && !b.getRegistryName().getNamespace().equals("chiselsandbits");
+        return b.defaultBlockState().getRenderShape() == RenderShape.MODEL && !b.getRegistryName().getNamespace().equals("chiselsandbits");
     }
 
     public static class TemplateHandler extends BaseModuleHandler {
         private static final String NBT_TEMPLATE = "Template";
 
-        public TemplateHandler(ItemStack holderStack, TileEntityItemRouter router) {
+        public TemplateHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
             super(holderStack, router, TEMPLATE_SLOTS, NBT_TEMPLATE);
         }
 

@@ -1,20 +1,20 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -25,10 +25,10 @@ public class CompiledFlingerModule extends CompiledDropperModule {
 
     private final float speed, pitch, yaw;
 
-    public CompiledFlingerModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledFlingerModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = ModuleHelper.validateNBT(stack);
+        CompoundTag compound = ModuleHelper.validateNBT(stack);
         for (String key : new String[] { NBT_SPEED, NBT_PITCH, NBT_YAW }) {
             if (!compound.contains(key)) {
                 compound.putFloat(key, 0.0f);
@@ -41,7 +41,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         boolean fired = super.execute(router);
 
         if (fired && MRConfig.Common.Module.flingerEffects) {
@@ -49,11 +49,11 @@ public class CompiledFlingerModule extends CompiledDropperModule {
             int n = Math.round(speed * 5);
             BlockPos pos = target.gPos.pos();
             if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-                ((ServerWorld) router.getLevel()).sendParticles(ParticleTypes.LARGE_SMOKE,
+                ((ServerLevel) router.getLevel()).sendParticles(ParticleTypes.LARGE_SMOKE,
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
-            router.playSound(null, pos, ModSounds.THUD.get(), SoundCategory.BLOCKS, 0.5f + speed, 1.0f);
+            router.playSound(null, pos, ModSounds.THUD.get(), SoundSource.BLOCKS, 0.5f + speed, 1.0f);
         }
 
         return fired;
@@ -72,7 +72,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     }
 
     @Override
-    protected void setupItemVelocity(TileEntityItemRouter router, ItemEntity item) {
+    protected void setupItemVelocity(ModularRouterBlockEntity router, ItemEntity item) {
         Direction routerFacing = router.getAbsoluteFacing(ItemModule.RelativeDirection.FRONT);
         float basePitch = 0.0f;
         float baseYaw;

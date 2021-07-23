@@ -1,20 +1,20 @@
 package me.desht.modularrouters.block.tile;
 
 import me.desht.modularrouters.block.BlockCamo;
-import me.desht.modularrouters.core.ModTileEntities;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.util.Scheduler;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
@@ -22,20 +22,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class TileEntityTemplateFrame extends TileEntity implements ICamouflageable {
+public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflageable {
     private static final String NBT_CAMO_NAME = "CamouflageName";
     private static final String NBT_MIMIC = "Mimic";
 
     private BlockState camouflage = null;  // block to masquerade as
     private boolean extendedMimic; // true if extra mimicking is done (light, hardness, blast resistance)
 
-    public TileEntityTemplateFrame() {
-        super(ModTileEntities.TEMPLATE_FRAME.get());
+    public TemplateFrameBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.TEMPLATE_FRAME.get(), pos, state);
     }
 
-    public static Optional<TileEntityTemplateFrame> getTemplateFrame(IBlockReader world, BlockPos pos) {
-        TileEntity te = world.getBlockEntity(pos);
-        return te instanceof TileEntityTemplateFrame ? Optional.of((TileEntityTemplateFrame) te) : Optional.empty();
+    public static Optional<TemplateFrameBlockEntity> getTemplateFrame(BlockGetter world, BlockPos pos) {
+        BlockEntity te = world.getBlockEntity(pos);
+        return te instanceof TemplateFrameBlockEntity ? Optional.of((TemplateFrameBlockEntity) te) : Optional.empty();
     }
 
     @Override
@@ -68,21 +68,21 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT compound) {
-        super.load(state, compound);
+    public void load(CompoundTag compound) {
+        super.load(compound);
         camouflage = getCamoStateFromNBT(compound);
         extendedMimic = compound.getBoolean(NBT_MIMIC);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         compound = super.save(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
         return getNBTFromCamoState(compound, camouflage);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         camouflage = getCamoStateFromNBT(pkt.getTag());
         extendedMimic = pkt.getTag().getBoolean("Mimic");
         if (camouflage != null && extendedMimic && camouflage.getLightEmission() > 0) {
@@ -91,8 +91,8 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        super.handleUpdateTag(state, tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
 
         camouflage = getCamoStateFromNBT(tag);
         extendedMimic = tag.getBoolean("Mimic");
@@ -105,13 +105,13 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.worldPosition, -1, getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, -1, getUpdateTag());
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT compound = new CompoundNBT();
+    public CompoundTag getUpdateTag() {
+        CompoundTag compound = new CompoundTag();
 
         compound.putInt("x", worldPosition.getX());
         compound.putInt("y", worldPosition.getY());
@@ -121,16 +121,16 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
         return getNBTFromCamoState(compound, camouflage);
     }
 
-    private static BlockState getCamoStateFromNBT(CompoundNBT tag) {
+    private static BlockState getCamoStateFromNBT(CompoundTag tag) {
         if (tag.contains(NBT_CAMO_NAME)) {
-            return NBTUtil.readBlockState(tag.getCompound(NBT_CAMO_NAME));
+            return NbtUtils.readBlockState(tag.getCompound(NBT_CAMO_NAME));
         }
         return null;
     }
 
-    private static CompoundNBT getNBTFromCamoState(CompoundNBT compound, BlockState camouflage) {
+    private static CompoundTag getNBTFromCamoState(CompoundTag compound, BlockState camouflage) {
         if (camouflage != null) {
-            compound.put(NBT_CAMO_NAME, NBTUtil.writeBlockState(camouflage));
+            compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
         }
         return compound;
     }

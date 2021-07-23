@@ -1,8 +1,8 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
     private T state;

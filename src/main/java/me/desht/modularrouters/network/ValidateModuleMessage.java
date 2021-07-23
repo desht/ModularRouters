@@ -1,11 +1,11 @@
 package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.item.module.TargetedModule;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -15,23 +15,23 @@ import java.util.function.Supplier;
  * send the player a message.
  */
 public class ValidateModuleMessage {
-    private final Hand hand;
+    private final InteractionHand hand;
 
-    public ValidateModuleMessage(Hand hand) {
+    public ValidateModuleMessage(InteractionHand hand) {
         this.hand = hand;
     }
 
-    public ValidateModuleMessage(PacketBuffer buf) {
-        hand = buf.readEnum(Hand.class);
+    public ValidateModuleMessage(FriendlyByteBuf buf) {
+        hand = buf.readEnum(InteractionHand.class);
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeEnum(hand);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 ItemStack stack = player.getItemInHand(hand);
                 if (stack.getItem() instanceof TargetedModule) {

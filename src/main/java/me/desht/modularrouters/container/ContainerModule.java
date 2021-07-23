@@ -1,6 +1,6 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
@@ -8,13 +8,13 @@ import me.desht.modularrouters.item.augment.ItemAugment;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -35,18 +35,18 @@ public class ContainerModule extends ContainerMRBase {
     private final ModuleFilterHandler filterHandler;
     private final AugmentHandler augmentHandler;
     private final int currentSlot;  // currently-selected slot for player
-    protected final TileEntityItemRouter router;
+    protected final ModularRouterBlockEntity router;
     private final MFLocator locator;
 
-    public ContainerModule(int windowId, PlayerInventory inv, PacketBuffer extra) {
+    public ContainerModule(int windowId, Inventory inv, FriendlyByteBuf extra) {
         this(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), windowId, inv, MFLocator.fromBuffer(extra));
     }
 
-    public ContainerModule(ContainerType type, int windowId, PlayerInventory inv, PacketBuffer extra) {
+    public ContainerModule(MenuType type, int windowId, Inventory inv, FriendlyByteBuf extra) {
         this(type, windowId, inv, MFLocator.fromBuffer(extra));
     }
 
-    public ContainerModule(ContainerType type, int windowId, PlayerInventory inv, MFLocator locator) {
+    public ContainerModule(MenuType type, int windowId, Inventory inv, MFLocator locator) {
         super(type, windowId);
 
         this.locator = locator;
@@ -85,26 +85,26 @@ public class ContainerModule extends ContainerMRBase {
         return locator;
     }
 
-    public TileEntityItemRouter getRouter() {
+    public ModularRouterBlockEntity getRouter() {
         return router;
     }
 
-    protected void transferStackInExtraSlot(PlayerEntity player, int index) {
+    protected void transferStackInExtraSlot(Player player, int index) {
         // does nothing by default, to be overridden
     }
 
-    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
         // does nothing by default, to be overridden
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return router == null || !router.isRemoved();
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         Slot srcSlot = slots.get(index);
 
         if (srcSlot != null && srcSlot.hasItem()) {
@@ -157,15 +157,16 @@ public class ContainerModule extends ContainerMRBase {
     }
 
     @Override
-    public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
         boolean forceUpdate = false;
 
         if (slot > HOTBAR_END) {
-            return slotClickExtraSlot(slot, dragType, clickTypeIn, player);
+            slotClickExtraSlot(slot, dragType, clickTypeIn, player);
+            return;
         }
         if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() > 1) {
             // prevent augment dupe
-            return ItemStack.EMPTY;
+            return;
         }
 
         switch (clickTypeIn) {
@@ -173,32 +174,31 @@ public class ContainerModule extends ContainerMRBase {
                 // normal left-click
                 if (router == null && slot == currentSlot) {
                     // no messing with the module that triggered this container's creation
-                    return ItemStack.EMPTY;
+                    return;
                 }
                 if (slot >= 0 && slot < Filter.FILTER_SIZE) {
                     Slot s = slots.get(slot);
-                    ItemStack stackOnCursor = player.inventory.getCarried();
+                    ItemStack stackOnCursor = getCarried();
                     if (stackOnCursor.isEmpty() || isItemOKForFilter(stackOnCursor, slot)) {
                         s.set(stackOnCursor.isEmpty() ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stackOnCursor, 1));
                     }
-                    return ItemStack.EMPTY;
+                    return;
                 } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     forceUpdate = true;
                 }
             case THROW:
                 if (slot >= 0 && slot < Filter.FILTER_SIZE) {
-                    return ItemStack.EMPTY;
+                    return;
                 } else if (slot >= AUGMENT_START && slot < AUGMENT_START + ItemAugment.SLOTS && augmentHandler.getHolderStack().getCount() == 1) {
                     forceUpdate = true;
                 }
         }
-        ItemStack ret = super.clicked(slot, dragType, clickTypeIn, player);
+        super.clicked(slot, dragType, clickTypeIn, player);
         if (forceUpdate) {
             // force item handler's onContentsChanged() to be called
             slots.get(slot).set(slots.get(slot).getItem());
             broadcastChanges();
         }
-        return ret;
     }
 
     private boolean isItemOKForFilter(ItemStack stack, int slot) {

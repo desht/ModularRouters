@@ -1,17 +1,17 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.util.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemStackButton extends TexturedButton {
     private final ItemStack renderStack;
     private final boolean flat;
 
-    public ItemStackButton(int x, int y, int width, int height, ItemStack renderStack, boolean flat, IPressable pressable) {
+    public ItemStackButton(int x, int y, int width, int height, ItemStack renderStack, boolean flat, OnPress pressable) {
         super(x, y, width, height, pressable);
         this.renderStack = renderStack;
         this.flat = flat;
@@ -22,11 +22,10 @@ public class ItemStackButton extends TexturedButton {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             Minecraft mc = Minecraft.getInstance();
-            mc.getTextureManager().bind(TEXTURE);
-//            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GuiUtil.bindTexture(TEXTURE);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getYImage(this.isHovered);
             RenderSystem.enableBlend();

@@ -1,17 +1,17 @@
 package me.desht.modularrouters.client.render.area;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,12 +43,12 @@ public class ModuleTargetRenderer {
     @SubscribeEvent
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (compiledPos != null) {
-            IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            MatrixStack matrixStack = event.getMatrixStack();
+            MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+            PoseStack matrixStack = event.getMatrixStack();
 
             matrixStack.pushPose();
 
-            Vector3d projectedView = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+            Vec3 projectedView = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
             render(buffer, matrixStack, compiledPos);
             matrixStack.popPose();
@@ -63,7 +63,7 @@ public class ModuleTargetRenderer {
         }
     }
 
-    private static void render(IRenderTypeBuffer.Impl buffer, MatrixStack matrixStack, ModuleTargetRenderer.CompiledPosition cp) {
+    private static void render(MultiBufferSource.BufferSource buffer, PoseStack matrixStack, ModuleTargetRenderer.CompiledPosition cp) {
         float start = (1 - BOX_SIZE) / 2.0f;
 
         for (BlockPos pos : cp.getPositions()) {
@@ -76,7 +76,7 @@ public class ModuleTargetRenderer {
             int b = color & 0xFF;
             int alpha;
 
-            IVertexBuilder faceBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE);
+            VertexConsumer faceBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             alpha = getFaceAlpha(cp, pos, Direction.NORTH);
             faceBuilder.vertex(posMat,0, 0, 0).color(r, g, b, alpha).endVertex();
@@ -117,7 +117,7 @@ public class ModuleTargetRenderer {
             RenderSystem.disableDepthTest();
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
-            IVertexBuilder lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
+            VertexConsumer lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
             lineBuilder.vertex(posMat, 0, 0, 0).color(64, 64, 64, 80).endVertex();
             lineBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(64, 64, 64, 80).endVertex();

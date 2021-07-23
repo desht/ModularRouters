@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -14,16 +14,16 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.fmlclient.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.Range;
 
 import java.util.Collections;
@@ -41,7 +41,7 @@ public class GuiModuleFluid extends GuiModule {
     private FluidDirectionButton fluidDirButton;
     private IntegerTextField maxTransferField;
 
-    public GuiModuleFluid(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+    public GuiModuleFluid(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -62,10 +62,10 @@ public class GuiModuleFluid extends GuiModule {
         maxTransferField.useGuiTextBackground();
         manager.focus(0);
 
-        addButton(new TooltipButton(leftPos + 130, topPos + 19, 16, 16, bucketStack));
-        addButton(fluidDirButton = new FluidDirectionButton(leftPos + 148, topPos + 44, cfm.getFluidDirection()));
-        addButton(forceEmptyButton = new ForceEmptyButton(leftPos + 168, topPos + 69, cfm.isForceEmpty()));
-        addButton(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.x + regulatorTextField.getWidth() + 2, regulatorTextField.y - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
+        addRenderableWidget(new TooltipButton(leftPos + 130, topPos + 19, 16, 16, bucketStack));
+        addRenderableWidget(fluidDirButton = new FluidDirectionButton(leftPos + 148, topPos + 44, cfm.getFluidDirection()));
+        addRenderableWidget(forceEmptyButton = new ForceEmptyButton(leftPos + 168, topPos + 69, cfm.isForceEmpty()));
+        addRenderableWidget(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.x + regulatorTextField.getWidth() + 2, regulatorTextField.y - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 17, leftPos + 183, topPos + 35, "modularrouters.guiText.popup.fluid.maxTransfer");
         getMouseOverHelp().addHelpRegion(leftPos + 126, topPos + 42, leftPos + 185, topPos + 61, "modularrouters.guiText.popup.fluid.direction");
@@ -84,7 +84,7 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         // text entry field custom background - super has already bound the correct texture
@@ -95,7 +95,7 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
 
         if (forceEmptyButton.visible) {
@@ -105,8 +105,8 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
+        super.containerTick();
 
         regulationTypeButton.visible = regulatorTextField.visible;
         regulationTypeButton.setText();
@@ -115,8 +115,8 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     @Override
-    protected CompoundNBT buildMessageData() {
-        CompoundNBT compound = super.buildMessageData();
+    protected CompoundTag buildMessageData() {
+        CompoundTag compound = super.buildMessageData();
         compound.putInt(CompiledFluidModule1.NBT_MAX_TRANSFER, maxTransferField.getIntValue());
         compound.putByte(CompiledFluidModule1.NBT_FLUID_DIRECTION, (byte) fluidDirButton.getState().ordinal());
         compound.putBoolean(CompiledFluidModule1.NBT_FORCE_EMPTY, forceEmptyButton.isToggled());
@@ -127,19 +127,19 @@ public class GuiModuleFluid extends GuiModule {
     private class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.fluidTransferTooltip");
-            tooltip1.add(StringTextComponent.EMPTY.plainCopy());
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidTransferTooltip");
+            tooltip1.add(TextComponent.EMPTY.plainCopy());
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
                 tooltip1.add(xlate("modularrouters.guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
-                tooltip1.add(StringTextComponent.EMPTY.plainCopy());
+                tooltip1.add(TextComponent.EMPTY.plainCopy());
             });
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
-        public void playDownSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundManager soundHandlerIn) {
             // no sound
         }
     }
@@ -151,7 +151,7 @@ public class GuiModuleFluid extends GuiModule {
     }
 
     private class FluidDirectionButton extends TexturedCyclerButton<FluidDirection> {
-        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+        private final List<List<Component>> tooltips = Lists.newArrayList();
 
         FluidDirectionButton(int x, int y, FluidDirection initialVal) {
             super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
@@ -171,7 +171,7 @@ public class GuiModuleFluid extends GuiModule {
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
     }
@@ -179,8 +179,8 @@ public class GuiModuleFluid extends GuiModule {
     private class ForceEmptyButton extends TexturedToggleButton {
         ForceEmptyButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, GuiModuleFluid.this);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.false");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.true");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.false");
+            MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.true");
         }
 
         @Override
@@ -197,8 +197,8 @@ public class GuiModuleFluid extends GuiModule {
     private static class RegulateAbsoluteButton extends ExtendedButton {
         private boolean regulateAbsolute;
 
-        public RegulateAbsoluteButton(int xPos, int yPos, int width, int height, IPressable pressable, boolean regulateAbsolute) {
-            super(xPos, yPos, width, height, StringTextComponent.EMPTY, pressable);
+        public RegulateAbsoluteButton(int xPos, int yPos, int width, int height, OnPress pressable, boolean regulateAbsolute) {
+            super(xPos, yPos, width, height, TextComponent.EMPTY, pressable);
             this.regulateAbsolute = regulateAbsolute;
         }
 
@@ -207,7 +207,7 @@ public class GuiModuleFluid extends GuiModule {
         }
 
         void setText() {
-            setMessage(new StringTextComponent(regulateAbsolute ? "mB" : "%"));
+            setMessage(new TextComponent(regulateAbsolute ? "mB" : "%"));
         }
     }
 }

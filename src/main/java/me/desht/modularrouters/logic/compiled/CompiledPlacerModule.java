@@ -1,24 +1,24 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.BlockUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
 public class CompiledPlacerModule extends CompiledModule {
-    public CompiledPlacerModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledPlacerModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (!isRegulationOK(router, false)) {
             return false;
         }
@@ -26,7 +26,7 @@ public class CompiledPlacerModule extends CompiledModule {
         if (!getFilter().test(toPlace)) {
             return false;
         }
-        World world = router.getLevel();
+        Level world = router.getLevel();
         BlockPos pos = getTarget().gPos.pos();
         BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, world, pos, getFacing());
         if (newState != null) {

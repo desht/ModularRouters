@@ -2,15 +2,15 @@ package me.desht.modularrouters.recipe;
 
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipe;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class GuideBookRecipe extends ShapelessRecipe {
@@ -29,13 +29,13 @@ public class GuideBookRecipe extends ShapelessRecipe {
     private static ItemStack makeGuideBook() {
         if (GUIDE_BOOK == null) return ItemStack.EMPTY;
         ItemStack book = new ItemStack(GUIDE_BOOK);
-        CompoundNBT tag = book.getOrCreateTag();
+        CompoundTag tag = book.getOrCreateTag();
         tag.putString(NBT_KEY, NBT_VAL);
         return book;
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipes.GUIDE_BOOK.get();
     }
 }

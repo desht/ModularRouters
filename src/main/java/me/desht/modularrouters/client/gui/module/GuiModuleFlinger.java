@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -9,18 +9,18 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
 public class GuiModuleFlinger extends GuiModule {
     private FloatTextField speedField;
     private FloatTextField pitchField;
     private FloatTextField yawField;
 
-    public GuiModuleFlinger(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+    public GuiModuleFlinger(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -28,9 +28,9 @@ public class GuiModuleFlinger extends GuiModule {
     public void init() {
         super.init();
 
-        addButton(new TooltipButton(0, leftPos + 130, topPos + 15, "speed", FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED));
-        addButton(new TooltipButton(1, leftPos + 130, topPos + 33, "pitch", FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH));
-        addButton(new TooltipButton(2, leftPos + 130, topPos + 51, "yaw", FlingerModule.MIN_YAW, FlingerModule.MAX_YAW));
+        addRenderableWidget(new TooltipButton(0, leftPos + 130, topPos + 15, "speed", FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED));
+        addRenderableWidget(new TooltipButton(1, leftPos + 130, topPos + 33, "pitch", FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH));
+        addRenderableWidget(new TooltipButton(2, leftPos + 130, topPos + 51, "yaw", FlingerModule.MIN_YAW, FlingerModule.MAX_YAW));
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
@@ -64,7 +64,7 @@ public class GuiModuleFlinger extends GuiModule {
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         this.blit(matrixStack, leftPos + 148, topPos + 16, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
@@ -73,8 +73,8 @@ public class GuiModuleFlinger extends GuiModule {
     }
 
     @Override
-    protected CompoundNBT buildMessageData() {
-        CompoundNBT compound = super.buildMessageData();
+    protected CompoundTag buildMessageData() {
+        CompoundTag compound = super.buildMessageData();
         compound.putFloat(CompiledFlingerModule.NBT_SPEED, speedField.getFloatValue());
         compound.putFloat(CompiledFlingerModule.NBT_PITCH, pitchField.getFloatValue());
         compound.putFloat(CompiledFlingerModule.NBT_YAW, yawField.getFloatValue());
@@ -88,7 +88,7 @@ public class GuiModuleFlinger extends GuiModule {
             super(x, y, 16, 16, p -> {});
             this.buttonId = buttonId;
             tooltip1.add(ClientUtil.xlate("modularrouters.guiText.tooltip.flinger." + key, min, max));
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
@@ -107,7 +107,7 @@ public class GuiModuleFlinger extends GuiModule {
         }
 
         @Override
-        public void playDownSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundManager soundHandlerIn) {
             // no click sound
         }
     }

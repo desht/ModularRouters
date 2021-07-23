@@ -1,16 +1,17 @@
 package me.desht.modularrouters.client.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public abstract class GuiScreenBase extends Screen implements IManagedTextFields {
     private TextFieldManager textFieldManager;
     private int delayTicks;
 
-    protected GuiScreenBase(ITextComponent displayName) {
+    protected GuiScreenBase(Component displayName) {
         super(displayName);
     }
 
@@ -27,18 +28,17 @@ public abstract class GuiScreenBase extends Screen implements IManagedTextFields
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         if (textFieldManager != null) textFieldManager.drawTextFields(matrixStack, mouseX, mouseY, partialTicks);
-        this.buttons.stream()
-                .filter(button -> button.isMouseOver(mouseX, mouseY) && button instanceof ITooltipButton)
+        this.renderables.stream()
+                .filter(widget -> widget instanceof AbstractWidget aw && aw.isMouseOver(mouseX, mouseY) && widget instanceof ITooltipButton)
                 .findFirst()
                 .ifPresent(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
     }
 
     @Override
     public void tick() {
-        super.tick();
         if (delayTicks > 0) {
             delayTicks--;
             if (delayTicks == 0) {

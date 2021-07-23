@@ -2,11 +2,11 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.container.FilterSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -23,20 +23,20 @@ public class ModuleFilterMessage {
         this.stack = stack;
     }
 
-    public ModuleFilterMessage(PacketBuffer buffer) {
+    public ModuleFilterMessage(FriendlyByteBuf buffer) {
         slot = buffer.readByte();
         stack = buffer.readItem();
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeByte(slot);
         buffer.writeItem(stack);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = ctx.get().getSender();
-            Container c = player.containerMenu;
+            Player player = ctx.get().getSender();
+            AbstractContainerMenu c = player.containerMenu;
             if (c instanceof ContainerModule && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
                 c.getSlot(slot).set(stack);
             }

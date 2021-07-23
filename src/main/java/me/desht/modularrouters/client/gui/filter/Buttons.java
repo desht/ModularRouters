@@ -4,7 +4,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 
 class Buttons {
     static class AddButton extends TexturedButton {
-        AddButton(int x, int y, IPressable pressable) {
+        AddButton(int x, int y, OnPress pressable) {
             super(x, y, 16, 16, pressable);
         }
 
@@ -22,7 +22,7 @@ class Buttons {
     static class DeleteButton extends TexturedButton {
         private final int id;
 
-        DeleteButton(int x, int y, int id, IPressable pressable) {
+        DeleteButton(int x, int y, int id, OnPress pressable) {
             super(x, y, 16, 16, pressable);
             this.id = id;
         }

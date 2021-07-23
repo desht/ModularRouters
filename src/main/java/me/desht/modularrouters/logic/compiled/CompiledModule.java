@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.ItemAugment.AugmentCounter;
 import me.desht.modularrouters.item.module.IRangedModule;
@@ -14,11 +14,11 @@ import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.CountedItemStacks;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.Validate;
@@ -53,7 +53,7 @@ public abstract class CompiledModule {
      * @param router router the module is installed in, may be null for an uninstalled module
      * @param stack item stack of the module item being compiled
      */
-    CompiledModule(@Nullable TileEntityItemRouter router, ItemStack stack) {
+    CompiledModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         Validate.isTrue(stack.getItem() instanceof ItemModule, "expected module item, got " + stack);
 
         module = (ItemModule) stack.getItem();
@@ -78,7 +78,7 @@ public abstract class CompiledModule {
      * @param router router the module is installed in, may <strong>not</strong> be null
      * @return true if the module did some work, false otherwise
      */
-    public abstract boolean execute(@Nonnull TileEntityItemRouter router);
+    public abstract boolean execute(@Nonnull ModularRouterBlockEntity router);
 
     @Nonnull
     public Filter getFilter() {
@@ -95,10 +95,10 @@ public abstract class CompiledModule {
 
     /**
      * Get the static target for a router module.  This is set up when the router is compiled, and does not
-     * necessarily reflect the true target for all modules.  Use {@link #getEffectiveTarget(TileEntityItemRouter)}
+     * necessarily reflect the true target for all modules.  Use {@link #getEffectiveTarget(ModularRouterBlockEntity)}
      * to get the actual target that should be interacted with when executing the module.
      *
-     * @return the first target as set up by {@link #setupTargets(TileEntityItemRouter, ItemStack)}
+     * @return the first target as set up by {@link #setupTargets(ModularRouterBlockEntity, ItemStack)}
      */
     ModuleTarget getTarget() {
         return targets == null || targets.isEmpty() ? null : targets.get(0);
@@ -108,7 +108,7 @@ public abstract class CompiledModule {
      * Used by modules which can store multiple targets, e.g. the distributor module.  See also
      * {@link #getTarget()}.
      *
-     * @return a list of the defined targets as set up by {@link #setupTargets(TileEntityItemRouter, ItemStack)}
+     * @return a list of the defined targets as set up by {@link #setupTargets(ModularRouterBlockEntity, ItemStack)}
      */
     List<ModuleTarget> getTargets() {
         return targets;
@@ -143,13 +143,13 @@ public abstract class CompiledModule {
         return facing;
     }
 
-    public void onCompiled(TileEntityItemRouter router) {
+    public void onCompiled(ModularRouterBlockEntity router) {
         if (behaviour == RouterRedstoneBehaviour.PULSE) {
             router.setHasPulsedModules(true);
         }
     }
 
-    public void cleanup(TileEntityItemRouter router) {
+    public void cleanup(ModularRouterBlockEntity router) {
         // does nothing by default
     }
 
@@ -187,7 +187,7 @@ public abstract class CompiledModule {
      * @param stack the module itemstack
      * @return a list of router target objects (for most modules this is a singleton list)
      */
-    List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
+    List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         if (router == null || (module.isDirectional() && direction == RelativeDirection.NONE)) {
             return null;
         }
@@ -198,7 +198,7 @@ public abstract class CompiledModule {
         return Collections.singletonList(new ModuleTarget(gPos, facing.getOpposite(), blockName));
     }
 
-    int getItemsPerTick(TileEntityItemRouter router) {
+    int getItemsPerTick(ModularRouterBlockEntity router) {
         int n = augmentCounter.getAugmentCount(ModItems.STACK_AUGMENT.get());
         return n > 0 ? Math.min(1 << n, 64) : router.getItemsPerTick();
     }
@@ -212,7 +212,7 @@ public abstract class CompiledModule {
      * @param router the router
      * @return items actually transferred
      */
-    ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, TileEntityItemRouter router) {
+    ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
         CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, key, getItemsPerTick(router), count);
@@ -245,7 +245,7 @@ public abstract class CompiledModule {
         return transferred;
     }
 
-    private ItemStack findItemToPull(TileEntityItemRouter router, IItemHandler handler, BlockPos key, int nToTake, CountedItemStacks count) {
+    private ItemStack findItemToPull(ModularRouterBlockEntity router, IItemHandler handler, BlockPos key, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
             // something in the router - try to pull more of that
@@ -271,7 +271,7 @@ public abstract class CompiledModule {
      *
      * @return the real target for this module
      */
-    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(ModularRouterBlockEntity router) {
         return getTarget();
     }
 
@@ -279,7 +279,7 @@ public abstract class CompiledModule {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 
-    boolean isRegulationOK(TileEntityItemRouter router, boolean inbound) {
+    boolean isRegulationOK(ModularRouterBlockEntity router, boolean inbound) {
         if (regulationAmount == 0) return true; // no regulation
         int items = router.getBufferItemStack().getCount();
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
@@ -301,7 +301,7 @@ public abstract class CompiledModule {
         return routerFacing;
     }
 
-    public void onNeighbourChange(TileEntityItemRouter router) {
+    public void onNeighbourChange(ModularRouterBlockEntity router) {
     }
 
     public int getEnergyCost() {

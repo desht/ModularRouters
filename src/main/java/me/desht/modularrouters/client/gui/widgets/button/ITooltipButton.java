@@ -1,9 +1,9 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public interface ITooltipButton {
-    List<ITextComponent> getTooltip();
+    List<Component> getTooltip();
 }

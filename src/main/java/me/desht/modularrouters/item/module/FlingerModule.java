@@ -6,9 +6,9 @@ import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -26,14 +26,14 @@ public class FlingerModule extends DropperModule {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledFlingerModule fs = new CompiledFlingerModule(null, itemstack);
         list.add(ClientUtil.xlate("modularrouters.itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_FLINGER.get();
     }
 

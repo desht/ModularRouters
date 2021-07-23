@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
@@ -8,7 +8,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule2;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
         super(ModItems.defaultProps(), CompiledSenderModule2::new);
     }
 
-    public SenderModule2(BiFunction<TileEntityItemRouter,ItemStack,? extends CompiledModule> compiler) {
+    public SenderModule2(BiFunction<ModularRouterBlockEntity,ItemStack,? extends CompiledModule> compiler) {
         super(ModItems.defaultProps(), compiler);
     }
 

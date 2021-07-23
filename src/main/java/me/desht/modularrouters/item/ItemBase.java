@@ -4,13 +4,13 @@ import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -26,10 +26,10 @@ public abstract class ItemBase extends Item {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         if (world == null) return;
 
-        ITextComponent text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage();
+        Component text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage();
 
         if (ClientSetup.keybindModuleInfo.isDown()) {
             addUsageInformation(stack, list);
@@ -45,12 +45,12 @@ public abstract class ItemBase extends Item {
         }
     }
 
-    protected void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
-        MiscUtil.appendMultilineText(list, TextFormatting.GRAY,
+    protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
+        MiscUtil.appendMultilineText(list, ChatFormatting.GRAY,
                 "modularrouters.itemText.usage.item." + itemstack.getItem().getRegistryName().getPath(), getExtraUsageParams());
     }
 
-    protected abstract void addExtraInformation(ItemStack stack, List<ITextComponent> list);
+    protected abstract void addExtraInformation(ItemStack stack, List<Component> list);
 
     protected Object[] getExtraUsageParams() {
         return new Object[0];

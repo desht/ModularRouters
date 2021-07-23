@@ -1,15 +1,15 @@
 package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -20,37 +20,37 @@ import java.util.function.Supplier;
  */
 public class ModuleSettingsMessage {
     private final MFLocator locator;
-    private final CompoundNBT payload;
+    private final CompoundTag payload;
 
-    ModuleSettingsMessage(PacketBuffer buf) {
+    ModuleSettingsMessage(FriendlyByteBuf buf) {
         locator = MFLocator.fromBuffer(buf);
         payload = buf.readNbt();
     }
 
-    public ModuleSettingsMessage(MFLocator locator, CompoundNBT payload) {
+    public ModuleSettingsMessage(MFLocator locator, CompoundTag payload) {
         this.locator = locator;
         this.payload = payload;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         locator.writeBuf(buf);
         buf.writeNbt(payload);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 ItemStack moduleStack = locator.getModuleStack(player);
 
                 if (moduleStack.getItem() instanceof ItemModule) {
-                    CompoundNBT compound = ModuleHelper.validateNBT(moduleStack);
+                    CompoundTag compound = ModuleHelper.validateNBT(moduleStack);
                     for (String key : payload.getAllKeys()) {
                         compound.put(key, payload.get(key));
                     }
                     if (locator.routerPos != null) {
-                        TileEntityItemRouter.getRouterAt(player.getCommandSenderWorld(), locator.routerPos)
-                                .ifPresent(router -> router.recompileNeeded(TileEntityItemRouter.COMPILE_MODULES));
+                        ModularRouterBlockEntity.getRouterAt(player.getCommandSenderWorld(), locator.routerPos)
+                                .ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES));
                     }
                 } else {
                     ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator.toString());

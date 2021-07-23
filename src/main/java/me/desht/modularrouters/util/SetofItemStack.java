@@ -2,9 +2,9 @@ package me.desht.modularrouters.util;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 

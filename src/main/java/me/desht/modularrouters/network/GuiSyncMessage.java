@@ -2,9 +2,9 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -20,11 +20,11 @@ public class GuiSyncMessage {
         this.newStack = newStack;
     }
 
-    public GuiSyncMessage(PacketBuffer buf) {
+    public GuiSyncMessage(FriendlyByteBuf buf) {
         newStack = buf.readItem();
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeItem(newStack);
     }
 

@@ -1,18 +1,18 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class ContainerSmartFilter extends ContainerMRBase {
     protected final ItemStack filterStack;
     protected final MFLocator locator;
-    protected final TileEntityItemRouter router;
+    protected final ModularRouterBlockEntity router;
 
-    ContainerSmartFilter(ContainerType<?> type, int windowId, PlayerInventory inv, MFLocator locator) {
+    ContainerSmartFilter(MenuType<?> type, int windowId, Inventory inv, MFLocator locator) {
         super(type, windowId);
 
         this.locator = locator;
@@ -21,7 +21,7 @@ public abstract class ContainerSmartFilter extends ContainerMRBase {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return router == null || !router.isRemoved();
     }
 
@@ -33,7 +33,7 @@ public abstract class ContainerSmartFilter extends ContainerMRBase {
         return filterStack;
     }
 
-    public TileEntityItemRouter getRouter() {
+    public ModularRouterBlockEntity getRouter() {
         return router;
     }
 }

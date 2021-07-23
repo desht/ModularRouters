@@ -1,9 +1,9 @@
 package me.desht.modularrouters.container.handler;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModBlocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -18,14 +18,14 @@ import javax.annotation.Nonnull;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
 
 public class BufferHandler extends ItemStackHandler {
-    private final TileEntityItemRouter router;
+    private final ModularRouterBlockEntity router;
     private boolean hasFluidCap;
     private boolean hasEnergyCap;
 
     private final IFluidHandler adapter = new FluidItemAdapter(0);
     private final LazyOptional<IFluidHandler> fluidAdapter = LazyOptional.of(() -> adapter);
 
-    public BufferHandler(TileEntityItemRouter router) {
+    public BufferHandler(ModularRouterBlockEntity router) {
         super(router.getBufferSlotCount());
         this.router = router;
         this.hasFluidCap = hasCap(getStackInSlot(0), FLUID_HANDLER_ITEM_CAPABILITY);
@@ -50,7 +50,7 @@ public class BufferHandler extends ItemStackHandler {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
 
         ItemStack stack = getStackInSlot(0);

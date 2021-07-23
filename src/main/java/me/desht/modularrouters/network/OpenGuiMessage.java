@@ -3,10 +3,10 @@ package me.desht.modularrouters.network;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import java.util.function.Supplier;
 
@@ -36,7 +36,7 @@ public class OpenGuiMessage {
         this.locator = locator;
     }
 
-    OpenGuiMessage(PacketBuffer buf) {
+    OpenGuiMessage(FriendlyByteBuf buf) {
         operation = buf.readEnum(Operation.class);
         locator = MFLocator.fromBuffer(buf);
     }
@@ -61,14 +61,14 @@ public class OpenGuiMessage {
         return new OpenGuiMessage(Operation.FILTER_INSTALLED, locator);
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeEnum(operation);
         locator.writeBuf(buf);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 switch (operation) {
                     case ROUTER:

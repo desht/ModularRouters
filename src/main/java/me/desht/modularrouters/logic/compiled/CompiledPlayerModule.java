@@ -1,19 +1,19 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.*;
 
@@ -49,19 +49,19 @@ public class CompiledPlayerModule extends CompiledModule {
     private final Section section;
     private final UUID playerId;
     private final String playerName;
-    private WeakReference<PlayerEntity> playerRef;
+    private WeakReference<Player> playerRef;
 
-    public CompiledPlayerModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledPlayerModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
+        CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             playerName = ((PlayerModule) stack.getItem()).getOwnerName(stack);
             playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);
             operation = Operation.values()[compound.getInt(NBT_OPERATION)];
             section = Section.values()[compound.getInt(NBT_SECTION)];
             if (router != null && !router.getLevel().isClientSide) {
-                PlayerEntity player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
+                Player player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
                 playerRef = new WeakReference<>(player);
             } else {
                 playerRef = new WeakReference<>(null);
@@ -80,8 +80,8 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
-        PlayerEntity player = getPlayer();  // will be non-null if we get here
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+        Player player = getPlayer();  // will be non-null if we get here
         IItemHandler itemHandler = getHandler(player);
         if (itemHandler == null) {
             return false;
@@ -117,7 +117,7 @@ public class CompiledPlayerModule extends CompiledModule {
         return false;
     }
 
-    private PlayerEntity getPlayer() {
+    private Player getPlayer() {
         return playerRef.get();
     }
 
@@ -136,7 +136,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public void onCompiled(TileEntityItemRouter router) {
+    public void onCompiled(ModularRouterBlockEntity router) {
         super.onCompiled(router);
         if (!router.getLevel().isClientSide) {
             MinecraftForge.EVENT_BUS.register(this);
@@ -144,7 +144,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public void cleanup(TileEntityItemRouter router) {
+    public void cleanup(ModularRouterBlockEntity router) {
         super.cleanup(router);
         if (!router.getLevel().isClientSide) {
             MinecraftForge.EVENT_BUS.unregister(this);
@@ -163,7 +163,7 @@ public class CompiledPlayerModule extends CompiledModule {
         return section;
     }
 
-    private boolean insertArmor(TileEntityItemRouter router, IItemHandler itemHandler, ItemStack armorStack) {
+    private boolean insertArmor(ModularRouterBlockEntity router, IItemHandler itemHandler, ItemStack armorStack) {
         int slot = getSlotForArmorItem(armorStack);
         if (slot >= 0 && itemHandler.getStackInSlot(slot).isEmpty()) {
             ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
@@ -178,29 +178,28 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     private int getSlotForArmorItem(ItemStack stack) {
-        switch (MobEntity.getEquipmentSlotForItem(stack)) {
-            case HEAD: return 3;
-            case CHEST: return 2;
-            case LEGS: return 1;
-            case FEET: return 0;
-            default: return -1;
-        }
+        return switch (Mob.getEquipmentSlotForItem(stack)) {
+            case HEAD -> 3;
+            case CHEST -> 2;
+            case LEGS -> 1;
+            case FEET -> 0;
+            default -> -1;
+        };
     }
 
-    private IItemHandler getHandler(PlayerEntity player) {
-        switch (section) {
-            case MAIN: return new PlayerMainInvWrapper(player.inventory);
-            case MAIN_NO_HOTBAR: return new PlayerMainInvNoHotbarWrapper(player.inventory);
-            case ARMOR: return new PlayerArmorInvWrapper(player.inventory);
-            case OFFHAND: return new PlayerOffhandInvWrapper(player.inventory);
-            case ENDER: return new InvWrapper(player.getEnderChestInventory());
-            default: return null;
-        }
+    private IItemHandler getHandler(Player player) {
+        return switch (section) {
+            case MAIN -> new PlayerMainInvWrapper(player.getInventory());
+            case MAIN_NO_HOTBAR -> new PlayerMainInvNoHotbarWrapper(player.getInventory());
+            case ARMOR -> new PlayerArmorInvWrapper(player.getInventory());
+            case OFFHAND -> new PlayerOffhandInvWrapper(player.getInventory());
+            case ENDER -> new InvWrapper(player.getEnderChestInventory());
+        };
     }
 
     public static class PlayerMainInvNoHotbarWrapper extends RangedWrapper {
-        PlayerMainInvNoHotbarWrapper(PlayerInventory inv) {
-            super(new InvWrapper(inv), PlayerInventory.getSelectionSize(), inv.items.size());
+        PlayerMainInvNoHotbarWrapper(Inventory inv) {
+            super(new InvWrapper(inv), Inventory.getSelectionSize(), inv.items.size());
         }
     }
 }

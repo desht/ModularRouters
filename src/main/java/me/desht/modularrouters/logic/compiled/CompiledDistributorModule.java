@@ -2,17 +2,17 @@ package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -42,10 +42,10 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     private int nextTarget = 0;
     private boolean pulling = false;
 
-    public CompiledDistributorModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledDistributorModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
+        CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             distributionStrategy = DistributionStrategy.values()[compound.getInt(NBT_STRATEGY)];
             if (distributionStrategy == DistributionStrategy.FURTHEST_FIRST) {
@@ -58,11 +58,11 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         return pulling ? executePull(router) : super.execute(router);
     }
 
-    private boolean executePull(TileEntityItemRouter router) {
+    private boolean executePull(ModularRouterBlockEntity router) {
         if (router.isBufferFull()) return false;
 
         ModuleTarget tgt = getEffectiveTarget(router);
@@ -88,7 +88,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
+    void playParticles(ModularRouterBlockEntity router, BlockPos targetPos, ItemStack stack) {
         if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
             BeamData data = new BeamData(router.getTickRate(), targetPos, stack, getBeamColor());
             router.addItemBeam(isPulling() ? data.reverseItems() : data);
@@ -101,7 +101,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    protected List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.getLevel().isClientSide);
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
@@ -109,7 +109,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return l;
     }
 
-    private static double calcDist(ModuleTarget tgt, TileEntity te) {
+    private static double calcDist(ModuleTarget tgt, BlockEntity te) {
         double distance = tgt.gPos.pos().distSqr(te.getBlockPos());
         if (!tgt.isSameWorld(te.getLevel())) {
             distance += 100_000_000;  // cross-dimension penalty
@@ -118,7 +118,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    public ModuleTarget getEffectiveTarget(TileEntityItemRouter router) {
+    public ModuleTarget getEffectiveTarget(ModularRouterBlockEntity router) {
         if (getTargets() == null || getTargets().isEmpty()) return null;
         int nTargets = getTargets().size();
         if (nTargets == 1) return getTargets().get(0); // degenerate case

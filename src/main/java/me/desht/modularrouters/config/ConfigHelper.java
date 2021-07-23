@@ -1,7 +1,7 @@
 package me.desht.modularrouters.config;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
 import java.util.stream.Collectors;

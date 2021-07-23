@@ -7,10 +7,10 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -31,12 +31,12 @@ public class DetectorModule extends ItemModule {
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_DETECTOR.get();
     }
 
     @Override
-    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
         list.add(ClientUtil.xlate("modularrouters.itemText.misc.redstoneLevel",

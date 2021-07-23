@@ -1,12 +1,12 @@
 package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.ImmutableList;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CompiledEnergyDistributorModule extends CompiledModule {
-    public CompiledEnergyDistributorModule(@Nullable TileEntityItemRouter router, ItemStack stack) {
+    public CompiledEnergyDistributorModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         List<ModuleTarget> inRange = getTargets().stream()
                 .filter(target -> target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared())
                 .collect(Collectors.toList());
@@ -49,7 +49,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
     }
 
     @Override
-    public List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
+    public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         return router == null ? Collections.emptyList() : ImmutableList.copyOf(TargetedModule.getTargets(stack, !router.getLevel().isClientSide));
     }
 }

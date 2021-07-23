@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
@@ -21,31 +21,31 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -158,14 +158,14 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         }
     }
 
-    final BiFunction<TileEntityItemRouter, ItemStack, ? extends CompiledModule> compiler;
+    final BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler;
 
-    public ItemModule(Properties props, BiFunction<TileEntityItemRouter, ItemStack, ? extends CompiledModule> compiler) {
+    public ItemModule(Properties props, BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler) {
         super(props);
         this.compiler = compiler;
     }
 
-    final public CompiledModule compile(TileEntityItemRouter router, ItemStack stack) {
+    final public CompiledModule compile(ModularRouterBlockEntity router, ItemStack stack) {
         return compiler.apply(router, stack);
     }
 
@@ -181,7 +181,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return false;
     }
 
-    ContainerModule createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+    ContainerModule createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
         return new ContainerModule(getContainerType(), windowId, invPlayer, loc);
     }
 
@@ -191,7 +191,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
      *
      * @return the container type
      */
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_BASIC.get();
     }
 
@@ -218,10 +218,10 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, world, list, flag);
 
-        TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
+        ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
         if (router != null) {
             Slot slot = ((GuiItemRouter) Minecraft.getInstance().screen).getSlotUnderMouse();
             if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
@@ -232,22 +232,22 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    protected void addExtraInformation(ItemStack stack, List<Component> list) {
         addSettingsInformation(stack, list);
         addAugmentInformation(stack, list);
     }
 
-    protected void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+    protected void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         if (isDirectional()) {
             RelativeDirection dir = ModuleHelper.getRelativeDirection(itemstack);
-            IFormattableTextComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
+            MutableComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
                     "modularrouters.guiText.tooltip.allDirections" : "modularrouters.guiText.tooltip." + dir.toString());
             list.add(xlate("modularrouters.guiText.label.direction")
-                    .append(new StringTextComponent(": "))
-                    .append(itc.withStyle(TextFormatting.AQUA)));
+                    .append(new TextComponent(": "))
+                    .append(itc.withStyle(ChatFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
-        list.add(new StringTextComponent(
+        list.add(new TextComponent(
                         I18n.get("modularrouters.itemText.misc.flags") + ": " +
                                 String.join(" | ",
                                         formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
@@ -260,27 +260,27 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
         list.add(xlate("modularrouters.itemText.misc.match").append(": ")
                 .append(xlate("modularrouters.itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
-                        .withStyle(TextFormatting.AQUA)));
+                        .withStyle(ChatFormatting.AQUA)));
 
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
             int curRange = rm.getCurrentRange(itemstack);
             String col = curRange > rm.getBaseRange() ?
-                    TextFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
-                    TextFormatting.RED.toString() : TextFormatting.AQUA.toString();
+                    ChatFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
+                    ChatFormatting.RED.toString() : ChatFormatting.AQUA.toString();
             list.add(xlate("modularrouters.itemText.misc.rangeInfo", col, rm.getCurrentRange(itemstack), rm.getBaseRange(), rm.getHardMaxRange()));
         }
 
         Termination termination = ModuleHelper.getTermination(itemstack);
         if (termination != Termination.NONE) {
-            list.add(xlate(termination.getTranslationKey() + ".header").withStyle(TextFormatting.YELLOW));
+            list.add(xlate(termination.getTranslationKey() + ".header").withStyle(ChatFormatting.YELLOW));
         }
 
         if (this instanceof IPickaxeUser) {
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
-            list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(TextFormatting.AQUA)));
+            list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(ChatFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
-                    list.add(new StringTextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(TextFormatting.AQUA)).withStyle(TextFormatting.YELLOW)));
+                    list.add(new TextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW)));
         }
 
         int energy = getEnergyCost(itemstack);
@@ -291,21 +291,21 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     public abstract int getEnergyCost(ItemStack stack);
 
-    private void addAugmentInformation(ItemStack stack, List<ITextComponent> list) {
+    private void addAugmentInformation(ItemStack stack, List<Component> list) {
         AugmentCounter c = new AugmentCounter(stack);
-        List<ITextComponent> toAdd = Lists.newArrayList();
+        List<Component> toAdd = Lists.newArrayList();
         for (ItemAugment augment : c.getAugments()) {
             int n = c.getAugmentCount(augment);
             if (n > 0) {
                 ItemStack augmentStack = new ItemStack(augment);
                 String s = augmentStack.getHoverName().getString();
                 if (n > 1) s = n + " x " + s;
-                s += TextFormatting.AQUA + augment.getExtraInfo(n, stack);
-                toAdd.add(new StringTextComponent(" \u2022 " + TextFormatting.DARK_GREEN + s));
+                s += ChatFormatting.AQUA + augment.getExtraInfo(n, stack);
+                toAdd.add(new TextComponent(" \u2022 " + ChatFormatting.DARK_GREEN + s));
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new StringTextComponent(TextFormatting.GREEN.toString()).append(xlate("modularrouters.itemText.augments")));
+            list.add(new TextComponent(ChatFormatting.GREEN.toString()).append(xlate("modularrouters.itemText.augments")));
             list.addAll(toAdd);
         }
     }
@@ -318,56 +318,56 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
 
     private String formatFlag(String key, boolean flag) {
         String text = I18n.get("modularrouters.itemText.misc." + key);
-        return (flag ? TextFormatting.DARK_GRAY : TextFormatting.AQUA) + text + TextFormatting.RESET;
+        return (flag ? ChatFormatting.DARK_GRAY : ChatFormatting.AQUA) + text + ChatFormatting.RESET;
     }
 
-    protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
+    protected Component getFilterItemDisplayName(ItemStack stack) {
         return stack.getHoverName();
     }
 
-    protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
+    protected MutableComponent itemListHeader(ItemStack itemstack) {
         return xlate("modularrouters.itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist"));
     }
 
-    private void addFilterInformation(ItemStack itemstack, List<ITextComponent> list) {
-        List<ITextComponent> l2 = new ArrayList<>();
+    private void addFilterInformation(ItemStack itemstack, List<Component> list) {
+        List<Component> l2 = new ArrayList<>();
         ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack, null);
         for (int i = 0; i < filterHandler.getSlots(); i++) {
             ItemStack s = filterHandler.getStackInSlot(i);
             if (s.getItem() instanceof ItemSmartFilter) {
                 int size = ((ItemSmartFilter) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(new StringTextComponent(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
-                        .withStyle(TextFormatting.AQUA, TextFormatting.ITALIC));
+                l2.add(new TextComponent(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
+                        .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new StringTextComponent(" \u2022 ").append(getFilterItemDisplayName(s).plainCopy()
-                        .withStyle(TextFormatting.AQUA)));
+                l2.add(new TextComponent(" \u2022 ").append(getFilterItemDisplayName(s).plainCopy()
+                        .withStyle(ChatFormatting.AQUA)));
             }
         }
         if (l2.isEmpty()) {
-            list.add(itemListHeader(itemstack).withStyle(TextFormatting.YELLOW).append(": ")
-                    .append(xlate("modularrouters.itemText.misc.noItems").withStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
+            list.add(itemListHeader(itemstack).withStyle(ChatFormatting.YELLOW).append(": ")
+                    .append(xlate("modularrouters.itemText.misc.noItems").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC))
             );
         } else {
-            list.add(itemListHeader(itemstack).withStyle(TextFormatting.YELLOW).append(": "));
+            list.add(itemListHeader(itemstack).withStyle(ChatFormatting.YELLOW).append(": "));
             list.addAll(l2);
         }
     }
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         ModuleHelper.validateNBT(stack);
         if (!player.isSteppingCarefully()) {
             if (!world.isClientSide) {
                 MFLocator locator = MFLocator.heldModule(hand);
-                NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, locator), locator::writeBuf);
+                NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(player, locator), locator::writeBuf);
             }
         } else {
             return onSneakRightClick(stack, world, player, hand);
         }
-        return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
     @Override
@@ -383,8 +383,8 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return "modularrouters.guiText.tooltip.regulator.label";
     }
 
-    public ActionResult<ItemStack> onSneakRightClick(ItemStack stack, World world, PlayerEntity player, Hand hand) {
-        return new ActionResult<>(ActionResultType.PASS, stack);
+    public InteractionResultHolder<ItemStack> onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
+        return new InteractionResultHolder<>(InteractionResult.PASS, stack);
     }
 
     @Override
@@ -392,23 +392,23 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return false;
     }
 
-    public static class ContainerProvider implements INamedContainerProvider {
+    public static class ContainerProvider implements MenuProvider {
         private final MFLocator loc;
         private final ItemStack moduleStack;
 
-        public ContainerProvider(PlayerEntity player, MFLocator loc) {
+        public ContainerProvider(Player player, MFLocator loc) {
             this.loc = loc;
             this.moduleStack = loc.getModuleStack(player);
         }
 
         @Override
-        public ITextComponent getDisplayName() {
+        public Component getDisplayName() {
             return moduleStack.getHoverName();
         }
 
         @Nullable
         @Override
-        public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
             return ((ItemModule)moduleStack.getItem()).createContainer(windowId, playerInventory, loc);
         }
     }

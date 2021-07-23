@@ -1,12 +1,12 @@
 package me.desht.modularrouters.client.render.area;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 import me.desht.modularrouters.client.render.ModRenderTypes;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.BlockPos;
 
 import java.util.Set;
 
@@ -21,7 +21,7 @@ public class AreaRenderer {
         this.size = size;
     }
 
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer.Impl buffer) {
+    public void render(PoseStack matrixStack, MultiBufferSource.BufferSource buffer) {
         render(matrixStack, buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE));
         RenderSystem.disableDepthTest();
         buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_FACE);
@@ -31,7 +31,7 @@ public class AreaRenderer {
         buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_LINE);
     }
 
-    private void render(MatrixStack matrixStack, IVertexBuilder builder) {
+    private void render(PoseStack matrixStack, VertexConsumer builder) {
         for (BlockPos pos : showingPositions) {
             matrixStack.pushPose();
             double start = (1 - size) / 2.0;
@@ -42,7 +42,7 @@ public class AreaRenderer {
         }
     }
 
-    private void addVertices(IVertexBuilder wr, Matrix4f posMat) {
+    private void addVertices(VertexConsumer wr, Matrix4f posMat) {
         wr.vertex(posMat, 0, 0, 0).color(cols[1], cols[2], cols[3], cols[0]).endVertex();
         wr.vertex(posMat, 0, size, 0).color(cols[1], cols[2], cols[3], cols[0]).endVertex();
         wr.vertex(posMat, size, size, 0).color(cols[1], cols[2], cols[3], cols[0]).endVertex();

@@ -11,11 +11,11 @@ import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
@@ -43,23 +43,23 @@ public class FluidModule1 extends ItemModule {
 
     @Override
     public String getRegulatorTranslationKey(ItemStack stack) {
-        CompoundNBT compound = ModuleHelper.validateNBT(stack);
+        CompoundTag compound = ModuleHelper.validateNBT(stack);
         boolean isAbsolute = compound.getBoolean(CompiledFluidModule1.NBT_REGULATE_ABSOLUTE);
         return "modularrouters.guiText.tooltip.regulator." + (isAbsolute ? "labelFluidmB" : "labelFluidPct");
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_FLUID.get();
     }
 
     @Override
-    protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
+    protected Component getFilterItemDisplayName(ItemStack stack) {
         return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getHoverName());
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    protected void addExtraInformation(ItemStack stack, List<Component> list) {
         super.addExtraInformation(stack, list);
 
         addFluidModuleInformation(stack, list);
@@ -94,7 +94,7 @@ public class FluidModule1 extends ItemModule {
         return TINT_COLOR;
     }
 
-    static void addFluidModuleInformation(ItemStack stack, List<ITextComponent> list) {
+    static void addFluidModuleInformation(ItemStack stack, List<Component> list) {
         CompiledFluidModule1 cfm = new CompiledFluidModule1(null, stack);
         String dir = I18n.get("modularrouters.itemText.fluid.direction." + cfm.getFluidDirection());
         list.add(xlate("modularrouters.itemText.fluid.direction", dir));

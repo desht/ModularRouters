@@ -2,16 +2,16 @@ package me.desht.modularrouters.logic;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -46,21 +46,21 @@ public class ModuleTarget {
         this(gPos, null);
     }
 
-    public CompoundNBT toNBT() {
-        CompoundNBT ext = new CompoundNBT();
+    public CompoundTag toNBT() {
+        CompoundTag ext = new CompoundTag();
         ext.put("Pos", MiscUtil.serializeGlobalPos(gPos));
         ext.putByte("Face", (byte) face.ordinal());
         ext.putString("InvName", blockTranslationKey);
         return ext;
     }
 
-    public static ModuleTarget fromNBT(CompoundNBT nbt) {
+    public static ModuleTarget fromNBT(CompoundTag nbt) {
         GlobalPos gPos = MiscUtil.deserializeGlobalPos(nbt.getCompound("Pos"));
         Direction face = Direction.values()[nbt.getByte("Face")];
         return new ModuleTarget(gPos, face, nbt.getString("InvName"));
     }
 
-    public boolean isSameWorld(World world) {
+    public boolean isSameWorld(Level world) {
         return gPos.dimension() == world.dimension();
     }
 
@@ -75,7 +75,7 @@ public class ModuleTarget {
      * @return a (lazy optional) item handler
      */
     public boolean hasItemHandlerClientSide() {
-        World w = ClientUtil.theClientWorld();
+        Level w = ClientUtil.theClientWorld();
         return isSameWorld(w) && getItemHandlerFor(w).isPresent();
     }
 
@@ -88,14 +88,14 @@ public class ModuleTarget {
         return getItemHandlerFor(MiscUtil.getWorldForGlobalPos(gPos));
     }
 
-    private LazyOptional<IItemHandler> getItemHandlerFor(World w) {
+    private LazyOptional<IItemHandler> getItemHandlerFor(Level w) {
         // called both client and server side...
         if (!cachedItemCap.isPresent()) {
             BlockPos pos = gPos.pos();
             if (w == null || !w.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
                 cachedItemCap = LazyOptional.empty();
             } else {
-                TileEntity te = w.getBlockEntity(pos);
+                BlockEntity te = w.getBlockEntity(pos);
                 cachedItemCap = te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
             }
             if (cachedItemCap.isPresent()) cachedItemCap.addListener(c -> cachedItemCap = LazyOptional.empty());
@@ -111,11 +111,11 @@ public class ModuleTarget {
     public LazyOptional<IEnergyStorage> getEnergyHandler() {
         if (!cachedEnergyCap.isPresent()) {
             BlockPos pos = gPos.pos();
-            World w = MiscUtil.getWorldForGlobalPos(gPos);
+            Level w = MiscUtil.getWorldForGlobalPos(gPos);
             if (w == null || !w.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
                 cachedEnergyCap = LazyOptional.empty();
             } else {
-                TileEntity te = w.getBlockEntity(pos);
+                BlockEntity te = w.getBlockEntity(pos);
                 cachedEnergyCap = te == null ? LazyOptional.empty() : te.getCapability(CapabilityEnergy.ENERGY, face);
             }
             if (cachedEnergyCap.isPresent()) cachedEnergyCap.addListener(c -> cachedEnergyCap = LazyOptional.empty());
@@ -141,8 +141,8 @@ public class ModuleTarget {
         return MiscUtil.locToString(gPos) + " " + face;
     }
 
-    public ITextComponent getTextComponent() {
-        return new TranslationTextComponent(blockTranslationKey).withStyle(TextFormatting.WHITE)
-                .append(new StringTextComponent(" @ " + toString()).withStyle(TextFormatting.AQUA));
+    public Component getTextComponent() {
+        return new TranslatableComponent(blockTranslationKey).withStyle(ChatFormatting.WHITE)
+                .append(new TextComponent(" @ " + toString()).withStyle(ChatFormatting.AQUA));
     }
 }

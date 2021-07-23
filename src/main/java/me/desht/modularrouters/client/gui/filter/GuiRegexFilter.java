@@ -1,19 +1,19 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class GuiRegexFilter extends GuiFilterScreen {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/regexfilter.png");
+    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/regexfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 186;
@@ -52,10 +52,10 @@ public class GuiRegexFilter extends GuiFilterScreen {
         manager.focus(0);
 
         if (locator.filterSlot >= 0) {
-            addButton(new BackButton(xPos - 12, yPos, p -> closeGUI()));
+            addRenderableWidget(new BackButton(xPos - 12, yPos, p -> closeGUI()));
         }
 
-        addButton(new Buttons.AddButton(xPos + 155, yPos + 23, button -> {
+        addRenderableWidget(new Buttons.AddButton(xPos + 155, yPos + 23, button -> {
             if (!regexTextField.getValue().isEmpty()) addRegex();
         }));
 
@@ -63,7 +63,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
         for (int i = 0; i < RegexFilter.MAX_SIZE; i++) {
             Buttons.DeleteButton b = new Buttons.DeleteButton(xPos + 8, yPos + 52 + i * 19, i,
                     button -> sendRemovePosMessage(((Buttons.DeleteButton) button).getId()));
-            addButton(b);
+            addRenderableWidget(b);
             deleteButtons.add(b);
         }
 
@@ -71,11 +71,10 @@ public class GuiRegexFilter extends GuiFilterScreen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
 
-        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bind(textureLocation);
+        GuiUtil.bindTexture(TEXTURE_LOCATION);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - font.width(title) / 2f, yPos + 6, 0x404040);
 
@@ -93,10 +92,8 @@ public class GuiRegexFilter extends GuiFilterScreen {
 
     @Override
     public void tick() {
-        if (errorTimer > 0) {
-            if (--errorTimer == 0) {
-                errorMsg = "";
-            }
+        if (errorTimer > 0 && --errorTimer == 0) {
+            errorMsg = "";
         }
         super.tick();
     }
@@ -132,7 +129,7 @@ public class GuiRegexFilter extends GuiFilterScreen {
     private static class RegexTextField extends TextFieldWidgetMR {
         private final GuiRegexFilter parent;
 
-        RegexTextField(GuiRegexFilter parent, int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height) {
+        RegexTextField(GuiRegexFilter parent, int componentId, Font fontrendererObj, int x, int y, int par5Width, int par6Height) {
             super(parent.getOrCreateTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
             setMaxLength(40);

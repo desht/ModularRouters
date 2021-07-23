@@ -1,20 +1,20 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.logic.ModuleTarget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public class CompiledPullerModule1 extends CompiledModule {
-    public CompiledPullerModule1(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledPullerModule1(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (!router.isBufferFull()) {
             if (!validateRange(router, getTarget())) {
                 return false;
@@ -35,11 +35,11 @@ public class CompiledPullerModule1 extends CompiledModule {
         return false;
     }
 
-    boolean validateRange(TileEntityItemRouter router, ModuleTarget target) {
+    boolean validateRange(ModularRouterBlockEntity router, ModuleTarget target) {
         return true;
     }
 
-    void playParticles(TileEntityItemRouter router, BlockPos targetPos, ItemStack stack) {
+    void playParticles(ModularRouterBlockEntity router, BlockPos targetPos, ItemStack stack) {
         // do nothing by default
     }
 }

@@ -1,12 +1,12 @@
 package me.desht.modularrouters.util;
 
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -23,7 +23,7 @@ public class InventoryUtils {
      * @param pos blockpos to drop at (usually position of the item handler tile entity)
      * @param itemHandler the item handler
      */
-    public static void dropInventoryItems(World world, BlockPos pos, IItemHandler itemHandler) {
+    public static void dropInventoryItems(Level world, BlockPos pos, IItemHandler itemHandler) {
         Random random = new Random();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack itemStack = itemHandler.getStackInSlot(i);
@@ -47,8 +47,8 @@ public class InventoryUtils {
         }
     }
 
-    public static LazyOptional<IItemHandler> getInventory(World world, BlockPos pos, @Nullable Direction side) {
-        TileEntity te = world.getBlockEntity(pos);
+    public static LazyOptional<IItemHandler> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
+        BlockEntity te = world.getBlockEntity(pos);
         return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
     }
 
@@ -83,7 +83,7 @@ public class InventoryUtils {
      * @param stack itemstack to drop
      * @return true if the entity was spawned, false otherwise
      */
-    public static boolean dropItems(World world, Vector3d pos, ItemStack stack) {
+    public static boolean dropItems(Level world, Vec3 pos, ItemStack stack) {
         if (!world.isClientSide) {
             ItemEntity item = new ItemEntity(world, pos.x(), pos.y(), pos.z(), stack);
             return world.addFreshEntity(item);

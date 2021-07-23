@@ -8,8 +8,8 @@ import me.desht.modularrouters.item.module.ItemModule.ModuleFlags;
 import me.desht.modularrouters.item.module.ItemModule.RelativeDirection;
 import me.desht.modularrouters.item.module.ItemModule.Termination;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -29,8 +29,8 @@ public class ModuleHelper {
     private static final String NBT_RR_COUNTER = "RoundRobinCounter";
 
     @Nonnull
-    public static CompoundNBT validateNBT(ItemStack stack) {
-        CompoundNBT compound = stack.getOrCreateTagElement(ModularRouters.MODID);
+    public static CompoundTag validateNBT(ItemStack stack) {
+        CompoundTag compound = stack.getOrCreateTagElement(ModularRouters.MODID);
         if (compound.getTagType(NBT_FLAGS) == Constants.NBT.TAG_BYTE) {
             // TODO get rid of this in 1.17
             // migrate old-format flags (encoded into a byte) to modern flexible format
@@ -49,7 +49,7 @@ public class ModuleHelper {
             ModularRouters.LOGGER.info("migrated module NBT for " + stack + " to new format");
         }
         if (compound.getTagType(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
-            compound.put(NBT_FILTER, new CompoundNBT());
+            compound.put(NBT_FILTER, new CompoundTag());
         }
         return compound;
     }
@@ -71,12 +71,12 @@ public class ModuleHelper {
     }
 
     public static boolean checkFlag(ItemStack stack, ModuleFlags flag) {
-        CompoundNBT tag = validateNBT(stack);
+        CompoundTag tag = validateNBT(stack);
         return tag.contains(flag.getName(), Constants.NBT.TAG_BYTE) ? tag.getBoolean(flag.getName()) : flag.getDefaultValue();
     }
 
     public static Termination getTermination(ItemStack stack) {
-        CompoundNBT compound = validateNBT(stack);
+        CompoundTag compound = validateNBT(stack);
         try {
             return compound.contains(ModuleHelper.NBT_TERMINATION, Constants.NBT.TAG_STRING) ?
                     Termination.valueOf(compound.getString(ModuleHelper.NBT_TERMINATION)) :
@@ -89,7 +89,7 @@ public class ModuleHelper {
 
     public static RelativeDirection getRelativeDirection(ItemStack stack) {
         if (stack.getItem() instanceof ItemModule && ((ItemModule) stack.getItem()).isDirectional()) {
-            CompoundNBT compound = validateNBT(stack);
+            CompoundTag compound = validateNBT(stack);
             try {
                 return RelativeDirection.valueOf(compound.getString(NBT_DIRECTION));
             } catch (IllegalArgumentException e) {
@@ -108,7 +108,7 @@ public class ModuleHelper {
     public static RouterRedstoneBehaviour getRedstoneBehaviour(ItemStack stack) {
         ItemAugment.AugmentCounter counter = new ItemAugment.AugmentCounter(stack);
         if (counter.getAugmentCount(ModItems.REDSTONE_AUGMENT.get()) > 0) {
-            CompoundNBT compound = validateNBT(stack);
+            CompoundTag compound = validateNBT(stack);
             try {
                 return RouterRedstoneBehaviour.values()[compound.getByte(NBT_REDSTONE_MODE)];
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
@@ -129,7 +129,7 @@ public class ModuleHelper {
     }
 
     public static void setRoundRobinCounter(ItemStack moduleStack, int counter) {
-        CompoundNBT tag = validateNBT(moduleStack);
+        CompoundTag tag = validateNBT(moduleStack);
         tag.putInt(NBT_RR_COUNTER, counter);
     }
 

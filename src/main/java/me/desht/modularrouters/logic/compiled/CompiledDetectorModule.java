@@ -1,10 +1,10 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -15,10 +15,10 @@ public class CompiledDetectorModule extends CompiledModule {
     private final int signalLevel;
     private final boolean strongSignal;
 
-    public CompiledDetectorModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledDetectorModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        CompoundNBT compound = setupNBT(stack);
+        CompoundTag compound = setupNBT(stack);
         signalLevel = compound == null ? 0 : compound.getByte(NBT_SIGNAL_LEVEL);
         strongSignal = compound != null && compound.getBoolean(NBT_STRONG_SIGNAL);
     }
@@ -29,7 +29,7 @@ public class CompiledDetectorModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         ItemStack stack = router.getBufferItemStack();
 
         if (!getFilter().test(stack)) {
@@ -41,8 +41,8 @@ public class CompiledDetectorModule extends CompiledModule {
         return true;
     }
 
-    private CompoundNBT setupNBT(ItemStack stack) {
-        CompoundNBT compound = ModuleHelper.validateNBT(stack);
+    private CompoundTag setupNBT(ItemStack stack) {
+        CompoundTag compound = ModuleHelper.validateNBT(stack);
         if (!compound.contains(NBT_SIGNAL_LEVEL)) {
             compound.putInt(NBT_SIGNAL_LEVEL, 15);
         }
@@ -61,13 +61,13 @@ public class CompiledDetectorModule extends CompiledModule {
     }
 
     @Override
-    public void onCompiled(TileEntityItemRouter router) {
+    public void onCompiled(ModularRouterBlockEntity router) {
         super.onCompiled(router);
         router.setAllowRedstoneEmission(true);
     }
 
     @Override
-    public void cleanup(TileEntityItemRouter router) {
+    public void cleanup(ModularRouterBlockEntity router) {
         super.cleanup(router);
         router.setAllowRedstoneEmission(false);
     }

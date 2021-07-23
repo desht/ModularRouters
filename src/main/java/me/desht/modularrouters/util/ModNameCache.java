@@ -1,7 +1,7 @@
 package me.desht.modularrouters.util;
 
 import com.google.common.collect.Maps;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
 

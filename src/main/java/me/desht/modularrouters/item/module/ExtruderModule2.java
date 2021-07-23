@@ -9,11 +9,11 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule2;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -28,22 +28,22 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
 
-        list.add(new StringTextComponent(TextFormatting.YELLOW.toString()).append(ClientUtil.xlate("modularrouters.itemText.extruder2.template")));
+        list.add(new TextComponent(ChatFormatting.YELLOW.toString()).append(ClientUtil.xlate("modularrouters.itemText.extruder2.template")));
         TemplateHandler handler = new TemplateHandler(itemstack, null);
         int size = list.size();
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack blockStack = handler.getStackInSlot(i);
             if (!blockStack.isEmpty()) {
-                list.add(new StringTextComponent(" \u2022 " + TextFormatting.AQUA + blockStack.getCount() + " x ").append(blockStack.getHoverName()));
+                list.add(new TextComponent(" \u2022 " + ChatFormatting.AQUA + blockStack.getCount() + " x ").append(blockStack.getHoverName()));
             }
         }
         if (list.size() == size) {
-            ITextComponent tc = list.get(size - 1);
+            Component tc = list.get(size - 1);
             list.set(list.size() - 1, asFormattable(tc)
-                    .append(new StringTextComponent(" " + TextFormatting.AQUA + TextFormatting.ITALIC))
+                    .append(new TextComponent(" " + ChatFormatting.AQUA + ChatFormatting.ITALIC))
                     .append(ClientUtil.xlate("modularrouters.itemText.misc.noItems"))
             );
 
@@ -51,7 +51,7 @@ public class ExtruderModule2 extends ItemModule implements IRangedModule {
     }
 
     @Override
-    ContainerModule createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+    ContainerModule createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
         return new ContainerExtruder2Module(windowId, invPlayer, loc);
     }
 

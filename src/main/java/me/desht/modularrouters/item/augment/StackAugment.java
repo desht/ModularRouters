@@ -1,8 +1,8 @@
 package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.item.module.*;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
 
 public class StackAugment extends ItemAugment {
     @Override

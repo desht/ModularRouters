@@ -11,15 +11,15 @@ import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -35,9 +35,9 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     public static List<String> getModList(ItemStack filterStack) {
-        CompoundNBT tag = filterStack.getTagElement(ModularRouters.MODID);
+        CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         if (tag != null) {
-            ListNBT items = tag.getList(NBT_MODS, Constants.NBT.TAG_STRING);
+            ListTag items = tag.getList(NBT_MODS, Constants.NBT.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
             for (int i = 0; i < items.size(); i++) {
                 res.add(items.getString(i));
@@ -49,20 +49,20 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     private static void setModList(ItemStack filterStack, List<String> mods) {
-        ListNBT list = mods.stream().map(StringNBT::valueOf).collect(Collectors.toCollection(ListNBT::new));
+        ListTag list = mods.stream().map(StringTag::valueOf).collect(Collectors.toCollection(ListTag::new));
         filterStack.getOrCreateTagElement(ModularRouters.MODID).put(NBT_MODS, list);
     }
 
     @Override
-    public void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    public void addExtraInformation(ItemStack stack, List<Component> list) {
         super.addExtraInformation(stack, list);
         if (stack.getTagElement(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", l.size()));
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
-                    .map(s -> " \u2022 " + TextFormatting.AQUA + s)
-                    .map(StringTextComponent::new)
+                    .map(s -> " \u2022 " + ChatFormatting.AQUA + s)
+                    .map(TextComponent::new)
                     .collect(Collectors.toList()));
         } else {
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", 0));
@@ -75,12 +75,12 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     @Override
-    public ContainerSmartFilter createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+    public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
         return new ContainerModFilter(windowId, invPlayer, loc);
     }
 
     @Override
-    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
         switch (message.getOp()) {
             case ADD_STRING:
@@ -109,7 +109,7 @@ public class ModFilter extends ItemSmartFilter {
     }
 
     @Override
-    public int getSize(ItemStack filterStack) {CompoundNBT tag = filterStack.getTagElement(ModularRouters.MODID);
+    public int getSize(ItemStack filterStack) {CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         return tag != null ? tag.getList(NBT_MODS, Constants.NBT.TAG_STRING).size() : 0;
     }
 }

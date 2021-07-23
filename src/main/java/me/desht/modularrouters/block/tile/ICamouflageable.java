@@ -1,7 +1,7 @@
 package me.desht.modularrouters.block.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public interface ICamouflageable {
     BlockState getCamouflage();
@@ -10,7 +10,7 @@ public interface ICamouflageable {
     default boolean extendedMimic() { return false; }
     default void setExtendedMimic(boolean mimic) {}
 
-    static boolean isCamouflaged(TileEntity te) {
+    static boolean isCamouflaged(BlockEntity te) {
         return te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null;
     }
 }

@@ -1,11 +1,12 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.base.Joiner;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
@@ -15,11 +16,11 @@ import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -29,7 +30,7 @@ import java.util.List;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class GuiInspectionFilter extends GuiFilterScreen {
-    private static final ResourceLocation textureLocation = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
+    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/inspectionfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 191;
@@ -56,32 +57,32 @@ public class GuiInspectionFilter extends GuiFilterScreen {
         yPos = (height - GUI_HEIGHT) / 2;
 
         if (locator.filterSlot >= 0) {
-            addButton(new BackButton(xPos - 12, yPos, button -> closeGUI()));
+            addRenderableWidget(new BackButton(xPos - 12, yPos, button -> closeGUI()));
         }
 
-        addButton(new Button(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
+        addRenderableWidget(new Button(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
             currentSubject = currentSubject.cycle(Screen.hasShiftDown() ? -1 : 1);
             button.setMessage(xlate(currentSubject.getTranslationKey()));
         }));
 
-        addButton(new Button(xPos + 95, yPos + 22, 20, 20, xlate(currentOp.getTranslationKey()), button -> {
+        addRenderableWidget(new Button(xPos + 95, yPos + 22, 20, 20, xlate(currentOp.getTranslationKey()), button -> {
             currentOp = currentOp.cycle(Screen.hasShiftDown() ? -1 : 1);
             button.setMessage(xlate(currentOp.getTranslationKey()));
         }));
 
-        addButton(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
+        addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
 
         matchButton = new Button(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
-            CompoundNBT ext = new CompoundNBT();
+            CompoundTag ext = new CompoundTag();
             ext.putBoolean("MatchAll", !comparisonList.isMatchAll());
             PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ANY_ALL_FLAG, locator, ext));
         });
-        addButton(matchButton);
+        addRenderableWidget(matchButton);
 
         deleteButtons.clear();
         for (int i = 0; i < InspectionFilter.MAX_SIZE; i++) {
             Buttons.DeleteButton b = new Buttons.DeleteButton(xPos + 8, yPos + 52 + i * 19, i, button -> sendRemovePosMessage(((Buttons.DeleteButton) button).getId()));
-            addButton(b);
+            addRenderableWidget(b);
             deleteButtons.add(b);
         }
         updateDeleteButtonVisibility();
@@ -116,10 +117,10 @@ public class GuiInspectionFilter extends GuiFilterScreen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
 
-        minecraft.getTextureManager().bind(textureLocation);
+        GuiUtil.bindTexture(TEXTURE_LOCATION);
         blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.width(title) / 2f, yPos + 6, 0x404040);
 

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -13,12 +13,12 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,7 @@ public class GuiModuleDistributor extends GuiModule {
     private StrategyButton sb;
     private DirectionButton db;
 
-    public GuiModuleDistributor(ContainerModule container, PlayerInventory inv, ITextComponent displayText) {
+    public GuiModuleDistributor(ContainerModule container, Inventory inv, Component displayText) {
         super(container, inv, displayText);
     }
 
@@ -39,9 +39,9 @@ public class GuiModuleDistributor extends GuiModule {
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, moduleItemStack);
 
-        addButton(new TooltipButton(leftPos + 127, topPos + 23));
-        addButton(sb = new StrategyButton(leftPos + 147, topPos + 23, 16, 16, cdm.getDistributionStrategy()));
-        addButton(db = new DirectionButton(leftPos + 147, topPos + 43, cdm.isPulling()));
+        addRenderableWidget(new TooltipButton(leftPos + 127, topPos + 23));
+        addRenderableWidget(sb = new StrategyButton(leftPos + 147, topPos + 23, 16, 16, cdm.getDistributionStrategy()));
+        addRenderableWidget(db = new DirectionButton(leftPos + 147, topPos + 43, cdm.isPulling()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 21, leftPos + 165, topPos + 41,
                 "modularrouters.guiText.popup.distributor.strategy");
@@ -50,22 +50,22 @@ public class GuiModuleDistributor extends GuiModule {
     }
 
     @Override
-    protected CompoundNBT buildMessageData() {
-        CompoundNBT tag = super.buildMessageData();
+    protected CompoundTag buildMessageData() {
+        CompoundTag tag = super.buildMessageData();
         tag.putInt(CompiledDistributorModule.NBT_STRATEGY, sb.getState().ordinal());
         tag.putBoolean(CompiledDistributorModule.NBT_PULLING, db.isToggled());
         return tag;
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, leftPos + 127, topPos + 43, "");
     }
 
     private class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
-        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+        private final List<List<Component>> tooltips = Lists.newArrayList();
 
         StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
             super(x, y, width, height, initialVal, GuiModuleDistributor.this);
@@ -85,7 +85,7 @@ public class GuiModuleDistributor extends GuiModule {
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
     }
@@ -94,8 +94,8 @@ public class GuiModuleDistributor extends GuiModule {
         public DirectionButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, GuiModuleDistributor.this);
 
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.itemText.fluid.direction.OUT");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.itemText.fluid.direction.IN");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.itemText.fluid.direction.OUT");
+            MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.itemText.fluid.direction.IN");
         }
 
         @Override
@@ -121,7 +121,7 @@ public class GuiModuleDistributor extends GuiModule {
         }
 
         @Override
-        public void playDownSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundManager soundHandlerIn) {
         }
 
         @Override

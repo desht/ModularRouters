@@ -2,7 +2,7 @@ package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.container.ContainerModule;
@@ -10,14 +10,14 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +26,7 @@ public class GuiModuleVacuum extends GuiModule {
     private XPTypeButton xpb;
     private EjectButton ejb;
 
-    public GuiModuleVacuum(ContainerModule container, PlayerInventory inv, ITextComponent displayName) {
+    public GuiModuleVacuum(ContainerModule container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -37,8 +37,8 @@ public class GuiModuleVacuum extends GuiModule {
         CompiledVacuumModule vac = new CompiledVacuumModule(null, moduleItemStack);
 
         ItemStack[] icons = Arrays.stream(XPCollectionType.values()).map(XPCollectionType::getIcon).toArray(ItemStack[]::new);
-        addButton(xpb = new XPTypeButton(leftPos + 170, topPos + 28, 16, 16, true, icons, vac.getXPCollectionType()));
-        addButton(ejb = new EjectButton(leftPos + 167, topPos + 48, vac.isAutoEjecting()));
+        addRenderableWidget(xpb = new XPTypeButton(leftPos + 170, topPos + 28, 16, 16, true, icons, vac.getXPCollectionType()));
+        addRenderableWidget(ejb = new EjectButton(leftPos + 167, topPos + 48, vac.isAutoEjecting()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 24, leftPos + 187, topPos + 45, "modularrouters.guiText.popup.xpVacuum", guiContainer -> xpb.visible);
         getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 46, leftPos + 187, topPos + 65, "modularrouters.guiText.popup.xpVacuum.eject", guiContainer -> xpb.visible);
@@ -53,7 +53,7 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
             font.draw(matrixStack, I18n.get("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
@@ -64,7 +64,7 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
             this.blit(matrixStack,leftPos + 168, topPos + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
@@ -72,23 +72,23 @@ public class GuiModuleVacuum extends GuiModule {
     }
 
     @Override
-    protected CompoundNBT buildMessageData() {
-        CompoundNBT compound = super.buildMessageData();
+    protected CompoundTag buildMessageData() {
+        CompoundTag compound = super.buildMessageData();
         compound.putInt(CompiledVacuumModule.NBT_XP_FLUID_TYPE, xpb.getState().ordinal());
         compound.putBoolean(CompiledVacuumModule.NBT_AUTO_EJECT, ejb.isToggled());
         return compound;
     }
 
     private class XPTypeButton extends ItemStackCyclerButton<XPCollectionType> {
-        private final List<List<ITextComponent>> tips = Lists.newArrayList();
+        private final List<List<Component>> tips = Lists.newArrayList();
 
         XPTypeButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, XPCollectionType initialVal) {
             super(x, y, width, height, flat, stacks, initialVal, GuiModuleVacuum.this);
 
             for (XPCollectionType type : XPCollectionType.values()) {
-                StringTextComponent modName = new StringTextComponent(ModNameCache.getModName(type.getModId()));
-                IFormattableTextComponent title = type.getDisplayName().plainCopy();
-                tips.add(ImmutableList.of(title, modName.withStyle(TextFormatting.BLUE, TextFormatting.ITALIC)));
+                TextComponent modName = new TextComponent(ModNameCache.getModName(type.getModId()));
+                MutableComponent title = type.getDisplayName().plainCopy();
+                tips.add(ImmutableList.of(title, modName.withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
             }
         }
 
@@ -100,7 +100,7 @@ public class GuiModuleVacuum extends GuiModule {
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return tips.get(getState().ordinal());
         }
 

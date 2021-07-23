@@ -1,7 +1,7 @@
 package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,7 +13,7 @@ public class TickEventHandler {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.world.dimension() == World.OVERWORLD && event.phase == TickEvent.Phase.END) {
+        if (event.world.dimension() == Level.OVERWORLD && event.phase == TickEvent.Phase.END) {
             TickCounter++;
         }
     }

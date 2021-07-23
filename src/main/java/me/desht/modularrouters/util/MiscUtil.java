@@ -1,25 +1,25 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.Direction;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -32,22 +32,22 @@ public class MiscUtil {
 
     private static final int WRAP_LENGTH = 45;
 
-    public static void appendMultilineText(List<ITextComponent> result, TextFormatting formatting, String key, Object... args) {
+    public static void appendMultilineText(List<Component> result, ChatFormatting formatting, String key, Object... args) {
         for (String s : I18n.get(key, args).split(Pattern.quote("${br}"))) {
-            result.add(new StringTextComponent(s).withStyle(formatting));
+            result.add(new TextComponent(s).withStyle(formatting));
         }
     }
 
-    public static IFormattableTextComponent asFormattable(ITextComponent component) {
-        return component instanceof IFormattableTextComponent ? (IFormattableTextComponent) component : component.plainCopy();
+    public static MutableComponent asFormattable(Component component) {
+        return component instanceof MutableComponent ? (MutableComponent) component : component.plainCopy();
     }
 
     public static List<String> wrapString(String text) {
         return wrapString(text, WRAP_LENGTH);
     }
 
-    public static List<ITextComponent> wrapStringAsTextComponent(String text) {
-        return wrapString(text, WRAP_LENGTH).stream().map(StringTextComponent::new).collect(Collectors.toList());
+    public static List<Component> wrapStringAsTextComponent(String text) {
+        return wrapString(text, WRAP_LENGTH).stream().map(TextComponent::new).collect(Collectors.toList());
     }
 
     public static String commify(int n) {
@@ -116,32 +116,32 @@ public class MiscUtil {
         }
     }
 
-    public static ITextComponent settingsStr(String prefix, ITextComponent c) {
-        return new StringTextComponent(prefix).append(c);  // appendSibling
+    public static Component settingsStr(String prefix, Component c) {
+        return new TextComponent(prefix).append(c);  // appendSibling
     }
 
-    public static CompoundNBT serializeGlobalPos(GlobalPos globalPos) {
-        CompoundNBT tag = new CompoundNBT();
-        tag.put("pos", net.minecraft.nbt.NBTUtil.writeBlockPos(globalPos.pos()));
+    public static CompoundTag serializeGlobalPos(GlobalPos globalPos) {
+        CompoundTag tag = new CompoundTag();
+        tag.put("pos", net.minecraft.nbt.NbtUtils.writeBlockPos(globalPos.pos()));
         tag.putString("dim", globalPos.dimension().location().toString());
         return tag;
     }
 
-    public static GlobalPos deserializeGlobalPos(CompoundNBT tag) {
-        RegistryKey<World> worldKey = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dim")));
-        return GlobalPos.of(worldKey, NBTUtil.readBlockPos(tag.getCompound("pos")));
+    public static GlobalPos deserializeGlobalPos(CompoundTag tag) {
+        ResourceKey<Level> worldKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dim")));
+        return GlobalPos.of(worldKey, NbtUtils.readBlockPos(tag.getCompound("pos")));
     }
 
-    public static ServerWorld getWorldForGlobalPos(GlobalPos pos) {
+    public static ServerLevel getWorldForGlobalPos(GlobalPos pos) {
         return ServerLifecycleHooks.getCurrentServer().getLevel(pos.dimension());
     }
 
-    public static GlobalPos makeGlobalPos(World w, BlockPos pos) {
+    public static GlobalPos makeGlobalPos(Level w, BlockPos pos) {
         return GlobalPos.of(w.dimension(), pos);
     }
 
     // this method from Block went missing in 1.16.2
-    public static boolean blockHasSolidSide(BlockState state, IBlockReader worldIn, BlockPos pos, Direction side) {
+    public static boolean blockHasSolidSide(BlockState state, BlockGetter worldIn, BlockPos pos, Direction side) {
         return Block.isFaceFull(state.getBlockSupportShape(worldIn, pos), side);
     }
 }

@@ -2,8 +2,8 @@ package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.item.module.DropperModule;
 import me.desht.modularrouters.item.module.ItemModule;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
 
 public class PickupDelayAugment extends ItemAugment {
     public static final int TICKS_PER_AUGMENT = 10;

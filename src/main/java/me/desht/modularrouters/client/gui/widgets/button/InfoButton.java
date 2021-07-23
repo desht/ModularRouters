@@ -1,12 +1,12 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 
 public class InfoButton extends TexturedButton {
     public InfoButton(int x, int y, String key) {
         super(x, y, 16, 16, p -> {});
-        MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + key);
+        MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip." + key);
     }
 
     @Override

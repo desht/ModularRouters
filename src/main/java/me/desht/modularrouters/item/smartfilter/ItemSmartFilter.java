@@ -8,18 +8,18 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +42,7 @@ public abstract class ItemSmartFilter extends ItemBase {
      * @param moduleStack item stack of the module the filter is installed in, if any
      * @return true if a GuiSync message should be returned to the client
      */
-    public abstract GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack);
+    public abstract GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack);
 
     /**
      * Get the number of items in this filter, mainly for client display purposes.
@@ -56,45 +56,45 @@ public abstract class ItemSmartFilter extends ItemBase {
         return false;
     }
 
-    public ContainerSmartFilter createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+    public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
         return null;
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    protected void addExtraInformation(ItemStack stack, List<Component> list) {
         // nothing - override in subclasses
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         ItemSmartFilter filter = (ItemSmartFilter) stack.getItem();
         MFLocator loc = MFLocator.heldFilter(hand);
         if (!world.isClientSide && filter.hasContainer()) {
-            NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player, loc), loc::writeBuf);
+            NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(player, loc), loc::writeBuf);
         } else if (world.isClientSide && !hasContainer()) {
             FilterGuiFactory.openFilterGui(loc);
         }
-        return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
-    public static class ContainerProvider implements INamedContainerProvider {
+    public static class ContainerProvider implements MenuProvider {
         private final MFLocator loc;
         private final ItemStack filterStack;
 
-        public ContainerProvider(PlayerEntity player, MFLocator loc) {
+        public ContainerProvider(Player player, MFLocator loc) {
             this.loc = loc;
             this.filterStack = loc.getTargetItem(player);
         }
 
         @Override
-        public ITextComponent getDisplayName() {
+        public Component getDisplayName() {
             return filterStack.getHoverName();
         }
 
         @Nullable
         @Override
-        public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
             return ((ItemSmartFilter) filterStack.getItem()).createContainer(windowId, playerInventory, loc);
         }
     }

@@ -9,13 +9,13 @@ import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncableGui {
-    protected final ITextComponent title;
+    protected final Component title;
     final MFLocator locator;
 
     GuiFilterScreen(ItemStack filterStack, MFLocator locator) {
@@ -51,13 +51,13 @@ public abstract class GuiFilterScreen extends GuiScreenBase implements IResyncab
     }
 
     void sendAddStringMessage(String key, String s) {
-        CompoundNBT ext = new CompoundNBT();
+        CompoundTag ext = new CompoundTag();
         ext.putString(key, s);
         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ADD_STRING, locator, ext));
     }
 
     void sendRemovePosMessage(int pos) {
-        CompoundNBT ext = new CompoundNBT();
+        CompoundTag ext = new CompoundTag();
         ext.putInt("Pos", pos);
         PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.REMOVE_AT, locator, ext));
     }

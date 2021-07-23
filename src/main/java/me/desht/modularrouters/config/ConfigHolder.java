@@ -2,6 +2,7 @@ package me.desht.modularrouters.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -26,7 +27,7 @@ public class ConfigHolder {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ConfigHolder::modConfig);
     }
 
-    private static void modConfig(final net.minecraftforge.fml.config.ModConfig.ModConfigEvent event) {
+    private static void modConfig(final ModConfigEvent event) {
         net.minecraftforge.fml.config.ModConfig config = event.getConfig();
         if (config.getSpec() == ConfigHolder.configClientSpec) {
             ConfigHelper.refreshClient(config);

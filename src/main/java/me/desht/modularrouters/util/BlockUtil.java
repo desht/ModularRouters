@@ -1,21 +1,26 @@
 package me.desht.modularrouters.util;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.item.*;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,10 +39,10 @@ public class BlockUtil {
             Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
     };
 
-    private static BlockState getPlaceableState(BlockItemUseContext ctx) {
+    private static BlockState getPlaceableState(BlockPlaceContext ctx) {
         try {
             BlockState res = null;
-            World world = ctx.getLevel();
+            Level world = ctx.getLevel();
             BlockPos pos = ctx.getClickedPos();
             Item item = ctx.getItemInHand().getItem();
             if (item instanceof BlockItem) {
@@ -60,13 +65,13 @@ public class BlockUtil {
         }
     }
 
-    private static BlockState getCocoaBeanState(BlockItemUseContext ctx) {
+    private static BlockState getCocoaBeanState(BlockPlaceContext ctx) {
         if (ctx.getPlayer() == null) return null;
         // try to find a jungle log in any horizontal direction
         for (Direction f : HORIZONTALS) {
             BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos().relative(f));
             if (state.getBlock() == Blocks.JUNGLE_LOG) {
-                ctx.getPlayer().yRot = getYawFromFacing(f);  // fake player must face the jungle log
+                ctx.getPlayer().setYRot(getYawFromFacing(f));  // fake player must face the jungle log
                 return Blocks.COCOA.getStateForPlacement(ctx);
             }
         }
@@ -74,13 +79,13 @@ public class BlockUtil {
     }
 
     private static float getYawFromFacing(Direction facing) {
-        switch (facing) {
-            case WEST: return 90f;
-            case NORTH: return 180f;
-            case EAST: return 270f;
-            case SOUTH: return 0f;
-            default: return 0f; // shouldn't happen
-        }
+        return switch (facing) {
+            case WEST -> 90f;
+            case NORTH -> 180f;
+            case EAST -> 270f;
+            case SOUTH -> 0f;
+            default -> 0f; // shouldn't happen
+        };
     }
 
     /**
@@ -93,18 +98,18 @@ public class BlockUtil {
      * @param facing direction the placer is facing
      * @return the new block state if successful, null otherwise
      */
-    public static BlockState tryPlaceAsBlock(TileEntityItemRouter router, ItemStack toPlace, World world, BlockPos pos, Direction facing) {
+    public static BlockState tryPlaceAsBlock(ModularRouterBlockEntity router, ItemStack toPlace, Level world, BlockPos pos, Direction facing) {
         BlockState currentState = world.getBlockState(pos);
 
         FakePlayer fakePlayer = router.getFakePlayer();
-        fakePlayer.yRot = getYawFromFacing(facing);
-        fakePlayer.setItemInHand(Hand.MAIN_HAND, toPlace);
+        fakePlayer.setYRot(getYawFromFacing(facing));
+        fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, toPlace);
 
         float hitX = (float) (fakePlayer.getX() - pos.getX());
         float hitY = (float) (fakePlayer.getY() - pos.getY());
         float hitZ = (float) (fakePlayer.getZ() - pos.getZ());
-        BlockRayTraceResult brtr = new BlockRayTraceResult(new Vector3d(hitX, hitY, hitZ), facing, pos, false);
-        BlockItemUseContext ctx = new BlockItemUseContext(new ItemUseContext(fakePlayer, Hand.MAIN_HAND, brtr));
+        BlockHitResult brtr = new BlockHitResult(new Vec3(hitX, hitY, hitZ), facing, pos, false);
+        BlockPlaceContext ctx = new BlockPlaceContext(new UseOnContext(fakePlayer, InteractionHand.MAIN_HAND, brtr));
         if (!currentState.canBeReplaced(ctx)) {
             return null;
         }
@@ -112,11 +117,11 @@ public class BlockUtil {
         BlockState newState = getPlaceableState(ctx);
         if (newState != null) {
             BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
-            fakePlayer.setItemInHand(Hand.MAIN_HAND, toPlace);
+            fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, toPlace);
             BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockAndUpdate(pos, newState)) {
-                fakePlayer.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                 BlockItem.updateCustomBlockEntityTag(world, fakePlayer, pos, toPlace);
                 newState.getBlock().setPlacedBy(world, pos, newState, fakePlayer, toPlace);
                 return newState;
@@ -126,8 +131,8 @@ public class BlockUtil {
         return null;
     }
 
-    public static boolean tryPlaceBlock(TileEntityItemRouter router, BlockState newState, World world, BlockPos pos) {
-        if (!(world instanceof ServerWorld) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
+    public static boolean tryPlaceBlock(ModularRouterBlockEntity router, BlockState newState, Level world, BlockPos pos) {
+        if (!(world instanceof ServerLevel) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
 
         BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
         BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), router.getFakePlayer());
@@ -146,19 +151,18 @@ public class BlockUtil {
      * @param pickaxe   the pickaxe to use to break block
      * @return a drop result object
      */
-    public static BreakResult tryBreakBlock(TileEntityItemRouter router, World world, BlockPos pos, Filter filter, ItemStack pickaxe) {
-        if (!(world instanceof ServerWorld)) return BreakResult.NOT_BROKEN;
-        ServerWorld serverWorld = (ServerWorld) world;
+    public static BreakResult tryBreakBlock(ModularRouterBlockEntity router, Level world, BlockPos pos, Filter filter, ItemStack pickaxe) {
+        if (!(world instanceof ServerLevel serverWorld)) return BreakResult.NOT_BROKEN;
 
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (block.isAir(state, world, pos) || state.getDestroySpeed(world, pos) < 0 || block instanceof FlowingFluidBlock) {
+        if (state.isAir() || state.getDestroySpeed(world, pos) < 0 || block instanceof LiquidBlock) {
             return BreakResult.NOT_BROKEN;
         }
 
         FakePlayer fakePlayer = router.getFakePlayer();
-        fakePlayer.setItemInHand(Hand.MAIN_HAND, pickaxe);
+        fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, pickaxe);
         if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.canHarvestBlock(state, fakePlayer, world, pos)) {
             return BreakResult.NOT_BROKEN;
         }
@@ -171,8 +175,8 @@ public class BlockUtil {
             if (!breakEvent.isCanceled()) {
                 world.removeBlock(pos, false);
                 if (MRConfig.Common.Router.blockBreakXPDrops && breakEvent.getExpToDrop() > 0) {
-                    Vector3d vec = Vector3d.atCenterOf(pos);
-                    ExperienceOrbEntity xpOrb = new ExperienceOrbEntity(world, vec.x, vec.y, vec.z, breakEvent.getExpToDrop());
+                    Vec3 vec = Vec3.atCenterOf(pos);
+                    ExperienceOrb xpOrb = new ExperienceOrb(world, vec.x, vec.y, vec.z, breakEvent.getExpToDrop());
                     world.addFreshEntity(xpOrb);
                 }
                 return new BreakResult(true, groups);
@@ -181,7 +185,7 @@ public class BlockUtil {
         return BreakResult.NOT_BROKEN;
     }
 
-    public static String getBlockName(World w, BlockPos pos) {
+    public static String getBlockName(Level w, BlockPos pos) {
         return w == null ? "" : w.getBlockState(pos).getBlock().getDescriptionId();
     }
 
@@ -212,15 +216,15 @@ public class BlockUtil {
          * @param pos the position to drop any items at
          * @param handler item handler to insert into
          */
-        public void processDrops(World world, BlockPos pos, IItemHandler handler) {
+        public void processDrops(Level world, BlockPos pos, IItemHandler handler) {
             for (ItemStack drop : getFilteredDrops(true)) {
                 ItemStack excess = handler.insertItem(0, drop, false);
                 if (!excess.isEmpty()) {
-                    InventoryUtils.dropItems(world, Vector3d.atCenterOf(pos), excess);
+                    InventoryUtils.dropItems(world, Vec3.atCenterOf(pos), excess);
                 }
             }
             for (ItemStack drop : getFilteredDrops(false)) {
-                InventoryUtils.dropItems(world, Vector3d.atCenterOf(pos), drop);
+                InventoryUtils.dropItems(world, Vec3.atCenterOf(pos), drop);
             }
         }
     }

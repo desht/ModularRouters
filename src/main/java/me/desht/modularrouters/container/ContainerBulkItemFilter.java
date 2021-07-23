@@ -1,18 +1,18 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.SetofItemStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -32,11 +32,11 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     private final int currentSlot;  // currently-selected slot for player
     private final BulkFilterHandler handler;
 
-    public ContainerBulkItemFilter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
+    public ContainerBulkItemFilter(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
         this(windowId, invPlayer, MFLocator.fromBuffer(extraData));
     }
 
-    public ContainerBulkItemFilter(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+    public ContainerBulkItemFilter(int windowId, Inventory invPlayer, MFLocator loc) {
         super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), windowId, invPlayer, loc);
 
         this.handler = new BulkFilterHandler(filterStack, router);
@@ -67,7 +67,7 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         handler.save();
 
         if (getRouter() != null && !getRouter().getLevel().isClientSide) {
-            getRouter().recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            getRouter().recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
         }
     }
 
@@ -95,14 +95,14 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
         handler.save();
 
         if (getRouter() != null && !getRouter().getLevel().isClientSide) {
-            getRouter().recompileNeeded(TileEntityItemRouter.COMPILE_MODULES);
+            getRouter().recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
         }
 
         return stacks.size() - origSize;
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack stack;
         Slot srcSlot = slots.get(index);
 
@@ -134,15 +134,15 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
         if (clickTypeIn == ClickType.PICKUP) {// normal left-click
             if (router == null && slot == currentSlot) {
                 // no messing with the module that triggered this container's creation
-                return ItemStack.EMPTY;
+                return;
             }
             if (slot < handler.getSlots() && slot >= 0) {
                 Slot s = slots.get(slot);
-                ItemStack stackOnCursor = player.inventory.getCarried();
+                ItemStack stackOnCursor = getCarried();
                 if (!stackOnCursor.isEmpty()) {
                     ItemStack stack1 = stackOnCursor.copy();
                     stack1.setCount(1);
@@ -150,13 +150,13 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
                 } else {
                     s.set(ItemStack.EMPTY);
                 }
-                return ItemStack.EMPTY;
+                return;
             }
         }
         if (slot < handler.getSlots() && slot >= 0) {
             // allow nothing else!
-            return ItemStack.EMPTY;
+            return;
         }
-        return super.clicked(slot, dragType, clickTypeIn, player);
+        super.clicked(slot, dragType, clickTypeIn, player);
     }
 }

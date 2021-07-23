@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Set;

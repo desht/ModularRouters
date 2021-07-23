@@ -1,8 +1,8 @@
 package me.desht.modularrouters.util;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 public class CountedItemStacks extends Object2IntOpenCustomHashMap<ItemStack> {

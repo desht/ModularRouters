@@ -4,8 +4,8 @@ import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.ExtruderModule2;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
 
 public class RegulatorAugment extends ItemAugment {
     @Override

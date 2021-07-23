@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedButton {
     private T state;

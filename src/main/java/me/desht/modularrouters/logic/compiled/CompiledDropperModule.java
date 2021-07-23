@@ -1,26 +1,26 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.PickupDelayAugment;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public class CompiledDropperModule extends CompiledModule {
     private final int pickupDelay;  // ticks
 
-    public CompiledDropperModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledDropperModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         pickupDelay = getAugmentCount(ModItems.PICKUP_DELAY_AUGMENT.get()) * PickupDelayAugment.TICKS_PER_AUGMENT;
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         ItemStack stack = router.getBufferItemStack();
         if (getFilter().test(stack) && isRegulationOK(router, false)) {
             int nItems = Math.min(getItemsPerTick(router), stack.getCount() - getRegulationAmount());
@@ -45,7 +45,7 @@ public class CompiledDropperModule extends CompiledModule {
         }
     }
 
-    void setupItemVelocity(TileEntityItemRouter router, ItemEntity item) {
+    void setupItemVelocity(ModularRouterBlockEntity router, ItemEntity item) {
         item.setDeltaMovement(0, 0, 0);
     }
 }

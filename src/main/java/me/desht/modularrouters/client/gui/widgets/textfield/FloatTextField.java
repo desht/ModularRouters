@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;
 
 public class FloatTextField extends TextFieldWidgetMR {
@@ -12,7 +12,7 @@ public class FloatTextField extends TextFieldWidgetMR {
     private float coarse = 5.0f;
     private String precStr = "%.1f";
 
-    public FloatTextField(TextFieldManager parent, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
+    public FloatTextField(TextFieldManager parent, Font fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
         super(parent, fontrendererObj, x, y, par5Width, par6Height);
         this.min = min;
         this.max = max;

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection;
@@ -10,20 +10,21 @@ import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -43,7 +44,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private final boolean autoEjecting;
     private final FluidStack xpJuiceStack;
 
-    private TileEntity fluidReceiver = null;
+    private BlockEntity fluidReceiver = null;
     private Direction fluidReceiverFace = null;
 
     // temporary small xp buffer (generally around an orb or less)
@@ -53,12 +54,12 @@ public class CompiledVacuumModule extends CompiledModule {
     // form in which to collect XP orbs
     private final XPCollectionType xpCollectionType;
 
-    public CompiledVacuumModule(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledVacuumModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
         fastPickup = getAugmentCount(ModItems.FAST_PICKUP_AUGMENT.get()) > 0;
         xpMode = getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0;
 
-        CompoundNBT compound = stack.getTagElement(ModularRouters.MODID);
+        CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
             xpCollectionType = XPCollection.getXPType(compound.getInt(NBT_XP_FLUID_TYPE));
             autoEjecting = compound.getBoolean(NBT_AUTO_EJECT);
@@ -80,7 +81,7 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (xpMode) {
             return handleXpMode(router);
         } else {
@@ -89,16 +90,16 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public void onNeighbourChange(TileEntityItemRouter router) {
+    public void onNeighbourChange(ModularRouterBlockEntity router) {
         findFluidReceiver(router);
     }
 
-    private void findFluidReceiver(TileEntityItemRouter router) {
+    private void findFluidReceiver(ModularRouterBlockEntity router) {
         if (!xpMode || xpJuiceStack.isEmpty()) return;
 
         fluidReceiver = null;
         for (Direction face : Direction.values()) {
-            TileEntity te = router.getLevel().getBlockEntity(router.getBlockPos().relative(face));
+            BlockEntity te = router.getLevel().getBlockEntity(router.getBlockPos().relative(face));
             if (te != null) {
                 te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()).ifPresent(handler -> {
                     if (handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
@@ -111,7 +112,7 @@ public class CompiledVacuumModule extends CompiledModule {
         }
     }
 
-    private boolean handleItemMode(TileEntityItemRouter router) {
+    private boolean handleItemMode(ModularRouterBlockEntity router) {
         if (router.isBufferFull()) {
             return false;
         }
@@ -121,7 +122,7 @@ public class CompiledVacuumModule extends CompiledModule {
         BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
         List<ItemEntity> items = router.getLevel().getEntitiesOfClass(ItemEntity.class,
-                new AxisAlignedBB(centrePos.offset(-range, -range, -range), centrePos.offset(range + 1, range + 1, range + 1)));
+                new AABB(centrePos.offset(-range, -range, -range), centrePos.offset(range + 1, range + 1, range + 1)));
 
         int toPickUp = getItemsPerTick(router);
 
@@ -142,10 +143,10 @@ public class CompiledVacuumModule extends CompiledModule {
                 int inserted = vacuumed.getCount() - remaining;
                 toPickUp -= inserted;
                 if (stackOnGround.isEmpty()) {
-                    item.remove();
+                    item.remove(Entity.RemovalReason.DISCARDED);
                 }
                 if (inserted > 0 && MRConfig.Common.Module.vacuumParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-                    ((ServerWorld) router.getLevel()).sendParticles(ParticleTypes.CLOUD, item.getX(), item.getY() + 0.25, item.getZ(), 2, 0.0, 0.0, 0.0, 0.0);
+                    ((ServerLevel) router.getLevel()).sendParticles(ParticleTypes.CLOUD, item.getX(), item.getY() + 0.25, item.getZ(), 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {
                     break;
@@ -155,11 +156,11 @@ public class CompiledVacuumModule extends CompiledModule {
         return toPickUp < getItemsPerTick(router);
     }
 
-    private boolean handleXpMode(TileEntityItemRouter router) {
+    private boolean handleXpMode(ModularRouterBlockEntity router) {
         BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
-        List<ExperienceOrbEntity> orbs = router.getLevel().getEntitiesOfClass(ExperienceOrbEntity.class,
-                new AxisAlignedBB(centrePos).inflate(range));
+        List<ExperienceOrb> orbs = router.getLevel().getEntitiesOfClass(ExperienceOrb.class,
+                new AABB(centrePos).inflate(range));
         if (orbs.isEmpty()) {
             return false;
         }
@@ -187,7 +188,7 @@ public class CompiledVacuumModule extends CompiledModule {
         }
 
         int initialSpaceForXp = spaceForXp;
-        for (ExperienceOrbEntity orb : orbs) {
+        for (ExperienceOrb orb : orbs) {
             if (orb.getValue() > spaceForXp) {
                 break;
             }
@@ -199,7 +200,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     ItemStack excess = router.insertBuffer(stack);
                     xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
                     if (!excess.isEmpty()) {
-                        InventoryUtils.dropItems(router.getLevel(), Vector3d.atCenterOf(router.getBlockPos()), excess);
+                        InventoryUtils.dropItems(router.getLevel(), Vec3.atCenterOf(router.getBlockPos()), excess);
                     }
                 }
             } else {
@@ -207,13 +208,13 @@ public class CompiledVacuumModule extends CompiledModule {
                 if (!filledAll) spaceForXp = 0;
             }
             spaceForXp -= orb.getValue();
-            orb.remove();
+            orb.remove(Entity.RemovalReason.DISCARDED);
         }
 
         return initialSpaceForXp - spaceForXp > 0;
     }
 
-    private boolean doFluidXPFill(ExperienceOrbEntity orb, IFluidHandler xpHandler) {
+    private boolean doFluidXPFill(ExperienceOrb orb, IFluidHandler xpHandler) {
         FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getValue() * xpCollectionType.getXpRatio() + xpBuffered);
         int filled = xpHandler.fill(xpStack, IFluidHandler.FluidAction.EXECUTE);
         if (filled < xpStack.getAmount()) {
@@ -241,7 +242,7 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public List<ModuleTarget> setupTargets(TileEntityItemRouter router, ItemStack stack) {
+    public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         if (router == null) {
             return null;
         }

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.config;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Set;
 

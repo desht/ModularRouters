@@ -9,10 +9,10 @@ import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.item.upgrade.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -85,7 +85,7 @@ public class ModItems {
         return register(name, () -> new Item(defaultProps()));
     }
 
-    static final ItemGroup MR_CREATIVE_TAB = new ItemGroup(ModularRouters.MODID) {
+    static final CreativeModeTab MR_CREATIVE_TAB = new CreativeModeTab(ModularRouters.MODID) {
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(ModBlocks.ITEM_ROUTER.get());

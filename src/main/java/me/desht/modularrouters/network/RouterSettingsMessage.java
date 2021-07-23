@@ -1,12 +1,12 @@
 package me.desht.modularrouters.network;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -19,24 +19,24 @@ import java.util.function.Supplier;
 public class RouterSettingsMessage {
     private final boolean ecoMode;
     private final RouterRedstoneBehaviour redstoneBehaviour;
-    private final TileEntityItemRouter.EnergyDirection energyDirection;
+    private final ModularRouterBlockEntity.EnergyDirection energyDirection;
     private final BlockPos pos;
 
-    public RouterSettingsMessage(TileEntityItemRouter router) {
+    public RouterSettingsMessage(ModularRouterBlockEntity router) {
         this.pos = router.getBlockPos();
         this.redstoneBehaviour = router.getRedstoneBehaviour();
         this.ecoMode = router.getEcoMode();
         this.energyDirection = router.getEnergyDirection();
     }
 
-    RouterSettingsMessage(PacketBuffer buffer) {
+    RouterSettingsMessage(FriendlyByteBuf buffer) {
         pos = buffer.readBlockPos();
         redstoneBehaviour = RouterRedstoneBehaviour.values()[buffer.readByte()];
         ecoMode = buffer.readBoolean();
-        energyDirection = buffer.readEnum(TileEntityItemRouter.EnergyDirection.class);
+        energyDirection = buffer.readEnum(ModularRouterBlockEntity.EnergyDirection.class);
     }
 
-    public void toBytes(PacketBuffer byteBuf) {
+    public void toBytes(FriendlyByteBuf byteBuf) {
         byteBuf.writeBlockPos(pos);
         byteBuf.writeByte(redstoneBehaviour.ordinal());
         byteBuf.writeBoolean(ecoMode);
@@ -45,8 +45,8 @@ public class RouterSettingsMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            World w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getLevel();
-            TileEntityItemRouter.getRouterAt(w, pos).ifPresent(router -> {
+            Level w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getLevel();
+            ModularRouterBlockEntity.getRouterAt(w, pos).ifPresent(router -> {
                 router.setRedstoneBehaviour(redstoneBehaviour);
                 router.setEcoMode(ecoMode);
                 router.setEnergyDirection(energyDirection);

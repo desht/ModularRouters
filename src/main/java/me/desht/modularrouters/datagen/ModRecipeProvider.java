@@ -3,14 +3,15 @@ package me.desht.modularrouters.datagen;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
-import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -25,7 +26,7 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
         shaped(ModBlocks.ITEM_ROUTER.get(), 4, Items.IRON_INGOT,
                 "IBI/BMB/IBI",
                 'I', Tags.Items.INGOTS_IRON,
@@ -119,7 +120,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         // modules
-        CustomRecipeBuilder.special(ModRecipes.EXTRUDER_MODULE_1.get())
+        SpecialRecipeBuilder.special(ModRecipes.EXTRUDER_MODULE_1.get())
                 .save(consumer, RL("extruder_module_1").toString());
 
         shaped(ModItems.FLUID_MODULE.get(), ModItems.BLANK_MODULE.get(),
@@ -157,7 +158,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.SENDER_MODULE_1.get(), Items.ENDER_PEARL
         ).save(consumer);
 
-        CustomRecipeBuilder.special(ModRecipes.BREAKER_MODULE.get())
+        SpecialRecipeBuilder.special(ModRecipes.BREAKER_MODULE.get())
                 .save(consumer, RL("breaker_module").toString());
 
         shapeless(ModItems.DROPPER_MODULE.get(), ModItems.BLANK_MODULE.get(),
@@ -329,24 +330,24 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.BULK_ITEM_FILTER.get(), Items.COMPARATOR
         ).save(consumer);
 
-        CustomRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
-        CustomRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get()).save(consumer, RL("guide_book").toString());
+        SpecialRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
+        SpecialRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get()).save(consumer, RL("guide_book").toString());
     }
 
-    private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
+    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
         return shaped(result, 1, required, pattern, keys);
     }
 
-    private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, int count, T required, String pattern, Object... keys) {
+    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, int count, T required, String pattern, Object... keys) {
         ShapedRecipeBuilder b = ShapedRecipeBuilder.shaped(result, count);
         Arrays.stream(pattern.split("/")).forEach(b::pattern);
         for (int i = 0; i < keys.length; i += 2) {
             Object v = keys[i + 1];
-            if (v instanceof ITag.INamedTag<?>) {
+            if (v instanceof Tag.Named<?>) {
                 //noinspection unchecked
-                b.define((Character) keys[i], (ITag.INamedTag<Item>) v);
-            } else if (v instanceof IItemProvider) {
-                b.define((Character) keys[i], (IItemProvider) v);
+                b.define((Character) keys[i], (Tag.Named<Item>) v);
+            } else if (v instanceof ItemLike) {
+                b.define((Character) keys[i], (ItemLike) v);
             } else if (v instanceof Ingredient) {
                 b.define((Character) keys[i], (Ingredient) v);
             } else {
@@ -357,18 +358,18 @@ public class ModRecipeProvider extends RecipeProvider {
         return b;
     }
 
-    private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, T required, Object... ingredients) {
+    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, T required, Object... ingredients) {
         return shapeless(result, 1, required, ingredients);
     }
 
-    private <T extends IItemProvider & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
+    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
         ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapeless(result, count);
         for (Object v : ingredients) {
-            if (v instanceof ITag.INamedTag<?>) {
+            if (v instanceof Tag.Named<?>) {
                 //noinspection unchecked
-                b.requires((ITag.INamedTag<Item>) v);
-            } else if (v instanceof IItemProvider) {
-                b.requires((IItemProvider) v);
+                b.requires((Tag.Named<Item>) v);
+            } else if (v instanceof ItemLike) {
+                b.requires((ItemLike) v);
             } else if (v instanceof Ingredient) {
                 b.requires((Ingredient) v);
             } else {

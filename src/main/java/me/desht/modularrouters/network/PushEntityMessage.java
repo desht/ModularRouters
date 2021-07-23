@@ -1,12 +1,12 @@
 package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.client.util.ClientUtil;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -16,19 +16,19 @@ import java.util.function.Supplier;
  */
 public class PushEntityMessage {
     private final int id;
-    private final Vector3d vec;
+    private final Vec3 vec;
 
-    public PushEntityMessage(Entity entity, Vector3d vec) {
+    public PushEntityMessage(Entity entity, Vec3 vec) {
         this.id = entity.getId();
         this.vec = vec;
     }
 
-    public PushEntityMessage(PacketBuffer buf) {
+    public PushEntityMessage(FriendlyByteBuf buf) {
         id = buf.readInt();
-        vec = new Vector3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        vec = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(id);
         buf.writeDouble(vec.x);
         buf.writeDouble(vec.y);
@@ -37,7 +37,7 @@ public class PushEntityMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            World w = ClientUtil.theClientWorld();
+            Level w = ClientUtil.theClientWorld();
             Entity entity = w.getEntity(id);
             if (entity != null) {
                 entity.setDeltaMovement(vec.x, vec.y, vec.z);

@@ -1,10 +1,10 @@
 package me.desht.modularrouters.datagen;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.core.ModBlocks;
+import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -44,9 +44,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         VariantBlockStateBuilder.PartialBlockstate builder = getVariantBuilder(ModBlocks.ITEM_ROUTER.get()).partialState();
         for (Direction d : HORIZONTALS) {
-            builder.with(BlockItemRouter.ACTIVE, false).with(BlockItemRouter.FACING, d)
+            builder.with(ModularRouterBlock.ACTIVE, false).with(ModularRouterBlock.FACING, d)
                     .setModels(new ConfiguredModel(routerOff, 0, getYRotation(d), false));
-            builder.with(BlockItemRouter.ACTIVE, true).with(BlockItemRouter.FACING, d)
+            builder.with(ModularRouterBlock.ACTIVE, true).with(ModularRouterBlock.FACING, d)
                     .setModels(new ConfiguredModel(routerOn, 0, getYRotation(d), false));
         }
 

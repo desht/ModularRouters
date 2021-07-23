@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledCreativeModule;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -31,7 +31,7 @@ public class CreativeModule extends ItemModule {
     }
 
     @Override
-    protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
+    protected MutableComponent itemListHeader(ItemStack itemstack) {
         return xlate("modularrouters.itemText.misc.itemList");
     }
 }

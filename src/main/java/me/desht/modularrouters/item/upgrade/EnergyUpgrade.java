@@ -1,12 +1,12 @@
 package me.desht.modularrouters.item.upgrade;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -29,9 +29,9 @@ public class EnergyUpgrade extends ItemUpgrade {
     }
 
     @Override
-    public void addUsageInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addUsageInformation(ItemStack itemstack, List<Component> list) {
         super.addUsageInformation(itemstack, list);
-        TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
+        ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
         if (router != null) {
             list.addAll(GuiUtil.xlateAndSplit("modularrouters.itemText.usage.item.energyUpgradeRouter",
                     commify(router.getEnergyCapacity()), commify(router.getEnergyXferRate())));

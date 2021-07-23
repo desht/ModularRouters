@@ -1,8 +1,8 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.Mth;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -16,7 +16,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
 
     private static final Pattern INT_MATCHER = Pattern.compile("^-?[0-9]+$");
 
-    public IntegerTextField(TextFieldManager parent, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height, Range<Integer> range) {
+    public IntegerTextField(TextFieldManager parent, Font fontrendererObj, int x, int y, int par5Width, int par6Height, Range<Integer> range) {
         super(parent, fontrendererObj, x, y, par5Width, par6Height);
 
         setRange(range);
@@ -54,7 +54,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
     public void setRange(Range<Integer> range) {
         this.range = range;
         if (!range.contains(getIntValue())) {
-            setValue(MathHelper.clamp(getIntValue(), range.getMinimum(), range.getMaximum()));
+            setValue(Mth.clamp(getIntValue(), range.getMinimum(), range.getMaximum()));
 //            setCursorPosition(1);
         }
         setMaxLength(Math.max(Integer.toString(range.getMinimum()).length(), Integer.toString(range.getMaximum()).length()));
@@ -102,7 +102,7 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     private boolean adjustField(int adj) {
-        int newVal = MathHelper.clamp(getIntValue() + adj, range.getMinimum(), range.getMaximum());
+        int newVal = Mth.clamp(getIntValue() + adj, range.getMinimum(), range.getMaximum());
         if (newVal != getIntValue()) {
             setValue("");
             insertText(Integer.toString(newVal));

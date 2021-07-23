@@ -7,10 +7,10 @@ import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -22,27 +22,27 @@ public class ActivatorModule extends ItemModule {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<ITextComponent> list) {
+    public void addSettingsInformation(ItemStack stack, List<Component> list) {
         super.addSettingsInformation(stack, list);
 
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
         list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.action").append(": ")
-                .withStyle(TextFormatting.YELLOW)
+                .withStyle(ChatFormatting.YELLOW)
                 .append(ClientUtil.xlate("modularrouters.itemText.activator.action." + cam.getActionType())
-                        .withStyle(TextFormatting.AQUA)));
+                        .withStyle(ChatFormatting.AQUA)));
         if (!cam.getActionType().isEntityTarget()) {
             list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.lookDirection").append(": ")
-                    .withStyle(TextFormatting.YELLOW)
+                    .withStyle(ChatFormatting.YELLOW)
                     .append(ClientUtil.xlate("modularrouters.itemText.activator.direction." + cam.getLookDirection())
-                            .withStyle(TextFormatting.AQUA)));
+                            .withStyle(ChatFormatting.AQUA)));
         } else {
             list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.entityMode").append(": ")
-                    .withStyle(TextFormatting.YELLOW)
+                    .withStyle(ChatFormatting.YELLOW)
                     .append(ClientUtil.xlate("modularrouters.itemText.activator.entityMode." + cam.getEntityMode())
-                            .withStyle(TextFormatting.AQUA)));
+                            .withStyle(ChatFormatting.AQUA)));
         }
         if (cam.isSneaking()) {
-            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.sneak").withStyle(TextFormatting.YELLOW));
+            list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.activator.sneak").withStyle(ChatFormatting.YELLOW));
         }
     }
 
@@ -55,7 +55,7 @@ public class ActivatorModule extends ItemModule {
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get();
     }
 

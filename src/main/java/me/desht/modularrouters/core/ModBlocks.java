@@ -1,13 +1,13 @@
 package me.desht.modularrouters.core;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.BlockItemRouter;
-import me.desht.modularrouters.block.BlockTemplateFrame;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraftforge.fml.RegistryObject;
+import me.desht.modularrouters.block.ModularRouterBlock;
+import me.desht.modularrouters.block.TemplateFrameBlock;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -18,8 +18,8 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModularRouters.MODID);
     public static final DeferredRegister<Item> ITEMS = ModItems.ITEMS;
 
-    public static final RegistryObject<BlockItemRouter> ITEM_ROUTER = register("item_router", BlockItemRouter::new);
-    public static final RegistryObject<BlockTemplateFrame> TEMPLATE_FRAME = registerNoItem("template_frame", BlockTemplateFrame::new);
+    public static final RegistryObject<ModularRouterBlock> ITEM_ROUTER = register("item_router", ModularRouterBlock::new);
+    public static final RegistryObject<TemplateFrameBlock> TEMPLATE_FRAME = registerNoItem("template_frame", TemplateFrameBlock::new);
 
     private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup) {
         return register(name, sup, ModBlocks::itemDefault);
@@ -39,7 +39,7 @@ public class ModBlocks {
         return item(block, ModItems.MR_CREATIVE_TAB);
     }
 
-    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block, final ItemGroup itemGroup) {
+    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block, final CreativeModeTab itemGroup) {
         return () -> new BlockItem(block.get(), new Item.Properties().tab(itemGroup));
     }
 }

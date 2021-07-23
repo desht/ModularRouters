@@ -1,19 +1,20 @@
 package me.desht.modularrouters.client.gui.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class GuiContainerBase<T extends Container> extends ContainerScreen<T> implements IResyncableGui, IManagedTextFields {
+public abstract class GuiContainerBase<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IResyncableGui, IManagedTextFields {
     private TextFieldManager textFieldManager;
 
-    public GuiContainerBase(T container, PlayerInventory inv, ITextComponent displayName) {
+    public GuiContainerBase(T container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
@@ -24,14 +25,14 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int x, int y, float partialTicks) {
+    public void render(PoseStack matrixStack, int x, int y, float partialTicks) {
         this.renderBackground(matrixStack);
         super.render(matrixStack, x, y, partialTicks);
         if (textFieldManager != null) {
             textFieldManager.drawTextFields(matrixStack, x, y, partialTicks);
         }
-        this.buttons.stream()
-                .filter(button -> button.isMouseOver(x, y) && button instanceof ITooltipButton)
+        this.renderables.stream()
+                .filter(widget -> widget instanceof AbstractWidget aw && aw.isMouseOver(x, y) && widget instanceof ITooltipButton)
                 .findFirst()
                 .ifPresent(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), x, y));
 
@@ -39,8 +40,8 @@ public abstract class GuiContainerBase<T extends Container> extends ContainerScr
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
+        super.containerTick();
         if (textFieldManager != null) textFieldManager.tick();
     }
 

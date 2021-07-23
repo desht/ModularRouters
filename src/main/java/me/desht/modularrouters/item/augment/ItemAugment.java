@@ -4,10 +4,10 @@ import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.ItemBase;
 import me.desht.modularrouters.item.module.ItemModule;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
 
@@ -25,7 +25,7 @@ public abstract class ItemAugment extends ItemBase {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    protected void addExtraInformation(ItemStack stack, List<Component> list) {
     }
 
     public abstract int getMaxAugments(ItemModule moduleType);

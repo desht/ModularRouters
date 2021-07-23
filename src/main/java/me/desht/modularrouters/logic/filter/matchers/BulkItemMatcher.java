@@ -3,8 +3,8 @@ package me.desht.modularrouters.logic.filter.matchers;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.util.SetofItemStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Set;
 

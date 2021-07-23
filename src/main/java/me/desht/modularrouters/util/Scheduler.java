@@ -4,7 +4,7 @@ import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import me.desht.modularrouters.ModularRouters;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,18 +1,18 @@
 package me.desht.modularrouters.logic.compiled;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
-import me.desht.modularrouters.block.tile.TileEntityTemplateFrame;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import me.desht.modularrouters.block.tile.TemplateFrameBlockEntity;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.BlockUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -24,7 +24,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
     private final List<ItemStack> blockList;
     private final boolean mimic;
 
-    public CompiledExtruderModule2(TileEntityItemRouter router, ItemStack stack) {
+    public CompiledExtruderModule2(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         blockList = new ArrayList<>();
@@ -44,9 +44,9 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
     }
 
     @Override
-    public boolean execute(@Nonnull TileEntityItemRouter router) {
+    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         boolean extend = shouldExtend(router);
-        World world = router.getLevel();
+        Level world = router.getLevel();
 
         if (extend && distance < blockList.size()) {
             // try to extend
@@ -57,7 +57,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 BlockPos placePos = router.getBlockPos().relative(getFacing(), distance + 1);
                 BlockState state = ModBlocks.TEMPLATE_FRAME.get().defaultBlockState();
                 if (BlockUtil.tryPlaceBlock(router, state, world, placePos)) {
-                    TileEntityTemplateFrame.getTemplateFrame(world, placePos).ifPresent(te -> {
+                    TemplateFrameBlockEntity.getTemplateFrame(world, placePos).ifPresent(te -> {
                         te.setCamouflage(blockList.get(distance), getFacing(), getRouterFacing());
                         te.setExtendedMimic(mimic);
                         if (mimic) {
@@ -67,7 +67,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                     });
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
-                            SoundCategory.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
+                            SoundSource.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
                     router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
                     tryPushEntities(router.getLevel(), placePos, getFacing());
                     return true;
@@ -88,8 +88,8 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         return false;
     }
 
-    private boolean okToBreak(BlockState state, World world, BlockPos pos) {
+    private boolean okToBreak(BlockState state, Level world, BlockPos pos) {
         Block b = state.getBlock();
-        return b.isAir(state, world, pos) || b == ModBlocks.TEMPLATE_FRAME.get() || b instanceof IFluidBlock;
+        return state.isAir() || b == ModBlocks.TEMPLATE_FRAME.get() || b instanceof IFluidBlock;
     }
 }

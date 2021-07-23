@@ -1,8 +1,8 @@
 package me.desht.modularrouters.util;
 
 import com.google.common.collect.Sets;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Set;
 

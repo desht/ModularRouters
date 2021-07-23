@@ -1,14 +1,14 @@
 package me.desht.modularrouters.container;
 
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public abstract class ContainerMRBase extends Container {
-    ContainerMRBase(@Nullable ContainerType<?> type, int id) {
+public abstract class ContainerMRBase extends AbstractContainerMenu {
+    ContainerMRBase(@Nullable MenuType<?> type, int id) {
         super(type, id);
     }
 
@@ -37,7 +37,7 @@ public abstract class ContainerMRBase extends Container {
 
                 Slot slot = this.slots.get(i);
                 ItemStack itemstack = slot.getItem();
-                if (!itemstack.isEmpty() && consideredTheSameItem(stack, itemstack)) {
+                if (!itemstack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
                     // modified HERE
                     int maxSize = Math.min(slot.getMaxStackSize(itemstack), Math.min(slot.getMaxStackSize(), stack.getMaxStackSize()));

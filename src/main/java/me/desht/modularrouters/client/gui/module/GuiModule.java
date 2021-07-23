@@ -1,10 +1,9 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
 import me.desht.modularrouters.client.gui.ISendToServer;
@@ -15,6 +14,7 @@ import me.desht.modularrouters.client.gui.widgets.button.*;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.MRConfig;
@@ -34,22 +34,21 @@ import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.IContainerListener;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -63,7 +62,7 @@ import java.util.Optional;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class GuiModule extends GuiContainerBase<ContainerModule> implements IContainerListener, IMouseOverHelpProvider, ISendToServer {
+public class GuiModule extends GuiContainerBase<ContainerModule> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
 
     // locations of extra textures on the gui module texture sheet
@@ -80,7 +79,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private final ItemModule module;
     private final BlockPos routerPos;
     private final int moduleSlotIndex;
-    private final Hand hand;
+    private final InteractionHand hand;
     private RelativeDirection facing;
     private int sendDelay;
     private int regulatorAmount;
@@ -97,7 +96,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     IntegerTextField regulatorTextField;
     private TerminationButton terminationButton;
 
-    public GuiModule(ContainerModule container, PlayerInventory inventory, ITextComponent displayName) {
+    public GuiModule(ContainerModule container, Inventory inventory, Component displayName) {
         super(container, inventory, displayName);
 
         MFLocator locator = container.getLocator();
@@ -130,8 +129,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
         addToggleButton(ModuleFlags.IGNORE_TAGS, 25, 93);
 //        addToggleButton(ModuleFlags.TERMINATE, 45, 93);
-        terminationButton = addButton(new TerminationButton(leftPos + 45, topPos + 93, ModuleHelper.getTermination(moduleItemStack)));
-        addButton(matchAllButton = new MatchAllButton(leftPos + 45, topPos + 75, matchAll));
+        terminationButton = addRenderableWidget(new TerminationButton(leftPos + 45, topPos + 93, ModuleHelper.getTermination(moduleItemStack)));
+        addRenderableWidget(matchAllButton = new MatchAllButton(leftPos + 45, topPos + 75, matchAll));
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -143,17 +142,17 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        addButton(mouseOverHelpButton = new MouseOverHelp.Button(leftPos + 175, topPos + 1));
+        addRenderableWidget(mouseOverHelpButton = new MouseOverHelp.Button(leftPos + 175, topPos + 1));
 
-        addButton(redstoneButton = new RedstoneBehaviourButton(this.leftPos + 170, this.topPos + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
+        addRenderableWidget(redstoneButton = new RedstoneBehaviourButton(this.leftPos + 170, this.topPos + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
-        addButton(regulatorTextField = buildRegulationTextField(getOrCreateTextFieldManager()));
+        addRenderableWidget(regulatorTextField = buildRegulationTextField(getOrCreateTextFieldManager()));
 
-        addButton(regulatorTooltipButton = new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
+        addRenderableWidget(regulatorTooltipButton = new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
 
         if (routerPos != null) {
-            addButton(new BackButton(leftPos + 2, topPos + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
+            addRenderableWidget(new BackButton(leftPos + 2, topPos + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
         }
 
         mouseOverHelp.addHelpRegion(leftPos + 7, topPos + 16, leftPos + 60, topPos + 69, "modularrouters.guiText.popup.filter");
@@ -195,17 +194,17 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
         toggleButtons.put(flag, new ModuleToggleButton(flag, this.leftPos + x, this.topPos + y, ModuleHelper.checkFlag(moduleItemStack, flag)));
-        addButton(toggleButtons.get(flag));
+        addRenderableWidget(toggleButtons.get(flag));
     }
 
     private void addDirectionButton(RelativeDirection dir, int x, int y) {
         directionButtons.put(dir, new DirectionButton(dir, module, this.leftPos + x, this.topPos + y, dir == facing));
-        addButton(directionButtons.get(dir));
+        addRenderableWidget(directionButtons.get(dir));
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
+        super.containerTick();
         mouseOverHelp.setActive(mouseOverHelpButton.isToggled());
         if (sendDelay > 0 && --sendDelay <= 0) {
             sendToServer();
@@ -233,9 +232,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
      *
      * @return the message data NBT
      */
-    protected CompoundNBT buildMessageData() {
+    protected CompoundTag buildMessageData() {
         RouterRedstoneBehaviour behaviour = redstoneButton == null ? RouterRedstoneBehaviour.ALWAYS : redstoneButton.getState();
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         for (ModuleFlags flag : ModuleFlags.values()) {
             compound.putBoolean(flag.getName(), toggleButtons.get(flag).isToggled());
         }
@@ -248,16 +247,15 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
-        ITextComponent title = moduleItemStack.getHoverName().copy().append(routerPos != null ? " " + I18n.get("modularrouters.guiText.label.installed") : "");
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+        Component title = moduleItemStack.getHoverName().copy().append(routerPos != null ? " " + I18n.get("modularrouters.guiText.label.installed") : "");
         this.font.draw(matrixStack, title, this.imageWidth / 2f - this.font.width(title) / 2f, 5, getFgColor(module.getItemTint()));
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         TintColor c = getGuiBackgroundTint();
-        RenderSystem.color4f(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
-        minecraft.getTextureManager().bind(GUI_TEXTURE);
+        GuiUtil.bindTexture(GUI_TEXTURE, c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         blit(matrixStack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
         if (!module.isDirectional()) {
             blit(matrixStack, leftPos + 69, topPos + 17, 204, 0, 52, 52);
@@ -332,16 +330,16 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         }
     }
 
-    Optional<TileEntityItemRouter> getItemRouter() {
-        return routerPos != null ? TileEntityItemRouter.getRouterAt(Minecraft.getInstance().level, routerPos) : Optional.empty();
+    Optional<ModularRouterBlockEntity> getItemRouter() {
+        return routerPos != null ? ModularRouterBlockEntity.getRouterAt(Minecraft.getInstance().level, routerPos) : Optional.empty();
     }
 
-    @Override
-    public void refreshContainer(Container containerToSend, NonNullList<ItemStack> itemsList) {
-    }
+//    @Override
+//    public void refreshContainer(AbstractContainerMenu containerToSend, NonNullList<ItemStack> itemsList) {
+//    }
 
     @Override
-    public void slotChanged(Container containerToSend, int slotInd, ItemStack stack) {
+    public void slotChanged(AbstractContainerMenu containerToSend, int slotInd, ItemStack stack) {
         if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + ItemAugment.SLOTS) {
             augmentCounter.refresh(moduleItemStack);
             setupButtonVisibility();
@@ -349,7 +347,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     @Override
-    public void setContainerData(Container containerIn, int varToUpdate, int newValue) {
+    public void dataChanged(AbstractContainerMenu abstractContainerMenu, int i, int i1) {
     }
 
     private static final int THRESHOLD = 129;
@@ -371,8 +369,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private static class RegulatorTooltipButton extends TexturedButton {
         RegulatorTooltipButton(int x, int y, boolean isFluid) {
             super(x, y, 16, 16, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, isFluid ? "modularrouters.guiText.tooltip.fluidRegulatorTooltip" : "modularrouters.guiText.tooltip.regulatorTooltip");
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, isFluid ? "modularrouters.guiText.tooltip.fluidRegulatorTooltip" : "modularrouters.guiText.tooltip.regulatorTooltip");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
 
         @Override
@@ -391,7 +389,7 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         }
 
         @Override
-        public void playDownSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundManager soundHandlerIn) {
             // no sound
         }
     }
@@ -402,8 +400,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
         ModuleToggleButton(ModuleFlags flag, int x, int y, boolean toggled) {
             super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
             this.flag = flag;
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".1");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".2");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".1");
+            MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip." + flag + ".2");
         }
 
         @Override
@@ -425,9 +423,9 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
             super(DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, GuiModule.this);
 
             this.direction = dir;
-            StringTextComponent dirStr = new StringTextComponent(module.getDirectionString(dir));
-            tooltip1.add(dirStr.withStyle(TextFormatting.GRAY));
-            tooltip2.add(dirStr.withStyle(TextFormatting.YELLOW));
+            TextComponent dirStr = new TextComponent(module.getDirectionString(dir));
+            tooltip1.add(dirStr.withStyle(ChatFormatting.GRAY));
+            tooltip2.add(dirStr.withStyle(ChatFormatting.YELLOW));
         }
 
         @Override
@@ -461,8 +459,8 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     private class MatchAllButton extends TexturedToggleButton {
         MatchAllButton(int x, int y, boolean toggled) {
             super(x, y, 16, 16, toggled, GuiModule.this);
-            MiscUtil.appendMultilineText(tooltip1, TextFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.false");
-            MiscUtil.appendMultilineText(tooltip2, TextFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.true");
+            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.false");
+            MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.true");
         }
 
         @Override
@@ -477,21 +475,21 @@ public class GuiModule extends GuiContainerBase<ContainerModule> implements ICon
     }
 
     private class TerminationButton extends TexturedCyclerButton<Termination> {
-        private final List<List<ITextComponent>> tooltips = Lists.newArrayList();
+        private final List<List<Component>> tooltips = Lists.newArrayList();
 
         public TerminationButton(int x, int y, Termination initialVal) {
             super(x, y, 16, 16, initialVal, GuiModule.this);
 
             for (Termination termination : Termination.values()) {
-                List<ITextComponent> l = new ArrayList<>();
+                List<Component> l = new ArrayList<>();
                 l.add(xlate(termination.getTranslationKey() + ".header"));
-                MiscUtil.appendMultilineText(l, TextFormatting.GRAY, termination.getTranslationKey());
+                MiscUtil.appendMultilineText(l, ChatFormatting.GRAY, termination.getTranslationKey());
                 tooltips.add(l);
             }
         }
 
         @Override
-        public List<ITextComponent> getTooltip() {
+        public List<Component> getTooltip() {
             return tooltips.get(getState().ordinal());
         }
 

@@ -3,12 +3,12 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.container.handler.GhostItemHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -22,11 +22,11 @@ public class ContainerModFilter extends ContainerSmartFilter {
 
     public final IItemHandlerModifiable handler;
 
-    public ContainerModFilter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
+    public ContainerModFilter(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
         this(windowId, invPlayer, MFLocator.fromBuffer(extraData));
     }
 
-    public ContainerModFilter(int windowId, PlayerInventory invPlayer, MFLocator locator) {
+    public ContainerModFilter(int windowId, Inventory invPlayer, MFLocator locator) {
         super(ModContainerTypes.CONTAINER_MOD_FILTER.get(), windowId, invPlayer, locator);
 
         handler = new GhostItemHandler(1);
@@ -48,7 +48,7 @@ public class ContainerModFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack stack;
         Slot slot = slots.get(index);
 
@@ -72,26 +72,26 @@ public class ContainerModFilter extends ContainerSmartFilter {
     }
 
     @Override
-    public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
         switch (clickTypeIn) {
             case PICKUP:
                 // normal left-click
                 if (slot == 0) {
                     Slot s = slots.get(slot);
-                    if (!player.inventory.getCarried().isEmpty()) {
-                        ItemStack stack1 = player.inventory.getCarried().copy();
+                    if (!getCarried().isEmpty()) {
+                        ItemStack stack1 = getCarried().copy();
                         stack1.setCount(1);
                         s.set(stack1);
                     } else {
                         s.set(ItemStack.EMPTY);
                     }
-                    return ItemStack.EMPTY;
+                    return;
                 }
             case THROW:
                 if (slot == 0) {
-                    return ItemStack.EMPTY;
+                    return;
                 }
         }
-        return super.clicked(slot, dragType, clickTypeIn, player);
+        super.clicked(slot, dragType, clickTypeIn, player);
     }
 }

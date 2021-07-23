@@ -16,15 +16,15 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -52,7 +52,7 @@ public class    BulkItemFilter extends ItemSmartFilter {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
         super.addExtraInformation(itemstack, list);
         list.add(ClientUtil.xlate("modularrouters.itemText.misc.bulkItemFilter.count", getSize(itemstack)));
     }
@@ -63,31 +63,31 @@ public class    BulkItemFilter extends ItemSmartFilter {
     }
 
     @Override
-    public ContainerSmartFilter createContainer(int windowId, PlayerInventory invPlayer, MFLocator loc) {
+    public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
         return new ContainerBulkItemFilter(windowId, invPlayer, loc);
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext ctx) {
-        World world = ctx.getLevel();
-        PlayerEntity player = ctx.getPlayer();
+    public InteractionResult useOn(UseOnContext ctx) {
+        Level world = ctx.getLevel();
+        Player player = ctx.getPlayer();
         ItemStack stack = ctx.getItemInHand();
         if (world.isClientSide) {
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else if (player != null && player.isSteppingCarefully()) {
             return InventoryUtils.getInventory(world, ctx.getClickedPos(), ctx.getClickedFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
-                player.displayClientMessage(new TranslationTextComponent("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
-                world.playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundCategory.MASTER, 1.0f, 1.0f);
-                return ActionResultType.SUCCESS;
+                player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
+                world.playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundSource.MASTER, 1.0f, 1.0f);
+                return InteractionResult.SUCCESS;
             }).orElse(super.useOn(ctx));
         } else {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
     }
 
     @Override
-    public GuiSyncMessage onReceiveSettingsMessage(PlayerEntity player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
+    public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         if (!(player.containerMenu instanceof ContainerBulkItemFilter)) {
             return null;
         }

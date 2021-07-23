@@ -9,15 +9,15 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 
 import java.util.List;
 
@@ -30,24 +30,24 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack itemstack, List<ITextComponent> list) {
+    public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, itemstack);
         String owner = cpm.getPlayerName() == null ? "-" : cpm.getPlayerName();
-        list.add(MiscUtil.settingsStr(TextFormatting.YELLOW.toString(),
+        list.add(MiscUtil.settingsStr(ChatFormatting.YELLOW.toString(),
                 ClientUtil.xlate("modularrouters.itemText.security.owner", owner)));
 
-        String s = String.format(TextFormatting.YELLOW + "%s: " + TextFormatting.AQUA + "%s %s %s",
+        String s = String.format(ChatFormatting.YELLOW + "%s: " + ChatFormatting.AQUA + "%s %s %s",
                 I18n.get("modularrouters.itemText.misc.operation"),
                 I18n.get("block.modularrouters.item_router"),
                 cpm.getOperation().getSymbol(),
                 I18n.get("modularrouters.guiText.label.playerSect." + cpm.getSection()));
-        list.add(new StringTextComponent(s));
+        list.add(new TextComponent(s));
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_PLAYER.get();
     }
 
@@ -57,13 +57,13 @@ public class PlayerModule extends ItemModule implements IPlayerOwned {
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext ctx) {
+    public InteractionResult useOn(UseOnContext ctx) {
         if (ctx.getLevel().isClientSide) {
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItemInHand(), ctx.getPlayer());
-            ctx.getPlayer().displayClientMessage(new TranslationTextComponent("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
-            return ActionResultType.SUCCESS;
+            ctx.getPlayer().displayClientMessage(new TranslatableComponent("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
+            return InteractionResult.SUCCESS;
         } else {
             return super.useOn(ctx);
         }

@@ -1,11 +1,11 @@
 package me.desht.modularrouters.util;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class BeamData {
     private final BlockPos dest;
@@ -31,7 +31,7 @@ public class BeamData {
         this.color = color;
     }
 
-    public BeamData(PacketBuffer buf, BlockPos pos1) {
+    public BeamData(FriendlyByteBuf buf, BlockPos pos1) {
         byte x = buf.readByte();
         byte y = buf.readByte();
         byte z = buf.readByte();
@@ -45,7 +45,7 @@ public class BeamData {
         }
     }
 
-    public void toBytes(PacketBuffer buf, BlockPos pos1) {
+    public void toBytes(FriendlyByteBuf buf, BlockPos pos1) {
         buf.writeByte(pos1.getX() - dest.getX());
         buf.writeByte(pos1.getY() - dest.getY());
         buf.writeByte(pos1.getZ() - dest.getZ());
@@ -68,16 +68,16 @@ public class BeamData {
         return this;
     }
 
-    public Vector3d getStart(Vector3d basePos) {
-        return reversed ? Vector3d.atCenterOf(dest) : basePos;
+    public Vec3 getStart(Vec3 basePos) {
+        return reversed ? Vec3.atCenterOf(dest) : basePos;
     }
 
-    public Vector3d getEnd(Vector3d basePos) {
-        return reversed ? basePos : Vector3d.atCenterOf(dest);
+    public Vec3 getEnd(Vec3 basePos) {
+        return reversed ? basePos : Vec3.atCenterOf(dest);
     }
 
-    public AxisAlignedBB getAABB(BlockPos basePos) {
-        return new AxisAlignedBB(basePos, dest);
+    public AABB getAABB(BlockPos basePos) {
+        return new AABB(basePos, dest);
     }
 
     public ItemStack getStack() {
@@ -89,7 +89,7 @@ public class BeamData {
     }
 
     public float getProgress(float partialTicks) {
-        return MathHelper.clamp((ticksLived - 1 + partialTicks) / duration, 0f, 1f);
+        return Mth.clamp((ticksLived - 1 + partialTicks) / duration, 0f, 1f);
     }
 
     public void tick() {

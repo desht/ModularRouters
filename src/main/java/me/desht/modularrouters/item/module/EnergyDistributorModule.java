@@ -7,9 +7,9 @@ import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
@@ -49,8 +49,8 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
     }
 
     @Override
-    protected boolean isValidTarget(ItemUseContext ctx) {
-        TileEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+    protected boolean isValidTarget(UseOnContext ctx) {
+        BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         return te != null && te.getCapability(CapabilityEnergy.ENERGY, ctx.getClickedFace())
                 .map(IEnergyStorage::canReceive)
                 .orElse(false);

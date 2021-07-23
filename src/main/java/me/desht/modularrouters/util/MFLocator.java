@@ -1,15 +1,15 @@
 package me.desht.modularrouters.util;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -20,13 +20,13 @@ import java.util.Optional;
  */
 public class MFLocator {
     public enum ItemType { MODULE, FILTER }
-    public final Hand hand;   // hand the player is holding the module/filter
+    public final InteractionHand hand;   // hand the player is holding the module/filter
     public final BlockPos routerPos;  // router the module is installed in
     public final int routerSlot;  // router slot that the module is in
     public final int filterSlot;  // module slot that the filter is in
     private final ItemType itemType;
 
-    private MFLocator(ItemType itemType, Hand hand, BlockPos routerPos, int routerSlot, int filterSlot) {
+    private MFLocator(ItemType itemType, InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot) {
         this.itemType = itemType;
         this.hand = hand;
         this.routerPos = routerPos;
@@ -36,11 +36,11 @@ public class MFLocator {
         Validate.isTrue(hand != null || routerPos != null && routerSlot >= 0);
     }
 
-    public static MFLocator heldModule(Hand hand) {
+    public static MFLocator heldModule(InteractionHand hand) {
         return new MFLocator(ItemType.MODULE, hand, null, -1, -1);
     }
 
-    public static MFLocator heldFilter(Hand hand) {
+    public static MFLocator heldFilter(InteractionHand hand) {
         return new MFLocator(ItemType.FILTER, hand, null, -1, -1);
     }
 
@@ -48,7 +48,7 @@ public class MFLocator {
         return new MFLocator(ItemType.MODULE, null, routerPos, routerSlot, -1);
     }
 
-    public static MFLocator filterInHeldModule(Hand hand, int filterSlot) {
+    public static MFLocator filterInHeldModule(InteractionHand hand, int filterSlot) {
         return new MFLocator(ItemType.FILTER, hand, null, -1, filterSlot);
     }
 
@@ -56,22 +56,22 @@ public class MFLocator {
         return new MFLocator(ItemType.FILTER, null, routerPos, routerSlot, filterSlot);
     }
 
-    public static MFLocator fromBuffer(PacketBuffer buf) {
+    public static MFLocator fromBuffer(FriendlyByteBuf buf) {
         ItemType type = buf.readEnum(ItemType.class);
-        Hand hand = null;
+        InteractionHand hand = null;
         BlockPos routerPos = null;
         int routerSlot  = -1;
         if (buf.readBoolean()) {
             routerPos = buf.readBlockPos();
             routerSlot = buf.readByte();
         } else {
-            hand = buf.readEnum(Hand.class);
+            hand = buf.readEnum(InteractionHand.class);
         }
         int filterSlot = buf.readByte();
         return new MFLocator(type, hand, routerPos, routerSlot, filterSlot);
     }
 
-    public void writeBuf(PacketBuffer buf) {
+    public void writeBuf(FriendlyByteBuf buf) {
         buf.writeEnum(itemType);
         buf.writeBoolean(routerPos != null);
         if (routerPos != null) {
@@ -84,7 +84,7 @@ public class MFLocator {
     }
 
     @Nonnull
-    public ItemStack getTargetItem(PlayerEntity player) {
+    public ItemStack getTargetItem(Player player) {
         if (itemType == ItemType.MODULE) {
             if (hand != null) {
                 return player.getItemInHand(hand).getItem() instanceof ItemModule ? player.getItemInHand(hand) : ItemStack.EMPTY;
@@ -102,7 +102,7 @@ public class MFLocator {
     }
 
     @Nonnull
-    public ItemStack getModuleStack(PlayerEntity player) {
+    public ItemStack getModuleStack(Player player) {
         if (hand != null) {
             return player.getItemInHand(hand).getItem() instanceof ItemModule ? player.getItemInHand(hand) : ItemStack.EMPTY;
         } else if (routerPos != null) {
@@ -112,12 +112,12 @@ public class MFLocator {
         }
     }
 
-    public Optional<TileEntityItemRouter> getRouter(World world) {
-        return routerPos == null ? Optional.empty() : TileEntityItemRouter.getRouterAt(world, routerPos);
+    public Optional<ModularRouterBlockEntity> getRouter(Level world) {
+        return routerPos == null ? Optional.empty() : ModularRouterBlockEntity.getRouterAt(world, routerPos);
     }
 
     @Nonnull
-    private ItemStack getInstalledModule(World world) {
+    private ItemStack getInstalledModule(Level world) {
         return getRouter(world).map(router -> router.getModules().getStackInSlot(routerSlot)).orElse(ItemStack.EMPTY);
     }
 

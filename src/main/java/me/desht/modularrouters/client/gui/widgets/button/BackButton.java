@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 public class BackButton extends TexturedButton {
-    public BackButton(int x, int y, IPressable pressable) {
+    public BackButton(int x, int y, OnPress pressable) {
         super(x, y, 16, 16, pressable);
     }
 

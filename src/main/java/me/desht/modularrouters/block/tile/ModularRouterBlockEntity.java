@@ -4,14 +4,14 @@ import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
-import me.desht.modularrouters.block.BlockItemRouter;
+import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerItemRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.core.ModTileEntities;
 import me.desht.modularrouters.event.TickEventHandler;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule1;
@@ -31,40 +31,44 @@ import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.fake_player.FakeNetHandlerPlayerServer;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -74,7 +78,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class TileEntityItemRouter extends TileEntity implements ITickableTileEntity, ICamouflageable, INamedContainerProvider {
+public class ModularRouterBlockEntity extends BlockEntity implements ICamouflageable, MenuProvider {
     public static final GameProfile DEFAULT_FAKEPLAYER_PROFILE = new GameProfile(
             UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()),
             "[" + ModularRouters.MODNAME + "]"
@@ -141,7 +145,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private boolean ecoMode = false;  // track eco-mode
     private int ecoCounter = MRConfig.Common.Router.ecoTimeout;
     private boolean hasPulsedModules = false;
-    private CompoundNBT extData;  // extra (persisted) data which various modules can set & read
+    private CompoundTag extData;  // extra (persisted) data which various modules can set & read
     private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
     private boolean executing;       // are we currently executing modules?
@@ -150,12 +154,12 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     public final List<BeamData> beams = new ArrayList<>(); // client-side: beams being rendered
     public final List<BeamData> pendingBeams = new ArrayList<>(); // server-side: beams to be sent to client
 
-    private AxisAlignedBB cachedRenderAABB;
+    private AABB cachedRenderAABB;
 
     private RouterFakePlayer fakePlayer;
 
-    public TileEntityItemRouter() {
-        super(ModTileEntities.ITEM_ROUTER.get());
+    public ModularRouterBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.ITEM_ROUTER.get(), pos, state);
     }
 
     public IItemHandler getBuffer() {
@@ -171,15 +175,15 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT compound = new CompoundNBT();
+    public CompoundTag getUpdateTag() {
+        CompoundTag compound = new CompoundTag();
 
         compound.putInt("x", worldPosition.getX());
         compound.putInt("y", worldPosition.getY());
         compound.putInt("z", worldPosition.getZ());
 
         if (camouflage != null) {
-            compound.put(CamouflageUpgrade.NBT_STATE_NAME, NBTUtil.writeBlockState(camouflage));
+            compound.put(CamouflageUpgrade.NBT_STATE_NAME, NbtUtils.writeBlockState(camouflage));
         }
 
         // energy upgrade count sync'd so clientside TE knows if neighbouring cables should be able to connect
@@ -191,26 +195,26 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        super.handleUpdateTag(state, tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
         processClientSync(tag);
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.worldPosition, -1, getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, -1, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         processClientSync(pkt.getTag());
     }
 
-    private void processClientSync(CompoundNBT compound) {
+    private void processClientSync(CompoundTag compound) {
         // called client-side on receipt of NBT
 
         if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
-            setCamouflage(NBTUtil.readBlockState(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
+            setCamouflage(NbtUtils.readBlockState(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }
@@ -234,8 +238,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
 
         bufferHandler.deserializeNBT(nbt.getCompound(NBT_BUFFER));
         modulesHandler.deserializeNBT(nbt.getCompound(NBT_MODULES));
@@ -247,8 +251,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         activeTimer = nbt.getInt(NBT_ACTIVE_TIMER);
         ecoMode = nbt.getBoolean(NBT_ECO_MODE);
 
-        CompoundNBT ext = nbt.getCompound(NBT_EXTRA);
-        CompoundNBT ext1 = getExtData();
+        CompoundTag ext = nbt.getCompound(NBT_EXTRA);
+        CompoundTag ext1 = getExtData();
         for (String key : ext.getAllKeys()) {
             //noinspection ConstantConditions
             ext1.put(key, ext.get(key));
@@ -263,7 +267,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     @Nonnull
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
+    public CompoundTag save(CompoundTag nbt) {
         nbt = super.save(nbt);
 
         nbt.put(NBT_BUFFER, bufferHandler.serializeNBT());
@@ -276,8 +280,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
         nbt.putBoolean(NBT_ECO_MODE, ecoMode);
 
-        CompoundNBT ext = new CompoundNBT();
-        CompoundNBT ext1 = getExtData();
+        CompoundTag ext = new CompoundTag();
+        CompoundTag ext1 = getExtData();
         for (String key : ext1.getAllKeys()) {
             //noinspection ConstantConditions
             ext.put(key, ext1.get(key));
@@ -294,54 +298,102 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         return false;
     }
 
-    @Override
-    public void tick() {
-        if (getLevel().isClientSide) {
-            for (Iterator<BeamData> iterator = beams.iterator(); iterator.hasNext(); ) {
-                BeamData beam = iterator.next();
-                beam.tick();
-                if (beam.isExpired()) {
-                    iterator.remove();
-                    cachedRenderAABB = null;
-                }
+    public void clientTick() {
+        for (Iterator<BeamData> iterator = beams.iterator(); iterator.hasNext(); ) {
+            BeamData beam = iterator.next();
+            beam.tick();
+            if (beam.isExpired()) {
+                iterator.remove();
+                cachedRenderAABB = null;
             }
-        } else {
-            if (recompileNeeded != 0) {
-                compile();
-            }
-            counter++;
-            pulseCounter++;
-
-            if (fakePlayer != null) {
-                fakePlayer.tick();
-                fakePlayer.getCooldowns().tick();
-            }
-
-            if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
-                // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
-                // however, we do need to turn the state inactive after a short time if we were set active by a pulse
-                if (activeTimer > 0 && --activeTimer == 0) {
-                    setActive(false);
-                }
-            } else {
-                if (counter >= getTickRate()) {
-                    allocateFluidTransfer(counter);
-                    executeModules(false);
-                    counter = 0;
-                }
-            }
-
-            if (ecoMode) {
-                if (active) {
-                    ecoCounter = MRConfig.Common.Router.ecoTimeout;
-                } else if (ecoCounter > 0) {
-                    ecoCounter--;
-                }
-            }
-
-            maybeDoEnergyTransfer();
         }
     }
+
+    public void serverTick() {
+        if (recompileNeeded != 0) {
+            compile();
+        }
+        counter++;
+        pulseCounter++;
+
+        if (fakePlayer != null) {
+            fakePlayer.tick();
+            fakePlayer.getCooldowns().tick();
+        }
+
+        if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
+            // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
+            // however, we do need to turn the state inactive after a short time if we were set active by a pulse
+            if (activeTimer > 0 && --activeTimer == 0) {
+                setActive(false);
+            }
+        } else {
+            if (counter >= getTickRate()) {
+                allocateFluidTransfer(counter);
+                executeModules(false);
+                counter = 0;
+            }
+        }
+
+        if (ecoMode) {
+            if (active) {
+                ecoCounter = MRConfig.Common.Router.ecoTimeout;
+            } else if (ecoCounter > 0) {
+                ecoCounter--;
+            }
+        }
+
+        maybeDoEnergyTransfer();
+    }
+
+//    @Override
+//    public void tick() {
+//        if (getLevel().isClientSide) {
+//            for (Iterator<BeamData> iterator = beams.iterator(); iterator.hasNext(); ) {
+//                BeamData beam = iterator.next();
+//                beam.tick();
+//                if (beam.isExpired()) {
+//                    iterator.remove();
+//                    cachedRenderAABB = null;
+//                }
+//            }
+//        } else {
+//            if (recompileNeeded != 0) {
+//                compile();
+//            }
+//            counter++;
+//            pulseCounter++;
+//
+//            if (fakePlayer != null) {
+//                fakePlayer.tick();
+//                fakePlayer.getCooldowns().tick();
+//            }
+//
+//            if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
+//                // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
+//                // however, we do need to turn the state inactive after a short time if we were set active by a pulse
+//                if (activeTimer > 0 && --activeTimer == 0) {
+//                    setActive(false);
+//                }
+//            } else {
+//                if (counter >= getTickRate()) {
+//                    allocateFluidTransfer(counter);
+//                    executeModules(false);
+//                    counter = 0;
+//                }
+//            }
+//
+//            if (ecoMode) {
+//                if (active) {
+//                    ecoCounter = MRConfig.Common.Router.ecoTimeout;
+//                } else if (ecoCounter > 0) {
+//                    ecoCounter--;
+//                }
+//            }
+//
+//            maybeDoEnergyTransfer();
+//        }
+//    }
 
     private void maybeDoEnergyTransfer() {
         if (getEnergyCapacity() > 0 && !getBufferItemStack().isEmpty() && redstoneBehaviour.shouldRun(getRedstonePower() > 0, false)) {
@@ -365,13 +417,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public RouterFakePlayer getFakePlayer() {
-        if (!(getLevel() instanceof ServerWorld)) return null;
+        if (!(getLevel() instanceof ServerLevel)) return null;
 
         if (fakePlayer == null) {
-            fakePlayer = new RouterFakePlayer(this, (ServerWorld) getLevel(), getOwner());
+            fakePlayer = new RouterFakePlayer(this, (ServerLevel) getLevel(), getOwner());
             fakePlayer.connection = new FakeNetHandlerPlayerServer(level.getServer(), fakePlayer);
             fakePlayer.level = level;
-            fakePlayer.inventory.selected = 0;  // held item always in slot 0
+            fakePlayer.getInventory().selected = 0;  // held item always in slot 0
             fakePlayer.setPosRaw(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
         }
         return fakePlayer;
@@ -453,7 +505,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     private void setActive(boolean newActive) {
         if (active != newActive) {
             active = newActive;
-            level.setBlock(getBlockPos(), getBlockState().setValue(BlockItemRouter.ACTIVE,
+            level.setBlock(getBlockPos(), getBlockState().setValue(ModularRouterBlock.ACTIVE,
                     newActive && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 3), Constants.BlockFlags.BLOCK_UPDATE);
         }
     }
@@ -581,7 +633,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                 fakePlayer = null; // in case security upgrades change
                 int mufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
                 if (prevMufflers != mufflers) {
-                    level.setBlock(worldPosition, getBlockState().setValue(BlockItemRouter.ACTIVE, active && mufflers < 3), Constants.BlockFlags.BLOCK_UPDATE);
+                    level.setBlock(worldPosition, getBlockState().setValue(ModularRouterBlock.ACTIVE, active && mufflers < 3), Constants.BlockFlags.BLOCK_UPDATE);
                 }
                 notifyWatchingPlayers();
             }
@@ -589,10 +641,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     private void notifyWatchingPlayers() {
-        for (PlayerEntity player : level.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(getBlockPos()).inflate(5))) {
+        for (Player player : level.getEntitiesOfClass(Player.class, new AABB(getBlockPos()).inflate(5))) {
             if (player.containerMenu instanceof ContainerItemRouter) {
                 if (((ContainerItemRouter) player.containerMenu).getRouter() == this) {
-                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RouterUpgradesSyncMessage(this));
+                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(this));
                 }
             }
         }
@@ -615,7 +667,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     public void setAllowRedstoneEmission(boolean allow) {
         canEmit = allow;
-        getLevel().setBlockAndUpdate(worldPosition, getBlockState().setValue(BlockItemRouter.CAN_EMIT, canEmit));
+        getLevel().setBlockAndUpdate(worldPosition, getBlockState().setValue(ModularRouterBlock.CAN_EMIT, canEmit));
     }
 
     public int getUpgradeCount(Item type) {
@@ -662,7 +714,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public Direction getAbsoluteFacing(RelativeDirection direction) {
-        return direction.toAbsolute(getBlockState().getValue(BlockItemRouter.FACING));
+        return direction.toAbsolute(getBlockState().getValue(ModularRouterBlock.FACING));
     }
 
     public ItemStack getBufferItemStack() {
@@ -760,11 +812,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         this.permitted.addAll(permittedIds);
     }
 
-    public boolean isPermitted(PlayerEntity player) {
+    public boolean isPermitted(Player player) {
         if (permitted.isEmpty() || permitted.contains(player.getUUID())) {
             return true;
         }
-        for (Hand hand : Hand.values()) {
+        for (InteractionHand hand : InteractionHand.values()) {
             if (player.getItemInHand(hand).getItem() == ModItems.OVERRIDE_CARD.get()) {
                 return true;
             }
@@ -831,19 +883,19 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         return power;
     }
 
-    public CompoundNBT getExtData() {
+    public CompoundTag getExtData() {
         if (extData == null) {
-            extData = new CompoundNBT();
+            extData = new CompoundTag();
         }
         return extData;
     }
 
-    public static Optional<TileEntityItemRouter> getRouterAt(IBlockReader world, BlockPos routerPos) {
-        TileEntity te = world.getBlockEntity(routerPos);
-        return te instanceof TileEntityItemRouter ? Optional.of((TileEntityItemRouter) te) : Optional.empty();
+    public static Optional<ModularRouterBlockEntity> getRouterAt(BlockGetter world, BlockPos routerPos) {
+        BlockEntity te = world.getBlockEntity(routerPos);
+        return te instanceof ModularRouterBlockEntity ? Optional.of((ModularRouterBlockEntity) te) : Optional.empty();
     }
 
-    public void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+    public void playSound(Player player, BlockPos pos, SoundEvent sound, SoundSource category, float volume, float pitch) {
         if (getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
             getLevel().playSound(player, pos, sound, category, volume, pitch);
         }
@@ -872,13 +924,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.modularrouters.item_router");
+    public Component getDisplayName() {
+        return new TranslatableComponent("block.modularrouters.item_router");
     }
 
     @Nullable
     @Override
-    public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
         return new ContainerItemRouter(windowId, playerInventory, this.getBlockPos());
     }
 
@@ -901,7 +953,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public AxisAlignedBB getRenderBoundingBox() {
+    public AABB getRenderBoundingBox() {
         if (cachedRenderAABB == null) {
             cachedRenderAABB = super.getRenderBoundingBox();
             beams.forEach(beam -> cachedRenderAABB = cachedRenderAABB.minmax(beam.getAABB(getBlockPos())));
@@ -988,13 +1040,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
     class ModuleHandler extends RouterItemHandler {
         ModuleHandler() {
-            super(TileEntityItemRouter.COMPILE_MODULES, getModuleSlotCount(), s -> s.getItem() instanceof ItemModule);
+            super(ModularRouterBlockEntity.COMPILE_MODULES, getModuleSlotCount(), s -> s.getItem() instanceof ItemModule);
         }
     }
 
     class UpgradeHandler extends RouterItemHandler {
         UpgradeHandler() {
-            super(TileEntityItemRouter.COMPILE_UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof ItemUpgrade);
+            super(ModularRouterBlockEntity.COMPILE_UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof ItemUpgrade);
         }
 
         @Override
@@ -1013,17 +1065,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         }
     }
 
-    private static class CompiledIndexedModule {
-        final CompiledModule compiledModule;
-        final int index;
-
-        private CompiledIndexedModule(CompiledModule compiledModule, int index) {
-            this.compiledModule = compiledModule;
-            this.index = index;
-        }
+    private record CompiledIndexedModule(CompiledModule compiledModule, int index) {
     }
 
-    class RouterEnergyBuffer extends EnergyStorage implements INBTSerializable<CompoundNBT> {
+    class RouterEnergyBuffer extends EnergyStorage {
         private int excess;  // "hidden" energy due to energy upgrades being removed
 
         public RouterEnergyBuffer(int capacity) {
@@ -1081,8 +1126,8 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         }
 
         @Override
-        public CompoundNBT serializeNBT() {
-            CompoundNBT tag = new CompoundNBT();
+        public Tag serializeNBT() {
+            CompoundTag tag = new CompoundTag();
             tag.putInt("Energy", energy);
             tag.putInt("Capacity", capacity);
             tag.putInt("Excess", excess);
@@ -1090,10 +1135,13 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
-            energy = nbt.getInt("Energy");
-            capacity = nbt.getInt("Capacity");
-            excess = nbt.getInt("Excess");
+        public void deserializeNBT(Tag nbt) {
+            if (!(nbt instanceof CompoundTag compound)) {
+                throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
+            }
+            energy = compound.getInt("Energy");
+            capacity = compound.getInt("Capacity");
+            excess = compound.getInt("Excess");
         }
 
         public int getCapacity() {
@@ -1106,7 +1154,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         }
     }
 
-    public class TrackedEnergy implements IIntArray {
+    public class TrackedEnergy implements ContainerData {
         @Override
         public int get(int idx) {
             int res = 0;

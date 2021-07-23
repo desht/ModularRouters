@@ -1,16 +1,16 @@
 package me.desht.modularrouters.container;
 
-import me.desht.modularrouters.block.tile.TileEntityItemRouter;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.item.module.ItemModule;
 import me.desht.modularrouters.item.upgrade.ItemUpgrade;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -38,17 +38,17 @@ public class ContainerItemRouter extends ContainerMRBase {
     public static final int TE_FIRST_SLOT = 36;
     private static final int TE_LAST_SLOT = TE_FIRST_SLOT + UPGRADE_SLOT_END;
 
-    private final TileEntityItemRouter router;
-    public final TileEntityItemRouter.TrackedEnergy data;
+    private final ModularRouterBlockEntity router;
+    public final ModularRouterBlockEntity.TrackedEnergy data;
 
-    public ContainerItemRouter(int windowId, PlayerInventory invPlayer, PacketBuffer extraData) {
+    public ContainerItemRouter(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
         this(windowId, invPlayer, extraData.readBlockPos());
     }
 
-    public ContainerItemRouter(int windowId, PlayerInventory invPlayer, BlockPos routerPos) {
+    public ContainerItemRouter(int windowId, Inventory invPlayer, BlockPos routerPos) {
         super(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), windowId);
 
-        Optional<TileEntityItemRouter> o = TileEntityItemRouter.getRouterAt(invPlayer.player.level, routerPos);
+        Optional<ModularRouterBlockEntity> o = ModularRouterBlockEntity.getRouterAt(invPlayer.player.level, routerPos);
         this.router = o.orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
 
         data = router.trackedEnergy;
@@ -83,12 +83,12 @@ public class ContainerItemRouter extends ContainerMRBase {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
-        return !router.isRemoved() && Vector3d.atCenterOf(router.getBlockPos()).distanceToSqr(player.position()) <= 64;
+    public boolean stillValid(Player player) {
+        return !router.isRemoved() && Vec3.atCenterOf(router.getBlockPos()).distanceToSqr(player.position()) <= 64;
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity player, int sourceSlotIndex) {
+    public ItemStack quickMoveStack(Player player, int sourceSlotIndex) {
         Slot sourceSlot = slots.get(sourceSlotIndex);
         if (sourceSlot == null || !sourceSlot.hasItem()) {
             return ItemStack.EMPTY;
@@ -136,7 +136,7 @@ public class ContainerItemRouter extends ContainerMRBase {
         return copyOfSourceStack;
     }
 
-    public TileEntityItemRouter getRouter() {
+    public ModularRouterBlockEntity getRouter() {
         return router;
     }
 

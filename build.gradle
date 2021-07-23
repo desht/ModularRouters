@@ -1,21 +1,21 @@
 
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+        maven { url = 'https://maven.minecraftforge.net' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 //apply plugin: 'eclipse'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 ext.configFile = file('gradle.properties')
 ext.config = parseConfig(configFile)
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 version = config.mc_version + "-" + config.mod_version
 group = "me.desht"
@@ -88,18 +88,17 @@ minecraft {
 def extraModsDir = "extra-mods-${mc_version}"
 
 repositories {
-    jcenter { }
     flatDir {
         name "extra-mods"
         dir file(extraModsDir)
     }
     maven { // TOP
         name = "tterrag maven"
-        url = "http://maven.tterrag.com/"
+        url = "https://maven.tterrag.com/"
     }
     maven {
         name = "JEI"
-        url = "http://dvs1.progwml6.com/files/maven"
+        url = "https://dvs1.progwml6.com/files/maven"
     }
     maven {
         name = "K-4u Mod maven"
@@ -107,7 +106,7 @@ repositories {
     }
     maven {
         name = 'Patchouli'
-        url = 'http://maven.blamejared.com/'
+        url = 'https://maven.blamejared.com/'
     }
 //    maven {
 //        name = 'HWYLA'
@@ -124,16 +123,14 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
-    compile fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
-//    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}:api")
-//    runtime fg.deobf("mcp.mobius.waila:Hwyla:${config.waila_version}")
-    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}:api")
-    runtime fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}")
-    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}:api")
-    runtime fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
-    compile "com.google.errorprone:error_prone_annotations:2.0.15"
+//    compileOnly fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
+//    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}:api")
+//    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}")
+//    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
+//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
+//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
+//    compileOnly "com.google.errorprone:error_prone_annotations:2.0.15"
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {

@@ -10,10 +10,10 @@ import me.desht.modularrouters.item.smartfilter.ItemSmartFilter;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule2;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
@@ -28,7 +28,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     }
 
     @Override
-    protected boolean isValidTarget(ItemUseContext ctx) {
+    protected boolean isValidTarget(UseOnContext ctx) {
         return !ctx.getLevel().isEmptyBlock(ctx.getClickedPos());
     }
 
@@ -38,12 +38,12 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     }
 
     @Override
-    public ContainerType<? extends ContainerModule> getContainerType() {
+    public MenuType<? extends ContainerModule> getContainerType() {
         return ModContainerTypes.CONTAINER_MODULE_FLUID.get();
     }
 
     @Override
-    protected ITextComponent getFilterItemDisplayName(ItemStack stack) {
+    protected Component getFilterItemDisplayName(ItemStack stack) {
         return FluidUtil.getFluidContained(stack).map(FluidStack::getDisplayName).orElse(stack.getHoverName());
     }
 
@@ -82,7 +82,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<ITextComponent> list) {
+    protected void addExtraInformation(ItemStack stack, List<Component> list) {
         super.addExtraInformation(stack, list);
         FluidModule1.addFluidModuleInformation(stack, list);
     }
