@@ -7,8 +7,7 @@ import me.desht.modularrouters.client.util.TintColor;
 public class StackUpgrade extends UpgradeItem {
     @Override
     public Object[] getExtraUsageParams() {
-        ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
-        int itemsPerTick = router == null ? 1 : router.getItemsPerTick();
+        int itemsPerTick = ClientUtil.getOpenItemRouter().map(ModularRouterBlockEntity::getItemsPerTick).orElse(1);
         return new Object[] { itemsPerTick, 6 };
     }
 

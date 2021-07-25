@@ -39,7 +39,7 @@ public class InspectionFilter extends SmartFilterItem {
         if (!comparisonList.items.isEmpty()) {
             list.add(new TextComponent(ChatFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
             for (Comparison c : comparisonList.items) {
-                list.add(new TextComponent(ChatFormatting.AQUA + "\u2022 " + c.asLocalizedText()));
+                list.add(new TextComponent(ChatFormatting.AQUA + "\u2022 ").append(c.asLocalizedText()));
             }
         }
     }

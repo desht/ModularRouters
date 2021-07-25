@@ -10,16 +10,12 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 //apply plugin: 'eclipse'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
-
-ext.configFile = file('gradle.properties')
-ext.config = parseConfig(configFile)
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
-version = config.mc_version + "-" + config.mod_version
+version = "${mod_version}"
 group = "me.desht"
-archivesBaseName = 'modular-routers'
+archivesBaseName = "${modid}-${mc_version}"
 
 if (System.getenv().BUILD_NUMBER != null) {
     version += "-${System.getenv().BUILD_NUMBER}"
@@ -32,7 +28,7 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    mappings channel: 'official', version: config.mc_version
+    mappings channel: 'official', version: "${mappings_version}"
     //accessTransformer = file('my_at.cfg')
     runs {
         client {
@@ -92,44 +88,44 @@ repositories {
         name "extra-mods"
         dir file(extraModsDir)
     }
-    maven { // TOP
-        name = "tterrag maven"
-        url = "https://maven.tterrag.com/"
-    }
-    maven {
-        name = "JEI"
-        url = "https://dvs1.progwml6.com/files/maven"
-    }
-    maven {
-        name = "K-4u Mod maven"
-        url = "https://modmaven.dev/"
-    }
-    maven {
-        name = 'Patchouli'
-        url = 'https://maven.blamejared.com/'
-    }
-//    maven {
-//        name = 'HWYLA'
-//        url = 'http://www.cursemaven.com/'
+//    maven { // TOP
+//        name = "tterrag maven"
+//        url = "https://maven.tterrag.com/"
 //    }
-    maven {
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
+//    maven {
+//        name = "JEI"
+//        url = "https://dvs1.progwml6.com/files/maven"
+//    }
+//    maven {
+//        name = "K-4u Mod maven"
+//        url = "https://modmaven.dev/"
+//    }
+//    maven {
+//        name = 'Patchouli'
+//        url = 'https://maven.blamejared.com/'
+//    }
+////    maven {
+////        name = 'HWYLA'
+////        url = 'http://www.cursemaven.com/'
+////    }
+//    maven {
+//        url "https://www.cursemaven.com"
+//        content {
+//            includeGroup "curse.maven"
+//        }
+//    }
 
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 //    compileOnly fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
-//    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}:api")
-//    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${config.top_version}")
-//    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}:api")
-//    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
-//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}:api")
-//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${config.patchouli_version}")
+//    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
+//    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+//    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}")
+//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 //    compileOnly "com.google.errorprone:error_prone_annotations:2.0.15"
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
@@ -143,21 +139,13 @@ dependencies {
     }
 }
 
-static def parseConfig(File config) {
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
-    }
-}
-
 jar {
     manifest {
         attributes(["Specification-Title": "modularrouters",
                     "Specification-Vendor": "desht",
-                    "Specification-Version": "32.0", // We are version 1 of the modlauncher specification
+                    "Specification-Version": "37.0", // We are version 1 of the modlauncher specification
                     "Implementation-Title": project.name,
-                    "Implementation-Version": "${archiveVersion}",
+                    "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"desht",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }

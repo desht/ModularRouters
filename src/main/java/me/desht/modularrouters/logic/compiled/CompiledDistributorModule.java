@@ -109,9 +109,9 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return l;
     }
 
-    private static double calcDist(ModuleTarget tgt, BlockEntity te) {
-        double distance = tgt.gPos.pos().distSqr(te.getBlockPos());
-        if (!tgt.isSameWorld(te.getLevel())) {
+    private static double calcDist(ModuleTarget tgt, BlockEntity blockEntity) {
+        double distance = tgt.gPos.pos().distSqr(blockEntity.getBlockPos());
+        if (!tgt.isSameWorld(blockEntity.getLevel())) {
             distance += 100_000_000;  // cross-dimension penalty
         }
         return distance;

@@ -31,23 +31,6 @@ public class ModuleHelper {
     @Nonnull
     public static CompoundTag validateNBT(ItemStack stack) {
         CompoundTag compound = stack.getOrCreateTagElement(ModularRouters.MODID);
-        if (compound.getTagType(NBT_FLAGS) == Constants.NBT.TAG_BYTE) {
-            // TODO get rid of this in 1.17
-            // migrate old-format flags (encoded into a byte) to modern flexible format
-            byte b = compound.getByte(NBT_FLAGS);
-            for (ModuleFlags flag : ModuleFlags.values()) {
-                compound.putBoolean(flag.getName(), (b & flag.getMask()) != 0);
-            }
-            // 0x80 was the mask bit for the old termination flag
-            compound.putString(ModuleHelper.NBT_TERMINATION, (b & 0x80) != 0 ? Termination.RAN.toString() : Termination.NONE.toString());
-
-            RelativeDirection rDir = RelativeDirection.values()[(b & 0x70) >> 4];
-            compound.putString(NBT_DIRECTION, rDir.toString());
-
-            compound.remove(NBT_FLAGS);
-
-            ModularRouters.LOGGER.info("migrated module NBT for " + stack + " to new format");
-        }
         if (compound.getTagType(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
             compound.put(NBT_FILTER, new CompoundTag());
         }

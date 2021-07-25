@@ -166,21 +166,19 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
 
         @Override
         protected int getTextureX() {
-            switch (getState()) {
-                case RANDOM: return 176;
-                case NEAREST: return 192;
-                case ROUND_ROBIN: return 160;
-                default: return 0;
-            }
+            return switch (getState()) {
+                case RANDOM -> 176;
+                case NEAREST -> 192;
+                case ROUND_ROBIN -> 160;
+            };
         }
 
         @Override
         protected int getTextureY() {
-            switch (getState()) {
-                case RANDOM: case ROUND_ROBIN: return 32;
-                case NEAREST: return 16;
-                default: return 0;
-            }
+            return switch (getState()) {
+                case RANDOM, ROUND_ROBIN -> 32;
+                case NEAREST -> 16;
+            };
         }
 
         @Override

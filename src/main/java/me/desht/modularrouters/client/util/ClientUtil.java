@@ -11,16 +11,18 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Optional;
+
 public class ClientUtil {
     public static Level theClientWorld() {
         return Minecraft.getInstance().level;
     }
 
-    public static ModularRouterBlockEntity getOpenItemRouter() {
-        if (Minecraft.getInstance().screen instanceof ModularRouterScreen) {
-            return ((ModularRouterScreen) Minecraft.getInstance().screen).getMenu().getRouter();
+    public static Optional<ModularRouterBlockEntity> getOpenItemRouter() {
+        if (Minecraft.getInstance().screen instanceof ModularRouterScreen mrs) {
+            return Optional.of(mrs.getMenu().getRouter());
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 

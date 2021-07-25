@@ -104,16 +104,12 @@ public class MiscUtil {
     }
 
     public static int getYawFromFacing(Direction facing) {
-        switch (facing) {
-            case NORTH:
-                return 180;
-            case WEST:
-                return 90;
-            case EAST:
-                return -90;
-            default: // including SOUTH
-                return 0;
-        }
+        return switch (facing) {
+            case NORTH -> 180;
+            case WEST -> 90;
+            case EAST -> -90;
+            default -> 0; // including SOUTH
+        };
     }
 
     public static Component settingsStr(String prefix, Component c) {

@@ -19,8 +19,8 @@ public class CompiledDetectorModule extends CompiledModule {
         super(router, stack);
 
         CompoundTag compound = setupNBT(stack);
-        signalLevel = compound == null ? 0 : compound.getByte(NBT_SIGNAL_LEVEL);
-        strongSignal = compound != null && compound.getBoolean(NBT_STRONG_SIGNAL);
+        signalLevel = compound.getByte(NBT_SIGNAL_LEVEL);
+        strongSignal = compound.getBoolean(NBT_STRONG_SIGNAL);
     }
 
     @Override

@@ -29,14 +29,14 @@ public class GuiUtil {
         bindTexture(texture, 1f, 1f, 1f, 1f);
     }
 
-    public static void renderItemStack(PoseStack matrixStack, Minecraft mc, ItemStack stack, int x, int y, String txt) {
+    public static void renderItemStack(PoseStack poseStack, Minecraft mc, ItemStack stack, int x, int y, String txt) {
         ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
         if (!stack.isEmpty()) {
-            matrixStack.pushPose();
-            matrixStack.translate(0.0F, 0.0F, 32.0F);
+            poseStack.pushPose();
+            poseStack.translate(0.0F, 0.0F, 32.0F);
             itemRender.renderAndDecorateItem(stack, x, y);
             itemRender.renderGuiItemDecorations(mc.font, stack, x, y, txt);
-            matrixStack.popPose();
+            poseStack.popPose();
         }
     }
 

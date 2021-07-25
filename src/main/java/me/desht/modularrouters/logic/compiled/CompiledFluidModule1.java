@@ -71,28 +71,20 @@ public class CompiledFluidModule1 extends CompiledModule {
         if (!worldFluidCap.isPresent()) {
             // no TE at the target position; try to interact with a fluid block in the world
             boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
-            switch (fluidDirection) {
-                case IN:
-                    didWork = tryPickupFluid(routerCap, world, pos, playSound);
-                    break;
-                case OUT:
-                    didWork = tryPourOutFluid(routerCap, world, pos, playSound);
-                    break;
-            }
+            didWork = switch (fluidDirection) {
+                case IN -> tryPickupFluid(routerCap, world, pos, playSound);
+                case OUT -> tryPourOutFluid(routerCap, world, pos, playSound);
+            };
         } else {
             // there's a TE with a fluid capability; try to interact with that
-            switch (fluidDirection) {
-                case IN:
-                    didWork = worldFluidCap.map(srcHandler ->
-                            routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false))
-                            .orElse(false);
-                    break;
-                case OUT:
-                    didWork = routerCap.map(srcHandler ->
-                            worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false))
-                            .orElse(false);
-                    break;
-            }
+            didWork = switch (fluidDirection) {
+                case IN -> worldFluidCap.map(srcHandler ->
+                        routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false))
+                        .orElse(false);
+                case OUT -> routerCap.map(srcHandler ->
+                        worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false))
+                        .orElse(false);
+            };
         }
 
         if (didWork) {
@@ -103,7 +95,7 @@ public class CompiledFluidModule1 extends CompiledModule {
 
     private boolean tryPickupFluid(LazyOptional<IFluidHandlerItem> routerCap, Level world, BlockPos pos, boolean playSound) {
         BlockState state = world.getBlockState(pos);
-        if (!(state.getBlock() instanceof BucketPickup)) {
+        if (!(state.getBlock() instanceof BucketPickup bucketPickup)) {
             return false;
         }
 
@@ -122,7 +114,7 @@ public class CompiledFluidModule1 extends CompiledModule {
             return false;
         }
         // actually do the pickup & transfer now
-        ((BucketPickup) state.getBlock()).pickupBlock(world, pos, state);
+        bucketPickup.pickupBlock(world, pos, state);
         FluidStack transferred = routerCap.map(h ->
                 FluidUtil.tryFluidTransfer(h, tank, BUCKET_VOLUME, true))
                 .orElse(FluidStack.EMPTY);
@@ -157,10 +149,10 @@ public class CompiledFluidModule1 extends CompiledModule {
                 if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
                     // no pouring water in the nether!
                     playEvaporationEffects(world, pos);
-                } else if (block instanceof LiquidBlockContainer) {
+                } else if (block instanceof LiquidBlockContainer liq) {
                     // a block which can take fluid, e.g. waterloggable block like a slab
                     FluidState still = fluid instanceof FlowingFluid ? ((FlowingFluid) fluid).getSource(false) : fluid.defaultFluidState();
-                    if (((LiquidBlockContainer)block).placeLiquid(world, pos, blockstate, still) && playSound) {
+                    if (liq.placeLiquid(world, pos, blockstate, still) && playSound) {
                         playEmptySound(world, pos, fluid);
                     }
                 } else {

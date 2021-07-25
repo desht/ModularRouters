@@ -48,15 +48,16 @@ public class ClientSetup {
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            // these all add stuff to non-threadsafe hashmaps - need to defer to the main thread
             setupRenderLayers();
             registerScreenFactories();
-            registerKeyBindings();
             registerItemModelOverrides();
-
-//            ClientRegistry.bindTileEntityRenderer(ModBlockEntities.ITEM_ROUTER.get(), ItemBeamTileRenderer::new);
         });
 
+        registerKeyBindings();
+
         BlockEntityRenderers.register(ModBlockEntities.MODULAR_ROUTER.get(), ItemBeamTileRenderer::new);
+
         FilterScreenFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), InspectionFilterScreen::new);
         FilterScreenFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), RegexFilterScreen::new);
     }

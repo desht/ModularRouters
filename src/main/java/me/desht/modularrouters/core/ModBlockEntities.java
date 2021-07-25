@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.function.Supplier;
 
 public class ModBlockEntities {
-    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ModularRouters.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ModularRouters.MODID);
 
     public static final RegistryObject<BlockEntityType<ModularRouterBlockEntity>> MODULAR_ROUTER
             = register("modular_router", () -> new BlockEntityType<>(ModularRouterBlockEntity::new, ImmutableSet.of(ModBlocks.MODULAR_ROUTER.get()), null));
@@ -20,6 +20,6 @@ public class ModBlockEntities {
             = register("template_frame", () -> new BlockEntityType<>(TemplateFrameBlockEntity::new, ImmutableSet.of(ModBlocks.TEMPLATE_FRAME.get()), null));
 
     private static <T extends BlockEntityType<?>> RegistryObject<T> register(String name, Supplier<T> sup) {
-        return TILE_ENTITIES.register(name, sup);
+        return BLOCK_ENTITIES.register(name, sup);
     }
 }

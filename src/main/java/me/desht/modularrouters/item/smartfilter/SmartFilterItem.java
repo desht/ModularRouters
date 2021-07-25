@@ -40,8 +40,9 @@ public abstract class SmartFilterItem extends MRBaseItem {
      * @param message received message
      * @param filterStack item stack of the filter that needs to be updated
      * @param moduleStack item stack of the module the filter is installed in, if any
-     * @return true if a GuiSync message should be returned to the client
+     * @return true a GuiSyncMessage if a response should be sent, null otherwise
      */
+    @Nullable
     public abstract GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack);
 
     /**

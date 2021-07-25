@@ -101,14 +101,6 @@ public class CompiledActivatorModule extends CompiledModule {
             this.pitch = pitch;
         }
 
-        BlockPos offset(BlockPos pos, int dist) {
-            switch (this) {
-                case ABOVE: return pos.relative(Direction.UP, dist);
-                case BELOW: return pos.relative(Direction.DOWN, dist);
-                default: return pos;
-            }
-        }
-
         @Override
         public String getTranslationKey() {
             return "modularrouters.itemText.activator.direction." + this;
@@ -165,18 +157,11 @@ public class CompiledActivatorModule extends CompiledModule {
         fakePlayer.setShiftKeyDown(sneaking);
         fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-        boolean didWork = false;
-        switch (actionType) {
-            case ITEM_OR_BLOCK:
-                didWork = doUseItem(router, fakePlayer);
-                break;
-            case USE_ITEM_ON_ENTITY:
-                didWork = doUseItemOnEntity(router, fakePlayer);
-                break;
-            case ATTACK_ENTITY:
-                didWork = doAttackEntity(router, fakePlayer);
-                break;
-        }
+        boolean didWork = switch (actionType) {
+            case ITEM_OR_BLOCK -> doUseItem(router, fakePlayer);
+            case USE_ITEM_ON_ENTITY -> doUseItemOnEntity(router, fakePlayer);
+            case ATTACK_ENTITY -> doAttackEntity(router, fakePlayer);
+        };
 
         if (didWork) {
             router.setBufferItemStack(fakePlayer.getMainHandItem());

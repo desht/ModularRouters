@@ -345,72 +345,19 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         maybeDoEnergyTransfer();
     }
 
-//    @Override
-//    public void tick() {
-//        if (getLevel().isClientSide) {
-//            for (Iterator<BeamData> iterator = beams.iterator(); iterator.hasNext(); ) {
-//                BeamData beam = iterator.next();
-//                beam.tick();
-//                if (beam.isExpired()) {
-//                    iterator.remove();
-//                    cachedRenderAABB = null;
-//                }
-//            }
-//        } else {
-//            if (recompileNeeded != 0) {
-//                compile();
-//            }
-//            counter++;
-//            pulseCounter++;
-//
-//            if (fakePlayer != null) {
-//                fakePlayer.tick();
-//                fakePlayer.getCooldowns().tick();
-//            }
-//
-//            if (getRedstoneBehaviour() == RouterRedstoneBehaviour.PULSE) {
-//                // pulse checking is done by checkRedstonePulse() - called from BlockItemRouter#neighborChanged()
-//                // however, we do need to turn the state inactive after a short time if we were set active by a pulse
-//                if (activeTimer > 0 && --activeTimer == 0) {
-//                    setActive(false);
-//                }
-//            } else {
-//                if (counter >= getTickRate()) {
-//                    allocateFluidTransfer(counter);
-//                    executeModules(false);
-//                    counter = 0;
-//                }
-//            }
-//
-//            if (ecoMode) {
-//                if (active) {
-//                    ecoCounter = MRConfig.Common.Router.ecoTimeout;
-//                } else if (ecoCounter > 0) {
-//                    ecoCounter--;
-//                }
-//            }
-//
-//            maybeDoEnergyTransfer();
-//        }
-//    }
-
     private void maybeDoEnergyTransfer() {
         if (getEnergyCapacity() > 0 && !getBufferItemStack().isEmpty() && redstoneBehaviour.shouldRun(getRedstonePower() > 0, false)) {
             switch (energyDirection) {
-                case FROM_ROUTER:
-                    bufferHandler.getEnergyCapability().ifPresent(energyHandler -> {
-                        int toExtract = getEnergyStorage().extractEnergy(getEnergyXferRate(), true);
-                        int received = energyHandler.receiveEnergy(toExtract, false);
-                        getEnergyStorage().extractEnergy(received, false);
-                    });
-                    break;
-                case TO_ROUTER:
-                    bufferHandler.getEnergyCapability().ifPresent(energyHandler -> {
-                        int toExtract = energyHandler.extractEnergy(getEnergyXferRate(), true);
-                        int received = energyStorage.receiveEnergy(toExtract, false);
-                        energyHandler.extractEnergy(received, false);
-                    });
-                    break;
+                case FROM_ROUTER -> bufferHandler.getEnergyCapability().ifPresent(energyHandler -> {
+                    int toExtract = getEnergyStorage().extractEnergy(getEnergyXferRate(), true);
+                    int received = energyHandler.receiveEnergy(toExtract, false);
+                    getEnergyStorage().extractEnergy(received, false);
+                });
+                case TO_ROUTER -> bufferHandler.getEnergyCapability().ifPresent(energyHandler -> {
+                    int toExtract = energyHandler.extractEnergy(getEnergyXferRate(), true);
+                    int received = energyStorage.receiveEnergy(toExtract, false);
+                    energyHandler.extractEnergy(received, false);
+                });
             }
         }
     }

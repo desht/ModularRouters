@@ -18,10 +18,8 @@ public class FluidUpgrade extends UpgradeItem {
     @Override
     public void addUsageInformation(ItemStack itemstack, List<Component> list) {
         super.addUsageInformation(itemstack, list);
-        ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
-        if (router != null) {
-            list.add(ClientUtil.xlate("modularrouters.itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate()));
-        }
+        ClientUtil.getOpenItemRouter()
+                .ifPresent(router -> list.add(ClientUtil.xlate("modularrouters.itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate())));
     }
 
     @Override

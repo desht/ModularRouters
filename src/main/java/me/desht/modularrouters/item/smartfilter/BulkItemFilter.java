@@ -88,25 +88,14 @@ public class    BulkItemFilter extends SmartFilterItem {
 
     @Override
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
-        if (!(player.containerMenu instanceof ContainerBulkItemFilter)) {
-            return null;
-        }
-
-        ContainerBulkItemFilter con = (ContainerBulkItemFilter) player.containerMenu;
-        Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
-        switch (message.getOp()) {
-            case CLEAR_ALL:
-                con.clearSlots();
-                break;
-            case MERGE:
-                message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, false));
-                break;
-            case LOAD:
-                message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, true));
-                break;
-            default:
-                ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
-                break;
+        if (player.containerMenu instanceof ContainerBulkItemFilter con) {
+            Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
+            switch (message.getOp()) {
+                case CLEAR_ALL -> con.clearSlots();
+                case MERGE -> message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, false));
+                case LOAD -> message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, true));
+                default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
+            }
         }
         return null;
     }

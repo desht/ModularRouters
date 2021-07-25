@@ -97,16 +97,8 @@ public class CompiledSenderModule1 extends CompiledModule {
         return !MiscUtil.blockHasSolidSide(state, w, pos, face.getOpposite()) || !state.isSolidRender(w, pos);
     }
 
-    static class PositionedItemHandler {
-        private final BlockPos pos;
-        private final IItemHandler handler;
-
+    record PositionedItemHandler(BlockPos pos, IItemHandler handler) {
         static final PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
-
-        PositionedItemHandler(BlockPos pos, IItemHandler handler) {
-            this.pos = pos;
-            this.handler = handler;
-        }
 
         boolean isValid() {
             return pos != null && handler != null;

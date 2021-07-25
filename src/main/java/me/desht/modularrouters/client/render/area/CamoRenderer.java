@@ -56,11 +56,6 @@ public enum CamoRenderer {
         if (lastPlayerPos == null || camoPositionShower == null
                 || player.distanceToSqr(lastPlayerPos.getX(), lastPlayerPos.getY(), lastPlayerPos.getZ()) > 9) {
             lastPlayerPos = player.blockPosition();
-//            Set<BlockPos> camoPosSet = player.getCommandSenderWorld().blockEntityList.stream()
-//                    .filter(ICamouflageable::isCamouflaged)
-//                    .map(BlockEntity::getBlockPos)
-//                    .filter(pos -> pos.distSqr(lastPlayerPos) < 256)
-//                    .collect(Collectors.toSet());
             camoPositionShower = new AreaRenderer(getNearbyCamouflaged(player), 0x408080FF, 0.75f);
         }
         if (camoPositionShower != null) {

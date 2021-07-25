@@ -188,14 +188,7 @@ public class ModuleTargetRenderer {
             return positions.containsKey(pos) ? positions.get(pos).colour : 0;
         }
 
-        static class FaceAndColour {
-            final BitSet faces;
-            final int colour;
-
-            FaceAndColour(BitSet faces, int colour) {
-                this.faces = faces;
-                this.colour = colour;
-            }
+        record FaceAndColour(BitSet faces, int colour) {
         }
     }
 

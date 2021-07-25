@@ -43,8 +43,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -57,29 +55,23 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintable {
     public enum ModuleFlags {
-        BLACKLIST(true, 0x1, "F_blacklist", 0),
-        IGNORE_DAMAGE(false, 0x2, "F_ignoreDamage", 32),
-        IGNORE_NBT(true, 0x4, "F_ignoreNBT", 64),
-        IGNORE_TAGS(true, 0x8, "F_ignoreTags", 96);
+        BLACKLIST(true, "F_blacklist", 0),
+        IGNORE_DAMAGE(false, "F_ignoreDamage", 32),
+        IGNORE_NBT(true, "F_ignoreNBT", 64),
+        IGNORE_TAGS(true, "F_ignoreTags", 96);
 
         private final boolean defaultValue;
-        private final byte mask;  // TODO legacy - remove in 1.17
         private final String name;
         private final int textureX;
 
-        ModuleFlags(boolean defaultValue, int mask, String name, int textureX) {
+        ModuleFlags(boolean defaultValue, String name, int textureX) {
             this.defaultValue = defaultValue;
-            this.mask = (byte) mask;
             this.name = name;
             this.textureX = textureX;
         }
 
         public boolean getDefaultValue() {
             return defaultValue;
-        }
-
-        public byte getMask() {
-            return mask;
         }
 
         public String getName() {
@@ -114,20 +106,15 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         }
 
         public Direction toAbsolute(Direction current) {
-            switch (this) {
-                case UP:
-                    return Direction.UP;
-                case DOWN:
-                    return Direction.DOWN;
-                case LEFT:
-                    return current.getClockWise();
-                case BACK:
-                    return current.getOpposite();
-                case RIGHT:
-                    return current.getCounterClockWise();
-                default: // including FRONT
-                    return current;
-            }
+            return switch (this) {
+                case UP -> Direction.UP;
+                case DOWN -> Direction.DOWN;
+                case LEFT -> current.getClockWise();
+                case BACK -> current.getOpposite();
+                case RIGHT -> current.getCounterClockWise();
+                default -> // including FRONT
+                        current;
+            };
         }
 
         public String getSymbol() {
@@ -187,7 +174,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
     /**
      * Override this for any module which has a GUI providing any extra controls.  Such GUI's need their own
-     * container type due to the way 1.14 handles container -> GUI connection.
+     * container type due to the way 1.14+ handles container -> GUI connection.
      *
      * @return the container type
      */
@@ -217,18 +204,16 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, world, list, flag);
 
-        ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
-        if (router != null) {
+        ClientUtil.getOpenItemRouter().ifPresent(router -> {
             Slot slot = ((ModularRouterScreen) Minecraft.getInstance().screen).getSlotUnderMouse();
             if (slot instanceof ContainerModularRouter.InstalledModuleSlot) {
                 String s = ClientSetup.keybindConfigure.getKey().getName();
                 list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
             }
-        }
+        });
     }
 
     @Override

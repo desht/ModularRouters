@@ -138,14 +138,13 @@ public abstract class TargetedModule extends ModuleItem {
             if (target != null) {
                 Component msg = new TextComponent("\u25b6 ").append(asFormattable(target.getTextComponent()).withStyle(ChatFormatting.WHITE));
                 list.add(msg);
-                ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
-                if (router != null) {
+                ClientUtil.getOpenItemRouter().ifPresent(router -> {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(itemstack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
                         list.add(xlate(val.translationKey()).withStyle(val.getColor()));
                     }
-                }
+                });
             }
         }
     }
@@ -314,8 +313,8 @@ public abstract class TargetedModule extends ModuleItem {
     }
 
     private int maxDistanceSq(ItemStack stack) {
-        if (stack.getItem() instanceof IRangedModule) {
-            int r = ((IRangedModule) stack.getItem()).getCurrentRange(stack);
+        if (stack.getItem() instanceof IRangedModule rangedModule) {
+            int r = rangedModule.getCurrentRange(stack);
             return r * r;
         }
         return 0;

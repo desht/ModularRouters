@@ -1,6 +1,7 @@
 package me.desht.modularrouters.container.handler;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class GhostItemHandler extends ItemStackHandler {
@@ -11,9 +12,7 @@ public class GhostItemHandler extends ItemStackHandler {
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (!simulate) {
-            ItemStack stack1 = stack.copy();
-            stack1.setCount(1);
-            setStackInSlot(slot, stack1);
+            setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(stack, 1));
         }
         return stack;
     }

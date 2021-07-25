@@ -3,15 +3,16 @@ package me.desht.modularrouters.logic.filter.matchers;
 import com.google.common.base.Joiner;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.logic.filter.Filter;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -104,14 +105,13 @@ public class InspectionMatcher implements IItemMatcher {
             return Joiner.on(" ").join(subject, op, target);
         }
 
-        @OnlyIn(Dist.CLIENT)
-        public String asLocalizedText() {
-            if (subject == null || op == null) return "<?>";
-            return Joiner.on(" ").join(
-                    I18n.get("modularrouters.guiText.label.inspectionSubject." + subject),
-                    I18n.get("modularrouters.guiText.label.inspectionOp." + op),
-                    target + subject.getDisplaySuffix()
-            );
+        public Component asLocalizedText() {
+            if (subject == null || op == null) return new TextComponent("<?>");
+            return new TextComponent(" ")
+                    .append(new TranslatableComponent("modularrouters.guiText.label.inspectionSubject." + subject))
+                    .append(" ")
+                    .append(new TranslatableComponent("modularrouters.guiText.label.inspectionOp." + op))
+                    .append(target + subject.getDisplaySuffix());
         }
     }
 
@@ -125,36 +125,27 @@ public class InspectionMatcher implements IItemMatcher {
 
         @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.label.inspectionSubject." + toString();
+            return "modularrouters.guiText.label.inspectionSubject." + this;
         }
 
         private Optional<Integer> getValue(ItemStack stack) {
-            switch (this) {
-                case NONE:
-                    return Optional.empty();
-                case DURABILITY:
-                    return stack.getMaxDamage() > 0 ?
-                            Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamageValue(), stack.getMaxDamage())) :
-                            Optional.empty();
-                case FLUID:
-                    return getFluidPercent(stack);
-                case ENERGY:
-                    return getEnergyPercent(stack);
-                case ENCHANT:
-                    return getHighestEnchantLevel(stack);
-                case FOOD:
-                    return getFoodValue(stack);
-                default:
-                    throw new IllegalArgumentException("invalid comparison subject! " + this);
-            }
+            return switch (this) {
+                case NONE -> Optional.empty();
+                case DURABILITY -> stack.getMaxDamage() > 0 ?
+                        Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamageValue(), stack.getMaxDamage())) :
+                        Optional.empty();
+                case FLUID -> getFluidPercent(stack);
+                case ENERGY -> getEnergyPercent(stack);
+                case ENCHANT -> getHighestEnchantLevel(stack);
+                case FOOD -> getFoodValue(stack);
+            };
         }
 
         private Optional<Integer> getFoodValue(ItemStack stack) {
-            if (stack.getItem().isEdible()) {
-                return Optional.of(stack.getItem().getFoodProperties().getNutrition());
-            } else {
-                return Optional.empty();
-            }
+            //noinspection ConstantConditions
+            return stack.getItem().isEdible() ?
+                    Optional.of(stack.getItem().getFoodProperties().getNutrition()) :
+                    Optional.empty();
         }
 
         private Optional<Integer> getHighestEnchantLevel(ItemStack stack) {
@@ -182,12 +173,10 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         public String getDisplaySuffix() {
-            switch (this) {
-                case ENCHANT:case FOOD:case NONE:
-                    return "";
-                default:
-                    return "%";
-            }
+            return switch (this) {
+                case ENCHANT, FOOD, NONE -> "";
+                default -> "%";
+            };
         }
 
         public InspectionSubject cycle(int direction) {
@@ -203,7 +192,7 @@ public class InspectionMatcher implements IItemMatcher {
             // BigDecimal is a bit overkill perhaps, but guarantees no danger of overflow here
             BigDecimal a = new BigDecimal(val);
             BigDecimal b = new BigDecimal(max);
-            return a.multiply(HUNDRED).divide(b, BigDecimal.ROUND_DOWN).intValue();
+            return a.multiply(HUNDRED).divide(b, RoundingMode.DOWN).intValue();
         }
     }
 
@@ -218,27 +207,19 @@ public class InspectionMatcher implements IItemMatcher {
 
         @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.label.inspectionOp." + toString();
+            return "modularrouters.guiText.label.inspectionOp." + this;
         }
 
         public boolean check(long value, long target) {
-            switch (this) {
-                case NONE:
-                    return false;
-                case GT:
-                    return value > target;
-                case LT:
-                    return value < target;
-                case LE:
-                    return value <= target;
-                case GE:
-                    return value >= target;
-                case EQ:
-                    return value == target;
-                case NE:
-                    return value != target;
-            }
-            return false;
+            return switch (this) {
+                case NONE -> false;
+                case GT -> value > target;
+                case LT -> value < target;
+                case LE -> value <= target;
+                case GE -> value >= target;
+                case EQ -> value == target;
+                case NE -> value != target;
+            };
         }
 
         public InspectionOp cycle(int direction) {

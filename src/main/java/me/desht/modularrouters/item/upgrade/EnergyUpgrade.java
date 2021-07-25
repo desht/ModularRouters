@@ -31,11 +31,10 @@ public class EnergyUpgrade extends UpgradeItem {
     @Override
     public void addUsageInformation(ItemStack itemstack, List<Component> list) {
         super.addUsageInformation(itemstack, list);
-        ModularRouterBlockEntity router = ClientUtil.getOpenItemRouter();
-        if (router != null) {
+        ClientUtil.getOpenItemRouter().ifPresent(router -> {
             list.addAll(GuiUtil.xlateAndSplit("modularrouters.itemText.usage.item.energyUpgradeRouter",
                     commify(router.getEnergyCapacity()), commify(router.getEnergyXferRate())));
-        }
+        });
     }
 
     @Override

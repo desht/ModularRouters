@@ -83,7 +83,7 @@ public class ModFilter extends SmartFilterItem {
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
         switch (message.getOp()) {
-            case ADD_STRING:
+            case ADD_STRING -> {
                 String modId = message.getPayload().getString("ModId");
                 l = getModList(filterStack);
                 if (l.size() < MAX_SIZE && !l.contains(modId)) {
@@ -91,8 +91,8 @@ public class ModFilter extends SmartFilterItem {
                     setModList(filterStack, l);
                     return new GuiSyncMessage(filterStack);
                 }
-                break;
-            case REMOVE_AT:
+            }
+            case REMOVE_AT -> {
                 int pos = message.getPayload().getInt("Pos");
                 l = getModList(filterStack);
                 if (pos >= 0 && pos < l.size()) {
@@ -100,10 +100,8 @@ public class ModFilter extends SmartFilterItem {
                     setModList(filterStack, l);
                     return new GuiSyncMessage(filterStack);
                 }
-                break;
-            default:
-                ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
-                break;
+            }
+            default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
         }
         return null;
     }

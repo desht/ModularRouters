@@ -5,11 +5,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
+import me.desht.modularrouters.client.gui.AbstractMRContainerScreen;
 import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.filter.FilterScreenFactory;
-import me.desht.modularrouters.client.gui.AbstractMRContainerScreen;
 import me.desht.modularrouters.client.gui.widgets.button.*;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -50,9 +50,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -129,9 +127,8 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         addToggleButton(ModuleFlags.IGNORE_DAMAGE, 7, 93);
         addToggleButton(ModuleFlags.IGNORE_NBT, 25, 75);
         addToggleButton(ModuleFlags.IGNORE_TAGS, 25, 93);
-//        addToggleButton(ModuleFlags.TERMINATE, 45, 93);
         terminationButton = addRenderableWidget(new TerminationButton(leftPos + 45, topPos + 93, ModuleHelper.getTermination(moduleItemStack)));
-        addRenderableWidget(matchAllButton = new MatchAllButton(leftPos + 45, topPos + 75, matchAll));
+        matchAllButton = addRenderableWidget(new MatchAllButton(leftPos + 45, topPos + 75, matchAll));
 
         if (module.isDirectional()) {
             addDirectionButton(RelativeDirection.NONE, 70, 18);
@@ -143,14 +140,13 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
             addDirectionButton(RelativeDirection.BACK, 104, 52);
         }
 
-        addRenderableWidget(mouseOverHelpButton = new MouseOverHelp.Button(leftPos + 175, topPos + 1));
+        mouseOverHelpButton = addRenderableWidget(new MouseOverHelp.Button(leftPos + 175, topPos + 1));
 
-        addRenderableWidget(redstoneButton = new RedstoneBehaviourButton(this.leftPos + 170, this.topPos + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
+        redstoneButton = addRenderableWidget(new RedstoneBehaviourButton(this.leftPos + 170, this.topPos + 93, BUTTON_WIDTH, BUTTON_HEIGHT,
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
-        addRenderableWidget(regulatorTextField = buildRegulationTextField(getOrCreateTextFieldManager()));
-
-        addRenderableWidget(regulatorTooltipButton = new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
+        regulatorTextField = addRenderableWidget(buildRegulationTextField(getOrCreateTextFieldManager()));
+        regulatorTooltipButton = addRenderableWidget(new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
 
         if (routerPos != null) {
             addRenderableWidget(new BackButton(leftPos + 2, topPos + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
@@ -172,12 +168,12 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         return tf;
     }
 
-    @SubscribeEvent
-    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-        getMenu().removeSlotListener(this);
-        getMenu().addSlotListener(this);
-        setupButtonVisibility();
-    }
+//    @SubscribeEvent
+//    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+//        getMenu().removeSlotListener(this);
+//        getMenu().addSlotListener(this);
+//        setupButtonVisibility();
+//    }
 
     public int getRegulatorAmount() {
         return regulatorAmount;
