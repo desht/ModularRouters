@@ -228,7 +228,7 @@ public abstract class CompiledModule {
                 // we'd found an item to pull but it looks like this handler doesn't allow us to extract it
                 // give up, but advance the last match pos so we don't get stuck trying this slot forever
                 setLastMatchPos(key, (pos + 1) % handler.getSlots());
-                return ItemStack.EMPTY;
+                return transferred;
             }
             if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
                 // this item is suitable for pulling
