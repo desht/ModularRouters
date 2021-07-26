@@ -4,7 +4,17 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
-## Minecraft 1.16.3 / 1.16.4
+## Minecraft 1.17.1
+
+### 8.0.0 (26 Jul 2021)
+
+* Initial alpha release for Minecraft 1.17.1!
+* Only basic testing has been done so far; this should be considered very much an unstable alpha at this point
+* No JEI or TOP integration since those mods haven't been released yet for 1.17
+* Patchouli also unavailable for now
+* Feature-wise, this is identical to the last 1.16.5 release
+
+## Minecraft 1.16.3 / 1.16.4 / 1.16.5
 
 ### 7.5.0 (19 May 2021)
 * New Upgrade: the Energy Upgrade!
