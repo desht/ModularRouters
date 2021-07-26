@@ -27,6 +27,7 @@ conf
 *.pl
 *.log
 extra-mods-*
+mcmodsrepo
 
 # datagen caches
 **/.cache

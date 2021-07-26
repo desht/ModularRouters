@@ -14,7 +14,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.crafting.StackList;
 import org.apache.commons.lang3.Validate;
 
@@ -29,7 +28,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         super(resourceLocation, "", result, ingredients);
 
         Validate.isTrue(result.getItem() instanceof IPickaxeUser,
-                "recipe " + resourceLocation.toString() + ": result is not a IPickaxeUser!");
+                "recipe " + resourceLocation + ": result is not a IPickaxeUser!");
     }
 
     @Override
@@ -38,7 +37,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
 
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) || stack.getItem() instanceof IPickaxeUser) {
+            if (isValidPickaxe(stack) || stack.getItem() instanceof IPickaxeUser) {
                 return true;
             }
         }
@@ -50,11 +49,11 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         ItemStack pick = ItemStack.EMPTY;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE)) {
+            if (isValidPickaxe(stack)) {
                 pick = stack;
                 break;
-            } else if (stack.getItem() instanceof IPickaxeUser) {
-                pick = ((IPickaxeUser) stack.getItem()).getPickaxe(stack);
+            } else if (stack.getItem() instanceof IPickaxeUser pickaxeUser) {
+                pick = pickaxeUser.getPickaxe(stack);
                 break;
             }
         }
@@ -117,12 +116,15 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
 
         @Override
         public boolean test(@Nullable ItemStack stack) {
-            // should match anything that claims to be a pickaxe
-
-            // FIXME getToolTypes() currently broken in 1.17 for pickaxes
-            //  workaround supports vanilla pickaxes only
-//            return stack != null && stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) && stack.getDamageValue() == 0;
-            return stack != null && stack.getItem() instanceof PickaxeItem && stack.getDamageValue() == 0;
+            return isValidPickaxe(stack);
         }
+    }
+
+    private static boolean isValidPickaxe(ItemStack stack) {
+        // FIXME getToolTypes() currently broken in 1.17 for pickaxes
+        //  workaround is good for now but won't necessarily work with all pickaxe-like items
+
+        // return stack != null && stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) && stack.getDamageValue() == 0;
+        return stack != null && stack.getItem() instanceof PickaxeItem && stack.getDamageValue() == 0;
     }
 }
