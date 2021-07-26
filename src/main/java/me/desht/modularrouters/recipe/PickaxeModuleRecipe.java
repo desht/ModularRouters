@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -117,7 +118,11 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
         @Override
         public boolean test(@Nullable ItemStack stack) {
             // should match anything that claims to be a pickaxe
-            return stack != null && stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) && stack.getDamageValue() == 0;
+
+            // FIXME getToolTypes() currently broken in 1.17 for pickaxes
+            //  workaround supports vanilla pickaxes only
+//            return stack != null && stack.getItem().getToolTypes(stack).contains(ToolType.PICKAXE) && stack.getDamageValue() == 0;
+            return stack != null && stack.getItem() instanceof PickaxeItem && stack.getDamageValue() == 0;
         }
     }
 }

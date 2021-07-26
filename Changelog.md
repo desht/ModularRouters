@@ -12,7 +12,7 @@ Changes are in reverse chronological order; newest changes at the top.
 * Only basic testing has been done so far; this should be considered very much an unstable alpha at this point
 * No JEI or TOP integration since those mods haven't been released yet for 1.17
 * Patchouli also unavailable for now
-* Feature-wise, this is identical to the last 1.16.5 release
+* Feature-wise, this is identical to the last 1.16.5 release with one limitation: only vanilla pickaxes are currently supported in the Breaker Module recipe
 
 ## Minecraft 1.16.3 / 1.16.4 / 1.16.5
 
