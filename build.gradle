@@ -9,6 +9,7 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'maven-publish'
 //apply plugin: 'eclipse'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(16)
