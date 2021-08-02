@@ -61,8 +61,8 @@ public class Filter implements Predicate<ItemStack> {
 
     @Nonnull
     private IItemMatcher createMatcher(ItemStack filterStack, ItemStack moduleStack) {
-        if (filterStack.getItem() instanceof SmartFilterItem) {
-            return ((SmartFilterItem) filterStack.getItem()).compile(filterStack, moduleStack);
+        if (filterStack.getItem() instanceof SmartFilterItem sf) {
+            return sf.compile(filterStack, moduleStack);
         } else {
             return ((ModuleItem) moduleStack.getItem()).getFilterItemMatcher(filterStack);
         }
@@ -110,7 +110,7 @@ public class Filter implements Predicate<ItemStack> {
 
     public boolean testFluid(Fluid fluid) {
         for (IItemMatcher matcher : matchers) {
-            if (matcher instanceof FluidMatcher && ((FluidMatcher) matcher).matchFluid(fluid, flags)) {
+            if (matcher instanceof FluidMatcher fm && fm.matchFluid(fluid, flags)) {
                 return !flags.isBlacklist();
             }
         }

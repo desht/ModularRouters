@@ -43,7 +43,7 @@ public class PushEntityMessage {
                 entity.setDeltaMovement(vec.x, vec.y, vec.z);
                 entity.horizontalCollision = false;
                 entity.verticalCollision = false;
-                if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
+                if (entity instanceof LivingEntity l) l.setJumping(true);
             }
         });
         ctx.get().setPacketHandled(true);

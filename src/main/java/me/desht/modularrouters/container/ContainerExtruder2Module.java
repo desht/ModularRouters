@@ -40,7 +40,7 @@ public class ContainerExtruder2Module extends ContainerModule {
     }
 
     @Override
-    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
+    protected void slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
         Slot s = slots.get(slot);
         ItemStack stackOnCursor = getCarried();
         ItemStack stackInSlot = s.getItem().copy();
@@ -66,18 +66,19 @@ public class ContainerExtruder2Module extends ContainerModule {
                 s.setChanged();  // need explicit call here
             }
         }
-        return ItemStack.EMPTY;
     }
 
     private static boolean isItemOKForTemplate(ItemStack stack) {
         if (stack.isEmpty()) {
             return true;  //  null is ok, clears the slot
         }
-        if (!(stack.getItem() instanceof BlockItem)) {
+        if (stack.getItem() instanceof BlockItem bi) {
+            Block b = bi.getBlock();
+            return b.defaultBlockState().getRenderShape() == RenderShape.MODEL
+                    && !b.getRegistryName().getNamespace().equals("chiselsandbits");
+        } else {
             return true;  // non-block items are allowed - they act as spacers
         }
-        Block b = ((BlockItem) stack.getItem()).getBlock();
-        return b.defaultBlockState().getRenderShape() == RenderShape.MODEL && !b.getRegistryName().getNamespace().equals("chiselsandbits");
     }
 
     public static class TemplateHandler extends BaseModuleHandler {

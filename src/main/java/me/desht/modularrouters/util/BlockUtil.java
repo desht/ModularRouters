@@ -83,8 +83,7 @@ public class BlockUtil {
             case WEST -> 90f;
             case NORTH -> 180f;
             case EAST -> 270f;
-            case SOUTH -> 0f;
-            default -> 0f; // shouldn't happen
+            default -> 0f; // including SOUTH
         };
     }
 

@@ -56,13 +56,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     private int getYRotation(Direction d) {
-        switch (d) {
-            case NORTH: return 0;
-            case EAST: return 90;
-            case SOUTH: return 180;
-            case WEST: return 270;
-            default: throw new IllegalArgumentException("invalid dir");
-        }
+        return switch (d) {
+            case NORTH -> 0;
+            case EAST -> 90;
+            case SOUTH -> 180;
+            case WEST -> 270;
+            default -> throw new IllegalArgumentException("invalid dir");
+        };
     }
 
     @Override

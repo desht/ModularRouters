@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client.render.item_beam;
+package me.desht.modularrouters.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -8,6 +8,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,15 +19,19 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ItemBeamTileRenderer implements BlockEntityRenderer<ModularRouterBlockEntity> {
+public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockEntity> {
     private static final Vector3f ROTATION = new Vector3f(0.15f, 1.0f, 0f);
+    private static final float CAMO_HIGHLIGHT_SIZE = 0.75f;
+    private static final int[] COLS = new int[] { 128, 128, 255, 64 };
 
-    public ItemBeamTileRenderer(BlockEntityRendererProvider.Context ctx) {
-//        super(rendererDispatcherIn);
+    @SuppressWarnings("unused")
+    public ModularRouterBER(BlockEntityRendererProvider.Context ctx) {
     }
 
     @Override
@@ -47,8 +52,61 @@ public class ItemBeamTileRenderer implements BlockEntityRenderer<ModularRouterBl
             renderBeamLine(beam, matrixStack, buffer, progress, startPos, endPos);
             matrixStack.popPose();
         }
-
         matrixStack.popPose();
+
+        Player player = Minecraft.getInstance().player;
+        if (MRConfig.Client.Misc.heldRouterShowsCamoRouters
+                && te.getCamouflage() != null
+                && playerHoldingRouter(player)
+                && Vec3.atCenterOf(te.getBlockPos()).distanceToSqr(player.position()) < 256) {
+            renderCamoHighlight(matrixStack, buffer);
+        }
+    }
+
+    private void renderCamoHighlight(PoseStack matrixStack, MultiBufferSource buffer) {
+        matrixStack.pushPose();
+        double start = (1 - CAMO_HIGHLIGHT_SIZE) / 2.0;
+        matrixStack.translate(start, start, start);
+        addVertices(buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE), matrixStack.last().pose());
+        addVertices(buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE), matrixStack.last().pose());
+        matrixStack.popPose();
+    }
+
+    private void addVertices(VertexConsumer wr, Matrix4f posMat) {
+        wr.vertex(posMat, 0, 0, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, 0, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+
+        wr.vertex(posMat, 0, 0, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, 0, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+
+        wr.vertex(posMat, 0, 0, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, 0, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+
+        wr.vertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+        wr.vertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).color(COLS[0], COLS[1], COLS[2], COLS[3]).endVertex();
+    }
+
+    private static boolean playerHoldingRouter(Player player) {
+        Item router = ModBlocks.MODULAR_ROUTER.get().asItem();
+        return player.getMainHandItem().getItem() == router || player.getOffhandItem().getItem() == router;
     }
 
     private void renderFlyingItem(BeamData beam, PoseStack matrixStack, MultiBufferSource buffer, float progress, Vec3 startPos, Vec3 endPos) {

@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.*;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -145,13 +146,14 @@ public class CompiledFluidModule1 extends CompiledModule {
                 return false;
             }
             Block block = blockstate.getBlock();
-            if (world.isEmptyBlock(pos) || isNotSolid || isReplaceable || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(world, pos, blockstate, toPlace.getFluid())) {
+            if (world.isEmptyBlock(pos) || isNotSolid || isReplaceable
+                    || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(world, pos, blockstate, toPlace.getFluid())) {
                 if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
                     // no pouring water in the nether!
                     playEvaporationEffects(world, pos);
                 } else if (block instanceof LiquidBlockContainer liq) {
                     // a block which can take fluid, e.g. waterloggable block like a slab
-                    FluidState still = fluid instanceof FlowingFluid ? ((FlowingFluid) fluid).getSource(false) : fluid.defaultFluidState();
+                    FluidState still = fluid instanceof FlowingFluid ff ? ff.getSource(false) : fluid.defaultFluidState();
                     if (liq.placeLiquid(world, pos, blockstate, still) && playSound) {
                         playEmptySound(world, pos, fluid);
                     }
@@ -163,7 +165,7 @@ public class CompiledFluidModule1 extends CompiledModule {
                     if (isNotSolid || isReplaceable) {
                         world.destroyBlock(pos, true);
                     }
-                    world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), 3);
+                    world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Constants.BlockFlags.DEFAULT_AND_RERENDER);
                 }
                 return true;
             }

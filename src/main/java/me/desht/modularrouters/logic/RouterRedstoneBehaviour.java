@@ -14,13 +14,13 @@ public enum RouterRedstoneBehaviour implements IHasTranslationKey {
     }
 
     public boolean shouldRun(boolean powered, boolean pulsed) {
-        switch (this) {
-            case ALWAYS: return true;
-            case LOW: return !powered;
-            case HIGH: return powered;
-            case PULSE: return pulsed;
-            default: return false;  // including NEVER
-        }
+        return switch (this) {
+            case ALWAYS -> true;
+            case LOW -> !powered;
+            case HIGH -> powered;
+            case PULSE -> pulsed;
+            case NEVER -> false;
+        };
     }
 
     @Override

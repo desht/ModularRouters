@@ -36,9 +36,11 @@ public class ModuleFilterMessage {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Player player = ctx.get().getSender();
-            AbstractContainerMenu c = player.containerMenu;
-            if (c instanceof ContainerModule && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
-                c.getSlot(slot).set(stack);
+            if (player != null) {
+                AbstractContainerMenu c = player.containerMenu;
+                if (c instanceof ContainerModule && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
+                    c.getSlot(slot).set(stack);
+                }
             }
         });
         ctx.get().setPacketHandled(true);

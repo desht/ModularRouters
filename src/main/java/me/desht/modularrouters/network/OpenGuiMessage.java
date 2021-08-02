@@ -71,29 +71,24 @@ public class OpenGuiMessage {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 switch (operation) {
-                    case ROUTER:
-                        // item router GUI
-                        locator.getRouter(player.getCommandSenderWorld())
-                                .ifPresent(router -> NetworkHooks.openGui(player, router, locator.routerPos));
-                        break;
-                    case MODULE_HELD:
-                        // module held in player's hand
-                        NetworkHooks.openGui(player, new ModuleItem.ContainerProvider(player, locator), locator::writeBuf);
-                        break;
-                    case MODULE_INSTALLED:
-                        // module installed in a router
-                        locator.getRouter(player.getCommandSenderWorld())
-                                .ifPresent(router -> NetworkHooks.openGui(player, new ModuleItem.ContainerProvider(player, locator), locator::writeBuf));
-                        break;
-                    case FILTER_HELD:
-                        // filter is in a module in player's hand
-                        NetworkHooks.openGui(player, new SmartFilterItem.ContainerProvider(player, locator), locator::writeBuf);
-                        break;
-                    case FILTER_INSTALLED:
-                        // filter is in a module in a router
-                        locator.getRouter(player.getCommandSenderWorld())
-                                .ifPresent(router -> NetworkHooks.openGui(player, new SmartFilterItem.ContainerProvider(player, locator), locator::writeBuf));
-                        break;
+                    case ROUTER ->
+                            // item router GUI
+                            locator.getRouter(player.getCommandSenderWorld())
+                                    .ifPresent(router -> NetworkHooks.openGui(player, router, locator.routerPos));
+                    case MODULE_HELD ->
+                            // module held in player's hand
+                            NetworkHooks.openGui(player, new ModuleItem.ContainerProvider(player, locator), locator::writeBuf);
+                    case MODULE_INSTALLED ->
+                            // module installed in a router
+                            locator.getRouter(player.getCommandSenderWorld())
+                                    .ifPresent(router -> NetworkHooks.openGui(player, new ModuleItem.ContainerProvider(player, locator), locator::writeBuf));
+                    case FILTER_HELD ->
+                            // filter is in a module in player's hand
+                            NetworkHooks.openGui(player, new SmartFilterItem.ContainerProvider(player, locator), locator::writeBuf);
+                    case FILTER_INSTALLED ->
+                            // filter is in a module in a router
+                            locator.getRouter(player.getCommandSenderWorld())
+                                    .ifPresent(router -> NetworkHooks.openGui(player, new SmartFilterItem.ContainerProvider(player, locator), locator::writeBuf));
                 }
             }
         });

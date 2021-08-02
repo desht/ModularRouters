@@ -34,8 +34,8 @@ public class ValidateModuleMessage {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 ItemStack stack = player.getItemInHand(hand);
-                if (stack.getItem() instanceof TargetedModule) {
-                    ((TargetedModule) stack.getItem()).doModuleValidation(stack, player);
+                if (stack.getItem() instanceof TargetedModule tm) {
+                    tm.doModuleValidation(stack, player);
                 }
             }
         });

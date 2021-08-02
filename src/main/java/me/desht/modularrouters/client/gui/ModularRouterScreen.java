@@ -23,7 +23,7 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -85,12 +85,12 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
 
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        String title = I18n.get("block.modularrouters.modular_router");
+        MutableComponent title = xlate("block.modularrouters.modular_router");
         font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.upgrades"), ContainerModularRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.label.modules"), ContainerModularRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, I18n.get("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.label.upgrades"), ContainerModularRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.label.modules"), ContainerModularRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, xlate("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040);
     }
 
     @Override
@@ -177,11 +177,14 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
 
         @Override
         public List<Component> getTooltip() {
-            return MiscUtil.wrapStringAsTextComponent(
-                    I18n.get("modularrouters.guiText.tooltip.eco." + isToggled(),
-                            MRConfig.Common.Router.ecoTimeout / 20.f,
-                            MRConfig.Common.Router.lowPowerTickRate / 20.f)
-            );
+            return GuiUtil.xlateAndSplit("modularrouters.guiText.tooltip.eco." + isToggled(),
+                    MRConfig.Common.Router.ecoTimeout / 20.f,
+                    MRConfig.Common.Router.lowPowerTickRate / 20.f);
+//            return MiscUtil.wrapStringAsTextComponent(
+//                    I18n.get("modularrouters.guiText.tooltip.eco." + isToggled(),
+//                            MRConfig.Common.Router.ecoTimeout / 20.f,
+//                            MRConfig.Common.Router.lowPowerTickRate / 20.f)
+//            );
         }
     }
 

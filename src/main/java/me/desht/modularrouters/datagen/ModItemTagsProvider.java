@@ -40,7 +40,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     }
 
     @SafeVarargs
-    private final void addItemsToTag(Tag.Named<Item> tag, Supplier<? extends ItemLike>... items) {
+    private void addItemsToTag(Tag.Named<Item> tag, Supplier<? extends ItemLike>... items) {
         tag(tag).add(Arrays.stream(items).map(Supplier::get).map(ItemLike::asItem).toArray(Item[]::new));
     }
 

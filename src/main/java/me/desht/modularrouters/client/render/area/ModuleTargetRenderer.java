@@ -20,6 +20,7 @@ import java.util.*;
 
 public class ModuleTargetRenderer {
     private static final float BOX_SIZE = 0.5f;
+    private static final float BOX_START = (1f - BOX_SIZE) / 2f;
 
     private static ItemStack lastStack = ItemStack.EMPTY;
     private static CompiledPosition compiledPos = null;
@@ -30,12 +31,7 @@ public class ModuleTargetRenderer {
             ItemStack curItem = Minecraft.getInstance().player.getMainHandItem();
             if (!ItemStack.matches(curItem, lastStack)) {
                 lastStack = curItem.copy();
-                IPositionProvider positionProvider = getPositionProvider(curItem);
-                if (positionProvider != null) {
-                    compiledPos = new CompiledPosition(curItem, positionProvider);
-                } else {
-                    compiledPos = null;
-                }
+                compiledPos = curItem.getItem() instanceof IPositionProvider pp ? new CompiledPosition(curItem, pp) : null;
             }
         }
     }
@@ -51,22 +47,17 @@ public class ModuleTargetRenderer {
             Vec3 projectedView = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
             render(buffer, matrixStack, compiledPos);
+
             matrixStack.popPose();
         }
     }
 
-    private static IPositionProvider getPositionProvider(ItemStack stack) {
-        return stack.getItem() instanceof IPositionProvider pp ? pp : null;
-    }
-
     private static void render(MultiBufferSource.BufferSource buffer, PoseStack matrixStack, ModuleTargetRenderer.CompiledPosition cp) {
-        float start = (1 - BOX_SIZE) / 2.0f;
-
-        for (BlockPos pos : cp.getPositions()) {
+        cp.positions.forEach((pos, faceAndColour) -> {
             matrixStack.pushPose();
-            matrixStack.translate(pos.getX() + start, pos.getY() + start, pos.getZ() + start);
+            matrixStack.translate(pos.getX() + BOX_START, pos.getY() + BOX_START, pos.getZ() + BOX_START);
             Matrix4f posMat = matrixStack.last().pose();
-            int color = cp.getColour(pos);
+            int color = faceAndColour.colour();
             int r = (color & 0xFF0000) >> 16;
             int g = (color & 0xFF00) >> 8;
             int b = color & 0xFF;
@@ -74,37 +65,37 @@ public class ModuleTargetRenderer {
 
             VertexConsumer faceBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
-            alpha = getFaceAlpha(cp, pos, Direction.NORTH);
+            alpha = getFaceAlpha(faceAndColour, Direction.NORTH);
             faceBuilder.vertex(posMat,0, 0, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
 
-            alpha = getFaceAlpha(cp, pos, Direction.SOUTH);
+            alpha = getFaceAlpha(faceAndColour, Direction.SOUTH);
             faceBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
 
-            alpha = getFaceAlpha(cp, pos, Direction.WEST);
+            alpha = getFaceAlpha(faceAndColour, Direction.WEST);
             faceBuilder.vertex(posMat, 0, 0, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
 
-            alpha = getFaceAlpha(cp, pos, Direction.EAST);
+            alpha = getFaceAlpha(faceAndColour, Direction.EAST);
             faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
 
-            alpha = getFaceAlpha(cp, pos, Direction.DOWN);
+            alpha = getFaceAlpha(faceAndColour, Direction.DOWN);
             faceBuilder.vertex(posMat, 0, 0, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, 0, 0).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, 0, 0, BOX_SIZE).color(r, g, b, alpha).endVertex();
 
-            alpha = getFaceAlpha(cp, pos, Direction.UP);
+            alpha = getFaceAlpha(faceAndColour, Direction.UP);
             faceBuilder.vertex(posMat, 0, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, BOX_SIZE).color(r, g, b, alpha).endVertex();
             faceBuilder.vertex(posMat, BOX_SIZE, BOX_SIZE, 0).color(r, g, b, alpha).endVertex();
@@ -149,11 +140,12 @@ public class ModuleTargetRenderer {
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
             matrixStack.popPose();
-        }
+        });
     }
 
-    private static int getFaceAlpha(ModuleTargetRenderer.CompiledPosition cp, BlockPos pos, Direction face) {
-        return cp.checkFace(pos, face) ? 160 : 40;
+
+    private static int getFaceAlpha(CompiledPosition.FaceAndColour fc, Direction face) {
+        return fc.faces.get(face.get3DDataValue()) ? 160 : 40;
     }
 
     static class CompiledPosition {
@@ -166,26 +158,14 @@ public class ModuleTargetRenderer {
                 if (target.isSameWorld(Minecraft.getInstance().level)) {
                     BlockPos pos = target.gPos.pos();
                     if (positions.containsKey(pos)) {
-                        positions.get(pos).faces.set(target.face.ordinal());
+                        positions.get(pos).faces.set(target.face.get3DDataValue());
                     } else {
                         FaceAndColour fc = new FaceAndColour(new BitSet(6), provider.getRenderColor(i));
-                        fc.faces.set(target.face.ordinal());
+                        fc.faces.set(target.face.get3DDataValue());
                         positions.put(pos, fc);
                     }
                 }
             }
-        }
-
-        Set<BlockPos> getPositions() {
-            return positions.keySet();
-        }
-
-        boolean checkFace(BlockPos pos, Direction face) {
-            return positions.containsKey(pos) && positions.get(pos).faces.get(face.get3DDataValue());
-        }
-
-        int getColour(BlockPos pos) {
-            return positions.containsKey(pos) ? positions.get(pos).colour : 0;
         }
 
         record FaceAndColour(BitSet faces, int colour) {

@@ -75,8 +75,7 @@ public class FilterSettingsMessage {
     private void processPacket(ServerPlayer player) {
         ItemStack moduleStack = locator.getModuleStack(player);
         ItemStack filterStack = locator.getTargetItem(player);
-        if (filterStack.getItem() instanceof SmartFilterItem) {
-            SmartFilterItem sf = (SmartFilterItem) filterStack.getItem();
+        if (filterStack.getItem() instanceof SmartFilterItem sf) {
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
                 ModularRouterBlockEntity router = locator.getRouter(player.level).orElse(null);

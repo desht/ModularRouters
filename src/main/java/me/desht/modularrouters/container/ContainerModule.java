@@ -93,9 +93,8 @@ public class ContainerModule extends ContainerMRBase {
         // does nothing by default, to be overridden
     }
 
-    protected ItemStack slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
+    protected void slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
         // does nothing by default, to be overridden
-        return ItemStack.EMPTY;
     }
 
     @Override
@@ -107,7 +106,7 @@ public class ContainerModule extends ContainerMRBase {
     public ItemStack quickMoveStack(Player player, int index) {
         Slot srcSlot = slots.get(index);
 
-        if (srcSlot != null && srcSlot.hasItem()) {
+        if (srcSlot.hasItem()) {
             if (index < AUGMENT_START) {
                 // shift-clicking in a filter slot: clear it from the filter
                 srcSlot.set(ItemStack.EMPTY);

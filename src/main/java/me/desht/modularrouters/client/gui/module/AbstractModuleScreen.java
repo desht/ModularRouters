@@ -50,7 +50,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -168,12 +170,12 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         return tf;
     }
 
-//    @SubscribeEvent
-//    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-//        getMenu().removeSlotListener(this);
-//        getMenu().addSlotListener(this);
-//        setupButtonVisibility();
-//    }
+    @SubscribeEvent
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+        getMenu().removeSlotListener(this);
+        getMenu().addSlotListener(this);
+        setupButtonVisibility();
+    }
 
     public int getRegulatorAmount() {
         return regulatorAmount;
@@ -185,8 +187,9 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
 
     protected void setupButtonVisibility() {
         redstoneButton.visible = augmentCounter.getAugmentCount(ModItems.REDSTONE_AUGMENT.get()) > 0;
+
         regulatorTooltipButton.visible = augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT.get()) > 0;
-        regulatorTextField.setVisible(augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT.get()) > 0);
+        regulatorTextField.setVisible(regulatorTooltipButton.visible);
     }
 
     private void addToggleButton(ModuleFlags flag, int x, int y) {
