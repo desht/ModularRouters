@@ -89,6 +89,13 @@ repositories {
         name "extra-mods"
         dir file(extraModsDir)
     }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+
 //    maven { // TOP
 //        name = "tterrag maven"
 //        url = "https://maven.tterrag.com/"
@@ -109,17 +116,13 @@ repositories {
 ////        name = 'HWYLA'
 ////        url = 'http://www.cursemaven.com/'
 ////    }
-//    maven {
-//        url "https://www.cursemaven.com"
-//        content {
-//            includeGroup "curse.maven"
-//        }
-//    }
-
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    // temporary till TOP for 1.17.1 is on maven.tterrag.com...
+    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3402482")
+    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3402482")
 //    compileOnly fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
 //    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
 //    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
