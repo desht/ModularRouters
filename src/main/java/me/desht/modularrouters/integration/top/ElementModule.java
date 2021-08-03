@@ -24,9 +24,8 @@ public class ElementModule implements IElement {
     }
 
     public ElementModule(FriendlyByteBuf buf) {
-        FriendlyByteBuf pb = new FriendlyByteBuf(buf);
-        this.stack = pb.readItem();
-        this.dir = pb.readEnum(ModuleItem.RelativeDirection.class);
+        this.stack = buf.readItem();
+        this.dir = buf.readEnum(ModuleItem.RelativeDirection.class);
     }
 
     @Override
