@@ -9,7 +9,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -18,8 +17,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 
 public class TemplateFrameBlock extends BlockCamo implements EntityBlock {
-    public TemplateFrameBlock() {
-        super(Properties.of(Material.GLASS).isValidSpawn((state, world, pos, entityType) -> false));
+    public TemplateFrameBlock(Properties props) {
+        super(props);
     }
 
     @Override

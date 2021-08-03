@@ -30,7 +30,6 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -39,7 +38,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -56,18 +54,13 @@ import java.util.List;
 import static me.desht.modularrouters.block.tile.ModularRouterBlockEntity.*;
 
 public class ModularRouterBlock extends BlockCamo implements EntityBlock {
-    private static final float HARDNESS = 1.5f;
-    private static final float BLAST_RESISTANCE = 6.0f;
-
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");
 
-    public ModularRouterBlock() {
-        super(Block.Properties.of(Material.METAL)
-                .strength(HARDNESS, BLAST_RESISTANCE)
-                .sound(SoundType.METAL)
-                .noOcclusion());
+    public ModularRouterBlock(Properties props) {
+        super(props);
+
         registerDefaultState(this.getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(CAN_EMIT, false));
     }
@@ -80,8 +73,8 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        Direction enumfacing = (ctx.getPlayer() == null) ? ctx.getClickedFace() : Direction.fromYRot(ctx.getPlayer().getYRot()).getOpposite();
-        return this.defaultBlockState().setValue(FACING, enumfacing);
+        Direction dir = (ctx.getPlayer() == null) ? ctx.getClickedFace() : Direction.fromYRot(ctx.getPlayer().getYRot()).getOpposite();
+        return this.defaultBlockState().setValue(FACING, dir);
     }
 
     @Override
@@ -240,7 +233,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
     @Override
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
         return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
-                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) > 0 ? 20000f : BLAST_RESISTANCE)
+                .map(router -> router.getUpgradeCount(ModItems.BLAST_UPGRADE.get()) > 0 ? 20000f : explosionResistance)
                 .orElse(0f);
     }
 
