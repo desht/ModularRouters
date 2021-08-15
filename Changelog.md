@@ -6,6 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
+### 7.5.1 (15 Aug 2021)
+
+* Fix Regulator Augment sometimes being ignored by Puller Upgrade
+* Fix Terminate on No Match also terminating execution on partial pulls (i.e. pulling succeeded but fewer items than desired by current Stack Upgrades)
+* Routers now render more nicely when underwater (no more flowing fluid overlay texture)
+* Routers should now be rotatable with other mods' wrench items
+* Updated ru_ru translations (thanks @misny)
+
 ### 7.5.0 (19 May 2021)
 * New Upgrade: the Energy Upgrade!
   * Gives the router an internal energy buffer; each upgrade adds 50,000 FE capacity and 1,000 FE transfer per router tick
