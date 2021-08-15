@@ -247,7 +247,7 @@ public abstract class CompiledModule {
 
     private ItemStack findItemToPull(ModularRouterBlockEntity router, IItemHandler handler, BlockPos key, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
-        if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter)) {
+        if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter) && (count == null || count.getInt(stackInRouter) - nToTake >= getRegulationAmount())) {
             // something in the router - try to pull more of that
             return ItemHandlerHelper.copyStackWithSize(stackInRouter, nToTake);
         } else if (stackInRouter.isEmpty()) {
