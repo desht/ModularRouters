@@ -40,6 +40,7 @@ public class MRConfig {
             public static boolean extruderPushEntities;
             public static boolean breakerHarvestLevelLimit;
             public static Set<ResourceLocation> activatorEntityBlacklist;
+            public static Set<ResourceLocation> activatorEntityAttackBlacklist;
         }
 
         public static class Router {

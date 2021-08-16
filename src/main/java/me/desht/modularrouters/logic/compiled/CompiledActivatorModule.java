@@ -35,10 +35,8 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_ACTION_TYPE = "ActionType2";
@@ -77,10 +75,6 @@ public class CompiledActivatorModule extends CompiledModule {
         @Override
         public String getTranslationKey() {
             return "modularrouters.itemText.activator.action." + this;
-        }
-
-        public static ActionType fromOldOrdinal(int ord) {
-            return ord == 2 ? USE_ITEM_ON_ENTITY : ITEM_OR_BLOCK;
         }
 
         public boolean isEntityTarget() {
@@ -167,17 +161,17 @@ public class CompiledActivatorModule extends CompiledModule {
 
     private boolean doUseItem(ModularRouterBlockEntity router, FakePlayer fakePlayer) {
         BlockPos pos = router.getBlockPos();
-        Level world = router.getLevel();
+        Level world = Objects.requireNonNull(router.getLevel());
         ItemStack stack = router.getBufferItemStack();
         fakePlayer.setYRot(MiscUtil.getYawFromFacing(getFacing()));
         fakePlayer.setXRot(getFacing().getAxis() == Direction.Axis.Y ? getFacing().getStepY() * -90 : lookDirection.pitch);
-        BlockHitResult brtr = doRayTrace(pos, fakePlayer);
-        BlockState state = world.getBlockState(brtr.getBlockPos());
-        if (brtr.getType() != HitResult.Type.MISS && blockBlacklist.contains(state.getBlock())) {
+        BlockHitResult hitResult = doRayTrace(pos, fakePlayer);
+        BlockState state = world.getBlockState(hitResult.getBlockPos());
+        if (hitResult.getType() != HitResult.Type.MISS && blockBlacklist.contains(state.getBlock())) {
             return false;
         }
         try {
-            return fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, InteractionHand.MAIN_HAND, brtr).consumesAction()
+            return fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, InteractionHand.MAIN_HAND, hitResult).consumesAction()
                     || fakePlayer.gameMode.useItem(fakePlayer, world, stack, InteractionHand.MAIN_HAND).consumesAction();
         } catch (Exception e) {
             handleBlacklisting(stack, state, e);
@@ -259,8 +253,8 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doAttackEntity(ModularRouterBlockEntity router, RouterFakePlayer fakePlayer) {
-        LivingEntity entity = findEntity(router, LivingEntity.class);
-        if (entity == null || entity instanceof Player && router.getUpgradeCount(ModItems.SECURITY_UPGRADE.get()) > 0 && router.isPermitted((Player) entity)) {
+        LivingEntity entity = findEntity(router, LivingEntity.class, this::passesAttackBlacklist);
+        if (entity == null || entity instanceof Player p && router.getUpgradeCount(ModItems.SECURITY_UPGRADE.get()) > 0 && router.isPermitted(p)) {
             return false;
         }
         fakePlayer.lookAt(EntityAnchorArgument.Anchor.EYES, entity.position());
@@ -269,7 +263,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doUseItemOnEntity(ModularRouterBlockEntity router, FakePlayer fakePlayer) {
-        Entity entity = findEntity(router, Entity.class);
+        Entity entity = findEntity(router, Entity.class, this::passesUseBlacklist);
         if (entity == null) {
             return false;
         }
@@ -281,14 +275,14 @@ public class CompiledActivatorModule extends CompiledModule {
         return false;
     }
 
-    private <T extends Entity> T findEntity(ModularRouterBlockEntity router, Class<T> cls) {
+    private <T extends Entity> T findEntity(ModularRouterBlockEntity router, Class<T> cls, Predicate<Entity> blacklistChecker) {
         Direction face = getFacing();
         final BlockPos pos = router.getBlockPos();
         Vec3 vec = Vec3.atCenterOf(pos);
         AABB box = new AABB(vec, vec)
                 .move(face.getStepX() * 2.5, face.getStepY() * 2.5, face.getStepZ() * 2.5)
                 .inflate(2.0);
-        List<T> l = router.getLevel().getEntitiesOfClass(cls, box, this::passesBlacklist);
+        List<T> l = Objects.requireNonNull(router.getLevel()).getEntitiesOfClass(cls, box, blacklistChecker);
         if (l.isEmpty()) {
             return null;
         }
@@ -308,7 +302,11 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    private boolean passesBlacklist(Entity e) {
+    private boolean passesAttackBlacklist(Entity e) {
+        return !MRConfig.Common.Module.activatorEntityAttackBlacklist.contains(e.getType().getRegistryName());
+    }
+
+    private boolean passesUseBlacklist(Entity e) {
         return !MRConfig.Common.Module.activatorEntityBlacklist.contains(e.getType().getRegistryName());
     }
 
@@ -319,8 +317,9 @@ public class CompiledActivatorModule extends CompiledModule {
         NonNullList<ItemStack> inv = fakePlayer.getInventory().items;
         Vec3 where = Vec3.atCenterOf(router.getBlockPos().relative(getFacing()));
         // start at slot 1, since slot 0 is always used for the fake player's held item, which doesn't get dropped
+        Level level = Objects.requireNonNull(router.getLevel());
         for (int i = 1; i < inv.size() && !inv.get(i).isEmpty(); i++) {
-            ItemEntity item = new ItemEntity(router.getLevel(), where.x(), where.y(), where.z(), inv.get(i));
+            ItemEntity item = new ItemEntity(level, where.x(), where.y(), where.z(), inv.get(i));
             router.getLevel().addFreshEntity(item);
             inv.set(i, ItemStack.EMPTY);
         }

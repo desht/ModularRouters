@@ -49,8 +49,12 @@ public class ConfigHelper {
         MRConfig.Common.Module.extruderSound = common.module.extruderSound.get();
         MRConfig.Common.Module.extruderPushEntities = common.module.extruderPushEntities.get();
         MRConfig.Common.Module.breakerHarvestLevelLimit = common.module.breakerHarvestLevelLimit.get();
-        MRConfig.Common.Module.activatorEntityBlacklist = common.module.activatorEntityBlacklist.get()
-                .stream().map(resourceName -> new ResourceLocation(resourceName.toLowerCase(Locale.ROOT))).collect(Collectors.toSet());
+        MRConfig.Common.Module.activatorEntityBlacklist = common.module.activatorEntityBlacklist.get().stream()
+                .map(resourceName -> new ResourceLocation(resourceName.toLowerCase(Locale.ROOT)))
+                .collect(Collectors.toSet());
+        MRConfig.Common.Module.activatorEntityAttackBlacklist = common.module.activatorEntityAttackBlacklist.get().stream()
+                .map(resourceName -> new ResourceLocation(resourceName.toLowerCase(Locale.ROOT)))
+                .collect(Collectors.toSet());
 
         MRConfig.Common.Router.baseTickRate = common.router.baseTickRate.get();
         MRConfig.Common.Router.ticksPerUpgrade = common.router.ticksPerUpgrade.get();
