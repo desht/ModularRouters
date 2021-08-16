@@ -162,7 +162,7 @@ public class BlockUtil {
 
         FakePlayer fakePlayer = router.getFakePlayer();
         fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, pickaxe);
-        if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.canHarvestBlock(state, fakePlayer, world, pos)) {
+        if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.isCorrectToolForDrops(state, fakePlayer)) {
             return BreakResult.NOT_BROKEN;
         }
 
