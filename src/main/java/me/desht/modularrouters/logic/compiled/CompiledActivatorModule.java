@@ -53,12 +53,11 @@ public class CompiledActivatorModule extends CompiledModule {
     private final boolean sneaking;
     private int entityIdx;
 
-
     private final Set<String> BLOCK_METHODS = ImmutableSet.of(
             "onBlockActivated", "use"
     );
     private final Set<String> ITEM_METHODS = ImmutableSet.of(
-            "onItemUseFirst", // forge method, no SRG nam
+            "onItemUseFirst", // forge method, no SRG name
             "onItemUse", "useOn",
             "onItemRightClick", "use"
     );

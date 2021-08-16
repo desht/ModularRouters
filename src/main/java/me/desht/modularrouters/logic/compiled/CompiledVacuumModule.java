@@ -98,7 +98,7 @@ public class CompiledVacuumModule extends CompiledModule {
         if (!xpMode || xpJuiceStack.isEmpty()) return;
 
         fluidReceiver = null;
-        for (Direction face : Direction.values()) {
+        for (Direction face : MiscUtil.DIRECTIONS) {
             BlockEntity te = router.getLevel().getBlockEntity(router.getBlockPos().relative(face));
             if (te != null) {
                 te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()).ifPresent(handler -> {

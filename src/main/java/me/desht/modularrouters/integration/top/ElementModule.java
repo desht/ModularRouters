@@ -1,7 +1,6 @@
 package me.desht.modularrouters.integration.top;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.netty.buffer.ByteBuf;
 import mcjty.theoneprobe.api.IElement;
 import mcjty.theoneprobe.api.IElementFactory;
 import me.desht.modularrouters.client.util.GuiUtil;

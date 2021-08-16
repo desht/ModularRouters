@@ -30,11 +30,6 @@ public class RegexMatcher implements IItemMatcher {
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (stack.isEmpty()) return false;
         String name = stack.getItem().getRegistryName().getPath();
-        for (Pattern pat : patterns) {
-            if (pat.matcher(name).find()) {
-                return true;
-            }
-        }
-        return false;
+        return patterns.stream().anyMatch(pat -> pat.matcher(name).find());
     }
 }

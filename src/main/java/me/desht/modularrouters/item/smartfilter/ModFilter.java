@@ -70,11 +70,6 @@ public class ModFilter extends SmartFilterItem {
     }
 
     @Override
-    public boolean hasContainer() {
-        return true;
-    }
-
-    @Override
     public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
         return new ContainerModFilter(windowId, invPlayer, loc);
     }

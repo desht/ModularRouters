@@ -52,7 +52,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
             // try to extend
             if (!(blockList.get(distance).getItem() instanceof BlockItem)) {
                 // non-block item; it's a spacer so just skip over
-                router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
+                router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
             } else {
                 BlockPos placePos = router.getBlockPos().relative(getFacing(), distance + 1);
                 BlockState state = ModBlocks.TEMPLATE_FRAME.get().defaultBlockState();
@@ -68,7 +68,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundSource.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
-                    router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
+                    router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
                     tryPushEntities(router.getLevel(), placePos, getFacing());
                     return true;
                 }
@@ -76,7 +76,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         } else if (!extend && distance > 0) {
             BlockPos breakPos = router.getBlockPos().relative(getFacing(), distance);
             BlockState oldState = world.getBlockState(breakPos);
-            router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
+            router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
             if (okToBreak(oldState, world, breakPos)) {
                 if (oldState.getBlock() == ModBlocks.TEMPLATE_FRAME.get()) {
                     world.removeBlock(breakPos, false);

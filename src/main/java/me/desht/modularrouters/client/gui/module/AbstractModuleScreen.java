@@ -295,11 +295,10 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
 
     private boolean handleFilterConfig() {
         Slot slot = getSlotUnderMouse();
-        if (slot == null || !(slot.getItem().getItem() instanceof SmartFilterItem) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
+        if (slot == null || !(slot.getItem().getItem() instanceof SmartFilterItem filter) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
             return false;
         }
         int filterSlotIndex = slot.index;
-        SmartFilterItem filter = (SmartFilterItem) slot.getItem().getItem();
         if (routerPos != null) {
             // module is installed in a router
             MFLocator locator = MFLocator.filterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex);

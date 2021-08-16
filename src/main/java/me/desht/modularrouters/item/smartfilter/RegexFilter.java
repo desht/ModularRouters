@@ -38,6 +38,11 @@ public class RegexFilter extends SmartFilterItem {
         }
     }
 
+    @Override
+    public boolean hasContainer() {
+        return false;
+    }
+
     private static void setRegexList(ItemStack filterStack, List<String> regex) {
         ListTag list = regex.stream().map(StringTag::valueOf).collect(Collectors.toCollection(ListTag::new));
         filterStack.getOrCreateTagElement(ModularRouters.MODID).put(NBT_REGEX, list);
@@ -59,11 +64,6 @@ public class RegexFilter extends SmartFilterItem {
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new RegexMatcher(getRegexList(filterStack));
-    }
-
-    @Override
-    public boolean hasContainer() {
-        return false;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
 
     public CompiledExtruderModule1(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
-        distance = router == null ? 0 : router.getExtData().getInt(NBT_EXTRUDER_DIST + getFacing());
+        distance = router == null ? 0 : router.getExtensionData().getInt(NBT_EXTRUDER_DIST + getFacing());
         pushingAugments = getAugmentCount(ModItems.PUSHING_AUGMENT.get());
         pickaxe = stack.getItem() instanceof IPickaxeUser ? ((IPickaxeUser) stack.getItem()).getPickaxe(stack) : ItemStack.EMPTY;
 
@@ -58,7 +58,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             BlockState state = BlockUtil.tryPlaceAsBlock(router, toPlace, world, placePos, getFacing());
             if (state != null) {
                 router.extractBuffer(1);
-                router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
+                router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
                 if (MRConfig.Common.Module.extruderSound) {
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
@@ -74,12 +74,12 @@ public class CompiledExtruderModule1 extends CompiledModule {
             Block oldBlock = oldState.getBlock();
             if (world.isEmptyBlock(breakPos) || oldBlock instanceof LiquidBlock) {
                 // nothing there? continue to retract anyway...
-                router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
+                router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
             }
             BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(router, world, breakPos, getFilter(), pickaxe);
             if (dropResult.isBlockBroken()) {
-                router.getExtData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
+                router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());
                 if (MRConfig.Common.Module.extruderSound) {
                     router.playSound(null, breakPos,

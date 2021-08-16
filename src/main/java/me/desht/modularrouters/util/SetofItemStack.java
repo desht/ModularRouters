@@ -14,14 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
-
-    private static class ItemStackHashingStrategy implements Strategy<ItemStack> {
-        private final Flags filterFlags;
-
-        ItemStackHashingStrategy(Flags filterFlags) {
-            this.filterFlags = filterFlags;
-        }
-
+    private record ItemStackHashingStrategy(Flags filterFlags) implements Strategy<ItemStack> {
         @Override
         public int hashCode(ItemStack object) {
             int hashCode = Item.getId(object.getItem());

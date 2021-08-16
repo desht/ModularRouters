@@ -110,8 +110,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
     private void addEntry() {
         if (currentOp != InspectionOp.NONE && currentSubject != InspectionSubject.NONE) {
             int val = valueTextField.getIntValue();
-            String s = Joiner.on(" ").join(currentSubject, currentOp, val);
-            sendAddStringMessage("Comparison", s);
+            sendAddStringMessage(InspectionFilter.NBT_COMPARISON, Joiner.on(" ").join(currentSubject, currentOp, val));
             valueTextField.setValue("");
         }
     }

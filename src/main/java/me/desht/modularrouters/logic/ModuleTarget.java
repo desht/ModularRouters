@@ -18,6 +18,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -60,8 +61,8 @@ public class ModuleTarget {
         return new ModuleTarget(gPos, face, nbt.getString("InvName"));
     }
 
-    public boolean isSameWorld(Level world) {
-        return gPos.dimension() == world.dimension();
+    public boolean isSameWorld(@Nullable Level world) {
+        return world != null && gPos.dimension() == world.dimension();
     }
 
     public boolean isSameWorld(ModuleTarget dst) {

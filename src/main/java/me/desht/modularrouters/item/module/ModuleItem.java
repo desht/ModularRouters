@@ -112,8 +112,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
                 case LEFT -> current.getClockWise();
                 case BACK -> current.getOpposite();
                 case RIGHT -> current.getCounterClockWise();
-                default -> // including FRONT
-                        current;
+                default -> current; // including FRONT
             };
         }
 

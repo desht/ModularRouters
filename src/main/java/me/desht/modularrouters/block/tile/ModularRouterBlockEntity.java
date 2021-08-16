@@ -129,7 +129,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private int fluidTransferRemainingOut = 0;
 
     // for tracking redstone emission levels for the detector module
-    private final int SIDES = Direction.values().length;
+    private final int SIDES = MiscUtil.DIRECTIONS.length;
     private final int[] redstoneLevels = new int[SIDES];
     private final int[] newRedstoneLevels = new int[SIDES];
     private final SignalType[] signalType = new SignalType[SIDES];
@@ -251,7 +251,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         ecoMode = nbt.getBoolean(NBT_ECO_MODE);
 
         CompoundTag ext = nbt.getCompound(NBT_EXTRA);
-        CompoundTag ext1 = getExtData();
+        CompoundTag ext1 = getExtensionData();
         for (String key : ext.getAllKeys()) {
             //noinspection ConstantConditions
             ext1.put(key, ext.get(key));
@@ -280,7 +280,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         nbt.putBoolean(NBT_ECO_MODE, ecoMode);
 
         CompoundTag ext = new CompoundTag();
-        CompoundTag ext1 = getExtData();
+        CompoundTag ext1 = getExtensionData();
         for (String key : ext1.getAllKeys()) {
             //noinspection ConstantConditions
             ext.put(key, ext1.get(key));
@@ -690,8 +690,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             Arrays.fill(newSignalType, signalType);
         } else {
             Direction facing = getAbsoluteFacing(direction).getOpposite();
-            newRedstoneLevels[facing.ordinal()] = power;
-            newSignalType[facing.ordinal()] = signalType;
+            newRedstoneLevels[facing.get3DDataValue()] = power;
+            newSignalType[facing.get3DDataValue()] = signalType;
         }
     }
 
@@ -700,7 +700,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             // -1 means the block shouldn't have any special redstone handling
             return -1;
         }
-        int i = facing.ordinal();
+        int i = facing.get3DDataValue();
         if (strong) {
             return signalType[i] == SignalType.STRONG ? redstoneLevels[i] : 0;
         } else {
@@ -716,27 +716,27 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             // block has stopped being able to emit a signal (all detector modules removed)
             // notify neighbours, and neighbours of neighbours where a strong signal was being emitted
             notifyOwnNeighbours = true;
-            for (Direction f : Direction.values()) {
-                if (signalType[f.ordinal()] == SignalType.STRONG) {
-                    toNotify.add(f.getOpposite());
+            for (Direction dir : MiscUtil.DIRECTIONS) {
+                if (signalType[dir.get3DDataValue()] == SignalType.STRONG) {
+                    toNotify.add(dir.getOpposite());
                 }
             }
             Arrays.fill(redstoneLevels, 0);
             Arrays.fill(signalType, SignalType.NONE);
         } else {
-            for (Direction facing : Direction.values()) {
-                int i = facing.ordinal();
+            for (Direction dir : MiscUtil.DIRECTIONS) {
+                int i = dir.get3DDataValue();
                 // if the signal op (strong/weak) has changed, notify neighbours of block in that direction
-                // if the signal strength has changed, notify immediate neighbours
-                //   - and if signal op is strong, also notify neighbours of neighbour
                 if (newSignalType[i] != signalType[i]) {
-                    toNotify.add(facing.getOpposite());
+                    toNotify.add(dir.getOpposite());
                     signalType[i] = newSignalType[i];
                 }
+                // if the signal strength has changed, notify immediate neighbours
+                //   - and if signal op is strong, also notify neighbours of neighbour
                 if (newRedstoneLevels[i] != redstoneLevels[i]) {
                     notifyOwnNeighbours = true;
                     if (newSignalType[i] == SignalType.STRONG) {
-                        toNotify.add(facing.getOpposite());
+                        toNotify.add(dir.getOpposite());
                     }
                     redstoneLevels[i] = newRedstoneLevels[i];
                 }
@@ -760,12 +760,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (permitted.isEmpty() || permitted.contains(player.getUUID())) {
             return true;
         }
-        for (InteractionHand hand : InteractionHand.values()) {
-            if (player.getItemInHand(hand).getItem() == ModItems.OVERRIDE_CARD.get()) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(InteractionHand.values())
+                .anyMatch(hand -> player.getItemInHand(hand).getItem() == ModItems.OVERRIDE_CARD.get());
     }
 
     public boolean isBufferFull() {
@@ -812,8 +808,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         // like World#isBlockIndirectlyGettingPowered() but will ignore redstone from any sides
         // currently being extruded on
         int power = 0;
-        for (Direction facing : Direction.values()) {
-            if (getExtData().getInt(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing) > 0) {
+        for (Direction facing : MiscUtil.DIRECTIONS) {
+            if (getExtensionData().getInt(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing) > 0) {
                 // ignore signal from any side we're extruding on (don't let placed redstone emitters lock up the router)
                 continue;
             }
@@ -827,7 +823,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return power;
     }
 
-    public CompoundTag getExtData() {
+    public CompoundTag getExtensionData() {
         if (extData == null) {
             extData = new CompoundTag();
         }
@@ -841,9 +837,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public void notifyModules() {
-        for (CompiledIndexedModule cim : compiledModules) {
-            cim.compiledModule.onNeighbourChange(this);
-        }
+        compiledModules.forEach(cim -> cim.compiledModule.onNeighbourChange(this));
     }
 
     public int getModuleSlotCount() {
@@ -856,10 +850,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public int getBufferSlotCount() {
         return N_BUFFER_SLOTS;
-    }
-
-    public int getModuleCount() {
-        return compiledModules.size();
     }
 
     @Override

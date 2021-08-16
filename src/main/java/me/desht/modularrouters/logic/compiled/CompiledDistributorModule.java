@@ -34,7 +34,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
         @Override
         public String getTranslationKey() {
-            return "modularrouters.itemText.distributor.strategy." + this.toString();
+            return "modularrouters.itemText.distributor.strategy." + this;
         }
     }
 
@@ -109,7 +109,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return l;
     }
 
-    private static double calcDist(ModuleTarget tgt, BlockEntity blockEntity) {
+    private static double calcDist(ModuleTarget tgt, @Nonnull BlockEntity blockEntity) {
         double distance = tgt.gPos.pos().distSqr(blockEntity.getBlockPos());
         if (!tgt.isSameWorld(blockEntity.getLevel())) {
             distance += 100_000_000;  // cross-dimension penalty

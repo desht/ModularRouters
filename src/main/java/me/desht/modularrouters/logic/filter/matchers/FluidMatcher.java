@@ -22,6 +22,7 @@ public class FluidMatcher implements IItemMatcher {
                 .orElse(false);
     }
 
+    @Override
     public boolean matchFluid(Fluid fluid, Filter.Flags flags) {
         return fluid == this.fluid || flags.matchTags() && !Sets.intersection(fluid.getTags(), this.fluid.getTags()).isEmpty();
     }

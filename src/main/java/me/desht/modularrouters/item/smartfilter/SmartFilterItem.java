@@ -54,7 +54,7 @@ public abstract class SmartFilterItem extends MRBaseItem {
     public abstract int getSize(ItemStack filterStack);
 
     public boolean hasContainer() {
-        return false;
+        return true;
     }
 
     public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {

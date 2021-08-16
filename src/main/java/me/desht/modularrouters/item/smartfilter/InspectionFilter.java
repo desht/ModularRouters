@@ -25,11 +25,17 @@ import java.util.stream.Collectors;
 public class InspectionFilter extends SmartFilterItem {
     private static final String NBT_MATCH_ALL = "MatchAll";
     private static final String NBT_ITEMS = "Items";
+    public static final String NBT_COMPARISON = "Comparison";
     public static final int MAX_SIZE = 6;
 
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new InspectionMatcher(getComparisonList(filterStack));
+    }
+
+    @Override
+    public boolean hasContainer() {
+        return false;
     }
 
     @Override
@@ -73,7 +79,7 @@ public class InspectionFilter extends SmartFilterItem {
         switch (message.getOp()) {
             case ADD_STRING:
                 if (comparisonList.items.size() < MAX_SIZE) {
-                    Comparison c = Comparison.fromString(message.getPayload().getString("Comparison"));
+                    Comparison c = Comparison.fromString(message.getPayload().getString(NBT_COMPARISON));
                     comparisonList.items.add(c);
                     setComparisonList(filterStack, comparisonList);
                     return new GuiSyncMessage(filterStack);
@@ -88,7 +94,7 @@ public class InspectionFilter extends SmartFilterItem {
                 }
                 break;
             case ANY_ALL_FLAG:
-                comparisonList.setMatchAll(message.getPayload().getBoolean("MatchAll"));
+                comparisonList.setMatchAll(message.getPayload().getBoolean(NBT_MATCH_ALL));
                 setComparisonList(filterStack, comparisonList);
                 return new GuiSyncMessage(filterStack);
         }

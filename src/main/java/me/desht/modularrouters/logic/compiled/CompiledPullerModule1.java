@@ -16,16 +16,15 @@ public class CompiledPullerModule1 extends CompiledModule {
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (!router.isBufferFull()) {
-            if (!validateRange(router, getTarget())) {
+            ModuleTarget target = getTarget();
+            if (target == null || !validateRange(router, getTarget())) {
                 return false;
             }
-            ModuleTarget target = getTarget();
-            if (target == null) return false;
-            return getTarget().getItemHandler().map(handler -> {
+            return target.getItemHandler().map(handler -> {
                 ItemStack taken = transferToRouter(handler, null, router);
                 if (!taken.isEmpty()) {
                     if (MRConfig.Common.Module.pullerParticles) {
-                        playParticles(router,  getTarget().gPos.pos(), taken);
+                        playParticles(router,  target.gPos.pos(), taken);
                     }
                     return true;
                 }
