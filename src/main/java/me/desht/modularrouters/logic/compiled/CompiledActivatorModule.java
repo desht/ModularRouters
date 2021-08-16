@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_ACTION_TYPE_OLD = "ActionType";
@@ -97,14 +98,6 @@ public class CompiledActivatorModule extends CompiledModule {
 
         LookDirection(float pitch) {
             this.pitch = pitch;
-        }
-
-        BlockPos offset(BlockPos pos, int dist) {
-            switch (this) {
-                case ABOVE: return pos.relative(Direction.UP, dist);
-                case BELOW: return pos.relative(Direction.DOWN, dist);
-                default: return pos;
-            }
         }
 
         @Override
@@ -278,7 +271,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doAttackEntity(TileEntityItemRouter router, RouterFakePlayer fakePlayer) {
-        LivingEntity entity = findEntity(router, LivingEntity.class);
+        LivingEntity entity = findEntity(router, LivingEntity.class, this::passesAttackBlacklist);
         if (entity == null || entity instanceof PlayerEntity && router.getUpgradeCount(ModItems.SECURITY_UPGRADE.get()) > 0 && router.isPermitted((PlayerEntity) entity)) {
             return false;
         }
@@ -288,7 +281,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doUseItemOnEntity(TileEntityItemRouter router, FakePlayer fakePlayer) {
-        Entity entity = findEntity(router, Entity.class);
+        Entity entity = findEntity(router, Entity.class, this::passesUseBlacklist);
         if (entity == null) {
             return false;
         }
@@ -300,14 +293,14 @@ public class CompiledActivatorModule extends CompiledModule {
         return false;
     }
 
-    private <T extends Entity> T findEntity(TileEntityItemRouter router, Class<T> cls) {
+    private <T extends Entity> T findEntity(TileEntityItemRouter router, Class<T> cls, Predicate<Entity> blacklistChecker) {
         Direction face = getFacing();
         final BlockPos pos = router.getBlockPos();
         Vector3d vec = Vector3d.atCenterOf(pos);
         AxisAlignedBB box = new AxisAlignedBB(vec, vec)
                 .move(face.getStepX() * 2.5, face.getStepY() * 2.5, face.getStepZ() * 2.5)
                 .inflate(2.0);
-        List<T> l = router.getLevel().getEntitiesOfClass(cls, box, this::passesBlacklist);
+        List<T> l = router.getLevel().getEntitiesOfClass(cls, box, blacklistChecker);
         if (l.isEmpty()) {
             return null;
         }
@@ -327,7 +320,11 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    private boolean passesBlacklist(Entity e) {
+    private boolean passesAttackBlacklist(Entity e) {
+        return !MRConfig.Common.Module.activatorEntityAttackBlacklist.contains(e.getType().getRegistryName());
+    }
+
+    private boolean passesUseBlacklist(Entity e) {
         return !MRConfig.Common.Module.activatorEntityBlacklist.contains(e.getType().getRegistryName());
     }
 
