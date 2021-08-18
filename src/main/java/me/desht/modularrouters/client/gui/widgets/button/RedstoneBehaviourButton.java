@@ -27,7 +27,6 @@ public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstone
     @Override
     public List<Component> getTooltip() {
         return Collections.singletonList(
-                // TODO 1.16 append = appendSibling
                 new TranslatableComponent("modularrouters.guiText.tooltip.redstone.label")
                         .append(new TextComponent(": "))
                         .append(new TranslatableComponent(getState().getTranslationKey()))

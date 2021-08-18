@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +23,6 @@ import java.util.Set;
 public class CompiledDistributorModule extends CompiledSenderModule2 {
     public static final String NBT_STRATEGY = "DistStrategy";
     public static final String NBT_PULLING = "Pulling";
-    private final List<BeamData> beams = new ArrayList<>();
 
     public enum DistributionStrategy implements IHasTranslationKey {
         ROUND_ROBIN,

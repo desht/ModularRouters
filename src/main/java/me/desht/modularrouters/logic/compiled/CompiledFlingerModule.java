@@ -17,6 +17,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.stream.Stream;
 
 public class CompiledFlingerModule extends CompiledDropperModule {
     public static final String NBT_SPEED = "Speed";
@@ -29,11 +30,9 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         super(router, stack);
 
         CompoundTag compound = ModuleHelper.validateNBT(stack);
-        for (String key : new String[] { NBT_SPEED, NBT_PITCH, NBT_YAW }) {
-            if (!compound.contains(key)) {
-                compound.putFloat(key, 0.0f);
-            }
-        }
+        Stream.of(NBT_SPEED, NBT_PITCH, NBT_YAW)
+                .filter(key -> !compound.contains(key))
+                .forEach(key -> compound.putFloat(key, 0.0f));
 
         speed = compound.getFloat(NBT_SPEED);
         pitch = compound.getFloat(NBT_PITCH);

@@ -50,14 +50,14 @@ public class ModuleTarget {
     public CompoundTag toNBT() {
         CompoundTag ext = new CompoundTag();
         ext.put("Pos", MiscUtil.serializeGlobalPos(gPos));
-        ext.putByte("Face", (byte) face.ordinal());
+        ext.putByte("Face", (byte) face.get3DDataValue());
         ext.putString("InvName", blockTranslationKey);
         return ext;
     }
 
     public static ModuleTarget fromNBT(CompoundTag nbt) {
         GlobalPos gPos = MiscUtil.deserializeGlobalPos(nbt.getCompound("Pos"));
-        Direction face = Direction.values()[nbt.getByte("Face")];
+        Direction face = Direction.from3DDataValue(nbt.getByte("Face"));
         return new ModuleTarget(gPos, face, nbt.getString("InvName"));
     }
 
@@ -93,7 +93,7 @@ public class ModuleTarget {
         // called both client and server side...
         if (!cachedItemCap.isPresent()) {
             BlockPos pos = gPos.pos();
-            if (w == null || !w.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+            if (w == null || !w.isLoaded(pos)) {
                 cachedItemCap = LazyOptional.empty();
             } else {
                 BlockEntity te = w.getBlockEntity(pos);
@@ -113,7 +113,7 @@ public class ModuleTarget {
         if (!cachedEnergyCap.isPresent()) {
             BlockPos pos = gPos.pos();
             Level w = MiscUtil.getWorldForGlobalPos(gPos);
-            if (w == null || !w.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+            if (w == null || !w.isLoaded(pos)) {
                 cachedEnergyCap = LazyOptional.empty();
             } else {
                 BlockEntity te = w.getBlockEntity(pos);
@@ -127,8 +127,7 @@ public class ModuleTarget {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ModuleTarget)) return false;
-        ModuleTarget that = (ModuleTarget) o;
+        if (!(o instanceof ModuleTarget that)) return false;
         return gPos.equals(that.gPos) && face == that.face;
     }
 

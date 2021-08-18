@@ -246,8 +246,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
                 .append(xlate("modularrouters.itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
                         .withStyle(ChatFormatting.AQUA)));
 
-        if (this instanceof IRangedModule) {
-            IRangedModule rm = (IRangedModule) this;
+        if (this instanceof IRangedModule rm) {
             int curRange = rm.getCurrentRange(itemstack);
             String col = curRange > rm.getBaseRange() ?
                     ChatFormatting.GREEN.toString() : curRange < rm.getBaseRange() ?
@@ -260,8 +259,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             list.add(xlate(termination.getTranslationKey() + ".header").withStyle(ChatFormatting.YELLOW));
         }
 
-        if (this instanceof IPickaxeUser) {
-            ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
+        if (this instanceof IPickaxeUser pickaxeUser) {
+            ItemStack pick = pickaxeUser.getPickaxe(itemstack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(ChatFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
                     list.add(new TextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW)));
@@ -356,8 +355,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        if (stack.getItem() instanceof IPickaxeUser) {
-            ItemStack pick = ((IPickaxeUser) stack.getItem()).getPickaxe(stack);
+        if (stack.getItem() instanceof IPickaxeUser pickaxeUser) {
+            ItemStack pick = pickaxeUser.getPickaxe(stack);
             return !pick.isEmpty() && !EnchantmentHelper.getEnchantments(pick).isEmpty();
         }
         return false;

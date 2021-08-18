@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Set;
 
 public class CompiledActivatorModule extends CompiledModule {
-    public static final String NBT_ACTION_TYPE_OLD = "ActionType";
     public static final String NBT_ACTION_TYPE = "ActionType2";
     public static final String NBT_LOOK_DIRECTION = "LookDirection";
     public static final String NBT_SNEAKING = "Sneaking";
@@ -122,11 +121,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
         CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
-            if (compound.contains(NBT_ACTION_TYPE_OLD)) {
-                actionType = ActionType.fromOldOrdinal(compound.getInt(NBT_ACTION_TYPE_OLD));
-            } else {
-                actionType = ActionType.values()[compound.getInt(NBT_ACTION_TYPE)];
-            }
+            actionType = ActionType.values()[compound.getInt(NBT_ACTION_TYPE)];
             lookDirection = LookDirection.values()[compound.getInt(NBT_LOOK_DIRECTION)];
             entityMode = EntityMode.values()[compound.getInt(NBT_ENTITY_MODE)];
             sneaking = compound.getBoolean(NBT_SNEAKING);
