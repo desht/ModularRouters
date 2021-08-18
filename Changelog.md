@@ -6,6 +6,17 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.17.1
 
+### 8.0.1 (unreleased)
+
+* This version *requires* Forge 37.0.34 or later
+* Breaker Module recipe should now work with any item claiming to act like a pickaxe
+* Fixed Puller module ignoring Regulator Upgrade values under some circumstances  
+* Modular Router block now requires Iron Pickaxe to break (same as an Iron Block), and the effective tool is a pickaxe
+  * Using MC 1.17 block tags for mineability & harvest level
+* The One Probe is now supported again (Modular Router block shows extra info in TOP)
+* Router should now be rotatable by other mods' wrenches  
+* A lot of internal code cleanup
+
 ### 8.0.0 (26 Jul 2021)
 
 * Initial alpha release for Minecraft 1.17.1!
