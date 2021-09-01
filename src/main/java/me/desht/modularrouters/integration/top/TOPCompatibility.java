@@ -12,10 +12,12 @@ import net.minecraftforge.fml.InterModComms;
 
 import java.util.function.Function;
 
+import static me.desht.modularrouters.util.MiscUtil.RL;
+
 public class TOPCompatibility {
     private static boolean registered;
 
-    static ResourceLocation ELEMENT_MODULE_ITEM = MiscUtil.RL("module");
+    static ResourceLocation ELEMENT_MODULE_ITEM = RL("module");
 
     public static void register() {
         if (registered)
@@ -28,8 +30,8 @@ public class TOPCompatibility {
 
             iTheOneProbe.registerProvider(new IProbeInfoProvider() {
                 @Override
-                public String getID() {
-                    return ModularRouters.MODID + ":default";
+                public ResourceLocation getID() {
+                    return RL("default");
                 }
 
                 @Override

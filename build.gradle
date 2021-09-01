@@ -10,6 +10,11 @@ buildscript {
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+}
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'maven-publish'
@@ -32,54 +37,40 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2021.08.15-1.17.1'
-//    mappings channel: 'official', version: "${mappings_version}"
-    //accessTransformer = file('my_at.cfg')
+    mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}-${project.mc_version}"
     runs {
         client {
-            // recommended logging data for a userdev environment
-//            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            workingDirectory file('run')
             property 'forge.logging.markers', 'CONFIG'
-            // recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-//            property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             ideaModule "${project.name}.main"
-            workingDirectory project.file('run').canonicalPath
             mods {
-                modularrouters {
-                    source sourceSets.main
-                }
+                modularrouters.sources((SourceSet[]) [sourceSets.main])
             }
         }
         server {
-            // recommended logging data for a userdev environment
+            workingDirectory file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.disableRefMap', 'true'
             ideaModule "${project.name}.main"
-            workingDirectory project.file('run').canonicalPath
             mods {
-                modularrouters {
-                    source sourceSets.main
-                }
+                modularrouters.sources((SourceSet[]) [sourceSets.main])
             }
         }
         data {
-            workingDirectory project.file('run')
+            workingDirectory file('run')
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
             property 'mixin.env.disableRefMap', 'true'
             ideaModule "${project.name}.main"
             mods {
-                modularrouters {
-                    source sourceSets.main
-                }
+                modularrouters.sources((SourceSet[]) [sourceSets.main])
             }
             args '--mod', 'modularrouters', '--all', '--output', file('src/generated/resources/'),
-                '--existing', sourceSets.main.resources.srcDirs[0]
+                    '--existing', sourceSets.main.resources.srcDirs[0]
             environment 'target', 'fmluserdevdata'
         }
     }
@@ -99,14 +90,14 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = "JEI"
+        url = "https://dvs1.progwml6.com/files/maven"
+    }
 
 //    maven { // TOP
 //        name = "tterrag maven"
 //        url = "https://maven.tterrag.com/"
-//    }
-//    maven {
-//        name = "JEI"
-//        url = "https://dvs1.progwml6.com/files/maven"
 //    }
 //    maven {
 //        name = "K-4u Mod maven"
@@ -116,25 +107,22 @@ repositories {
 //        name = 'Patchouli'
 //        url = 'https://maven.blamejared.com/'
 //    }
-////    maven {
-////        name = 'HWYLA'
-////        url = 'http://www.cursemaven.com/'
-////    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+
     // temporary till TOP for 1.17.1 is on maven.tterrag.com...
-    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3402482")
-    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3402482")
+    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3430022")
+    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3430022")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+
 //    compileOnly fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
 //    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
 //    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-//    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}:api")
-//    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}")
 //    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
 //    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-//    compileOnly "com.google.errorprone:error_prone_annotations:2.0.15"
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
@@ -148,20 +136,17 @@ dependencies {
 }
 
 jar {
-    manifest {
-        attributes(["Specification-Title": "modularrouters",
-                    "Specification-Vendor": "desht",
-                    "Specification-Version": "37.0", // We are version 1 of the modlauncher specification
-                    "Implementation-Title": project.name,
-                    "Implementation-Version": "${version}",
-                    "Implementation-Vendor" :"desht",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
-    }
+    manifest.attributes([
+            "Specification-Title": "Modular Routers",
+            "Specification-Vendor": "desht",
+            "Specification-Version": "37.0", // We are version 1 of the modlauncher specification
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${project.version}",
+            "Implementation-Vendor" :"desht",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+    ])
+    finalizedBy('reobfJar')
 }
-
-jar.finalizedBy('reobfJar')
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-// publish.dependsOn('reobfJar')
 
 publishing {
     publications {
@@ -172,6 +157,14 @@ publishing {
     repositories {
         maven {
             url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+idea {
+    module {
+        for (String exclude in ['run', 'out', 'logs']) {
+            excludeDirs += file(exclude)
         }
     }
 }

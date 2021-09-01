@@ -63,7 +63,7 @@ public class ModFilter extends SmartFilterItem {
                     .map(ModNameCache::getModName)
                     .map(s -> " \u2022 " + ChatFormatting.AQUA + s)
                     .map(TextComponent::new)
-                    .collect(Collectors.toList()));
+                    .toList());
         } else {
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", 0));
         }

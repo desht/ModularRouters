@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class MiscUtil {
     public static Direction[] DIRECTIONS = new Direction[] {
@@ -50,8 +49,8 @@ public class MiscUtil {
         return wrapString(text, WRAP_LENGTH);
     }
 
-    public static List<Component> wrapStringAsTextComponent(String text) {
-        return wrapString(text, WRAP_LENGTH).stream().map(TextComponent::new).collect(Collectors.toList());
+    public static List<TextComponent> wrapStringAsTextComponent(String text) {
+        return wrapString(text, WRAP_LENGTH).stream().map(TextComponent::new).toList();
     }
 
     public static String commify(int n) {

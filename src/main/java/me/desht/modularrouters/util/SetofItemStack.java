@@ -19,12 +19,14 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
         public int hashCode(ItemStack object) {
             int hashCode = Item.getId(object.getItem());
             if (!filterFlags.isIgnoreDamage()) hashCode += 37 * object.getDamageValue();
-            if (!filterFlags.isIgnoreNBT() && object.hasTag()) hashCode += 37 * object.getTag().hashCode();
+            if (!filterFlags.isIgnoreNBT() && object.hasTag()) //noinspection ConstantConditions
+                hashCode += 37 * object.getTag().hashCode();
             return hashCode;
         }
 
         @Override
         public boolean equals(ItemStack o1, ItemStack o2) {
+            //noinspection ConstantConditions
             return (o1 == o2) || !(o1 == null || o2 == null)
                     && o1.getItem() == o2.getItem()
                     && (filterFlags.isIgnoreDamage() || o1.getDamageValue() == o2.getDamageValue())
@@ -52,7 +54,7 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
     }
 
     public List<ItemStack> sortedList() {
-        return this.stream().sorted(compareStacks).collect(Collectors.toList());
+        return this.stream().sorted(compareStacks).toList();
     }
 
     // matches by mod, then by display name

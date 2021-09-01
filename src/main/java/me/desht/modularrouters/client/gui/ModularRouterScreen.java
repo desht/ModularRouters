@@ -153,7 +153,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
         PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
     }
 
-    public Collection<Rect2i> getExtraArea() {
+    public List<Rect2i> getExtraArea() {
         // for JEI's benefit
         return menu.getRouter().getEnergyCapacity() > 0 ?
                 Collections.singletonList(new Rect2i(leftPos - 27, topPos, 32, 100)) :

@@ -55,7 +55,7 @@ public class RegexFilter extends SmartFilterItem {
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", l.size()));
-            list.addAll(l.stream().map(s -> " \u2022 " + ChatFormatting.AQUA + "/" + s + "/").map(TextComponent::new).collect(Collectors.toList()));
+            list.addAll(l.stream().map(s -> " \u2022 " + ChatFormatting.AQUA + "/" + s + "/").map(TextComponent::new).toList());
         } else {
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", 0));
         }

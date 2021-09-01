@@ -38,7 +38,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
                     .map(name -> " \u2022 " + ChatFormatting.YELLOW + name)
                     .sorted()
                     .map(TextComponent::new)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
     }
 
@@ -66,7 +66,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
 
         if (compound.contains(NBT_PLAYERS)) {
             CompoundTag p = compound.getCompound(NBT_PLAYERS);
-            res.addAll(p.getAllKeys().stream().map(UUID::fromString).collect(Collectors.toList()));
+            res.addAll(p.getAllKeys().stream().map(UUID::fromString).toList());
         }
         return res;
     }

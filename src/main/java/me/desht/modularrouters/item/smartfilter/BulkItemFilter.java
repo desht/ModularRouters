@@ -114,7 +114,7 @@ public class    BulkItemFilter extends SmartFilterItem {
         BulkFilterHandler handler = new BulkFilterHandler(filterStack, null);
         int slot = 0;
         Comparator<ItemStack> comp = (o1, o2) -> o1.getHoverName().toString().compareTo(o2.getHoverName().getString());
-        for (ItemStack stack : stacks.stream().sorted(comp).collect(Collectors.toList())) {
+        for (ItemStack stack : stacks.stream().sorted(comp).toList()) {
             handler.setStackInSlot(slot++, stack);
         }
         handler.save();

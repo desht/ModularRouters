@@ -6,8 +6,9 @@ import net.minecraftforge.fml.ModList;
 public class IntegrationHandler {
 
     public static void registerAll() {
-        IntegrationHandler.registerWaila();
         IntegrationHandler.registerTOP();
+
+        // TOP and HWYLA registration are implicit; annotation-driven
     }
 
     private static void registerTOP() {
@@ -15,9 +16,4 @@ public class IntegrationHandler {
             TOPCompatibility.register();
         }
     }
-
-    public static void registerWaila() {
-        // nothing specific to do; registration is implicit
-    }
-
 }

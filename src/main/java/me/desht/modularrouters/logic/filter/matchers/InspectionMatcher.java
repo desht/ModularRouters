@@ -15,7 +15,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class InspectionMatcher implements IItemMatcher {
     private final ComparisonList comparisonList;
@@ -31,7 +35,7 @@ public class InspectionMatcher implements IItemMatcher {
             return false;
         }
         for (Comparison comp : comparisonList.items) {
-            if (comp.matches(stack)) {
+            if (comp.test(stack)) {
                 if (!comparisonList.matchAll) {
                     return true;
                 } else {
@@ -60,7 +64,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
     }
 
-    public static class Comparison {
+    public static class Comparison implements Predicate<ItemStack> {
         static final Comparison BAD_COMPARISON = new Comparison();
 
         private final InspectionSubject subject;
@@ -79,12 +83,13 @@ public class InspectionMatcher implements IItemMatcher {
             target = 0;
         }
 
-        boolean matches(ItemStack stack) {
+        @Override
+        public boolean test(ItemStack stack) {
             if (op == null || subject == null) {
                 return false;
             }
-            Optional<Integer> val = subject.getValue(stack);
-            return op.check(val.orElse(-1), target);
+            Optional<Integer> val = subject.evaluator.apply(stack);
+            return op.test(Long.valueOf(val.orElse(-1)), target);
         }
 
         public static Comparison fromString(String s) {
@@ -111,54 +116,55 @@ public class InspectionMatcher implements IItemMatcher {
                     .append(new TranslatableComponent("modularrouters.guiText.label.inspectionSubject." + subject))
                     .append(" ")
                     .append(new TranslatableComponent("modularrouters.guiText.label.inspectionOp." + op))
-                    .append(target + subject.getDisplaySuffix());
+                    .append(target + subject.suffix);
         }
     }
 
     public enum InspectionSubject implements IHasTranslationKey {
-        NONE,
-        DURABILITY,
-        FLUID,
-        ENERGY,
-        ENCHANT,
-        FOOD;
+        NONE("", stack -> Optional.empty()),
+        DURABILITY("%", InspectionSubject::getDurabilityPercent),
+        FLUID("%", InspectionSubject::getFluidPercent),
+        ENERGY("%", InspectionSubject::getEnergyPercent),
+        ENCHANT("", InspectionSubject::getHighestEnchantLevel),
+        FOOD("", InspectionSubject::getFoodValue);
+
+        private final String suffix;
+        private final Function<ItemStack, Optional<Integer>> evaluator;
+
+        InspectionSubject(String suffix, Function<ItemStack, Optional<Integer>> evaluator) {
+            this.suffix = suffix;
+            this.evaluator = evaluator;
+        }
 
         @Override
         public String getTranslationKey() {
             return "modularrouters.guiText.label.inspectionSubject." + this;
         }
 
-        private Optional<Integer> getValue(ItemStack stack) {
-            return switch (this) {
-                case NONE -> Optional.empty();
-                case DURABILITY -> stack.getMaxDamage() > 0 ?
-                        Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamageValue(), stack.getMaxDamage())) :
-                        Optional.empty();
-                case FLUID -> getFluidPercent(stack);
-                case ENERGY -> getEnergyPercent(stack);
-                case ENCHANT -> getHighestEnchantLevel(stack);
-                case FOOD -> getFoodValue(stack);
-            };
+        private static Optional<Integer> getDurabilityPercent(ItemStack stack) {
+            return stack.getMaxDamage() > 0 ?
+                    Optional.of(asPercentage(stack.getMaxDamage() - stack.getDamageValue(), stack.getMaxDamage())) :
+                    Optional.empty();
         }
 
-        private Optional<Integer> getFoodValue(ItemStack stack) {
+        private static Optional<Integer> getFoodValue(ItemStack stack) {
             //noinspection ConstantConditions
             return stack.getItem().isEdible() ?
                     Optional.of(stack.getItem().getFoodProperties().getNutrition()) :
                     Optional.empty();
         }
 
-        private Optional<Integer> getHighestEnchantLevel(ItemStack stack) {
+        private static Optional<Integer> getHighestEnchantLevel(ItemStack stack) {
             return EnchantmentHelper.getEnchantments(stack).values().stream().max(Comparator.naturalOrder());
         }
 
-        private Optional<Integer> getEnergyPercent(ItemStack stack) {
+        private static Optional<Integer> getEnergyPercent(ItemStack stack) {
             return stack.getCapability(CapabilityEnergy.ENERGY, null)
                     .map(handler -> Optional.of(asPercentage(handler.getEnergyStored(), handler.getMaxEnergyStored())))
                     .orElse(Optional.empty());
         }
 
-        private Optional<Integer> getFluidPercent(ItemStack stack) {
+        private static Optional<Integer> getFluidPercent(ItemStack stack) {
             return FluidUtil.getFluidHandler(stack)
                     .map(handler -> {
                         int total = 0;
@@ -172,13 +178,6 @@ public class InspectionMatcher implements IItemMatcher {
                     .orElse(Optional.empty());
         }
 
-        public String getDisplaySuffix() {
-            return switch (this) {
-                case ENCHANT, FOOD, NONE -> "";
-                default -> "%";
-            };
-        }
-
         public InspectionSubject cycle(int direction) {
             int n = this.ordinal() + direction;
             if (n >= values().length) n = 0;
@@ -187,7 +186,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private static final BigDecimal HUNDRED = new BigDecimal(100);
-        private int asPercentage(long val, long max) {
+        private static int asPercentage(long val, long max) {
             if (max == 0) return 0;  // https://github.com/desht/ModularRouters/issues/82
             // BigDecimal is a bit overkill perhaps, but guarantees no danger of overflow here
             BigDecimal a = new BigDecimal(val);
@@ -196,30 +195,29 @@ public class InspectionMatcher implements IItemMatcher {
         }
     }
 
-    public enum InspectionOp implements IHasTranslationKey {
-        NONE,
-        GT,
-        LT,
-        LE,
-        GE,
-        EQ,
-        NE;
+    public enum InspectionOp implements IHasTranslationKey, BiPredicate<Long,Long> {
+        NONE((val, target) -> false),
+        GT((val, target) -> val > target),
+        LT((val, target) -> val < target),
+        LE((val, target) -> val <= target),
+        GE((val, target) -> val >= target),
+        EQ(Objects::equals),
+        NE((val, target) -> !Objects.equals(val, target));
+
+        private final BiPredicate<Long,Long> predicate;
+
+        InspectionOp(BiPredicate<Long,Long> predicate) {
+            this.predicate = predicate;
+        }
 
         @Override
         public String getTranslationKey() {
             return "modularrouters.guiText.label.inspectionOp." + this;
         }
 
-        public boolean check(long value, long target) {
-            return switch (this) {
-                case NONE -> false;
-                case GT -> value > target;
-                case LT -> value < target;
-                case LE -> value <= target;
-                case GE -> value >= target;
-                case EQ -> value == target;
-                case NE -> value != target;
-            };
+        @Override
+        public boolean test(Long value, Long target) {
+            return predicate.test(value, target);
         }
 
         public InspectionOp cycle(int direction) {

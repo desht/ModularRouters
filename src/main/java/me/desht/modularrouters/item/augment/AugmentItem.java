@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public abstract class AugmentItem extends MRBaseItem {
@@ -35,7 +36,7 @@ public abstract class AugmentItem extends MRBaseItem {
     }
 
     public static class AugmentCounter {
-        private final Map<ResourceLocation, Integer> counts = new HashMap<>();
+        private final Map<AugmentItem, Integer> counts = new HashMap<>();
 
         public AugmentCounter(ItemStack moduleStack) {
             refresh(moduleStack);
@@ -48,20 +49,19 @@ public abstract class AugmentItem extends MRBaseItem {
             counts.clear();
             for (int i = 0; i < h.getSlots(); i++) {
                 ItemStack augmentStack = h.getStackInSlot(i);
-                if (augmentStack.getItem() instanceof AugmentItem) {
-                    ResourceLocation k = augmentStack.getItem().getRegistryName();
-                    counts.put(k, counts.getOrDefault(k, 0) + augmentStack.getCount());
+                if (augmentStack.getItem() instanceof AugmentItem augment) {
+                    counts.merge(augment, augmentStack.getCount(), Integer::sum);
                 }
             }
         }
 
         public Collection<AugmentItem> getAugments() {
-            return counts.keySet().stream().map(ForgeRegistries.ITEMS::getValue).map(i -> (AugmentItem)i).collect(Collectors.toList());
+            return counts.keySet().stream().toList();
         }
 
         public int getAugmentCount(Item type) {
-            if (type == null) return 0;
-            return counts.getOrDefault(type.getRegistryName(), 0);
+            if (!(type instanceof AugmentItem)) return 0;
+            return counts.getOrDefault(type, 0);
         }
     }
 }

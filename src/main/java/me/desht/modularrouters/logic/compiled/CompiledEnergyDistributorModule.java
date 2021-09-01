@@ -24,7 +24,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         List<ModuleTarget> inRange = getTargets().stream()
                 .filter(target -> target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared())
-                .collect(Collectors.toList());
+                .toList();
         if (inRange.isEmpty()) return false;
 
         int total = router.getCapability(CapabilityEnergy.ENERGY).map(routerHandler -> {
