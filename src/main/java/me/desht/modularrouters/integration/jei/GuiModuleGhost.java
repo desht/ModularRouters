@@ -31,6 +31,7 @@ public class GuiModuleGhost implements IGhostIngredientHandler<AbstractModuleScr
     public void onComplete() {
     }
 
+    @SuppressWarnings("ClassCanBeRecord")
     static class ItemTarget<I> implements Target<I> {
         private final AbstractModuleScreen gui;
         private final Slot slot;

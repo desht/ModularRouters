@@ -24,7 +24,7 @@ public class JEIModularRoutersPlugin implements IModPlugin {
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         // commented out for now since current JEI 1.17.x builds (as of 2021-09-01) will crash trying to draw ghost ingredients
         // https://github.com/mezz/JustEnoughItems/issues/2479
-//        registration.addGhostIngredientHandler(AbstractModuleScreen.class, new GuiModuleGhost());
+        registration.addGhostIngredientHandler(AbstractModuleScreen.class, new GuiModuleGhost());
 
         registration.addGuiContainerHandler(ModularRouterScreen.class, new IGuiContainerHandler<>() {
             @Override
