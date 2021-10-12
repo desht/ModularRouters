@@ -5,18 +5,15 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public abstract class AugmentItem extends MRBaseItem {
     public static final int SLOTS = 4;
@@ -31,8 +28,8 @@ public abstract class AugmentItem extends MRBaseItem {
 
     public abstract int getMaxAugments(ModuleItem moduleType);
 
-    public String getExtraInfo(int c, ItemStack moduleStack) {
-        return "";
+    public Component getExtraInfo(int c, ItemStack moduleStack) {
+        return TextComponent.EMPTY;
     }
 
     public static class AugmentCounter {

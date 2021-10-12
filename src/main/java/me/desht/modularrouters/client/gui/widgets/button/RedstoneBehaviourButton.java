@@ -1,6 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -15,13 +16,8 @@ public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstone
     }
 
     @Override
-    protected int getTextureX() {
-        return 16 * getState().ordinal();
-    }
-
-    @Override
-    protected int getTextureY() {
-        return 16;
+    protected XYPoint getTextureXY() {
+        return new XYPoint(16 * getState().ordinal(), 16);
     }
 
     @Override

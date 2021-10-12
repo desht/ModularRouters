@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.widgets.IManagedTextFields;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;

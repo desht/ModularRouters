@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
@@ -57,7 +58,7 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, leftPos + 167, topPos + 31, BUTTON_XY.x, BUTTON_XY.y, 18, 18);  // section "button" background
+        this.blit(matrixStack, leftPos + 167, topPos + 31, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);  // section "button" background
 
         GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, leftPos + 128, topPos + 32, "");
     }
@@ -98,13 +99,8 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return 160 + getState().ordinal() * 16;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return new XYPoint(160 + getState().ordinal() * 16, 16);
         }
 
         @Override

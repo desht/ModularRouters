@@ -54,6 +54,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,7 +62,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
@@ -363,10 +363,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public RouterFakePlayer getFakePlayer() {
-        if (!(getLevel() instanceof ServerLevel)) return null;
+        if (!(getLevel() instanceof ServerLevel serverLevel)) return null;
 
         if (fakePlayer == null) {
-            fakePlayer = new RouterFakePlayer(this, (ServerLevel) getLevel(), getOwner());
+            fakePlayer = new RouterFakePlayer(this, serverLevel, getOwner());
             fakePlayer.connection = new FakeNetHandlerPlayerServer(level.getServer(), fakePlayer);
             fakePlayer.level = level;
             fakePlayer.getInventory().selected = 0;  // held item always in slot 0
@@ -452,7 +452,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (active != newActive) {
             active = newActive;
             level.setBlock(getBlockPos(), getBlockState().setValue(ModularRouterBlock.ACTIVE,
-                    newActive && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 3), Constants.BlockFlags.BLOCK_UPDATE);
+                    newActive && getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 3), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -487,7 +487,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         // some tile entity field changed that the client needs to know about
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         if (!getLevel().isClientSide) {
-            getLevel().sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Constants.BlockFlags.DEFAULT);
+            getLevel().sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         } else if (getLevel().isClientSide && renderUpdate) {
             requestModelDataUpdate();
             getLevel().setBlocksDirty(worldPosition, Blocks.AIR.defaultBlockState(), getBlockState());
@@ -579,7 +579,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                 fakePlayer = null; // in case security upgrades change
                 int mufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
                 if (prevMufflers != mufflers) {
-                    level.setBlock(worldPosition, getBlockState().setValue(ModularRouterBlock.ACTIVE, active && mufflers < 3), Constants.BlockFlags.BLOCK_UPDATE);
+                    level.setBlock(worldPosition, getBlockState().setValue(ModularRouterBlock.ACTIVE, active && mufflers < 3), Block.UPDATE_CLIENTS);
                 }
                 notifyWatchingPlayers();
             }

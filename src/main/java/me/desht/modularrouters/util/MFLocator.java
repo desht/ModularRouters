@@ -19,6 +19,7 @@ import java.util.Optional;
 /**
  * Unified object to locate a module or filter.
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class MFLocator {
     public enum ItemType { MODULE, FILTER }
     public final InteractionHand hand;   // hand the player is holding the module/filter

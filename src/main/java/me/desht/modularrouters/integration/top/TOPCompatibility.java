@@ -3,7 +3,6 @@ package me.desht.modularrouters.integration.top;
 import mcjty.theoneprobe.api.*;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModularRouterBlock;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;

@@ -13,11 +13,11 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +55,7 @@ public class InspectionFilter extends SmartFilterItem {
         if (compound != null) {
             boolean matchAll = compound.getBoolean(NBT_MATCH_ALL);
             List<Comparison> l = Lists.newArrayList();
-            ListTag items = compound.getList(NBT_ITEMS, Constants.NBT.TAG_STRING);
+            ListTag items = compound.getList(NBT_ITEMS, Tag.TAG_STRING);
             for (int i = 0; i < items.size(); i++) {
                 l.add(Comparison.fromString(items.getString(i)));
             }

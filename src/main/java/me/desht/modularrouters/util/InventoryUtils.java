@@ -13,6 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Random;
 
 public class InventoryUtils {
@@ -35,7 +36,7 @@ public class InventoryUtils {
                     int stackSize = Math.min(itemStack.getCount(), random.nextInt(21) + 10);
                     ItemEntity entityitem = new ItemEntity(world, pos.getX() + (double) offsetX, pos.getY() + (double) offsetY, pos.getZ() + (double) offsetZ, new ItemStack(itemStack.getItem(), stackSize));
                     if (itemStack.hasTag()) {
-                        entityitem.getItem().setTag(itemStack.getTag().copy());
+                        entityitem.getItem().setTag(Objects.requireNonNull(itemStack.getTag()).copy());
                     }
                     itemStack.shrink(stackSize);
 

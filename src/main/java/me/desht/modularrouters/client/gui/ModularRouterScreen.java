@@ -10,6 +10,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModularRouter;
 import me.desht.modularrouters.item.module.ModuleItem;
@@ -21,16 +22,15 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -161,18 +161,16 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
     }
 
     private class EcoButton extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(80, 16);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(96, 16);
+
         EcoButton(int x, int y, int width, int height, boolean initialVal) {
             super(x, y, width, height, initialVal, ModularRouterScreen.this);
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 96 : 80;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
 
         @Override
@@ -180,11 +178,6 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
             return GuiUtil.xlateAndSplit("modularrouters.guiText.tooltip.eco." + isToggled(),
                     MRConfig.Common.Router.ecoTimeout / 20.f,
                     MRConfig.Common.Router.lowPowerTickRate / 20.f);
-//            return MiscUtil.wrapStringAsTextComponent(
-//                    I18n.get("modularrouters.guiText.tooltip.eco." + isToggled(),
-//                            MRConfig.Common.Router.ecoTimeout / 20.f,
-//                            MRConfig.Common.Router.lowPowerTickRate / 20.f)
-//            );
         }
     }
 
@@ -194,18 +187,13 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
         }
 
         @Override
-        protected int getTextureX() {
-            switch (getState()) {
-                case TO_ROUTER: return 224;
-                case FROM_ROUTER: return 144;
-                case NONE: return 176;
-            }
-            throw new IllegalStateException();
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 0;
+        protected XYPoint getTextureXY() {
+            int x = switch (getState()) {
+                case TO_ROUTER -> 224;
+                case FROM_ROUTER -> 144;
+                case NONE -> 176;
+            };
+            return new XYPoint(x, 0);
         }
 
         @Override
@@ -247,13 +235,9 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
         }
 
         @Override
-        protected int getTextureX() {
-            return 240;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return menu.getRouter().getEnergyStorage().getEnergyStored() < energyUsage && theClientWorld().getGameTime() % 40 < 35 ? 0 : 240;
+        protected XYPoint getTextureXY() {
+            boolean lowEnergy = menu.getRouter().getEnergyStorage().getEnergyStored() < energyUsage;
+            return new XYPoint(240, lowEnergy && theClientWorld().getGameTime() % 40 < 35 ? 0 : 240);
         }
     }
 }

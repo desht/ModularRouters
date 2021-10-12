@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -47,14 +48,14 @@ public class ModuleSettingsMessage {
                 if (moduleStack.getItem() instanceof ModuleItem) {
                     CompoundTag compound = ModuleHelper.validateNBT(moduleStack);
                     for (String key : payload.getAllKeys()) {
-                        compound.put(key, payload.get(key));
+                        compound.put(key, Objects.requireNonNull(payload.get(key)));
                     }
                     if (locator.routerPos != null) {
                         player.getCommandSenderWorld().getBlockEntity(locator.routerPos, ModBlockEntities.MODULAR_ROUTER.get())
                                 .ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES));
                     }
                 } else {
-                    ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator.toString());
+                    ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator);
                 }
             }
         });

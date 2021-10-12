@@ -11,11 +11,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class RegexFilter extends SmartFilterItem {
     public static List<String> getRegexList(ItemStack filterStack) {
         CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         if (tag != null) {
-            ListTag items = tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING);
+            ListTag items = tag.getList(NBT_REGEX, Tag.TAG_STRING);
             List<String> res = Lists.newArrayListWithExpectedSize(items.size());
             for (int i = 0; i < items.size(); i++) {
                 res.add(items.getString(i));
@@ -96,6 +96,6 @@ public class RegexFilter extends SmartFilterItem {
     @Override
     public int getSize(ItemStack filterStack) {
         CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
-        return tag != null ? tag.getList(NBT_REGEX, Constants.NBT.TAG_STRING).size() : 0;
+        return tag != null ? tag.getList(NBT_REGEX, Tag.TAG_STRING).size() : 0;
     }
 }

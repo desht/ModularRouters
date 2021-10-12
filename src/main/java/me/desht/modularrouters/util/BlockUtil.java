@@ -188,6 +188,7 @@ public class BlockUtil {
         return w == null ? "" : w.getBlockState(pos).getBlock().getDescriptionId();
     }
 
+    @SuppressWarnings("ClassCanBeRecord")
     public static class BreakResult {
         static final BreakResult NOT_BROKEN = new BreakResult(false, Collections.emptyMap());
 

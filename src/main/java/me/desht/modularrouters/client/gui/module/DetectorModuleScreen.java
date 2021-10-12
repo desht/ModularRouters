@@ -62,7 +62,7 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         // text entry field background - super has already bound the correct texture
-        this.blit(matrixStack, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x, SMALL_TEXTFIELD_XY.y, 21, 14);
+        this.blit(matrixStack, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x(), SMALL_TEXTFIELD_XY.y(), 21, 14);
     }
 
     @Override

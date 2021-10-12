@@ -9,8 +9,8 @@ import me.desht.modularrouters.item.module.ModuleItem.RelativeDirection;
 import me.desht.modularrouters.item.module.ModuleItem.Termination;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 
@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
  * Collection of static convenience methods for managing NBT data in a module itemstack.
  */
 public class ModuleHelper {
-    public static final String NBT_FLAGS = "Flags";
     public static final String NBT_DIRECTION = "Direction";
     public static final String NBT_REDSTONE_MODE = "RedstoneMode";
     public static final String NBT_REGULATOR_AMOUNT = "RegulatorAmount";
@@ -31,7 +30,7 @@ public class ModuleHelper {
     @Nonnull
     public static CompoundTag validateNBT(ItemStack stack) {
         CompoundTag compound = stack.getOrCreateTagElement(ModularRouters.MODID);
-        if (compound.getTagType(NBT_FILTER) != Constants.NBT.TAG_COMPOUND) {
+        if (compound.getTagType(NBT_FILTER) != Tag.TAG_COMPOUND) {
             compound.put(NBT_FILTER, new CompoundTag());
         }
         return compound;
@@ -55,13 +54,13 @@ public class ModuleHelper {
 
     public static boolean checkFlag(ItemStack stack, ModuleFlags flag) {
         CompoundTag tag = validateNBT(stack);
-        return tag.contains(flag.getName(), Constants.NBT.TAG_BYTE) ? tag.getBoolean(flag.getName()) : flag.getDefaultValue();
+        return tag.contains(flag.getName(), Tag.TAG_BYTE) ? tag.getBoolean(flag.getName()) : flag.getDefaultValue();
     }
 
     public static Termination getTermination(ItemStack stack) {
         CompoundTag compound = validateNBT(stack);
         try {
-            return compound.contains(ModuleHelper.NBT_TERMINATION, Constants.NBT.TAG_STRING) ?
+            return compound.contains(ModuleHelper.NBT_TERMINATION, Tag.TAG_STRING) ?
                     Termination.valueOf(compound.getString(ModuleHelper.NBT_TERMINATION)) :
                     Termination.NONE;
         } catch (IllegalArgumentException e) {

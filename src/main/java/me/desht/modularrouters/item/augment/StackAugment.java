@@ -1,8 +1,11 @@
 package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.item.module.*;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class StackAugment extends AugmentItem {
     @Override
@@ -14,7 +17,7 @@ public class StackAugment extends AugmentItem {
     }
 
     @Override
-    public String getExtraInfo(int c, ItemStack stack) {
-        return " - " + I18n.get("modularrouters.itemText.augments.stackInfo", Math.min(1 << c, 64));
+    public Component getExtraInfo(int c, ItemStack stack) {
+        return new TextComponent(" - ").append(xlate("modularrouters.itemText.augments.stackInfo", Math.min(1 << c, 64)));
     }
 }

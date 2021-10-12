@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -43,9 +44,19 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
         return true;
     }
 
-    protected abstract int getTextureX();
+    protected abstract XYPoint getTextureXY();
 
-    protected abstract int getTextureY();
+    final int getTextureX() {
+        return getTextureXY().x();
+    }
+
+    final int getTextureY() {
+        return getTextureXY().y();
+    }
+
+//    protected abstract int getTextureX();
+//
+//    protected abstract int getTextureY();
 
     public List<Component> getTooltip() {
         return tooltip1;

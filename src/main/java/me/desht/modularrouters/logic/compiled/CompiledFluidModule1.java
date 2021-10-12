@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.*;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -28,6 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 import static net.minecraftforge.fluids.FluidAttributes.BUCKET_VOLUME;
 
@@ -64,19 +64,12 @@ public class CompiledFluidModule1 extends CompiledModule {
             return false;
         }
 
-        Level world = router.getLevel();
+        Level world = Objects.requireNonNull(router.getLevel());
         BlockPos pos = getTarget().gPos.pos();
         LazyOptional<IFluidHandler> worldFluidCap = FluidUtil.getFluidHandler(world, pos, getFacing().getOpposite());
 
-        boolean didWork = false;
-        if (!worldFluidCap.isPresent()) {
-            // no TE at the target position; try to interact with a fluid block in the world
-            boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
-            didWork = switch (fluidDirection) {
-                case IN -> tryPickupFluid(routerCap, world, pos, playSound);
-                case OUT -> tryPourOutFluid(routerCap, world, pos, playSound);
-            };
-        } else {
+        boolean didWork;
+        if (worldFluidCap.isPresent()) {
             // there's a TE with a fluid capability; try to interact with that
             didWork = switch (fluidDirection) {
                 case IN -> worldFluidCap.map(srcHandler ->
@@ -85,6 +78,13 @@ public class CompiledFluidModule1 extends CompiledModule {
                 case OUT -> routerCap.map(srcHandler ->
                         worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false))
                         .orElse(false);
+            };
+        } else {
+            // no TE at the target position; try to interact with a fluid block in the world
+            boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
+            didWork = switch (fluidDirection) {
+                case IN -> tryPickupFluid(routerCap, world, pos, playSound);
+                case OUT -> tryPourOutFluid(routerCap, world, pos, playSound);
             };
         }
 
@@ -165,7 +165,7 @@ public class CompiledFluidModule1 extends CompiledModule {
                     if (isNotSolid || isReplaceable) {
                         world.destroyBlock(pos, true);
                     }
-                    world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Constants.BlockFlags.DEFAULT_AND_RERENDER);
+                    world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Block.UPDATE_ALL_IMMEDIATE);
                 }
                 return true;
             }
@@ -200,7 +200,7 @@ public class CompiledFluidModule1 extends CompiledModule {
         }
     }
 
-    private boolean isInfiniteWaterSource(Level world, BlockPos pos) {
+//    private boolean isInfiniteWaterSource(Level world, BlockPos pos) {
         // @todo 1.13
 //        IBlockState state = world.getBlockState(pos);
 //
@@ -213,8 +213,8 @@ public class CompiledFluidModule1 extends CompiledModule {
 //                }
 //            }
 //        }
-        return false;
-    }
+//        return false;
+//    }
 
     private boolean doTransfer(ModularRouterBlockEntity router, IFluidHandler src, IFluidHandler dest, FluidDirection direction) {
         if (getRegulationAmount() > 0) {

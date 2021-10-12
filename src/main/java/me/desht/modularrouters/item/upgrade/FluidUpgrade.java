@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.upgrade;
 
-import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.MRConfig;

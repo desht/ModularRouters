@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -130,6 +131,9 @@ public class MouseOverHelp {
     }
 
     public static class Button extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(192, 0);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(208, 0);
+
         public Button(int x, int y) {
             super(x, y, 16, 16, false, null);
             tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.get("modularrouters.guiText.tooltip.mouseOverHelp.false")));
@@ -152,13 +156,8 @@ public class MouseOverHelp {
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 208 : 192;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 0;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
     }
 }

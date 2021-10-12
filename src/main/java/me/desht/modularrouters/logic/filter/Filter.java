@@ -5,7 +5,6 @@ import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterH
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.module.ModuleItem.ModuleFlags;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
-import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.world.item.ItemStack;

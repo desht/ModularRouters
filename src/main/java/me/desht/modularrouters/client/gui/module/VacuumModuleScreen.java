@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
@@ -67,7 +68,7 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            this.blit(matrixStack,leftPos + 168, topPos + 26, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
+            this.blit(matrixStack,leftPos + 168, topPos + 26, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);
         }
     }
 
@@ -111,18 +112,16 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
     }
 
     private class EjectButton extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(112, 16);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(192, 16);
+
         EjectButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, VacuumModuleScreen.this);
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 192 : 112;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
     }
 }

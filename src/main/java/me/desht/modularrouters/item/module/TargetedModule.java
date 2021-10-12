@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -32,7 +33,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 import java.util.Set;
@@ -179,7 +179,7 @@ public abstract class TargetedModule extends ModuleItem {
             ModuleTarget mt = new ModuleTarget(MiscUtil.makeGlobalPos(world, pos), face, BlockUtil.getBlockName(world, pos));
             compound.put(NBT_TARGET, mt.toNBT());
         }
-        stack.getTag().put(ModularRouters.MODID, compound);
+        stack.getOrCreateTag().put(ModularRouters.MODID, compound);
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class TargetedModule extends ModuleItem {
      */
     public static ModuleTarget getTarget(ItemStack stack, boolean checkBlockName) {
         CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
-        if (compound != null && compound.getTagType(NBT_TARGET) == Constants.NBT.TAG_COMPOUND) {
+        if (compound != null && compound.getTagType(NBT_TARGET) == Tag.TAG_COMPOUND) {
             ModuleTarget target = ModuleTarget.fromNBT(compound.getCompound(NBT_TARGET));
             if (checkBlockName) {
                 ModuleTarget newTarget = updateTargetBlockName(stack, target);
@@ -224,8 +224,8 @@ public abstract class TargetedModule extends ModuleItem {
         Set<ModuleTarget> result = Sets.newHashSet();
 
         CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
-        if (compound != null && compound.getTagType(NBT_MULTI_TARGET) == Constants.NBT.TAG_LIST) {
-            ListTag list = compound.getList(NBT_MULTI_TARGET, Constants.NBT.TAG_COMPOUND);
+        if (compound != null && compound.getTagType(NBT_MULTI_TARGET) == Tag.TAG_LIST) {
+            ListTag list = compound.getList(NBT_MULTI_TARGET, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 ModuleTarget target = ModuleTarget.fromNBT(list.getCompound(i));
                 if (checkBlockName) {
@@ -246,7 +246,7 @@ public abstract class TargetedModule extends ModuleItem {
             list.add(target.toNBT());
         }
         compound.put(NBT_MULTI_TARGET, list);
-        stack.getTag().put(ModularRouters.MODID, compound);
+        stack.getOrCreateTag().put(ModularRouters.MODID, compound);
     }
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {
@@ -344,7 +344,7 @@ public abstract class TargetedModule extends ModuleItem {
         }
 
         String translationKey() {
-            return "modularrouters.chatText.targetValidation." + this.toString();
+            return "modularrouters.chatText.targetValidation." + this;
         }
     }
 }

@@ -22,7 +22,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
 
     public void setState(T newState) { state = newState; }
 
-    public T cycle(boolean forward) {
+    public void cycle(boolean forward) {
         int b = state.ordinal();
         b += forward ? 1 : -1;
 
@@ -32,8 +32,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
             b = len - 1;
         }
 
-        state = (T) state.getClass().getEnumConstants()[b];
-        return state;
+        //noinspection unchecked
+        state = (T) state.getClass().getEnumConstants()[b];  // should be a safe cast here; state is of class T
     }
-
 }

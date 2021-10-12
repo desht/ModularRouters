@@ -4,8 +4,11 @@ import me.desht.modularrouters.item.module.DetectorModule;
 import me.desht.modularrouters.item.module.ExtruderModule2;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class RegulatorAugment extends AugmentItem {
     @Override
@@ -14,9 +17,9 @@ public class RegulatorAugment extends AugmentItem {
     }
 
     @Override
-    public String getExtraInfo(int c, ItemStack moduleStack) {
+    public Component getExtraInfo(int c, ItemStack moduleStack) {
         int amount = ModuleHelper.getRegulatorAmount(moduleStack);
         String key = ((ModuleItem) moduleStack.getItem()).getRegulatorTranslationKey(moduleStack);
-        return " - " + I18n.get(key, amount);
+        return new TextComponent(" - ").append(xlate(key, amount));
     }
 }

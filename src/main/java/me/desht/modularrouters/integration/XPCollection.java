@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+// FIXME redo this completely to use datapacks, and use "forge:experience" fluid tag
 public class XPCollection {
     private static final Set<XPCollectionType> AVAILABLE = EnumSet.noneOf(XPCollectionType.class);
     private static final Map<XPCollectionType, ItemStack> ICONS = new EnumMap<>(XPCollectionType.class);

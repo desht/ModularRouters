@@ -5,6 +5,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
@@ -67,9 +68,9 @@ public class FlingerModuleScreen extends AbstractModuleScreen {
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, leftPos + 148, topPos + 16, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
-        this.blit(matrixStack, leftPos + 148, topPos + 34, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
-        this.blit(matrixStack, leftPos + 148, topPos + 52, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.blit(matrixStack, leftPos + 148, topPos + 16, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
+        this.blit(matrixStack, leftPos + 148, topPos + 34, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
+        this.blit(matrixStack, leftPos + 148, topPos + 52, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
     }
 
     @Override
@@ -97,13 +98,8 @@ public class FlingerModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return 48 + 16 * buttonId;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 0;
+        protected XYPoint getTextureXY() {
+            return new XYPoint(48 + 16 * buttonId, 0);
         }
 
         @Override

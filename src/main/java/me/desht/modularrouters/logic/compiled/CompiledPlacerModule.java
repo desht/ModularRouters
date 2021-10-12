@@ -8,8 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +32,7 @@ public class CompiledPlacerModule extends CompiledModule {
         BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, world, pos, getFacing());
         if (newState != null) {
             if (MRConfig.Common.Module.placerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
-                world.levelEvent(Constants.WorldEvents.BREAK_BLOCK_EFFECTS, pos, Block.getId(newState));
+                world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(newState));
             }
             router.extractBuffer(1);
             return true;

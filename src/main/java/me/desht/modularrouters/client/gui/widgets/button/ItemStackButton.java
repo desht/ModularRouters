@@ -4,10 +4,13 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemStackButton extends TexturedButton {
+    private static final XYPoint TEXTURE_XY = new XYPoint(0, 0);
+
     private final ItemStack renderStack;
     private final boolean flat;
 
@@ -41,13 +44,7 @@ public class ItemStackButton extends TexturedButton {
     }
 
     @Override
-    protected int getTextureX() {
-        return 0;
+    protected XYPoint getTextureXY() {
+        return TEXTURE_XY;
     }
-
-    @Override
-    protected int getTextureY() {
-        return 0;
-    }
-
 }

@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerSmartFilter;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -109,19 +110,16 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
     }
 
     static class LoadButton extends TexturedButton {
-        LoadButton(int x, int y, String locStr, String name,  OnPress pressable) {
+        private static final XYPoint TEXTURE_XY = new XYPoint(144, 16);
+
+        LoadButton(int x, int y, String locStr, String name, OnPress pressable) {
             super( x, y, 16, 16, pressable);
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.loadFilter", name, locStr);
         }
 
         @Override
-        protected int getTextureX() {
-            return 144;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return TEXTURE_XY;
         }
     }
 }

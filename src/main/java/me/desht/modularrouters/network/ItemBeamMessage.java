@@ -48,9 +48,10 @@ public class ItemBeamMessage {
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> ClientUtil.theClientWorld().getBlockEntity(pos1, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(te -> {
-            beams.forEach(te::addItemBeam);
-        }));
+        ctx.get().enqueueWork(() ->
+                ClientUtil.theClientWorld().getBlockEntity(pos1, ModBlockEntities.MODULAR_ROUTER.get())
+                        .ifPresent(te -> beams.forEach(te::addItemBeam))
+        );
         ctx.get().setPacketHandled(true);
     }
 

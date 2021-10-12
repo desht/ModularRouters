@@ -6,6 +6,7 @@ import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
@@ -61,7 +62,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
     protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, leftPos + 165, topPos + 19, BUTTON_XY.x, BUTTON_XY.y, 18, 18);
+        this.blit(matrixStack, leftPos + 165, topPos + 19, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);
     }
 
     @Override
@@ -123,13 +124,8 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return 144 + getState().ordinal() * 16;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 0;
+        protected XYPoint getTextureXY() {
+            return new XYPoint(144 + getState().ordinal() * 16, 0);
         }
 
         @Override
@@ -139,18 +135,16 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
     }
 
     private class SneakButton extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(112, 16);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(192, 16);
+
         SneakButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, ActivatorModuleScreen.this);
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 192 : 112;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
     }
 
@@ -165,20 +159,17 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return switch (getState()) {
+        protected XYPoint getTextureXY() {
+            int x = switch (getState()) {
                 case RANDOM -> 176;
                 case NEAREST -> 192;
                 case ROUND_ROBIN -> 160;
             };
-        }
-
-        @Override
-        protected int getTextureY() {
-            return switch (getState()) {
+            int y = switch (getState()) {
                 case RANDOM, ROUND_ROBIN -> 32;
                 case NEAREST -> 16;
             };
+            return new XYPoint(x, y);
         }
 
         @Override

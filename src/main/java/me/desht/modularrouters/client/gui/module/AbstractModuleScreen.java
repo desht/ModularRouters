@@ -42,7 +42,6 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -366,6 +365,8 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
     }
 
     private static class RegulatorTooltipButton extends TexturedButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(112, 0);
+
         RegulatorTooltipButton(int x, int y, boolean isFluid) {
             super(x, y, 16, 16, p -> {});
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, isFluid ? "modularrouters.guiText.tooltip.fluidRegulatorTooltip" : "modularrouters.guiText.tooltip.regulatorTooltip");
@@ -373,13 +374,8 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         }
 
         @Override
-        protected int getTextureX() {
-            return 112;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 0;
+        protected XYPoint getTextureXY() {
+            return TEXTURE_XY;
         }
 
         @Override
@@ -404,13 +400,8 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         }
 
         @Override
-        protected int getTextureX() {
-            return flag.ordinal() * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0);
-        }
-
-        @Override
-        protected int getTextureY() {
-            return flag.getTextureY();
+        protected XYPoint getTextureXY() {
+            return new XYPoint(flag.ordinal() * BUTTON_WIDTH * 2 + (isToggled() ? BUTTON_WIDTH : 0), flag.getTextureY());
         }
     }
 
@@ -422,19 +413,13 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
             super(DIRECTION_GROUP, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, toggled, AbstractModuleScreen.this);
 
             this.direction = dir;
-            TextComponent dirStr = new TextComponent(module.getDirectionString(dir));
-            tooltip1.add(dirStr.withStyle(ChatFormatting.GRAY));
-            tooltip2.add(dirStr.withStyle(ChatFormatting.YELLOW));
+            tooltip1.add(module.getDirectionString(dir).withStyle(ChatFormatting.GRAY));
+            tooltip2.add(module.getDirectionString(dir).withStyle(ChatFormatting.YELLOW));
         }
 
         @Override
-        protected int getTextureX() {
-            return direction.getTextureX(isToggled());
-        }
-
-        @Override
-        protected int getTextureY() {
-            return direction.getTextureY();
+        protected XYPoint getTextureXY() {
+            return new XYPoint(direction.getTextureX(isToggled()), direction.getTextureY());
         }
 
         public RelativeDirection getDirection() {
@@ -456,6 +441,9 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
     }
 
     private class MatchAllButton extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(208, 16);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(224, 16);
+
         MatchAllButton(int x, int y, boolean toggled) {
             super(x, y, 16, 16, toggled, AbstractModuleScreen.this);
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.matchAll.false");
@@ -463,13 +451,8 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 224 : 208;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
     }
 
@@ -493,18 +476,13 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         }
 
         @Override
-        protected int getTextureX() {
-            switch (getState()) {
-                case NONE: return 128;
-                case NOT_RAN: return 224;
-                case RAN: return 144;
-                default: throw new IllegalArgumentException("unknown value");
-            }
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 32;
+        protected XYPoint getTextureXY() {
+            int x = switch (getState()) {
+                case NONE -> 128;
+                case NOT_RAN -> 224;
+                case RAN -> 144;
+            };
+            return new XYPoint(x, 32);
         }
     }
 }

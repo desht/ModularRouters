@@ -4,11 +4,10 @@ import me.desht.modularrouters.integration.top.TOPCompatibility;
 import net.minecraftforge.fml.ModList;
 
 public class IntegrationHandler {
-
     public static void registerAll() {
-        IntegrationHandler.registerTOP();
+        registerTOP();
 
-        // TOP and HWYLA registration are implicit; annotation-driven
+        // JEI and HWYLA registration are implicit; annotation-driven
     }
 
     private static void registerTOP() {

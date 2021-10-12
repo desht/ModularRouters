@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
@@ -75,13 +76,8 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return 160 + getState().ordinal() * 16;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 32;
+        protected XYPoint getTextureXY() {
+            return new XYPoint(160 + getState().ordinal() * 16, 32);
         }
 
         @Override
@@ -91,6 +87,9 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
     }
 
     private class DirectionButton extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(176, 16);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(160, 16);
+
         public DirectionButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, DistributorModuleScreen.this);
 
@@ -99,17 +98,14 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 160 : 176;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
     }
 
     private static class TooltipButton extends ItemStackButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(176, 16);
+
         TooltipButton(int x, int y) {
             super(x, y, 16, 16, new ItemStack(ModItems.DISTRIBUTOR_MODULE.get()), true, p -> {});
             tooltip1.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy"));
@@ -125,13 +121,8 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return 176;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return TEXTURE_XY;
         }
     }
 }

@@ -8,6 +8,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.GuiUtil;
+import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.MRConfig;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
@@ -88,7 +89,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
         // text entry field custom background - super has already bound the correct texture
-        this.blit(matrixStack, leftPos + 146, topPos + 20, LARGE_TEXTFIELD_XY.x, LARGE_TEXTFIELD_XY.y, 35, 14);
+        this.blit(matrixStack, leftPos + 146, topPos + 20, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
 
         GuiUtil.renderItemStack(matrixStack, minecraft, routerStack, leftPos + 128, topPos + 44, "");
         GuiUtil.renderItemStack(matrixStack, minecraft, waterStack, leftPos + 168, topPos + 44, "");
@@ -161,13 +162,8 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return 160 + getState().ordinal() * 16;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return new XYPoint(160 + getState().ordinal() * 16, 16);
         }
 
         @Override
@@ -177,6 +173,9 @@ public class FluidModuleScreen extends AbstractModuleScreen {
     }
 
     private class ForceEmptyButton extends TexturedToggleButton {
+        private static final XYPoint TEXTURE_XY = new XYPoint(112, 16);
+        private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(192, 16);
+
         ForceEmptyButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, FluidModuleScreen.this);
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.false");
@@ -184,13 +183,8 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        protected int getTextureX() {
-            return isToggled() ? 192 : 112;
-        }
-
-        @Override
-        protected int getTextureY() {
-            return 16;
+        protected XYPoint getTextureXY() {
+            return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
         }
     }
 

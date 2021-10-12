@@ -231,14 +231,13 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
                     .append(itc.withStyle(ChatFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
-        list.add(new TextComponent(
-                        I18n.get("modularrouters.itemText.misc.flags") + ": " +
-                                String.join(" | ",
-                                        formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
-                                        formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
-                                        formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack))
-                                )
-                )
+        list.add(xlate("modularrouters.itemText.misc.flags")
+                .append(": ")
+                .append(String.join(" | ",
+                        formatFlag("IGNORE_DAMAGE", ModuleHelper.ignoreDamage(itemstack)),
+                        formatFlag("IGNORE_NBT", ModuleHelper.ignoreNBT(itemstack)),
+                        formatFlag("IGNORE_TAGS", ModuleHelper.ignoreTags(itemstack))
+                ))
         );
 
         boolean matchAll = ModuleHelper.isMatchAll(itemstack);
@@ -281,10 +280,14 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             int n = c.getAugmentCount(augment);
             if (n > 0) {
                 ItemStack augmentStack = new ItemStack(augment);
-                String s = augmentStack.getHoverName().getString();
-                if (n > 1) s = n + " x " + s;
-                s += ChatFormatting.AQUA + augment.getExtraInfo(n, stack);
-                toAdd.add(new TextComponent(" \u2022 " + ChatFormatting.DARK_GREEN + s));
+//                String s = augmentStack.getHoverName().getString();
+//                if (n > 1) s = n + " x " + s;
+                MutableComponent comp = new TextComponent(" \u2022 ").withStyle(ChatFormatting.DARK_GREEN);
+                comp.append(n > 1 ? new TextComponent(n + " x ").append(augmentStack.getHoverName()) : augmentStack.getHoverName().copy());
+                comp.append(augment.getExtraInfo(n, stack).copy().withStyle(ChatFormatting.AQUA));
+//                s += ChatFormatting.AQUA + augment.getExtraInfo(n, stack);
+//                toAdd.add(new TextComponent(" \u2022 " + ChatFormatting.DARK_GREEN + s));
+                toAdd.add(comp);
             }
         }
         if (!toAdd.isEmpty()) {
@@ -293,10 +296,10 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         }
     }
 
-    public String getDirectionString(RelativeDirection dir) {
+    public MutableComponent getDirectionString(RelativeDirection dir) {
         return isOmniDirectional() && dir == RelativeDirection.NONE ?
-                I18n.get("modularrouters.guiText.tooltip.allDirections") :
-                I18n.get("modularrouters.guiText.tooltip." + dir.toString());
+                xlate("modularrouters.guiText.tooltip.allDirections") :
+                xlate("modularrouters.guiText.tooltip." + dir.toString());
     }
 
     private String formatFlag(String key, boolean flag) {
