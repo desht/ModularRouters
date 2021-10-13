@@ -14,14 +14,11 @@ import java.util.List;
 public class TextFieldManager {
     private final List<TextFieldWidgetMR> textFields = Lists.newArrayList();
     private int focusedField = -1;
-    private final Screen parent;
 
-    public TextFieldManager(Screen parent) {
-        this.parent = parent;
+    public TextFieldManager() {
     }
 
     public void drawTextFields(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-//        GlStateManager._disableLighting();
         GlStateManager._disableBlend();
         textFields.forEach(tf -> tf.renderButton(matrixStack, mouseX, mouseY, partialTicks));
     }
@@ -88,25 +85,24 @@ public class TextFieldManager {
     }
 
     private void cycleFocus(int dir) {
-        int f = focusedField, c = 0;
-        int oldF = f;
+        int count = 0;
+        int newFocused = focusedField;
+        int oldFocused = newFocused;
 
+        // take care here not to end up in an infinite loop if there are no suitable fields to cycle to...
         do {
-            f += dir;
-            c++;
-            if (f < 0) {
-                f = textFields.size() - 1;
-            } else if (f >= textFields.size()) {
-                f = 0;
+            newFocused += dir;
+            if (newFocused < 0) {
+                newFocused = textFields.size() - 1;
+            } else if (newFocused >= textFields.size()) {
+                newFocused = 0;
             }
-        } while (c < textFields.size() && !textFields.get(f).isVisible() && f != focusedField);
+        } while (++count < textFields.size() && !textFields.get(newFocused).isVisible() && newFocused != focusedField);
 
-        if (f != oldF) {
-            focus(f);
-            textFields.get(f).moveCursorToEnd();
-            textFields.get(f).setHighlightPos(0);
-            if (oldF >= 0 && oldF < textFields.size()) {
-                textFields.get(oldF).setHighlightPos(textFields.get(oldF).getCursorPosition());
+        if (newFocused != oldFocused) {
+            focus(newFocused);
+            if (oldFocused >= 0 && oldFocused < textFields.size()) {
+                textFields.get(oldFocused).setHighlightPos(textFields.get(oldFocused).getCursorPosition());
             }
         }
     }

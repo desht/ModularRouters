@@ -20,7 +20,7 @@ public abstract class AbstractMRContainerScreen<T extends AbstractContainerMenu>
 
     @Override
     public TextFieldManager getOrCreateTextFieldManager() {
-        if (textFieldManager == null) textFieldManager = new TextFieldManager(this);
+        if (textFieldManager == null) textFieldManager = new TextFieldManager();
         return textFieldManager;
     }
 

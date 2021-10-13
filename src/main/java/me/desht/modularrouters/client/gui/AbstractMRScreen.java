@@ -19,7 +19,7 @@ public abstract class AbstractMRScreen extends Screen implements IManagedTextFie
     @Override
     public TextFieldManager getOrCreateTextFieldManager() {
         if (textFieldManager == null) {
-            textFieldManager = new TextFieldManager(this);
+            textFieldManager = new TextFieldManager();
         }
         return textFieldManager;
     }
