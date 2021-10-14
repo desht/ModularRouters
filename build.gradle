@@ -41,7 +41,7 @@ minecraft {
     runs {
         client {
             workingDirectory file('run')
-            property 'forge.logging.markers', 'CONFIG'
+            property 'forge.logging.markers', 'SCAN,CONFIG'
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
