@@ -11,6 +11,7 @@ import net.minecraft.item.crafting.ShapelessRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class GuideBookRecipe extends ShapelessRecipe {
@@ -20,6 +21,7 @@ public class GuideBookRecipe extends ShapelessRecipe {
     private static final String NBT_KEY = "patchouli:book";
     private static final String NBT_VAL = "modularrouters:book";
 
+
     public GuideBookRecipe(ResourceLocation idIn) {
         super(idIn, "", makeGuideBook(),
                 NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BOOK), Ingredient.of(ModItems.BLANK_MODULE.get()))
@@ -27,7 +29,11 @@ public class GuideBookRecipe extends ShapelessRecipe {
     }
 
     private static ItemStack makeGuideBook() {
-        if (GUIDE_BOOK == null) return ItemStack.EMPTY;
+        if (GUIDE_BOOK == null) {
+            ItemStack stack = new ItemStack(Items.PAPER);
+            stack.setHoverName(new StringTextComponent("Install Patchouli for the guide book!"));
+            return stack;
+        }
         ItemStack book = new ItemStack(GUIDE_BOOK);
         CompoundNBT tag = book.getOrCreateTag();
         tag.putString(NBT_KEY, NBT_VAL);
