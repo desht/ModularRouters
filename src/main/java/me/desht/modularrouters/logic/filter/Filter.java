@@ -68,6 +68,14 @@ public class Filter implements Predicate<ItemStack> {
         }
     }
 
+    public boolean isEmpty() {
+        return matchers.isEmpty();
+    }
+
+    public boolean isBlacklist() {
+        return flags.isBlacklist();
+    }
+
     public List<ItemStack> getRawStacks() {
         return rawStacks;
     }
