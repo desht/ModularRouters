@@ -257,11 +257,6 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
                 )
         );
 
-        boolean matchAll = ModuleHelper.isMatchAll(itemstack);
-        list.add(xlate("modularrouters.itemText.misc.match").append(": ")
-                .append(xlate("modularrouters.itemText.misc." + (matchAll ? "matchAll" : "matchAny"))
-                        .withStyle(TextFormatting.AQUA)));
-
         if (this instanceof IRangedModule) {
             IRangedModule rm = (IRangedModule) this;
             int curRange = rm.getCurrentRange(itemstack);
@@ -280,7 +275,7 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             ItemStack pick = ((IPickaxeUser) this).getPickaxe(itemstack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(TextFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
-                    list.add(new StringTextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(TextFormatting.AQUA)).withStyle(TextFormatting.YELLOW)));
+                    list.add(new StringTextComponent(" \u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(TextFormatting.AQUA)).withStyle(TextFormatting.YELLOW)));
         }
 
         int energy = getEnergyCost(itemstack);
@@ -325,8 +320,14 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
         return stack.getHoverName();
     }
 
-    protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
-        return xlate("modularrouters.itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist"));
+    protected IFormattableTextComponent itemListHeader(ItemStack itemstack, int filterSize) {
+        IFormattableTextComponent res = xlate("modularrouters.itemText.misc." + (ModuleHelper.isBlacklist(itemstack) ? "blacklist" : "whitelist"));
+        if (filterSize > 1) {
+            IFormattableTextComponent c = xlate("modularrouters.itemText.misc." + (ModuleHelper.isMatchAll(itemstack) ? "matchAll" : "matchAny"));
+            return res.append(" (").append(c).append(")");
+        } else {
+            return res;
+        }
     }
 
     private void addFilterInformation(ItemStack itemstack, List<ITextComponent> list) {
@@ -345,11 +346,11 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
             }
         }
         if (l2.isEmpty()) {
-            list.add(itemListHeader(itemstack).withStyle(TextFormatting.YELLOW).append(": ")
+            list.add(itemListHeader(itemstack, 0).withStyle(TextFormatting.YELLOW).append(": ")
                     .append(xlate("modularrouters.itemText.misc.noItems").withStyle(TextFormatting.AQUA, TextFormatting.ITALIC))
             );
         } else {
-            list.add(itemListHeader(itemstack).withStyle(TextFormatting.YELLOW).append(": "));
+            list.add(itemListHeader(itemstack, l2.size()).withStyle(TextFormatting.YELLOW).append(": "));
             list.addAll(l2);
         }
     }

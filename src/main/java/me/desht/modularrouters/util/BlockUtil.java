@@ -144,16 +144,18 @@ public class BlockUtil {
      * @param pos       the block position
      * @param filter    filter for the block's drops
      * @param pickaxe   the pickaxe to use to break block
+     * @param matchByBlock true to match by the block itself, false to match by the block's dropped item(s)
      * @return a drop result object
      */
-    public static BreakResult tryBreakBlock(TileEntityItemRouter router, World world, BlockPos pos, Filter filter, ItemStack pickaxe) {
+    public static BreakResult tryBreakBlock(TileEntityItemRouter router, World world, BlockPos pos, Filter filter, ItemStack pickaxe, boolean matchByBlock) {
         if (!(world instanceof ServerWorld)) return BreakResult.NOT_BROKEN;
         ServerWorld serverWorld = (ServerWorld) world;
 
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (block.isAir(state, world, pos) || state.getDestroySpeed(world, pos) < 0 || block instanceof FlowingFluidBlock) {
+        if (block.isAir(state, world, pos) || state.getDestroySpeed(world, pos) < 0 || block instanceof FlowingFluidBlock
+                || matchByBlock && !filter.test(new ItemStack(block))) {
             return BreakResult.NOT_BROKEN;
         }
 
@@ -163,9 +165,10 @@ public class BlockUtil {
             return BreakResult.NOT_BROKEN;
         }
 
-        List<ItemStack> allDrops = Block.getDrops(world.getBlockState(pos), serverWorld, pos, world.getBlockEntity(pos), fakePlayer, pickaxe);
-        Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
-        if (allDrops.isEmpty() && !filter.isEmpty() && !filter.isBlacklist()) {
+        List<ItemStack> allDrops = Block.getDrops(state, serverWorld, pos, world.getBlockEntity(pos), fakePlayer, pickaxe);
+        Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(matchByBlock ? s -> true : filter));
+
+        if (!matchByBlock && allDrops.isEmpty() && !filter.isEmpty() && !filter.isBlacklist()) {
             return BreakResult.NOT_BROKEN;
         }
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
@@ -179,6 +182,8 @@ public class BlockUtil {
                     world.addFreshEntity(xpOrb);
                 }
                 return new BreakResult(true, groups);
+            } else {
+                // buggy mods can cancel the event then go ahead any break the block;
             }
         }
         return BreakResult.NOT_BROKEN;

@@ -31,7 +31,7 @@ public class CreativeModule extends ItemModule {
     }
 
     @Override
-    protected IFormattableTextComponent itemListHeader(ItemStack itemstack) {
+    protected IFormattableTextComponent itemListHeader(ItemStack itemstack, int filterSize) {
         return xlate("modularrouters.itemText.misc.itemList");
     }
 }

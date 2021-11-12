@@ -9,6 +9,10 @@ public class ContainerModules {
         return new ContainerModule(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), windowId, inv, extra);
     }
 
+    public static ContainerModule createBreakerContainer(int windowId, PlayerInventory inv, PacketBuffer extra) {
+        return new ContainerModule(ModContainerTypes.CONTAINER_MODULE_BREAKER.get(), windowId, inv, extra);
+    }
+
     public static ContainerModule createDetectorContainer(int windowId, PlayerInventory inv, PacketBuffer extra) {
         return new ContainerModule(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), windowId, inv, extra);
     }

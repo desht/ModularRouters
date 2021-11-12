@@ -92,6 +92,7 @@ public class ClientSetup {
 
         ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), GuiModule::new);
         ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), GuiModuleActivator::new);
+        ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_BREAKER.get(), GuiModuleBreaker::new);
         ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), GuiModuleDetector::new);
         ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), GuiModuleDistributor::new);
         ScreenManager.register(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), GuiModuleExtruder2::new);
