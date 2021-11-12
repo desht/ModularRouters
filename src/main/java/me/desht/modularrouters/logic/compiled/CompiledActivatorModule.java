@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
@@ -12,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ItemEntity;
@@ -19,10 +21,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.ITag;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
@@ -31,6 +32,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
@@ -46,12 +48,15 @@ public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_SNEAKING = "Sneaking";
     public static final String NBT_ENTITY_MODE = "EntityMode";
 
+    private static Set<EntityType<?>> useBlacklist = new ObjectOpenHashSet<>();
+    private static Set<EntityType<?>> attackBlacklist = new ObjectOpenHashSet<>();
+    private static boolean needCacheRebuild = true;
+
     private final ActionType actionType;
     private final LookDirection lookDirection;
     private final EntityMode entityMode;
     private final boolean sneaking;
     private int entityIdx;
-
 
     private final Set<String> BLOCK_METHODS = ImmutableSet.of(
             "onBlockActivated", "use"
@@ -322,11 +327,45 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean passesAttackBlacklist(Entity e) {
-        return !MRConfig.Common.Module.activatorEntityAttackBlacklist.contains(e.getType().getRegistryName());
+        if (needCacheRebuild) rebuildBlacklists();
+        return !attackBlacklist.contains(e.getType());
     }
 
     private boolean passesUseBlacklist(Entity e) {
-        return !MRConfig.Common.Module.activatorEntityBlacklist.contains(e.getType().getRegistryName());
+        if (needCacheRebuild) rebuildBlacklists();
+        return !useBlacklist.contains(e.getType());
+    }
+
+    public static void clearBlacklistCache() {
+        needCacheRebuild = true;
+    }
+
+    private static void rebuildBlacklists() {
+        useBlacklist = processBlacklist(MRConfig.Common.Module.activatorEntityBlacklist, "activatorEntityBlacklist");
+        attackBlacklist = processBlacklist(MRConfig.Common.Module.activatorEntityAttackBlacklist, "activatorEntityAttackBlacklist");
+        needCacheRebuild = false;
+    }
+
+    private static Set<EntityType<?>> processBlacklist(Set<String> strings, String what) {
+        Set<EntityType<?>> res = new ObjectOpenHashSet<>();
+        for (String id : strings) {
+            if (id.startsWith("#")) {
+                ITag<EntityType<?>> tag = EntityTypeTags.getAllTags().getTag(new ResourceLocation(id.substring(1)));
+                if (tag != null) {
+                    res.addAll(tag.getValues());
+                } else {
+                    ModularRouters.LOGGER.warn(String.format("unknown entity type tag '%s' in modularrouters-common.toml / %s", id, what));
+                }
+            } else {
+                ResourceLocation rl = new ResourceLocation(id);
+                if (ForgeRegistries.ENTITIES.containsKey(rl)) {
+                    res.add(ForgeRegistries.ENTITIES.getValue(rl));
+                } else {
+                    ModularRouters.LOGGER.warn(String.format("unknown entity type '%s' in modularrouters-common.toml / %s", id, what));
+                }
+            }
+        }
+        return res;
     }
 
     private void dropExtraItems(TileEntityItemRouter router, PlayerEntity fakePlayer) {

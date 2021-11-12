@@ -6,10 +6,16 @@ import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
+import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -20,6 +26,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+
 @Mod(ModularRouters.MODID)
 public class ModularRouters {
     public static final String MODID = "modularrouters";
@@ -28,6 +37,7 @@ public class ModularRouters {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public ModularRouters() {
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ConfigHolder.init();
@@ -35,6 +45,7 @@ public class ModularRouters {
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientSetup::initEarly);
 
         modBus.addListener(this::commonSetup);
+        forgeBus.addListener(this::addReloadListeners);
 
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
@@ -56,6 +67,10 @@ public class ModularRouters {
         });
     }
 
+    private void addReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(new CacheReloadListener());
+    }
+
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class DataGenerators {
         @SubscribeEvent
@@ -70,6 +85,13 @@ public class ModularRouters {
                 generator.addProvider(new ModBlockStateProvider(generator, event.getExistingFileHelper()));
                 generator.addProvider(new ModItemModelProvider(generator, event.getExistingFileHelper()));
             }
+        }
+    }
+
+    public static class CacheReloadListener implements IFutureReloadListener {
+        @Override
+        public CompletableFuture<Void> reload(IStage stage, IResourceManager resourceManager, IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
+            return CompletableFuture.runAsync(CompiledActivatorModule::clearBlacklistCache, gameExecutor).thenCompose(stage::wait);
         }
     }
 }
