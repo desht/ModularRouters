@@ -6,6 +6,18 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.3 / 1.16.4
 
+### 7.5.2 (unreleased)
+
+* The Breaker Module can now be configured to filter by the block, rather than by dropped items (as before)
+  * By dropped items remains the default behaviour; Breaker Module GUI now has a toggle button to change this
+* There is now a separate configuration value for blacklisting entities from Activator Module attack mode
+  * Config setting is `activatorEntityAttackBlacklist`, which is in addition to existing `activatorEntityBlacklist`
+  * This blacklist is empty by default, so Activator Module *will* by default now attack villagers
+* Activator module blacklists (`activatorEntityBlacklist` and `activatorEntityAttackBlacklist`) can now also take entity tags
+  * Use a '#' prefix to indicate a tag, e.g. `#minecraft:skeletons` will match all skeletons (including Strays and Wither Skeletons)
+* Fixed Activator Module running with no item in buffer even when module has a non-empty whitelist filter
+* Fixed Breaker Module breaking blocks with no drops even when module has a non-empty whitelist filter
+  
 ### 7.5.1 (15 Aug 2021)
 
 * Fix Regulator Augment sometimes being ignored by Puller Upgrade
