@@ -4,7 +4,9 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.gui.GuiItemRouter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -22,6 +24,13 @@ public class ClientUtil {
         } else {
             return null;
         }
+    }
+
+    public static Slot getHoveredSlot() {
+        if (Minecraft.getInstance().screen instanceof ContainerScreen) {
+            return ((ContainerScreen<?>) Minecraft.getInstance().screen).getSlotUnderMouse();
+        }
+        return null;
     }
 
     public static boolean thisScreenPassesEvents() {

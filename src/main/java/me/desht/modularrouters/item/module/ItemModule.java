@@ -3,7 +3,6 @@ package me.desht.modularrouters.item.module;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.TileEntityItemRouter;
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.gui.GuiItemRouter;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.client.util.TintColor;
@@ -21,7 +20,6 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -32,7 +30,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -221,13 +218,9 @@ public abstract class ItemModule extends ItemBase implements ModItems.ITintable 
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.appendHoverText(stack, world, list, flag);
 
-        TileEntityItemRouter router = ClientUtil.getOpenItemRouter();
-        if (router != null) {
-            Slot slot = ((GuiItemRouter) Minecraft.getInstance().screen).getSlotUnderMouse();
-            if (slot instanceof ContainerItemRouter.InstalledModuleSlot) {
-                String s = ClientSetup.keybindConfigure.getKey().getName();
-                list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
-            }
+        if (ClientUtil.getHoveredSlot() instanceof ContainerItemRouter.InstalledModuleSlot) {
+            String s = ClientSetup.keybindConfigure.getKey().getName();
+            list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
         }
     }
 
