@@ -12,7 +12,6 @@ import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -22,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class VacuumModuleScreen extends AbstractModuleScreen {
     private XPTypeButton xpb;
@@ -57,9 +58,9 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            font.draw(matrixStack, I18n.get("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
+            font.draw(matrixStack, xlate("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                font.draw(matrixStack, I18n.get("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                font.draw(matrixStack, xlate("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }

@@ -16,10 +16,10 @@ import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -100,8 +100,8 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         super.renderLabels(matrixStack, mouseX, mouseY);
 
         if (forceEmptyButton.visible) {
-            String s = I18n.get("modularrouters.guiText.label.fluidForceEmpty");
-            font.draw(matrixStack, s, 165 - font.width(s), 73, 0x202040);
+            MutableComponent c = xlate("modularrouters.guiText.label.fluidForceEmpty");
+            font.draw(matrixStack, c, 165 - font.width(c), 73, 0x202040);
         }
     }
 

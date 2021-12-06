@@ -5,14 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +21,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class ActivatorModuleScreen extends AbstractModuleScreen {
     private static final ItemStack ITEM_STACK = new ItemStack(Items.FLINT_AND_STEEL);
@@ -69,12 +69,12 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
 
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040);
-        font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
         if (actionTypeButton.getState().isEntityTarget()) {
-            font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
+            font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
         } else {
-            font.draw(matrixStack, I18n.get("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
+            font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
         }
     }
 
@@ -103,7 +103,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
             super(x, y, width, height, flat, stacks, initialVal, ActivatorModuleScreen.this);
 
             for (ActionType actionType : ActionType.values()) {
-                tooltips.put(actionType, Collections.singletonList(ClientUtil.xlate(actionType.getTranslationKey())));
+                tooltips.put(actionType, Collections.singletonList(xlate(actionType.getTranslationKey())));
             }
         }
 
@@ -119,7 +119,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         LookDirectionButton(int x, int y, int width, int height, LookDirection initialVal) {
             super(x, y, width, height, initialVal, ActivatorModuleScreen.this);
             for (LookDirection dir : LookDirection.values()) {
-                tooltips.put(dir, Collections.singletonList(ClientUtil.xlate(dir.getTranslationKey())));
+                tooltips.put(dir, Collections.singletonList(xlate(dir.getTranslationKey())));
             }
         }
 
@@ -154,7 +154,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         EntityModeButton(int x, int y, int width, int height, EntityMode initialVal) {
             super(x, y, width, height, initialVal, ActivatorModuleScreen.this);
             for (EntityMode mode : EntityMode.values()) {
-                tooltips.add(Collections.singletonList(ClientUtil.xlate(mode.getTranslationKey())));
+                tooltips.add(Collections.singletonList(xlate(mode.getTranslationKey())));
             }
         }
 
