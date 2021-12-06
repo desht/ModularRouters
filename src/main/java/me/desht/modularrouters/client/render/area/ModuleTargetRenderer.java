@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -40,10 +40,10 @@ public class ModuleTargetRenderer {
     }
 
     @SubscribeEvent
-    public static void renderWorldLastEvent(RenderWorldLastEvent event) {
+    public static void renderWorldLastEvent(RenderLevelLastEvent event) {
         if (compiledPos != null) {
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            PoseStack matrixStack = event.getMatrixStack();
+            PoseStack matrixStack = event.getPoseStack();
 
             matrixStack.pushPose();
 

@@ -68,10 +68,9 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
+    public void saveAdditional(CompoundTag compound) {
         compound = super.save(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
-        return getNBTFromCamoState(compound, camouflage);
     }
 
     @Override
@@ -99,7 +98,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, -1, getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

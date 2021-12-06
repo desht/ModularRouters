@@ -34,7 +34,7 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
         }
         BlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
 
-        RenderType layer = MinecraftForgeClient.getRenderLayer();
+        RenderType layer = MinecraftForgeClient.getRenderType();
         if (layer == null) {
             layer = RenderType.solid(); // workaround for when this isn't set (digging, etc.)
         }

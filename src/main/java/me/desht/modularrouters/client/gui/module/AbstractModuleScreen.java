@@ -49,7 +49,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
@@ -170,7 +170,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
     }
 
     @SubscribeEvent
-    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+    public void onInitGui(ScreenEvent.InitScreenEvent.Post event) {
         getMenu().removeSlotListener(this);
         getMenu().addSlotListener(this);
         setupButtonVisibility();

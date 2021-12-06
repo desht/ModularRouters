@@ -36,6 +36,7 @@
             },
             {
               "function": "minecraft:set_contents",
+              "type": "modularrouters:modular_router",
               "entries": [
                 {
                   "type": "minecraft:dynamic",
@@ -51,8 +52,7 @@
         {
           "condition": "minecraft:survives_explosion"
         }
-      ],
-      "functions": []
+      ]
     }
   ]
 }

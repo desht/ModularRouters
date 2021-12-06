@@ -14,7 +14,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.crafting.StackList;
+import net.minecraftforge.common.crafting.MultiItemValue;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
@@ -105,7 +105,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     private static class PickaxeIngredient extends Ingredient {
         PickaxeIngredient() {
             // this is for the benefit of getMatchingStacks()
-            super(Stream.of(new StackList(ImmutableList.of(
+            super(Stream.of(new MultiItemValue(ImmutableList.of(
                     new ItemStack(Items.WOODEN_PICKAXE),
                     new ItemStack(Items.STONE_PICKAXE),
                     new ItemStack(Items.IRON_PICKAXE),

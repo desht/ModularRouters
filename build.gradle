@@ -20,7 +20,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'maven-publish'
 //apply plugin: 'eclipse'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 version = "${mod_version}"
 group = "me.desht"
@@ -37,7 +37,9 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}-${project.mc_version}"
+    // until we have parchment...
+    //mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}-${project.mc_version}"
+    mappings channel: "official", version: "1.18"
     runs {
         client {
             workingDirectory file('run')
@@ -112,9 +114,9 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    // temporary till TOP for 1.17.1 is on maven.tterrag.com...
-    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3430022")
-    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3430022")
+    // temporary till TOP for 1.18 is on maven.tterrag.com...
+    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3550084")
+    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3550084")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
@@ -139,7 +141,7 @@ jar {
     manifest.attributes([
             "Specification-Title": "Modular Routers",
             "Specification-Vendor": "desht",
-            "Specification-Version": "37.0", // We are version 1 of the modlauncher specification
+            "Specification-Version": "38.0", // We are version 1 of the modlauncher specification
             "Implementation-Title": project.name,
             "Implementation-Version": "${project.version}",
             "Implementation-Vendor" :"desht",

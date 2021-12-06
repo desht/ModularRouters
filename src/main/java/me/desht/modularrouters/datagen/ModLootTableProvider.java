@@ -2,6 +2,7 @@ package me.desht.modularrouters.datagen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
+import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.BlockLoot;
@@ -61,7 +62,7 @@ public class ModLootTableProvider extends LootTableProvider {
                                     .copy("Modules", "BlockEntityTag.Modules", CopyNbtFunction.MergeStrategy.REPLACE)
                                     .copy("Upgrades", "BlockEntityTag.Upgrades", CopyNbtFunction.MergeStrategy.REPLACE)
                                     .copy("Redstone", "BlockEntityTag.Redstone", CopyNbtFunction.MergeStrategy.REPLACE))
-                            .apply(SetContainerContents.setContents()
+                            .apply(SetContainerContents.setContents(ModBlockEntities.MODULAR_ROUTER.get())
                                     .withEntry(DynamicLoot.dynamicEntry(ShulkerBoxBlock.CONTENTS))));
             add(router, LootTable.lootTable().withPool(builder));
         }

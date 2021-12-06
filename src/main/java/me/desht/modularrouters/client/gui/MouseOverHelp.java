@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
@@ -122,11 +122,11 @@ public class MouseOverHelp {
     }
 
     @SubscribeEvent
-    public static void drawMouseOver(GuiContainerEvent.DrawForeground event) {
+    public static void drawMouseOver(ContainerScreenEvent.DrawForeground event) {
         // using an event ensures this is done after all subclass drawing is done
         // otherwise help region highlights can obscure text
-        if (event.getGuiContainer() instanceof IMouseOverHelpProvider provider) {
-            provider.getMouseOverHelp().onMouseOver(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
+        if (event.getContainerScreen() instanceof IMouseOverHelpProvider provider) {
+            provider.getMouseOverHelp().onMouseOver(event.getPoseStack(), event.getMouseX(), event.getMouseY());
         }
     }
 

@@ -67,7 +67,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -201,7 +201,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, -1, getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
@@ -264,9 +264,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         counter = -1;
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public void saveAdditional(CompoundTag nbt) {
         nbt = super.save(nbt);
 
         nbt.put(NBT_BUFFER, bufferHandler.serializeNBT());
@@ -286,8 +285,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             ext.put(key, ext1.get(key));
         }
         nbt.put(NBT_EXTRA, ext);
-
-        return nbt;
     }
 
     private boolean hasItems(IItemHandler handler) {

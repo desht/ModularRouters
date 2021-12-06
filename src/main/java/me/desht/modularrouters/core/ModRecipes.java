@@ -7,7 +7,7 @@ import me.desht.modularrouters.recipe.PickaxeModuleRecipe.ExtruderModule1Recipe;
 import me.desht.modularrouters.recipe.ResetModuleRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 

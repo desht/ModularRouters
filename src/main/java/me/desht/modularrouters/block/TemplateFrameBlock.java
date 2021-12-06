@@ -22,9 +22,9 @@ public class TemplateFrameBlock extends BlockCamo implements EntityBlock {
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         ICamouflageable camo = getCamoState(world, pos);
-        if (camo == null) return super.getPickBlock(state, target, world, pos, player);
+        if (camo == null) return super.getCloneItemStack(state, target, world, pos, player);
         ItemStack stack = new ItemStack(camo.getCamouflage().getBlock().asItem());
         return stack.setHoverName(stack.getHoverName().plainCopy().append("..?"));
     }
