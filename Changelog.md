@@ -4,6 +4,12 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.18
+
+### 9.0.0 (6 Dec 2021)
+
+* Just a direct port of 8.0.1 to Minecraft 1.18. No new features or functionality.
+
 ## Minecraft 1.17.1
 
 ### 8.0.1 (2 Sep 2021)
