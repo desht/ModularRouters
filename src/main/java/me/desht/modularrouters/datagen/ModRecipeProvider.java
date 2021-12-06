@@ -13,6 +13,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.Arrays;
@@ -331,7 +333,10 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         SpecialRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
-        SpecialRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get()).save(consumer, RL("guide_book").toString());
+        ConditionalRecipe.builder()
+                .addCondition(new ModLoadedCondition("patchouli"))
+                .addRecipe(c -> SpecialRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get()).save(c, RL("guide_book").toString()))
+                .build(consumer, RL("guide_book"));
     }
 
     private <T extends ItemLike & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
