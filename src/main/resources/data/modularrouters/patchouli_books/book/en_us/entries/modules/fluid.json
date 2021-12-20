@@ -1,6 +1,6 @@
 {
   "name": "Fluid Module Mk1",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:fluid_module",
   "pages": [
     {

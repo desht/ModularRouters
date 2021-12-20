@@ -1,6 +1,6 @@
 {
   "name": "Bulk Item Filter",
-  "category": "filters",
+  "category": "modularrouters:filters",
   "icon": "modularrouters:bulk_item_filter",
   "pages": [
     {

@@ -1,6 +1,6 @@
 {
   "name": "Pickup Delay Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:pickup_delay_augment",
   "pages": [
     {

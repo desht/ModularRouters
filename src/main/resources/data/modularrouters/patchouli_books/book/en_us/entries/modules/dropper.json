@@ -1,6 +1,6 @@
 {
   "name": "Dropper Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:dropper_module",
   "pages": [
     {

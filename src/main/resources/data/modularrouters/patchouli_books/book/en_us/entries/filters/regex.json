@@ -1,6 +1,6 @@
 {
   "name": "Regex Filter",
-  "category": "filters",
+  "category": "modularrouters:filters",
   "icon": "modularrouters:regex_filter",
   "pages": [
     {

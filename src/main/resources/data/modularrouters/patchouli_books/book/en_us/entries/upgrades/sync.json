@@ -1,6 +1,6 @@
 {
   "name": "Sync Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:sync_upgrade",
   "pages": [
     {

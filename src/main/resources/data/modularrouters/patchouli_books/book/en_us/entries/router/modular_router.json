@@ -1,7 +1,7 @@
 {
   "name": "Modular Router",
   "icon": "modularrouters:modular_router",
-  "category": "router",
+  "category": "modularrouters:router",
   "pages": [
     {
       "type": "text",

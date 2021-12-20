@@ -1,6 +1,6 @@
 {
   "name": "Stack Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:stack_augment",
   "pages": [
     {

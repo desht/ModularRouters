@@ -1,6 +1,6 @@
 {
   "name": "Detector Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:detector_module",
   "pages": [
     {

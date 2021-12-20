@@ -1,6 +1,6 @@
 {
   "name": "Distributor Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:distributor_module",
   "pages": [
     {

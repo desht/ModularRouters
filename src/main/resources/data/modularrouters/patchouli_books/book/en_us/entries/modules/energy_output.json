@@ -1,6 +1,6 @@
 {
   "name": "Energy Output Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:energy_output_module",
   "pages": [
     {

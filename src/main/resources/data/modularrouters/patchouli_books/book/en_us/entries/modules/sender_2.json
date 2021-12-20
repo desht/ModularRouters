@@ -1,6 +1,6 @@
 {
   "name": "Sender Module Mk2",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:sender_module_2",
   "pages": [
     {

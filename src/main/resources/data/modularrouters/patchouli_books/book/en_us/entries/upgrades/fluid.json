@@ -1,6 +1,6 @@
 {
   "name": "Fluid Transfer Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:fluid_upgrade",
   "pages": [
     {

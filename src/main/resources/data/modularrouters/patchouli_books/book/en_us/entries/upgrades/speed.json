@@ -1,6 +1,6 @@
 {
   "name": "Speed Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:speed_upgrade",
   "pages": [
     {

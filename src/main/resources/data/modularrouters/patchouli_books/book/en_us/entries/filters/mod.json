@@ -1,6 +1,6 @@
 {
   "name": "Mod Filter",
-  "category": "filters",
+  "category": "modularrouters:filters",
   "icon": "modularrouters:mod_filter",
   "pages": [
     {

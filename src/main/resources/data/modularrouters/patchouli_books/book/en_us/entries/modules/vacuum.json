@@ -1,6 +1,6 @@
 {
   "name": "Vacuum Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:vacuum_module",
   "pages": [
     {

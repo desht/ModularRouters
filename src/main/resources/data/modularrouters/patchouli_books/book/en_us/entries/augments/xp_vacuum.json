@@ -1,6 +1,6 @@
 {
   "name": "XP Vacuum Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:xp_vacuum_augment",
   "pages": [
     {

@@ -1,6 +1,6 @@
 {
   "name": "Stack Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:stack_upgrade",
   "pages": [
     {

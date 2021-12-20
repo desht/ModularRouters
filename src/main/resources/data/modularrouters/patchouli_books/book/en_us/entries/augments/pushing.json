@@ -1,6 +1,6 @@
 {
   "name": "Pushing Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:pushing_augment",
   "pages": [
     {

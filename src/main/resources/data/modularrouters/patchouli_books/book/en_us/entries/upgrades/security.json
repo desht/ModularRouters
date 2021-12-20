@@ -1,6 +1,6 @@
 {
   "name": "Security Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:security_upgrade",
   "pages": [
     {

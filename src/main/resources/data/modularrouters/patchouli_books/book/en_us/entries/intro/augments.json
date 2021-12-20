@@ -1,7 +1,7 @@
 {
   "name": "Augments",
   "icon": "modularrouters:augment_core",
-  "category": "intro",
+  "category": "modularrouters:intro",
   "pages": [
     {
       "type": "text",

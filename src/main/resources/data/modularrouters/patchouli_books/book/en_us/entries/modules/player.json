@@ -1,6 +1,6 @@
 {
   "name": "Player Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:player_module",
   "pages": [
     {

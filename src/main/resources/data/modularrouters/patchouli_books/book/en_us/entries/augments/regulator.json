@@ -1,6 +1,6 @@
 {
   "name": "Regulator Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:regulator_augment",
   "pages": [
     {

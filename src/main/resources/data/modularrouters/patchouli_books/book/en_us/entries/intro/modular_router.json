@@ -1,7 +1,7 @@
 {
   "name": "Modular Router Overview",
   "icon": "modularrouters:modular_router",
-  "category": "intro",
+  "category": "modularrouters:intro",
   "pages": [
     {
       "type": "text",

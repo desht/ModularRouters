@@ -1,6 +1,6 @@
 {
   "name": "Muffler Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:muffler_upgrade",
   "pages": [
     {

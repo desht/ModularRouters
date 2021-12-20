@@ -1,6 +1,6 @@
 {
   "name": "Camouflage Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:camouflage_upgrade",
   "pages": [
     {

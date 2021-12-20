@@ -1,6 +1,6 @@
 {
   "name": "Redstone Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:redstone_augment",
   "pages": [
     {

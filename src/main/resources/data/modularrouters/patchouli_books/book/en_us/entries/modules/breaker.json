@@ -1,6 +1,6 @@
 {
   "name": "Breaker Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:breaker_module",
   "pages": [
     {

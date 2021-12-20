@@ -1,6 +1,6 @@
 {
   "name": "Blast Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:blast_upgrade",
   "pages": [
     {

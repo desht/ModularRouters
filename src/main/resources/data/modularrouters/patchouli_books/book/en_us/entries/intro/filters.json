@@ -1,7 +1,7 @@
 {
   "name": "Smart Filters",
   "icon": "modularrouters:bulk_item_filter",
-  "category": "intro",
+  "category": "modularrouters:intro",
   "pages": [
     {
       "type": "text",

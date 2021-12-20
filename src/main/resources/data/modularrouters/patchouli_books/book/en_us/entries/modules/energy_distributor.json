@@ -1,6 +1,6 @@
 {
   "name": "Energy Distributor Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:energy_distributor_module",
   "pages": [
     {

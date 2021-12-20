@@ -1,6 +1,6 @@
 {
   "name": "Mimic Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:mimic_augment",
   "pages": [
     {

@@ -1,6 +1,6 @@
 {
   "name": "Creative Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:creative_module",
   "pages": [
     {

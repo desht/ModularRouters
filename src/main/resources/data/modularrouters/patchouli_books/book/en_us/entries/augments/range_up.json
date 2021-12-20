@@ -1,6 +1,6 @@
 {
   "name": "Range Up Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:range_up_augment",
   "pages": [
     {

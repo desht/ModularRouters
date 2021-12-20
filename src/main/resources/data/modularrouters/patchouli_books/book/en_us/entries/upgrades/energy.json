@@ -1,6 +1,6 @@
 {
   "name": "Energy Upgrade",
-  "category": "upgrades",
+  "category": "modularrouters:upgrades",
   "icon": "modularrouters:energy_upgrade",
   "pages": [
     {

@@ -1,7 +1,7 @@
 {
   "name": "Termination",
   "icon": "minecraft:barrier",
-  "category": "router",
+  "category": "modularrouters:router",
   "pages": [
     {
       "type": "text",

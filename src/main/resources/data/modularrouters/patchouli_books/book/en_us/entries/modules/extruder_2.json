@@ -1,6 +1,6 @@
 {
   "name": "Extruder Module Mk2",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:extruder_module_2",
   "pages": [
     {

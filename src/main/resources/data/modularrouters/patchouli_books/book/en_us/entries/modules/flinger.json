@@ -1,6 +1,6 @@
 {
   "name": "Flinger Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:flinger_module",
   "pages": [
     {

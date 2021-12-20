@@ -1,6 +1,6 @@
 {
   "name": "Puller Module Mk2",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:puller_module_2",
   "pages": [
     {

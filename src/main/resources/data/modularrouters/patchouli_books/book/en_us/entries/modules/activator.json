@@ -1,6 +1,6 @@
 {
   "name": "Activator Module",
-  "category": "modules",
+  "category": "modularrouters:modules",
   "icon": "modularrouters:activator_module",
   "pages": [
     {

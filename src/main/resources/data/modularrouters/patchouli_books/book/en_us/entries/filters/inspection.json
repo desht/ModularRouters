@@ -1,6 +1,6 @@
 {
   "name": "Inspection Filter",
-  "category": "filters",
+  "category": "modularrouters:filters",
   "icon": "modularrouters:inspection_filter",
   "pages": [
     {

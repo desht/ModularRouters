@@ -1,6 +1,6 @@
 {
   "name": "Fast Pickup Augment",
-  "category": "augments",
+  "category": "modularrouters:augments",
   "icon": "modularrouters:fast_pickup_augment",
   "pages": [
     {
