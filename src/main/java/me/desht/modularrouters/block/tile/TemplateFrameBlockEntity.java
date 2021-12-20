@@ -128,8 +128,8 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public void setCamouflage(ItemStack itemStack, Direction facing, Direction routerFacing) {
-        if (itemStack.getItem() instanceof BlockItem) {
-            camouflage = ((BlockItem) itemStack.getItem()).getBlock().defaultBlockState();
+        if (itemStack.getItem() instanceof BlockItem b) {
+            camouflage = b.getBlock().defaultBlockState();
             if (camouflage.hasProperty(BlockStateProperties.AXIS)) {
                 camouflage = camouflage.setValue(BlockStateProperties.AXIS, facing.getAxis());
             } else if (camouflage.hasProperty(BlockStateProperties.FACING)) {

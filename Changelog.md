@@ -6,6 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.18
 
+### 9.0.1 (20 Dec 2021)
+
+* Now building with Forge 39.x (for MC 1.18.1)
+  * Note that previous 9.0.0 release does run on MC 1.18.1, but Patchouli manual is broken in that release
+  * Patchouli book now works again
+
 ### 9.0.0 (6 Dec 2021)
 
 * Just a direct port of 8.0.1 to Minecraft 1.18. No new features or functionality.
