@@ -4,13 +4,15 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
-## Minecraft 1.18
+## Minecraft 1.18.1
 
 ### 9.0.1 (20 Dec 2021)
 
 * Now building with Forge 39.x (for MC 1.18.1)
-  * Note that previous 9.0.0 release does run on MC 1.18.1, but Patchouli manual is broken in that release
-  * Patchouli book now works again
+  * Note that previous 9.0.0 release for MC 1.18 will run on MC 1.18.1, but Patchouli support is broken in that release
+  * Patchouli book now works properly
+
+## Minecraft 1.18
 
 ### 9.0.0 (6 Dec 2021)
 
