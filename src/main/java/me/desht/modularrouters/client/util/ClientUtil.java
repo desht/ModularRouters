@@ -5,9 +5,11 @@ import com.mojang.math.Matrix4f;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -42,5 +44,12 @@ public class ClientUtil {
 
     public static VertexConsumer posF(VertexConsumer builder, Matrix4f posMat, Vec3 vec) {
         return builder.vertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z);
+    }
+
+    public static Slot getHoveredSlot() {
+        if (Minecraft.getInstance().screen instanceof ContainerScreen cs) {
+            return cs.getSlotUnderMouse();
+        }
+        return null;
     }
 }

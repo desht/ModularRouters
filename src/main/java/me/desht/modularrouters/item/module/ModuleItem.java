@@ -206,13 +206,10 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, world, list, flag);
 
-        ClientUtil.getOpenItemRouter().ifPresent(router -> {
-            Slot slot = ((ModularRouterScreen) Minecraft.getInstance().screen).getSlotUnderMouse();
-            if (slot instanceof ContainerModularRouter.InstalledModuleSlot) {
-                String s = ClientSetup.keybindConfigure.getKey().getName();
-                list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
-            }
-        });
+        if (ClientUtil.getHoveredSlot() instanceof ContainerModularRouter.InstalledModuleSlot) {
+            String s = ClientSetup.keybindConfigure.getKey().getName();
+            list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
+        }
     }
 
     @Override
