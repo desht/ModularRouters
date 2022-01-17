@@ -398,11 +398,11 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
 
         boolean powered = pulsed || getRedstonePower() > 0;
 
+        if (prevCanEmit || canEmit) {
+            Arrays.fill(newRedstoneLevels, 0);
+            Arrays.fill(newSignalType, SignalType.NONE);
+        }
         if (redstoneBehaviour.shouldRun(powered, pulsed)) {
-            if (prevCanEmit || canEmit) {
-                Arrays.fill(newRedstoneLevels, 0);
-                Arrays.fill(newSignalType, SignalType.NONE);
-            }
             for (CompiledIndexedModule cim : compiledModules) {
                 CompiledModule cm = cim.compiledModule;
                 if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed))
@@ -425,9 +425,9 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
                         new ItemBeamMessage(this, pendingBeams));
                 pendingBeams.clear();
             }
-            if (prevCanEmit || canEmit) {
-                handleRedstoneEmission();
-            }
+        }
+        if (prevCanEmit || canEmit) {
+            handleRedstoneEmission();
         }
         setActive(newActive);
         prevCanEmit = canEmit;
@@ -443,11 +443,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     public void setRedstoneBehaviour(RouterRedstoneBehaviour redstoneBehaviour) {
-        this.redstoneBehaviour = redstoneBehaviour;
-        if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
-            lastPower = getRedstonePower();
+        if (this.redstoneBehaviour != redstoneBehaviour) {
+            this.redstoneBehaviour = redstoneBehaviour;
+            if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE) {
+                lastPower = getRedstonePower();
+            }
+            calculateIncomingRedstonePower(worldPosition);
+            handleSync(false);
         }
-        handleSync(false);
     }
 
     private void setActive(boolean newActive) {
@@ -704,7 +707,7 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
             // -1 means the block shouldn't have any special redstone handling
             return -1;
         }
-        int i = facing.ordinal();
+        int i = facing.get3DDataValue();
         if (strong) {
             return signalType[i] == SignalType.STRONG ? redstoneLevels[i] : 0;
         } else {
@@ -817,6 +820,10 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
         // currently being extruded on
         int power = 0;
         for (Direction facing : Direction.values()) {
+            if (getRedstoneLevel(facing, false) > 0) {
+                // ignore signal on any side we ourselves are emitting on
+                continue;
+            }
             if (getExtData().getInt(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing) > 0) {
                 // ignore signal from any side we're extruding on (don't let placed redstone emitters lock up the router)
                 continue;
