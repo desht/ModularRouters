@@ -1,7 +1,6 @@
-
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
         mavenCentral()
     }
     dependencies {
@@ -9,45 +8,29 @@ buildscript {
     }
 }
 
-plugins {
-    id 'java'
-    id 'eclipse'
-    id 'idea'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-}
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
-//ext.configFile = file('gradle.properties')
-//ext.config = parseConfig(configFile)
-
-version = ${project.mc_version} + "-" + ${mod_version}
-group = "me.desht"
-archivesBaseName = 'modular-routers'
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
-
+version = "${project.mc_version}-${mod_version}"
 if (System.getenv().BUILD_NUMBER != null) {
     version += "-${System.getenv().BUILD_NUMBER}"
 } else {
     version += "-CUSTOM"
 }
+group = "me.desht"
+archivesBaseName = 'modular-routers'
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
     mappings channel: 'official', version: ${project.mc_version}
-    //accessTransformer = file('my_at.cfg')
     runs {
         client {
             // recommended logging data for a userdev environment
-//            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.markers', 'CONFIG'
             // recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-//            property 'mixin.env.disableRefMap', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             ideaModule "${project.name}.main"
@@ -92,8 +75,10 @@ minecraft {
     }
 }
 
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 // All jar files from this folder will be added automatically as runtime mod dependencies
-def extraModsDir = "extra-mods-${mc_version}"
+String extraModsDir = "extra-mods-${mc_version}"
 
 repositories {
     mavenCentral()
@@ -117,17 +102,12 @@ repositories {
         name = 'Patchouli'
         url = 'https://maven.blamejared.com/'
     }
-//    maven {
-//        name = 'HWYLA'
-//        url = 'http://www.cursemaven.com/'
-//    }
     maven {
         url "https://www.cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
-
 }
 
 dependencies {
@@ -153,14 +133,6 @@ dependencies {
         runtimeOnly fg.deobf("extra-mods:$artifactId:$version")
     }
 }
-
-//static def parseConfig(File config) {
-//    config.withReader {
-//        def prop = new Properties()
-//        prop.load(it)
-//        return (new ConfigSlurper().parse(prop))
-//    }
-//}
 
 jar {
     manifest {
