@@ -1,6 +1,8 @@
 package me.desht.modularrouters.config;
 
+import com.google.common.collect.ImmutableSet;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
@@ -49,12 +51,9 @@ public class ConfigHelper {
         MRConfig.Common.Module.extruderSound = common.module.extruderSound.get();
         MRConfig.Common.Module.extruderPushEntities = common.module.extruderPushEntities.get();
         MRConfig.Common.Module.breakerHarvestLevelLimit = common.module.breakerHarvestLevelLimit.get();
-        MRConfig.Common.Module.activatorEntityBlacklist = common.module.activatorEntityBlacklist.get().stream()
-                .map(resourceName -> new ResourceLocation(resourceName.toLowerCase(Locale.ROOT)))
-                .collect(Collectors.toSet());
-        MRConfig.Common.Module.activatorEntityAttackBlacklist = common.module.activatorEntityAttackBlacklist.get().stream()
-                .map(resourceName -> new ResourceLocation(resourceName.toLowerCase(Locale.ROOT)))
-                .collect(Collectors.toSet());
+        MRConfig.Common.Module.activatorEntityBlacklist = ImmutableSet.copyOf(common.module.activatorEntityBlacklist.get());
+        MRConfig.Common.Module.activatorEntityAttackBlacklist = ImmutableSet.copyOf(common.module.activatorEntityAttackBlacklist.get());
+        CompiledActivatorModule.clearBlacklistCache();
 
         MRConfig.Common.Router.baseTickRate = common.router.baseTickRate.get();
         MRConfig.Common.Router.ticksPerUpgrade = common.router.ticksPerUpgrade.get();

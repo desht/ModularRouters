@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
@@ -13,9 +14,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -33,6 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -43,6 +51,10 @@ public class CompiledActivatorModule extends CompiledModule {
     public static final String NBT_LOOK_DIRECTION = "LookDirection";
     public static final String NBT_SNEAKING = "Sneaking";
     public static final String NBT_ENTITY_MODE = "EntityMode";
+
+    private static Set<EntityType<?>> useBlacklist = new ObjectOpenHashSet<>();
+    private static Set<EntityType<?>> attackBlacklist = new ObjectOpenHashSet<>();
+    private static boolean needCacheRebuild = true;
 
     private final ActionType actionType;
     private final LookDirection lookDirection;
@@ -303,11 +315,45 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean passesAttackBlacklist(Entity e) {
-        return !MRConfig.Common.Module.activatorEntityAttackBlacklist.contains(e.getType().getRegistryName());
+        if (needCacheRebuild) rebuildBlacklists();
+        return !attackBlacklist.contains(e.getType());
     }
 
     private boolean passesUseBlacklist(Entity e) {
-        return !MRConfig.Common.Module.activatorEntityBlacklist.contains(e.getType().getRegistryName());
+        if (needCacheRebuild) rebuildBlacklists();
+        return !useBlacklist.contains(e.getType());
+    }
+
+    public static void clearBlacklistCache() {
+        needCacheRebuild = true;
+    }
+
+    private static void rebuildBlacklists() {
+        useBlacklist = processBlacklist(MRConfig.Common.Module.activatorEntityBlacklist, "activatorEntityBlacklist");
+        attackBlacklist = processBlacklist(MRConfig.Common.Module.activatorEntityAttackBlacklist, "activatorEntityAttackBlacklist");
+        needCacheRebuild = false;
+    }
+
+    private static Set<EntityType<?>> processBlacklist(Set<String> strings, String what) {
+        Set<EntityType<?>> res = new ObjectOpenHashSet<>();
+        for (String id : strings) {
+            if (id.startsWith("#")) {
+                Tag<EntityType<?>> tag = EntityTypeTags.getAllTags().getTag(new ResourceLocation(id.substring(1)));
+                if (tag != null) {
+                    res.addAll(tag.getValues());
+                } else {
+                    ModularRouters.LOGGER.warn(String.format("unknown entity type tag '%s' in modularrouters-common.toml / %s", id, what));
+                }
+            } else {
+                ResourceLocation rl = new ResourceLocation(id);
+                if (ForgeRegistries.ENTITIES.containsKey(rl)) {
+                    res.add(ForgeRegistries.ENTITIES.getValue(rl));
+                } else {
+                    ModularRouters.LOGGER.warn(String.format("unknown entity type '%s' in modularrouters-common.toml / %s", id, what));
+                }
+            }
+        }
+        return res;
     }
 
     private void dropExtraItems(ModularRouterBlockEntity router, Player fakePlayer) {
@@ -351,5 +397,12 @@ public class CompiledActivatorModule extends CompiledModule {
     @Override
     public boolean careAboutItemAttributes() {
         return actionType == ActionType.ATTACK_ENTITY;
+    }
+
+    public static class ReloadListener implements ResourceManagerReloadListener {
+        @Override
+        public void onResourceManagerReload(ResourceManager resourceManager) {
+            clearBlacklistCache();
+        }
     }
 }
