@@ -146,7 +146,8 @@ public class CompiledActivatorModule extends CompiledModule {
         if (itemBlacklist.contains(stack.getItem())) return false;
 
         // we'll allow an empty stack, since right-clicking with an empty hand is a valid operation
-        if (!stack.isEmpty() && !getFilter().test(stack)) {
+        // - but only if there's an empty or blacklist filter
+        if (!stack.isEmpty() && !getFilter().test(stack) || stack.isEmpty() && !getFilter().isEmpty() && !getFilter().isBlacklist()) {
             return false;
         }
 
