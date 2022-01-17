@@ -4,12 +4,12 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
-## Minecraft 1.16.3 / 1.16.4
+## Minecraft 1.16.5
 
-### 7.5.2 (unreleased)
+### 7.5.2 (17 Jan 2022)
 
-* The Breaker Module can now be configured to filter by the block, rather than by dropped items (as before)
-  * By dropped items remains the default behaviour; Breaker Module GUI now has a toggle button to change this
+* The Breaker Module can now be configured to filter by the block, rather than by dropped items
+  * By dropped items remains the default behaviour; the Breaker Module GUI now has a toggle button to change this
 * There is now a separate configuration value for blacklisting entities from Activator Module attack mode
   * Config setting is `activatorEntityAttackBlacklist`, which is in addition to existing `activatorEntityBlacklist`
   * This blacklist is empty by default, so Activator Module *will* by default now attack villagers
@@ -17,6 +17,10 @@ Changes are in reverse chronological order; newest changes at the top.
   * Use a '#' prefix to indicate a tag, e.g. `#minecraft:skeletons` will match all skeletons (including Strays and Wither Skeletons)
 * Fixed Activator Module running with no item in buffer even when module has a non-empty whitelist filter
 * Fixed Breaker Module breaking blocks with no drops even when module has a non-empty whitelist filter
+* Fixed Detector Module always emitting redstone, even if router is not in "redstone always" mode
+  * One issue to be aware of: if a Detector is already emitting, switching router into "Redstone high" mode won't stop it running, but removing and replacing the Detector module will work around this.
+
+## Minecraft 1.16.3 / 1.16.4
   
 ### 7.5.1 (15 Aug 2021)
 
