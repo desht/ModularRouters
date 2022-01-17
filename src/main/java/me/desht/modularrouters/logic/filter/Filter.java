@@ -71,6 +71,15 @@ public class Filter implements Predicate<ItemStack> {
         return rawStacks;
     }
 
+
+    public boolean isEmpty() {
+        return matchers.isEmpty();
+    }
+
+    public boolean isBlacklist() {
+        return flags.isBlacklist();
+    }
+
     /**
      * Check if this filter would allow the given item stack through.  Will always return false if the item
      * stack is empty.

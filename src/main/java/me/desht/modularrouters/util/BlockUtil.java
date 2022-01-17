@@ -142,7 +142,7 @@ public class BlockUtil {
     /**
      * Try to break the block at the given position. If the block has any drops, but no drops pass the filter, then the
      * block will not be broken. Liquid, air & unbreakable blocks (bedrock etc.) will never be broken.  Drops will be
-     * available via the BreakResult object, organised by whether or not they passed the filter.
+     * available via the BreakResult object, organised by whether they passed the filter.
      *
      * @param world     the world
      * @param pos       the block position
@@ -150,13 +150,14 @@ public class BlockUtil {
      * @param pickaxe   the pickaxe to use to break block
      * @return a drop result object
      */
-    public static BreakResult tryBreakBlock(ModularRouterBlockEntity router, Level world, BlockPos pos, Filter filter, ItemStack pickaxe) {
+    public static BreakResult tryBreakBlock(ModularRouterBlockEntity router, Level world, BlockPos pos, Filter filter, ItemStack pickaxe, boolean matchByBlock) {
         if (!(world instanceof ServerLevel serverWorld)) return BreakResult.NOT_BROKEN;
 
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (state.isAir() || state.getDestroySpeed(world, pos) < 0 || block instanceof LiquidBlock) {
+        if (state.isAir() || state.getDestroySpeed(world, pos) < 0 || block instanceof LiquidBlock
+                || matchByBlock && !filter.test(new ItemStack(block))) {
             return BreakResult.NOT_BROKEN;
         }
 
@@ -167,7 +168,12 @@ public class BlockUtil {
         }
 
         List<ItemStack> allDrops = Block.getDrops(world.getBlockState(pos), serverWorld, pos, world.getBlockEntity(pos), fakePlayer, pickaxe);
-        Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(filter));
+        Map<Boolean, List<ItemStack>> groups = allDrops.stream().collect(Collectors.partitioningBy(matchByBlock ? s -> true : filter));
+
+        if (!matchByBlock && allDrops.isEmpty() && !filter.isEmpty() && !filter.isBlacklist()) {
+            return BreakResult.NOT_BROKEN;
+        }
+
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);

@@ -96,6 +96,7 @@ public class ClientSetup {
 
         MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), AbstractModuleScreen::new);
         MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), ActivatorModuleScreen::new);
+        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_BREAKER.get(), BreakerModuleScreen::new);
         MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), DetectorModuleScreen::new);
         MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), DistributorModuleScreen::new);
         MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), ExtruderModule2Screen::new);

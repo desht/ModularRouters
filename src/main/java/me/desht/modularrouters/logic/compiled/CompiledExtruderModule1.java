@@ -77,7 +77,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
                 router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 return false;
             }
-            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(router, world, breakPos, getFilter(), pickaxe);
+            BlockUtil.BreakResult dropResult = BlockUtil.tryBreakBlock(router, world, breakPos, getFilter(), pickaxe, false);
             if (dropResult.isBlockBroken()) {
                 router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());

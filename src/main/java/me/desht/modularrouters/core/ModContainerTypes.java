@@ -20,6 +20,8 @@ public class ModContainerTypes {
             = register("module_basic", ContainerModule::new);
     public static final RegistryObject<MenuType<ContainerModule>> CONTAINER_MODULE_ACTIVATOR
             = register("module_activator", ContainerModules::createActivatorContainer);
+    public static final RegistryObject<MenuType<ContainerModule>> CONTAINER_MODULE_BREAKER
+            = register("module_breaker", ContainerModules::createBreakerContainer);
     public static final RegistryObject<MenuType<ContainerModule>> CONTAINER_MODULE_DETECTOR
             = register("module_detector", ContainerModules::createDetectorContainer);
     public static final RegistryObject<MenuType<ContainerModule>> CONTAINER_MODULE_DISTRIBUTOR
