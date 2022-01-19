@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.5
 
+### 7.5.3 (unreleased)
+
+* Fixed graphical glitch in GUI energy widget (only visible with tweaked-up energy values in mod config)
+
 ### 7.5.2 (17 Jan 2022)
 
 * The Breaker Module can now be configured to filter by the block, rather than by dropped items
@@ -19,7 +23,6 @@ Changes are in reverse chronological order; newest changes at the top.
 * Fixed Breaker Module breaking blocks with no drops even when module has a non-empty whitelist filter
 * Fixed Detector Module always emitting redstone, even if router is not in "redstone always" mode
   * One issue to be aware of: if a Detector is already emitting, switching router into "Redstone high" mode won't stop it running, but removing and replacing the Detector module will work around this.
-* Fixed graphical glitch in GUI energy widget (only visible with tweaked-up energy values in mod config)
 
 ## Minecraft 1.16.3 / 1.16.4
   
