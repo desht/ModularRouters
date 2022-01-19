@@ -42,7 +42,8 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
         if (storage.getMaxEnergyStored() <= 0) {
             return height;
         }
-        return storage.getEnergyStored() * height / storage.getMaxEnergyStored();
+        // avoid integer overflow here
+        return (int)((long)storage.getEnergyStored() * height / storage.getMaxEnergyStored());
     }
 
     @Override
