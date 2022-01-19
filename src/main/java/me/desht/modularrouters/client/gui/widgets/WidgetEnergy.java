@@ -37,11 +37,12 @@ public class WidgetEnergy extends Widget implements ITooltipButton {
         AbstractGui.blit(matrixStack, x + 1, y + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
     }
 
-    private int getScaled(){
+    private int getScaled() {
         if (storage.getMaxEnergyStored() <= 0) {
             return height;
         }
-        return storage.getEnergyStored() * height / storage.getMaxEnergyStored();
+        // avoid integer overflow here
+        return (int)((long)storage.getEnergyStored() * height / storage.getMaxEnergyStored());
     }
 
     @Override
