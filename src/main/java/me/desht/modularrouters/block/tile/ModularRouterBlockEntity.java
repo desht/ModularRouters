@@ -266,7 +266,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
-        nbt = super.save(nbt);
+        super.saveAdditional(nbt);
 
         nbt.put(NBT_BUFFER, bufferHandler.serializeNBT());
         if (hasItems(modulesHandler)) nbt.put(NBT_MODULES, modulesHandler.serializeNBT());
