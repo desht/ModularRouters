@@ -69,7 +69,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public void saveAdditional(CompoundTag compound) {
-        compound = super.save(compound);
+        super.saveAdditional(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
     }
 
