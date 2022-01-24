@@ -6,12 +6,13 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.18.1
 
-### 9.0.2 (unreleased)
+### 9.0.2 (24 Jan 2022)
 
-This release consists mainly of fixes and improvements to the 1.16.5 branch, forward ported:
-
-* The Breaker Module can now be configured to filter by the block, rather than by dropped items
-* By dropped items remains the default behaviour; the Breaker Module GUI now has a toggle button to change this
+* This release adds compatibility with most recent 1.18.1 Forge builds (39.0.59 at time of writing)
+  * Forge 39.0.55 minimum is required
+* Also includes some fixes and improvements forward ported from the last 1.16.5 release
+* The Breaker Module can now be configured to filter by block, rather than by dropped items
+  * By dropped items remains the default behaviour; the Breaker Module GUI now has a toggle button to change this
 * There is now a separate configuration value for blacklisting entities from Activator Module attack mode
   * Config setting is `activatorEntityAttackBlacklist`, which is in addition to existing `activatorEntityBlacklist`
   * This blacklist is empty by default, so Activator Module *will* by default now attack villagers
@@ -21,7 +22,7 @@ This release consists mainly of fixes and improvements to the 1.16.5 branch, for
 * Fixed Breaker Module breaking blocks with no drops even when module has a non-empty whitelist filter
 * Fixed Detector Module always emitting redstone, even if router is not in "redstone always" mode
   * One issue to be aware of: if a Detector is already emitting, switching router into "Redstone high" mode won't stop it running, but removing and replacing the Detector module will work around this.
-* Fixed graphical glitch in GUI energy widget (only visible with tweaked-up energy values in mod config)
+* Fixed graphical glitch in GUI energy widget related to integer arithmetic overflow (only visible with boosted energy values in mod config)
 
 ### 9.0.1 (20 Dec 2021)
 
