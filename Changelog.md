@@ -6,8 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.5
 
-### 7.5.3 (unreleased)
+### 7.5.3 (25 Jan 2022)
 
+* Fixed a fluid dupe issue
 * Fixed graphical glitch in GUI energy widget (only visible with tweaked-up energy values in mod config)
 
 ### 7.5.2 (17 Jan 2022)
