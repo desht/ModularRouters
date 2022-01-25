@@ -59,7 +59,8 @@ public class BufferHandler extends ItemStackHandler {
     }
 
     public LazyOptional<IFluidHandlerItem> getFluidItemCapability() {
-        return getStackInSlot(0).getCapability(FLUID_HANDLER_ITEM_CAPABILITY);
+        ItemStack stack = getStackInSlot(0);
+        return stack.getCount() == 1 ? getStackInSlot(0).getCapability(FLUID_HANDLER_ITEM_CAPABILITY) : LazyOptional.empty();
     }
 
     public LazyOptional<IFluidHandler> getFluidCapability() {
