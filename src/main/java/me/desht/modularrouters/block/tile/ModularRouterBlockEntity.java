@@ -470,7 +470,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return camouflage;
     }
 
-    @Override
     public void setCamouflage(BlockState newCamouflage) {
         if (newCamouflage != camouflage) {
             this.camouflage = newCamouflage;

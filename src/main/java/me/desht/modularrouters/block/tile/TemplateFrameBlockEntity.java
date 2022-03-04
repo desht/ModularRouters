@@ -36,7 +36,6 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
         return camouflage;
     }
 
-    @Override
     public void setCamouflage(BlockState camouflage) {
         this.camouflage = camouflage;
         requestModelDataUpdate();
@@ -55,7 +54,6 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
         return extendedMimic;
     }
 
-    @Override
     public void setExtendedMimic(boolean mimic) {
         this.extendedMimic = mimic;
     }
