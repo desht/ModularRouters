@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.util.BlockUtil;
@@ -51,7 +51,7 @@ public class CompiledBreakerModule extends CompiledModule {
             BlockUtil.BreakResult breakResult = BlockUtil.tryBreakBlock(router, world, pos, getFilter(), pickaxe, matchType == MatchType.BLOCK);
             if (breakResult.isBlockBroken()) {
                 breakResult.processDrops(world, pos, router.getBuffer());
-                if (MRConfig.Common.Module.breakerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
+                if (ConfigHolder.common.module.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
                     world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
                 }
                 return true;

@@ -7,7 +7,7 @@ import com.mojang.math.Vector3f;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
@@ -46,7 +46,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
             Vec3 startPos = beam.getStart(routerVec);
             Vec3 endPos = beam.getEnd(routerVec);
             float progress = beam.getProgress(partialTicks);
-            if (MRConfig.Client.Misc.renderFlyingItems) {
+            if (ConfigHolder.client.misc.renderFlyingItems.get()) {
                 renderFlyingItem(beam, matrixStack, buffer, progress, startPos, endPos);
             }
             renderBeamLine(beam, matrixStack, buffer, progress, startPos, endPos);
@@ -55,7 +55,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         matrixStack.popPose();
 
         Player player = Minecraft.getInstance().player;
-        if (MRConfig.Client.Misc.heldRouterShowsCamoRouters
+        if (ConfigHolder.client.misc.heldRouterShowsCamoRouters.get()
                 && te.getCamouflage() != null
                 && playerHoldingRouter(player)
                 && Vec3.atCenterOf(te.getBlockPos()).distanceToSqr(player.position()) < 256) {

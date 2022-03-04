@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ public class CompiledPlacerModule extends CompiledModule {
         BlockPos pos = getTarget().gPos.pos();
         BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, world, pos, getFacing());
         if (newState != null) {
-            if (MRConfig.Common.Module.placerParticles && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
+            if (ConfigHolder.common.module.placerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
                 world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(newState));
             }
             router.extractBuffer(1);

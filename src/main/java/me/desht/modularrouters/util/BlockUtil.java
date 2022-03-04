@@ -1,7 +1,7 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -163,7 +163,7 @@ public class BlockUtil {
 
         FakePlayer fakePlayer = router.getFakePlayer();
         fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, pickaxe);
-        if (MRConfig.Common.Module.breakerHarvestLevelLimit && !ForgeHooks.isCorrectToolForDrops(state, fakePlayer)) {
+        if (ConfigHolder.common.module.breakerHarvestLevelLimit.get() && !ForgeHooks.isCorrectToolForDrops(state, fakePlayer)) {
             return BreakResult.NOT_BROKEN;
         }
 
@@ -179,7 +179,7 @@ public class BlockUtil {
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 world.removeBlock(pos, false);
-                if (MRConfig.Common.Router.blockBreakXPDrops && breakEvent.getExpToDrop() > 0) {
+                if (ConfigHolder.common.router.blockBreakXPDrops.get() && breakEvent.getExpToDrop() > 0) {
                     Vec3 vec = Vec3.atCenterOf(pos);
                     ExperienceOrb xpOrb = new ExperienceOrb(world, vec.x, vec.y, vec.z, breakEvent.getExpToDrop());
                     world.addFreshEntity(xpOrb);

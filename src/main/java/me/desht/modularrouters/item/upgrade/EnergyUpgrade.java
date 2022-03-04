@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,8 +22,8 @@ public class EnergyUpgrade extends UpgradeItem {
     @Override
     protected Object[] getExtraUsageParams() {
         return new Object[] {
-                commify(MRConfig.Common.Router.fePerEnergyUpgrade),
-                commify(MRConfig.Common.Router.feXferPerEnergyUpgrade)
+                commify(ConfigHolder.common.router.fePerEnergyUpgrade.get()),
+                commify(ConfigHolder.common.router.feXferPerEnergyUpgrade.get())
         };
     }
 

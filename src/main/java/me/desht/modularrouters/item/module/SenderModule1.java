@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule1;
 import net.minecraft.world.item.ItemStack;
@@ -16,12 +16,12 @@ public class SenderModule1 extends ModuleItem implements IRangedModule {
 
     @Override
     public int getBaseRange() {
-        return MRConfig.Common.Module.sender1BaseRange;
+        return ConfigHolder.common.module.sender1BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return MRConfig.Common.Module.sender1MaxRange;
+        return ConfigHolder.common.module.sender1MaxRange.get();
     }
 
     @Override
@@ -31,6 +31,6 @@ public class SenderModule1 extends ModuleItem implements IRangedModule {
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.senderModule1EnergyCost;
+        return ConfigHolder.common.energyCosts.senderModule1EnergyCost.get();
     }
 }

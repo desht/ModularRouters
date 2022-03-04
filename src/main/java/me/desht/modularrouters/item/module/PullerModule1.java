@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledPullerModule1;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +21,6 @@ public class PullerModule1 extends ModuleItem {
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.pullerModule1EnergyCost;
+        return ConfigHolder.common.energyCosts.pullerModule1EnergyCost.get();
     }
 }

@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class FluidUpgrade extends UpgradeItem {
     @Override
     public Object[] getExtraUsageParams() {
-        return new Object[] { MRConfig.Common.Router.mBperFluidUpgade };
+        return new Object[] { ConfigHolder.common.router.mBperFluidUpgade.get() };
     }
 
     @Override

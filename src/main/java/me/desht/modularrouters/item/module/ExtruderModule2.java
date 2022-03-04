@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerExtruder2Module;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.container.ContainerModule;
@@ -57,12 +57,12 @@ public class ExtruderModule2 extends ModuleItem implements IRangedModule {
 
     @Override
     public int getBaseRange() {
-        return MRConfig.Common.Module.extruder2BaseRange;
+        return ConfigHolder.common.module.extruder2BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return MRConfig.Common.Module.extruder2MaxRange;
+        return ConfigHolder.common.module.extruder2MaxRange.get();
     }
 
     @Override
@@ -72,6 +72,6 @@ public class ExtruderModule2 extends ModuleItem implements IRangedModule {
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.extruderModule2EnergyCost;
+        return ConfigHolder.common.energyCosts.extruderModule2EnergyCost.get();
     }
 }

@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -27,17 +27,17 @@ public class ExtruderModule1 extends ModuleItem implements IRangedModule, IPicka
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.extruderModule1EnergyCost;
+        return ConfigHolder.common.energyCosts.extruderModule1EnergyCost.get();
     }
 
     @Override
     public int getBaseRange() {
-        return MRConfig.Common.Module.extruder1BaseRange;
+        return ConfigHolder.common.module.extruder1BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return MRConfig.Common.Module.extruder1MaxRange;
+        return ConfigHolder.common.module.extruder1MaxRange.get();
     }
 
     @Override

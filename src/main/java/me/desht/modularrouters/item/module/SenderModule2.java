@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -34,12 +34,12 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
 
     @Override
     public int getBaseRange() {
-        return MRConfig.Common.Module.sender2BaseRange;
+        return ConfigHolder.common.module.sender2BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return MRConfig.Common.Module.sender2MaxRange;
+        return ConfigHolder.common.module.sender2MaxRange.get();
     }
 
     @Override
@@ -60,6 +60,6 @@ public class SenderModule2 extends TargetedModule implements IRangedModule, IPos
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.senderModule2EnergyCost;
+        return ConfigHolder.common.energyCosts.senderModule2EnergyCost.get();
     }
 }

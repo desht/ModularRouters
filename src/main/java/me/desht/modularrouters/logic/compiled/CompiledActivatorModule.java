@@ -5,7 +5,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.ModularRoutersTags;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
@@ -349,8 +349,8 @@ public class CompiledActivatorModule extends CompiledModule {
     @Override
     public int getEnergyCost() {
         return actionType == ActionType.ATTACK_ENTITY ?
-                MRConfig.Common.EnergyCosts.activatorModuleEnergyCostAttack :
-                MRConfig.Common.EnergyCosts.activatorModuleEnergyCost;
+                ConfigHolder.common.energyCosts.activatorModuleEnergyCostAttack.get() :
+                ConfigHolder.common.energyCosts.activatorModuleEnergyCost.get();
     }
 
     @Override

@@ -5,7 +5,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.upgrade.SyncUpgradeScreen;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -56,7 +56,7 @@ public class SyncUpgrade extends UpgradeItem {
             SyncUpgradeScreen.openSyncGui(stack, hand);
         } else if (player.isSteppingCarefully()) {
             if (!world.isClientSide) {
-                setTunedValue(stack, world.random.nextInt(MRConfig.Common.Router.baseTickRate));
+                setTunedValue(stack, world.random.nextInt(ConfigHolder.common.router.baseTickRate.get()));
                 player.displayClientMessage(new TranslatableComponent("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);

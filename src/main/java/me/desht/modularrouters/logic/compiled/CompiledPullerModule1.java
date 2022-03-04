@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ public class CompiledPullerModule1 extends CompiledModule {
             return target.getItemHandler().map(handler -> {
                 ItemStack taken = transferToRouter(handler, null, router);
                 if (!taken.isEmpty()) {
-                    if (MRConfig.Common.Module.pullerParticles) {
+                    if (ConfigHolder.common.module.pullerParticles.get()) {
                         playParticles(router,  target.gPos.pos(), taken);
                     }
                     return true;

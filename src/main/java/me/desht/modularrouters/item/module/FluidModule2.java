@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -68,12 +68,12 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
 
     @Override
     public int getBaseRange() {
-        return MRConfig.Common.Module.fluid2BaseRange;
+        return ConfigHolder.common.module.fluid2BaseRange.get();
     }
 
     @Override
     public int getHardMaxRange() {
-        return MRConfig.Common.Module.fluid2MaxRange;
+        return ConfigHolder.common.module.fluid2MaxRange.get();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.fluidModule2EnergyCost;
+        return ConfigHolder.common.energyCosts.fluidModule2EnergyCost.get();
     }
 
 }

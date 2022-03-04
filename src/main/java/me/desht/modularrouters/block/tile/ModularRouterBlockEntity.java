@@ -6,7 +6,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModularRouter;
 import me.desht.modularrouters.container.handler.BufferHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
@@ -67,10 +67,10 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -120,7 +120,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private final List<CompiledIndexedModule> compiledModules = new ArrayList<>();
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
-    private int tickRate = MRConfig.Common.Router.baseTickRate;
+    private int tickRate = ConfigHolder.common.router.baseTickRate.get();
     private int itemsPerTick = 1;
     private final Map<ResourceLocation, Integer> upgradeCount = new HashMap<>();
 
@@ -142,7 +142,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private final Set<UUID> permitted = Sets.newHashSet(); // permitted user ID's from security upgrade
     private byte sidesOpen;          // bitmask of which of the 6 sides are currently open
     private boolean ecoMode = false;  // track eco-mode
-    private int ecoCounter = MRConfig.Common.Router.ecoTimeout;
+    private int ecoCounter = ConfigHolder.common.router.ecoTimeout.get();
     private boolean hasPulsedModules = false;
     private CompoundTag extData;  // extra (persisted) data which various modules can set & read
     private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
@@ -333,7 +333,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         if (ecoMode) {
             if (active) {
-                ecoCounter = MRConfig.Common.Router.ecoTimeout;
+                ecoCounter = ConfigHolder.common.router.ecoTimeout.get();
             } else if (ecoCounter > 0) {
                 ecoCounter--;
             }
@@ -430,7 +430,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public int getTickRate() {
-        return ecoMode && ecoCounter == 0 ? MRConfig.Common.Router.lowPowerTickRate : tickRate;
+        return ecoMode && ecoCounter == 0 ? ConfigHolder.common.router.lowPowerTickRate.get() : tickRate;
     }
 
     public RouterRedstoneBehaviour getRedstoneBehaviour() {
@@ -463,7 +463,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     public void setEcoMode(boolean newEco) {
         if (newEco != ecoMode) {
             ecoMode = newEco;
-            ecoCounter = MRConfig.Common.Router.ecoTimeout;
+            ecoCounter = ConfigHolder.common.router.ecoTimeout.get();
         }
     }
 
@@ -566,10 +566,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             }
 
             itemsPerTick = 1 << (Math.min(6, getUpgradeCount(ModItems.STACK_UPGRADE.get())));
-            tickRate = Math.max(MRConfig.Common.Router.hardMinTickRate,
-                    MRConfig.Common.Router.baseTickRate - MRConfig.Common.Router.ticksPerUpgrade * getUpgradeCount(ModItems.SPEED_UPGRADE.get()));
-            fluidTransferRate = Math.min(MRConfig.Common.Router.fluidMaxTransferRate,
-                    MRConfig.Common.Router.fluidBaseTransferRate + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * MRConfig.Common.Router.mBperFluidUpgade);
+            tickRate = Math.max(ConfigHolder.common.router.hardMinTickRate.get(),
+                    ConfigHolder.common.router.baseTickRate.get() - ConfigHolder.common.router.ticksPerUpgrade.get() * getUpgradeCount(ModItems.SPEED_UPGRADE.get()));
+            fluidTransferRate = Math.min(ConfigHolder.common.router.fluidMaxTransferRate.get(),
+                    ConfigHolder.common.router.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * ConfigHolder.common.router.mBperFluidUpgade.get());
 
             energyStorage.updateForEnergyUpgrades(getUpgradeCount(ModItems.ENERGY_UPGRADE.get()));
             if (!level.isClientSide) {
@@ -626,7 +626,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private void allocateFluidTransfer(int ticks) {
         // increment the in/out fluid transfer allowance based on the number of ticks which have passed
         // and the current fluid transfer rate of the router (which depends on the number of fluid upgrades)
-        int maxTransfer = MRConfig.Common.Router.baseTickRate * fluidTransferRate;
+        int maxTransfer = ConfigHolder.common.router.baseTickRate.get() * fluidTransferRate;
         fluidTransferRemainingIn = Math.min(fluidTransferRemainingIn + ticks * fluidTransferRate, maxTransfer);
         fluidTransferRemainingOut = Math.min(fluidTransferRemainingOut + ticks * fluidTransferRate, maxTransfer);
     }
@@ -670,7 +670,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (redstoneBehaviour == RouterRedstoneBehaviour.PULSE
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
             if (redstonePower > lastPower && pulseCounter >= tickRate) {
-                allocateFluidTransfer(Math.min(pulseCounter, MRConfig.Common.Router.baseTickRate));
+                allocateFluidTransfer(Math.min(pulseCounter, ConfigHolder.common.router.baseTickRate.get()));
                 executeModules(true);
                 pulseCounter = 0;
                 if (active) {
@@ -1028,7 +1028,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         void updateForEnergyUpgrades(int nEnergyUpgrades) {
             int oldCapacity = capacity;
-            capacity = MRConfig.Common.Router.fePerEnergyUpgrade * nEnergyUpgrades;
+            capacity = ConfigHolder.common.router.fePerEnergyUpgrade.get() * nEnergyUpgrades;
             if (energy > capacity) {
                 // now not enough capacity - stow the excess energy
                 excess += energy - capacity;
@@ -1040,7 +1040,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                 excess -= toMove;
                 energy += toMove;
             }
-            maxExtract = maxReceive = MRConfig.Common.Router.feXferPerEnergyUpgrade * nEnergyUpgrades;
+            maxExtract = maxReceive = ConfigHolder.common.router.feXferPerEnergyUpgrade.get() * nEnergyUpgrades;
             if (oldCapacity == 0 && capacity != 0 || oldCapacity != 0 && capacity == 0) {
                 // in case any pipes/cables need to connect/disconnect
                 getLevel().updateNeighborsAt(getBlockPos(), ModBlocks.MODULAR_ROUTER.get());

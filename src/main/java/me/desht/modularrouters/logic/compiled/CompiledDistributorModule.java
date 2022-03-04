@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
@@ -68,7 +68,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return tgt.getItemHandler().map(handler -> {
             ItemStack taken = transferToRouter(handler, tgt.gPos.pos(), router);
             if (!taken.isEmpty()) {
-                if (MRConfig.Common.Module.pullerParticles) {
+                if (ConfigHolder.common.module.pullerParticles.get()) {
                     playParticles(router, tgt.gPos.pos(), taken);
                 }
                 return true;

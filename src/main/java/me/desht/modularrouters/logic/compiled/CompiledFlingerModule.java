@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.module.ModuleItem;
@@ -43,7 +43,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         boolean fired = super.execute(router);
 
-        if (fired && MRConfig.Common.Module.flingerEffects) {
+        if (fired && ConfigHolder.common.module.flingerEffects.get()) {
             ModuleTarget target = getTarget();
             int n = Math.round(speed * 5);
             BlockPos pos = target.gPos.pos();

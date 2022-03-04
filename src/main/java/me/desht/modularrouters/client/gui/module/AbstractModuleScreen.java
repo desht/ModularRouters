@@ -17,7 +17,7 @@ import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
@@ -262,7 +262,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
     }
 
     private TintColor getGuiBackgroundTint() {
-        if (MRConfig.Client.Misc.moduleGuiBackgroundTint) {
+        if (ConfigHolder.client.misc.moduleGuiBackgroundTint.get()) {
             TintColor c = module.getItemTint();
             float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
             return TintColor.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);

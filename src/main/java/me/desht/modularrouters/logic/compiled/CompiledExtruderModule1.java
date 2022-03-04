@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.network.PacketHandler;
@@ -59,7 +59,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             if (state != null) {
                 router.extractBuffer(1);
                 router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), ++distance);
-                if (MRConfig.Common.Module.extruderSound) {
+                if (ConfigHolder.common.module.extruderSound.get()) {
                     router.playSound(null, placePos,
                             state.getBlock().getSoundType(state, world, placePos, null).getPlaceSound(),
                             SoundSource.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
@@ -81,7 +81,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
             if (dropResult.isBlockBroken()) {
                 router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
                 dropResult.processDrops(world, breakPos, router.getBuffer());
-                if (MRConfig.Common.Module.extruderSound) {
+                if (ConfigHolder.common.module.extruderSound.get()) {
                     router.playSound(null, breakPos,
                             oldBlock.getSoundType(oldState, world, breakPos, null).getBreakSound(),
                             SoundSource.BLOCKS, 1.0f, 0.5f + distance * 0.1f);
@@ -93,7 +93,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     }
 
     void tryPushEntities(Level world, BlockPos placePos, Direction facing) {
-        if (!MRConfig.Common.Module.extruderPushEntities) {
+        if (!ConfigHolder.common.module.extruderPushEntities.get()) {
             return;
         }
         Vec3 v = Vec3.atLowerCornerOf(facing.getNormal()).scale(BASE_PUSH_STRENGTH + pushingAugments * AUGMENT_BOOST);

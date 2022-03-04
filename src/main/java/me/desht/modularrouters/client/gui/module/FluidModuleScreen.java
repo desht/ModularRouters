@@ -9,7 +9,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
@@ -54,7 +54,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
         TextFieldManager manager = getOrCreateTextFieldManager();
 
-        int max = MRConfig.Common.Router.baseTickRate * MRConfig.Common.Router.fluidMaxTransferRate;
+        int max = ConfigHolder.common.router.baseTickRate.get() * ConfigHolder.common.router.fluidMaxTransferRate.get();
         maxTransferField = new IntegerTextField(manager, font, leftPos + 152, topPos + 23, 34, 12,
                 Range.between(0, max));
         maxTransferField.setValue(cfm.getMaxTransfer());

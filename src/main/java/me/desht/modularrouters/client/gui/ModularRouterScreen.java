@@ -11,7 +11,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModularRouter;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.OpenGuiMessage;
@@ -176,8 +176,8 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
         @Override
         public List<Component> getTooltip() {
             return GuiUtil.xlateAndSplit("modularrouters.guiText.tooltip.eco." + isToggled(),
-                    MRConfig.Common.Router.ecoTimeout / 20.f,
-                    MRConfig.Common.Router.lowPowerTickRate / 20.f);
+                    ConfigHolder.common.router.ecoTimeout.get() / 20.f,
+                    ConfigHolder.common.router.lowPowerTickRate.get() / 20.f);
         }
     }
 

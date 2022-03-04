@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
@@ -44,6 +44,6 @@ public class FlingerModule extends DropperModule {
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.flingerModuleEnergyCost;
+        return ConfigHolder.common.energyCosts.flingerModuleEnergyCost.get();
     }
 }

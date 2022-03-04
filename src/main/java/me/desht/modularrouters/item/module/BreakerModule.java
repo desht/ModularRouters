@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -28,7 +28,7 @@ public class BreakerModule extends ModuleItem implements IPickaxeUser {
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.breakerModuleEnergyCost;
+        return ConfigHolder.common.energyCosts.breakerModuleEnergyCost.get();
     }
 
     @Override

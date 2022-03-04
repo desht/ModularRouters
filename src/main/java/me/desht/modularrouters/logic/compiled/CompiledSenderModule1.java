@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
@@ -43,7 +43,7 @@ public class CompiledSenderModule1 extends CompiledModule {
                 }
                 int sent = InventoryUtils.transferItems(buffer, positionedItemHandler.handler, 0, nToSend);
                 if (sent > 0) {
-                    if (MRConfig.Common.Module.senderParticles) {
+                    if (ConfigHolder.common.module.senderParticles.get()) {
                         playParticles(router, positionedItemHandler.pos, ItemHandlerHelper.copyStackWithSize(bufferStack, sent));
                     }
                     return true;

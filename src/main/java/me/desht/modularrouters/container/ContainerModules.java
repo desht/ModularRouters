@@ -3,7 +3,6 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.core.ModContainerTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class ContainerModules {
     public static ContainerModule createActivatorContainer(int windowId, Inventory inv, FriendlyByteBuf extra) {

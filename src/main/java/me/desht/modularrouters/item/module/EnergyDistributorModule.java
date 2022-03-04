@@ -3,7 +3,7 @@ package me.desht.modularrouters.item.module;
 import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
@@ -30,7 +30,7 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        return MRConfig.Common.EnergyCosts.energydistributorModuleEnergyCost;
+        return ConfigHolder.common.energyCosts.energydistributorModuleEnergyCost.get();
     }
 
     @Override

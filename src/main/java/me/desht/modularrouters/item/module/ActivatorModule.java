@@ -2,7 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ContainerModule;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.core.ModItems;
@@ -50,8 +50,8 @@ public class ActivatorModule extends ModuleItem {
     public int getEnergyCost(ItemStack stack) {
         CompiledActivatorModule cam = new CompiledActivatorModule(null, stack);
         return cam.getActionType() == CompiledActivatorModule.ActionType.ATTACK_ENTITY ?
-                MRConfig.Common.EnergyCosts.activatorModuleEnergyCostAttack :
-                MRConfig.Common.EnergyCosts.activatorModuleEnergyCost;
+                ConfigHolder.common.energyCosts.activatorModuleEnergyCostAttack.get() :
+                ConfigHolder.common.energyCosts.activatorModuleEnergyCost.get();
     }
 
     @Override

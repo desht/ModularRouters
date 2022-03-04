@@ -2,7 +2,7 @@ package me.desht.modularrouters.item;
 
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.config.MRConfig;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -30,12 +30,12 @@ public abstract class MRBaseItem extends Item {
 
         if (ClientSetup.keybindModuleInfo.isDown()) {
             addUsageInformation(stack, list);
-        } else if (MRConfig.Client.Misc.alwaysShowModuleSettings || Screen.hasShiftDown()) {
+        } else if (ConfigHolder.client.misc.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             if (ClientUtil.thisScreenPassesEvents()) {
                 list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
             }
-        } else if (!MRConfig.Client.Misc.alwaysShowModuleSettings) {
+        } else if (!ConfigHolder.client.misc.alwaysShowModuleSettings.get()) {
             if (ClientUtil.thisScreenPassesEvents()) {
                 list.add(xlate("modularrouters.itemText.misc.holdShiftKey", text.getString()));
             }

@@ -4,10 +4,10 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
     public static class Misc {
-        ForgeConfigSpec.BooleanValue heldRouterShowsCamoRouters;
-        ForgeConfigSpec.BooleanValue alwaysShowModuleSettings;
-        ForgeConfigSpec.BooleanValue moduleGuiBackgroundTint;
-        ForgeConfigSpec.BooleanValue renderFlyingItems;
+        public ForgeConfigSpec.BooleanValue heldRouterShowsCamoRouters;
+        public ForgeConfigSpec.BooleanValue alwaysShowModuleSettings;
+        public ForgeConfigSpec.BooleanValue moduleGuiBackgroundTint;
+        public ForgeConfigSpec.BooleanValue renderFlyingItems;
     }
 
     public final Misc misc = new Misc();
