@@ -29,7 +29,6 @@ import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
-import me.desht.modularrouters.util.fake_player.FakeNetHandlerPlayerServer;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -364,8 +363,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         if (fakePlayer == null) {
             fakePlayer = new RouterFakePlayer(this, serverLevel, getOwner());
-            fakePlayer.connection = new FakeNetHandlerPlayerServer(level.getServer(), fakePlayer);
-            fakePlayer.level = level;
+            fakePlayer.level = serverLevel;
             fakePlayer.getInventory().selected = 0;  // held item always in slot 0
             fakePlayer.setPosRaw(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
         }
