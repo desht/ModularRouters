@@ -4,7 +4,7 @@ name: "Build applicable branches on push or pull request"
 # events but only for the 1.18.1 branch
 on:
   push:
-    branches: [ "1.18.2" ]
+    branches: [ "MC1.18.2-master" ]
 
 jobs:
   build:
