@@ -39,7 +39,7 @@ sourceSets.main.resources {
 minecraft {
     // until we have parchment...
     //mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}-${project.mc_version}"
-    mappings channel: "official", version: "1.18"
+    mappings channel: "official", version: "1.18.2"
     runs {
         client {
             workingDirectory file('run')
@@ -115,8 +115,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     // temporary till TOP for 1.18 is on maven.tterrag.com...
-    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3550084")
-    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3550084")
+    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3671753")
+    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3671753")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 

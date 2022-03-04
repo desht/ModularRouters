@@ -1,23 +1,33 @@
 package me.desht.modularrouters;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 
 public class ModularRoutersTags {
     public static class Items {
-        public static final Tag.Named<Item> MODULES = modTag("modules");
-        public static final Tag.Named<Item> UPGRADES = modTag("upgrades");
-        public static final Tag.Named<Item> AUGMENTS = modTag("augments");
-        public static final Tag.Named<Item> FILTERS = modTag("filters");
+        public static final TagKey<Item> MODULES = modTag("modules");
+        public static final TagKey<Item> UPGRADES = modTag("upgrades");
+        public static final TagKey<Item> AUGMENTS = modTag("augments");
+        public static final TagKey<Item> FILTERS = modTag("filters");
 
-        private static Tag.Named<Item> modTag(String name) {
-            return ItemTags.bind(new ResourceLocation(ModularRouters.MODID, name).toString());
+        private static TagKey<Item> modTag(String name) {
+            return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(ModularRouters.MODID, name));
         }
 
-        private static Tag.Named<Item> forgeTag(String name) {
-            return ItemTags.bind(new ResourceLocation("forge", name).toString());
+        private static TagKey<Item> forgeTag(String name) {
+            return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class EntityTypes {
+        public static final TagKey<EntityType<?>> activatorInteractBlacklist = modTag("activator_interact_blacklist");
+        public static final TagKey<EntityType<?>> activatorAttackBlacklist = modTag("activator_attack_blacklist");
+
+        private static TagKey<EntityType<?>> modTag(String name) {
+            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(ModularRouters.MODID, name));
         }
     }
 

@@ -10,7 +10,7 @@ import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -40,8 +40,8 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     }
 
     @SafeVarargs
-    private void addItemsToTag(Tag.Named<Item> tag, Supplier<? extends ItemLike>... items) {
-        tag(tag).add(Arrays.stream(items).map(Supplier::get).map(ItemLike::asItem).toArray(Item[]::new));
+    private void addItemsToTag(TagKey<Item> tagKey, Supplier<? extends ItemLike>... items) {
+        tag(tagKey).add(Arrays.stream(items).map(Supplier::get).map(ItemLike::asItem).toArray(Item[]::new));
     }
 
     @Override

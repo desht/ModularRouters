@@ -6,13 +6,10 @@ import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
-import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -22,9 +19,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 @Mod(ModularRouters.MODID)
 public class ModularRouters {
@@ -41,7 +35,6 @@ public class ModularRouters {
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientSetup::initEarly);
 
         modBus.addListener(this::commonSetup);
-        MinecraftForge.EVENT_BUS.addListener(this::addReloadListener);
 
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
@@ -63,10 +56,6 @@ public class ModularRouters {
         });
     }
 
-    private void addReloadListener(AddReloadListenerEvent event) {
-        event.addListener(new CompiledActivatorModule.ReloadListener());
-    }
-
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class DataGenerators {
         @SubscribeEvent
@@ -77,6 +66,7 @@ public class ModularRouters {
                 generator.addProvider(new ModItemTagsProvider(generator, event.getExistingFileHelper()));
                 generator.addProvider(new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
                 generator.addProvider(new ModLootTableProvider(generator));
+                generator.addProvider(new ModEntityTypeTagsProvider(generator, event.getExistingFileHelper()));
             }
             if (event.includeClient()) {
                 generator.addProvider(new ModBlockStateProvider(generator, event.getExistingFileHelper()));

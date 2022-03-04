@@ -7,7 +7,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -348,9 +348,9 @@ public class ModRecipeProvider extends RecipeProvider {
         Arrays.stream(pattern.split("/")).forEach(b::pattern);
         for (int i = 0; i < keys.length; i += 2) {
             Object v = keys[i + 1];
-            if (v instanceof Tag.Named<?>) {
+            if (v instanceof TagKey<?>) {
                 //noinspection unchecked
-                b.define((Character) keys[i], (Tag.Named<Item>) v);
+                b.define((Character) keys[i], (TagKey<Item>) v);
             } else if (v instanceof ItemLike) {
                 b.define((Character) keys[i], (ItemLike) v);
             } else if (v instanceof Ingredient) {
@@ -370,9 +370,9 @@ public class ModRecipeProvider extends RecipeProvider {
     private <T extends ItemLike & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
         ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapeless(result, count);
         for (Object v : ingredients) {
-            if (v instanceof Tag.Named<?>) {
+            if (v instanceof TagKey<?>) {
                 //noinspection unchecked
-                b.requires((Tag.Named<Item>) v);
+                b.requires((TagKey<Item>) v);
             } else if (v instanceof ItemLike) {
                 b.requires((ItemLike) v);
             } else if (v instanceof Ingredient) {

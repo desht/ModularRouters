@@ -15,17 +15,23 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import javax.annotation.CheckForNull;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class MiscUtil {
     public static Direction[] DIRECTIONS = new Direction[] {
@@ -43,10 +49,6 @@ public class MiscUtil {
 
     public static MutableComponent asFormattable(Component component) {
         return component instanceof MutableComponent ? (MutableComponent) component : component.plainCopy();
-    }
-
-    public static List<String> wrapString(String text) {
-        return wrapString(text, WRAP_LENGTH);
     }
 
     public static List<TextComponent> wrapStringAsTextComponent(String text) {
@@ -131,6 +133,7 @@ public class MiscUtil {
         return GlobalPos.of(worldKey, NbtUtils.readBlockPos(tag.getCompound("pos")));
     }
 
+    @CheckForNull
     public static ServerLevel getWorldForGlobalPos(GlobalPos pos) {
         return ServerLifecycleHooks.getCurrentServer().getLevel(pos.dimension());
     }
@@ -142,5 +145,19 @@ public class MiscUtil {
     // this method from Block went missing in 1.16.2
     public static boolean blockHasSolidSide(BlockState state, BlockGetter worldIn, BlockPos pos, Direction side) {
         return Block.isFaceFull(state.getBlockSupportShape(worldIn, pos), side);
+    }
+
+    public static Set<TagKey<Item>> itemTags(Item item) {
+        //noinspection deprecation
+        return Registry.ITEM.getHolderOrThrow(Registry.ITEM.getResourceKey(item).orElseThrow())
+                .tags()
+                .collect(Collectors.toSet());
+    }
+
+    public static Set<TagKey<Fluid>> fluidTags(Fluid fluid) {
+        //noinspection deprecation
+        return Registry.FLUID.getHolderOrThrow(Registry.FLUID.getResourceKey(fluid).orElseThrow())
+                .tags()
+                .collect(Collectors.toSet());
     }
 }
