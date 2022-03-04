@@ -1,0 +1,61 @@
+name: "Build applicable branches on push or pull request"
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the 1.18.1 branch
+on:
+  push:
+    branches: [ "1.18.2" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Use gradle cache for faster builds
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+      - name: Cleanup Gradle Cache
+        # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
+        # Restoring these files from a GitHub Actions cache might cause problems for future builds.
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Clean gradle
+        run: ./gradlew clean --no-daemon --max-workers 1
+      - name: Remove any generated assets/data
+        run: rm -rf ./src/generated
+      - name: Generate assets
+        run: ./gradlew runData --no-daemon --max-workers 1 || test -f ./src/generated/resources/.cache/cache
+      - name: Validate assets
+        run: test -d ./src/generated -a -f ./src/generated/resources/.cache/cache
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon --max-workers 1
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: modular-routers-dist-${{ github.run_id }}.zip
+          path: build/libs/
+      - name: Discord notification
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        if:
+          env.DISCORD_WEBHOOK != null
+        with:
+          args: 'Build complete for project {{ EVENT_PAYLOAD.repository.full_name }}: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}.'

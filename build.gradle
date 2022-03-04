@@ -68,6 +68,7 @@ minecraft {
             property 'fml.earlyprogresswindow', 'false'
             property 'mixin.env.disableRefMap', 'true'
             ideaModule "${project.name}.main"
+            forceExit false
             mods {
                 modularrouters.sources((SourceSet[]) [sourceSets.main])
             }
