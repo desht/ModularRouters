@@ -4,6 +4,15 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.18.2
+
+### 9.1.0 (5 Mar 2022)
+
+* Just a port to Minecraft 1.18.2; this release is *not* compatible with 1.18.1. No new player-visible features.
+* The config settings `activatorEntityBlacklist` and `activatorEntityAttackBlacklist` are removed, and replaced by entity type tags in `data/modularrouters/tags/entity_types`:
+  * `modularrouters:activator_interact_blacklist` defines entities which may not be right-clicked by the Activator module (as before, it contains Villagers and Wandering Traders by default)
+  * `modularrouters:activator_attack_blacklist` defines entities which may not be attacked by the Activator module (as before, it is empty by default)
+
 ## Minecraft 1.18.1
 
 ### 9.0.2 (24 Jan 2022)

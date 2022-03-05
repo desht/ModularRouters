@@ -24,7 +24,7 @@ version="${file.jarVersion}" #mandatory
  # A display name for the mod
 displayName="Modular Routers"
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.18-master/release_info.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.18.2-master/release_info.json" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Modular Routers is a highly flexible mod for moving items around the world in various ways.

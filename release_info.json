@@ -4,7 +4,9 @@
     "1.18-recommended" : "9.0.0",
     "1.18-latest" : "9.0.0",
     "1.18.1-recommended" : "9.0.2",
-    "1.18.1-latest" : "9.0.2"
+    "1.18.1-latest" : "9.0.2",
+    "1.18.2-recommended" : "9.1.0",
+    "1.18.2-latest" : "9.1.0"
   },
   "1.18" : {
     "9.0.0": "https://github.com/desht/ModularRouters/blob/MC1.18-master/Changelog.md#900-6-dec-2021"
@@ -12,5 +14,8 @@
   "1.18.1" : {
     "9.0.2": "https://github.com/desht/ModularRouters/blob/MC1.18-master/Changelog.md#902-24-jan-2021",
     "9.0.1": "https://github.com/desht/ModularRouters/blob/MC1.18-master/Changelog.md#901-20-dec-2021"
+  },
+  "1.18.2" : {
+    "9.1.0": "https://github.com/desht/ModularRouters/blob/MC1.18.2-master/Changelog.md#910-5-mar-2022"
   }
 }
