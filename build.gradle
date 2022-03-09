@@ -39,7 +39,7 @@ sourceSets.main.resources {
 minecraft {
     // until we have parchment...
     //mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}-${project.mc_version}"
-    mappings channel: "official", version: "1.18.2"
+    mappings channel: 'parchment', version: "1.18.1-2022.03.06-1.18.2"
     runs {
         client {
             workingDirectory file('run')

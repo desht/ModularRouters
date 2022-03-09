@@ -117,7 +117,7 @@ public class BlockUtil {
         if (newState != null) {
             BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, toPlace);
-            BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer);
+            BlockEvent.EntityPlaceEvent event = new CustomEntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer, newState);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockAndUpdate(pos, newState)) {
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -134,7 +134,7 @@ public class BlockUtil {
         if (!(world instanceof ServerLevel) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
 
         BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
-        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), router.getFakePlayer());
+        BlockEvent.EntityPlaceEvent event = new CustomEntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), router.getFakePlayer(), newState);
         MinecraftForge.EVENT_BUS.post(event);
         return !event.isCanceled() && world.setBlockAndUpdate(pos, newState);
     }
