@@ -75,6 +75,11 @@ public class BufferHandler extends ItemStackHandler {
         return stack.getCount() == 1 && stack.getCapability(cap).isPresent();
     }
 
+    public void invalidateCaps() {
+        getFluidCapability().invalidate();
+        getEnergyCapability().invalidate();
+    }
+
     private class FluidItemAdapter implements IFluidHandler {
         private final int slot;
 

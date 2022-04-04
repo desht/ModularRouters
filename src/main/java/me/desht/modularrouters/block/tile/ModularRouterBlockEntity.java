@@ -236,6 +236,14 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
+    public void setRemoved() {
+        super.setRemoved();
+
+        inventoryCap.invalidate();
+        bufferHandler.invalidateCaps();
+    }
+
+    @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
 
