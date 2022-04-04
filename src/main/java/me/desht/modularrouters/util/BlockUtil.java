@@ -113,7 +113,7 @@ public class BlockUtil {
         if (newState != null) {
             BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
             fakePlayer.setItemInHand(Hand.MAIN_HAND, toPlace);
-            BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer);
+            BlockEvent.EntityPlaceEvent event = new CustomEntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer, newState);
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockAndUpdate(pos, newState)) {
                 fakePlayer.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
