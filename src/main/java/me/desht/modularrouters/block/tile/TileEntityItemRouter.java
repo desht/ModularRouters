@@ -234,6 +234,14 @@ public class TileEntityItemRouter extends TileEntity implements ITickableTileEnt
     }
 
     @Override
+    public void setRemoved() {
+        super.setRemoved();
+
+        inventoryCap.invalidate();
+        bufferHandler.invalidateCaps();
+    }
+
+    @Override
     public void load(BlockState state, CompoundNBT nbt) {
         super.load(state, nbt);
 
