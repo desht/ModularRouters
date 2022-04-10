@@ -13,7 +13,6 @@ import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -306,13 +305,11 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean passesAttackBlacklist(Entity e) {
-        return !Registry.ENTITY_TYPE.getHolderOrThrow(Registry.ENTITY_TYPE.getResourceKey(e.getType()).orElseThrow())
-                .is(ModularRoutersTags.EntityTypes.activatorAttackBlacklist);
+        return !e.getType().is(ModularRoutersTags.EntityTypes.activatorAttackBlacklist);
     }
 
     private boolean passesUseBlacklist(Entity e) {
-        return !Registry.ENTITY_TYPE.getHolderOrThrow(Registry.ENTITY_TYPE.getResourceKey(e.getType()).orElseThrow())
-                .is(ModularRoutersTags.EntityTypes.activatorInteractBlacklist);
+        return !e.getType().is(ModularRoutersTags.EntityTypes.activatorInteractBlacklist);
     }
 
     private void dropExtraItems(ModularRouterBlockEntity router, Player fakePlayer) {

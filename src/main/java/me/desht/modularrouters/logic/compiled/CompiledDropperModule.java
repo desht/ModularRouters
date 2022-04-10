@@ -30,14 +30,14 @@ public class CompiledDropperModule extends CompiledModule {
             ItemStack toDrop = router.peekBuffer(nItems);
             BlockPos pos = getTarget().gPos.pos();
             Direction face = getTarget().face;
-            ItemEntity item = new ItemEntity(router.getLevel(),
+            ItemEntity item = new ItemEntity(router.nonNullLevel(),
                     pos.getX() + 0.5 + 0.2 * face.getStepX(),
                     pos.getY() + 0.5 + 0.2 * face.getStepY(),
                     pos.getZ() + 0.5 + 0.2 * face.getStepZ(),
                     toDrop);
             item.setPickUpDelay(pickupDelay);
             setupItemVelocity(router, item);
-            router.getLevel().addFreshEntity(item);
+            router.nonNullLevel().addFreshEntity(item);
             router.extractBuffer(toDrop.getCount());
             return true;
         } else {

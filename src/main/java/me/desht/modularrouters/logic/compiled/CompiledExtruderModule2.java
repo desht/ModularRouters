@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
+import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
@@ -27,26 +28,27 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
     public CompiledExtruderModule2(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        blockList = new ArrayList<>();
+        List<ItemStack> stacks = new ArrayList<>();
         mimic = getAugmentCount(ModItems.MIMIC_AUGMENT.get()) > 0;
 
         TemplateHandler handler = new TemplateHandler(stack, router);
-        for (int i = 0; i < handler.getSlots() && blockList.size() < getRange(); i++) {
+        for (int i = 0; i < handler.getSlots() && stacks.size() < getRange(); i++) {
             ItemStack stack1 = handler.getStackInSlot(i);
             if (stack1.isEmpty()) {
                 break;
             } else {
-                for (int j = 0; j < stack1.getCount() && blockList.size() < getRange(); j++) {
-                    blockList.add(ItemHandlerHelper.copyStackWithSize(stack1, 1));
+                for (int j = 0; j < stack1.getCount() && stacks.size() < getRange(); j++) {
+                    stacks.add(ItemHandlerHelper.copyStackWithSize(stack1, 1));
                 }
             }
         }
+        blockList = ImmutableList.copyOf(stacks);
     }
 
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         boolean extend = shouldExtend(router);
-        Level world = router.getLevel();
+        Level world = router.nonNullLevel();
 
         if (extend && distance < blockList.size()) {
             // try to extend
@@ -77,7 +79,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
             BlockPos breakPos = router.getBlockPos().relative(getFacing(), distance);
             BlockState oldState = world.getBlockState(breakPos);
             router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getFacing(), --distance);
-            if (okToBreak(oldState, world, breakPos)) {
+            if (okToBreak(oldState)) {
                 if (oldState.getBlock() == ModBlocks.TEMPLATE_FRAME.get()) {
                     world.removeBlock(breakPos, false);
                 }
@@ -88,7 +90,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
         return false;
     }
 
-    private boolean okToBreak(BlockState state, Level world, BlockPos pos) {
+    private boolean okToBreak(BlockState state) {
         Block b = state.getBlock();
         return state.isAir() || b == ModBlocks.TEMPLATE_FRAME.get() || b instanceof IFluidBlock;
     }

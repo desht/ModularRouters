@@ -47,8 +47,8 @@ public class CompiledFlingerModule extends CompiledDropperModule {
             ModuleTarget target = getTarget();
             int n = Math.round(speed * 5);
             BlockPos pos = target.gPos.pos();
-            if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-                ((ServerLevel) router.getLevel()).sendParticles(ParticleTypes.LARGE_SMOKE,
+            if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2 && router.getLevel() instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
                         0.0, 0.0, 0.0, 0.0);
             }
@@ -76,17 +76,15 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         float basePitch = 0.0f;
         float baseYaw;
         switch (getDirection()) {
-            case UP:
+            case UP -> {
                 basePitch = 90.0f;
                 baseYaw = yawFromFacing(routerFacing);
-                break;
-            case DOWN:
+            }
+            case DOWN -> {
                 basePitch = -90.0f;
                 baseYaw = yawFromFacing(routerFacing);
-                break;
-            default:
-                baseYaw = yawFromFacing(getFacing());
-                break;
+            }
+            default -> baseYaw = yawFromFacing(getFacing());
         }
 
         double yawRad = Math.toRadians(baseYaw + yaw), pitchRad = Math.toRadians(basePitch + pitch);
@@ -99,12 +97,12 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     }
 
     private float yawFromFacing(Direction absoluteFacing) {
-        switch (absoluteFacing) {
-            case EAST: return 0.0f;
-            case NORTH: return 90.0f;
-            case WEST: return 180.0f;
-            case SOUTH: return 270.0f;
-        }
-        return 0;
+        return switch (absoluteFacing) {
+            case EAST -> 0.0f;
+            case NORTH -> 90.0f;
+            case WEST -> 180.0f;
+            case SOUTH -> 270.0f;
+            default -> 0;
+        };
     }
 }

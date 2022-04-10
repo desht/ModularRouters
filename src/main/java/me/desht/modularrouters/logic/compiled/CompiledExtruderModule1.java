@@ -49,7 +49,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         boolean extend = shouldExtend(router);
-        Level world = router.getLevel();
+        Level world = router.nonNullLevel();
 
         if (extend && !router.isBufferEmpty() && distance < getRange() && isRegulationOK(router, false)) {
             // try to extend

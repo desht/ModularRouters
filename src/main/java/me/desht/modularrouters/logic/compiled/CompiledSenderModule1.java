@@ -78,13 +78,13 @@ public class CompiledSenderModule1 extends CompiledModule {
         BlockPos p0 = getTarget().gPos.pos();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(p0.getX(), p0.getY(), p0.getZ());
         Direction face = getTarget().face;
-        Level world = router.getLevel();
+        Level level = router.nonNullLevel();
         for (int i = 1; i <= getRange(); i++) {
-            BlockEntity te = world.getBlockEntity(pos);
+            BlockEntity te = level.getBlockEntity(pos);
             if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getTarget().face).isPresent()) {
-                GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos.immutable());
-                return new ModuleTarget(gPos, face, BlockUtil.getBlockName(world, pos));
-            } else if (!isPassable(world, pos, face)) {
+                GlobalPos gPos = MiscUtil.makeGlobalPos(level, pos.immutable());
+                return new ModuleTarget(gPos, face, BlockUtil.getBlockName(level, pos));
+            } else if (!isPassable(level, pos, face)) {
                 return null;
             }
             pos.move(getFacing());

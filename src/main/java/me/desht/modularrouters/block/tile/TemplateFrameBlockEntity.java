@@ -19,6 +19,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflageable {
     private static final String NBT_CAMO_NAME = "CamouflageName";
@@ -39,6 +40,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     public void setCamouflage(BlockState camouflage) {
         this.camouflage = camouflage;
         requestModelDataUpdate();
+        setChanged();
     }
 
     @Nonnull
@@ -56,6 +58,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
 
     public void setExtendedMimic(boolean mimic) {
         this.extendedMimic = mimic;
+        setChanged();
     }
 
     @Override
@@ -69,14 +72,17 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     public void saveAdditional(CompoundTag compound) {
         super.saveAdditional(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
+        compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
     }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        camouflage = getCamoStateFromNBT(pkt.getTag());
-        extendedMimic = pkt.getTag().getBoolean("Mimic");
-        if (camouflage != null && extendedMimic && camouflage.getLightEmission() > 0) {
-            getLevel().getChunkSource().getLightEngine().checkBlock(worldPosition);
+        if (pkt.getTag() != null) {
+            camouflage = getCamoStateFromNBT(pkt.getTag());
+            extendedMimic = pkt.getTag().getBoolean("Mimic");
+            if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
+                Objects.requireNonNull(getLevel()).getChunkSource().getLightEngine().checkBlock(worldPosition);
+            }
         }
     }
 
@@ -86,10 +92,10 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
 
         camouflage = getCamoStateFromNBT(tag);
         extendedMimic = tag.getBoolean("Mimic");
-        if (camouflage != null && extendedMimic && camouflage.getLightEmission() > 0) {
+        if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
-            Scheduler.client().schedule(() -> getLevel().getChunkSource().getLightEngine().checkBlock(worldPosition), 1L);
+            Scheduler.client().schedule(() -> Objects.requireNonNull(getLevel()).getChunkSource().getLightEngine().checkBlock(worldPosition), 1L);
         }
     }
 
@@ -136,6 +142,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
                 camouflage = camouflage.setValue(BlockStateProperties.HORIZONTAL_FACING,
                         facing.getAxis() == Direction.Axis.Y ? routerFacing : facing);
             }
+            setChanged();
         }
     }
 }

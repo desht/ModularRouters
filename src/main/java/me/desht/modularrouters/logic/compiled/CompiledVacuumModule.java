@@ -99,7 +99,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         fluidReceiver = null;
         for (Direction face : MiscUtil.DIRECTIONS) {
-            BlockEntity te = router.getLevel().getBlockEntity(router.getBlockPos().relative(face));
+            BlockEntity te = router.nonNullLevel().getBlockEntity(router.getBlockPos().relative(face));
             if (te != null) {
                 te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()).ifPresent(handler -> {
                     if (handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
@@ -121,7 +121,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
-        List<ItemEntity> items = router.getLevel().getEntitiesOfClass(ItemEntity.class,
+        List<ItemEntity> items = router.nonNullLevel().getEntitiesOfClass(ItemEntity.class,
                 new AABB(centrePos.offset(-range, -range, -range), centrePos.offset(range + 1, range + 1, range + 1)));
 
         int toPickUp = getItemsPerTick(router);
@@ -146,7 +146,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     item.remove(Entity.RemovalReason.DISCARDED);
                 }
                 if (inserted > 0 && ConfigHolder.common.module.vacuumParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2) {
-                    ((ServerLevel) router.getLevel()).sendParticles(ParticleTypes.CLOUD, item.getX(), item.getY() + 0.25, item.getZ(), 2, 0.0, 0.0, 0.0, 0.0);
+                    ((ServerLevel) router.nonNullLevel()).sendParticles(ParticleTypes.CLOUD, item.getX(), item.getY() + 0.25, item.getZ(), 2, 0.0, 0.0, 0.0, 0.0);
                 }
                 if (toPickUp <= 0) {
                     break;
@@ -159,7 +159,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private boolean handleXpMode(ModularRouterBlockEntity router) {
         BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
-        List<ExperienceOrb> orbs = router.getLevel().getEntitiesOfClass(ExperienceOrb.class,
+        List<ExperienceOrb> orbs = router.nonNullLevel().getEntitiesOfClass(ExperienceOrb.class,
                 new AABB(centrePos).inflate(range));
         if (orbs.isEmpty()) {
             return false;
@@ -200,7 +200,7 @@ public class CompiledVacuumModule extends CompiledModule {
                     ItemStack excess = router.insertBuffer(stack);
                     xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
                     if (!excess.isEmpty()) {
-                        InventoryUtils.dropItems(router.getLevel(), Vec3.atCenterOf(router.getBlockPos()), excess);
+                        InventoryUtils.dropItems(router.nonNullLevel(), Vec3.atCenterOf(router.getBlockPos()), excess);
                     }
                 }
             } else {
@@ -249,7 +249,7 @@ public class CompiledVacuumModule extends CompiledModule {
         ModuleItem.RelativeDirection dir = getDirection();
         int offset = dir == ModuleItem.RelativeDirection.NONE ? 0 : getRange() + 1;
         Direction facing = router.getAbsoluteFacing(dir);
-        GlobalPos gPos = MiscUtil.makeGlobalPos(router.getLevel(), router.getBlockPos().relative(facing, offset));
+        GlobalPos gPos = MiscUtil.makeGlobalPos(router.nonNullLevel(), router.getBlockPos().relative(facing, offset));
         return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 

@@ -15,7 +15,7 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
 
     @Override
     protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        return Collections.singletonList(TargetedModule.getTarget(stack, !router.getLevel().isClientSide));
+        return Collections.singletonList(TargetedModule.getTarget(stack, !router.nonNullLevel().isClientSide));
     }
 
     @Override

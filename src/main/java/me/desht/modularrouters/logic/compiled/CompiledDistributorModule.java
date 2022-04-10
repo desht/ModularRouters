@@ -100,7 +100,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.getLevel().isClientSide);
+        Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide);
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
         l.sort(Comparator.comparingDouble(o -> calcDist(o, router)));
@@ -136,7 +136,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 }
                 break;
             case RANDOM:
-                int r = router.getLevel().random.nextInt(getTargets().size());
+                int r = router.nonNullLevel().random.nextInt(getTargets().size());
                 res = getTargets().get(r);
                 break;
             case NEAREST_FIRST:

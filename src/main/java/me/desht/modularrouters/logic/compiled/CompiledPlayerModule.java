@@ -60,7 +60,7 @@ public class CompiledPlayerModule extends CompiledModule {
             playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);
             operation = Operation.values()[compound.getInt(NBT_OPERATION)];
             section = Section.values()[compound.getInt(NBT_SECTION)];
-            if (router != null && !router.getLevel().isClientSide) {
+            if (router != null && !router.nonNullLevel().isClientSide) {
                 Player player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
                 playerRef = new WeakReference<>(player);
             } else {
@@ -138,7 +138,7 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public void onCompiled(ModularRouterBlockEntity router) {
         super.onCompiled(router);
-        if (!router.getLevel().isClientSide) {
+        if (!router.nonNullLevel().isClientSide) {
             MinecraftForge.EVENT_BUS.register(this);
         }
     }
@@ -146,7 +146,7 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public void cleanup(ModularRouterBlockEntity router) {
         super.cleanup(router);
-        if (!router.getLevel().isClientSide) {
+        if (!router.nonNullLevel().isClientSide) {
             MinecraftForge.EVENT_BUS.unregister(this);
         }
     }
