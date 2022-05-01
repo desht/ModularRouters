@@ -6,9 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.18.2
 
-### 9.1.1 (10 Apr 2022)
+### 9.1.1 (1 May 2022)
 
 * Added fr_fr translation (thanks @dracnis)
+* Added ko_kr translation (thanks @gjeodnd12165)
 * Fixed template blocks (as extruded by Extruder Mk2) losing their texture after world reload (https://github.com/desht/ModularRouters/issues/163)
 * Fixed router inventory capabilities not being invalidated when router was broken (https://github.com/desht/ModularRouters/issues/148)
 * Worked around known Forge issue with EntityPlaceEvent (fired by Placer & Extruder modules) not containing correct blockstate (https://github.com/desht/ModularRouters/issues/158)
