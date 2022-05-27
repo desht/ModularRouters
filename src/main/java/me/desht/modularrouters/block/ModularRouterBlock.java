@@ -76,7 +76,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction dir = (ctx.getPlayer() == null) ? ctx.getClickedFace() : Direction.fromYRot(ctx.getPlayer().getYRot()).getOpposite();
-        return this.defaultBlockState().setValue(FACING, dir);
+        return dir.getAxis().isHorizontal() ? this.defaultBlockState().setValue(FACING, dir) : super.getStateForPlacement(ctx);
     }
 
     @Override
