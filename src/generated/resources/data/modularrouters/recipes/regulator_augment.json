@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "M": {
+      "item": "modularrouters:augment_core"
+    },
+    "Q": {
+      "tag": "forge:gems/quartz"
+    }
+  },
   "pattern": [
     " Q ",
     "CMC",
     " Q "
   ],
-  "key": {
-    "Q": {
-      "tag": "forge:gems/quartz"
-    },
-    "M": {
-      "item": "modularrouters:augment_core"
-    },
-    "C": {
-      "item": "minecraft:comparator"
-    }
-  },
   "result": {
     "item": "modularrouters:regulator_augment"
   }

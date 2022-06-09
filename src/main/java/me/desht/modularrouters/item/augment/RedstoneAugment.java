@@ -4,7 +4,6 @@ import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -18,6 +17,6 @@ public class RedstoneAugment extends AugmentItem {
     @Override
     public Component getExtraInfo(int c, ItemStack moduleStack) {
         RouterRedstoneBehaviour rrb = ModuleHelper.getRedstoneBehaviour(moduleStack);
-        return new TextComponent(" - ").append(xlate("modularrouters.guiText.tooltip.redstone." + rrb.toString()));
+        return Component.literal(" - ").append(xlate("modularrouters.guiText.tooltip.redstone." + rrb.toString()));
     }
 }

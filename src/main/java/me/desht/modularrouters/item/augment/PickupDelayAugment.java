@@ -3,7 +3,6 @@ package me.desht.modularrouters.item.augment;
 import me.desht.modularrouters.item.module.DropperModule;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -19,6 +18,6 @@ public class PickupDelayAugment extends AugmentItem {
     @Override
     public Component getExtraInfo(int nAugments, ItemStack moduleStack) {
         int pickupDelay = nAugments * TICKS_PER_AUGMENT;
-        return new TextComponent(" - ").append(xlate("modularrouters.itemText.augments.pickupDelay", pickupDelay, pickupDelay / 20.0f));
+        return Component.literal(" - ").append(xlate("modularrouters.itemText.augments.pickupDelay", pickupDelay, pickupDelay / 20.0f));
     }
 }

@@ -1,25 +1,25 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "RST",
-    "RBR"
-  ],
   "key": {
-    "S": {
-      "tag": "forge:stone"
-    },
-    "T": {
-      "item": "minecraft:redstone_torch"
-    },
     "B": {
       "item": "modularrouters:blank_upgrade"
     },
     "R": {
       "tag": "forge:dusts/redstone"
+    },
+    "S": {
+      "tag": "forge:stone"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
     }
   },
+  "pattern": [
+    "RST",
+    "RBR"
+  ],
   "result": {
-    "item": "modularrouters:sync_upgrade",
-    "count": 16
+    "count": 16,
+    "item": "modularrouters:sync_upgrade"
   }
 }

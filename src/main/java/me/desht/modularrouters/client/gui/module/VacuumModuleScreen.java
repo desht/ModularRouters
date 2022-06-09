@@ -15,7 +15,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -88,7 +87,7 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
             super(x, y, width, height, flat, stacks, initialVal, VacuumModuleScreen.this);
 
             for (XPCollectionType type : XPCollectionType.values()) {
-                TextComponent modName = new TextComponent(ModNameCache.getModName(type.getModId()));
+                MutableComponent modName = Component.literal(ModNameCache.getModName(type.getModId()));
                 MutableComponent title = type.getDisplayName().plainCopy();
                 tips.add(ImmutableList.of(title, modName.withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
             }

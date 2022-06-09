@@ -43,8 +43,9 @@ public abstract class MRBaseItem extends Item {
     }
 
     protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
-        MiscUtil.appendMultilineText(list, ChatFormatting.GRAY,
-                "modularrouters.itemText.usage.item." + itemstack.getItem().getRegistryName().getPath(), getExtraUsageParams());
+        MiscUtil.getRegistryName(itemstack.getItem())
+                .ifPresent(regName -> MiscUtil.appendMultilineText(list, ChatFormatting.GRAY,
+                        "modularrouters.itemText.usage.item." + regName.getPath(), getExtraUsageParams()));
     }
 
     protected abstract void addExtraInformation(ItemStack stack, List<Component> list);

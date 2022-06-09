@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "modularrouters:fast_pickup_augment",
     "modularrouters:filter_round_robin_augment",

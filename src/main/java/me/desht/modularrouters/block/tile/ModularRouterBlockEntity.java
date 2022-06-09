@@ -38,9 +38,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -122,7 +120,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private int tickRate = ConfigHolder.common.router.baseTickRate.get();
     private int itemsPerTick = 1;
-    private final Map<ResourceLocation, Integer> upgradeCount = new HashMap<>();
+    private final Map<Item, Integer> upgradeCount = new HashMap<>();
 
     private int fluidTransferRate;  // mB/t
     private int fluidTransferRemainingIn = 0;
@@ -575,7 +573,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
                 if (stack.getItem() instanceof UpgradeItem upgradeItem) {
-                    upgradeCount.put(stack.getItem().getRegistryName(), getUpgradeCount(stack.getItem()) + stack.getCount());
+                    upgradeCount.put(stack.getItem(), getUpgradeCount(stack.getItem()) + stack.getCount());
                     upgradeItem.onCompiled(stack, this);
                 }
             }
@@ -627,7 +625,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public int getUpgradeCount(Item type) {
-        return upgradeCount.getOrDefault(type.getRegistryName(), 0);
+        return upgradeCount.getOrDefault(type, 0);
     }
 
     public void recompileNeeded(int what) {
@@ -870,7 +868,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.modularrouters.modular_router");
+        return Component.translatable("block.modularrouters.modular_router");
     }
 
     @Nullable

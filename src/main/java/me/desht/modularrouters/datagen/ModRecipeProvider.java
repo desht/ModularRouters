@@ -15,7 +15,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -339,11 +339,11 @@ public class ModRecipeProvider extends RecipeProvider {
                 .build(consumer, RL("guide_book"));
     }
 
-    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
+    private <T extends ItemLike> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
         return shaped(result, 1, required, pattern, keys);
     }
 
-    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapedRecipeBuilder shaped(T result, int count, T required, String pattern, Object... keys) {
+    private <T extends ItemLike> ShapedRecipeBuilder shaped(T result, int count, T required, String pattern, Object... keys) {
         ShapedRecipeBuilder b = ShapedRecipeBuilder.shaped(result, count);
         Arrays.stream(pattern.split("/")).forEach(b::pattern);
         for (int i = 0; i < keys.length; i += 2) {
@@ -363,11 +363,11 @@ public class ModRecipeProvider extends RecipeProvider {
         return b;
     }
 
-    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, T required, Object... ingredients) {
+    private <T extends ItemLike> ShapelessRecipeBuilder shapeless(T result, T required, Object... ingredients) {
         return shapeless(result, 1, required, ingredients);
     }
 
-    private <T extends ItemLike & IForgeRegistryEntry<?>> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
+    private <T extends ItemLike> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
         ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapeless(result, count);
         for (Object v : ingredients) {
             if (v instanceof TagKey<?>) {
@@ -385,12 +385,9 @@ public class ModRecipeProvider extends RecipeProvider {
         return b;
     }
 
-    private String safeName(IForgeRegistryEntry<?>  i) {
-        return safeName(i.getRegistryName());
-    }
-
-    private String safeName(ResourceLocation registryName) {
-        return registryName.getPath().replace('/', '_');
+    private <T extends ItemLike> String safeName(T required) {
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(required.asItem());
+        return key == null ? "" : key.getPath().replace('/', '_');
     }
 
     @Override

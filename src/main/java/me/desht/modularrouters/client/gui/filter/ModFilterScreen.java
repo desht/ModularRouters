@@ -11,6 +11,7 @@ import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
@@ -101,7 +102,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             modId = modName = "";
         } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !inSlot.sameItemStackIgnoreDurability(prevInSlot))) {
-            modId = inSlot.getItem().getRegistryName().getNamespace();
+            modId = MiscUtil.getRegistryName(inSlot.getItem()).map(ResourceLocation::getNamespace).orElse("?");
             modName = ModNameCache.getModName(modId);
         }
         prevInSlot = inSlot;

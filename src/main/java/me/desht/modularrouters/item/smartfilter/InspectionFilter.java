@@ -15,7 +15,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -43,9 +42,9 @@ public class InspectionFilter extends SmartFilterItem {
         super.addExtraInformation(itemstack, list);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
-            list.add(new TextComponent(ChatFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
+            list.add(Component.literal(ChatFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
             for (Comparison c : comparisonList.items) {
-                list.add(new TextComponent(ChatFormatting.AQUA + "\u2022 ").append(c.asLocalizedText()));
+                list.add(Component.literal(ChatFormatting.AQUA + "\u2022 ").append(c.asLocalizedText()));
             }
         }
     }

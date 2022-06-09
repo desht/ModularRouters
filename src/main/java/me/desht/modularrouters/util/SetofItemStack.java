@@ -3,10 +3,11 @@ package me.desht.modularrouters.util;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -53,15 +54,16 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
     }
 
     public List<ItemStack> sortedList() {
-        return this.stream().sorted(compareStacks).toList();
+        return this.stream().sorted(COMPARE_STACKS).toList();
     }
 
     // matches by mod, then by display name
-    private static final Comparator<? super ItemStack> compareStacks = Comparator
+    private static final Comparator<? super ItemStack> COMPARE_STACKS = Comparator
             .comparing((ItemStack stack) -> namespace(stack.getItem()))
             .thenComparing(stack -> stack.getHoverName().getString());
 
-    private static String namespace(IForgeRegistryEntry<?> entry) {
-        return entry.getRegistryName() == null ? "?" : entry.getRegistryName().getNamespace();
+    private static String namespace(Item item) {
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(item);
+        return key == null ? "?" : key.getNamespace();
     }
 }

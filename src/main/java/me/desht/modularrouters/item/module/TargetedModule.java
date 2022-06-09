@@ -20,8 +20,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -79,7 +77,7 @@ public abstract class TargetedModule extends ModuleItem {
             setTarget(stack, world, pos, face);
             ModuleTarget tgt = getTarget(stack, true);
             if (tgt != null) {
-                MutableComponent msg = new TranslatableComponent("modularrouters.chatText.misc.targetSet").append(tgt.getTextComponent());
+                MutableComponent msg = Component.translatable("modularrouters.chatText.misc.targetSet").append(tgt.getTextComponent());
                 player.displayClientMessage(msg.withStyle(ChatFormatting.YELLOW), true);
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, 1.3f);
             }
@@ -96,15 +94,15 @@ public abstract class TargetedModule extends ModuleItem {
             if (targets.contains(tgt)) {
                 targets.remove(tgt);
                 removing = true;
-                player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
+                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
                         .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
             } else if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
-                player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.misc.targetAdded", targets.size(), getMaxTargets())
+                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetAdded", targets.size(), getMaxTargets())
                         .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
             } else {
                 // too many targets already
-                player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.misc.tooManyTargets", getMaxTargets())
+                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.tooManyTargets", getMaxTargets())
                         .withStyle(ChatFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundSource.BLOCKS, 1.0f, 1.3f);
                 return;
@@ -136,7 +134,7 @@ public abstract class TargetedModule extends ModuleItem {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                Component msg = new TextComponent("\u25b6 ").append(asFormattable(target.getTextComponent()).withStyle(ChatFormatting.WHITE));
+                Component msg = Component.literal("\u25b6 ").append(asFormattable(target.getTextComponent()).withStyle(ChatFormatting.WHITE));
                 list.add(msg);
                 ClientUtil.getOpenItemRouter().ifPresent(router -> {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
@@ -154,7 +152,7 @@ public abstract class TargetedModule extends ModuleItem {
         if (!world.isClientSide && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
             world.playSound(null, new BlockPos(player.position()), ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
-            player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW), true);
+            player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW), true);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
@@ -277,7 +275,7 @@ public abstract class TargetedModule extends ModuleItem {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
                 MutableComponent msg = MiscUtil.asFormattable(target.getTextComponent())
-                        .append(" ").append(new TranslatableComponent(v.translationKey()).withStyle(v.getColor()));
+                        .append(" ").append(Component.translatable(v.translationKey()).withStyle(v.getColor()));
                 player.displayClientMessage(msg, false);
             }
         }

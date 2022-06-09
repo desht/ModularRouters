@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +41,7 @@ public class GuiUtil {
 
     public static List<Component> xlateAndSplit(String key, Object... params) {
         return Arrays.stream(StringUtils.splitByWholeSeparator(I18n.get(key, params), TRANSLATION_LINE_BREAK))
-                .map(TextComponent::new)
+                .map(Component::literal)
                 .collect(Collectors.toList());
     }
 }

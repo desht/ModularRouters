@@ -16,10 +16,14 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ModularRouters.MODID);
+
+    public static final List<RegistryObject<? extends Item>> REGISTRY_OBJECTS = new ArrayList<>();
 
     public static final RegistryObject<Item> BLANK_MODULE = register("blank_module");
     public static final RegistryObject<Item> BLANK_UPGRADE = register("blank_upgrade");
@@ -78,7 +82,9 @@ public class ModItems {
 
 
     private static <T extends Item> RegistryObject<T> register(final String name, final Supplier<T> sup) {
-        return ITEMS.register(name, sup);
+        RegistryObject<T> ro = ITEMS.register(name, sup);
+        REGISTRY_OBJECTS.add(ro);
+        return ro;
     }
 
     private static RegistryObject<Item> register(final String name) {

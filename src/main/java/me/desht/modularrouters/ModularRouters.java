@@ -62,15 +62,15 @@ public class ModularRouters {
         public static void gatherData(GatherDataEvent event) {
             DataGenerator generator = event.getGenerator();
             if (event.includeServer()) {
-                generator.addProvider(new ModRecipeProvider(generator));
-                generator.addProvider(new ModItemTagsProvider(generator, event.getExistingFileHelper()));
-                generator.addProvider(new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
-                generator.addProvider(new ModLootTableProvider(generator));
-                generator.addProvider(new ModEntityTypeTagsProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModRecipeProvider(generator));
+                generator.addProvider(event.includeClient(), new ModItemTagsProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModLootTableProvider(generator));
+                generator.addProvider(event.includeClient(), new ModEntityTypeTagsProvider(generator, event.getExistingFileHelper()));
             }
             if (event.includeClient()) {
-                generator.addProvider(new ModBlockStateProvider(generator, event.getExistingFileHelper()));
-                generator.addProvider(new ModItemModelProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModBlockStateProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, event.getExistingFileHelper()));
             }
         }
     }

@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.core.ModContainerTypes;
 import me.desht.modularrouters.util.MFLocator;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -75,7 +76,7 @@ public class ContainerExtruder2Module extends ContainerModule {
         if (stack.getItem() instanceof BlockItem bi) {
             Block b = bi.getBlock();
             return b.defaultBlockState().getRenderShape() == RenderShape.MODEL
-                    && !b.getRegistryName().getNamespace().equals("chiselsandbits");
+                    && !MiscUtil.getRegistryName(b).orElseThrow().getNamespace().equals("chiselsandbits");
         } else {
             return true;  // non-block items are allowed - they act as spacers
         }

@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " Q ",
-    "NBN",
-    " R "
-  ],
   "key": {
     "B": {
       "item": "modularrouters:blank_upgrade"
@@ -12,13 +7,18 @@
     "N": {
       "tag": "forge:nuggets/gold"
     },
-    "R": {
-      "tag": "forge:dusts/redstone"
-    },
     "Q": {
       "tag": "forge:gems/quartz"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
     }
   },
+  "pattern": [
+    " Q ",
+    "NBN",
+    " R "
+  ],
   "result": {
     "item": "modularrouters:security_upgrade"
   }

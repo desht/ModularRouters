@@ -5,8 +5,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import me.desht.modularrouters.core.ModBlockEntities;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -34,13 +33,13 @@ class TOPInfoProvider {
                     }
                 }
 
-                probeInfo.text(new TextComponent(ChatFormatting.YELLOW.toString())
-                        .append(new TranslatableComponent("modularrouters.guiText.tooltip.redstone.label"))
+                probeInfo.text(Component.literal(ChatFormatting.YELLOW.toString())
+                        .append(Component.translatable("modularrouters.guiText.tooltip.redstone.label"))
                         .append(ChatFormatting.WHITE + ": ")
-                        .append(new TranslatableComponent(router.getRedstoneBehaviour().getTranslationKey()))
+                        .append(Component.translatable(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {
-                probeInfo.text(new TranslatableComponent("modularrouters.chatText.security.accessDenied"));
+                probeInfo.text(Component.translatable("modularrouters.chatText.security.accessDenied"));
             }
         });
     }

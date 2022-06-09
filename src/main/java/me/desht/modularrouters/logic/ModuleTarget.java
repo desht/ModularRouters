@@ -8,8 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
@@ -142,7 +140,7 @@ public class ModuleTarget {
     }
 
     public Component getTextComponent() {
-        return new TranslatableComponent(blockTranslationKey).withStyle(ChatFormatting.WHITE)
-                .append(new TextComponent(" @ " + toString()).withStyle(ChatFormatting.AQUA));
+        return Component.translatable(blockTranslationKey).withStyle(ChatFormatting.WHITE)
+                .append(Component.literal(" @ " + toString()).withStyle(ChatFormatting.AQUA));
     }
 }

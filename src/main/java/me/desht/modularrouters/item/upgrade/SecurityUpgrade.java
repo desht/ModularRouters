@@ -9,8 +9,6 @@ import me.desht.modularrouters.item.IPlayerOwned;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -37,7 +35,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
             list.addAll(names.stream()
                     .map(name -> " \u2022 " + ChatFormatting.YELLOW + name)
                     .sorted()
-                    .map(TextComponent::new)
+                    .map(Component::literal)
                     .toList());
         }
     }
@@ -128,7 +126,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.getCommandSenderWorld().isClientSide && player.isSteppingCarefully()) {
             setOwner(stack, player);
-            player.displayClientMessage(new TranslatableComponent("modularrouters.itemText.security.owner", player.getDisplayName().getString()), false);
+            player.displayClientMessage(Component.translatable("modularrouters.itemText.security.owner", player.getDisplayName().getString()), false);
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.pass(stack);
@@ -144,7 +142,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
             if (player.level.isClientSide) {
                 player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
             } else {
-                player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.security." + res.toString(), name), false);
+                player.displayClientMessage(Component.translatable("modularrouters.chatText.security." + res.toString(), name), false);
             }
             return InteractionResult.SUCCESS;
         }

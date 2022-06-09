@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " T ",
-    "RMR",
-    " T "
-  ],
   "key": {
     "M": {
       "item": "modularrouters:augment_core"
@@ -16,6 +11,11 @@
       "item": "minecraft:redstone_torch"
     }
   },
+  "pattern": [
+    " T ",
+    "RMR",
+    " T "
+  ],
   "result": {
     "item": "modularrouters:redstone_augment"
   }

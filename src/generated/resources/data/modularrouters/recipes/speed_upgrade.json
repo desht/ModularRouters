@@ -1,32 +1,32 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "RIR",
-    "NBN",
-    "GZG"
-  ],
   "key": {
-    "I": {
-      "tag": "forge:ingots/gold"
+    "B": {
+      "item": "modularrouters:blank_upgrade"
     },
     "G": {
       "tag": "forge:gunpowder"
     },
-    "R": {
-      "tag": "forge:dusts/redstone"
-    },
-    "B": {
-      "item": "modularrouters:blank_upgrade"
+    "I": {
+      "tag": "forge:ingots/gold"
     },
     "N": {
       "tag": "forge:nuggets/gold"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
     },
     "Z": {
       "tag": "forge:rods/blaze"
     }
   },
+  "pattern": [
+    "RIR",
+    "NBN",
+    "GZG"
+  ],
   "result": {
-    "item": "modularrouters:speed_upgrade",
-    "count": 3
+    "count": 3,
+    "item": "modularrouters:speed_upgrade"
   }
 }

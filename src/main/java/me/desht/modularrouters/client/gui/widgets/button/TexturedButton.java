@@ -7,7 +7,6 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
@@ -20,7 +19,7 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
     protected final List<Component> tooltip1;
 
     public TexturedButton(int x, int y, int width, int height, OnPress pressable) {
-        super(x, y, width, height, TextComponent.EMPTY, pressable);
+        super(x, y, width, height, Component.empty(), pressable);
         this.tooltip1 = new ArrayList<>();
     }
 

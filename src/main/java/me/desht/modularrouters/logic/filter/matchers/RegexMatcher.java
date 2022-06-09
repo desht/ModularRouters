@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.filter.matchers;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class RegexMatcher implements IItemMatcher {
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (stack.isEmpty()) return false;
-        String name = stack.getItem().getRegistryName().getPath();
+        String name = MiscUtil.getRegistryName(stack.getItem()).orElseThrow().getPath();
         return patterns.stream().anyMatch(pat -> pat.matcher(name).find());
     }
 }

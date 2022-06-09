@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "modularrouters:blank_upgrade"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
   "pattern": [
     " W ",
     "WBW",
     " W "
   ],
-  "key": {
-    "W": {
-      "tag": "minecraft:wool"
-    },
-    "B": {
-      "item": "modularrouters:blank_upgrade"
-    }
-  },
   "result": {
-    "item": "modularrouters:muffler_upgrade",
-    "count": 4
+    "count": 4,
+    "item": "modularrouters:muffler_upgrade"
   }
 }

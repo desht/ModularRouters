@@ -7,8 +7,8 @@ import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -35,7 +35,7 @@ public class ClientUtil {
     public static MutableComponent xlate(String key, Object... args) {
         // not using TranslationTextComponent here because each argument starts a separate child component,
         // which resets any formatting each time
-        return new TextComponent(I18n.get(key, args));
+        return Component.literal(I18n.get(key, args));
     }
 
     public static boolean isInvKey(int keyCode) {

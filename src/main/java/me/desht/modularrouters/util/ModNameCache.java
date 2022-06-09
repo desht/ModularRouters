@@ -1,9 +1,11 @@
 package me.desht.modularrouters.util;
 
 import com.google.common.collect.Maps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -24,7 +26,8 @@ public class ModNameCache {
     }
 
     public static String getModName(ItemStack stack) {
-        return getModName(stack.getItem().getRegistryName().getNamespace());
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        return key == null ? "?" : getModName(key.getNamespace());
     }
 
     public static String getModName(String modId) {

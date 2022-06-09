@@ -2,14 +2,14 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class TextFieldWidgetMR extends EditBox {
     private final TextFieldManager manager;
     private final int ordinal;  // order in which this field appears in the textfield manager
 
     public TextFieldWidgetMR(TextFieldManager manager, Font fontrendererObj, int x, int y, int width, int height) {
-        super(fontrendererObj, x, y, width, height, TextComponent.EMPTY);
+        super(fontrendererObj, x, y, width, height, Component.empty());
 
         this.manager = manager;
         this.ordinal = manager.addTextField(this);

@@ -25,7 +25,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -221,7 +220,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             MutableComponent itc = xlate(isOmniDirectional() && dir == RelativeDirection.NONE ?
                     "modularrouters.guiText.tooltip.allDirections" : "modularrouters.guiText.tooltip." + dir.toString());
             list.add(xlate("modularrouters.guiText.label.direction")
-                    .append(new TextComponent(": "))
+                    .append(Component.literal(": "))
                     .append(itc.withStyle(ChatFormatting.AQUA)));
         }
         addFilterInformation(itemstack, list);
@@ -256,7 +255,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             ItemStack pick = pickaxeUser.getPickaxe(itemstack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(ChatFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
-                    list.add(new TextComponent("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW)));
+                    list.add(Component.literal("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW)));
         }
 
         int energy = getEnergyCost(itemstack);
@@ -276,16 +275,16 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
                 ItemStack augmentStack = new ItemStack(augment);
 //                String s = augmentStack.getHoverName().getString();
 //                if (n > 1) s = n + " x " + s;
-                MutableComponent comp = new TextComponent(" \u2022 ").withStyle(ChatFormatting.DARK_GREEN);
-                comp.append(n > 1 ? new TextComponent(n + " x ").append(augmentStack.getHoverName()) : augmentStack.getHoverName().copy());
+                MutableComponent comp = Component.literal(" \u2022 ").withStyle(ChatFormatting.DARK_GREEN);
+                comp.append(n > 1 ? Component.literal(n + " x ").append(augmentStack.getHoverName()) : augmentStack.getHoverName().copy());
                 comp.append(augment.getExtraInfo(n, stack).copy().withStyle(ChatFormatting.AQUA));
 //                s += ChatFormatting.AQUA + augment.getExtraInfo(n, stack);
-//                toAdd.add(new TextComponent(" \u2022 " + ChatFormatting.DARK_GREEN + s));
+//                toAdd.add(Component.literal(" \u2022 " + ChatFormatting.DARK_GREEN + s));
                 toAdd.add(comp);
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(new TextComponent(ChatFormatting.GREEN.toString()).append(xlate("modularrouters.itemText.augments")));
+            list.add(Component.literal(ChatFormatting.GREEN.toString()).append(xlate("modularrouters.itemText.augments")));
             list.addAll(toAdd);
         }
     }
@@ -317,10 +316,10 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             if (s.getItem() instanceof SmartFilterItem) {
                 int size = ((SmartFilterItem) s.getItem()).getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(new TextComponent(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
+                l2.add(Component.literal(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
                         .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(new TextComponent(" \u2022 ").append(getFilterItemDisplayName(s).plainCopy()
+                l2.add(Component.literal(" \u2022 ").append(getFilterItemDisplayName(s).plainCopy()
                         .withStyle(ChatFormatting.AQUA)));
             }
         }

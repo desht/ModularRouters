@@ -13,10 +13,9 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
-import java.util.function.Supplier;
 
 import static me.desht.modularrouters.datagen.ModBlockStateProvider.modid;
 
@@ -35,37 +34,38 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        for (Item item : ForgeRegistries.ITEMS.getValues()) {
-            String name = item.getRegistryName().getPath();
+        for (RegistryObject<? extends Item> registryObject : ModItems.REGISTRY_OBJECTS) {
+            String name = registryObject.getId().getPath();
+            Item item = registryObject.get();
             if (item instanceof ModuleItem) {
                 if (item == ModItems.DISTRIBUTOR_MODULE.get()) {
                     // special case; distributor module has a model override based on its mode
-                    ModelFile distributorPull = simpleItemVariant(ModItems.DISTRIBUTOR_MODULE.get(), "_pull",
+                    ModelFile distributorPull = simpleItemVariant(ModItems.DISTRIBUTOR_MODULE, "_pull",
                             modid("item/module/module_layer0"),
                             modid("item/module/module_layer1"),
                             modid("item/module/distributor_module_pull"));
-                    simpleItem(ModItems.DISTRIBUTOR_MODULE.get(),
+                    simpleItem(ModItems.DISTRIBUTOR_MODULE,
                             modid("item/module/module_layer0"),
                             modid("item/module/module_layer1"),
                             modid("item/module/distributor_module"))
                             .override().predicate(modLoc("mode"), 0.5f).model(distributorPull);
                 } else {
-                    simpleItem(item,
+                    simpleItem(registryObject,
                             modid("item/module/module_layer0"),
                             modid("item/module/module_layer1"),
                             modid("item/module/" + name));
                 }
             } else if (item instanceof UpgradeItem) {
-                simpleItem(item,
+                simpleItem(registryObject,
                         modid("item/upgrade/upgrade_layer0"),
                         modid("item/upgrade/upgrade_layer1"),
                         modid("item/upgrade/" + name));
             } else if (item instanceof AugmentItem) {
-                simpleItem(item,
+                simpleItem(registryObject,
                         modid("item/augment/augment_layer0"),
                         modid("item/augment/" + name));
             } else if (item instanceof SmartFilterItem) {
-                simpleItem(item, modid("item/filter/" + name));
+                simpleItem(registryObject, modid("item/filter/" + name));
             }
         }
 
@@ -77,20 +77,20 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent("manual", GENERATED).texture("layer0", modid("item/manual"));
     }
 
-    private ItemModelBuilder simpleItem(Supplier<Item> item, String... textures) {
-        return simpleItem(item.get(), textures);
+    private ItemModelBuilder simpleItem(RegistryObject<? extends Item> item, String... textures) {
+        return simpleItem(item.getId(), textures);
     }
 
-    private ItemModelBuilder simpleItem(Item item, String... textures) {
-        ItemModelBuilder builder = withExistingParent(item.getRegistryName().getPath(), GENERATED);
+    private ItemModelBuilder simpleItem(ResourceLocation itemKey, String... textures) {
+        ItemModelBuilder builder = withExistingParent(itemKey.getPath(), GENERATED);
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);
         }
         return builder;
     }
 
-    private ItemModelBuilder simpleItemVariant(Item item, String suffix, String... textures) {
-        ItemModelBuilder builder = withExistingParent(item.getRegistryName().getPath() + suffix, GENERATED);
+    private ItemModelBuilder simpleItemVariant(RegistryObject<? extends Item> item, String suffix, String... textures) {
+        ItemModelBuilder builder = withExistingParent(item.getId().getPath() + suffix, GENERATED);
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);
         }

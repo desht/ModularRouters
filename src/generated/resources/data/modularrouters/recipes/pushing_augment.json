@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "M": {
+      "item": "modularrouters:augment_core"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    }
+  },
   "pattern": [
     "PMP"
   ],
-  "key": {
-    "P": {
-      "item": "minecraft:piston"
-    },
-    "M": {
-      "item": "modularrouters:augment_core"
-    }
-  },
   "result": {
     "item": "modularrouters:pushing_augment"
   }

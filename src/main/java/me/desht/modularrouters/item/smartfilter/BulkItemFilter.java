@@ -17,7 +17,6 @@ import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
@@ -71,7 +70,7 @@ public class    BulkItemFilter extends SmartFilterItem {
         } else if (player != null && player.isSteppingCarefully()) {
             return InventoryUtils.getInventory(world, ctx.getClickedPos(), ctx.getClickedFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
-                player.displayClientMessage(new TranslatableComponent("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
+                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
                 world.playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundSource.MASTER, 1.0f, 1.0f);
                 return InteractionResult.SUCCESS;
             }).orElse(super.useOn(ctx));

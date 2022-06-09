@@ -8,7 +8,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.energy.IEnergyStorage;
 
@@ -25,7 +24,7 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
     private final IEnergyStorage storage;
 
     public WidgetEnergy(int x, int y, IEnergyStorage storage) {
-        super(x, y, 16, DEFAULT_SCALE, TextComponent.EMPTY);
+        super(x, y, 16, DEFAULT_SCALE, Component.empty());
         this.storage = storage;
     }
 
@@ -48,7 +47,7 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
 
     @Override
     public List<Component> getTooltip() {
-        return Collections.singletonList(new TextComponent(MiscUtil.commify(storage.getEnergyStored()) + " / " + MiscUtil.commify(storage.getMaxEnergyStored()) + " FE"));
+        return Collections.singletonList(Component.literal(MiscUtil.commify(storage.getEnergyStored()) + " / " + MiscUtil.commify(storage.getMaxEnergyStored()) + " FE"));
     }
 
     @Override

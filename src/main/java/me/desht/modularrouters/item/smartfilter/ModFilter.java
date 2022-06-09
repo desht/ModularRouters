@@ -17,7 +17,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -62,7 +61,7 @@ public class ModFilter extends SmartFilterItem {
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
                     .map(s -> " \u2022 " + ChatFormatting.AQUA + s)
-                    .map(TextComponent::new)
+                    .map(Component::literal)
                     .toList());
         } else {
             list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", 0));

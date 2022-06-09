@@ -1,27 +1,27 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "item": "minecraft:diamond_chestplate"
+    },
+    "H": {
+      "item": "minecraft:diamond_helmet"
+    },
+    "P": {
+      "item": "modularrouters:puller_module_2"
+    },
+    "S": {
+      "item": "modularrouters:sender_module_3"
+    },
+    "Z": {
+      "item": "minecraft:wither_skeleton_skull"
+    }
+  },
   "pattern": [
     " H ",
     "SZP",
     " C "
   ],
-  "key": {
-    "C": {
-      "item": "minecraft:diamond_chestplate"
-    },
-    "P": {
-      "item": "modularrouters:puller_module_2"
-    },
-    "Z": {
-      "item": "minecraft:wither_skeleton_skull"
-    },
-    "H": {
-      "item": "minecraft:diamond_helmet"
-    },
-    "S": {
-      "item": "modularrouters:sender_module_3"
-    }
-  },
   "result": {
     "item": "modularrouters:player_module"
   }

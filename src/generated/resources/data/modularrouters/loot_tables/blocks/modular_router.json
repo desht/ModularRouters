@@ -2,9 +2,12 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "name": "modular_router",
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:item",
@@ -15,44 +18,41 @@
             },
             {
               "function": "minecraft:copy_nbt",
-              "source": "block_entity",
               "ops": [
                 {
+                  "op": "replace",
                   "source": "Modules",
-                  "target": "BlockEntityTag.Modules",
-                  "op": "replace"
+                  "target": "BlockEntityTag.Modules"
                 },
                 {
+                  "op": "replace",
                   "source": "Upgrades",
-                  "target": "BlockEntityTag.Upgrades",
-                  "op": "replace"
+                  "target": "BlockEntityTag.Upgrades"
                 },
                 {
+                  "op": "replace",
                   "source": "Redstone",
-                  "target": "BlockEntityTag.Redstone",
-                  "op": "replace"
+                  "target": "BlockEntityTag.Redstone"
                 }
-              ]
+              ],
+              "source": "block_entity"
             },
             {
-              "function": "minecraft:set_contents",
               "type": "modularrouters:modular_router",
               "entries": [
                 {
                   "type": "minecraft:dynamic",
                   "name": "minecraft:contents"
                 }
-              ]
+              ],
+              "function": "minecraft:set_contents"
             }
           ],
           "name": "modularrouters:modular_router"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "name": "modular_router",
+      "rolls": 1.0
     }
   ]
 }

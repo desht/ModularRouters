@@ -1,14 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "QRQ",
-    " B ",
-    "QGQ"
-  ],
   "key": {
-    "R": {
-      "tag": "forge:storage_blocks/redstone"
-    },
     "B": {
       "item": "modularrouters:blank_upgrade"
     },
@@ -17,8 +9,16 @@
     },
     "Q": {
       "tag": "forge:gems/quartz"
+    },
+    "R": {
+      "tag": "forge:storage_blocks/redstone"
     }
   },
+  "pattern": [
+    "QRQ",
+    " B ",
+    "QGQ"
+  ],
   "result": {
     "item": "modularrouters:energy_upgrade"
   }

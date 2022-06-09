@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " S ",
-    "QMQ",
-    " Q "
-  ],
   "key": {
     "M": {
       "item": "modularrouters:augment_core"
@@ -16,8 +11,13 @@
       "tag": "forge:rods/wooden"
     }
   },
+  "pattern": [
+    " S ",
+    "QMQ",
+    " Q "
+  ],
   "result": {
-    "item": "modularrouters:range_down_augment",
-    "count": 4
+    "count": 4,
+    "item": "modularrouters:range_down_augment"
   }
 }

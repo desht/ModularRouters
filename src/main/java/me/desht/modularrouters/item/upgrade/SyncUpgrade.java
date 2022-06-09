@@ -9,7 +9,6 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -57,7 +56,7 @@ public class SyncUpgrade extends UpgradeItem {
         } else if (player.isSteppingCarefully()) {
             if (!world.isClientSide) {
                 setTunedValue(stack, world.random.nextInt(ConfigHolder.common.router.baseTickRate.get()));
-                player.displayClientMessage(new TranslatableComponent("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
+                player.displayClientMessage(Component.translatable("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
             }

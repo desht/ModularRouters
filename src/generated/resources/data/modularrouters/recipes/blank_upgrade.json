@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": {
+      "tag": "forge:nuggets/gold"
+    },
+    "L": {
+      "tag": "forge:gems/lapis"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
   "pattern": [
     "PPG",
     "PLG",
     " PG"
   ],
-  "key": {
-    "P": {
-      "item": "minecraft:paper"
-    },
-    "L": {
-      "tag": "forge:gems/lapis"
-    },
-    "G": {
-      "tag": "forge:nuggets/gold"
-    }
-  },
   "result": {
-    "item": "modularrouters:blank_upgrade",
-    "count": 4
+    "count": 4,
+    "item": "modularrouters:blank_upgrade"
   }
 }

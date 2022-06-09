@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.augment;
 
 import me.desht.modularrouters.item.module.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -18,6 +17,6 @@ public class StackAugment extends AugmentItem {
 
     @Override
     public Component getExtraInfo(int c, ItemStack stack) {
-        return new TextComponent(" - ").append(xlate("modularrouters.itemText.augments.stackInfo", Math.min(1 << c, 64)));
+        return Component.literal(" - ").append(xlate("modularrouters.itemText.augments.stackInfo", Math.min(1 << c, 64)));
     }
 }

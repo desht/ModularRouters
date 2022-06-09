@@ -22,7 +22,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        String routerName = ModBlocks.MODULAR_ROUTER.get().getRegistryName().getPath();
+        String routerName = ModBlocks.MODULAR_ROUTER.getId().getPath();
         models().withExistingParent(routerName,"block/block")
                 .texture("back", modid("block/%s_back", routerName))
                 .texture("side", modid("block/%s_side", routerName))

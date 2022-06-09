@@ -5,7 +5,6 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.Validate;
@@ -29,7 +28,7 @@ public abstract class AugmentItem extends MRBaseItem {
     public abstract int getMaxAugments(ModuleItem moduleType);
 
     public Component getExtraInfo(int c, ItemStack moduleStack) {
-        return TextComponent.EMPTY;
+        return Component.empty();
     }
 
     public static class AugmentCounter {

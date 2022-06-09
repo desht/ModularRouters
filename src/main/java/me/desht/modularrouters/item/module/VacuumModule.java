@@ -12,7 +12,6 @@ import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,7 +37,7 @@ public class VacuumModule extends ModuleItem implements IRangedModule {
         CompiledVacuumModule cvm = new CompiledVacuumModule(null, itemstack);
         if (cvm.isXpMode()) {
             XPCollection.XPCollectionType type = cvm.getXPCollectionType();
-            Component modName = new TextComponent(ModNameCache.getModName(type.getModId())).withStyle(ChatFormatting.BLUE);
+            Component modName = Component.literal(ModNameCache.getModName(type.getModId())).withStyle(ChatFormatting.BLUE);
             Component title = type.getDisplayName().plainCopy().withStyle(ChatFormatting.AQUA);
             list.add(ClientUtil.xlate("modularrouters.guiText.label.xpVacuum")
                     .append(": ").withStyle(ChatFormatting.YELLOW)

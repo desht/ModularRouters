@@ -4,12 +4,11 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModSounds;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +37,7 @@ public class CamouflageUpgrade extends UpgradeItem {
 
     private static Component getCamoStateDisplayName(ItemStack stack) {
         BlockState state = getCamoState(stack);
-        return state != null ? getCamoStateDisplayName(state) : new TextComponent("<?>");
+        return state != null ? getCamoStateDisplayName(state) : Component.literal("<?>");
     }
 
     private static Component getCamoStateDisplayName(BlockState camoState) {
@@ -55,7 +54,7 @@ public class CamouflageUpgrade extends UpgradeItem {
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
             if (!ctx.getLevel().isClientSide) {
-                player.displayClientMessage(new TranslatableComponent("modularrouters.itemText.camouflage.held")
+                player.displayClientMessage(Component.translatable("modularrouters.itemText.camouflage.held")
                         .append(ChatFormatting.AQUA.toString())
                         .append(getCamoStateDisplayName(stack))
                         .withStyle(ChatFormatting.YELLOW), true);
@@ -84,6 +83,6 @@ public class CamouflageUpgrade extends UpgradeItem {
     private static boolean isBlockOKForCamo(BlockState state) {
         // trying to camo a router as itself = recursion hell
         return state.getRenderShape() == RenderShape.MODEL && state.getBlock() != ModBlocks.MODULAR_ROUTER.get()
-                && !state.getBlock().getRegistryName().getNamespace().equals("chiselsandbits");
+                && !MiscUtil.getRegistryName(state.getBlock()).orElseThrow().getNamespace().equals("chiselsandbits");
     }
 }

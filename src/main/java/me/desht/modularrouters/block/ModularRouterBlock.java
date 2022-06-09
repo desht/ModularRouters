@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -124,7 +123,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
                 for (int i = 0; i < modulesHandler.getSlots(); i++) {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
-                        moduleText.add(new TextComponent("\u2022 ")
+                        moduleText.add(Component.literal("\u2022 ")
                                 .append(moduleStack.getHoverName())
                                 .withStyle(ChatFormatting.AQUA)
                         );
@@ -145,7 +144,7 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
                     ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
                     if (!upgradeStack.isEmpty()) {
                         nUpgrades += upgradeStack.getCount();
-                        upgradeText.add(new TextComponent("\u2022 " + upgradeStack.getCount() + " x ")
+                        upgradeText.add(Component.literal("\u2022 " + upgradeStack.getCount() + " x ")
                                 .append(upgradeStack.getHoverName())
                                 .withStyle(ChatFormatting.AQUA)
                         );

@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -22,14 +21,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.CheckForNull;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -43,7 +40,7 @@ public class MiscUtil {
 
     public static void appendMultilineText(List<Component> result, ChatFormatting formatting, String key, Object... args) {
         for (String s : I18n.get(key, args).split(Pattern.quote("${br}"))) {
-            result.add(new TextComponent(s).withStyle(formatting));
+            result.add(Component.literal(s).withStyle(formatting));
         }
     }
 
@@ -51,8 +48,8 @@ public class MiscUtil {
         return component instanceof MutableComponent ? (MutableComponent) component : component.plainCopy();
     }
 
-    public static List<TextComponent> wrapStringAsTextComponent(String text) {
-        return wrapString(text, WRAP_LENGTH).stream().map(TextComponent::new).toList();
+    public static List<? extends Component> wrapStringAsTextComponent(String text) {
+        return wrapString(text, WRAP_LENGTH).stream().map(Component::literal).toList();
     }
 
     public static String commify(int n) {
@@ -118,7 +115,7 @@ public class MiscUtil {
     }
 
     public static Component settingsStr(String prefix, Component c) {
-        return new TextComponent(prefix).append(c);  // appendSibling
+        return Component.literal(prefix).append(c);  // appendSibling
     }
 
     public static CompoundTag serializeGlobalPos(GlobalPos globalPos) {
@@ -159,5 +156,13 @@ public class MiscUtil {
         return Registry.FLUID.getHolderOrThrow(Registry.FLUID.getResourceKey(fluid).orElseThrow())
                 .tags()
                 .collect(Collectors.toSet());
+    }
+
+    public static Optional<ResourceLocation> getRegistryName(Item item) {
+        return Optional.ofNullable(ForgeRegistries.ITEMS.getKey(item));
+    }
+
+    public static Optional<ResourceLocation> getRegistryName(Block block) {
+        return Optional.ofNullable(ForgeRegistries.BLOCKS.getKey(block));
     }
 }

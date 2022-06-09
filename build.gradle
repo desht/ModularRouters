@@ -38,8 +38,8 @@ sourceSets.main.resources {
 
 minecraft {
     // until we have parchment...
-    //mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}-${project.mc_version}"
-    mappings channel: 'parchment', version: "1.18.1-2022.03.06-1.18.2"
+    //mappings channel: 'parchment', version: "1.18.1-2022.03.06-1.18.2"
+    mappings channel: 'official', version: "1.19"
     runs {
         client {
             workingDirectory file('run')
@@ -116,16 +116,14 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     // temporary till TOP for 1.18 is on maven.tterrag.com...
-    compileOnly fg.deobf("curse.maven:theoneprobe-245211:3671753")
-    runtimeOnly fg.deobf("curse.maven:theoneprobe-245211:3671753")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+    implementation fg.deobf("curse.maven:theoneprobe-245211:3822185")
+    //implementation fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
 
 //    compileOnly fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
 //    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
 //    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    //compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {

@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "modularrouters:bulk_item_filter",
     "modularrouters:inspection_filter",

@@ -4,7 +4,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +30,7 @@ public class GuideBookRecipe extends ShapelessRecipe {
         Item bookItem = ForgeRegistries.ITEMS.getValue(BOOK_ID);
         if (bookItem == null) {
             ItemStack stack = new ItemStack(Items.PAPER);
-            stack.setHoverName(new TextComponent("Install Patchouli for the guide book!"));
+            stack.setHoverName(Component.literal("Install Patchouli for the guide book!"));
             return stack;
         }
         ItemStack book = new ItemStack(bookItem);

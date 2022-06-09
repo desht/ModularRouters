@@ -4,8 +4,6 @@ import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +21,9 @@ public class RedstoneBehaviourButton extends TexturedCyclerButton<RouterRedstone
     @Override
     public List<Component> getTooltip() {
         return Collections.singletonList(
-                new TranslatableComponent("modularrouters.guiText.tooltip.redstone.label")
-                        .append(new TextComponent(": "))
-                        .append(new TranslatableComponent(getState().getTranslationKey()))
+                Component.translatable("modularrouters.guiText.tooltip.redstone.label")
+                        .append(Component.literal(": "))
+                        .append(Component.translatable(getState().getTranslationKey()))
         );
     }
 }

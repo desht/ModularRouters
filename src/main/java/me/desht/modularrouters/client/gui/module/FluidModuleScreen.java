@@ -20,7 +20,6 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -129,12 +128,12 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidTransferTooltip");
-            tooltip1.add(TextComponent.EMPTY.plainCopy());
+            tooltip1.add(Component.empty().plainCopy());
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
                 tooltip1.add(xlate("modularrouters.guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
-                tooltip1.add(TextComponent.EMPTY.plainCopy());
+                tooltip1.add(Component.empty().plainCopy());
             });
             MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
         }
@@ -192,7 +191,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         private boolean regulateAbsolute;
 
         public RegulateAbsoluteButton(int xPos, int yPos, int width, int height, OnPress pressable, boolean regulateAbsolute) {
-            super(xPos, yPos, width, height, TextComponent.EMPTY, pressable);
+            super(xPos, yPos, width, height, Component.empty(), pressable);
             this.regulateAbsolute = regulateAbsolute;
         }
 
@@ -201,7 +200,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         }
 
         void setText() {
-            setMessage(new TextComponent(regulateAbsolute ? "mB" : "%"));
+            setMessage(Component.literal(regulateAbsolute ? "mB" : "%"));
         }
     }
 }

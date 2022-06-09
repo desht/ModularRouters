@@ -1,8 +1,10 @@
 package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.ICamouflageable;
+import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
@@ -13,6 +15,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public abstract class BlockCamo extends Block /*implements IFacade*/ {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
@@ -117,7 +120,9 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
     private boolean isBlacklisted(BlockState camouflage) {
         // C&B chiseled blocks also have some camo functionality, and this can cause a recursive loop
         // https://github.com/desht/ModularRouters/issues/116
-        return camouflage.getBlock().getRegistryName().getNamespace().equals("chiselsandbits");
+        return MiscUtil.getRegistryName(camouflage.getBlock())
+                .map(regName -> regName.getNamespace().equals("chiselsandbits"))
+                .orElse(false);
     }
 
 //    @Nonnull

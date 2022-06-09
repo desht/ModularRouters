@@ -4,8 +4,6 @@ import com.google.common.base.Joiner;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -111,11 +109,11 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         public Component asLocalizedText() {
-            if (subject == null || op == null) return new TextComponent("<?>");
-            return new TextComponent(" ")
-                    .append(new TranslatableComponent("modularrouters.guiText.label.inspectionSubject." + subject))
+            if (subject == null || op == null) return Component.literal("<?>");
+            return Component.literal(" ")
+                    .append(Component.translatable("modularrouters.guiText.label.inspectionSubject." + subject))
                     .append(" ")
-                    .append(new TranslatableComponent("modularrouters.guiText.label.inspectionOp." + op))
+                    .append(Component.translatable("modularrouters.guiText.label.inspectionOp." + op))
                     .append(target + subject.suffix);
         }
     }

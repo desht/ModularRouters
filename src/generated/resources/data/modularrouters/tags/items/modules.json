@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "modularrouters:activator_module",
     "modularrouters:breaker_module",

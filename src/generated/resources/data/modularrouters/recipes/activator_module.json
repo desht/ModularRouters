@@ -1,27 +1,27 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    },
+    "M": {
+      "item": "modularrouters:blank_module"
+    },
+    "Q": {
+      "tag": "forge:gems/quartz"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
   "pattern": [
     "RLR",
     "DMD",
     "RQR"
   ],
-  "key": {
-    "Q": {
-      "tag": "forge:gems/quartz"
-    },
-    "D": {
-      "item": "minecraft:dispenser"
-    },
-    "R": {
-      "tag": "forge:dusts/redstone"
-    },
-    "M": {
-      "item": "modularrouters:blank_module"
-    },
-    "L": {
-      "item": "minecraft:lever"
-    }
-  },
   "result": {
     "item": "modularrouters:activator_module"
   }

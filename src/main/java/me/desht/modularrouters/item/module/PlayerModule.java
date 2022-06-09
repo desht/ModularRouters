@@ -12,8 +12,6 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +41,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
                 I18n.get("block.modularrouters.modular_router"),
                 cpm.getOperation().getSymbol(),
                 I18n.get("modularrouters.guiText.label.playerSect." + cpm.getSection()));
-        list.add(new TextComponent(s));
+        list.add(Component.literal(s));
     }
 
     @Override
@@ -62,7 +60,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
             return InteractionResult.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItemInHand(), ctx.getPlayer());
-            ctx.getPlayer().displayClientMessage(new TranslatableComponent("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
+            ctx.getPlayer().displayClientMessage(Component.translatable("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
             return InteractionResult.SUCCESS;
         } else {
             return super.useOn(ctx);
