@@ -53,10 +53,6 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
         return getTextureXY().y();
     }
 
-//    protected abstract int getTextureX();
-//
-//    protected abstract int getTextureY();
-
     public List<Component> getTooltip() {
         return tooltip1;
     }

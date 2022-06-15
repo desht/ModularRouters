@@ -1,7 +1,7 @@
 # The mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[40,)" #mandatory (24 is current forge version)
+loaderVersion="[41,)" #mandatory (24 is current forge version)
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/desht/ModularRouters/issues"
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -24,7 +24,7 @@ version="${file.jarVersion}" #mandatory
  # A display name for the mod
 displayName="Modular Routers"
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.18.2-master/release_info.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.19-master/release_info.json" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Modular Routers is a highly flexible mod for moving items around the world in various ways.
@@ -33,7 +33,7 @@ Modular Routers is a highly flexible mod for moving items around the world in va
 [[dependencies.modularrouters]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[40.0.3,)" #mandatory
+    versionRange="[41.0.32,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]

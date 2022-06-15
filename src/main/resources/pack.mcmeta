@@ -1,6 +1,8 @@
 {
     "pack": {
-        "description": "Modular Routers resources",
-        "pack_format": 8
+        "pack_format": 9,
+        "description": "Modular Routers resource pack",
+        "forge:resource_pack_format": 9,
+        "forge:data_pack_format": 10
     }
 }

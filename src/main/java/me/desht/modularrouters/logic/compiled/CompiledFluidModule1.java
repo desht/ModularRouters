@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +17,7 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.*;
+import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -29,20 +29,18 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import static net.minecraftforge.fluids.FluidAttributes.BUCKET_VOLUME;
-
 public class CompiledFluidModule1 extends CompiledModule {
     public static final String NBT_FORCE_EMPTY = "ForceEmpty";
     public static final String NBT_MAX_TRANSFER = "MaxTransfer";
     public static final String NBT_FLUID_DIRECTION = "FluidDir";
     public static final String NBT_REGULATE_ABSOLUTE = "RegulateAbsolute";
 
+    public static final int BUCKET_VOLUME = 1000;
+
     private final int maxTransfer;
     private final FluidDirection fluidDirection;
     private final boolean forceEmpty;  // force emptying even if there's a fluid block in the way
     private final boolean regulateAbsolute;  // true = regulate by mB; false = regulate by % of tank's capacity
-
-//    private static final InfiniteWaterHandler infiniteWater = new InfiniteWaterHandler();
 
     public CompiledFluidModule1(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
@@ -70,7 +68,7 @@ public class CompiledFluidModule1 extends CompiledModule {
 
         boolean didWork;
         if (worldFluidCap.isPresent()) {
-            // there's a TE with a fluid capability; try to interact with that
+            // there's a block entity with a fluid capability; try to interact with that
             didWork = switch (fluidDirection) {
                 case IN -> worldFluidCap.map(srcHandler ->
                         routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false))
@@ -80,7 +78,7 @@ public class CompiledFluidModule1 extends CompiledModule {
                         .orElse(false);
             };
         } else {
-            // no TE at the target position; try to interact with a fluid block in the world
+            // no block entity at the target position; try to interact with a fluid block in the world
             boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
             didWork = switch (fluidDirection) {
                 case IN -> tryPickupFluid(routerCap, world, pos, playSound);
@@ -116,8 +114,8 @@ public class CompiledFluidModule1 extends CompiledModule {
         }
         // actually do the pickup & transfer now
         bucketPickup.pickupBlock(world, pos, state);
-        FluidStack transferred = routerCap.map(h ->
-                FluidUtil.tryFluidTransfer(h, tank, BUCKET_VOLUME, true))
+        FluidStack transferred = routerCap.map(destHandler ->
+                FluidUtil.tryFluidTransfer(destHandler, tank, BUCKET_VOLUME, true))
                 .orElse(FluidStack.EMPTY);
         if (!transferred.isEmpty() && playSound) {
             playFillSound(world, pos, fluid);
@@ -150,7 +148,7 @@ public class CompiledFluidModule1 extends CompiledModule {
                     || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(world, pos, blockstate, toPlace.getFluid())) {
                 if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
                     // no pouring water in the nether!
-                    playEvaporationEffects(world, pos);
+                    playEvaporationEffects(world, pos, fluid);
                 } else if (block instanceof LiquidBlockContainer liq) {
                     // a block which can take fluid, e.g. waterloggable block like a slab
                     FluidState still = fluid instanceof FlowingFluid ff ? ff.getSource(false) : fluid.defaultFluidState();
@@ -179,42 +177,31 @@ public class CompiledFluidModule1 extends CompiledModule {
     }
 
     private void playEmptySound(Level world, BlockPos pos, Fluid fluid) {
-        SoundEvent soundevent = fluid.getAttributes().getEmptySound();
-        if(soundevent == null) soundevent = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
-        world.playSound(null, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
-    }
-
-    private void playFillSound(Level world, BlockPos pos, Fluid fluid) {
-        SoundEvent soundEvent = fluid.getAttributes().getFillSound();
-        if (soundEvent == null) soundEvent = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
-        world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
-    }
-
-    private void playEvaporationEffects(Level world, BlockPos pos) {
-        int i = pos.getX();
-        int j = pos.getY();
-        int k = pos.getZ();
-        world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
-        for(int l = 0; l < 8; ++l) {
-            world.addParticle(ParticleTypes.LARGE_SMOKE, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
+        SoundEvent soundevent = fluid.getFluidType().getSound(SoundActions.BUCKET_EMPTY);
+        if (soundevent != null) {
+            world.playSound(null, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
 
-//    private boolean isInfiniteWaterSource(Level world, BlockPos pos) {
-        // @todo 1.13
-//        IBlockState state = world.getBlockState(pos);
-//
-//        if ((state.getBlock() == Blocks.WATER || state.getBlock() == Blocks.FLOWING_WATER) && state.getValue(BlockLiquid.LEVEL) == 0) {
-//            int count = 0;
-//            for (EnumFacing face : EnumFacing.HORIZONTALS) {
-//                IBlockState state2 = world.getBlockState(pos.offset(face));
-//                if ((state2.getBlock() == Blocks.WATER || state2.getBlock() == Blocks.FLOWING_WATER) && state2.getValue(BlockLiquid.LEVEL) == 0) {
-//                    if (++count >= 2) return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    private void playFillSound(Level world, BlockPos pos, Fluid fluid) {
+        SoundEvent soundEvent = fluid.getFluidType().getSound(SoundActions.BUCKET_FILL);
+        if (soundEvent != null) {
+            world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
+    }
+
+    private void playEvaporationEffects(Level world, BlockPos pos, Fluid fluid) {
+        SoundEvent soundEvent = fluid.getFluidType().getSound(SoundActions.FLUID_VAPORIZE);
+        if (soundEvent != null) {
+            world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
+        int i = pos.getX();
+        int j = pos.getY();
+        int k = pos.getZ();
+        for (int l = 0; l < 8; ++l) {
+            world.addParticle(ParticleTypes.LARGE_SMOKE, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
+        }
+    }
 
     private boolean doTransfer(ModularRouterBlockEntity router, IFluidHandler src, IFluidHandler dest, FluidDirection direction) {
         if (getRegulationAmount() > 0) {
@@ -279,61 +266,4 @@ public class CompiledFluidModule1 extends CompiledModule {
     public boolean isRegulateAbsolute() {
         return regulateAbsolute;
     }
-// @todo 1.13
-//    private static class InfiniteWaterHandler implements IFluidHandler {
-//        private static final IFluidTankProperties waterTank = new IFluidTankProperties() {
-//            @Nullable
-//            @Override
-//            public FluidStack getContents() {
-//                return new FluidStack(FluidRegistry.WATER, 1000);
-//            }
-//
-//            @Override
-//            public int getCapacity() {
-//                return 1000;
-//            }
-//
-//            @Override
-//            public boolean canFill() {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean canDrain() {
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean canFillFluidType(FluidStack fluidStack) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean canDrainFluidType(FluidStack fluidStack) {
-//                return fluidStack.getFluid() == FluidRegistry.WATER;
-//            }
-//        };
-//
-//        @Override
-//        public IFluidTankProperties[] getTankProperties() {
-//            return new IFluidTankProperties[] { waterTank };
-//        }
-//
-//        @Override
-//        public int fill(FluidStack resource, boolean doFill) {
-//            return 0;
-//        }
-//
-//        @Nullable
-//        @Override
-//        public FluidStack drain(FluidStack resource, boolean doDrain) {
-//            return new FluidStack(FluidRegistry.WATER, resource.amount);
-//        }
-//
-//        @Nullable
-//        @Override
-//        public FluidStack drain(int maxDrain, boolean doDrain) {
-//            return new FluidStack(FluidRegistry.WATER, maxDrain);
-//        }
-//    }
 }
