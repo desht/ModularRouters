@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-abstract class AbstractFilterContainerScreen extends AbstractMRContainerScreen<ContainerSmartFilter> {
+public abstract class AbstractFilterContainerScreen extends AbstractMRContainerScreen<ContainerSmartFilter> {
     protected final InteractionHand hand;
     protected final String title;
     protected final ItemStack filterStack;

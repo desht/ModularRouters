@@ -32,7 +32,7 @@ public class ContainerModFilter extends ContainerSmartFilter {
         handler = new GhostItemHandler(1);
 
         // slot for the ghost item
-        addSlot(new SlotItemHandler(handler, 0, 7, 19));
+        addSlot(new FilterSlot(handler, 0, 7, 19));
 
         // player's main inventory - uses default locations for standard inventory texture file
         for (int i = 0; i < 3; i++) {

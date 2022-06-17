@@ -1,6 +1,6 @@
 package me.desht.modularrouters.network;
 
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ContainerMRBase;
 import me.desht.modularrouters.container.FilterSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 /**
  * Received on: SERVER
- * Sent by client when a module filter slot is updated via JEI
+ * Sent by client when a filter slot is updated via the JEI ghost handler
  */
 public class ModuleFilterMessage {
     private final int slot;
@@ -24,12 +24,12 @@ public class ModuleFilterMessage {
     }
 
     public ModuleFilterMessage(FriendlyByteBuf buffer) {
-        slot = buffer.readByte();
+        slot = buffer.readVarInt();
         stack = buffer.readItem();
     }
 
     public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeByte(slot);
+        buffer.writeVarInt(slot);
         buffer.writeItem(stack);
     }
 
@@ -38,7 +38,7 @@ public class ModuleFilterMessage {
             Player player = ctx.get().getSender();
             if (player != null) {
                 AbstractContainerMenu c = player.containerMenu;
-                if (c instanceof ContainerModule && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
+                if (c instanceof ContainerMRBase && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
                     c.getSlot(slot).set(stack);
                 }
             }
