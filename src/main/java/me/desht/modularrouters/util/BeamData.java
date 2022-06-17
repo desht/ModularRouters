@@ -107,8 +107,4 @@ public class BeamData {
         res[2] = color       & 0xff;
         return res;
     }
-
-    public boolean isReversed() {
-        return reversed;
-    }
 }

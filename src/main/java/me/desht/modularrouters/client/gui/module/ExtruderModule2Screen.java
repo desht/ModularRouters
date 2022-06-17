@@ -2,12 +2,12 @@ package me.desht.modularrouters.client.gui.module;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.InfoButton;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ExtruderModule2Screen extends AbstractModuleScreen {
-    public ExtruderModule2Screen(ContainerModule container, Inventory inv, Component displayName) {
+    public ExtruderModule2Screen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

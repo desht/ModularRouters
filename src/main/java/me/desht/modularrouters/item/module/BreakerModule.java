@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.container.ModuleMenu;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import net.minecraft.ChatFormatting;
@@ -41,7 +41,7 @@ public class BreakerModule extends ModuleItem implements IPickaxeUser {
     }
 
     @Override
-    public MenuType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_BREAKER.get();
+    public MenuType<? extends ModuleMenu> getMenuType() {
+        return ModMenuTypes.BREAKER_MENU.get();
     }
 }

@@ -2,7 +2,7 @@ package me.desht.modularrouters.client.gui.filter;
 
 import me.desht.modularrouters.client.gui.AbstractMRContainerScreen;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
@@ -13,12 +13,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-public abstract class AbstractFilterContainerScreen extends AbstractMRContainerScreen<ContainerSmartFilter> {
+public abstract class AbstractFilterContainerScreen extends AbstractMRContainerScreen<AbstractSmartFilterMenu> {
     protected final InteractionHand hand;
     protected final String title;
     protected final ItemStack filterStack;
 
-    AbstractFilterContainerScreen(ContainerSmartFilter container, Inventory inv, Component displayName) {
+    AbstractFilterContainerScreen(AbstractSmartFilterMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
 
         this.hand = container.getLocator().hand;

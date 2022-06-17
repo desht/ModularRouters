@@ -12,7 +12,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModularRouter;
+import me.desht.modularrouters.container.RouterMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.OpenGuiMessage;
 import me.desht.modularrouters.network.PacketHandler;
@@ -38,7 +38,7 @@ import static me.desht.modularrouters.client.util.ClientUtil.theClientWorld;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
-public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModularRouter> implements ISendToServer, MenuAccess<ContainerModularRouter> {
+public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> implements ISendToServer, MenuAccess<RouterMenu> {
     private static final ResourceLocation TEXTURE_LOCATION = RL("textures/gui/router.png");
 
     private static final int LABEL_YPOS = 5;
@@ -50,8 +50,8 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
     private static final int BUTTON_HEIGHT = 16;
     private static final int BUTTON_WIDTH = 16;
 
-    private static final int MODULE_START = ContainerModularRouter.TE_FIRST_SLOT + ContainerModularRouter.MODULE_SLOT_START;
-    private static final int MODULE_END = ContainerModularRouter.TE_FIRST_SLOT + ContainerModularRouter.MODULE_SLOT_END;
+    private static final int MODULE_START = RouterMenu.TE_FIRST_SLOT + RouterMenu.MODULE_SLOT_START;
+    private static final int MODULE_END = RouterMenu.TE_FIRST_SLOT + RouterMenu.MODULE_SLOT_END;
 
     private RedstoneBehaviourButton redstoneBehaviourButton;
     private EcoButton ecoButton;
@@ -60,7 +60,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
     private EnergyWarningButton energyWarning;
     private int energyUsage;
 
-    public ModularRouterScreen(ContainerModularRouter container, Inventory inventoryPlayer, Component displayName) {
+    public ModularRouterScreen(RouterMenu container, Inventory inventoryPlayer, Component displayName) {
         super(container, inventoryPlayer, displayName);
 
         this.imageWidth = GUI_WIDTH;
@@ -88,8 +88,8 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
         MutableComponent title = xlate("block.modularrouters.modular_router");
         font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, LABEL_YPOS, 0xFF404040);
         font.draw(matrixStack, xlate("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, xlate("modularrouters.guiText.label.upgrades"), ContainerModularRouter.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, xlate("modularrouters.guiText.label.modules"), ContainerModularRouter.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.label.upgrades"), RouterMenu.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
+        font.draw(matrixStack, xlate("modularrouters.guiText.label.modules"), RouterMenu.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
         font.draw(matrixStack, xlate("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040);
     }
 
@@ -127,7 +127,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<ContainerModu
         boolean hasEnergyUpgrade = menu.getRouter().getEnergyCapacity() > 0;
         energyWidget.visible = hasEnergyUpgrade;
         energyDirButton.visible = hasEnergyUpgrade
-                && getMenu().getSlot(ContainerModularRouter.TE_FIRST_SLOT).getItem().getCapability(CapabilityEnergy.ENERGY).isPresent();
+                && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(CapabilityEnergy.ENERGY).isPresent();
 
         energyWarning.x = hasEnergyUpgrade ? leftPos - 22 : leftPos + 4;
 

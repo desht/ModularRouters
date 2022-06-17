@@ -2,7 +2,7 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModBlockEntities;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.core.BlockPos;
@@ -18,7 +18,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ContainerModularRouter extends ContainerMRBase {
+public class RouterMenu extends AbstractMRContainerMenu {
     private static final int BUFFER_SLOT = 0;
     public static final int MODULE_SLOT_START = 1;
     public static final int MODULE_SLOT_END = 9;
@@ -40,12 +40,12 @@ public class ContainerModularRouter extends ContainerMRBase {
     private final ModularRouterBlockEntity router;
     public final ModularRouterBlockEntity.TrackedEnergy data;
 
-    public ContainerModularRouter(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
+    public RouterMenu(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
         this(windowId, invPlayer, extraData.readBlockPos());
     }
 
-    public ContainerModularRouter(int windowId, Inventory invPlayer, BlockPos routerPos) {
-        super(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), windowId);
+    public RouterMenu(int windowId, Inventory invPlayer, BlockPos routerPos) {
+        super(ModMenuTypes.ROUTER_MENU.get(), windowId);
 
         this.router = invPlayer.player.level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get())
                 .orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));

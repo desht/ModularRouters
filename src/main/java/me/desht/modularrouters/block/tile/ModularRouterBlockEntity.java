@@ -7,7 +7,7 @@ import me.desht.modularrouters.block.BlockCamo;
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModularRouter;
+import me.desht.modularrouters.container.RouterMenu;
 import me.desht.modularrouters.container.handler.BufferHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
@@ -598,7 +598,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private void notifyWatchingPlayers() {
         for (Player player : nonNullLevel().players()) {
-            if (player.containerMenu instanceof ContainerModularRouter c && c.getRouter() == this) {
+            if (player.containerMenu instanceof RouterMenu c && c.getRouter() == this) {
                 PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(this));
             }
         }
@@ -874,7 +874,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-        return new ContainerModularRouter(windowId, playerInventory, this.getBlockPos());
+        return new RouterMenu(windowId, playerInventory, this.getBlockPos());
     }
 
     public GlobalPos getGlobalPos() {

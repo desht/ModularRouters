@@ -3,7 +3,7 @@ package me.desht.modularrouters.container;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.filter.Filter;
@@ -21,7 +21,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ContainerModule extends ContainerMRBase {
+public class ModuleMenu extends AbstractMRContainerMenu {
     public static final int AUGMENT_START = Filter.FILTER_SIZE;
     private static final int INV_START = AUGMENT_START + AugmentItem.SLOTS;
     private static final int INV_END = INV_START + 26;
@@ -38,15 +38,15 @@ public class ContainerModule extends ContainerMRBase {
     protected final ModularRouterBlockEntity router;
     private final MFLocator locator;
 
-    public ContainerModule(int windowId, Inventory inv, FriendlyByteBuf extra) {
-        this(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), windowId, inv, MFLocator.fromBuffer(extra));
+    public ModuleMenu(int windowId, Inventory inv, FriendlyByteBuf extra) {
+        this(ModMenuTypes.BASE_MODULE_MENU.get(), windowId, inv, MFLocator.fromBuffer(extra));
     }
 
-    public ContainerModule(MenuType type, int windowId, Inventory inv, FriendlyByteBuf extra) {
+    public ModuleMenu(MenuType type, int windowId, Inventory inv, FriendlyByteBuf extra) {
         this(type, windowId, inv, MFLocator.fromBuffer(extra));
     }
 
-    public ContainerModule(MenuType type, int windowId, Inventory inv, MFLocator locator) {
+    public ModuleMenu(MenuType type, int windowId, Inventory inv, MFLocator locator) {
         super(type, windowId);
 
         this.locator = locator;

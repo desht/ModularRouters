@@ -3,9 +3,9 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerExtruder2Module;
-import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.Extruder2ModuleMenu;
+import me.desht.modularrouters.container.Extruder2ModuleMenu.TemplateHandler;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule2;
 import me.desht.modularrouters.util.MFLocator;
@@ -50,8 +50,8 @@ public class ExtruderModule2 extends ModuleItem implements IRangedModule {
     }
 
     @Override
-    ContainerModule createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
-        return new ContainerExtruder2Module(windowId, invPlayer, loc);
+    ModuleMenu createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
+        return new Extruder2ModuleMenu(windowId, invPlayer, loc);
     }
 
     @Override

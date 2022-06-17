@@ -6,7 +6,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.util.GuiUtil;
-import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
@@ -35,7 +35,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     private String modId = "";
     private String modName = "";
 
-    public ModFilterScreen(ContainerSmartFilter container, Inventory inv, Component displayName) {
+    public ModFilterScreen(AbstractSmartFilterMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
 
         this.imageWidth = GUI_WIDTH;

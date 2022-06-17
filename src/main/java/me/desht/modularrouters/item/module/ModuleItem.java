@@ -6,10 +6,10 @@ import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.client.util.TintColor;
-import me.desht.modularrouters.container.ContainerModularRouter;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.RouterMenu;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.item.augment.AugmentItem;
@@ -163,8 +163,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         return false;
     }
 
-    ContainerModule createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
-        return new ContainerModule(getContainerType(), windowId, invPlayer, loc);
+    ModuleMenu createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
+        return new ModuleMenu(getMenuType(), windowId, invPlayer, loc);
     }
 
     /**
@@ -173,8 +173,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
      *
      * @return the container type
      */
-    public MenuType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_BASIC.get();
+    public MenuType<? extends ModuleMenu> getMenuType() {
+        return ModMenuTypes.BASE_MODULE_MENU.get();
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, world, list, flag);
 
-        if (ClientUtil.getHoveredSlot() instanceof ContainerModularRouter.InstalledModuleSlot) {
+        if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot) {
             String s = ClientSetup.keybindConfigure.getKey().getName();
             list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
         }
@@ -341,7 +341,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         if (!player.isSteppingCarefully()) {
             if (!world.isClientSide) {
                 MFLocator locator = MFLocator.heldModule(hand);
-                NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(player, locator), locator::writeBuf);
+                NetworkHooks.openGui((ServerPlayer) player, new ModuleMenuProvider(player, locator), locator::writeBuf);
             }
         } else {
             return onSneakRightClick(stack, world, player, hand);
@@ -371,11 +371,11 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         return false;
     }
 
-    public static class ContainerProvider implements MenuProvider {
+    public static class ModuleMenuProvider implements MenuProvider {
         private final MFLocator loc;
         private final ItemStack moduleStack;
 
-        public ContainerProvider(Player player, MFLocator loc) {
+        public ModuleMenuProvider(Player player, MFLocator loc) {
             this.loc = loc;
             this.moduleStack = loc.getModuleStack(player);
         }

@@ -2,8 +2,8 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.container.ContainerBulkItemFilter;
-import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.BulkItemFilterMenu;
+import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.ModSounds;
@@ -56,8 +56,8 @@ public class    BulkItemFilter extends SmartFilterItem {
     }
 
     @Override
-    public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
-        return new ContainerBulkItemFilter(windowId, invPlayer, loc);
+    public AbstractSmartFilterMenu createMenu(int windowId, Inventory invPlayer, MFLocator loc) {
+        return new BulkItemFilterMenu(windowId, invPlayer, loc);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class    BulkItemFilter extends SmartFilterItem {
 
     @Override
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
-        if (player.containerMenu instanceof ContainerBulkItemFilter con) {
+        if (player.containerMenu instanceof BulkItemFilterMenu con) {
             Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
             switch (message.getOp()) {
                 case CLEAR_ALL -> con.clearSlots();

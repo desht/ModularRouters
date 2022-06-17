@@ -27,7 +27,7 @@ public class FilterScreenFactory {
     public static void openFilterGui(MFLocator locator) {
         ItemStack filterStack = locator.getTargetItem(Minecraft.getInstance().player);
         if (filterStack.getItem() instanceof SmartFilterItem smartFilterItem
-                && !smartFilterItem.hasContainer()
+                && !smartFilterItem.hasMenu()
                 && REGISTRY.containsKey(filterStack.getItem()))
         {
             Minecraft.getInstance().setScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));

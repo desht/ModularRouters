@@ -2,7 +2,7 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.MFLocator;
@@ -19,7 +19,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ContainerBulkItemFilter extends ContainerSmartFilter {
+public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
     private static final int INV_START = BulkItemFilter.FILTER_SIZE;
     private static final int INV_END = INV_START + 26;
     private static final int HOTBAR_START = INV_END + 1;
@@ -32,12 +32,12 @@ public class ContainerBulkItemFilter extends ContainerSmartFilter {
     private final int currentSlot;  // currently-selected slot for player
     private final BulkFilterHandler handler;
 
-    public ContainerBulkItemFilter(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
+    public BulkItemFilterMenu(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
         this(windowId, invPlayer, MFLocator.fromBuffer(extraData));
     }
 
-    public ContainerBulkItemFilter(int windowId, Inventory invPlayer, MFLocator loc) {
-        super(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), windowId, invPlayer, loc);
+    public BulkItemFilterMenu(int windowId, Inventory invPlayer, MFLocator loc) {
+        super(ModMenuTypes.BULK_FILTER_MENU.get(), windowId, invPlayer, loc);
 
         this.handler = new BulkFilterHandler(filterStack, router);
         this.currentSlot = invPlayer.selected + HOTBAR_START;

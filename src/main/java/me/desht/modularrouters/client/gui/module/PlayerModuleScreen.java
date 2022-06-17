@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
@@ -38,7 +38,7 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
     private SectionButton secButton;
     private OperationButton opButton;
 
-    public PlayerModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
+    public PlayerModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

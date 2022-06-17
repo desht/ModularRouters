@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.container.ModuleMenu;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
@@ -49,8 +49,8 @@ public class FluidModule1 extends ModuleItem {
     }
 
     @Override
-    public MenuType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_FLUID.get();
+    public MenuType<? extends ModuleMenu> getMenuType() {
+        return ModMenuTypes.FLUID_MENU.get();
     }
 
     @Override

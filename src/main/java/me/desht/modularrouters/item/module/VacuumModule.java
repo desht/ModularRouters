@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModule;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.container.ModuleMenu;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
@@ -26,8 +26,8 @@ public class VacuumModule extends ModuleItem implements IRangedModule {
     }
 
     @Override
-    public MenuType<? extends ContainerModule> getContainerType() {
-        return ModContainerTypes.CONTAINER_MODULE_VACUUM.get();
+    public MenuType<? extends ModuleMenu> getMenuType() {
+        return ModMenuTypes.VACUUM_MENU.get();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.client.gui.filter.FilterScreenFactory;
-import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -53,11 +53,11 @@ public abstract class SmartFilterItem extends MRBaseItem {
      */
     public abstract int getSize(ItemStack filterStack);
 
-    public boolean hasContainer() {
+    public boolean hasMenu() {
         return true;
     }
 
-    public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
+    public AbstractSmartFilterMenu createMenu(int windowId, Inventory invPlayer, MFLocator loc) {
         return null;
     }
 
@@ -71,19 +71,19 @@ public abstract class SmartFilterItem extends MRBaseItem {
         ItemStack stack = player.getItemInHand(hand);
         SmartFilterItem filter = (SmartFilterItem) stack.getItem();
         MFLocator loc = MFLocator.heldFilter(hand);
-        if (!world.isClientSide && filter.hasContainer()) {
-            NetworkHooks.openGui((ServerPlayer) player, new ContainerProvider(player, loc), loc::writeBuf);
-        } else if (world.isClientSide && !hasContainer()) {
+        if (!world.isClientSide && filter.hasMenu()) {
+            NetworkHooks.openGui((ServerPlayer) player, new FilterMenuProvider(player, loc), loc::writeBuf);
+        } else if (world.isClientSide && !hasMenu()) {
             FilterScreenFactory.openFilterGui(loc);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
-    public static class ContainerProvider implements MenuProvider {
+    public static class FilterMenuProvider implements MenuProvider {
         private final MFLocator loc;
         private final ItemStack filterStack;
 
-        public ContainerProvider(Player player, MFLocator loc) {
+        public FilterMenuProvider(Player player, MFLocator loc) {
             this.loc = loc;
             this.filterStack = loc.getTargetItem(player);
         }
@@ -96,7 +96,7 @@ public abstract class SmartFilterItem extends MRBaseItem {
         @Nullable
         @Override
         public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-            return ((SmartFilterItem) filterStack.getItem()).createContainer(windowId, playerInventory, loc);
+            return ((SmartFilterItem) filterStack.getItem()).createMenu(windowId, playerInventory, loc);
         }
     }
 }

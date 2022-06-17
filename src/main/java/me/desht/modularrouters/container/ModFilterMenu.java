@@ -1,7 +1,7 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.container.handler.GhostItemHandler;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,24 +10,23 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.SlotItemHandler;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
 
-public class ContainerModFilter extends ContainerSmartFilter {
+public class ModFilterMenu extends AbstractSmartFilterMenu {
     private static final int PLAYER_INV_X = 8;
     private static final int PLAYER_INV_Y = 162;
     private static final int PLAYER_HOTBAR_Y = 220;
 
     public final IItemHandlerModifiable handler;
 
-    public ContainerModFilter(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
+    public ModFilterMenu(int windowId, Inventory invPlayer, FriendlyByteBuf extraData) {
         this(windowId, invPlayer, MFLocator.fromBuffer(extraData));
     }
 
-    public ContainerModFilter(int windowId, Inventory invPlayer, MFLocator locator) {
-        super(ModContainerTypes.CONTAINER_MOD_FILTER.get(), windowId, invPlayer, locator);
+    public ModFilterMenu(int windowId, Inventory invPlayer, MFLocator locator) {
+        super(ModMenuTypes.MOD_FILTER_MENU.get(), windowId, invPlayer, locator);
 
         handler = new GhostItemHandler(1);
 

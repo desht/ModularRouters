@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public abstract class ContainerMRBase extends AbstractContainerMenu {
-    ContainerMRBase(@Nullable MenuType<?> type, int id) {
+public abstract class AbstractMRContainerMenu extends AbstractContainerMenu {
+    AbstractMRContainerMenu(@Nullable MenuType<?> type, int id) {
         super(type, id);
     }
 

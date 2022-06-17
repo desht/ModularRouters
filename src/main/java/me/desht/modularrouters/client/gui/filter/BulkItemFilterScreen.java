@@ -8,7 +8,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -33,7 +33,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
 
     private ModuleTarget target;
 
-    public BulkItemFilterScreen(ContainerSmartFilter container, Inventory inventory, Component displayName) {
+    public BulkItemFilterScreen(AbstractSmartFilterMenu container, Inventory inventory, Component displayName) {
         super(container, inventory, displayName);
 
         this.imageWidth = GUI_WIDTH;

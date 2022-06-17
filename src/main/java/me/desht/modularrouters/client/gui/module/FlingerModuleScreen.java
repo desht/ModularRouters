@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
@@ -21,7 +21,7 @@ public class FlingerModuleScreen extends AbstractModuleScreen {
     private FloatTextField pitchField;
     private FloatTextField yawField;
 
-    public FlingerModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
+    public FlingerModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

@@ -38,7 +38,7 @@ public class RegexFilter extends SmartFilterItem {
     }
 
     @Override
-    public boolean hasContainer() {
+    public boolean hasMenu() {
         return false;
     }
 

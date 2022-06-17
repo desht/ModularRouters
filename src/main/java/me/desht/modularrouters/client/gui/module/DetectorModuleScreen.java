@@ -5,7 +5,7 @@ import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
@@ -24,7 +24,7 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
     private boolean isStrong;
     private IntegerTextField intField;
 
-    public DetectorModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
+    public DetectorModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

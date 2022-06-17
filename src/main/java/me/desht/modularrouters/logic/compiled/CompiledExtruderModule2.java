@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.container.ContainerExtruder2Module.TemplateHandler;
+import me.desht.modularrouters.container.Extruder2ModuleMenu.TemplateHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;

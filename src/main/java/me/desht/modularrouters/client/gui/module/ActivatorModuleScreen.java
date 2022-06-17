@@ -6,7 +6,7 @@ import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
@@ -34,7 +34,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
     private EntityModeButton entityModeButton;
     private SneakButton sneakButton;
 
-    public ActivatorModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
+    public ActivatorModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

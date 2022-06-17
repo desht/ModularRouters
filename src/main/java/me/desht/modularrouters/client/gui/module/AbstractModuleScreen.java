@@ -15,7 +15,7 @@ import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
@@ -56,7 +56,7 @@ import java.util.*;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerModule> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
+public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
     private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
 
     // locations of extra textures on the gui module texture sheet
@@ -90,7 +90,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
     IntegerTextField regulatorTextField;
     private TerminationButton terminationButton;
 
-    public AbstractModuleScreen(ContainerModule container, Inventory inventory, Component displayName) {
+    public AbstractModuleScreen(ModuleMenu container, Inventory inventory, Component displayName) {
         super(container, inventory, displayName);
 
         MFLocator locator = container.getLocator();
@@ -295,7 +295,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         if (routerPos != null) {
             // module is installed in a router
             MFLocator locator = MFLocator.filterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex);
-            if (filter.hasContainer()) {
+            if (filter.hasMenu()) {
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
@@ -304,7 +304,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
         } else if (hand != null) {
             // module is in player's hand
             MFLocator locator = MFLocator.filterInHeldModule(hand, filterSlotIndex);
-            if (filter.hasContainer()) {
+            if (filter.hasMenu()) {
                 PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openFilterInHeldModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
@@ -332,7 +332,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ContainerMod
 
     @Override
     public void slotChanged(AbstractContainerMenu containerToSend, int slotInd, ItemStack stack) {
-        if (slotInd >= ContainerModule.AUGMENT_START && slotInd < ContainerModule.AUGMENT_START + AugmentItem.SLOTS) {
+        if (slotInd >= ModuleMenu.AUGMENT_START && slotInd < ModuleMenu.AUGMENT_START + AugmentItem.SLOTS) {
             augmentCounter.refresh(moduleItemStack);
             setupButtonVisibility();
         }

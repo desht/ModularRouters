@@ -11,7 +11,7 @@ import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterBER;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import net.minecraft.client.KeyMapping;
@@ -92,20 +92,20 @@ public class ClientSetup {
     }
 
     private static void registerScreenFactories() {
-        MenuScreens.register(ModContainerTypes.CONTAINER_ITEM_ROUTER.get(), ModularRouterScreen::new);
+        MenuScreens.register(ModMenuTypes.ROUTER_MENU.get(), ModularRouterScreen::new);
 
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_BASIC.get(), AbstractModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_ACTIVATOR.get(), ActivatorModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_BREAKER.get(), BreakerModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DETECTOR.get(), DetectorModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_DISTRIBUTOR.get(), DistributorModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), ExtruderModule2Screen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_FLINGER.get(), FlingerModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_FLUID.get(), FluidModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_PLAYER.get(), PlayerModuleScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MODULE_VACUUM.get(), VacuumModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.BASE_MODULE_MENU.get(), AbstractModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.ACTIVATOR_MENU.get(), ActivatorModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.BREAKER_MENU.get(), BreakerModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.DETECTOR_MENU.get(), DetectorModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.DISTRIBUTOR_MENU.get(), DistributorModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.EXTRUDER2_MENU.get(), ExtruderModule2Screen::new);
+        MenuScreens.register(ModMenuTypes.FLINGER_MENU.get(), FlingerModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.FLUID_MENU.get(), FluidModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.PLAYER_MENU.get(), PlayerModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.VACUUM_MENU.get(), VacuumModuleScreen::new);
 
-        MenuScreens.register(ModContainerTypes.CONTAINER_BULK_ITEM_FILTER.get(), BulkItemFilterScreen::new);
-        MenuScreens.register(ModContainerTypes.CONTAINER_MOD_FILTER.get(), ModFilterScreen::new);
+        MenuScreens.register(ModMenuTypes.BULK_FILTER_MENU.get(), BulkItemFilterScreen::new);
+        MenuScreens.register(ModMenuTypes.MOD_FILTER_MENU.get(), ModFilterScreen::new);
     }
 }

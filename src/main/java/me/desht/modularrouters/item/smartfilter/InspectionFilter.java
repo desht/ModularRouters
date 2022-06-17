@@ -33,7 +33,7 @@ public class InspectionFilter extends SmartFilterItem {
     }
 
     @Override
-    public boolean hasContainer() {
+    public boolean hasMenu() {
         return false;
     }
 

@@ -8,7 +8,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
@@ -30,7 +30,7 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
     private StrategyButton sb;
     private DirectionButton db;
 
-    public DistributorModuleScreen(ContainerModule container, Inventory inv, Component displayText) {
+    public DistributorModuleScreen(ModuleMenu container, Inventory inv, Component displayText) {
         super(container, inv, displayText);
     }
 

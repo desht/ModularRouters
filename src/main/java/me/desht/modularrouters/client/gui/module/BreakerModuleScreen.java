@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule.MatchType;
 import net.minecraft.nbt.CompoundTag;
@@ -28,7 +28,7 @@ public class BreakerModuleScreen extends AbstractModuleScreen {
 
     private MatchBlockButton matchBlockButton;
 
-    public BreakerModuleScreen(ContainerModule container, Inventory inventory, Component displayName) {
+    public BreakerModuleScreen(ModuleMenu container, Inventory inventory, Component displayName) {
         super(container, inventory, displayName);
     }
 

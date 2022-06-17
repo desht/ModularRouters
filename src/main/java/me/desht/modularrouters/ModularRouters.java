@@ -39,7 +39,7 @@ public class ModularRouters {
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
-        ModContainerTypes.CONTAINERS.register(modBus);
+        ModMenuTypes.MENUS.register(modBus);
         ModSounds.SOUNDS.register(modBus);
         ModRecipes.RECIPES.register(modBus);
     }

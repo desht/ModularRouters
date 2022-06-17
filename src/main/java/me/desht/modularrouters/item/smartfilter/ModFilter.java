@@ -3,8 +3,8 @@ package me.desht.modularrouters.item.smartfilter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.container.ContainerModFilter;
-import me.desht.modularrouters.container.ContainerSmartFilter;
+import me.desht.modularrouters.container.ModFilterMenu;
+import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.ModMatcher;
 import me.desht.modularrouters.network.FilterSettingsMessage;
@@ -69,8 +69,8 @@ public class ModFilter extends SmartFilterItem {
     }
 
     @Override
-    public ContainerSmartFilter createContainer(int windowId, Inventory invPlayer, MFLocator loc) {
-        return new ContainerModFilter(windowId, invPlayer, loc);
+    public AbstractSmartFilterMenu createMenu(int windowId, Inventory invPlayer, MFLocator loc) {
+        return new ModFilterMenu(windowId, invPlayer, loc);
     }
 
     @Override

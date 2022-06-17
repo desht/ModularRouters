@@ -2,7 +2,7 @@ package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
-import me.desht.modularrouters.core.ModContainerTypes;
+import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,15 +19,15 @@ import javax.annotation.Nonnull;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 
-public class ContainerExtruder2Module extends ContainerModule {
+public class Extruder2ModuleMenu extends ModuleMenu {
     private static final int TEMPLATE_SLOTS = 9;
 
-    ContainerExtruder2Module(int windowId, Inventory inv, FriendlyByteBuf extra) {
+    Extruder2ModuleMenu(int windowId, Inventory inv, FriendlyByteBuf extra) {
         this(windowId, inv, MFLocator.fromBuffer(extra));
     }
 
-    public ContainerExtruder2Module(int windowId, Inventory inv, MFLocator locator) {
-        super(ModContainerTypes.CONTAINER_MODULE_EXTRUDER2.get(), windowId, inv, locator);
+    public Extruder2ModuleMenu(int windowId, Inventory inv, MFLocator locator) {
+        super(ModMenuTypes.EXTRUDER2_MENU.get(), windowId, inv, locator);
 
         TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player), router);
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {

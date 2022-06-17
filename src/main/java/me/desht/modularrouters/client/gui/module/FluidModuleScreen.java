@@ -10,7 +10,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
@@ -41,7 +41,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
     private FluidDirectionButton fluidDirButton;
     private IntegerTextField maxTransferField;
 
-    public FluidModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
+    public FluidModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 

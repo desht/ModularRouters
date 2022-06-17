@@ -7,12 +7,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ContainerSmartFilter extends ContainerMRBase {
+public abstract class AbstractSmartFilterMenu extends AbstractMRContainerMenu {
     protected final ItemStack filterStack;
     protected final MFLocator locator;
     protected final ModularRouterBlockEntity router;
 
-    ContainerSmartFilter(MenuType<?> type, int windowId, Inventory inv, MFLocator locator) {
+    AbstractSmartFilterMenu(MenuType<?> type, int windowId, Inventory inv, MFLocator locator) {
         super(type, windowId);
 
         this.locator = locator;

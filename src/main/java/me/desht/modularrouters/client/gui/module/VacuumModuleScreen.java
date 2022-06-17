@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.container.ContainerModule;
+import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
@@ -27,7 +27,7 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
     private XPTypeButton xpb;
     private EjectButton ejb;
 
-    public VacuumModuleScreen(ContainerModule container, Inventory inv, Component displayName) {
+    public VacuumModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
         super(container, inv, displayName);
     }
 
