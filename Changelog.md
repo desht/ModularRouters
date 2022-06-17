@@ -4,6 +4,13 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.19
+
+### 10.0.0 (17 Jun 2022)
+
+* Port of 9.1.1 version (for MC 1.18) to Minecraft 1.19
+* JEI: it is now possible to drag items from JEI into the Bulk and Mod Filter GUI's (in addition to the Module GUI filter slots)
+
 ## Minecraft 1.18.2
 
 ### 9.1.1 (1 May 2022)

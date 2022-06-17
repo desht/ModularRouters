@@ -39,6 +39,6 @@ Modular Routers is a highly flexible mod for moving items around the world in va
 [[dependencies.modularrouters]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18.2,)"
+    versionRange="[1.19,)"
     ordering="NONE"
     side="BOTH"
