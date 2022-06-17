@@ -2,9 +2,6 @@ package me.desht.modularrouters.integration.jei;
 
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.client.gui.filter.AbstractFilterContainerScreen;
-import me.desht.modularrouters.client.gui.filter.AbstractFilterScreen;
-import me.desht.modularrouters.client.gui.filter.BulkItemFilterScreen;
-import me.desht.modularrouters.client.gui.filter.ModFilterScreen;
 import me.desht.modularrouters.client.gui.module.AbstractModuleScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;

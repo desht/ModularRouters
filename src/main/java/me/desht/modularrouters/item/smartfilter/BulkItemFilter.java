@@ -2,8 +2,8 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.container.BulkItemFilterMenu;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
+import me.desht.modularrouters.container.BulkItemFilterMenu;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.ModSounds;

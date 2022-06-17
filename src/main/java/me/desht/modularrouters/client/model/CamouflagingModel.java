@@ -19,7 +19,6 @@ import net.minecraftforge.client.model.data.IModelData;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public abstract class CamouflagingModel implements IDynamicBakedModel {
     private final BakedModel baseModel;

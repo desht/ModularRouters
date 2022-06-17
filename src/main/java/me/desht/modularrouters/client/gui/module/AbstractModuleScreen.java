@@ -5,7 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.gui.*;
+import me.desht.modularrouters.client.gui.AbstractMRContainerScreen;
+import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
+import me.desht.modularrouters.client.gui.ISendToServer;
+import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.filter.FilterScreenFactory;
 import me.desht.modularrouters.client.gui.widgets.button.*;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
@@ -52,7 +55,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Optional;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
