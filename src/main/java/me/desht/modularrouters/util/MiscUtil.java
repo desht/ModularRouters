@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MiscUtil {
-    public static Direction[] DIRECTIONS = new Direction[] {
+    public static final Direction[] DIRECTIONS = new Direction[] {
             // same as Direction.VALUES but that's private
             Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
     };

@@ -148,7 +148,7 @@ public class InspectionMatcher implements IItemMatcher {
         private static Optional<Integer> getFoodValue(ItemStack stack) {
             //noinspection ConstantConditions
             return stack.getItem().isEdible() ?
-                    Optional.of(stack.getItem().getFoodProperties().getNutrition()) :
+                    Optional.of(stack.getItem().getFoodProperties(stack, null).getNutrition()) :
                     Optional.empty();
         }
 

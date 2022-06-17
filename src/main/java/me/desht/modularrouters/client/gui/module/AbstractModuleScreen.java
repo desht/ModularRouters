@@ -332,10 +332,6 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         return routerPos != null ? Minecraft.getInstance().level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get()) : Optional.empty();
     }
 
-//    @Override
-//    public void refreshContainer(AbstractContainerMenu containerToSend, NonNullList<ItemStack> itemsList) {
-//    }
-
     @Override
     public void slotChanged(AbstractContainerMenu containerToSend, int slotInd, ItemStack stack) {
         if (slotInd >= ModuleMenu.AUGMENT_START && slotInd < ModuleMenu.AUGMENT_START + AugmentItem.SLOTS) {

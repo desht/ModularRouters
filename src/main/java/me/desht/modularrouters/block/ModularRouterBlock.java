@@ -210,11 +210,6 @@ public class ModularRouterBlock extends BlockCamo implements EntityBlock {
         }).orElse(0);
     }
 
-//    @Override
-//    public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) {
-//        return true;
-//    }
-
     @Override
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean b) {
         worldIn.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {

@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-public abstract class BlockCamo extends Block /*implements IFacade*/ {
+public abstract class BlockCamo extends Block {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
 
     BlockCamo(Properties props) {
@@ -122,15 +122,4 @@ public abstract class BlockCamo extends Block /*implements IFacade*/ {
                 .map(regName -> regName.getNamespace().equals("chiselsandbits"))
                 .orElse(false);
     }
-
-//    @Nonnull
-//    @Override
-//    @Optional.Method(modid = "ctm-api")
-//    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
-//        TileEntity te = world.getTileEntity(pos);
-//        if (te instanceof ICamouflageable && ((ICamouflageable) te).getCamouflage() != null) {
-//            return ((ICamouflageable) te).getCamouflage();
-//        }
-//        return world.getBlockState(pos);
-//    }
 }

@@ -16,7 +16,7 @@ import static me.desht.modularrouters.util.MiscUtil.RL;
 public class TOPCompatibility {
     private static boolean registered;
 
-    static ResourceLocation ELEMENT_MODULE_ITEM = RL("module");
+    static final ResourceLocation ELEMENT_MODULE_ITEM = RL("module");
 
     public static void register() {
         if (registered)

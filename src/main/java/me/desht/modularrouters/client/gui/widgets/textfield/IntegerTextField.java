@@ -37,25 +37,19 @@ public class IntegerTextField extends TextFieldWidgetMR {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        switch (keyCode) {
-            case GLFW.GLFW_KEY_UP:
-                return adjustField(getAdjustment());
-            case GLFW.GLFW_KEY_DOWN:
-                return adjustField(-getAdjustment());
-            case GLFW.GLFW_KEY_PAGE_UP:
-                return adjustField(range.getMaximum());
-            case GLFW.GLFW_KEY_PAGE_DOWN:
-                return adjustField(-range.getMaximum());
-            default:
-                return super.keyPressed(keyCode, scanCode, modifiers);
-        }
+        return switch (keyCode) {
+            case GLFW.GLFW_KEY_UP -> adjustField(getAdjustment());
+            case GLFW.GLFW_KEY_DOWN -> adjustField(-getAdjustment());
+            case GLFW.GLFW_KEY_PAGE_UP -> adjustField(range.getMaximum());
+            case GLFW.GLFW_KEY_PAGE_DOWN -> adjustField(-range.getMaximum());
+            default -> super.keyPressed(keyCode, scanCode, modifiers);
+        };
     }
 
     public void setRange(Range<Integer> range) {
         this.range = range;
         if (!range.contains(getIntValue())) {
             setValue(Mth.clamp(getIntValue(), range.getMinimum(), range.getMaximum()));
-//            setCursorPosition(1);
         }
         setMaxLength(Math.max(Integer.toString(range.getMinimum()).length(), Integer.toString(range.getMaximum()).length()));
     }

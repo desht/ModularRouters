@@ -273,13 +273,9 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             int n = c.getAugmentCount(augment);
             if (n > 0) {
                 ItemStack augmentStack = new ItemStack(augment);
-//                String s = augmentStack.getHoverName().getString();
-//                if (n > 1) s = n + " x " + s;
                 MutableComponent comp = Component.literal(" \u2022 ").withStyle(ChatFormatting.DARK_GREEN);
                 comp.append(n > 1 ? Component.literal(n + " x ").append(augmentStack.getHoverName()) : augmentStack.getHoverName().copy());
                 comp.append(augment.getExtraInfo(n, stack).copy().withStyle(ChatFormatting.AQUA));
-//                s += ChatFormatting.AQUA + augment.getExtraInfo(n, stack);
-//                toAdd.add(Component.literal(" \u2022 " + ChatFormatting.DARK_GREEN + s));
                 toAdd.add(comp);
             }
         }

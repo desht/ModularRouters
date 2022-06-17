@@ -141,6 +141,6 @@ public class ModuleTarget {
 
     public Component getTextComponent() {
         return Component.translatable(blockTranslationKey).withStyle(ChatFormatting.WHITE)
-                .append(Component.literal(" @ " + toString()).withStyle(ChatFormatting.AQUA));
+                .append(Component.literal(" @ " + this).withStyle(ChatFormatting.AQUA));
     }
 }

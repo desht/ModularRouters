@@ -134,8 +134,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-        if (entity instanceof Player) {
-            Player targetPlayer = (Player)entity;
+        if (entity instanceof Player targetPlayer) {
             String id = targetPlayer.getUUID().toString();
             String name = targetPlayer.getDisplayName().toString();
             Result res = player.isSteppingCarefully() ? removePlayer(stack, id) : addPlayer(stack, id, name);

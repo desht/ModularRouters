@@ -39,18 +39,13 @@ public class FloatTextField extends TextFieldWidgetMR {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        switch (keyCode) {
-            case GLFW.GLFW_KEY_UP:
-                return adjustField(incr);
-            case GLFW.GLFW_KEY_DOWN:
-                return adjustField(-incr);
-            case GLFW.GLFW_KEY_PAGE_UP:
-                return adjustField(max);
-            case GLFW.GLFW_KEY_PAGE_DOWN:
-                return adjustField(-max);
-            default:
-                return super.keyPressed(keyCode, scanCode, modifiers);
-        }
+        return switch (keyCode) {
+            case GLFW.GLFW_KEY_UP -> adjustField(incr);
+            case GLFW.GLFW_KEY_DOWN -> adjustField(-incr);
+            case GLFW.GLFW_KEY_PAGE_UP -> adjustField(max);
+            case GLFW.GLFW_KEY_PAGE_DOWN -> adjustField(-max);
+            default -> super.keyPressed(keyCode, scanCode, modifiers);
+        };
     }
 
     @Override
