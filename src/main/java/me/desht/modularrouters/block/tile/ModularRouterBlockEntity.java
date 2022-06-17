@@ -934,6 +934,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return energyDirection;
     }
 
+    public int getModuleCount() {
+        return compiledModules.size();
+    }
+
     public enum EnergyDirection implements IHasTranslationKey {
         FROM_ROUTER("from_router"),
         TO_ROUTER("to_router"),

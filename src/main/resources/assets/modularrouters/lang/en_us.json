@@ -1,6 +1,7 @@
 {
    "block.modularrouters.modular_router" : "Modular Router",
    "block.modularrouters.template_frame" : "Template Frame",
+   "config.jade.plugin_modularrouters.router": "Modular Router",
    "item.modularrouters.activator_module" : "Activator Module",
    "item.modularrouters.augment_core" : "Augment Core",
    "item.modularrouters.blank_module" : "Blank Module",
