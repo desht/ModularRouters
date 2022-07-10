@@ -97,15 +97,6 @@ repositories {
         name = "JEI"
         url = "https://dvs1.progwml6.com/files/maven"
     }
-
-//    maven { // TOP
-//        name = "tterrag maven"
-//        url = "https://maven.tterrag.com/"
-//    }
-//    maven {
-//        name = "K-4u Mod maven"
-//        url = "https://modmaven.dev/"
-//    }
     maven {
         name = 'Patchouli'
         url = 'https://maven.blamejared.com/'
@@ -116,17 +107,15 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     implementation fg.deobf("curse.maven:theoneprobe-245211:3822185")
-    implementation fg.deobf("curse.maven:jade-324717:3834997")
-    //implementation fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
-    // temporary due to broken POM in jei maven
-    implementation fg.deobf("curse.maven:jei-238222:3834070")
-
-
-//    compileOnly fg.deobf("curse.maven:hwyla-253449:${hwyla_curse_id}")
-//    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
-//    runtimeOnly fg.deobf ("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-    //compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+//    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api")
+//    runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}")
+    implementation fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
+    // compile against the JEI API but do not include it at runtime
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    // at runtime, use the full JEI
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
