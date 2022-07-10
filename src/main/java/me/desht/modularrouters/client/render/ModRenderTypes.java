@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.RenderType;
 
 import java.util.OptionalDouble;
 
-
 public class ModRenderTypes extends RenderType {
     public ModRenderTypes(String name, VertexFormat format, VertexFormat.Mode drawMode, int bufferSize, boolean useDelegate, boolean needsSorting, Runnable pre, Runnable post) {
         super(name, format, drawMode, bufferSize, useDelegate, needsSorting, pre, post);

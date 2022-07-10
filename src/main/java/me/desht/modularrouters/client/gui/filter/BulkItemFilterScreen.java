@@ -25,6 +25,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraft.client.gui.components.Button.OnPress;
+
 public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/bulkitemfilter.png");
 

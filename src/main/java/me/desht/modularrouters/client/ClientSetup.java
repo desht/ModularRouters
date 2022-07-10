@@ -20,8 +20,8 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,8 +52,6 @@ public class ClientSetup {
             registerItemModelOverrides();
         });
 
-        registerKeyBindings();
-
         FilterScreenFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), InspectionFilterScreen::new);
         FilterScreenFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), RegexFilterScreen::new);
     }
@@ -61,6 +59,17 @@ public class ClientSetup {
     @SubscribeEvent
     public static void init(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.MODULAR_ROUTER.get(), ModularRouterBER::new);
+    }
+
+    @SubscribeEvent
+    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
+        keybindConfigure = new KeyMapping("key.modularrouters.configure", KeyConflictContext.GUI,
+                InputConstants.getKey(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
+        keybindModuleInfo = new KeyMapping("key.modularrouters.moduleInfo", KeyConflictContext.GUI,
+                InputConstants.getKey(GLFW.GLFW_KEY_I, -1), "key.modularrouters.category");
+
+        event.register(keybindConfigure);
+        event.register(keybindModuleInfo);
     }
 
     private static void registerItemModelOverrides() {
@@ -73,16 +82,6 @@ public class ClientSetup {
             }
             return 0f;
         });
-    }
-
-    private static void registerKeyBindings() {
-        keybindConfigure = new KeyMapping("key.modularrouters.configure", KeyConflictContext.GUI,
-                InputConstants.getKey(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
-        keybindModuleInfo = new KeyMapping("key.modularrouters.moduleInfo", KeyConflictContext.GUI,
-                InputConstants.getKey(GLFW.GLFW_KEY_I, -1), "key.modularrouters.category");
-
-        ClientRegistry.registerKeyBinding(keybindConfigure);
-        ClientRegistry.registerKeyBinding(keybindModuleInfo);
     }
 
     private static void setupRenderLayers() {

@@ -2,6 +2,8 @@ package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.util.XYPoint;
 
+import net.minecraft.client.gui.components.Button.OnPress;
+
 public class BackButton extends TexturedButton {
     private static final XYPoint TEXTURE_XY = new XYPoint(96, 0);
 

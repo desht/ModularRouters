@@ -14,8 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,9 +44,9 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
 
     @Nonnull
     @Override
-    public IModelData getModelData() {
-        return new ModelDataMap.Builder()
-                .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
+    public ModelData getModelData() {
+        return ModelData.builder()
+                .with(BlockCamo.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
 

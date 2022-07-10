@@ -170,7 +170,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
     }
 
     @SubscribeEvent
-    public void onInitGui(ScreenEvent.InitScreenEvent.Post event) {
+    public void onInitGui(ScreenEvent.Init.Post event) {
         getMenu().removeSlotListener(this);
         getMenu().addSlotListener(this);
         setupButtonVisibility();

@@ -12,9 +12,10 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.model.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -28,27 +29,31 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, IModelData modelData) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData modelData, @Nullable RenderType renderType) {
         if (state == null || !(state.getBlock() instanceof BlockCamo)) {
-            return baseModel.getQuads(state, side, rand, modelData);
+            return baseModel.getQuads(state, side, rand, modelData, renderType);
         }
-        BlockState camoState = modelData.getData(BlockCamo.CAMOUFLAGE_STATE);
+        BlockState camoState = modelData.get(BlockCamo.CAMOUFLAGE_STATE);
 
-        RenderType layer = MinecraftForgeClient.getRenderType();
-        if (layer == null) {
-            layer = RenderType.solid(); // workaround for when this isn't set (digging, etc.)
+        if (renderType == null) {
+            renderType = RenderType.solid(); // workaround for when this isn't set (digging, etc.)
         }
-        if (camoState == null && layer == RenderType.solid()) {
+        if (camoState == null && renderType == RenderType.solid()) {
             // No camo
-            return baseModel.getQuads(state, side, rand, modelData);
-        } else if (camoState != null && ItemBlockRenderTypes.canRenderInLayer(camoState, layer)) {
+            return baseModel.getQuads(state, side, rand, modelData, renderType);
+        } else if (camoState != null && getRenderTypes(camoState, rand, modelData).contains(renderType)) {
             // Steal camo's model
             BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(camoState);
-            return model.getQuads(camoState, side, rand, modelData);
+            return model.getQuads(camoState, side, rand, modelData, renderType);
         } else {
             // Not rendering in this layer
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
+        return baseModel.getRenderTypes(state, rand, data);
     }
 
     @Override

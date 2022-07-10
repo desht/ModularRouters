@@ -5,6 +5,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
+import it.unimi.dsi.fastutil.Hash.Strategy;
+
 public class CountedItemStacks extends Object2IntOpenCustomHashMap<ItemStack> {
     private static class ItemStackHashingStrategy implements Strategy<ItemStack> {
         @Override

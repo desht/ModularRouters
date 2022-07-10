@@ -8,7 +8,7 @@ import me.desht.modularrouters.core.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ColorHandlers {
     @SubscribeEvent
-    public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
+    public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
         for (RegistryObject<Item> item : ModItems.ITEMS.getEntries()) {
             if (item.get() instanceof ModItems.ITintable tintable) {
                 event.getItemColors().register((stack, tintIndex) -> switch (tintIndex) {
@@ -29,7 +29,7 @@ public class ColorHandlers {
     }
 
     @SubscribeEvent
-    public static void registerBlockColorHandlers(ColorHandlerEvent.Block event) {
+    public static void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
         event.getBlockColors().register((state, reader, pos, tintIndex) -> {
             if (pos == null || reader == null) return -1;
             BlockEntity te = reader.getBlockEntity(pos);

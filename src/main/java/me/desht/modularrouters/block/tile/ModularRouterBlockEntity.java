@@ -57,8 +57,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -505,9 +504,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Nonnull
     @Override
-    public IModelData getModelData() {
-        return new ModelDataMap.Builder()
-                .withInitial(BlockCamo.CAMOUFLAGE_STATE, camouflage)
+    public ModelData getModelData() {
+        return ModelData.builder()
+                .with(BlockCamo.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
 

@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import it.unimi.dsi.fastutil.Hash.Strategy;
+
 public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
     private record ItemStackHashingStrategy(Flags filterFlags) implements Strategy<ItemStack> {
         @Override

@@ -31,6 +31,8 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
+import net.minecraft.client.gui.components.Button.OnPress;
+
 public class FluidModuleScreen extends AbstractModuleScreen {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
     private static final ItemStack routerStack = new ItemStack(ModBlocks.MODULAR_ROUTER.get());

@@ -122,7 +122,7 @@ public class MouseOverHelp {
     }
 
     @SubscribeEvent
-    public static void drawMouseOver(ContainerScreenEvent.DrawForeground event) {
+    public static void drawMouseOver(ContainerScreenEvent.Render.Foreground event) {
         // using an event ensures this is done after all subclass drawing is done
         // otherwise help region highlights can obscure text
         if (event.getContainerScreen() instanceof IMouseOverHelpProvider provider) {

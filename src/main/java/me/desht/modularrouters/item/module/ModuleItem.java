@@ -49,6 +49,8 @@ import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
+import net.minecraft.world.item.Item.Properties;
+
 public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintable {
     public enum ModuleFlags {
         BLACKLIST(true, "F_blacklist", 0),
