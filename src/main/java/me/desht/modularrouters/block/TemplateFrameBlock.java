@@ -16,7 +16,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class TemplateFrameBlock extends BlockCamo implements EntityBlock {
+public class TemplateFrameBlock extends CamouflageableBlock implements EntityBlock {
     public TemplateFrameBlock(Properties props) {
         super(props);
     }

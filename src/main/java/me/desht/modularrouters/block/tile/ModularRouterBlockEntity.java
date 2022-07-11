@@ -3,7 +3,7 @@ package me.desht.modularrouters.block.tile;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.block.BlockCamo;
+import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.config.ConfigHolder;
@@ -506,7 +506,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     @Override
     public ModelData getModelData() {
         return ModelData.builder()
-                .with(BlockCamo.CAMOUFLAGE_STATE, camouflage)
+                .with(CamouflageableBlock.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
 

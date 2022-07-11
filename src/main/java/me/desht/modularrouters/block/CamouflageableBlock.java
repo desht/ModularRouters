@@ -15,10 +15,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-public abstract class BlockCamo extends Block {
+public abstract class CamouflageableBlock extends Block {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
 
-    BlockCamo(Properties props) {
+    CamouflageableBlock(Properties props) {
         super(props);
     }
 
@@ -50,6 +50,12 @@ public abstract class BlockCamo extends Block {
     public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
         ICamouflageable camo = getCamoState(worldIn, pos);
         return camo == null ? getUncamouflagedRenderShape(state, worldIn, pos) : camo.getCamouflage().getBlockSupportShape(worldIn, pos);
+    }
+
+    @Override
+    public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext ctx) {
+        ICamouflageable camo = getCamoState(worldIn, pos);
+        return camo == null ? getUncamouflagedVisualShape(state, worldIn, pos, ctx) : camo.getCamouflage().getVisualShape(worldIn, pos, ctx);
     }
 
     @Override
@@ -107,6 +113,10 @@ public abstract class BlockCamo extends Block {
         return getUncamouflagedShape(state, reader, pos, ctx);
     }
 
+    protected VoxelShape getUncamouflagedVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext ctx) {
+        return getUncamouflagedCollisionShape(state, worldIn, pos, ctx);
+    }
+
     protected VoxelShape getUncamouflagedRenderShape(BlockState state, BlockGetter reader, BlockPos pos) {
         return getUncamouflagedShape(state, reader, pos, CollisionContext.empty());
     }
@@ -114,6 +124,7 @@ public abstract class BlockCamo extends Block {
     protected VoxelShape getUncamouflagedRaytraceShape(BlockState state, BlockGetter reader, BlockPos pos) {
         return Shapes.empty();
     }
+
 
     private boolean isBlacklisted(BlockState camouflage) {
         // C&B chiseled blocks also have some camo functionality, and this can cause a recursive loop

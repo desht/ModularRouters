@@ -1,6 +1,6 @@
 package me.desht.modularrouters.block.tile;
 
-import me.desht.modularrouters.block.BlockCamo;
+import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.util.Scheduler;
 import net.minecraft.core.BlockPos;
@@ -46,7 +46,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     @Override
     public ModelData getModelData() {
         return ModelData.builder()
-                .with(BlockCamo.CAMOUFLAGE_STATE, camouflage)
+                .with(CamouflageableBlock.CAMOUFLAGE_STATE, camouflage)
                 .build();
     }
 

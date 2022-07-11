@@ -54,7 +54,7 @@ import java.util.List;
 
 import static me.desht.modularrouters.block.tile.ModularRouterBlockEntity.*;
 
-public class ModularRouterBlock extends BlockCamo implements EntityBlock {
+public class ModularRouterBlock extends CamouflageableBlock implements EntityBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");

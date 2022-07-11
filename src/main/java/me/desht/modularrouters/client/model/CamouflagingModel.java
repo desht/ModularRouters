@@ -1,6 +1,6 @@
 package me.desht.modularrouters.client.model;
 
-import me.desht.modularrouters.block.BlockCamo;
+import me.desht.modularrouters.block.CamouflageableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -29,10 +29,10 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
 
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData modelData, @Nullable RenderType renderType) {
-        if (state == null || !(state.getBlock() instanceof BlockCamo)) {
+        if (state == null || !(state.getBlock() instanceof CamouflageableBlock)) {
             return baseModel.getQuads(state, side, rand, modelData, renderType);
         }
-        BlockState camoState = modelData.get(BlockCamo.CAMOUFLAGE_STATE);
+        BlockState camoState = modelData.get(CamouflageableBlock.CAMOUFLAGE_STATE);
 
         if (renderType == null) {
             renderType = RenderType.solid(); // workaround for when this isn't set (digging, etc.)
@@ -52,7 +52,7 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
 
     @Override
     public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
-        BlockState camoState = data.get(BlockCamo.CAMOUFLAGE_STATE);
+        BlockState camoState = data.get(CamouflageableBlock.CAMOUFLAGE_STATE);
         return IDynamicBakedModel.super.getRenderTypes(camoState == null ? state : camoState, rand, data);
     }
 
