@@ -10,13 +10,11 @@ import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterBER;
 import me.desht.modularrouters.core.ModBlockEntities;
-import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,7 +45,6 @@ public class ClientSetup {
     public static void init(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // these all add stuff to non-threadsafe hashmaps - defer to the main thread
-            setupRenderLayers();
             registerScreenFactories();
             registerItemModelOverrides();
         });
@@ -82,12 +79,6 @@ public class ClientSetup {
             }
             return 0f;
         });
-    }
-
-    private static void setupRenderLayers() {
-        // due to camouflage requirements, these need to render in any layer
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.MODULAR_ROUTER.get(), renderType -> true);
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.TEMPLATE_FRAME.get(), renderType -> true);
     }
 
     private static void registerScreenFactories() {

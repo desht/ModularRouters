@@ -2,7 +2,6 @@ package me.desht.modularrouters.client.model;
 
 import me.desht.modularrouters.block.BlockCamo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -53,7 +52,8 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
 
     @Override
     public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
-        return baseModel.getRenderTypes(state, rand, data);
+        BlockState camoState = data.get(BlockCamo.CAMOUFLAGE_STATE);
+        return IDynamicBakedModel.super.getRenderTypes(camoState == null ? state : camoState, rand, data);
     }
 
     @Override
