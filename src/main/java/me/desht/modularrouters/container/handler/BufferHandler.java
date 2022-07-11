@@ -17,8 +17,6 @@ import javax.annotation.Nonnull;
 
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 public class BufferHandler extends ItemStackHandler {
     private final ModularRouterBlockEntity router;
     private boolean hasFluidCap;

@@ -2,7 +2,10 @@ package me.desht.modularrouters.integration.waila;
 
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import snownee.jade.api.*;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
 
 @WailaPlugin
 public class WailaIntegration implements IWailaPlugin {

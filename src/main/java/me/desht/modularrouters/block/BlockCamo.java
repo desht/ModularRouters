@@ -15,8 +15,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public abstract class BlockCamo extends Block {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
 

@@ -54,8 +54,6 @@ import java.util.List;
 
 import static me.desht.modularrouters.block.tile.ModularRouterBlockEntity.*;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public class ModularRouterBlock extends BlockCamo implements EntityBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");

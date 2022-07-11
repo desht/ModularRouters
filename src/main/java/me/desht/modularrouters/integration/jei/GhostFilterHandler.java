@@ -17,8 +17,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
-
 public class GhostFilterHandler<T extends AbstractMRContainerScreen<?>> implements IGhostIngredientHandler<T> {
     @Override
     public <I> List<Target<I>> getTargets(T gui, I ingredient, boolean doStart) {

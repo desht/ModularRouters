@@ -17,8 +17,6 @@ import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-import net.minecraft.world.item.Item.Properties;
-
 public abstract class MRBaseItem extends Item {
     public MRBaseItem(Properties props) {
         super(props);

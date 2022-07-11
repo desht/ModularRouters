@@ -16,8 +16,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public class TemplateFrameBlock extends BlockCamo implements EntityBlock {
     public TemplateFrameBlock(Properties props) {
         super(props);

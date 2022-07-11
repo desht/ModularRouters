@@ -8,8 +8,6 @@ import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 
-import net.minecraft.client.gui.components.Button.OnPress;
-
 public class ItemStackButton extends TexturedButton {
     private static final XYPoint TEXTURE_XY = new XYPoint(0, 0);
 
