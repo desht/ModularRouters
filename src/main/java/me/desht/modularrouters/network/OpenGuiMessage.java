@@ -74,21 +74,21 @@ public class OpenGuiMessage {
                     case ROUTER ->
                             // item router GUI
                             locator.getRouter(player.getCommandSenderWorld())
-                                    .ifPresent(router -> NetworkHooks.openGui(player, router, locator.routerPos));
+                                    .ifPresent(router -> NetworkHooks.openScreen(player, router, locator.routerPos));
                     case MODULE_HELD ->
                             // module held in player's hand
-                            NetworkHooks.openGui(player, new ModuleItem.ModuleMenuProvider(player, locator), locator::writeBuf);
+                            NetworkHooks.openScreen(player, new ModuleItem.ModuleMenuProvider(player, locator), locator::writeBuf);
                     case MODULE_INSTALLED ->
                             // module installed in a router
                             locator.getRouter(player.getCommandSenderWorld())
-                                    .ifPresent(router -> NetworkHooks.openGui(player, new ModuleItem.ModuleMenuProvider(player, locator), locator::writeBuf));
+                                    .ifPresent(router -> NetworkHooks.openScreen(player, new ModuleItem.ModuleMenuProvider(player, locator), locator::writeBuf));
                     case FILTER_HELD ->
                             // filter is in a module in player's hand
-                            NetworkHooks.openGui(player, new SmartFilterItem.FilterMenuProvider(player, locator), locator::writeBuf);
+                            NetworkHooks.openScreen(player, new SmartFilterItem.FilterMenuProvider(player, locator), locator::writeBuf);
                     case FILTER_INSTALLED ->
                             // filter is in a module in a router
                             locator.getRouter(player.getCommandSenderWorld())
-                                    .ifPresent(router -> NetworkHooks.openGui(player, new SmartFilterItem.FilterMenuProvider(player, locator), locator::writeBuf));
+                                    .ifPresent(router -> NetworkHooks.openScreen(player, new SmartFilterItem.FilterMenuProvider(player, locator), locator::writeBuf));
                 }
             }
         });

@@ -123,14 +123,14 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer().getUUID().equals(playerId)) {
-            playerRef = new WeakReference<>(event.getPlayer());
+        if (event.getEntity().getUUID().equals(playerId)) {
+            playerRef = new WeakReference<>(event.getEntity());
         }
     }
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getPlayer().getUUID().equals(playerId)) {
+        if (event.getEntity().getUUID().equals(playerId)) {
             playerRef = new WeakReference<>(null);
         }
     }

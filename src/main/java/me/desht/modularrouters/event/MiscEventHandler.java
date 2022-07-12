@@ -24,13 +24,13 @@ public class MiscEventHandler {
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
         if (event.getPos() != null) {
-            BlockState state = event.getPlayer().getCommandSenderWorld().getBlockState(event.getPos());
+            BlockState state = event.getEntity().getCommandSenderWorld().getBlockState(event.getPos());
             if (state.getBlock() instanceof TemplateFrameBlock) {
-                event.getPlayer().getCommandSenderWorld().getBlockEntity(event.getPos(), ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
+                event.getEntity().getCommandSenderWorld().getBlockEntity(event.getPos(), ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
                     if (te.getCamouflage() != null && te.extendedMimic()) {
                         BlockState camoState = te.getCamouflage();
                         // note: passing getPos() here would cause an infinite event loop
-                        event.setNewSpeed(event.getPlayer().getDigSpeed(camoState, UNKNOWN));
+                        event.setNewSpeed(event.getEntity().getDigSpeed(camoState, UNKNOWN));
                     }
                 });
             }
@@ -42,7 +42,7 @@ public class MiscEventHandler {
         ItemStack stack = event.getCrafting();
         if (event.getCrafting().getItem() instanceof IPlayerOwned playerOwned) {
             // player-owned items get tagged with the creator's name & ID
-            playerOwned.setOwner(stack, event.getPlayer());
+            playerOwned.setOwner(stack, event.getEntity());
         } else if (stack.getItem() instanceof ModuleItem) {
             // if self-crafting a module to reset it; retrieve any augments in the module
             ItemStack moduleStack = ItemStack.EMPTY;
@@ -59,7 +59,7 @@ public class MiscEventHandler {
             if (!moduleStack.isEmpty()) {
                 AugmentHandler h = new AugmentHandler(moduleStack, null);
                 for (int i = 0; i < h.getSlots(); i++) {
-                    ItemHandlerHelper.giveItemToPlayer(event.getPlayer(), h.getStackInSlot(i));
+                    ItemHandlerHelper.giveItemToPlayer(event.getEntity(), h.getStackInSlot(i));
                 }
             }
         }

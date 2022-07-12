@@ -178,7 +178,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     // TODO combine into one packet?
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterSettingsMessage(router));
                     PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(router));
-                    NetworkHooks.openGui((ServerPlayer) player, router, pos);
+                    NetworkHooks.openScreen((ServerPlayer) player, router, pos);
                 } else if (!router.isPermitted(player) && world.isClientSide) {
                     player.displayClientMessage(ClientUtil.xlate("modularrouters.chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);

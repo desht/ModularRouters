@@ -8,8 +8,8 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ### 10.1.0 (unreleased)
 
-* Build for Forge 41.0.64+
-  * This version *will not run* on Forge versions 41.0.63 and earlier!
+* Build for Forge 41.0.94+
+  * This version *will not run* on Forge versions 41.0.93 and earlier!
   * Version 10.0.0 (previous release) *will not run* on Forge versions 41.0.64 and later!
 
 ### 10.0.0 (17 Jun 2022)

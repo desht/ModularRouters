@@ -72,7 +72,7 @@ public abstract class SmartFilterItem extends MRBaseItem {
         SmartFilterItem filter = (SmartFilterItem) stack.getItem();
         MFLocator loc = MFLocator.heldFilter(hand);
         if (!world.isClientSide && filter.hasMenu()) {
-            NetworkHooks.openGui((ServerPlayer) player, new FilterMenuProvider(player, loc), loc::writeBuf);
+            NetworkHooks.openScreen((ServerPlayer) player, new FilterMenuProvider(player, loc), loc::writeBuf);
         } else if (world.isClientSide && !hasMenu()) {
             FilterScreenFactory.openFilterGui(loc);
         }
