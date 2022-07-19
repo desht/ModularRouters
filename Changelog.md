@@ -6,7 +6,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.19
 
-### 10.1.0 (unreleased)
+### 10.1.0 (19 Jul 2022)
 
 * Build for Forge 41.0.94+
   * This version *will not run* on Forge versions 41.0.93 and earlier!
