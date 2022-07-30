@@ -53,6 +53,7 @@ public class XPCollection {
         // note: bottles o' enchanting are randomly worth 3-11 experience, so let's use an average of 7
         SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
         BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
+        NUGGET_OF_EXPERIENCE(true, 7, "create:experience_nugget"),
         MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence"),
         CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice"),
         IF_ESSENCE(false, 20, "industrialforegoing:essence"),
