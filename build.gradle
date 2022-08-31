@@ -37,9 +37,7 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    // until we have parchment...
-    //mappings channel: 'parchment', version: "1.18.1-2022.03.06-1.18.2"
-    mappings channel: 'official', version: "1.19"
+    mappings channel: 'parchment', version: "${project.mappings_version}-${project.mc_version}"
     runs {
         client {
             workingDirectory file('run')
@@ -112,6 +110,7 @@ dependencies {
 
     // compileOnly till jade is updated
     compileOnly fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
+
     // compile against the JEI API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
