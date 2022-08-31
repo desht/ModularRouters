@@ -2,6 +2,7 @@ package me.desht.modularrouters.integration.jei;
 
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.client.gui.filter.AbstractFilterContainerScreen;
+import me.desht.modularrouters.client.gui.filter.BulkItemFilterScreen;
 import me.desht.modularrouters.client.gui.module.AbstractModuleScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -23,8 +24,8 @@ public class JEIModularRoutersPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addGhostIngredientHandler(AbstractModuleScreen.class, new GhostFilterHandler.ModuleFilter());
-        registration.addGhostIngredientHandler(AbstractFilterContainerScreen.class, new GhostFilterHandler.Filter());
+        registration.addGhostIngredientHandler(AbstractModuleScreen.class, new ModuleScreenGhost());
+        registration.addGhostIngredientHandler(BulkItemFilterScreen.class, new BulkFilterScreenGhost());
 
         registration.addGuiContainerHandler(ModularRouterScreen.class, new IGuiContainerHandler<>() {
             @Override

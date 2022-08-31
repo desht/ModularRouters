@@ -1,7 +1,9 @@
 package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.container.AbstractMRContainerMenu;
+import me.desht.modularrouters.container.BulkItemFilterMenu;
 import me.desht.modularrouters.container.FilterSlot;
+import me.desht.modularrouters.container.ModuleMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -38,11 +40,15 @@ public class ModuleFilterMessage {
             Player player = ctx.get().getSender();
             if (player != null) {
                 AbstractContainerMenu c = player.containerMenu;
-                if (c instanceof AbstractMRContainerMenu && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
+                if (isValidContainer(c) && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
                     c.getSlot(slot).set(stack);
                 }
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    private boolean isValidContainer(AbstractContainerMenu c) {
+        return c instanceof ModuleMenu || c instanceof BulkItemFilterMenu;
     }
 }
