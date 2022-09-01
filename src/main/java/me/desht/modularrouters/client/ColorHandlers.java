@@ -19,7 +19,7 @@ public class ColorHandlers {
     public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
         for (RegistryObject<Item> item : ModItems.ITEMS.getEntries()) {
             if (item.get() instanceof ModItems.ITintable tintable) {
-                event.getItemColors().register((stack, tintIndex) -> switch (tintIndex) {
+                event.register((stack, tintIndex) -> switch (tintIndex) {
                     case 0, 2 -> TintColor.WHITE.getRGB();
                     case 1 -> tintable.getItemTint().getRGB();
                     default -> TintColor.BLACK.getRGB();  // shouldn't get here
@@ -30,7 +30,7 @@ public class ColorHandlers {
 
     @SubscribeEvent
     public static void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
-        event.getBlockColors().register((state, reader, pos, tintIndex) -> {
+        event.register((state, reader, pos, tintIndex) -> {
             if (pos == null || reader == null) return -1;
             BlockEntity te = reader.getBlockEntity(pos);
             if (te instanceof ICamouflageable camouflageable && camouflageable.getCamouflage() != null) {

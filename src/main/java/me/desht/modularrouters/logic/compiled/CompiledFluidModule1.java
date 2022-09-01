@@ -18,10 +18,10 @@ import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.*;
 import net.minecraftforge.common.SoundActions;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -56,7 +56,7 @@ public class CompiledFluidModule1 extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (getTarget() == null) return false;
 
-        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
 
         if (!routerCap.isPresent()) {
             return false;

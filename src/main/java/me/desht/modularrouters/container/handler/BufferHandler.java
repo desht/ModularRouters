@@ -5,8 +5,8 @@ import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -15,7 +15,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
 
 public class BufferHandler extends ItemStackHandler {
     private final ModularRouterBlockEntity router;
@@ -28,20 +27,20 @@ public class BufferHandler extends ItemStackHandler {
     public BufferHandler(ModularRouterBlockEntity router) {
         super(router.getBufferSlotCount());
         this.router = router;
-        this.hasFluidCap = hasCap(getStackInSlot(0), FLUID_HANDLER_ITEM_CAPABILITY);
-        this.hasEnergyCap = hasCap(getStackInSlot(0), CapabilityEnergy.ENERGY);
+        this.hasFluidCap = hasCap(getStackInSlot(0), ForgeCapabilities.FLUID_HANDLER_ITEM);
+        this.hasEnergyCap = hasCap(getStackInSlot(0), ForgeCapabilities.ENERGY);
     }
 
     @Override
     public void onContentsChanged(int slot) {
         ItemStack stack = getStackInSlot(slot);
 
-        boolean newFluidCap = hasCap(stack, FLUID_HANDLER_ITEM_CAPABILITY);
-        boolean newEnergyCap = hasCap(stack, CapabilityEnergy.ENERGY);
+        boolean newFluidCap = hasCap(stack, ForgeCapabilities.FLUID_HANDLER_ITEM);
+        boolean newEnergyCap = hasCap(stack, ForgeCapabilities.ENERGY);
 
         if (newFluidCap != hasFluidCap || newEnergyCap != hasEnergyCap) {
             // in case any pipes/cables need to connect/disconnect
-            router.getLevel().updateNeighborsAt(router.getBlockPos(), ModBlocks.MODULAR_ROUTER.get());
+            router.nonNullLevel().updateNeighborsAt(router.getBlockPos(), ModBlocks.MODULAR_ROUTER.get());
         }
         hasFluidCap = newFluidCap;
         hasEnergyCap = newEnergyCap;
@@ -54,13 +53,13 @@ public class BufferHandler extends ItemStackHandler {
         super.deserializeNBT(nbt);
 
         ItemStack stack = getStackInSlot(0);
-        this.hasFluidCap = hasCap(stack, FLUID_HANDLER_ITEM_CAPABILITY);
-        this.hasEnergyCap = hasCap(stack, CapabilityEnergy.ENERGY);
+        this.hasFluidCap = hasCap(stack, ForgeCapabilities.FLUID_HANDLER_ITEM);
+        this.hasEnergyCap = hasCap(stack, ForgeCapabilities.ENERGY);
     }
 
     public LazyOptional<IFluidHandlerItem> getFluidItemCapability() {
         ItemStack stack = getStackInSlot(0);
-        return stack.getCount() == 1 ? getStackInSlot(0).getCapability(FLUID_HANDLER_ITEM_CAPABILITY) : LazyOptional.empty();
+        return stack.getCount() == 1 ? getStackInSlot(0).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM) : LazyOptional.empty();
     }
 
     public LazyOptional<IFluidHandler> getFluidCapability() {
@@ -68,7 +67,7 @@ public class BufferHandler extends ItemStackHandler {
     }
 
     public LazyOptional<IEnergyStorage> getEnergyCapability() {
-        return getStackInSlot(0).getCapability(CapabilityEnergy.ENERGY);
+        return getStackInSlot(0).getCapability(ForgeCapabilities.ENERGY);
     }
 
     private boolean hasCap(ItemStack stack, Capability<?> cap) {

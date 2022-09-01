@@ -7,7 +7,7 @@ import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +26,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
                 .toList();
         if (inRange.isEmpty()) return false;
 
-        int total = router.getCapability(CapabilityEnergy.ENERGY).map(routerHandler -> {
+        int total = router.getCapability(ForgeCapabilities.ENERGY).map(routerHandler -> {
             int toSend = routerHandler.getEnergyStored() / inRange.size();
             int total1 = 0;
             boolean doBeam = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2;

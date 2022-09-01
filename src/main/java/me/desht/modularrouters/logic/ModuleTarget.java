@@ -10,10 +10,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -95,7 +94,7 @@ public class ModuleTarget {
                 cachedItemCap = LazyOptional.empty();
             } else {
                 BlockEntity te = w.getBlockEntity(pos);
-                cachedItemCap = te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+                cachedItemCap = te == null ? LazyOptional.empty() : te.getCapability(ForgeCapabilities.ITEM_HANDLER, face);
             }
             if (cachedItemCap.isPresent()) cachedItemCap.addListener(c -> cachedItemCap = LazyOptional.empty());
         }
@@ -115,7 +114,7 @@ public class ModuleTarget {
                 cachedEnergyCap = LazyOptional.empty();
             } else {
                 BlockEntity te = w.getBlockEntity(pos);
-                cachedEnergyCap = te == null ? LazyOptional.empty() : te.getCapability(CapabilityEnergy.ENERGY, face);
+                cachedEnergyCap = te == null ? LazyOptional.empty() : te.getCapability(ForgeCapabilities.ENERGY, face);
             }
             if (cachedEnergyCap.isPresent()) cachedEnergyCap.addListener(c -> cachedEnergyCap = LazyOptional.empty());
         }

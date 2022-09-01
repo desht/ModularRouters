@@ -6,7 +6,7 @@ import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.math.BigDecimal;
@@ -157,7 +157,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private static Optional<Integer> getEnergyPercent(ItemStack stack) {
-            return stack.getCapability(CapabilityEnergy.ENERGY, null)
+            return stack.getCapability(ForgeCapabilities.ENERGY, null)
                     .map(handler -> Optional.of(asPercentage(handler.getEnergyStored(), handler.getMaxEnergyStored())))
                     .orElse(Optional.empty());
         }

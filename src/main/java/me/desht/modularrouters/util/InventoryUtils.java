@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -50,7 +50,7 @@ public class InventoryUtils {
 
     public static LazyOptional<IItemHandler> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
-        return te == null ? LazyOptional.empty() : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        return te == null ? LazyOptional.empty() : te.getCapability(ForgeCapabilities.ITEM_HANDLER, side);
     }
 
     /**

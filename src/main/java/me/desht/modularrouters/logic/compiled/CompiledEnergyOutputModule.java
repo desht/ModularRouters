@@ -2,7 +2,7 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,7 +16,7 @@ public class CompiledEnergyOutputModule extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (getTarget() == null) return false;
 
-        return router.getCapability(CapabilityEnergy.ENERGY)
+        return router.getCapability(ForgeCapabilities.ENERGY)
                 .map(routerHandler -> getTarget().getEnergyHandler().map(otherHandler -> {
                     int toExtract = routerHandler.extractEnergy(router.getEnergyXferRate(), true);
                     int inserted = otherHandler.receiveEnergy(toExtract, false);

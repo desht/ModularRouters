@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -81,7 +81,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         Level level = router.nonNullLevel();
         for (int i = 1; i <= getRange(); i++) {
             BlockEntity te = level.getBlockEntity(pos);
-            if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getTarget().face).isPresent()) {
+            if (te != null && te.getCapability(ForgeCapabilities.ITEM_HANDLER, getTarget().face).isPresent()) {
                 GlobalPos gPos = MiscUtil.makeGlobalPos(level, pos.immutable());
                 return new ModuleTarget(gPos, face, BlockUtil.getBlockName(level, pos));
             } else if (!isPassable(level, pos, face)) {

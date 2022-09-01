@@ -1,6 +1,5 @@
 package me.desht.modularrouters.network;
 
-import me.desht.modularrouters.container.AbstractMRContainerMenu;
 import me.desht.modularrouters.container.BulkItemFilterMenu;
 import me.desht.modularrouters.container.FilterSlot;
 import me.desht.modularrouters.container.ModuleMenu;
