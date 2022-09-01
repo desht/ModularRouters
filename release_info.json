@@ -1,10 +1,11 @@
 {
   "homepage" : "https://minecraft.curseforge.com/projects/modular-routers",
   "promos" : {
-    "1.19-recommended" : "10.1.0",
-    "1.19-latest" : "10.1.0"
+    "1.19-recommended" : "10.2.0",
+    "1.19-latest" : "10.2.0"
   },
   "1.19" : {
+    "10.2.0": "https://github.com/desht/ModularRouters/blob/MC1.19.2-master/Changelog.md#1020-1-sep-2022",
     "10.1.0": "https://github.com/desht/ModularRouters/blob/MC1.19-master/Changelog.md#1010-19-jul-2022",
     "10.0.0": "https://github.com/desht/ModularRouters/blob/MC1.19-master/Changelog.md#1000-17-jun-2022"
   }

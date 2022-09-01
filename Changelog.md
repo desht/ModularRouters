@@ -6,6 +6,13 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.19
 
+### 10.2.0 (1 Sep 2022)
+
+* Build for Minecraft 1.19.2
+  * Might work on earlier 1.19 releases but no support provided there
+* Added XP Vacuum support for Create's XP nuggets and Sophisticated Core XP fluid
+* Added JEI ghost item dragging support to the Bulk Filter GUI
+
 ### 10.1.0 (19 Jul 2022)
 
 * Build for Forge 41.0.94+
