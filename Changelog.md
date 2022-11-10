@@ -6,7 +6,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.19
 
-### 10.2.0 (1 Sep 2022)
+### 10.2.0
 
 * Build for Minecraft 1.19.2
   * Might work on earlier 1.19 releases but no support provided there
