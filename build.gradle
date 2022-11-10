@@ -162,9 +162,6 @@ publishing {
                 }
 
                 from components.java
-                artifact sourcesJar
-                artifact javadocJar
-                artifact apiJar
             }
         }
         repositories {
