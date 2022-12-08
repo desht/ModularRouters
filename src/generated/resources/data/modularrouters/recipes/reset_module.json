@@ -1,3 +1,4 @@
 {
-  "type": "modularrouters:module_reset"
+  "type": "modularrouters:module_reset",
+  "category": "misc"
 }

@@ -106,7 +106,7 @@ public class InventoryUtils {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                boolean match = matchMeta ? stack.sameItem(toCount) : stack.sameItemStackIgnoreDurability(toCount);
+                boolean match = matchMeta ? stack.sameItem(toCount) : MiscUtil.sameItemStackIgnoreDurability(stack, toCount);
                 if (match) {
                     count += stack.getCount();
                 }

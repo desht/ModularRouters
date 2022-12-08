@@ -101,7 +101,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         ItemStack inSlot = getMenu().getItems().get(0);
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             modId = modName = "";
-        } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !inSlot.sameItemStackIgnoreDurability(prevInSlot))) {
+        } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !MiscUtil.sameItemStackIgnoreDurability(inSlot, prevInSlot))) {
             modId = MiscUtil.getRegistryName(inSlot.getItem()).map(ResourceLocation::getNamespace).orElse("?");
             modName = ModNameCache.getModName(modId);
         }

@@ -147,7 +147,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
                 ModuleHelper.getRedstoneBehaviour(moduleItemStack), this));
 
         regulatorTextField = addRenderableWidget(buildRegulationTextField(getOrCreateTextFieldManager()));
-        regulatorTooltipButton = addRenderableWidget(new RegulatorTooltipButton(regulatorTextField.x - 16, regulatorTextField.y - 2, module.isFluidModule()));
+        regulatorTooltipButton = addRenderableWidget(new RegulatorTooltipButton(regulatorTextField.getX() - 16, regulatorTextField.getY() - 2, module.isFluidModule()));
 
         if (routerPos != null) {
             addRenderableWidget(new BackButton(leftPos + 2, topPos + 1, p -> PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));

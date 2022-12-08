@@ -129,7 +129,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         energyDirButton.visible = hasEnergyUpgrade
                 && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(ForgeCapabilities.ENERGY).isPresent();
 
-        energyWarning.x = hasEnergyUpgrade ? leftPos - 22 : leftPos + 4;
+        energyWarning.setX(hasEnergyUpgrade ? leftPos - 22 : leftPos + 4);
 
     }
 

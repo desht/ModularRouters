@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -20,8 +21,8 @@ public class GuideBookRecipe extends ShapelessRecipe {
     private static final String NBT_KEY = "patchouli:book";
     private static final String NBT_VAL = "modularrouters:book";
 
-    public GuideBookRecipe(ResourceLocation idIn) {
-        super(idIn, "", makeGuideBook(),
+    public GuideBookRecipe(ResourceLocation idIn, CraftingBookCategory category) {
+        super(idIn, "", category, makeGuideBook(),
                 NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BOOK), Ingredient.of(ModItems.BLANK_MODULE.get()))
         );
     }

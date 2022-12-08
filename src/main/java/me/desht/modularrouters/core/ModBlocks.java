@@ -4,7 +4,6 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.block.TemplateFrameBlock;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -48,10 +47,10 @@ public class ModBlocks {
     }
 
     private static Supplier<BlockItem> itemDefault(final RegistryObject<? extends Block> block) {
-        return item(block, ModItems.MR_CREATIVE_TAB);
+        return item(block);
     }
 
-    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block, final CreativeModeTab itemGroup) {
-        return () -> new BlockItem(block.get(), new Item.Properties().tab(itemGroup));
+    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block) {
+        return () -> new BlockItem(block.get(), new Item.Properties());
     }
 }

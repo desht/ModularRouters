@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -60,19 +61,19 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
             addRenderableWidget(new BackButton(xPos - 12, yPos, button -> closeGUI()));
         }
 
-        addRenderableWidget(new Button(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
+        addRenderableWidget(new ExtendedButton(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
             currentSubject = currentSubject.cycle(Screen.hasShiftDown() ? -1 : 1);
             button.setMessage(xlate(currentSubject.getTranslationKey()));
         }));
 
-        addRenderableWidget(new Button(xPos + 95, yPos + 22, 20, 20, xlate(currentOp.getTranslationKey()), button -> {
+        addRenderableWidget(new ExtendedButton(xPos + 95, yPos + 22, 20, 20, xlate(currentOp.getTranslationKey()), button -> {
             currentOp = currentOp.cycle(Screen.hasShiftDown() ? -1 : 1);
             button.setMessage(xlate(currentOp.getTranslationKey()));
         }));
 
         addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
 
-        matchButton = new Button(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
+        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
             CompoundTag ext = new CompoundTag();
             ext.putBoolean("MatchAll", !comparisonList.isMatchAll());
             PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ANY_ALL_FLAG, locator, ext));

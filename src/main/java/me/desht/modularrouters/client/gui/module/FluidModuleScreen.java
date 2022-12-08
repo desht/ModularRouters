@@ -65,7 +65,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         addRenderableWidget(new TooltipButton(leftPos + 130, topPos + 19, 16, 16, bucketStack));
         addRenderableWidget(fluidDirButton = new FluidDirectionButton(leftPos + 148, topPos + 44, cfm.getFluidDirection()));
         addRenderableWidget(forceEmptyButton = new ForceEmptyButton(leftPos + 168, topPos + 69, cfm.isForceEmpty()));
-        addRenderableWidget(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.x + regulatorTextField.getWidth() + 2, regulatorTextField.y - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
+        addRenderableWidget(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.getX() + regulatorTextField.getWidth() + 2, regulatorTextField.getY() - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 17, leftPos + 183, topPos + 35, "modularrouters.guiText.popup.fluid.maxTransfer");
         getMouseOverHelp().addHelpRegion(leftPos + 126, topPos + 42, leftPos + 185, topPos + 61, "modularrouters.guiText.popup.fluid.direction");

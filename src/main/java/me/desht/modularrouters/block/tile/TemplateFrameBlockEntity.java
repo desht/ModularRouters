@@ -5,6 +5,7 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.util.Scheduler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.Connection;
@@ -116,9 +117,9 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
         return getNBTFromCamoState(compound, camouflage);
     }
 
-    private static BlockState getCamoStateFromNBT(CompoundTag tag) {
+    private BlockState getCamoStateFromNBT(CompoundTag tag) {
         if (tag.contains(NBT_CAMO_NAME)) {
-            return NbtUtils.readBlockState(tag.getCompound(NBT_CAMO_NAME));
+            return NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK), tag.getCompound(NBT_CAMO_NAME));
         }
         return null;
     }

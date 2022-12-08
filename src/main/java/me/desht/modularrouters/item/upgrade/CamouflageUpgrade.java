@@ -6,6 +6,7 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class CamouflageUpgrade extends UpgradeItem {
     public static final String NBT_STATE_NAME = "BlockStateName";
@@ -32,7 +34,7 @@ public class CamouflageUpgrade extends UpgradeItem {
 
     private static BlockState getCamoState(ItemStack stack) {
         CompoundTag tag = stack.getTagElement(ModularRouters.MODID);
-        return tag != null ? NbtUtils.readBlockState(tag.getCompound(NBT_STATE_NAME)) : null;
+        return tag != null ? NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), tag.getCompound(NBT_STATE_NAME)) : null;
     }
 
     private static Component getCamoStateDisplayName(ItemStack stack) {

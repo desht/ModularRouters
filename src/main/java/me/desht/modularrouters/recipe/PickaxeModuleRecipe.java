@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -24,8 +25,8 @@ import java.util.stream.Stream;
  * For modules which need a pickaxe in their recipe to set their harvest level.
  */
 public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
-    PickaxeModuleRecipe(ResourceLocation resourceLocation, ItemStack result, NonNullList<Ingredient> ingredients) {
-        super(resourceLocation, "", result, ingredients);
+    PickaxeModuleRecipe(ResourceLocation resourceLocation, ItemStack result, NonNullList<Ingredient> ingredients, CraftingBookCategory category) {
+        super(resourceLocation, "", category, result, ingredients);
 
         Validate.isTrue(result.getItem() instanceof IPickaxeUser,
                 "recipe " + resourceLocation + ": result is not a IPickaxeUser!");
@@ -66,8 +67,8 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     }
 
     public static class BreakerModuleRecipe extends PickaxeModuleRecipe {
-        public BreakerModuleRecipe(ResourceLocation resourceLocation) {
-            super(resourceLocation, new ItemStack(ModItems.BREAKER_MODULE.get()), ingredients());
+        public BreakerModuleRecipe(ResourceLocation resourceLocation, CraftingBookCategory category) {
+            super(resourceLocation, new ItemStack(ModItems.BREAKER_MODULE.get()), ingredients(), category);
         }
 
         private static NonNullList<Ingredient> ingredients() {
@@ -84,8 +85,8 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     }
 
     public static class ExtruderModule1Recipe extends PickaxeModuleRecipe {
-        public ExtruderModule1Recipe(ResourceLocation resourceLocation) {
-            super(resourceLocation, new ItemStack(ModItems.EXTRUDER_MODULE_1.get()), ingredients());
+        public ExtruderModule1Recipe(ResourceLocation resourceLocation, CraftingBookCategory category) {
+            super(resourceLocation, new ItemStack(ModItems.EXTRUDER_MODULE_1.get()), ingredients(), category);
         }
 
         private static NonNullList<Ingredient> ingredients() {

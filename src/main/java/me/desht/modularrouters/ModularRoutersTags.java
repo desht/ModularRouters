@@ -1,6 +1,6 @@
 package me.desht.modularrouters;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -14,11 +14,11 @@ public class ModularRoutersTags {
         public static final TagKey<Item> FILTERS = modTag("filters");
 
         private static TagKey<Item> modTag(String name) {
-            return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(ModularRouters.MODID, name));
+            return TagKey.create(Registries.ITEM, new ResourceLocation(ModularRouters.MODID, name));
         }
 
         private static TagKey<Item> forgeTag(String name) {
-            return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation("forge", name));
+            return TagKey.create(Registries.ITEM, new ResourceLocation("forge", name));
         }
     }
 
@@ -27,7 +27,7 @@ public class ModularRoutersTags {
         public static final TagKey<EntityType<?>> activatorAttackBlacklist = modTag("activator_attack_blacklist");
 
         private static TagKey<EntityType<?>> modTag(String name) {
-            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(ModularRouters.MODID, name));
+            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(ModularRouters.MODID, name));
         }
     }
 

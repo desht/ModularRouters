@@ -147,7 +147,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-            if (mouseX >= this.x && mouseX < this.x + this.width && mouseY >= this.y && mouseY < this.y + this.height) {
+            if (mouseX >= this.getX() && mouseX < this.getX() + this.width && mouseY >= this.getY() && mouseY < this.getY() + this.height) {
                 if (mouseButton == 1) {
                     setValue("");  // right click clears field
                 }

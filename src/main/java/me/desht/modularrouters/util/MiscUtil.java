@@ -6,7 +6,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -126,7 +127,7 @@ public class MiscUtil {
     }
 
     public static GlobalPos deserializeGlobalPos(CompoundTag tag) {
-        ResourceKey<Level> worldKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(tag.getString("dim")));
+        ResourceKey<Level> worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dim")));
         return GlobalPos.of(worldKey, NbtUtils.readBlockPos(tag.getCompound("pos")));
     }
 
@@ -146,16 +147,11 @@ public class MiscUtil {
 
     public static Set<TagKey<Item>> itemTags(Item item) {
         //noinspection deprecation
-        return Registry.ITEM.getHolderOrThrow(Registry.ITEM.getResourceKey(item).orElseThrow())
-                .tags()
-                .collect(Collectors.toSet());
+        return ForgeRegistries.ITEMS.getHolder(item).orElseThrow().tags().collect(Collectors.toSet());
     }
 
     public static Set<TagKey<Fluid>> fluidTags(Fluid fluid) {
-        //noinspection deprecation
-        return Registry.FLUID.getHolderOrThrow(Registry.FLUID.getResourceKey(fluid).orElseThrow())
-                .tags()
-                .collect(Collectors.toSet());
+        return ForgeRegistries.FLUIDS.getHolder(fluid).orElseThrow().tags().collect(Collectors.toSet());
     }
 
     public static Optional<ResourceLocation> getRegistryName(Item item) {
@@ -164,5 +160,14 @@ public class MiscUtil {
 
     public static Optional<ResourceLocation> getRegistryName(Block block) {
         return Optional.ofNullable(ForgeRegistries.BLOCKS.getKey(block));
+    }
+
+    public static boolean sameItemStackIgnoreDurability(ItemStack stack1, ItemStack stack2) {
+        // disappeared from 1.19.2
+        if (!stack1.isDamageableItem()) {
+            return stack1.sameItem(stack2);
+        } else {
+            return !stack2.isEmpty() && stack1.is(stack2.getItem());
+        }
     }
 }

@@ -33,8 +33,8 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
         int amount = getScaled();
 
         GuiUtil.bindTexture(TEXTURE_LOCATION);
-        GuiComponent.blit(matrixStack, x + 1, y, 1, 0, width - 2, height, 32, 64);
-        GuiComponent.blit(matrixStack, x + 1, y + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
+        GuiComponent.blit(matrixStack, getX() + 1, getY(), 1, 0, width - 2, height, 32, 64);
+        GuiComponent.blit(matrixStack, getX() + 1, getY() + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
     }
 
     private int getScaled(){
@@ -51,6 +51,6 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput output) {
     }
 }

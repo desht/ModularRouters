@@ -16,6 +16,6 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> THUD = register("thud");
 
     private static RegistryObject<SoundEvent> register(String name) {
-        return SOUNDS.register(name, () -> new SoundEvent(RL(name)));
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(RL(name)));
     }
 }

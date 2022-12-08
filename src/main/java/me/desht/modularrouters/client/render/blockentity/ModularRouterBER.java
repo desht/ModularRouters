@@ -2,8 +2,7 @@ package me.desht.modularrouters.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.client.util.ClientUtil;
@@ -24,6 +23,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockEntity> {
     private static final Vector3f ROTATION = new Vector3f(0.15f, 1.0f, 0f);
@@ -119,7 +120,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         if (shape.isEmpty() || !shape.bounds().move(pos).contains(ix, iy, iz)) {
             matrixStack.pushPose();
             matrixStack.translate(ix, iy - 0.15, iz);
-            matrixStack.mulPose(ROTATION.rotationDegrees(progress * 360));
+            matrixStack.mulPose(Axis.of(ROTATION).rotationDegrees(progress * 360));
             if (beam.isItemFade()) {
                 matrixStack.translate(0, 0.15, 0);
                 matrixStack.scale(1.15f - progress, 1.15f - progress, 1.15f - progress);

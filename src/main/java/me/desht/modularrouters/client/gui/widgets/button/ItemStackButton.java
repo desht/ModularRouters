@@ -29,16 +29,16 @@ public class ItemStackButton extends TexturedButton {
         if (this.visible) {
             Minecraft mc = Minecraft.getInstance();
             GuiUtil.bindTexture(TEXTURE);
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             int i = this.getYImage(this.isHovered);
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             if (!flat) {
-                this.blit(matrixStack, this.x, this.y, i * 16, 0, this.width, this.height);
+                this.blit(matrixStack, this.getX(), this.getY(), i * 16, 0, this.width, this.height);
             }
-            int x = this.x + (width - 18) / 2;
-            int y = this.y + (height - 18) / 2;
+            int x = this.getX() + (width - 18) / 2;
+            int y = this.getY() + (height - 18) / 2;
             GuiUtil.renderItemStack(matrixStack, mc, getRenderStack(), x, y, "");
         }
     }

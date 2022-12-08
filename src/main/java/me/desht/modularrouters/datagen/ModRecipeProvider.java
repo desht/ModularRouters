@@ -24,11 +24,11 @@ import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModRecipeProvider extends RecipeProvider {
     public ModRecipeProvider(DataGenerator generator) {
-        super(generator);
+        super(generator.getPackOutput());
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
         shaped(ModBlocks.MODULAR_ROUTER.get(), 4, Items.IRON_INGOT,
                 "IBI/BMB/IBI",
                 'I', Tags.Items.INGOTS_IRON,
@@ -344,7 +344,7 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private <T extends ItemLike> ShapedRecipeBuilder shaped(T result, int count, T required, String pattern, Object... keys) {
-        ShapedRecipeBuilder b = ShapedRecipeBuilder.shaped(result, count);
+        ShapedRecipeBuilder b = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, count);
         Arrays.stream(pattern.split("/")).forEach(b::pattern);
         for (int i = 0; i < keys.length; i += 2) {
             Object v = keys[i + 1];
@@ -368,7 +368,7 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private <T extends ItemLike> ShapelessRecipeBuilder shapeless(T result, int count, T required, Object... ingredients) {
-        ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapeless(result, count);
+        ShapelessRecipeBuilder b = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, result, count);
         for (Object v : ingredients) {
             if (v instanceof TagKey<?>) {
                 //noinspection unchecked
@@ -388,10 +388,5 @@ public class ModRecipeProvider extends RecipeProvider {
     private <T extends ItemLike> String safeName(T required) {
         ResourceLocation key = ForgeRegistries.ITEMS.getKey(required.asItem());
         return key == null ? "" : key.getPath().replace('/', '_');
-    }
-
-    @Override
-    public String getName() {
-        return "Modular Routers Recipes";
     }
 }

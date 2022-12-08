@@ -9,9 +9,7 @@ import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.item.upgrade.*;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -80,7 +78,6 @@ public class ModItems {
     public static final RegistryObject<Item> MOD_FILTER = register("mod_filter", ModFilter::new);
     public static final RegistryObject<Item> REGEX_FILTER = register("regex_filter", RegexFilter::new);
 
-
     private static <T extends Item> RegistryObject<T> register(final String name, final Supplier<T> sup) {
         RegistryObject<T> ro = ITEMS.register(name, sup);
         REGISTRY_OBJECTS.add(ro);
@@ -91,15 +88,15 @@ public class ModItems {
         return register(name, () -> new Item(defaultProps()));
     }
 
-    static final CreativeModeTab MR_CREATIVE_TAB = new CreativeModeTab(ModularRouters.MODID) {
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(ModBlocks.MODULAR_ROUTER.get());
-        }
-    };
-
+//    static final CreativeModeTab MR_CREATIVE_TAB = new CreativeModeTab(ModularRouters.MODID) {
+//        @Override
+//        public ItemStack makeIcon() {
+//            return new ItemStack(ModBlocks.MODULAR_ROUTER.get());
+//        }
+//    };
+//
     public static Item.Properties defaultProps() {
-        return new Item.Properties().tab(MR_CREATIVE_TAB);
+        return new Item.Properties();
     }
 
     public interface ITintable {

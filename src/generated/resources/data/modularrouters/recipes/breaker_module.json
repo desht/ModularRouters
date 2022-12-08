@@ -1,3 +1,4 @@
 {
-  "type": "modularrouters:breaker_module"
+  "type": "modularrouters:breaker_module",
+  "category": "misc"
 }

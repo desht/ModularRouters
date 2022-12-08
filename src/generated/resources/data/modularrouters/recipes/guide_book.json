@@ -9,7 +9,8 @@
         }
       ],
       "recipe": {
-        "type": "modularrouters:guide_book"
+        "type": "modularrouters:guide_book",
+        "category": "misc"
       }
     }
   ]

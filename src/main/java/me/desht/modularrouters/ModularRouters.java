@@ -8,8 +8,10 @@ import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,12 +22,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.CompletableFuture;
+
 @Mod(ModularRouters.MODID)
 public class ModularRouters {
     public static final String MODID = "modularrouters";
     public static final String MODNAME = "Modular Routers";
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger(MODNAME);
 
     public ModularRouters() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -61,16 +65,18 @@ public class ModularRouters {
         @SubscribeEvent
         public static void gatherData(GatherDataEvent event) {
             DataGenerator generator = event.getGenerator();
+            CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
             if (event.includeServer()) {
                 generator.addProvider(event.includeClient(), new ModRecipeProvider(generator));
-                generator.addProvider(event.includeClient(), new ModItemTagsProvider(generator, event.getExistingFileHelper()));
-                generator.addProvider(event.includeClient(), new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModItemTagsProvider(generator, lookupProvider, existingFileHelper));
+                generator.addProvider(event.includeClient(), new ModBlockTagsProvider(generator, lookupProvider, existingFileHelper));
                 generator.addProvider(event.includeClient(), new ModLootTableProvider(generator));
-                generator.addProvider(event.includeClient(), new ModEntityTypeTagsProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModEntityTypeTagsProvider(generator, lookupProvider, existingFileHelper));
             }
             if (event.includeClient()) {
-                generator.addProvider(event.includeClient(), new ModBlockStateProvider(generator, event.getExistingFileHelper()));
-                generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, event.getExistingFileHelper()));
+                generator.addProvider(event.includeClient(), new ModBlockStateProvider(generator, existingFileHelper));
+                generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, existingFileHelper));
             }
         }
     }

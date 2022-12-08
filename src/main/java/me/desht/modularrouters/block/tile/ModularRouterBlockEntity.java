@@ -33,6 +33,9 @@ import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -212,7 +215,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private void processClientSync(CompoundTag compound) {
         // called client-side on receipt of NBT
         if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
-            setCamouflage(NbtUtils.readBlockState(compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
+            setCamouflage(NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }

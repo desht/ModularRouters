@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.Range;
 
 public class DetectorModuleScreen extends AbstractModuleScreen {
@@ -46,7 +47,7 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
 
         Component label = ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
-        addRenderableWidget(new Button(leftPos + 138, topPos + 33, 40, 20, label, button -> {
+        addRenderableWidget(new ExtendedButton(leftPos + 138, topPos + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
             button.setMessage(ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
             DetectorModuleScreen.this.sendToServer();

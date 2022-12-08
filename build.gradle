@@ -109,19 +109,19 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    implementation fg.deobf("curse.maven:theoneprobe-245211:3871444")
+    //implementation fg.deobf("curse.maven:theoneprobe-245211:3871444")
 //    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api")
 //    runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}")
 
     // compileOnly till jade is updated
-    compileOnly fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
+    //compileOnly fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    //compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    //compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
     // at runtime, use the full JEI
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
@@ -138,7 +138,7 @@ jar {
     manifest.attributes([
             "Specification-Title": "Modular Routers",
             "Specification-Vendor": "desht",
-            "Specification-Version": "38.0", // We are version 1 of the modlauncher specification
+            "Specification-Version": "44.0", // We are version 1 of the modlauncher specification
             "Implementation-Title": project.name,
             "Implementation-Version": "${project.version}",
             "Implementation-Vendor" :"desht",

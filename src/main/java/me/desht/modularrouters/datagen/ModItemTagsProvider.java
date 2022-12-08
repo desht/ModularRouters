@@ -7,8 +7,8 @@ import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -17,15 +17,16 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class ModItemTagsProvider extends ItemTagsProvider {
-    public ModItemTagsProvider(DataGenerator generatorIn, ExistingFileHelper existingFileHelper) {
-        super(generatorIn, new BlockTagsProvider(generatorIn, ModularRouters.MODID, existingFileHelper), ModularRouters.MODID, existingFileHelper);
+    public ModItemTagsProvider(DataGenerator generatorIn, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(generatorIn.getPackOutput(), lookupProvider, new ModBlockTagsProvider(generatorIn, lookupProvider, existingFileHelper), ModularRouters.MODID, existingFileHelper);
     }
 
     @Override
-    protected void addTags() {
+    protected void addTags(HolderLookup.Provider provider) {
         for (RegistryObject<Item> ro : ModItems.ITEMS.getEntries()) {
             if (ro.get() instanceof ModuleItem) {
                 addItemsToTag(ModularRoutersTags.Items.MODULES, ro);
@@ -48,4 +49,5 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     public String getName() {
         return "Modular Routers Item Tags";
     }
+
 }

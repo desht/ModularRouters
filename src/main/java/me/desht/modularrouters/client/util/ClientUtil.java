@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.util;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import net.minecraft.client.Minecraft;
@@ -12,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 
 import java.util.Optional;
 

@@ -4,36 +4,32 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.TemplateFrameBlock;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import static me.desht.modularrouters.util.MiscUtil.RL;
+
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class MiscEventHandler {
-    // as per javadoc for PlayerEvent.BreakSpeed, a Y val of -1 indicates an unknown pos
-    // pos is more irrelevant than unknown here, but should at least indicate to other mods
-    // not to do anything with it if they also handle PlayerEvent.BreakSpeed
-    private static final BlockPos UNKNOWN = new BlockPos(0, -1, 0);
-
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
-        if (event.getPos() != null) {
-            BlockState state = event.getEntity().getCommandSenderWorld().getBlockState(event.getPos());
-            if (state.getBlock() instanceof TemplateFrameBlock) {
-                event.getEntity().getCommandSenderWorld().getBlockEntity(event.getPos(), ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
-                    if (te.getCamouflage() != null && te.extendedMimic()) {
-                        BlockState camoState = te.getCamouflage();
-                        // note: passing getPos() here would cause an infinite event loop
-                        event.setNewSpeed(event.getEntity().getDigSpeed(camoState, UNKNOWN));
-                    }
-                });
-            }
+        if (event.getState().getBlock() instanceof TemplateFrameBlock) {
+            event.getPosition().flatMap(pos -> event.getEntity().getLevel().getBlockEntity(pos, ModBlockEntities.TEMPLATE_FRAME.get())).ifPresent(te -> {
+                if (te.getCamouflage() != null && te.extendedMimic()) {
+                    // note: passing pos here would cause an infinite event loop; necessary to pass null
+                    event.setNewSpeed(event.getEntity().getDigSpeed(te.getCamouflage(), null));
+                }
+            });
         }
     }
 
@@ -64,4 +60,5 @@ public class MiscEventHandler {
             }
         }
     }
+
 }
