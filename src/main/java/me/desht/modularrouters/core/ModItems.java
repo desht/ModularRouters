@@ -88,13 +88,6 @@ public class ModItems {
         return register(name, () -> new Item(defaultProps()));
     }
 
-//    static final CreativeModeTab MR_CREATIVE_TAB = new CreativeModeTab(ModularRouters.MODID) {
-//        @Override
-//        public ItemStack makeIcon() {
-//            return new ItemStack(ModBlocks.MODULAR_ROUTER.get());
-//        }
-//    };
-//
     public static Item.Properties defaultProps() {
         return new Item.Properties();
     }

@@ -2,20 +2,17 @@ package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.core.ModBlocks;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,18 +23,17 @@ import static me.desht.modularrouters.util.MiscUtil.RL;
 public class CreativeTabEventHandler {
     @SubscribeEvent
     public static void onCreativeTabRegister(CreativeModeTabEvent.Register event) {
-        List<ItemStack> items = ForgeRegistries.ITEMS.getEntries().stream()
-                .filter(e -> e.getKey().location().getNamespace().equals(ModularRouters.MODID))
-                .map(e -> new ItemStack(e.getValue()))
+        List<ItemStack> items = ModItems.ITEMS.getEntries().stream()
+                .map(ro -> new ItemStack(ro.get()))
                 .sorted(new ItemSorter())
                 .toList();
 
-        event.registerCreativeModeTab(RL("default"), builder -> {
+        event.registerCreativeModeTab(RL("default"), builder ->
             builder.title(Component.literal(ModularRouters.MODNAME))
                     .icon(() -> new ItemStack(ModBlocks.MODULAR_ROUTER.get()))
                     .displayItems((flags, output, b) -> output.acceptAll(items))
-                    .build();
-        });
+                    .build()
+        );
     }
 
     private static class ItemSorter implements Comparator<ItemStack> {
