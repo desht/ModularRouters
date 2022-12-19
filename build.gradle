@@ -104,14 +104,20 @@ repositories {
         name = 'Patchouli'
         url = 'https://maven.blamejared.com/'
     }
+    maven {
+        url = 'https://modmaven.dev/'
+        content {
+            includeGroup "mcjty.theoneprobe"
+        }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    //implementation fg.deobf("curse.maven:theoneprobe-245211:3871444")
-//    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api")
-//    runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}")
+    implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
+        exclude group: "net.minecraftforge", module: "forge"
+    }
 
     // compileOnly till jade is updated
     //compileOnly fg.deobf("curse.maven:jade-324717:${jade_curse_id}")

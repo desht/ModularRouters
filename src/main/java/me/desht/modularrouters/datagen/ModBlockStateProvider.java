@@ -17,7 +17,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     };
 
     public ModBlockStateProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, ModularRouters.MODID, existingFileHelper);
+        super(generator.getPackOutput(), ModularRouters.MODID, existingFileHelper);
     }
 
     @Override
