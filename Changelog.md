@@ -6,6 +6,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.19
 
+### 11.0.0
+
+* Beta build for Minecraft 1.19.3 - *will not run* on Minecraft 1.19.2!
+* Functionally the same as 10.2.0, but no JEI support at this time
+* Forge 44.0.36 or later required
+
 ### 10.2.0
 
 * Build for Minecraft 1.19.2
