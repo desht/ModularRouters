@@ -35,7 +35,7 @@ ext.isBeta = ext.releaseTag.contains("beta")
 def semver = "${version}"
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
 def mavenVer = ext.releaseTag == "" ? "${project.mc_version}-${semver}-SNAPSHOT" : "${project.mc_version}-${semver}"
-version += System.getenv().BUILD_NUMBER != null ? "-${System.getenv().BUILD_NUMBER}" : "CUSTOM"
+version += System.getenv().BUILD_NUMBER != null ? "-${System.getenv().BUILD_NUMBER}" : "-CUSTOM"
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
@@ -148,6 +148,15 @@ jar {
 }
 
 publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = rootProject.archivesBaseName
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
     if (System.getenv("MODMAVEN_USER") != null) {
         publications {
             maven(MavenPublication) {
