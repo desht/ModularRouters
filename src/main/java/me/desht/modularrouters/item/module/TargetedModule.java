@@ -52,20 +52,18 @@ public abstract class TargetedModule extends ModuleItem {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        if (ctx.getPlayer() != null && ctx.getPlayer().isCrouching()) {
-            if (isValidTarget(ctx)) {
-                if (getMaxTargets() == 1) {
-                    handleSingleTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
-                } else {
-                    handleMultiTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
-                }
-                return InteractionResult.SUCCESS;
+        ModularRouters.LOGGER.info("use item!");
+        if (ctx.getLevel().isClientSide) return InteractionResult.SUCCESS;
+
+        if (ctx.getPlayer() != null && ctx.getPlayer().isCrouching() && isValidTarget(ctx)) {
+            if (getMaxTargets() == 1) {
+                handleSingleTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
             } else {
-                return super.useOn(ctx);
+                handleMultiTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
             }
-        } else {
-            return InteractionResult.PASS;
+            return InteractionResult.SUCCESS;
         }
+        return InteractionResult.PASS;
     }
 
     protected boolean isValidTarget(UseOnContext ctx) {
