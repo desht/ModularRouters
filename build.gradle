@@ -32,7 +32,7 @@ ext.releaseTag = System.getenv('TAG') ?: ""
 ext.isAlpha = ext.releaseTag.contains("alpha")
 ext.isBeta = ext.releaseTag.contains("beta")
 
-def semver = "${version}"
+def semver = mod_version
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
 version += System.getenv("BUILD_NUMBER") ?: "-CUSTOM"
 
