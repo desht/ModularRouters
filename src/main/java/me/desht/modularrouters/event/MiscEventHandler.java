@@ -16,25 +16,19 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class MiscEventHandler {
-    // as per javadoc for PlayerEvent.BreakSpeed, a Y val of -1 indicates an unknown pos
-    // pos is more irrelevant than unknown here, but should at least indicate to other mods
-    // not to do anything with it if they also handle PlayerEvent.BreakSpeed
-    private static final BlockPos UNKNOWN = new BlockPos(0, -1, 0);
-
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
-        if (event.getPos() != null) {
-            BlockState state = event.getEntity().getCommandSenderWorld().getBlockState(event.getPos());
+        event.getPosition().ifPresent(pos -> {
+            BlockState state = event.getEntity().getLevel().getBlockState(pos);
             if (state.getBlock() instanceof TemplateFrameBlock) {
-                event.getEntity().getCommandSenderWorld().getBlockEntity(event.getPos(), ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
+                event.getEntity().getLevel().getBlockEntity(pos, ModBlockEntities.TEMPLATE_FRAME.get()).ifPresent(te -> {
                     if (te.getCamouflage() != null && te.extendedMimic()) {
                         BlockState camoState = te.getCamouflage();
-                        // note: passing getPos() here would cause an infinite event loop
-                        event.setNewSpeed(event.getEntity().getDigSpeed(camoState, UNKNOWN));
+                        event.setNewSpeed(event.getEntity().getDigSpeed(camoState, null));
                     }
                 });
             }
-        }
+        });
     }
 
     @SubscribeEvent
