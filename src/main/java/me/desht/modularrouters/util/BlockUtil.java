@@ -8,10 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -21,9 +18,9 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.level.BlockEvent;
@@ -163,7 +160,8 @@ public class BlockUtil {
 
         FakePlayer fakePlayer = router.getFakePlayer();
         fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, pickaxe);
-        if (ConfigHolder.common.module.breakerHarvestLevelLimit.get() && !ForgeHooks.isCorrectToolForDrops(state, fakePlayer)) {
+        Tier tier = pickaxe.getItem() instanceof TieredItem t ? t.getTier() : Tiers.STONE;
+        if (ConfigHolder.common.module.breakerHarvestLevelLimit.get() && !TierSortingRegistry.isCorrectTierForDrops(tier, state)) {
             return BreakResult.NOT_BROKEN;
         }
 
@@ -194,7 +192,6 @@ public class BlockUtil {
         return w == null ? "" : w.getBlockState(pos).getBlock().getDescriptionId();
     }
 
-    @SuppressWarnings("ClassCanBeRecord")
     public static class BreakResult {
         static final BreakResult NOT_BROKEN = new BreakResult(false, Collections.emptyMap());
 
