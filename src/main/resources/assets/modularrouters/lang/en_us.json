@@ -73,7 +73,7 @@
    "modularrouters.chatText.security.ALREADY_ADDED" : "Player [%s] is already on this upgrade",
    "modularrouters.chatText.security.ERROR" : "Couldn't add player [%s] (internal error)",
    "modularrouters.chatText.security.FULL" : "Security upgrade items full!",
-   "modularrouters.chatText.security.NOT_PRESENT" : "Player [%s] is not on this uprade",
+   "modularrouters.chatText.security.NOT_PRESENT" : "Player [%s] is not on this upgrade",
    "modularrouters.chatText.security.REMOVED" : "Removed player [%s]",
    "modularrouters.chatText.subtitle.error" : "Error",
    "modularrouters.chatText.subtitle.success" : "Success",
