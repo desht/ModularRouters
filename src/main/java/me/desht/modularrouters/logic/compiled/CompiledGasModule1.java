@@ -50,9 +50,9 @@ public class CompiledGasModule1 extends CompiledModule {
         if (getTarget() == null) return false;
         Level world = Objects.requireNonNull(router.getLevel());
         BlockPos pos = getTarget().gPos.pos();
-
+        // TODO selects the actual side, is that what you want?
         // changed so it selects the actual face you select when selecting the side on the block
-        // instead of opposite/relative.
+        // instead of opposite/relative. I don't know if this is in line with the ideas about the mod though
         LazyOptional<IGasHandler> worldGasCap = ModItems.getGasHandler(world, pos, getTarget().face );
         Optional<IGasHandler> routerCap = router.getBuffer().getStackInSlot(0).getCapability(GAS_HANDLER).resolve();
 
@@ -77,6 +77,8 @@ public class CompiledGasModule1 extends CompiledModule {
             };
         }
         if (didWork) {
+            //TODO fix this so it is in line with the fluid module
+            // Couldn't really convert this reallly well (from how the fluid module does it) to a gas method so it doesn't really do much I think
             routerCap.ifPresent(h -> router.setBufferItemStack(router.getBufferItemStack()));
         }
         return didWork;
