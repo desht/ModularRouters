@@ -20,6 +20,10 @@ public class CommonConfig {
         public IntValue puller2MaxRange;
         public IntValue fluid2BaseRange;
         public IntValue fluid2MaxRange;
+
+        public IntValue gas2BaseRange;
+        public IntValue gas2MaxRange;
+
         public BooleanValue senderParticles;
         public BooleanValue pullerParticles;
         public BooleanValue placerParticles;
@@ -40,7 +44,12 @@ public class CommonConfig {
         public IntValue lowPowerTickRate;
         public IntValue fluidBaseTransferRate;
         public IntValue fluidMaxTransferRate;
+
+        public IntValue gasBaseTransferRate;
+        public IntValue gasMaxTransferRate;
+
         public IntValue mBperFluidUpgade;
+        public IntValue mBperGasUpgrade;
         public IntValue fePerEnergyUpgrade;
         public IntValue feXferPerEnergyUpgrade;
     }
@@ -59,6 +68,10 @@ public class CommonConfig {
         public IntValue flingerModuleEnergyCost;
         public IntValue fluidModuleEnergyCost;
         public IntValue fluidModule2EnergyCost;
+        public IntValue gasModuleEnergyCost;
+        public IntValue gasModule2EnergyCost;
+
+
         public IntValue placerModuleEnergyCost;
         public IntValue playerModuleEnergyCost;
         public IntValue pullerModule1EnergyCost;
@@ -115,9 +128,15 @@ public class CommonConfig {
         module.fluid2BaseRange = builder.comment("Base range for Fluid Mk2 (no range upgrades)")
                 .translation("gui.config.fluid2BaseRange")
                 .defineInRange("fluid2BaseRange", 12, 1, Integer.MAX_VALUE);
+        module.gas2BaseRange = builder.comment("Base range for Gas Mk2 (no range upgrades)")
+                .translation("gui.config.gas2BaseRange")
+                .defineInRange("gas2BaseRange", 12, 1, Integer.MAX_VALUE);
         module.fluid2MaxRange = builder.comment("Max range for Fluid Mk2")
                 .translation("gui.config.fluid2MaxRange")
                 .defineInRange("fluid2MaxRange", 24, 1, Integer.MAX_VALUE);
+        module.gas2MaxRange = builder.comment("Max range for Gas Mk2")
+                .translation("gui.config.gas2MaxRange")
+                .defineInRange("gas2MaxRange", 24, 1, Integer.MAX_VALUE);
         module.senderParticles = builder.comment("Should Sender modules show particle effects when working?")
                 .translation("modularrouters.gui.config.senderParticles")
                 .define("senderParticles", true);
@@ -169,9 +188,25 @@ public class CommonConfig {
         router.fluidMaxTransferRate = builder.comment("Max fluid transfer rate (mB/t in each direction) for a router")
                 .translation("modularrouters.gui.config.baseTickRate")
                 .defineInRange("fluidMaxTransferRate", 400, 1, Integer.MAX_VALUE);
+
+        router.gasBaseTransferRate = builder.comment("Base gas transfer rate (mB/t in each direction) for a router")
+                .translation("gui.config.gasBaseTransferRate")
+                .defineInRange("gasBaseTransferRate", 50, 1, Integer.MAX_VALUE);
+        router.gasMaxTransferRate = builder.comment("Max gas transfer rate (mB/t in each direction) for a router")
+                .translation("modularrouters.gui.config.baseTickRate")
+                .defineInRange("gasMaxTransferRate", 400, 1, Integer.MAX_VALUE);
+
+
         router.mBperFluidUpgade = builder.comment("Fluid transfer rate increase per Fluid Transfer Upgrade")
                 .translation("gui.config.mBperFluidUpgade")
                 .defineInRange("mBperFluidUpgade", 10, 1, Integer.MAX_VALUE);
+
+        router.mBperGasUpgrade = builder.comment("Gas transfer rate increase per Gas Transfer Upgrade")
+                .translation("gui.config.mBperGasUpgrade")
+                .defineInRange("mBperGasUpgrade", 10, 1, Integer.MAX_VALUE);
+
+
+
         router.fePerEnergyUpgrade = builder.comment("FE capacity per Energy Upgrade")
                 .translation("gui.config.fePerEnergyUpgrade")
                 .defineInRange("fePerEnergyUpgrade", 50_000, 1, Integer.MAX_VALUE);
@@ -223,6 +258,14 @@ public class CommonConfig {
         energyCosts.fluidModule2EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Fluid Module Mk2")
                 .translation("modularrouters.gui.config.fluidModule2EnergyCost")
                 .defineInRange("fluidModule2EnergyCost", 0, 0, Integer.MAX_VALUE);
+
+        energyCosts.gasModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Gas Module Mk1")
+                .translation("modularrouters.gui.config.gasModuleEnergyCost")
+                .defineInRange("gasModuleEnergyCost", 0, 0, Integer.MAX_VALUE);
+        energyCosts.gasModule2EnergyCost = builder.comment("Energy cost (FE) to run one operation for the Gas Module Mk2")
+                .translation("modularrouters.gui.config.gasModule2EnergyCost")
+                .defineInRange("gasModule2EnergyCost", 0, 0, Integer.MAX_VALUE);
+
         energyCosts.placerModuleEnergyCost = builder.comment("Energy cost (FE) to run one operation for the Placer Module")
                 .translation("modularrouters.gui.config.placerModuleEnergyCost")
                 .defineInRange("placerModuleEnergyCost", 0, 0, Integer.MAX_VALUE);

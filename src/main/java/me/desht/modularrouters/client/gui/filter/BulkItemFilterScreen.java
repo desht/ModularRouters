@@ -76,6 +76,22 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
                     }
                 }));
             }
+            if (target.hasGasHandlerClientSide()) {
+                addRenderableWidget(new MergeButton(leftPos + 28, topPos + 130, target.toString(),
+                        I18n.get(target.blockTranslationKey), p -> {
+                    if (target != null) {
+                        PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                                Operation.MERGE, menu.getLocator(), target.toNBT()));
+                    }
+                }));
+                addRenderableWidget(new LoadButton(leftPos + 48, topPos + 130, target.toString(),
+                        I18n.get(target.blockTranslationKey), p -> {
+                    if (target != null) {
+                        PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(
+                                Operation.LOAD, menu.getLocator(), target.toNBT()));
+                    }
+                }));
+            }
         }
     }
 

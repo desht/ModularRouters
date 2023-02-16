@@ -92,6 +92,7 @@ public class ClientSetup {
         MenuScreens.register(ModMenuTypes.EXTRUDER2_MENU.get(), ExtruderModule2Screen::new);
         MenuScreens.register(ModMenuTypes.FLINGER_MENU.get(), FlingerModuleScreen::new);
         MenuScreens.register(ModMenuTypes.FLUID_MENU.get(), FluidModuleScreen::new);
+        MenuScreens.register(ModMenuTypes.GAS_MENU.get(), GasModuleScreen::new);
         MenuScreens.register(ModMenuTypes.PLAYER_MENU.get(), PlayerModuleScreen::new);
         MenuScreens.register(ModMenuTypes.VACUUM_MENU.get(), VacuumModuleScreen::new);
 

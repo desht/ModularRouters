@@ -131,10 +131,18 @@ public class ModRecipeProvider extends RecipeProvider {
                 'C', Items.CAULDRON,
                 'M', ModItems.BLANK_MODULE.get()
         ).save(consumer);
-
-        shapeless(ModItems.FLUID_MODULE_2.get(), ModItems.FLUID_MODULE.get(),
-                ModItems.FLUID_MODULE.get(), Items.PRISMARINE_SHARD
+        shaped(ModItems.GAS_MODULE.get(), ModItems.BLANK_MODULE.get(),
+                " C /GMG",
+                'G', Tags.Items.NUGGETS_GOLD,
+                'C', Items.CAULDRON,
+                'M', ModItems.BLANK_MODULE.get()
         ).save(consumer);
+
+        shapeless(ModItems.GAS_MODULE_2.get(), 4, ModItems.GAS_MODULE.get(),
+                ModItems.GAS_MODULE.get(), ModItems.GAS_MODULE.get(),
+                ModItems.GAS_MODULE.get(), ModItems.GAS_MODULE.get(),
+                Items.ENDER_PEARL
+        ).save(consumer, RL("gas_module_2_x4"));
 
         shapeless(ModItems.FLUID_MODULE_2.get(), 4, ModItems.FLUID_MODULE.get(),
                 ModItems.FLUID_MODULE.get(), ModItems.FLUID_MODULE.get(),
@@ -272,6 +280,13 @@ public class ModRecipeProvider extends RecipeProvider {
         shaped(ModItems.FLUID_UPGRADE.get(), 3, ModItems.BLANK_UPGRADE.get(),
                 " U /GBG",
                 'G', Tags.Items.GLASS,
+                'U', Items.BUCKET,
+                'B', ModItems.BLANK_UPGRADE.get()
+        ).save(consumer);
+
+        shaped(ModItems.GAS_UPGRADE.get(), 3, ModItems.BLANK_UPGRADE.get(),
+                " U /GBG",
+                'G', Tags.Items.NUGGETS_GOLD,
                 'U', Items.BUCKET,
                 'B', ModItems.BLANK_UPGRADE.get()
         ).save(consumer);

@@ -1,6 +1,8 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
+import mekanism.api.MekanismAPI;
+import mekanism.api.chemical.gas.Gas;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -157,6 +159,19 @@ public class MiscUtil {
                 .tags()
                 .collect(Collectors.toSet());
     }
+
+
+
+    public static Set<TagKey<Gas>> gasTags(Gas gas) {
+        Optional<ResourceKey<Gas>> gasReference = MekanismAPI.gasRegistry().getResourceKey(gas);
+        if (gasReference.isPresent()) {
+            return (Set<TagKey<Gas>>) MekanismAPI.gasRegistry().getHolder(gasReference.get()).orElseThrow().tags();
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+
 
     public static Optional<ResourceLocation> getRegistryName(Item item) {
         return Optional.ofNullable(ForgeRegistries.ITEMS.getKey(item));

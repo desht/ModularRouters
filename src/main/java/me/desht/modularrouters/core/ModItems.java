@@ -9,16 +9,33 @@ import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.item.upgrade.*;
+import mekanism.api.MekanismAPI;
+import mekanism.api.chemical.gas.Gas;
+import mekanism.api.chemical.gas.IGasHandler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static net.minecraftforge.common.capabilities.CapabilityManager.get;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ModularRouters.MODID);
@@ -43,6 +60,9 @@ public class ModItems {
     public static final RegistryObject<Item> FLINGER_MODULE = register("flinger_module", FlingerModule::new);
     public static final RegistryObject<Item> FLUID_MODULE = register("fluid_module", FluidModule1::new);
     public static final RegistryObject<Item> FLUID_MODULE_2 = register("fluid_module_2", FluidModule2::new);
+    public static final RegistryObject<Item> GAS_MODULE = register("gas_module", GasModule1::new);
+    public static final RegistryObject<Item> GAS_MODULE_2 = register("gas_module_2", GasModule2::new);
+
     public static final RegistryObject<Item> PLACER_MODULE = register("placer_module", PlacerModule::new);
     public static final RegistryObject<Item> PLAYER_MODULE = register("player_module", PlayerModule::new);
     public static final RegistryObject<Item> PULLER_MODULE_1 = register("puller_module_1", PullerModule1::new);
@@ -57,6 +77,8 @@ public class ModItems {
     public static final RegistryObject<Item> CAMOUFLAGE_UPGRADE = register("camouflage_upgrade", CamouflageUpgrade::new);
     public static final RegistryObject<Item> ENERGY_UPGRADE = register("energy_upgrade", EnergyUpgrade::new);
     public static final RegistryObject<Item> FLUID_UPGRADE = register("fluid_upgrade", FluidUpgrade::new);
+
+    public static final RegistryObject<Item> GAS_UPGRADE = register("gas_upgrade", GasUpgrade::new);
     public static final RegistryObject<Item> MUFFLER_UPGRADE = register("muffler_upgrade", MufflerUpgrade::new);
     public static final RegistryObject<Item> SECURITY_UPGRADE = register("security_upgrade", SecurityUpgrade::new);
     public static final RegistryObject<Item> SPEED_UPGRADE = register("speed_upgrade", SpeedUpgrade::new);
@@ -79,13 +101,57 @@ public class ModItems {
     public static final RegistryObject<Item> INSPECTION_FILTER = register("inspection_filter", InspectionFilter::new);
     public static final RegistryObject<Item> MOD_FILTER = register("mod_filter", ModFilter::new);
     public static final RegistryObject<Item> REGEX_FILTER = register("regex_filter", RegexFilter::new);
+    public static final Capability<IGasHandlerItem> GAS_HANDLER_ITEM = get(new CapabilityToken<>(){});
+    public static final Capability<IGasHandler> GAS_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
+    public static final Capability<IGasHandler> GAS_HANDLER = get(new CapabilityToken<>(){});
 
+    private Holder.Reference<Gas> gasDelegate;
+    private boolean isEmpty;
 
     private static <T extends Item> RegistryObject<T> register(final String name, final Supplier<T> sup) {
         RegistryObject<T> ro = ITEMS.register(name, sup);
         REGISTRY_OBJECTS.add(ro);
         return ro;
     }
+
+    public static LazyOptional<IGasHandlerItem> getGasHandler(@NotNull ItemStack itemStack)
+    {
+        return itemStack.getCapability(ModItems.GAS_HANDLER_ITEM);
+    }
+
+    public interface IGasHandlerItem extends IGasHandler
+    {
+        /**
+         * Get the container currently acted on by this gas handler.
+         * The ItemStack may be different from its initial state, in the case of gas containers that have different gasses
+         * for their filled and empty states.
+         * May be an empty item if the container was drained and is consumable.
+         */
+        @NotNull
+        ItemStack getContainer();
+    }
+
+    public static LazyOptional<IGasHandler> getGasHandler(Level level, BlockPos blockPos, @Nullable Direction side)
+    {
+        BlockState state = level.getBlockState(blockPos);
+        if (state.hasBlockEntity())
+        {
+            BlockEntity blockEntity = level.getBlockEntity(blockPos);
+            if (blockEntity != null)
+            {
+                return blockEntity.getCapability(ModItems.GAS_HANDLER_CAPABILITY, side);
+            }
+        }
+        return LazyOptional.empty();
+    }
+
+/*
+    public final Gas getGas()
+    {
+        return isEmpty ? MekanismAPI.EMPTY_GAS : gasDelegate.get();
+    }
+*/
 
     private static RegistryObject<Item> register(final String name) {
         return register(name, () -> new Item(defaultProps()));

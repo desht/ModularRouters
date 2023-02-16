@@ -32,6 +32,7 @@ public class DistributorModule extends SenderModule2 {
         list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy").append(": ").withStyle(ChatFormatting.YELLOW)
                 .append(ClientUtil.xlate(cdm.getDistributionStrategy().getTranslationKey())).withStyle(ChatFormatting.AQUA));
         list.add(ClientUtil.xlate("modularrouters.itemText.fluid.direction." + (cdm.isPulling() ? "IN" : "OUT")).withStyle(ChatFormatting.YELLOW));
+        list.add(ClientUtil.xlate("modularrouters.itemText.gas.direction." + (cdm.isPulling() ? "IN" : "OUT")).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override
