@@ -4,6 +4,7 @@
     "modularrouters:camouflage_upgrade",
     "modularrouters:energy_upgrade",
     "modularrouters:fluid_upgrade",
+    "modularrouters:gas_upgrade",
     "modularrouters:muffler_upgrade",
     "modularrouters:security_upgrade",
     "modularrouters:speed_upgrade",

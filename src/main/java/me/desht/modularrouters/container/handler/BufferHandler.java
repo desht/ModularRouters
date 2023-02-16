@@ -19,10 +19,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-//import static me.desht.modularrouters.core.ModItems.GAS_HANDLER_ITEM;
 import static me.desht.modularrouters.core.ModItems.GAS_HANDLER_ITEM;
-import static mekanism.common.util.CapabilityUtils.getCapability;
-
 
 public class BufferHandler extends ItemStackHandler {
     private final ModularRouterBlockEntity router;
