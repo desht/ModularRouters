@@ -69,8 +69,9 @@ public class ModularRouters {
             ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
             if (event.includeServer()) {
                 generator.addProvider(event.includeClient(), new ModRecipeProvider(generator));
-                generator.addProvider(event.includeClient(), new ModItemTagsProvider(generator, lookupProvider, existingFileHelper));
-                generator.addProvider(event.includeClient(), new ModBlockTagsProvider(generator, lookupProvider, existingFileHelper));
+                ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(generator, lookupProvider, existingFileHelper);
+                generator.addProvider(event.includeClient(), blockTagsProvider);
+                generator.addProvider(event.includeClient(), new ModItemTagsProvider(generator, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
                 generator.addProvider(event.includeClient(), new ModLootTableProvider(generator));
                 generator.addProvider(event.includeClient(), new ModEntityTypeTagsProvider(generator, lookupProvider, existingFileHelper));
             }

@@ -13,6 +13,7 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -21,8 +22,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class ModItemTagsProvider extends ItemTagsProvider {
-    public ModItemTagsProvider(DataGenerator generatorIn, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(generatorIn.getPackOutput(), lookupProvider, new ModBlockTagsProvider(generatorIn, lookupProvider, existingFileHelper), ModularRouters.MODID, existingFileHelper);
+    public ModItemTagsProvider(DataGenerator generatorIn, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider, ExistingFileHelper existingFileHelper) {
+        super(generatorIn.getPackOutput(), lookupProvider, blockTagProvider, ModularRouters.MODID, existingFileHelper);
     }
 
     @Override

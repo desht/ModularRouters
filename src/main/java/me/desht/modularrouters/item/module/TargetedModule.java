@@ -151,7 +151,7 @@ public abstract class TargetedModule extends ModuleItem {
     public InteractionResultHolder<ItemStack> onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
         if (!world.isClientSide && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            world.playSound(null, new BlockPos(player.position()), ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
+            world.playSound(null, player.blockPosition(), ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
             player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW), true);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
@@ -267,7 +267,7 @@ public abstract class TargetedModule extends ModuleItem {
      * @param player the player holding the module
      */
     public void doModuleValidation(ItemStack stack, ServerPlayer player) {
-        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getCommandSenderWorld(), new BlockPos(player.position())));
+        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getCommandSenderWorld(), player.blockPosition()));
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
                 getTargets(stack, true) :
                 Sets.newHashSet(getTarget(stack, true));

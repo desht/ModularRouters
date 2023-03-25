@@ -11,7 +11,6 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -20,6 +19,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -114,7 +114,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         double ix = Mth.lerp(progress, startPos.x(), endPos.x());
         double iy = Mth.lerp(progress, startPos.y(), endPos.y());
         double iz = Mth.lerp(progress, startPos.z(), endPos.z());
-        BlockPos pos = new BlockPos(ix, iy, iz);
+        BlockPos pos = BlockPos.containing(ix, iy, iz);
         Level world = Minecraft.getInstance().level;
         VoxelShape shape = world.getBlockState(pos).getCollisionShape(world, pos);
         if (shape.isEmpty() || !shape.bounds().move(pos).contains(ix, iy, iz)) {
@@ -128,9 +128,8 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
                     world.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
                 }
             }
-            // TODO what's the new int param at the end? is 0 ok?
             Minecraft.getInstance().getItemRenderer()
-                    .renderStatic(beam.getStack(), TransformType.GROUND, 0x00F000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer, 0);
+                    .renderStatic(beam.getStack(), ItemDisplayContext.GROUND, 0x00F000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer, world, 0);
             matrixStack.popPose();
         }
     }

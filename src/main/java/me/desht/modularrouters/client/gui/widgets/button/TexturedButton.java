@@ -24,11 +24,11 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
     }
 
     @Override
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             GuiUtil.bindTexture(TEXTURE);
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
-            int i = this.getYImage(this.isHovered);
+            int i = getYImage(isHovered);
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -37,6 +37,17 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
             }
             blit(matrixStack, this.getX(), this.getY(), getTextureX(), getTextureY(), this.width, this.height);
         }
+    }
+
+    protected int getYImage(boolean pIsHovered) {
+        int i = 1;
+        if (!this.active) {
+            i = 0;
+        } else if (pIsHovered) {
+            i = 2;
+        }
+
+        return i;
     }
 
     protected boolean drawStandardBackground() {

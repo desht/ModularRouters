@@ -29,7 +29,7 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
     }
 
     @Override
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTick){
+    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTick){
         int amount = getScaled();
 
         GuiUtil.bindTexture(TEXTURE_LOCATION);

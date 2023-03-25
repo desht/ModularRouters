@@ -23,8 +23,8 @@ public class RouterFakePlayer extends FakePlayer {
     }
 
     @Override
-    protected void playEquipSound(ItemStack stack) {
-        // no-op: silence annoying sound effects when fake player equips the buffer item
+    public boolean isSilent() {
+        return true;
     }
 
     @Override

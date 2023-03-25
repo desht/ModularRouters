@@ -33,8 +33,8 @@ public class GuiUtil {
         if (!stack.isEmpty()) {
             poseStack.pushPose();
             poseStack.translate(0.0F, 0.0F, 32.0F);
-            itemRender.renderAndDecorateItem(stack, x, y);
-            itemRender.renderGuiItemDecorations(mc.font, stack, x, y, txt);
+            itemRender.renderAndDecorateItem(poseStack, stack, x, y);
+            itemRender.renderGuiItemDecorations(poseStack, mc.font, stack, x, y, txt);
             poseStack.popPose();
         }
     }

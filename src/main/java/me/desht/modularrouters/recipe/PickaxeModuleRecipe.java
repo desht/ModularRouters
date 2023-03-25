@@ -5,6 +5,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +47,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
         ItemStack pick = ItemStack.EMPTY;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
@@ -59,7 +60,7 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
             }
         }
         if (!pick.isEmpty()) {
-            ItemStack result = super.assemble(inv);
+            ItemStack result = super.assemble(inv, registryAccess);
             return ((IPickaxeUser) result.getItem()).setPickaxe(result, pick);
         } else {
             return ItemStack.EMPTY;

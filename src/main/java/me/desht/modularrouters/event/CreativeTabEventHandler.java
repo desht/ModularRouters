@@ -31,7 +31,7 @@ public class CreativeTabEventHandler {
         event.registerCreativeModeTab(RL("default"), builder ->
             builder.title(Component.literal(ModularRouters.MODNAME))
                     .icon(() -> new ItemStack(ModBlocks.MODULAR_ROUTER.get()))
-                    .displayItems((flags, output, b) -> output.acceptAll(items))
+                    .displayItems((params, output) -> output.acceptAll(items))
                     .build()
         );
     }

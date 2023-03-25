@@ -80,7 +80,8 @@ public abstract class AbstractMRContainerScreen<T extends AbstractContainerMenu>
         }
     }
 
-    protected boolean isFocused() {
+    @Override
+    public boolean isFocused() {
         return textFieldManager != null && textFieldManager.isFocused();
     }
 

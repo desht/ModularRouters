@@ -59,7 +59,7 @@ public class SyncUpgradeScreen extends AbstractMRScreen {
         });
         intField.setValue(tunedValue);
         intField.useGuiTextBackground();
-        intField.setFocus(true);
+        intField.setFocused(true);
         setFocused(intField);
 
         addRenderableWidget(new TooltipButton(xPos + 55, yPos + 24, 16, 16));

@@ -20,7 +20,7 @@ public class TextFieldManager {
 
     public void drawTextFields(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         GlStateManager._disableBlend();
-        textFields.forEach(tf -> tf.renderButton(matrixStack, mouseX, mouseY, partialTicks));
+        textFields.forEach(tf -> tf.renderWidget(matrixStack, mouseX, mouseY, partialTicks));
     }
 
     public void tick() {
