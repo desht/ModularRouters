@@ -6,12 +6,18 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.16.5
 
-### 7.5.3 (25 Jan 2022)
+### 7.5.4
+
+* Fixed routers not invalidating their capabilities when broken
+* Fixed template frame blocks not always marking themselves as needing save
+* Worked around known Forge issue with EntityPlaceEvent (fired by Placer & Extruder modules) not containing correct blockstate (https://github.com/desht/ModularRouters/issues/158)
+
+### 7.5.3
 
 * Fixed a fluid dupe issue
 * Fixed graphical glitch in GUI energy widget (only visible with tweaked-up energy values in mod config)
 
-### 7.5.2 (17 Jan 2022)
+### 7.5.2
 
 * The Breaker Module can now be configured to filter by the block, rather than by dropped items
   * By dropped items remains the default behaviour; the Breaker Module GUI now has a toggle button to change this
