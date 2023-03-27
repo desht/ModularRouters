@@ -92,10 +92,6 @@ repositories {
         url "https://dvs1.progwml6.com/files/maven"
     }
     maven {
-        name "K-4u Mod maven"
-        url "https://modmaven.dev/"
-    }
-    maven {
         name 'Patchouli'
         url 'https://maven.blamejared.com/'
     }
