@@ -47,6 +47,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     public void setCamouflage(BlockState camouflage) {
         this.camouflage = camouflage;
         requestModelDataUpdate();
+        setChanged();
     }
 
     @Nonnull
@@ -65,6 +66,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
     @Override
     public void setExtendedMimic(boolean mimic) {
         this.extendedMimic = mimic;
+        setChanged();
     }
 
     @Override
@@ -146,6 +148,7 @@ public class TileEntityTemplateFrame extends TileEntity implements ICamouflageab
                 camouflage = camouflage.setValue(BlockStateProperties.HORIZONTAL_FACING,
                         facing.getAxis() == Direction.Axis.Y ? routerFacing : facing);
             }
+            setChanged();
         }
     }
 }
