@@ -67,6 +67,7 @@ minecraft {
                     source sourceSets.main
                 }
             }
+            setForceExit false
         }
     }
 }
