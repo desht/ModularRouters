@@ -4,20 +4,13 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.TemplateFrameBlock;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
-import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.item.module.ModuleItem;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ItemHandlerHelper;
-
-import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class MiscEventHandler {

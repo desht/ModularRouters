@@ -42,9 +42,9 @@ body:
     attributes:
       label: Which Minecraft version are you using?
       options:
+        - "1.19"
         - "1.18"
-        - "1.16"
-        - "1.12 - UNSUPPORTED"
+        - "1.16 - critical bugs only"
     validations:
       required: true
   - type: input
