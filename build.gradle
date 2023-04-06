@@ -149,6 +149,7 @@ jar {
     finalizedBy('reobfJar')
 }
 
+def mavenVer = ext.releaseTag == "" ? "${project.mc_version}-${semver}-SNAPSHOT" : "${project.mc_version}-${semver}"
 publishing {
     publications {
         mavenCommon(MavenPublication) {
