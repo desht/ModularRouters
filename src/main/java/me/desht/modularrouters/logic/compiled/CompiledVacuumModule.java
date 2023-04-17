@@ -157,19 +157,11 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private boolean handleXpMode(ModularRouterBlockEntity router) {
-        BlockPos centrePos = getTarget().gPos.pos();
-        int range = getRange();
-        List<ExperienceOrb> orbs = router.nonNullLevel().getEntitiesOfClass(ExperienceOrb.class,
-                new AABB(centrePos).inflate(range));
-        if (orbs.isEmpty()) {
-            return false;
-        }
-
-        ItemStack inRouterStack = router.getBufferItemStack();
-
         int spaceForXp;
         LazyOptional<IFluidHandler> lazyFluidHandler = LazyOptional.empty();
+
         if (xpCollectionType.isSolid()) {
+            ItemStack inRouterStack = router.getBufferItemStack();
             if (!inRouterStack.isEmpty() && !ItemHandlerHelper.canItemStacksStack(inRouterStack, xpCollectionType.getIcon())) {
                 return false;
             }
@@ -184,6 +176,15 @@ public class CompiledVacuumModule extends CompiledModule {
             spaceForXp = lazyFluidHandler.map(this::findSpaceForXPFluid).orElse(0);
         }
         if (spaceForXp == 0) {
+            return false;
+        }
+
+        List<ExperienceOrb> orbs = router.nonNullLevel().getEntitiesOfClass(
+                ExperienceOrb.class,
+                new AABB(getTarget().gPos.pos()).inflate(getRange()),
+                Entity::isAlive
+        );
+        if (orbs.isEmpty()) {
             return false;
         }
 
