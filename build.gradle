@@ -88,6 +88,9 @@ repositories {
     flatDir {
         name "extra-mods"
         dir file(extraModsDir)
+        content {
+            includeGroup "extra-mods"
+        }
     }
     maven {
         url "https://www.cursemaven.com"
@@ -96,24 +99,33 @@ repositories {
         }
     }
     maven {
-        name = "JEI"
-        url = "https://dvs1.progwml6.com/files/maven"
+        name = 'Patchouli/JEI'
+        url = 'https://maven.blamejared.com/'
+        content {
+            includeGroup "vazkii.patchouli"
+            includeGroup "mezz.jei"
+        }
     }
     maven {
-        name = 'Patchouli'
-        url = 'https://maven.blamejared.com/'
+        name "K-4u Mod maven"
+        url "https://modmaven.dev/"
+        content {
+            includeGroup "mcjty.theoneprobe"
+        }
     }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    implementation fg.deobf("curse.maven:theoneprobe-245211:3871444")
-//    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api")
-//    runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}")
+    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api"){
+        exclude group: "net.minecraftforge", module: "forge"
+    }
+    runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
+        exclude group: "net.minecraftforge", module: "forge"
+    }
 
-    // compileOnly till jade is updated
-    compileOnly fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
+    implementation fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
 
     // compile against the JEI API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
