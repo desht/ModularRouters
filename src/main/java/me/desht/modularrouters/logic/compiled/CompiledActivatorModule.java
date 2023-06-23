@@ -208,7 +208,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
         BlockPos.MutableBlockPos targetPos = routerPos.relative(getFacing()).mutable();
         if (lookDirection != LookDirection.LEVEL
-                && Block.isShapeFullBlock(fp.level.getBlockState(targetPos).getShape(fp.level, targetPos)))
+                && Block.isShapeFullBlock(fp.level().getBlockState(targetPos).getShape(fp.level(), targetPos)))
         {
             // small QoL kludge: if module faces horizontally AND is blocked on that side AND module looks above/below,
             // move the fake player pos above or below that block and target the top or bottom face as appropriate
@@ -231,11 +231,11 @@ public class CompiledActivatorModule extends CompiledModule {
 
         double reachDist = Math.pow(getPlayerReachDistance(fp), 2);
         for (; targetPos.distSqr(routerPos) <= reachDist; targetPos.move(xOff, yOff, zOff)) {
-            if (fp.level.isEmptyBlock(targetPos)) continue;
-            VoxelShape shape = fp.level.getBlockState(targetPos).getShape(fp.level, targetPos);
+            if (fp.level().isEmptyBlock(targetPos)) continue;
+            VoxelShape shape = fp.level().getBlockState(targetPos).getShape(fp.level(), targetPos);
             if (shape.isEmpty()) continue;
             Vec3 targetVec = shape.toAabbs().get(0).getCenter().add(Vec3.atLowerCornerOf(targetPos));
-            BlockHitResult res = fp.level.clip(new ClipContext(
+            BlockHitResult res = fp.level().clip(new ClipContext(
                     fpVec, targetVec, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY, null)
             );
             if (res.getType() == HitResult.Type.BLOCK) {
@@ -248,7 +248,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
     private double getPlayerReachDistance(Player player) {
         if (player != null) {
-            AttributeInstance attr = player.getAttribute(ForgeMod.REACH_DISTANCE.get());
+            AttributeInstance attr = player.getAttribute(ForgeMod.BLOCK_REACH.get());
             if (attr != null) return attr.getValue() + 1D;
         }
         return 4.5D;

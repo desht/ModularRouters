@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "modularrouters:energy_upgrade"
-  }
+  },
+  "show_notification": true
 }

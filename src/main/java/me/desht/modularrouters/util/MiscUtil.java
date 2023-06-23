@@ -165,7 +165,7 @@ public class MiscUtil {
     public static boolean sameItemStackIgnoreDurability(ItemStack stack1, ItemStack stack2) {
         // disappeared from 1.19.2
         if (!stack1.isDamageableItem()) {
-            return stack1.sameItem(stack2);
+            return stack1.is(stack2.getItem());
         } else {
             return !stack2.isEmpty() && stack1.is(stack2.getItem());
         }

@@ -30,5 +30,6 @@
     "recipes": [
       "modularrouters:mimic_augment"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -17,7 +17,7 @@ public class MiscEventHandler {
     @SubscribeEvent
     public static void onDigSpeedCheck(PlayerEvent.BreakSpeed event) {
         if (event.getState().getBlock() instanceof TemplateFrameBlock) {
-            event.getPosition().flatMap(pos -> event.getEntity().getLevel().getBlockEntity(pos, ModBlockEntities.TEMPLATE_FRAME.get())).ifPresent(te -> {
+            event.getPosition().flatMap(pos -> event.getEntity().level().getBlockEntity(pos, ModBlockEntities.TEMPLATE_FRAME.get())).ifPresent(te -> {
                 if (te.getCamouflage() != null && te.extendedMimic()) {
                     // note: passing pos here would cause an infinite event loop; necessary to pass null
                     event.setNewSpeed(event.getEntity().getDigSpeed(te.getCamouflage(), null));

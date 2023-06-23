@@ -47,7 +47,7 @@ public class Extruder2ModuleMenu extends ModuleMenu {
         ItemStack stackInSlot = s.getItem().copy();
         if (clickTypeIn == ClickType.QUICK_MOVE) {
             s.set(ItemStack.EMPTY);  // shift-left-click clears the slot
-        } else if (!stackOnCursor.isEmpty() && !ItemStack.isSame(stackInSlot, stackOnCursor) && s.mayPlace(stackOnCursor)) {
+        } else if (!stackOnCursor.isEmpty() && !ItemStack.isSameItem(stackInSlot, stackOnCursor) && s.mayPlace(stackOnCursor)) {
             // placing a new item in the template buffer
             ItemStack stack1 = stackOnCursor.copy();
             if (dragType == 1) {

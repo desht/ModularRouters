@@ -20,5 +20,6 @@
   "result": {
     "count": 4,
     "item": "modularrouters:modular_router"
-  }
+  },
+  "show_notification": true
 }

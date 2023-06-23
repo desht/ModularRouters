@@ -18,7 +18,7 @@ public class SimpleItemMatcher implements IItemMatcher {
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
         if (filterStack.getItem() == stack.getItem()) {
             return (flags.isIgnoreDamage() || matchDamage(stack, filterStack))
-                    && (flags.isIgnoreNBT() || ItemStack.tagMatches(stack, filterStack));
+                    && (flags.isIgnoreNBT() || ItemStack.isSameItemSameTags(stack, filterStack));
         } else if (flags.matchTags()) {
             return getTagMatcher().match(stack);
         } else {

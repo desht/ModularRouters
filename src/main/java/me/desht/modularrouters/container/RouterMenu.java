@@ -47,7 +47,7 @@ public class RouterMenu extends AbstractMRContainerMenu {
     public RouterMenu(int windowId, Inventory invPlayer, BlockPos routerPos) {
         super(ModMenuTypes.ROUTER_MENU.get(), windowId);
 
-        this.router = invPlayer.player.level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get())
+        this.router = invPlayer.player.level().getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get())
                 .orElseThrow(() -> new IllegalStateException("router missing at " + routerPos));
 
         data = router.trackedEnergy;

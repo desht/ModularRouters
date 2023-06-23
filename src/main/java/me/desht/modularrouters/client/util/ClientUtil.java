@@ -29,7 +29,7 @@ public class ClientUtil {
     }
 
     public static boolean thisScreenPassesEvents() {
-        return Minecraft.getInstance().screen == null || Minecraft.getInstance().screen.passEvents;
+        return Minecraft.getInstance().screen == null/* || Minecraft.getInstance().screen.passEvents*/;
     }
 
     public static MutableComponent xlate(String key, Object... args) {

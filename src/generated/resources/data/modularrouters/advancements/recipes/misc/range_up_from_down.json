@@ -30,5 +30,6 @@
     "recipes": [
       "modularrouters:range_up_from_down"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

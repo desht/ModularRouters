@@ -31,7 +31,7 @@ public abstract class TexturedToggleButton extends TexturedButton implements ITo
     }
 
     @Override
-    public List<Component> getTooltip() {
-        return toggled ? tooltip2 : super.getTooltip();
+    public List<Component> getTooltipLines() {
+        return toggled ? tooltip2 : super.getTooltipLines();
     }
 }

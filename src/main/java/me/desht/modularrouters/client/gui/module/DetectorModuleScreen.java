@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -9,6 +8,7 @@ import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -59,10 +59,10 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
         // text entry field background - super has already bound the correct texture
-        this.blit(matrixStack, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x(), SMALL_TEXTFIELD_XY.y(), 21, 14);
+        graphics.blit(GUI_TEXTURE, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x(), SMALL_TEXTFIELD_XY.y(), 21, 14);
     }
 
     @Override

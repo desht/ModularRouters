@@ -25,5 +25,6 @@
   ],
   "result": {
     "item": "modularrouters:player_module"
-  }
+  },
+  "show_notification": true
 }

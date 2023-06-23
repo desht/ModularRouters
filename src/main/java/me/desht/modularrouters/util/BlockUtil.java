@@ -131,7 +131,7 @@ public class BlockUtil {
     }
 
     public static boolean tryPlaceBlock(ModularRouterBlockEntity router, BlockState newState, Level world, BlockPos pos) {
-        if (!(world instanceof ServerLevel) || !world.getBlockState(pos).getMaterial().isReplaceable()) return false;
+        if (!(world instanceof ServerLevel) || !world.getBlockState(pos).canBeReplaced()) return false;
 
         BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
         BlockEvent.EntityPlaceEvent event = new CustomEntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), router.getFakePlayer(), newState);

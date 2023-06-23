@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.FloatTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
@@ -11,6 +10,7 @@ import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -65,12 +65,12 @@ public class FlingerModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, leftPos + 148, topPos + 16, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
-        this.blit(matrixStack, leftPos + 148, topPos + 34, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
-        this.blit(matrixStack, leftPos + 148, topPos + 52, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
+        graphics.blit(GUI_TEXTURE, leftPos + 148, topPos + 16, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
+        graphics.blit(GUI_TEXTURE, leftPos + 148, topPos + 34, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
+        graphics.blit(GUI_TEXTURE, leftPos + 148, topPos + 52, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
     }
 
     @Override

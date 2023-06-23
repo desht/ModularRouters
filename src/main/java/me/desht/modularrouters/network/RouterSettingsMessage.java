@@ -46,7 +46,7 @@ public class RouterSettingsMessage {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            Level w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().getLevel();
+            Level w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().level();
             w.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
                 router.setRedstoneBehaviour(redstoneBehaviour);
                 router.setEcoMode(ecoMode);

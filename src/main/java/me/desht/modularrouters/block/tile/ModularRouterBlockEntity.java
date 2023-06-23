@@ -372,7 +372,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         if (fakePlayer == null) {
             fakePlayer = new RouterFakePlayer(this, serverLevel, getOwner());
-            fakePlayer.level = serverLevel;
             fakePlayer.getInventory().selected = 0;  // held item always in slot 0
             fakePlayer.setPosRaw(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
         }

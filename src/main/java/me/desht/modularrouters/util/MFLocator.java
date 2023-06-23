@@ -91,13 +91,13 @@ public class MFLocator {
             if (hand != null) {
                 return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
             } else if (routerPos != null && routerSlot >= 0) {
-                return getInstalledModule(player.level);
+                return getInstalledModule(player.level());
             }
         } else if (itemType == ItemType.FILTER) {
             if (hand != null) {
                 return getFilterForStack(player.getItemInHand(hand));
             } else if (routerPos != null && routerSlot >= 0) {
-                return getFilterForStack(getInstalledModule(player.level));
+                return getFilterForStack(getInstalledModule(player.level()));
             }
         }
         return ItemStack.EMPTY;
@@ -108,7 +108,7 @@ public class MFLocator {
         if (hand != null) {
             return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
         } else if (routerPos != null) {
-            return getInstalledModule(player.level);
+            return getInstalledModule(player.level());
         } else {
             return ItemStack.EMPTY;
         }

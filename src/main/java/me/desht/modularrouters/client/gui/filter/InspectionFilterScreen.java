@@ -1,12 +1,10 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.base.Joiner;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
@@ -16,6 +14,7 @@ import me.desht.modularrouters.network.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
@@ -117,19 +116,18 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(matrixStack);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(graphics);
 
-        GuiUtil.bindTexture(TEXTURE_LOCATION);
-        blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - this.font.width(title) / 2f, yPos + 6, 0x404040);
+        graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
-            font.draw(matrixStack, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
+            graphics.drawString(font, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
 
     }
 

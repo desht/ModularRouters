@@ -30,5 +30,6 @@
     "recipes": [
       "modularrouters:activator_module"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

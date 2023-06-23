@@ -5,5 +5,5 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 
 public interface ITooltipButton {
-    List<Component> getTooltip();
+    List<Component> getTooltipLines();
 }

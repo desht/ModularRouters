@@ -2,10 +2,9 @@ package me.desht.modularrouters.client.gui.widgets.button;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -24,18 +23,17 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            GuiUtil.bindTexture(TEXTURE);
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             int i = getYImage(isHovered);
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             if (drawStandardBackground()) {
-                blit(matrixStack, this.getX(), this.getY(), i * 16, 0, this.width, this.height);
+                graphics.blit(TEXTURE, this.getX(), this.getY(), i * 16, 0, this.width, this.height);
             }
-            blit(matrixStack, this.getX(), this.getY(), getTextureX(), getTextureY(), this.width, this.height);
+            graphics.blit(TEXTURE, this.getX(), this.getY(), getTextureX(), getTextureY(), this.width, this.height);
         }
     }
 
@@ -64,7 +62,7 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
         return getTextureXY().y();
     }
 
-    public List<Component> getTooltip() {
+    public List<Component> getTooltipLines() {
         return tooltip1;
     }
 }

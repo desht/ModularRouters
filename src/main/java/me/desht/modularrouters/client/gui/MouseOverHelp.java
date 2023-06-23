@@ -1,12 +1,11 @@
 package me.desht.modularrouters.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
@@ -41,12 +40,12 @@ public class MouseOverHelp {
         helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.get(key), 35), showPredicate));
     }
 
-    private void onMouseOver(PoseStack matrixStack, int mouseX, int mouseY) {
+    private void onMouseOver(GuiGraphics graphics, int mouseX, int mouseY) {
         if (active) {
             HelpRegion region = getRegionAt(mouseX, mouseY);
             if (region != null) {
-                showPopupBox(matrixStack, screen, Minecraft.getInstance().font, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
-                showPopupBox(matrixStack, screen, Minecraft.getInstance().font, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
+                showPopupBox(graphics, screen, Minecraft.getInstance().font, region.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
+                showPopupBox(graphics, screen, Minecraft.getInstance().font, region.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, region.text);
             }
         }
     }
@@ -78,7 +77,7 @@ public class MouseOverHelp {
         }
     }
 
-    private static void showPopupBox(PoseStack matrixStack, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+    private static void showPopupBox(GuiGraphics graphics, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
         Rect2i actualRect = calcBounds(screen, fontRenderer, rect, helpText);
 
         int x1 = actualRect.getX() - screen.getGuiLeft();
@@ -86,22 +85,22 @@ public class MouseOverHelp {
         int x2 = x1 + actualRect.getWidth();
         int y2 = y1 + actualRect.getHeight();
 
-        matrixStack.pushPose();
-        matrixStack.translate(0, 0, 300);
-        GuiComponent.fill(matrixStack, x1, y1, x2, y2, bgColor);
-        GuiComponent.fill(matrixStack, x1, y1, x2, y1 + 1, borderColor);
-        GuiComponent.fill(matrixStack, x1, y2, x2, y2 + 1, borderColor);
-        GuiComponent.fill(matrixStack, x1, y1, x1 + 1, y2, borderColor);
-        GuiComponent.fill(matrixStack, x2, y1, x2 + 1, y2 + 1, borderColor);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 300);
+        graphics.fill(x1, y1, x2, y2, bgColor);
+        graphics.fill(x1, y1, x2, y1 + 1, borderColor);
+        graphics.fill(x1, y2, x2, y2 + 1, borderColor);
+        graphics.fill(x1, y1, x1 + 1, y2, borderColor);
+        graphics.fill(x2, y1, x2 + 1, y2 + 1, borderColor);
 
         if (helpText != null) {
             for (String s : helpText) {
-                fontRenderer.draw(matrixStack, s, x1 + TEXT_MARGIN / 2f, y1 + TEXT_MARGIN / 2f, textColor);
+                graphics.drawString(fontRenderer, s, x1 + TEXT_MARGIN / 2, y1 + TEXT_MARGIN / 2, textColor);
                 y1 += fontRenderer.lineHeight;
             }
         }
 
-        matrixStack.popPose();
+        graphics.pose().popPose();
     }
 
     public static class HelpRegion {
@@ -126,7 +125,7 @@ public class MouseOverHelp {
         // using an event ensures this is done after all subclass drawing is done
         // otherwise help region highlights can obscure text
         if (event.getContainerScreen() instanceof IMouseOverHelpProvider provider) {
-            provider.getMouseOverHelp().onMouseOver(event.getPoseStack(), event.getMouseX(), event.getMouseY());
+            provider.getMouseOverHelp().onMouseOver(event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
         }
     }
 

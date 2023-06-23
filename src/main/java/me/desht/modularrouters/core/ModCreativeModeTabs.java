@@ -1,39 +1,37 @@
-package me.desht.modularrouters.event;
+package me.desht.modularrouters.core;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.core.ModBlocks;
-import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Comparator;
 import java.util.List;
 
-import static me.desht.modularrouters.util.MiscUtil.RL;
+public class ModCreativeModeTabs {
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModularRouters.MODID);
 
-@Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class CreativeTabEventHandler {
-    @SubscribeEvent
-    public static void onCreativeTabRegister(CreativeModeTabEvent.Register event) {
+    public static final RegistryObject<CreativeModeTab> DEFAULT = TABS.register("default", ModCreativeModeTabs::buildDefaultTab);
+
+    private static CreativeModeTab buildDefaultTab() {
         List<ItemStack> items = ModItems.ITEMS.getEntries().stream()
                 .map(ro -> new ItemStack(ro.get()))
                 .sorted(new ItemSorter())
                 .toList();
 
-        event.registerCreativeModeTab(RL("default"), builder ->
-            builder.title(Component.literal(ModularRouters.MODNAME))
-                    .icon(() -> new ItemStack(ModBlocks.MODULAR_ROUTER.get()))
-                    .displayItems((params, output) -> output.acceptAll(items))
-                    .build()
-        );
+        return CreativeModeTab.builder()
+                .title(Component.literal(ModularRouters.MODNAME))
+                .icon(() -> new ItemStack(ModBlocks.MODULAR_ROUTER.get()))
+                .displayItems((params, output) -> output.acceptAll(items))
+                .build();
     }
 
     private static class ItemSorter implements Comparator<ItemStack> {

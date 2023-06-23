@@ -1,10 +1,8 @@
 package me.desht.modularrouters.client.gui.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -29,12 +27,11 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTick){
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick){
         int amount = getScaled();
 
-        GuiUtil.bindTexture(TEXTURE_LOCATION);
-        GuiComponent.blit(matrixStack, getX() + 1, getY(), 1, 0, width - 2, height, 32, 64);
-        GuiComponent.blit(matrixStack, getX() + 1, getY() + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
+        graphics.blit(TEXTURE_LOCATION, getX() + 1, getY(), 1, 0, width - 2, height, 32, 64);
+        graphics.blit(TEXTURE_LOCATION, getX() + 1, getY() + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
     }
 
     private int getScaled(){
@@ -46,7 +43,7 @@ public class WidgetEnergy extends AbstractWidget implements ITooltipButton {
     }
 
     @Override
-    public List<Component> getTooltip() {
+    public List<Component> getTooltipLines() {
         return Collections.singletonList(Component.literal(MiscUtil.commify(storage.getEnergyStored()) + " / " + MiscUtil.commify(storage.getMaxEnergyStored()) + " FE"));
     }
 

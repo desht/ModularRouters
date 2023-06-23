@@ -1,12 +1,12 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule.MatchType;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -51,10 +51,10 @@ public class BreakerModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(poseStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
-        this.blit(poseStack, leftPos + 147, topPos + 20, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);  // match type "button" background
+        graphics.blit(GUI_TEXTURE, leftPos + 147, topPos + 20, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);  // match type "button" background
     }
 
     private static class MatchBlockButton extends ItemStackCyclerButton<MatchType> {
@@ -69,7 +69,7 @@ public class BreakerModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tips.get(getState().ordinal());
         }
     }

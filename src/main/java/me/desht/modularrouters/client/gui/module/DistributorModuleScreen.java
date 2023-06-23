@@ -1,12 +1,10 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
@@ -15,6 +13,7 @@ import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -59,10 +58,10 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
-        GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, leftPos + 127, topPos + 43, "");
+        graphics.renderItem(ROUTER_STACK, leftPos + 127, topPos + 43);
     }
 
     private class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
@@ -81,7 +80,7 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState().ordinal());
         }
     }

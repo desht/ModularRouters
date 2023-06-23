@@ -102,18 +102,19 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+//    maven {
+//        name = "JEI"
+//        url = "https://dvs1.progwml6.com/files/maven"
+//        content {
+//            includeGroup "mezz.jei"
+//        }
+//    }
     maven {
-        name = "JEI"
-        url = "https://dvs1.progwml6.com/files/maven"
-        content {
-            includeGroup "mezz.jei"
-        }
-    }
-    maven {
-        name = "Patchouli"
+        name = "Patchouli/JEI"
         url = "https://maven.blamejared.com/"
         content {
             includeGroup "vazkii.patchouli"
+            includeGroup "mezz.jei"
         }
     }
 }
@@ -132,13 +133,13 @@ dependencies {
     compileOnly fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-1.19.3-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-1.19.3-forge-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 //    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
 //    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
     // at runtime, use the full JEI
-//    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
-//    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {

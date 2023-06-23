@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
@@ -13,6 +12,7 @@ import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -80,17 +80,17 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         String title = filterStack.getHoverName().getString() + (menu.getRouter() != null ? I18n.get("modularrouters.guiText.label.installed") : "");
-        font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, 8, 0x404040);
+        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0x404040, false);
 
         if (!modName.isEmpty()) {
-            font.draw(matrixStack, modName, 29, 23, 0x404040);
+            graphics.drawString(font, modName, 29, 23, 0x404040);
         }
 
         for (int i = 0; i < mods.size(); i++) {
             String mod = ModNameCache.getModName(mods.get(i));
-            font.draw(matrixStack, mod, 28, 47 + i * 19, 0x404080);
+            graphics.drawString(font, mod, 28, 47 + i * 19, 0x404080);
         }
     }
 
@@ -109,9 +109,8 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        GuiUtil.bindTexture(TEXTURE_LOCATION);
-        blit(matrixStack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        graphics.blit(TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override

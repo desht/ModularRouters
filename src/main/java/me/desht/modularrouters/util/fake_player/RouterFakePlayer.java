@@ -12,8 +12,8 @@ public class RouterFakePlayer extends FakePlayer {
     private final ModularRouterBlockEntity router;
     private ItemStack prevHeldStack = ItemStack.EMPTY;
 
-    public RouterFakePlayer(ModularRouterBlockEntity router, ServerLevel world, GameProfile profile) {
-        super(world, profile);
+    public RouterFakePlayer(ModularRouterBlockEntity router, ServerLevel level, GameProfile profile) {
+        super(level, profile);
         this.router = router;
     }
 

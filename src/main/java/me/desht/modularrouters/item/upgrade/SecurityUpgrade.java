@@ -138,7 +138,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
             String id = targetPlayer.getUUID().toString();
             String name = targetPlayer.getDisplayName().toString();
             Result res = player.isSteppingCarefully() ? removePlayer(stack, id) : addPlayer(stack, id, name);
-            if (player.level.isClientSide) {
+            if (player.level().isClientSide) {
                 player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
             } else {
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.security." + res.toString(), name), false);

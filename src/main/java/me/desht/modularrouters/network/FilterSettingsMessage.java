@@ -78,7 +78,7 @@ public class FilterSettingsMessage {
         if (filterStack.getItem() instanceof SmartFilterItem sf) {
             GuiSyncMessage response = sf.onReceiveSettingsMessage(player, this, filterStack, moduleStack);
             if (!moduleStack.isEmpty()) {
-                ModularRouterBlockEntity router = locator.getRouter(player.level).orElse(null);
+                ModularRouterBlockEntity router = locator.getRouter(player.level()).orElse(null);
                 ModuleFilterHandler filterHandler = new ModuleFilterHandler(moduleStack, router);
                 filterHandler.setStackInSlot(locator.filterSlot, filterStack);
                 filterHandler.save();

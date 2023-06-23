@@ -20,6 +20,7 @@ import me.desht.modularrouters.network.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.sounds.SoundManager;
@@ -34,8 +35,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import java.util.Collections;
 import java.util.List;
 
-import static me.desht.modularrouters.client.util.ClientUtil.theClientWorld;
-import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.*;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> implements ISendToServer, MenuAccess<RouterMenu> {
@@ -66,7 +66,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         this.imageWidth = GUI_WIDTH;
         this.imageHeight = GUI_HEIGHT;
 
-        this.passEvents = true;
+//        this.passEvents = true;
     }
 
     @Override
@@ -84,21 +84,20 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         MutableComponent title = xlate("block.modularrouters.modular_router");
-        font.draw(matrixStack, title, this.imageWidth / 2f - font.width(title) / 2f, LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, xlate("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, xlate("modularrouters.guiText.label.upgrades"), RouterMenu.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, xlate("modularrouters.guiText.label.modules"), RouterMenu.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040);
-        font.draw(matrixStack, xlate("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040);
+        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, LABEL_YPOS, 0xFF404040, false);
+        graphics.drawString(font, xlate("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040, false);
+        graphics.drawString(font, xlate("modularrouters.guiText.label.upgrades"), RouterMenu.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040, false);
+        graphics.drawString(font, xlate("modularrouters.guiText.label.modules"), RouterMenu.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040, false);
+        graphics.drawString(font, xlate("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040, false);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float v, int i, int i1) {
-        GuiUtil.bindTexture(TEXTURE_LOCATION);
-        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    protected void renderBg(GuiGraphics graphics, float v, int i, int i1) {
+        graphics.blit(TEXTURE_LOCATION, leftPos, topPos, 0, 0, imageWidth, imageHeight);
         if (menu.getRouter().getEnergyCapacity() > 0) {
-            blit(matrixStack, leftPos - 27, topPos, 180, 0, 32, 100);
+            graphics.blit(TEXTURE_LOCATION, leftPos - 27, topPos, 180, 0, 32, 100);
         }
     }
 
@@ -174,7 +173,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return GuiUtil.xlateAndSplit("modularrouters.guiText.tooltip.eco." + isToggled(),
                     ConfigHolder.common.router.ecoTimeout.get() / 20.f,
                     ConfigHolder.common.router.lowPowerTickRate.get() / 20.f);
@@ -202,7 +201,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return ImmutableList.of(
                     xlate(getState().getTranslationKey()),
                     xlate("modularrouters.guiText.tooltip.energy.rate",
@@ -218,7 +217,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             if (energyUsage <= menu.getRouter().getEnergyStorage().getEnergyStored()) return Collections.emptyList();
             return menu.getRouter().getEnergyCapacity() > 0 ?
                     GuiUtil.xlateAndSplit("modularrouters.itemText.misc.energyWarning") :

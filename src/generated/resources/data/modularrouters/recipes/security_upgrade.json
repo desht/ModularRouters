@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "modularrouters:security_upgrade"
-  }
+  },
+  "show_notification": true
 }

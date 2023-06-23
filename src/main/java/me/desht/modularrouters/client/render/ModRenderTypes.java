@@ -40,7 +40,7 @@ public class ModRenderTypes extends RenderType {
     );
 
     public static final RenderType BLOCK_HILIGHT_FACE = create("block_hilight",
-            DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,false, false,
+            DefaultVertexFormat.POSITION_COLOR_NORMAL, VertexFormat.Mode.QUADS, 256,false, false,
             RenderType.CompositeState.builder()
                     .setShaderState(RenderStateShard.RENDERTYPE_LINES_SHADER)
                     .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
@@ -54,7 +54,7 @@ public class ModRenderTypes extends RenderType {
     );
 
     public static final RenderType BLOCK_HILIGHT_LINE = create("block_hilight_line",
-            DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.LINES, 256, false, false,
+            DefaultVertexFormat.POSITION_COLOR_NORMAL, VertexFormat.Mode.LINES, 256, false, false,
             RenderType.CompositeState.builder().setLineState(THIN_LINE)
                     .setShaderState(RenderStateShard.RENDERTYPE_LINES_SHADER)
                     .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)

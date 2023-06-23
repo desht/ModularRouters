@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -11,6 +10,7 @@ import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -59,22 +59,22 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, leftPos + 165, topPos + 19, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);
+        graphics.blit(GUI_TEXTURE, leftPos + 165, topPos + 19, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
 
-        font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040);
-        font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
+        graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040);
+        graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040);
         if (actionTypeButton.getState().isEntityTarget()) {
-            font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
+            graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040);
         } else {
-            font.draw(matrixStack, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
+            graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040);
         }
     }
 
@@ -108,7 +108,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState());
         }
     }
@@ -129,7 +129,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState());
         }
     }
@@ -173,7 +173,7 @@ public class ActivatorModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState().ordinal());
         }
     }

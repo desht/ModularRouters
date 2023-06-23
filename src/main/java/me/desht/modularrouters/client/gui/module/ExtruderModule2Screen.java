@@ -1,8 +1,8 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.InfoButton;
 import me.desht.modularrouters.container.ModuleMenu;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -21,8 +21,8 @@ public class ExtruderModule2Screen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
-        this.blit(matrixStack, leftPos + 128, topPos + 16, 202, 52, 54, 54);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
+        graphics.blit(GUI_TEXTURE, leftPos + 128, topPos + 16, 202, 52, 54, 54);
     }
 }

@@ -52,7 +52,7 @@ public class ModLootTableProvider extends LootTableProvider {
         protected void generate() {
             Block router = ModBlocks.MODULAR_ROUTER.get();
             LootPool.Builder builder = LootPool.lootPool()
-                    .name(ModBlocks.MODULAR_ROUTER.getId().getPath())
+//                    .name(ModBlocks.MODULAR_ROUTER.getId().getPath())
                     .when(ExplosionCondition.survivesExplosion())
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(router)

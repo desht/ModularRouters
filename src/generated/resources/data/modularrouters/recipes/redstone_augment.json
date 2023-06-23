@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "modularrouters:redstone_augment"
-  }
+  },
+  "show_notification": true
 }

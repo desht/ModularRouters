@@ -14,5 +14,6 @@
   ],
   "result": {
     "item": "modularrouters:pushing_augment"
-  }
+  },
+  "show_notification": true
 }

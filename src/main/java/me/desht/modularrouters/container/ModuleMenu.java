@@ -50,7 +50,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
         super(type, windowId);
 
         this.locator = locator;
-        this.router = locator.getRouter(inv.player.level).orElse(null);
+        this.router = locator.getRouter(inv.player.level()).orElse(null);
         assert router != null || locator.hand != null;
 
         ItemStack moduleStack = locator.getModuleStack(inv.player);
@@ -136,7 +136,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
                     int firstFree = -1;
                     for (i = 0; i < Filter.FILTER_SIZE; i++) {
                         ItemStack stack0 = filterHandler.getStackInSlot(i);
-                        if (ItemStack.isSame(stack0, stack)) {
+                        if (ItemStack.isSameItem(stack0, stack)) {
                             firstFree = i;
                             break;
                         } else if (firstFree < 0 && stack0.isEmpty() && filterHandler.isItemValid(i, stack)) {

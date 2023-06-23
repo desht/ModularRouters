@@ -51,8 +51,8 @@
           "name": "modularrouters:modular_router"
         }
       ],
-      "name": "modular_router",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "modularrouters:blocks/modular_router"
 }

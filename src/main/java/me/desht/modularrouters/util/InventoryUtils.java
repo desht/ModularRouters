@@ -98,7 +98,7 @@ public class InventoryUtils {
      * @param toCount the item to count
      * @param handler the inventory to check
      * @param max maximum number of items to count
-     * @param matchMeta whether or not to consider item metadata
+     * @param matchMeta whether to consider item metadata
      * @return number of items found, or the supplied max, whichever is smaller
      */
     public static int countItems(ItemStack toCount, IItemHandler handler, int max, boolean matchMeta) {
@@ -106,7 +106,12 @@ public class InventoryUtils {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                boolean match = matchMeta ? stack.sameItem(toCount) : MiscUtil.sameItemStackIgnoreDurability(stack, toCount);
+                boolean match;
+                if (matchMeta) {
+                    match = stack.is(toCount.getItem()) && (!stack.isDamageableItem() || stack.getDamageValue() == toCount.getDamageValue());
+                } else {
+                    match = stack.is(toCount.getItem());
+                }
                 if (match) {
                     count += stack.getCount();
                 }

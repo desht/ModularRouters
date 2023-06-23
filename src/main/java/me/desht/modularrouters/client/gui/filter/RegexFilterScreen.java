@@ -11,6 +11,7 @@ import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -71,23 +72,22 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(matrixStack);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(graphics);
 
-        GuiUtil.bindTexture(TEXTURE_LOCATION);
-        blit(matrixStack, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
-        font.draw(matrixStack, title, xPos + GUI_WIDTH / 2f - font.width(title) / 2f, yPos + 6, 0x404040);
+        graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+        graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            font.draw(matrixStack, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
+            graphics.drawString(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
         }
 
         if (!errorMsg.isEmpty()) {
-            font.draw(matrixStack, errorMsg, xPos + 8, yPos + 170, 0x804040);
+            graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040);
         }
 
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

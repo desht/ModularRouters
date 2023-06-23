@@ -16,6 +16,7 @@ import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -84,23 +85,23 @@ public class FluidModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
         // text entry field custom background - super has already bound the correct texture
-        this.blit(matrixStack, leftPos + 146, topPos + 20, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
+        graphics.blit(GUI_TEXTURE, leftPos + 146, topPos + 20, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
 
-        GuiUtil.renderItemStack(matrixStack, minecraft, routerStack, leftPos + 128, topPos + 44, "");
-        GuiUtil.renderItemStack(matrixStack, minecraft, waterStack, leftPos + 168, topPos + 44, "");
+        graphics.renderItem(routerStack, leftPos + 128, topPos + 44);
+        graphics.renderItem(waterStack, leftPos + 168, topPos + 44);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
 
         if (forceEmptyButton.visible) {
             MutableComponent c = xlate("modularrouters.guiText.label.fluidForceEmpty");
-            font.draw(matrixStack, c, 165 - font.width(c), 73, 0x202040);
+            graphics.drawString(font, c, 165 - font.width(c), 73, 0x202040, false);
         }
     }
 
@@ -166,7 +167,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState().ordinal());
         }
     }

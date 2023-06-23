@@ -12,6 +12,7 @@ import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -54,21 +55,21 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        super.renderLabels(graphics, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            font.draw(matrixStack, xlate("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
+            graphics.drawString(font, xlate("modularrouters.guiText.label.xpVacuum"), 127, 32, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                font.draw(matrixStack, xlate("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                graphics.drawString(font, xlate("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            this.blit(matrixStack,leftPos + 168, topPos + 26, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);
+            graphics.blit(GUI_TEXTURE, leftPos + 168, topPos + 26, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);
         }
     }
 
@@ -101,7 +102,7 @@ public class VacuumModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tips.get(getState().ordinal());
         }
 

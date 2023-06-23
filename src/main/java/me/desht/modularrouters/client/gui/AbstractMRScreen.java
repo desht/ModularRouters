@@ -1,9 +1,9 @@
 package me.desht.modularrouters.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.IManagedTextFields;
 import me.desht.modularrouters.client.gui.widgets.button.ITooltipButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -29,13 +29,13 @@ public abstract class AbstractMRScreen extends Screen implements IManagedTextFie
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        if (textFieldManager != null) textFieldManager.drawTextFields(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        if (textFieldManager != null) textFieldManager.drawTextFields(graphics, mouseX, mouseY, partialTicks);
         this.renderables.stream()
                 .filter(widget -> widget instanceof AbstractWidget aw && aw.isMouseOver(mouseX, mouseY) && widget instanceof ITooltipButton)
                 .findFirst()
-                .ifPresent(button -> renderComponentTooltip(matrixStack, ((ITooltipButton) button).getTooltip(), mouseX, mouseY));
+                .ifPresent(button -> graphics.renderComponentTooltip(font, ((ITooltipButton) button).getTooltipLines(), mouseX, mouseY));
     }
 
     @Override

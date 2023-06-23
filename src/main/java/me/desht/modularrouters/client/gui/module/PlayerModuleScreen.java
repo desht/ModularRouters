@@ -1,16 +1,15 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -55,12 +54,12 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
-        this.blit(matrixStack, leftPos + 167, topPos + 31, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);  // section "button" background
+        graphics.blit(GUI_TEXTURE, leftPos + 167, topPos + 31, BUTTON_XY.x(), BUTTON_XY.y(), 18, 18);  // section "button" background
 
-        GuiUtil.renderItemStack(matrixStack, minecraft, ROUTER_STACK, leftPos + 128, topPos + 32, "");
+        graphics.renderItem(ROUTER_STACK, leftPos + 128, topPos + 32);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tips.get(getState().ordinal());
         }
     }
@@ -104,7 +103,7 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState().ordinal());
         }
     }

@@ -46,6 +46,7 @@ public class ModularRouters {
         ModMenuTypes.MENUS.register(modBus);
         ModSounds.SOUNDS.register(modBus);
         ModRecipes.RECIPES.register(modBus);
+        ModCreativeModeTabs.TABS.register(modBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

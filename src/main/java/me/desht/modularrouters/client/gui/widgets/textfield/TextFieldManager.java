@@ -3,6 +3,7 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;
 
@@ -18,9 +19,9 @@ public class TextFieldManager {
     public TextFieldManager() {
     }
 
-    public void drawTextFields(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void drawTextFields(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         GlStateManager._disableBlend();
-        textFields.forEach(tf -> tf.renderWidget(matrixStack, mouseX, mouseY, partialTicks));
+        textFields.forEach(tf -> tf.renderWidget(graphics, mouseX, mouseY, partialTicks));
     }
 
     public void tick() {

@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
@@ -37,6 +36,7 @@ import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
@@ -63,7 +63,7 @@ import java.util.Optional;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
+    static final ResourceLocation GUI_TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/module.png");
 
     // locations of extra textures on the gui module texture sheet
     static final XYPoint SMALL_TEXTFIELD_XY = new XYPoint(0, 198);
@@ -115,7 +115,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         this.imageHeight = GUI_HEIGHT;
         this.mouseOverHelp = new MouseOverHelp(this);
 
-        this.passEvents = true;
+//        this.passEvents = true;
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -246,30 +246,33 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         Component title = moduleItemStack.getHoverName().copy().append(routerPos != null ? " " + I18n.get("modularrouters.guiText.label.installed") : "");
-        this.font.draw(matrixStack, title, this.imageWidth / 2f - this.font.width(title) / 2f, 5, getFgColor(module.getItemTint()));
+        TintColor tint = module.getItemTint();
+        boolean drawShadow = GuiUtil.isLightColor(tint);
+        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 5, tint.getRGB(), drawShadow);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        TintColor c = getGuiBackgroundTint();
-        GuiUtil.bindTexture(GUI_TEXTURE, c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
-        blit(matrixStack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        // TODO: gui tinting? or some other approach
+//        TintColor c = getGuiBackgroundTint();
+//        GuiUtil.bindTexture(GUI_TEXTURE, c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
+        graphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
         if (!module.isDirectional()) {
-            blit(matrixStack, leftPos + 69, topPos + 17, 204, 0, 52, 52);
+            graphics.blit(GUI_TEXTURE, leftPos + 69, topPos + 17, 204, 0, 52, 52);
         }
     }
 
-    private TintColor getGuiBackgroundTint() {
-        if (ConfigHolder.client.misc.moduleGuiBackgroundTint.get()) {
-            TintColor c = module.getItemTint();
-            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-            return TintColor.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
-        } else {
-            return TintColor.WHITE;
-        }
-    }
+//    private TintColor getGuiBackgroundTint() {
+//        if (ConfigHolder.client.misc.moduleGuiBackgroundTint.get()) {
+//            TintColor c = module.getItemTint();
+//            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+//            return TintColor.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
+//        } else {
+//            return TintColor.WHITE;
+//        }
+//    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -344,16 +347,16 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
     public void dataChanged(AbstractContainerMenu abstractContainerMenu, int i, int i1) {
     }
 
-    private static final int THRESHOLD = 129;
-    private int getFgColor(TintColor bg) {
-        // calculate a foreground color which suitably contrasts with the given background color
-        int luminance = (int) Math.sqrt(
-                bg.getRed() * bg.getRed() * 0.241 +
-                bg.getGreen() * bg.getGreen() * 0.691 +
-                bg.getBlue() * bg.getBlue() * 0.068
-        );
-        return luminance > THRESHOLD ? 0x404040 : 0xffffff;
-    }
+//    private static final int THRESHOLD = 129;
+//    private int getFgColor(TintColor bg) {
+//        // calculate a foreground color which suitably contrasts with the given background color
+//        int luminance = (int) Math.sqrt(
+//                bg.getRed() * bg.getRed() * 0.241 +
+//                bg.getGreen() * bg.getGreen() * 0.691 +
+//                bg.getBlue() * bg.getBlue() * 0.068
+//        );
+//        return luminance > THRESHOLD ? 0x404040 : 0xffffff;
+//    }
 
     @Override
     public MouseOverHelp getMouseOverHelp() {
@@ -467,7 +470,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         }
 
         @Override
-        public List<Component> getTooltip() {
+        public List<Component> getTooltipLines() {
             return tooltips.get(getState().ordinal());
         }
 

@@ -129,10 +129,8 @@ public class CompiledFluidModule1 extends CompiledModule {
         }
 
         // code partially lifted from BucketItem
-        BlockState blockstate = world.getBlockState(pos);
-        Material material = blockstate.getMaterial();
-        boolean isNotSolid = !material.isSolid();
-        boolean isReplaceable = material.isReplaceable();
+//        Material material = blockstate.getMaterial();
+//        boolean isNotSolid = !material.isSolid();
 
         boolean didWork = routerFluidCap.map(handler -> {
             FluidStack toPlace = handler.drain(BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
@@ -143,8 +141,10 @@ public class CompiledFluidModule1 extends CompiledModule {
             if (!getFilter().testFluid(toPlace.getFluid())) {
                 return false;
             }
+            BlockState blockstate = world.getBlockState(pos);
+            boolean isReplaceable = blockstate.canBeReplaced(fluid);
             Block block = blockstate.getBlock();
-            if (world.isEmptyBlock(pos) || isNotSolid || isReplaceable
+            if (world.isEmptyBlock(pos) /*|| isNotSolid*/ || isReplaceable
                     || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(world, pos, blockstate, toPlace.getFluid())) {
                 if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
                     // no pouring water in the nether!
@@ -160,7 +160,7 @@ public class CompiledFluidModule1 extends CompiledModule {
                     if (playSound) {
                         playEmptySound(world, pos, fluid);
                     }
-                    if (isNotSolid || isReplaceable) {
+                    if (/*isNotSolid ||*/ isReplaceable) {
                         world.destroyBlock(pos, true);
                     }
                     world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Block.UPDATE_ALL_IMMEDIATE);
