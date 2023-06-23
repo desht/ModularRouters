@@ -4,6 +4,14 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+## Minecraft 1.20
+
+### 12.0.0
+
+* Beta build for Minecraft 1.20.1
+* Functionally the same as 10.2.0
+* Forge 47.0.1 or later required
+
 ## Minecraft 1.19
 
 ### 11.0.0

@@ -1,31 +1,16 @@
-# The mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
-# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[44,)" #mandatory (24 is current forge version)
-# A URL to refer people to when problems occur with this mod
+loaderVersion="[47,)" #mandatory (24 is current forge version)
 issueTrackerURL="https://github.com/desht/ModularRouters/issues"
-# A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://minecraft.curseforge.com/projects/modular-routers"
-# A file name (in the root of the mod JAR) containing a logo for display
-#logoFile=""
-# A text field displayed in the mod UI
 credits=""
-# A text field displayed in the mod UI
 authors="desht"
-# License
 license="MIT"
-# A list of mods - how many allowed here is determined by the individual mod loader
 
 [[mods]] #mandatory
-# The modid of the mod
 modId="modularrouters" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
+version="${version}" #mandatory
 displayName="Modular Routers"
-# A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.19-master/release_info.json" #optional
-# The description text for the mod (multi line!) (#mandatory)
+updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.20.1-master/release_info.json" #optional
 description='''
 Modular Routers is a highly flexible mod for moving items around the world in various ways.
 '''
@@ -33,12 +18,12 @@ Modular Routers is a highly flexible mod for moving items around the world in va
 [[dependencies.modularrouters]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[44.0.36,)" #mandatory
+    versionRange="${forge_version_range}" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.3,)"
+    versionRange="${mc_version_range}"
     ordering="NONE"
     side="BOTH"
