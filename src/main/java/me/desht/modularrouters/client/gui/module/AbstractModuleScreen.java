@@ -13,7 +13,6 @@ import me.desht.modularrouters.client.gui.widgets.button.*;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
@@ -114,8 +113,6 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         this.imageWidth = GUI_WIDTH;
         this.imageHeight = GUI_HEIGHT;
         this.mouseOverHelp = new MouseOverHelp(this);
-
-//        this.passEvents = true;
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -248,31 +245,29 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         Component title = moduleItemStack.getHoverName().copy().append(routerPos != null ? " " + I18n.get("modularrouters.guiText.label.installed") : "");
-        TintColor tint = module.getItemTint();
-        boolean drawShadow = GuiUtil.isLightColor(tint);
-        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 5, tint.getRGB(), drawShadow);
+        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 5, getFgColor(module.getItemTint()), false);
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        // TODO: gui tinting? or some other approach
-//        TintColor c = getGuiBackgroundTint();
-//        GuiUtil.bindTexture(GUI_TEXTURE, c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
+        TintColor c = getGuiBackgroundTint();
+        graphics.setColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0F);
         graphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
         if (!module.isDirectional()) {
             graphics.blit(GUI_TEXTURE, leftPos + 69, topPos + 17, 204, 0, 52, 52);
         }
+        graphics.setColor(1f, 1f, 1f, 1f);
     }
 
-//    private TintColor getGuiBackgroundTint() {
-//        if (ConfigHolder.client.misc.moduleGuiBackgroundTint.get()) {
-//            TintColor c = module.getItemTint();
-//            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-//            return TintColor.getHSBColor(hsb[0], hsb[1] * 0.7f, hsb[2]);
-//        } else {
-//            return TintColor.WHITE;
-//        }
-//    }
+    private TintColor getGuiBackgroundTint() {
+        if (ConfigHolder.client.misc.moduleGuiBackgroundTint.get()) {
+            TintColor c = module.getItemTint();
+            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+            return TintColor.getHSBColor(hsb[0], hsb[1] * 0.5f, hsb[2]);
+        } else {
+            return TintColor.WHITE;
+        }
+    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -347,16 +342,16 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
     public void dataChanged(AbstractContainerMenu abstractContainerMenu, int i, int i1) {
     }
 
-//    private static final int THRESHOLD = 129;
-//    private int getFgColor(TintColor bg) {
-//        // calculate a foreground color which suitably contrasts with the given background color
-//        int luminance = (int) Math.sqrt(
-//                bg.getRed() * bg.getRed() * 0.241 +
-//                bg.getGreen() * bg.getGreen() * 0.691 +
-//                bg.getBlue() * bg.getBlue() * 0.068
-//        );
-//        return luminance > THRESHOLD ? 0x404040 : 0xffffff;
-//    }
+    private static final int THRESHOLD = 129;
+    private int getFgColor(TintColor bg) {
+        // calculate a foreground color which suitably contrasts with the given background color
+        int luminance = (int) Math.sqrt(
+                bg.getRed() * bg.getRed() * 0.241 +
+                bg.getGreen() * bg.getGreen() * 0.691 +
+                bg.getBlue() * bg.getBlue() * 0.068
+        );
+        return luminance > THRESHOLD ? 0x404040 : 0xffffff;
+    }
 
     @Override
     public MouseOverHelp getMouseOverHelp() {

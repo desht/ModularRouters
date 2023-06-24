@@ -32,7 +32,6 @@ public class TintColor {
         return (getRGB() >> 16) & 0xFF;
     }
 
-
     public int getGreen() {
         return (getRGB() >> 8) & 0xFF;
     }
@@ -40,6 +39,8 @@ public class TintColor {
     public int getBlue() {
         return (getRGB()) & 0xFF;
     }
+
+    public int getAlpha() { return (getRGB() >> 24) & 0xFF; }
 
     public static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
         float hue, saturation, brightness;
@@ -126,5 +127,13 @@ public class TintColor {
 
     public static TintColor getHSBColor(float h, float s, float b) {
         return new TintColor(HSBtoRGB(h, s, b));
+    }
+
+    private static final double FACTOR = 0.7;
+    public TintColor darker() {
+        return new TintColor(Math.max((int)(getRed() * FACTOR), 0),
+                Math.max((int)(getGreen()*FACTOR), 0),
+                Math.max((int)(getBlue() *FACTOR), 0),
+                getAlpha());
     }
 }
