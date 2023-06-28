@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.20
 
+### 12.0.1
+* Patchouli book should now work
+  * Note: no public 1.20.1 release of Patchouli yet at the time of writing
+
 ### 12.0.0
 
 * Beta build for Minecraft 1.20.1
