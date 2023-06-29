@@ -5,16 +5,20 @@ import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
+import me.desht.modularrouters.recipe.GuideBookRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModularRouters.MODID);
@@ -25,7 +29,11 @@ public class ModCreativeModeTabs {
         List<ItemStack> items = ModItems.ITEMS.getEntries().stream()
                 .map(ro -> new ItemStack(ro.get()))
                 .sorted(new ItemSorter())
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (ModList.get().isLoaded("patchouli")) {
+            items.add(GuideBookRecipe.makeGuideBook());
+        }
 
         return CreativeModeTab.builder()
                 .title(Component.literal(ModularRouters.MODNAME))

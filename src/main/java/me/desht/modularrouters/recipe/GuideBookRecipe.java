@@ -27,7 +27,7 @@ public class GuideBookRecipe extends ShapelessRecipe {
         );
     }
 
-    private static ItemStack makeGuideBook() {
+    public static ItemStack makeGuideBook() {
         Item bookItem = ForgeRegistries.ITEMS.getValue(BOOK_ID);
         if (bookItem == null) {
             ItemStack stack = new ItemStack(Items.PAPER);
