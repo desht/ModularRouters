@@ -296,7 +296,7 @@
    "modularrouters.itemText.misc.strongSignal.true" : "Strong",
    "modularrouters.itemText.misc.TERMINATE" : "Termination",
    "modularrouters.itemText.misc.upgradeCount" : "▶ %d x %s",
-   "modularrouters.itemText.misc.upgrades" : "Upgrades:",
+   "modularrouters.itemText.misc.upgrades" : "Upgrades",
    "modularrouters.itemText.misc.whitelist" : "§eWhitelist",
    "modularrouters.itemText.security.count" : "%d / %d other player(s):",
    "modularrouters.itemText.security.owner" : "§eOwner: §b%s",

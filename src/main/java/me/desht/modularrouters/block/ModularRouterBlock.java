@@ -123,15 +123,14 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                 for (int i = 0; i < modulesHandler.getSlots(); i++) {
                     ItemStack moduleStack = modulesHandler.getStackInSlot(i);
                     if (!moduleStack.isEmpty()) {
-                        moduleText.add(Component.literal("\u2022 ")
+                        moduleText.add(Component.literal("• ")
                                 .append(moduleStack.getHoverName())
                                 .withStyle(ChatFormatting.AQUA)
                         );
                     }
                 }
                 if (!moduleText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.moduleCount",
-                            moduleText.size()).withStyle(ChatFormatting.YELLOW));
+                    tooltip.add(ClientUtil.xlate("modularrouters.guiText.label.modules").withStyle(ChatFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
             }
@@ -139,19 +138,17 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                 ItemStackHandler upgradesHandler = new ItemStackHandler();
                 upgradesHandler.deserializeNBT(compound.getCompound(NBT_UPGRADES));
                 List<Component> upgradeText = new ArrayList<>();
-                int nUpgrades = 0;
                 for (int i = 0; i < upgradesHandler.getSlots(); i++) {
                     ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
                     if (!upgradeStack.isEmpty()) {
-                        nUpgrades += upgradeStack.getCount();
-                        upgradeText.add(Component.literal("\u2022 " + upgradeStack.getCount() + " x ")
+                        upgradeText.add(Component.literal("• " + upgradeStack.getCount() + " x ")
                                 .append(upgradeStack.getHoverName())
                                 .withStyle(ChatFormatting.AQUA)
                         );
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.upgradeCount", nUpgrades).withStyle(ChatFormatting.YELLOW));
+                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.upgrades").withStyle(ChatFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
