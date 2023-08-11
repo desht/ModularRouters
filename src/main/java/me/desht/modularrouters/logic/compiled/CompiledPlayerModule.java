@@ -128,7 +128,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     private boolean isDimensionBlacklisted(ModularRouterBlockEntity router, Player player) {
         WildcardedRLMatcher matcher = ModularRouters.getDimensionBlacklist();
-        return matcher.test(router.nonNullLevel().dimension().location()) || matcher.test(player.level.dimension().location());
+        return matcher.test(router.nonNullLevel().dimension().location()) || matcher.test(player.level().dimension().location());
     }
 
     private Player getPlayer() {
