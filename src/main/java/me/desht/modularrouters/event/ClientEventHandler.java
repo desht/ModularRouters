@@ -1,6 +1,7 @@
 package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.ValidateModuleMessage;
@@ -22,7 +23,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof TargetedModule) {
+        if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ModuleItem) {
             PacketHandler.NETWORK.sendToServer(new ValidateModuleMessage(event.getHand()));
             event.setCanceled(true);
         }
@@ -30,7 +31,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof TargetedModule) {
+        if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ModuleItem) {
             PacketHandler.NETWORK.sendToServer(new ValidateModuleMessage(event.getHand()));
         }
     }

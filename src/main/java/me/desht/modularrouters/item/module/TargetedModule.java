@@ -20,6 +20,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -260,12 +261,7 @@ public abstract class TargetedModule extends ModuleItem {
         return null;
     }
 
-    /**
-     * Called server-side from ValidateModuleMessage
-     *
-     * @param stack the module item
-     * @param player the player holding the module
-     */
+    @Override
     public void doModuleValidation(ItemStack stack, ServerPlayer player) {
         ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getCommandSenderWorld(), player.blockPosition()));
         Set<ModuleTarget> targets = getMaxTargets() > 1 ?
@@ -306,8 +302,15 @@ public abstract class TargetedModule extends ModuleItem {
             if (w.getBlockEntity(dst.gPos.pos()) == null) {
                 return TargetValidation.NOT_INVENTORY;
             }
+            if (badDimension(dst.gPos.dimension().location()) || badDimension(src.gPos.dimension().location())) {
+                return TargetValidation.BAD_DIMENSION;
+            }
         }
         return TargetValidation.OK;
+    }
+
+    protected boolean badDimension(ResourceLocation dimId) {
+        return false;
     }
 
     private int maxDistanceSq(ItemStack stack) {
@@ -335,7 +338,8 @@ public abstract class TargetedModule extends ModuleItem {
         OK,
         OUT_OF_RANGE,
         NOT_LOADED,
-        NOT_INVENTORY;
+        NOT_INVENTORY,
+        BAD_DIMENSION;
 
         ChatFormatting getColor() {
             return this == OK ? ChatFormatting.GREEN : ChatFormatting.RED;

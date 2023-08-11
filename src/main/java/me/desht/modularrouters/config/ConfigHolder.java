@@ -1,7 +1,11 @@
 package me.desht.modularrouters.config;
 
+import me.desht.modularrouters.ModularRouters;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ConfigHolder {
@@ -19,7 +23,26 @@ public class ConfigHolder {
         common = spec2.getLeft();
         configCommonSpec = spec2.getRight();
 
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ConfigHolder.configCommonSpec);
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, ConfigHolder.configClientSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.configCommonSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHolder.configClientSpec);
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ConfigHolder::onConfigChanged);
+    }
+
+    private static void onConfigChanged(final ModConfigEvent event) {
+        ModConfig config = event.getConfig();
+        if (config.getSpec() == ConfigHolder.configClientSpec) {
+            refreshClient();
+        } else if (config.getSpec() == ConfigHolder.configCommonSpec) {
+            refreshCommon();
+        }
+    }
+
+    static void refreshClient() {
+        // nothing for now
+    }
+
+    static void refreshCommon() {
+        ModularRouters.clearDimensionBlacklist();
     }
 }

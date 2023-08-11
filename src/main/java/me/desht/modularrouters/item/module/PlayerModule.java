@@ -1,5 +1,6 @@
 package me.desht.modularrouters.item.module;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
@@ -12,6 +13,8 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -75,5 +78,14 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
     @Override
     public int getEnergyCost(ItemStack stack) {
         return ConfigHolder.common.energyCosts.playerModuleEnergyCost.get();
+    }
+
+    @Override
+    public void doModuleValidation(ItemStack stack, ServerPlayer player) {
+        TargetedModule.TargetValidation v = ModularRouters.getDimensionBlacklist().test(player.level.dimension().location()) ?
+                TargetedModule.TargetValidation.BAD_DIMENSION :
+                TargetedModule.TargetValidation.OK;
+        MutableComponent msg = Component.translatable(v.translationKey()).withStyle(v.getColor());
+        player.displayClientMessage(msg, false);
     }
 }

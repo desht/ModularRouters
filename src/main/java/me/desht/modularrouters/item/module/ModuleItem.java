@@ -367,6 +367,15 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         return false;
     }
 
+    /**
+     * Called server-side from ValidateModuleMessage
+     *
+     * @param stack the module item
+     * @param player the player holding the module
+     */
+    public void doModuleValidation(ItemStack stack, ServerPlayer player) {
+    }
+
     public static class ModuleMenuProvider implements MenuProvider {
         private final MFLocator loc;
         private final ItemStack moduleStack;

@@ -5,6 +5,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
+import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
@@ -82,21 +83,27 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         Player player = getPlayer();  // will be non-null if we get here
+
+        if (isDimensionBlacklisted(router, player)) {
+            return false;
+        }
+
         IItemHandler itemHandler = getHandler(player);
         if (itemHandler == null) {
             return false;
         }
+
         ItemStack bufferStack = router.getBufferItemStack();
         switch (operation) {
-            case EXTRACT:
+            case EXTRACT -> {
                 if (bufferStack.getCount() < bufferStack.getMaxStackSize()) {
                     ItemStack taken = transferToRouter(itemHandler, null, router);
                     return !taken.isEmpty();
                 }
-                break;
-            case INSERT:
+            }
+            case INSERT -> {
                 if (getFilter().test(bufferStack)) {
-                    if (getSection() == CompiledPlayerModule.Section.ARMOR) {
+                    if (getSection() == Section.ARMOR) {
                         return insertArmor(router, itemHandler, bufferStack);
                     } else {
                         int nToSend = getItemsPerTick(router);
@@ -111,10 +118,17 @@ public class CompiledPlayerModule extends CompiledModule {
                         return sent > 0;
                     }
                 }
-                break;
-            default: return false;
+            }
+            default -> {
+                return false;
+            }
         }
         return false;
+    }
+
+    private boolean isDimensionBlacklisted(ModularRouterBlockEntity router, Player player) {
+        WildcardedRLMatcher matcher = ModularRouters.getDimensionBlacklist();
+        return matcher.test(router.nonNullLevel().dimension().location()) || matcher.test(player.level.dimension().location());
     }
 
     private Player getPlayer() {

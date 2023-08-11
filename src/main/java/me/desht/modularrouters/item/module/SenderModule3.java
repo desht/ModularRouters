@@ -1,11 +1,13 @@
 package me.desht.modularrouters.item.module;
 
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule3;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -49,5 +51,10 @@ public class SenderModule3 extends TargetedModule implements IPositionProvider {
     @Override
     public int getEnergyCost(ItemStack stack) {
         return ConfigHolder.common.energyCosts.senderModule3EnergyCost.get();
+    }
+
+    @Override
+    protected boolean badDimension(ResourceLocation dimId) {
+        return ModularRouters.getDimensionBlacklist().test(dimId);
     }
 }
