@@ -6,7 +6,19 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.20
 
+### 12.0.2
+
+* As of Modular Routers 12.0.2, the mod is built with [Neoforge](https://neoforged.net/)
+  * While Modular Routers is likely to remain compatible with [Forge](https://files.minecraftforge.net/) for now, future compatibility is not guaranteed in any way
+* Player Module and Sender Module Mk3 now respect a dimension blacklist, dimensions which those modules cannot send items to or from
+  * See `dimensionBlacklist` config setting in `modularrouters-common.toml`
+* Fixed shaped template blocks (as placed by the Extruder Mk2) causing x-ray vision past them
+* Fixed snow blocks not being breakable by the Breaker Module
+  * Fix will also apply to any block requiring a tool other than a pickaxe
+* Cosmetic tooltip fix for Router items which contain modules and/or upgrades
+
 ### 12.0.1
+
 * Patchouli manual now works properly
   * Note: there isn't a public 1.20.1 release of Patchouli yet at the time of this release
 
