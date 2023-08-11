@@ -29,18 +29,13 @@ public class CompiledSenderModule2 extends CompiledSenderModule1 {
                 .orElse(PositionedItemHandler.INVALID);
     }
 
-    private boolean validate(ModularRouterBlockEntity router, ModuleTarget target) {
-        if (!isRangeLimited()) return true;
+    protected boolean validate(ModularRouterBlockEntity router, ModuleTarget target) {
         return target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared();
     }
 
     @Override
     protected int getBeamColor() {
         return 0xFF8000;
-    }
-
-    boolean isRangeLimited() {
-        return true;
     }
 
     @Override

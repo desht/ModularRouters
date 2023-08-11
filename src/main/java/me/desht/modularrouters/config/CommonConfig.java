@@ -2,7 +2,11 @@ package me.desht.modularrouters.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommonConfig {
     public static class Module {
@@ -29,6 +33,7 @@ public class CommonConfig {
         public BooleanValue extruderSound;
         public BooleanValue extruderPushEntities;
         public BooleanValue breakerHarvestLevelLimit;
+        public ConfigValue<List<String>> dimensionBlacklist;
     }
 
     public static class Router {
@@ -145,6 +150,9 @@ public class CommonConfig {
         module.breakerHarvestLevelLimit = builder.comment("Should Breaker & Extruder Mk1 Modules respect the harvest level of the pickaxe used to craft them? (e.g. craft with an Iron Pickaxe => can't break Obsidian")
                 .translation("gui.config.breakerHarvestLevelLimit")
                 .define("breakerHarvestLevelLimit", true);
+        module.dimensionBlacklist = builder.comment("Dimension ID's which the Sender Mk3 cannot send to or from, and the Player Module cannot operate (both router dimension and player dimension are checked). This can be wildcarded, e.g. 'somemod:*' blacklists all dimensions added by the mod 'somemod'")
+                .translation("modularrouters.gui.config.dimensionBlacklist")
+                .define("dimensionBlacklist", new ArrayList<>());
         builder.pop();
 
         builder.push("Router");

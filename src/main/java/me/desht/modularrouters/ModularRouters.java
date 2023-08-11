@@ -8,6 +8,7 @@ import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
+import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -27,6 +28,8 @@ public class ModularRouters {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
+    private static WildcardedRLMatcher dimensionBlacklist;
+
     public ModularRouters() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -42,6 +45,17 @@ public class ModularRouters {
         ModMenuTypes.MENUS.register(modBus);
         ModSounds.SOUNDS.register(modBus);
         ModRecipes.RECIPES.register(modBus);
+    }
+
+    public static WildcardedRLMatcher getDimensionBlacklist() {
+        if (dimensionBlacklist == null) {
+            dimensionBlacklist = new WildcardedRLMatcher(ConfigHolder.common.module.dimensionBlacklist.get());
+        }
+        return dimensionBlacklist;
+    }
+
+    public static void clearDimensionBlacklist() {
+        dimensionBlacklist = null;
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

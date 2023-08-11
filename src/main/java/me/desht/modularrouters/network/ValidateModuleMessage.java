@@ -1,5 +1,6 @@
 package me.desht.modularrouters.network;
 
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.module.TargetedModule;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 
 /**
  * Received on: SERVER
- * Sent by client when a targeted module is left-clicked; ask the server to validate the module and
+ * Sent by client when a module is left-clicked; ask the server to validate the module and
  * send the player a message.
  */
 public class ValidateModuleMessage {
@@ -34,8 +35,8 @@ public class ValidateModuleMessage {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
                 ItemStack stack = player.getItemInHand(hand);
-                if (stack.getItem() instanceof TargetedModule tm) {
-                    tm.doModuleValidation(stack, player);
+                if (stack.getItem() instanceof ModuleItem moduleItem) {
+                    moduleItem.doModuleValidation(stack, player);
                 }
             }
         });
