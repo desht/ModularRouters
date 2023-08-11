@@ -6,6 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.19
 
+### 10.2.1
+
+* Player Module and Sender Module Mk3 now respect a dimension blacklist, dimensions which those modules cannot send items to or from
+  * See `dimensionBlacklist` config setting in `modularrouters-common.toml`
+* Fixed shaped template blocks (as placed by the Extruder Mk2) causing x-ray vision past them
+* Fixed snow blocks not being breakable by the Breaker Module
+  * Fix will also apply to any block requiring a tool other than a pickaxe
+
 ### 10.2.0
 
 * Build for Minecraft 1.19.2
