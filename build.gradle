@@ -1,12 +1,12 @@
 
 buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
-    }
+//    repositories {
+//        maven { url = 'https://maven.neoforged.net/releases' }
+//        maven { url = 'https://maven.parchmentmc.org' }
+//        mavenCentral()
+//    }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+//        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -16,7 +16,7 @@ plugins {
     id("idea")
     id("com.modrinth.minotaur") version "2.+"
     id('com.matthewprenger.cursegradle') version "1.4.0"
-    id('net.minecraftforge.gradle') version '[6.0,6.2)'
+    id('net.neoforged.gradle') version '[6.0.13, 6.2)'
     id('maven-publish')
 }
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
@@ -111,7 +111,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    minecraft "net.neoforged:forge:${mc_version}-${forge_version}"
 
     implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
         exclude group: "net.minecraftforge", module: "forge"
