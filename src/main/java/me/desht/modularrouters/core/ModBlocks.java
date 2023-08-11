@@ -26,7 +26,8 @@ public class ModBlocks {
             .sound(SoundType.METAL)
             .noOcclusion();
     private static final BlockBehaviour.Properties TEMPLATE_FRAME_PROPS = Block.Properties.of()
-            .isValidSpawn((state, world, pos, entityType) -> false);
+            .isValidSpawn((state, world, pos, entityType) -> false)
+            .noOcclusion();
 
     public static final RegistryObject<ModularRouterBlock> MODULAR_ROUTER = register("modular_router",
             () -> new ModularRouterBlock(ROUTER_PROPS));
