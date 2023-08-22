@@ -32,6 +32,8 @@ public class ModMenuTypes {
             = register("module_flinger", ModuleMenuFactories::createFlingerMenu);
     public static final RegistryObject<MenuType<ModuleMenu>> FLUID_MENU
             = register("module_fluid", ModuleMenuFactories::createFluidMenu);
+    public static final RegistryObject<MenuType<ModuleMenu>> GAS_MENU
+            = register("module_gas", ModuleMenuFactories::createGasMenu);
     public static final RegistryObject<MenuType<ModuleMenu>> PLAYER_MENU
             = register("module_player", ModuleMenuFactories::createPlayerMenu);
     public static final RegistryObject<MenuType<ModuleMenu>> VACUUM_MENU

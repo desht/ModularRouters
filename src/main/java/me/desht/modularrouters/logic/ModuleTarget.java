@@ -2,6 +2,7 @@ package me.desht.modularrouters.logic;
 
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.util.MiscUtil;
+import mekanism.api.chemical.gas.IGasHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +19,8 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static me.desht.modularrouters.core.ModItems.GAS_HANDLER;
+
 /**
  * Represents the target for a given module, including the dimension, blockpos
  * and face of the block where insertion/extraction will occur.
@@ -28,6 +31,7 @@ public class ModuleTarget {
     public final String blockTranslationKey;
 
     private LazyOptional<IItemHandler> cachedItemCap = LazyOptional.empty();
+    private LazyOptional<IGasHandler> cachedGasCap = LazyOptional.empty();
     private LazyOptional<IEnergyStorage> cachedEnergyCap = LazyOptional.empty();
 
     public ModuleTarget(GlobalPos gPos, Direction face, String blockTranslationKey) {
@@ -77,6 +81,11 @@ public class ModuleTarget {
         return isSameWorld(w) && getItemHandlerFor(w).isPresent();
     }
 
+    public boolean hasGasHandlerClientSide() {
+        Level w = ClientUtil.theClientWorld();
+        return isSameWorld(w) && getGasHandlerFor(w).isPresent();
+    }
+
     /**
      * Get an item handler for the module target.  Only call this server-side.
      *
@@ -100,6 +109,23 @@ public class ModuleTarget {
         }
         return cachedItemCap;
     }
+
+    private LazyOptional<IGasHandler> getGasHandlerFor(Level w) {
+        // called both client and server side...
+        if (!cachedItemCap.isPresent()) {
+            BlockPos pos = gPos.pos();
+            if (w == null || !w.isLoaded(pos)) {
+                cachedItemCap = LazyOptional.empty();
+            } else {
+                BlockEntity te = w.getBlockEntity(pos);
+                cachedGasCap = te == null ? LazyOptional.empty() : te.getCapability(GAS_HANDLER, face);
+            }
+            if (cachedGasCap.isPresent()) cachedGasCap.addListener(c -> cachedGasCap = LazyOptional.empty());
+        }
+        return cachedGasCap;
+    }
+
+
 
     /**
      * Try to get an energy handler for this module target.  Only call this server-side.

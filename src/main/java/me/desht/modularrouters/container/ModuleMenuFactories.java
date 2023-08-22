@@ -33,6 +33,13 @@ public class ModuleMenuFactories {
         return new ModuleMenu(ModMenuTypes.FLUID_MENU.get(), windowId, inv, extra);
     }
 
+
+    public static ModuleMenu createGasMenu(int windowId, Inventory inv, FriendlyByteBuf extra) {
+        return new ModuleMenu(ModMenuTypes.GAS_MENU.get(), windowId, inv, extra);
+    }
+
+
+
     public static ModuleMenu createPlayerMenu(int windowId, Inventory inv, FriendlyByteBuf extra) {
         return new ModuleMenu(ModMenuTypes.PLAYER_MENU.get(), windowId, inv, extra);
     }

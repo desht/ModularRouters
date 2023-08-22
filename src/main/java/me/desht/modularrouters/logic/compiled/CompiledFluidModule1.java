@@ -42,6 +42,7 @@ public class CompiledFluidModule1 extends CompiledModule {
     private final boolean forceEmpty;  // force emptying even if there's a fluid block in the way
     private final boolean regulateAbsolute;  // true = regulate by mB; false = regulate by % of tank's capacity
 
+
     public CompiledFluidModule1(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 

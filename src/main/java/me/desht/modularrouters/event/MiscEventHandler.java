@@ -6,7 +6,6 @@ import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.item.module.ModuleItem;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.player.PlayerEvent;

@@ -41,7 +41,7 @@ sourceSets.main.resources {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: "${project.mappings_version}-${project.mc_version}"
+    mappings channel: 'parchment', version: "2022.11.27-1.19.2"
     runs {
         client {
             workingDirectory file('run')
@@ -133,6 +133,8 @@ dependencies {
     // at runtime, use the full JEI
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
+    implementation fg.deobf("curse.maven:mekanism-268560:${project.mekanism_fileId}")
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {

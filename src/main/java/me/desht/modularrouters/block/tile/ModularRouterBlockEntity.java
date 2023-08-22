@@ -15,6 +15,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.event.TickEventHandler;
 import me.desht.modularrouters.item.module.DetectorModule.SignalType;
 import me.desht.modularrouters.item.module.FluidModule1;
+import me.desht.modularrouters.item.module.GasModule1;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.module.ModuleItem.RelativeDirection;
 import me.desht.modularrouters.item.upgrade.CamouflageUpgrade;
@@ -72,6 +73,9 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static me.desht.modularrouters.core.ModItems.GAS_HANDLER;
+import static me.desht.modularrouters.core.ModItems.GAS_HANDLER_ITEM;
+
 public class ModularRouterBlockEntity extends BlockEntity implements ICamouflageable, MenuProvider {
     public static final GameProfile DEFAULT_FAKEPLAYER_PROFILE = new GameProfile(
             UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()),
@@ -120,8 +124,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private final Map<Item, Integer> upgradeCount = new HashMap<>();
 
     private int fluidTransferRate;  // mB/t
+    private int gasTransferRate;  // mB/t
     private int fluidTransferRemainingIn = 0;
+    private long gasTransferRemainingIn = 0;
     private int fluidTransferRemainingOut = 0;
+    private long gasTransferRemainingOut = 0;
 
     // for tracking redstone emission levels for the detector module
     private final int SIDES = MiscUtil.DIRECTIONS.length;
@@ -227,8 +234,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             return inventoryCap.cast();
         } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
             return bufferHandler.getFluidCapability().cast();
+        } else if (cap == GAS_HANDLER) {
+            return bufferHandler.getGasCapability().cast();
         } else if (cap == ForgeCapabilities.FLUID_HANDLER_ITEM) {
             return bufferHandler.getFluidItemCapability().cast();
+        } else if (cap == GAS_HANDLER_ITEM) {
+            return bufferHandler.getGasItemCapability().cast();
         } else if (cap == ForgeCapabilities.ENERGY) {
             return energyStorage.getTransferRate() > 0 ? energyCap.cast() : bufferHandler.getEnergyCapability().cast();
         }
@@ -333,6 +344,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         } else {
             if (counter >= getTickRate()) {
                 allocateFluidTransfer(counter);
+                allocateGasTransfer(counter);
                 executeModules(false);
                 counter = 0;
             }
@@ -581,6 +593,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             fluidTransferRate = Math.min(ConfigHolder.common.router.fluidMaxTransferRate.get(),
                     ConfigHolder.common.router.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * ConfigHolder.common.router.mBperFluidUpgade.get());
 
+            gasTransferRate = Math.min(ConfigHolder.common.router.gasMaxTransferRate.get(),
+                    ConfigHolder.common.router.gasBaseTransferRate.get() + getUpgradeCount(ModItems.GAS_UPGRADE.get()) * ConfigHolder.common.router.mBperGasUpgrade.get());
+
             energyStorage.updateForEnergyUpgrades(getUpgradeCount(ModItems.ENERGY_UPGRADE.get()));
             if (!level.isClientSide) {
                 fakePlayer = null; // in case security upgrades change
@@ -641,13 +656,30 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         fluidTransferRemainingOut = Math.min(fluidTransferRemainingOut + ticks * fluidTransferRate, maxTransfer);
     }
 
+    private void allocateGasTransfer(int ticks) {
+        // increment the in/out gas transfer allowance based on the number of ticks which have passed
+        // and the current gas transfer rate of the router (which depends on the number of gas upgrades)
+        int maxTransfer = ConfigHolder.common.router.baseTickRate.get() * gasTransferRate;
+        gasTransferRemainingIn = Math.min(gasTransferRemainingIn + (long) ticks * gasTransferRate, maxTransfer);
+        gasTransferRemainingOut = Math.min(gasTransferRemainingOut + (long) ticks * gasTransferRate, maxTransfer);
+    }
+
     public int getFluidTransferRate() {
         return fluidTransferRate;
+    }
+
+    public int getGasTransferRate() {
+        return gasTransferRate;
     }
 
     public int getCurrentFluidTransferAllowance(FluidModule1.FluidDirection dir) {
         return dir == FluidModule1.FluidDirection.IN ? fluidTransferRemainingIn : fluidTransferRemainingOut;
     }
+
+    public long getCurrentGasTransferAllowance(GasModule1.GasDirection dir) {
+        return dir == GasModule1.GasDirection.IN ? gasTransferRemainingIn : gasTransferRemainingOut;
+    }
+
 
     public void transferredFluid(int amount, FluidModule1.FluidDirection dir) {
         switch (dir) {
@@ -666,6 +698,24 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
     }
 
+    public void transferredGas(long amount, GasModule1.GasDirection dir) {
+        switch (dir) {
+            case IN -> {
+                if (gasTransferRemainingIn < amount)
+                    ModularRouters.LOGGER.warn("gas transfer: " + gasTransferRemainingIn + " < " + amount);
+                gasTransferRemainingIn = Math.max(0, gasTransferRemainingIn - amount);
+            }
+            case OUT -> {
+                if (gasTransferRemainingOut < amount)
+                    ModularRouters.LOGGER.warn("gas transfer: " + gasTransferRemainingOut + " < " + amount);
+                gasTransferRemainingOut = Math.max(0, gasTransferRemainingOut - amount);
+            }
+            default -> {
+            }
+        }
+    }
+
+
     public Direction getAbsoluteFacing(RelativeDirection direction) {
         return direction.toAbsolute(getBlockState().getValue(ModularRouterBlock.FACING));
     }
@@ -683,6 +733,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                 || hasPulsedModules && redstoneBehaviour == RouterRedstoneBehaviour.ALWAYS) {
             if (redstonePower > lastPower && pulseCounter >= tickRate) {
                 allocateFluidTransfer(Math.min(pulseCounter, ConfigHolder.common.router.baseTickRate.get()));
+                allocateGasTransfer(Math.min(pulseCounter, ConfigHolder.common.router.baseTickRate.get()));
                 executeModules(true);
                 pulseCounter = 0;
                 if (active) {
