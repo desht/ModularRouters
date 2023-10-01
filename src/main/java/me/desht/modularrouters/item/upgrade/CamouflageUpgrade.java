@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.util.MiscUtil;
@@ -60,7 +61,7 @@ public class CamouflageUpgrade extends UpgradeItem {
                         .append(getCamoStateDisplayName(stack))
                         .withStyle(ChatFormatting.YELLOW), true);
             } else {
-                player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
+                player.playSound(ModSounds.SUCCESS.get(), ConfigHolder.client.sound.bleepVolume.get().floatValue(), 1.5f);
             }
             return InteractionResult.SUCCESS;
         } else if (ctx.getLevel().isClientSide) {

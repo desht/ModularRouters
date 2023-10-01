@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
@@ -80,7 +81,8 @@ public abstract class TargetedModule extends ModuleItem {
             if (tgt != null) {
                 MutableComponent msg = Component.translatable("modularrouters.chatText.misc.targetSet").append(tgt.getTextComponent());
                 player.displayClientMessage(msg.withStyle(ChatFormatting.YELLOW), true);
-                world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, 1.3f);
+                world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
+                        ConfigHolder.client.sound.bleepVolume.get().floatValue(), 1.3f);
             }
         }
     }
@@ -109,7 +111,8 @@ public abstract class TargetedModule extends ModuleItem {
                 return;
             }
 
-            world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, removing ? 1.1f : 1.3f);
+            world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
+                    ConfigHolder.client.sound.bleepVolume.get().floatValue(), removing ? 1.1f : 1.3f);
             setTargets(stack, targets);
         }
     }
@@ -152,7 +155,8 @@ public abstract class TargetedModule extends ModuleItem {
     public InteractionResultHolder<ItemStack> onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
         if (!world.isClientSide && getTarget(stack) != null && getMaxTargets() == 1) {
             setTarget(stack, world, null, null);
-            world.playSound(null, player.blockPosition(), ModSounds.SUCCESS.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
+            world.playSound(null, player.blockPosition(), ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
+                    ConfigHolder.client.sound.bleepVolume.get().floatValue(), 1.1f);
             player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW), true);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);

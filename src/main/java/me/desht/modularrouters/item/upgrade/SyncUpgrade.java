@@ -58,7 +58,7 @@ public class SyncUpgrade extends UpgradeItem {
                 setTunedValue(stack, world.random.nextInt(ConfigHolder.common.router.baseTickRate.get()));
                 player.displayClientMessage(Component.translatable("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
             } else {
-                player.playSound(ModSounds.SUCCESS.get(), 1.0f, 1.5f);
+                player.playSound(ModSounds.SUCCESS.get(), ConfigHolder.client.sound.bleepVolume.get().floatValue(), 1.5f);
             }
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);

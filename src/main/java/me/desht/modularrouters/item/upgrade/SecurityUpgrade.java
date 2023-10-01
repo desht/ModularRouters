@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.IPlayerOwned;
 import net.minecraft.ChatFormatting;
@@ -139,7 +140,8 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
             String name = targetPlayer.getDisplayName().toString();
             Result res = player.isSteppingCarefully() ? removePlayer(stack, id) : addPlayer(stack, id, name);
             if (player.level().isClientSide) {
-                player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(), 1.0f, 1.0f);
+                player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(),
+                        ConfigHolder.client.sound.bleepVolume.get().floatValue(), 1.0f);
             } else {
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.security." + res.toString(), name), false);
             }

@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.BulkItemFilterMenu;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
@@ -30,7 +31,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.Comparator;
 import java.util.List;
 
-public class    BulkItemFilter extends SmartFilterItem {
+public class BulkItemFilter extends SmartFilterItem {
     public static final int FILTER_SIZE = 54;
 
     @Override
@@ -71,7 +72,8 @@ public class    BulkItemFilter extends SmartFilterItem {
             return InventoryUtils.getInventory(world, ctx.getClickedPos(), ctx.getClickedFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
-                world.playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundSource.MASTER, 1.0f, 1.0f);
+                world.playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundSource.MASTER,
+                        ConfigHolder.client.sound.bleepVolume.get().floatValue(), 1.0f);
                 return InteractionResult.SUCCESS;
             }).orElse(super.useOn(ctx));
         } else {

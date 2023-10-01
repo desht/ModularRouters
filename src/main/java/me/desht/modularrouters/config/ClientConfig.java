@@ -10,7 +10,12 @@ public class ClientConfig {
         public ForgeConfigSpec.BooleanValue renderFlyingItems;
     }
 
+    public static class Sound {
+        public ForgeConfigSpec.DoubleValue bleepVolume;
+    }
+
     public final Misc misc = new Misc();
+    public final Sound sound = new Sound();
 
     ClientConfig(ForgeConfigSpec.Builder builder) {
         builder.push("Misc");
@@ -26,6 +31,12 @@ public class ClientConfig {
         misc.heldRouterShowsCamoRouters = builder.comment("When holding an Item Router, should nearby camouflaged routers be highlighted?")
                 .translation("gui.config.heldRouterShowsCamoRouters")
                 .define("heldRouterShowsCamoRouters", true);
+        builder.pop();
+
+        builder.push("Sound");
+        sound.bleepVolume = builder.comment("Volume of the bleep played when various operations are done with modules/upgrades/etc. such as binding to an inventory, setting camo...")
+                .translation("gui.config.moduleBindVolume")
+                .defineInRange("bleepVolume", 0.5, 0.0, 2.0);
         builder.pop();
     }
 }
