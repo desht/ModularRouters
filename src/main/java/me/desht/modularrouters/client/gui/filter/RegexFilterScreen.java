@@ -80,11 +80,11 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            graphics.drawString(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080);
+            graphics.drawString(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080, false);
         }
 
         if (!errorMsg.isEmpty()) {
-            graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040);
+            graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
         }
 
         super.render(graphics, mouseX, mouseY, partialTicks);

@@ -85,12 +85,12 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0x404040, false);
 
         if (!modName.isEmpty()) {
-            graphics.drawString(font, modName, 29, 23, 0x404040);
+            graphics.drawString(font, modName, 29, 23, 0x404040, false);
         }
 
         for (int i = 0; i < mods.size(); i++) {
             String mod = ModNameCache.getModName(mods.get(i));
-            graphics.drawString(font, mod, 28, 47 + i * 19, 0x404080);
+            graphics.drawString(font, mod, 28, 47 + i * 19, 0x404080, false);
         }
     }
 

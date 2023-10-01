@@ -124,7 +124,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
-            graphics.drawString(font, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080);
+            graphics.drawString(font, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080, false);
         }
 
         super.render(graphics, mouseX, mouseY, partialTicks);
