@@ -51,19 +51,17 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintable {
     public enum ModuleFlags {
-        BLACKLIST(true, "F_blacklist", 0),
-        IGNORE_DAMAGE(false, "F_ignoreDamage", 32),
-        IGNORE_NBT(true, "F_ignoreNBT", 64),
-        IGNORE_TAGS(true, "F_ignoreTags", 96);
+        BLACKLIST(true, "F_blacklist"),
+        IGNORE_DAMAGE(false, "F_ignoreDamage"),
+        IGNORE_NBT(true, "F_ignoreNBT"),
+        IGNORE_TAGS(true, "F_ignoreTags");
 
         private final boolean defaultValue;
         private final String name;
-        private final int textureX;
 
-        ModuleFlags(boolean defaultValue, String name, int textureX) {
+        ModuleFlags(boolean defaultValue, String name) {
             this.defaultValue = defaultValue;
             this.name = name;
-            this.textureX = textureX;
         }
 
         public boolean getDefaultValue() {
@@ -72,10 +70,6 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
         public String getName() {
             return name;
-        }
-
-        public int getTextureX(boolean toggled) {
-            return textureX + (toggled ? 16 : 0);
         }
 
         public int getTextureY() {
@@ -255,7 +249,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             ItemStack pick = pickaxeUser.getPickaxe(itemstack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").append(pick.getHoverName().plainCopy().withStyle(ChatFormatting.AQUA)));
             EnchantmentHelper.getEnchantments(pick).forEach((ench, level) ->
-                    list.add(Component.literal("\u25b6 ").append(ench.getFullname(level).plainCopy().withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW)));
+                    list.add(Component.literal("▶ ").append(ench.getFullname(level).plainCopy().withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW)));
         }
 
         int energy = getEnergyCost(itemstack);
@@ -273,7 +267,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             int n = c.getAugmentCount(augment);
             if (n > 0) {
                 ItemStack augmentStack = new ItemStack(augment);
-                MutableComponent comp = Component.literal(" \u2022 ").withStyle(ChatFormatting.DARK_GREEN);
+                MutableComponent comp = Component.literal(" • ").withStyle(ChatFormatting.DARK_GREEN);
                 comp.append(n > 1 ? Component.literal(n + " x ").append(augmentStack.getHoverName()) : augmentStack.getHoverName().copy());
                 comp.append(augment.getExtraInfo(n, stack).copy().withStyle(ChatFormatting.AQUA));
                 toAdd.add(comp);
@@ -309,13 +303,13 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack, null);
         for (int i = 0; i < filterHandler.getSlots(); i++) {
             ItemStack s = filterHandler.getStackInSlot(i);
-            if (s.getItem() instanceof SmartFilterItem) {
-                int size = ((SmartFilterItem) s.getItem()).getSize(s);
+            if (s.getItem() instanceof SmartFilterItem sf) {
+                int size = sf.getSize(s);
                 String suffix = size > 0 ? " [" + size + "]" : "";
-                l2.add(Component.literal(" \u2022 ").append(s.getHoverName().plainCopy().append(suffix))
+                l2.add(Component.literal(" • ").append(s.getHoverName().plainCopy().append(suffix))
                         .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
             } else if (!s.isEmpty()) {
-                l2.add(Component.literal(" \u2022 ").append(getFilterItemDisplayName(s).plainCopy()
+                l2.add(Component.literal(" • ").append(getFilterItemDisplayName(s).plainCopy()
                         .withStyle(ChatFormatting.AQUA)));
             }
         }

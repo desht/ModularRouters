@@ -321,6 +321,10 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.BULK_ITEM_FILTER.get(), Items.REPEATER, Items.REDSTONE_TORCH
         ).save(consumer);
 
+        shapeless(ModItems.TAG_FILTER.get(), ModItems.BULK_ITEM_FILTER.get(),
+                ModItems.BULK_ITEM_FILTER.get(), Items.PAPER, Ingredient.of(Tags.Items.DYES_BLACK)
+        ).save(consumer);
+
         shaped(ModItems.INSPECTION_FILTER.get(), ModItems.BULK_ITEM_FILTER.get(),
                 "EBE/ P ",
                 'B', ModItems.BULK_ITEM_FILTER.get(),

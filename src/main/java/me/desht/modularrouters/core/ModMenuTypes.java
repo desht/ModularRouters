@@ -41,6 +41,8 @@ public class ModMenuTypes {
             = register("bulk_item_filter", BulkItemFilterMenu::new);
     public static final RegistryObject<MenuType<ModFilterMenu>> MOD_FILTER_MENU
             = register("mod_filter", ModFilterMenu::new);
+    public static final RegistryObject<MenuType<TagFilterMenu>> TAG_FILTER_MENU
+            = register("tag_filter", TagFilterMenu::new);
 
     private static <C extends AbstractContainerMenu, T extends MenuType<C>> RegistryObject<T> register(String name, IContainerFactory<? extends C> f) {
         //noinspection unchecked

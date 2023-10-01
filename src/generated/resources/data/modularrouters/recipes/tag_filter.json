@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "modularrouters:bulk_item_filter"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "tag": "forge:dyes/black"
+    }
+  ],
+  "result": {
+    "item": "modularrouters:tag_filter"
+  }
+}

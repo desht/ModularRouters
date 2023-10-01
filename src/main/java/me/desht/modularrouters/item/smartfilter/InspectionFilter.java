@@ -76,26 +76,27 @@ public class InspectionFilter extends SmartFilterItem {
         ComparisonList comparisonList = getComparisonList(filterStack);
 
         switch (message.getOp()) {
-            case ADD_STRING:
+            case ADD_STRING -> {
                 if (comparisonList.items.size() < MAX_SIZE) {
                     Comparison c = Comparison.fromString(message.getPayload().getString(NBT_COMPARISON));
                     comparisonList.items.add(c);
                     setComparisonList(filterStack, comparisonList);
                     return new GuiSyncMessage(filterStack);
                 }
-                break;
-            case REMOVE_AT:
+            }
+            case REMOVE_AT -> {
                 int pos = message.getPayload().getInt("Pos");
                 if (pos >= 0 && pos < comparisonList.items.size()) {
                     comparisonList.items.remove(pos);
                     setComparisonList(filterStack, comparisonList);
                     return new GuiSyncMessage(filterStack);
                 }
-                break;
-            case ANY_ALL_FLAG:
+            }
+            case ANY_ALL_FLAG -> {
                 comparisonList.setMatchAll(message.getPayload().getBoolean(NBT_MATCH_ALL));
                 setComparisonList(filterStack, comparisonList);
                 return new GuiSyncMessage(filterStack);
+            }
         }
         return null;
     }

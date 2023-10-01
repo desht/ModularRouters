@@ -4,10 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.item.augment.*;
 import me.desht.modularrouters.item.module.*;
-import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
-import me.desht.modularrouters.item.smartfilter.InspectionFilter;
-import me.desht.modularrouters.item.smartfilter.ModFilter;
-import me.desht.modularrouters.item.smartfilter.RegexFilter;
+import me.desht.modularrouters.item.smartfilter.*;
 import me.desht.modularrouters.item.upgrade.*;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -77,6 +74,7 @@ public class ModItems {
     public static final RegistryObject<Item> INSPECTION_FILTER = register("inspection_filter", InspectionFilter::new);
     public static final RegistryObject<Item> MOD_FILTER = register("mod_filter", ModFilter::new);
     public static final RegistryObject<Item> REGEX_FILTER = register("regex_filter", RegexFilter::new);
+    public static final RegistryObject<Item> TAG_FILTER = register("tag_filter", TagFilter::new);
 
     private static <T extends Item> RegistryObject<T> register(final String name, final Supplier<T> sup) {
         RegistryObject<T> ro = ITEMS.register(name, sup);

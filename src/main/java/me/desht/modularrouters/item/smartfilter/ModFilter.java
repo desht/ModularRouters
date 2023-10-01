@@ -57,14 +57,14 @@ public class ModFilter extends SmartFilterItem {
         super.addExtraInformation(stack, list);
         if (stack.getTagElement(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", l.size()));
+            list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", l.size()));
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
                     .map(s -> " \u2022 " + ChatFormatting.AQUA + s)
                     .map(Component::literal)
                     .toList());
         } else {
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.modFilter.count", 0));
+            list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", 0));
         }
     }
 
@@ -101,7 +101,8 @@ public class ModFilter extends SmartFilterItem {
     }
 
     @Override
-    public int getSize(ItemStack filterStack) {CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
+    public int getSize(ItemStack filterStack) {
+        CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         return tag != null ? tag.getList(NBT_MODS, Tag.TAG_STRING).size() : 0;
     }
 }

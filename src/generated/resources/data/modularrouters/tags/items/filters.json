@@ -3,6 +3,7 @@
     "modularrouters:bulk_item_filter",
     "modularrouters:inspection_filter",
     "modularrouters:mod_filter",
-    "modularrouters:regex_filter"
+    "modularrouters:regex_filter",
+    "modularrouters:tag_filter"
   ]
 }

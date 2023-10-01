@@ -97,5 +97,6 @@ public class ClientSetup {
 
         MenuScreens.register(ModMenuTypes.BULK_FILTER_MENU.get(), BulkItemFilterScreen::new);
         MenuScreens.register(ModMenuTypes.MOD_FILTER_MENU.get(), ModFilterScreen::new);
+        MenuScreens.register(ModMenuTypes.TAG_FILTER_MENU.get(), TagFilterScreen::new);
     }
 }

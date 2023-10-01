@@ -23,6 +23,11 @@ public class RegexFilter extends SmartFilterItem {
     private static final String NBT_REGEX = "Regex";
     public static final int MAX_SIZE = 6;
 
+    @Override
+    public boolean hasMenu() {
+        return false;
+    }
+
     public static List<String> getRegexList(ItemStack filterStack) {
         CompoundTag tag = filterStack.getTagElement(ModularRouters.MODID);
         if (tag != null) {
@@ -35,11 +40,6 @@ public class RegexFilter extends SmartFilterItem {
         } else {
             return Lists.newArrayList();
         }
-    }
-
-    @Override
-    public boolean hasMenu() {
-        return false;
     }
 
     private static void setRegexList(ItemStack filterStack, List<String> regex) {
