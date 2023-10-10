@@ -9,7 +9,7 @@
     },
     {
       "type": "text",
-      "text": "Termination is configured on a per-module basis, by the 'T' button beneath the filter slots. By default, it's inactive; if you switch if on for a module, then $(italic)if/$ the module does any work this router tick, the router will stop there. No further modules (i.e. to the right of this module) will be executed this time round."
+      "text": "Termination is configured on a per-module basis, by the 'T' button beneath the filter slots. By default, it's inactive; if you switch it on for a module, then $(italic)if/$ the module does any work this router tick, the router will stop there. No further modules (i.e. to the right of this module) will be executed this time round."
     },
     {
       "type": "text",
