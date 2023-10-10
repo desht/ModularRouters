@@ -6,7 +6,11 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.18.2
 
-### 9.1.1 (1 May 2022)
+### 9.1.2
+
+* JEI ghost support for the Bulk Item Filter (thanks @Attack8)
+
+### 9.1.1
 
 * Added fr_fr translation (thanks @dracnis)
 * Added ko_kr translation (thanks @gjeodnd12165)
@@ -14,7 +18,7 @@ Changes are in reverse chronological order; newest changes at the top.
 * Fixed router inventory capabilities not being invalidated when router was broken (https://github.com/desht/ModularRouters/issues/148)
 * Worked around known Forge issue with EntityPlaceEvent (fired by Placer & Extruder modules) not containing correct blockstate (https://github.com/desht/ModularRouters/issues/158)
 
-### 9.1.0 (5 Mar 2022)
+### 9.1.0
 
 * Just a port to Minecraft 1.18.2; this release is *not* compatible with 1.18.1. No new player-visible features.
 * The config settings `activatorEntityBlacklist` and `activatorEntityAttackBlacklist` are removed, and replaced by entity type tags in `data/modularrouters/tags/entity_types`:
