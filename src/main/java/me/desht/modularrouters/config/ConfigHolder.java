@@ -1,25 +1,25 @@
 package me.desht.modularrouters.config;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ConfigHolder {
     public static ClientConfig client;
     public static CommonConfig common;
-    private static ForgeConfigSpec configCommonSpec;
-    private static ForgeConfigSpec configClientSpec;
+    private static ModConfigSpec configCommonSpec;
+    private static ModConfigSpec configClientSpec;
 
     public static void init() {
-        final Pair<ClientConfig, ForgeConfigSpec> spec1 = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+        final Pair<ClientConfig, ModConfigSpec> spec1 = new ModConfigSpec.Builder().configure(ClientConfig::new);
         client = spec1.getLeft();
         configClientSpec = spec1.getRight();
 
-        final Pair<CommonConfig, ForgeConfigSpec> spec2 = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
+        final Pair<CommonConfig, ModConfigSpec> spec2 = new ModConfigSpec.Builder().configure(CommonConfig::new);
         common = spec2.getLeft();
         configCommonSpec = spec2.getRight();
 

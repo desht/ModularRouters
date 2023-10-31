@@ -2,7 +2,6 @@ package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.XYPoint;

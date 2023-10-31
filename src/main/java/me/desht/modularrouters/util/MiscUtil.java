@@ -22,8 +22,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.annotation.CheckForNull;
 import java.text.NumberFormat;

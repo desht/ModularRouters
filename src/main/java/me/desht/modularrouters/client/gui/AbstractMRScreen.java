@@ -50,8 +50,8 @@ public abstract class AbstractMRScreen extends Screen implements IManagedTextFie
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double dir) {
-        return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir);
+    public boolean mouseScrolled(double x, double y, double dir, double something) {
+        return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir, something);
     }
 
     @Override

@@ -25,11 +25,11 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -101,7 +101,7 @@ public class CompiledVacuumModule extends CompiledModule {
         for (Direction face : MiscUtil.DIRECTIONS) {
             BlockEntity te = router.nonNullLevel().getBlockEntity(router.getBlockPos().relative(face));
             if (te != null) {
-                te.getCapability(ForgeCapabilities.FLUID_HANDLER, face.getOpposite()).ifPresent(handler -> {
+                te.getCapability(Capabilities.FLUID_HANDLER, face.getOpposite()).ifPresent(handler -> {
                     if (handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
                         fluidReceiver = te;
                         fluidReceiverFace = face.getOpposite();
@@ -171,8 +171,8 @@ public class CompiledVacuumModule extends CompiledModule {
                 findFluidReceiver(router);
             }
             lazyFluidHandler = fluidReceiver != null ?
-                fluidReceiver.getCapability(ForgeCapabilities.FLUID_HANDLER, fluidReceiverFace) :
-                router.getCapability(ForgeCapabilities.FLUID_HANDLER);
+                fluidReceiver.getCapability(Capabilities.FLUID_HANDLER, fluidReceiverFace) :
+                router.getCapability(Capabilities.FLUID_HANDLER);
             spaceForXp = lazyFluidHandler.map(this::findSpaceForXPFluid).orElse(0);
         }
         if (spaceForXp == 0) {

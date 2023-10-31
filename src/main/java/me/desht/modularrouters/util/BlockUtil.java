@@ -18,13 +18,13 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.common.IPlantable;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.TierSortingRegistry;
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.Collections;
 import java.util.List;
@@ -115,7 +115,7 @@ public class BlockUtil {
             BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, toPlace);
             BlockEvent.EntityPlaceEvent event = new CustomEntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), fakePlayer, newState);
-            MinecraftForge.EVENT_BUS.post(event);
+            NeoForge.EVENT_BUS.post(event);
             if (!event.isCanceled() && world.setBlockAndUpdate(pos, newState)) {
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                 BlockItem.updateCustomBlockEntityTag(world, fakePlayer, pos, toPlace);
@@ -132,7 +132,7 @@ public class BlockUtil {
 
         BlockSnapshot snap = BlockSnapshot.create(world.dimension(), world, pos);
         BlockEvent.EntityPlaceEvent event = new CustomEntityPlaceEvent(snap, Blocks.AIR.defaultBlockState(), router.getFakePlayer(), newState);
-        MinecraftForge.EVENT_BUS.post(event);
+        NeoForge.EVENT_BUS.post(event);
         return !event.isCanceled() && world.setBlockAndUpdate(pos, newState);
     }
 
@@ -174,7 +174,7 @@ public class BlockUtil {
 
         if (allDrops.isEmpty() || !groups.get(true).isEmpty()) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
-            MinecraftForge.EVENT_BUS.post(breakEvent);
+            NeoForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
                 world.removeBlock(pos, false);
                 if (ConfigHolder.common.router.blockBreakXPDrops.get() && breakEvent.getExpToDrop() > 0) {

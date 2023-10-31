@@ -4,18 +4,17 @@ import me.desht.modularrouters.container.BulkItemFilterMenu;
 import me.desht.modularrouters.container.FilterSlot;
 import me.desht.modularrouters.container.ModuleMenu;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 /**
  * Received on: SERVER
  * Sent by client when a filter slot is updated via the JEI ghost handler
  */
-public class ModuleFilterMessage {
+public class ModuleFilterMessage implements SimpleMessage {
     private final int slot;
     private final ItemStack stack;
 
@@ -29,22 +28,21 @@ public class ModuleFilterMessage {
         stack = buffer.readItem();
     }
 
-    public void toBytes(FriendlyByteBuf buffer) {
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
         buffer.writeVarInt(slot);
         buffer.writeItem(stack);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            Player player = ctx.get().getSender();
-            if (player != null) {
-                AbstractContainerMenu c = player.containerMenu;
-                if (isValidContainer(c) && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
-                    c.getSlot(slot).set(stack);
-                }
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
+        if (player != null) {
+            AbstractContainerMenu c = player.containerMenu;
+            if (isValidContainer(c) && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
+                c.getSlot(slot).set(stack);
             }
-        });
-        ctx.get().setPacketHandled(true);
+        }
     }
 
     private boolean isValidContainer(AbstractContainerMenu c) {

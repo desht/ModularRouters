@@ -9,12 +9,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 /**
  * Received on: SERVER
@@ -22,14 +21,10 @@ import java.util.function.Supplier;
  * Sent when a filter's settings have been changed in any way via its GUI.
  * The filter could be in a player's hand, or in a module (which may or may not be in a router...)
  */
-public class FilterSettingsMessage {
+public class FilterSettingsMessage implements SimpleMessage {
     private final Operation op;
     private final CompoundTag payload;
     private final MFLocator locator;
-
-    public enum Operation {
-        CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG
-    }
 
     public FilterSettingsMessage(Operation op, MFLocator locator, CompoundTag payload) {
         this.op = op;
@@ -43,10 +38,19 @@ public class FilterSettingsMessage {
         payload = buf.readNbt();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeEnum(op);
-        locator.writeBuf(buf);
-        buf.writeNbt(payload);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeEnum(op);
+        locator.writeBuf(buffer);
+        buffer.writeNbt(payload);
+    }
+
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
+        if (player != null) {
+            processPacket(player);
+        }
     }
 
     public Operation getOp() {
@@ -60,16 +64,6 @@ public class FilterSettingsMessage {
     public LazyOptional<IItemHandler> getTargetInventory() {
         ModuleTarget target = ModuleTarget.fromNBT(payload);
         return target.getItemHandler();
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
-            if (player != null) {
-                processPacket(player);
-            }
-        });
-        ctx.get().setPacketHandled(true);
     }
 
     private void processPacket(ServerPlayer player) {
@@ -95,5 +89,9 @@ public class FilterSettingsMessage {
                 PacketHandler.NETWORK.send(PacketDistributor.NEAR.with(() -> tp), response);
             }
         }
+    }
+
+    public enum Operation {
+        CLEAR_ALL, REMOVE_ITEM, MERGE, LOAD, ADD_STRING, REMOVE_AT, ANY_ALL_FLAG
     }
 }

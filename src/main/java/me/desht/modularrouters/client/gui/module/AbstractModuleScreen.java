@@ -48,9 +48,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -114,7 +114,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         this.imageHeight = GUI_HEIGHT;
         this.mouseOverHelp = new MouseOverHelp(this);
 
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     @Override

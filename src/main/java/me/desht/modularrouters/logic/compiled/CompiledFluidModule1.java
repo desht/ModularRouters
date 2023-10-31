@@ -16,15 +16,18 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.*;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.SoundActions;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -56,7 +59,7 @@ public class CompiledFluidModule1 extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (getTarget() == null) return false;
 
-        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
+        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(Capabilities.FLUID_HANDLER_ITEM);
 
         if (!routerCap.isPresent()) {
             return false;
@@ -81,8 +84,8 @@ public class CompiledFluidModule1 extends CompiledModule {
             // no block entity at the target position; try to interact with a fluid block in the world
             boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
             didWork = switch (fluidDirection) {
-                case IN -> tryPickupFluid(routerCap, world, pos, playSound);
-                case OUT -> tryPourOutFluid(routerCap, world, pos, playSound);
+                case IN -> tryPickupFluid(router, routerCap, world, pos, playSound);
+                case OUT -> tryPourOutFluid(router, routerCap, world, pos, playSound);
             };
         }
 
@@ -92,7 +95,7 @@ public class CompiledFluidModule1 extends CompiledModule {
         return didWork;
     }
 
-    private boolean tryPickupFluid(LazyOptional<IFluidHandlerItem> routerCap, Level world, BlockPos pos, boolean playSound) {
+    private boolean tryPickupFluid(ModularRouterBlockEntity router, LazyOptional<IFluidHandlerItem> routerCap, Level world, BlockPos pos, boolean playSound) {
         BlockState state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof BucketPickup bucketPickup)) {
             return false;
@@ -113,7 +116,7 @@ public class CompiledFluidModule1 extends CompiledModule {
             return false;
         }
         // actually do the pickup & transfer now
-        bucketPickup.pickupBlock(world, pos, state);
+        bucketPickup.pickupBlock(router.getFakePlayer(), world, pos, state);
         FluidStack transferred = routerCap.map(destHandler ->
                 FluidUtil.tryFluidTransfer(destHandler, tank, BUCKET_VOLUME, true))
                 .orElse(FluidStack.EMPTY);
@@ -123,7 +126,7 @@ public class CompiledFluidModule1 extends CompiledModule {
         return !transferred.isEmpty();
     }
 
-    private boolean tryPourOutFluid(LazyOptional<IFluidHandlerItem> routerFluidCap, Level world, BlockPos pos, boolean playSound) {
+    private boolean tryPourOutFluid(ModularRouterBlockEntity router, LazyOptional<IFluidHandlerItem> routerFluidCap, Level world, BlockPos pos, boolean playSound) {
         if (!forceEmpty && !(world.isEmptyBlock(pos) || world.getBlockState(pos).getBlock() instanceof LiquidBlockContainer)) {
             return false;
         }
@@ -145,7 +148,7 @@ public class CompiledFluidModule1 extends CompiledModule {
             boolean isReplaceable = blockstate.canBeReplaced(fluid);
             Block block = blockstate.getBlock();
             if (world.isEmptyBlock(pos) /*|| isNotSolid*/ || isReplaceable
-                    || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(world, pos, blockstate, toPlace.getFluid())) {
+                    || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(router.getFakePlayer(), world, pos, blockstate, toPlace.getFluid())) {
                 if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
                     // no pouring water in the nether!
                     playEvaporationEffects(world, pos, fluid);

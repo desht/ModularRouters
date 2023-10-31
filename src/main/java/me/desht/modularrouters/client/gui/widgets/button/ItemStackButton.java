@@ -2,8 +2,6 @@ package me.desht.modularrouters.client.gui.widgets.button;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

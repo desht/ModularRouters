@@ -3,7 +3,7 @@ package me.desht.modularrouters.util;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class CountedItemStacks extends Object2IntOpenCustomHashMap<ItemStack> {
     private static class ItemStackHashingStrategy implements Strategy<ItemStack> {

@@ -26,7 +26,7 @@ public abstract class AbstractMRContainerScreen<T extends AbstractContainerMenu>
 
     @Override
     public void render(GuiGraphics graphics, int x, int y, float partialTicks) {
-        this.renderBackground(graphics);
+        this.renderBackground(graphics, x, y, partialTicks);
         super.render(graphics, x, y, partialTicks);
         if (textFieldManager != null) {
             textFieldManager.drawTextFields(graphics, x, y, partialTicks);
@@ -46,8 +46,8 @@ public abstract class AbstractMRContainerScreen<T extends AbstractContainerMenu>
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double dir) {
-        return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir);
+    public boolean mouseScrolled(double x, double y, double dir, double something) {
+        return textFieldManager != null ? textFieldManager.mouseScrolled(dir) : super.mouseScrolled(x, y, dir, something);
     }
 
     @Override

@@ -2,15 +2,14 @@ package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.item.module.ModuleItem;
-import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.network.ValidateModuleMessage;
 import me.desht.modularrouters.util.Scheduler;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ModularRouters.MODID)
 public class ClientEventHandler {

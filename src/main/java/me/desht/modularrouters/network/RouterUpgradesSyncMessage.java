@@ -6,18 +6,17 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 /**
  * Received on: CLIENT
  * Sent when a router GUI is opened to sync all the upgrades to the clientside TE
  * Various GUI messages/tooltips/etc. depend on knowing what upgrades the router has
  */
-public class RouterUpgradesSyncMessage {
+public class RouterUpgradesSyncMessage implements SimpleMessage {
     private final BlockPos pos;
     private final ItemStackHandler handler;
 
@@ -36,18 +35,18 @@ public class RouterUpgradesSyncMessage {
         handler.deserializeNBT(buf.readNbt());
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeBlockPos(pos);
-        buf.writeNbt(handler.serializeNBT());
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeBlockPos(pos);
+        buffer.writeNbt(handler.serializeNBT());
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            Level w = ClientUtil.theClientWorld();
-            if (w != null) {
-                w.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> router.setUpgradesFrom(handler));
-            }
-        });
-        ctx.get().setPacketHandled(true);
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        Level level = ClientUtil.theClientLevel();
+        if (level != null && level.isLoaded(pos)) {
+            level.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
+                    .ifPresent(router -> router.setUpgradesFrom(handler));
+        }
     }
 }

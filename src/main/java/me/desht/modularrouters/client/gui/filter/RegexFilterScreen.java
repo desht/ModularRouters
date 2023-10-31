@@ -1,12 +1,10 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.util.MFLocator;
@@ -73,7 +71,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics);
+        renderBackground(graphics, mouseX, mouseY, partialTicks);
 
         graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);

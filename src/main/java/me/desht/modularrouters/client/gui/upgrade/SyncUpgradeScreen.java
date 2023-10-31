@@ -1,12 +1,10 @@
 package me.desht.modularrouters.client.gui.upgrade;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.AbstractMRScreen;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import me.desht.modularrouters.network.PacketHandler;
@@ -70,7 +68,7 @@ public class SyncUpgradeScreen extends AbstractMRScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics);
+        renderBackground(graphics, mouseX, mouseY, partialTicks);
 
         graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);

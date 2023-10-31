@@ -3,6 +3,8 @@ package me.desht.modularrouters.datagen;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
+import me.desht.modularrouters.recipe.GuideBookRecipe;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -12,23 +14,23 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+import net.neoforged.neoforge.common.crafting.ConditionalRecipeBuilder;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModRecipeProvider extends RecipeProvider {
-    public ModRecipeProvider(DataGenerator generator) {
-        super(generator.getPackOutput());
+    public ModRecipeProvider(DataGenerator generator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(generator.getPackOutput(), lookupProvider);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(RecipeOutput consumer) {
         shaped(ModBlocks.MODULAR_ROUTER.get(), 4, Items.IRON_INGOT,
                 "IBI/BMB/IBI",
                 'I', Tags.Items.INGOTS_IRON,
@@ -337,10 +339,10 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         SpecialRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
-        ConditionalRecipe.builder()
-                .addCondition(new ModLoadedCondition("patchouli"))
-                .addRecipe(c -> SpecialRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get()).save(c, RL("guide_book").toString()))
-                .build(consumer, RL("guide_book"));
+//        new ConditionalRecipeBuilder()
+//                .withCondition(new ModLoadedCondition("patchouli"))
+//                .withRecipe(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, GuideBookRecipe.makeGuideBook().getItem()))
+//                .save(consumer, RL("guide_book"));
     }
 
     private <T extends ItemLike> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {

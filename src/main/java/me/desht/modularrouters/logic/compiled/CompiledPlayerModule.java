@@ -11,12 +11,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.*;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.*;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
@@ -153,7 +153,7 @@ public class CompiledPlayerModule extends CompiledModule {
     public void onCompiled(ModularRouterBlockEntity router) {
         super.onCompiled(router);
         if (!router.nonNullLevel().isClientSide) {
-            MinecraftForge.EVENT_BUS.register(this);
+            NeoForge.EVENT_BUS.register(this);
         }
     }
 
@@ -161,7 +161,7 @@ public class CompiledPlayerModule extends CompiledModule {
     public void cleanup(ModularRouterBlockEntity router) {
         super.cleanup(router);
         if (!router.nonNullLevel().isClientSide) {
-            MinecraftForge.EVENT_BUS.unregister(this);
+            NeoForge.EVENT_BUS.unregister(this);
         }
     }
 

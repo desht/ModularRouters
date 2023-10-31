@@ -5,8 +5,9 @@ import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 import java.util.function.Supplier;
 
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
  * 3) Open installed module GUI
  * 4) Open installed filter GUI (only if it is container-based)
  */
-public class OpenGuiMessage {
+public class OpenGuiMessage implements SimpleMessage {
     private enum Operation {
         ROUTER,
         MODULE_HELD,
@@ -61,10 +62,39 @@ public class OpenGuiMessage {
         return new OpenGuiMessage(Operation.FILTER_INSTALLED, locator);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeEnum(operation);
-        locator.writeBuf(buf);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeEnum(operation);
+        locator.writeBuf(buffer);
     }
+
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
+        if (player != null) {
+            switch (operation) {
+                case ROUTER ->
+                    // item router GUI
+                        locator.getRouter(player.getCommandSenderWorld())
+                                .ifPresent(router -> NetworkHooks.openScreen(player, router, locator.routerPos));
+                case MODULE_HELD ->
+                    // module held in player's hand
+                        NetworkHooks.openScreen(player, new ModuleItem.ModuleMenuProvider(player, locator), locator::writeBuf);
+                case MODULE_INSTALLED ->
+                    // module installed in a router
+                        locator.getRouter(player.getCommandSenderWorld())
+                                .ifPresent(router -> NetworkHooks.openScreen(player, new ModuleItem.ModuleMenuProvider(player, locator), locator::writeBuf));
+                case FILTER_HELD ->
+                    // filter is in a module in player's hand
+                        NetworkHooks.openScreen(player, new SmartFilterItem.FilterMenuProvider(player, locator), locator::writeBuf);
+                case FILTER_INSTALLED ->
+                    // filter is in a module in a router
+                        locator.getRouter(player.getCommandSenderWorld())
+                                .ifPresent(router -> NetworkHooks.openScreen(player, new SmartFilterItem.FilterMenuProvider(player, locator), locator::writeBuf));
+            }
+        }
+    }
+
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {

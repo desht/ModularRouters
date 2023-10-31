@@ -1,31 +1,15 @@
-
-buildscript {
-//    repositories {
-//        maven { url = 'https://maven.neoforged.net/releases' }
-//        maven { url = 'https://maven.parchmentmc.org' }
-//        mavenCentral()
-//    }
-    dependencies {
-//        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
 plugins {
-    id("java")
-    id("eclipse")
-    id("idea")
-    id("com.modrinth.minotaur") version "2.+"
-    id('com.matthewprenger.cursegradle') version "1.4.0"
-    id('net.neoforged.gradle') version '[6.0.13, 6.2)'
-    id('maven-publish')
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.0.5'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-version = "${mod_version}+mc${project.mc_version}"
-group = "me.desht.modularrouters"
-archivesBaseName = modid
+version = mod_version
+group = mod_group_id
 
 ext.releaseTag = System.getenv('TAG') ?: ""
 ext.isAlpha = ext.releaseTag.contains("alpha")
@@ -33,56 +17,12 @@ ext.isBeta = ext.releaseTag.contains("beta")
 
 def semver = mod_version
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
-//version += System.getenv("BUILD_NUMBER") ?: "-CUSTOM"
-
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
-
-minecraft {
-    mappings channel: 'parchment', version: "${project.mappings_version}-${project.mc_version}"
-    runs {
-        client {
-            workingDirectory file('run')
-            property 'forge.logging.markers', 'SCAN,CONFIG'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            ideaModule "${project.name}.main"
-            mods {
-                modularrouters.sources((SourceSet[]) [sourceSets.main])
-            }
-        }
-        server {
-            workingDirectory file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.disableRefMap', 'true'
-            ideaModule "${project.name}.main"
-            mods {
-                modularrouters.sources((SourceSet[]) [sourceSets.main])
-            }
-        }
-        data {
-            workingDirectory file('run')
-            property 'forge.logging.console.level', 'debug'
-            property 'fml.earlyprogresswindow', 'false'
-            property 'mixin.env.disableRefMap', 'true'
-            ideaModule "${project.name}.main"
-            mods {
-                modularrouters.sources((SourceSet[]) [sourceSets.main])
-            }
-            args '--mod', 'modularrouters', '--all', '--output', file('src/generated/resources/'),
-                    '--existing', sourceSets.main.resources.srcDirs[0]
-            environment 'target', 'fmluserdevdata'
-        }
-    }
-}
 
 // All jar files from this folder will be added automatically as runtime mod dependencies
-def extraModsDir = "extra-mods-${mc_version}"
+def extraModsDir = "extra-mods-${minecraft_version}"
 
 repositories {
+    mavenLocal()
     flatDir {
         name "extra-mods"
         dir file(extraModsDir)
@@ -110,21 +50,88 @@ repositories {
     }
 }
 
-dependencies {
-    minecraft "net.neoforged:forge:${mc_version}-${forge_version}"
+base {
+    archivesName = mod_id
+}
 
-    implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
-        exclude group: "net.minecraftforge", module: "forge"
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+//minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+//minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
+
+// Default run configurations.
+// These can be tweaked, removed, or duplicated as needed.
+runs {
+    // applies to all the run configs below
+    configureEach {
+        // Recommended logging data for a userdev environment
+        // The markers can be added/remove as needed separated by commas.
+        // "SCAN": For mods scan.
+        // "REGISTRIES": For firing of registry events.
+        // "REGISTRYDUMP": For getting the contents of all registries.
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+        // Recommended logging level for the console
+        // You can set various levels here.
+        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+        systemProperty 'forge.logging.console.level', 'debug'
+
+        modSource project.sourceSets.main
     }
 
-    implementation fg.deobf("curse.maven:jade-324717:${jade_curse_id}")
+    client {
+        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    // This run config launches GameTestServer and runs all registered gametests, then exits.
+    // By default, the server will crash when no gametests are provided.
+    // The gametest system is also enabled by default for other run configs under the /test command.
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+        // workingDirectory project.file('run-data')
+
+        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+// Include resources generated by data generators.
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    // Specify the version of Minecraft to use.
+    // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
+    // The group for userdev is net.neoforged, the module name is neoforge, and the version is the same as the neoforge version.
+    // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.
+    // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
+    // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
+    implementation "net.neoforged:neoforge:${neo_version}"
+
+    //implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
+    //    exclude group: "net.minecraftforge", module: "forge"
+    //}
+
+    compileOnly "mcjty.theoneprobe:theoneprobe:${top_version}"
+
+    compileOnly "curse.maven:jade-324717:${jade_curse_id}"
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
     // at runtime, use the full JEI
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
     for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
@@ -133,71 +140,41 @@ dependencies {
         assert versionSep != -1
         def artifactId = basename.substring(0, versionSep)
         def version = basename.substring(versionSep + 1)
-        runtimeOnly fg.deobf("extra-mods:$artifactId:$version")
+        runtimeOnly "extra-mods:$artifactId:$version"
     }
 }
 
-def replaceResources = tasks.register("replaceResources", Copy) {
-    it.outputs.upToDateWhen { false }
-    //Copy it into the build dir
-    it.from(sourceSets.main.resources) {
-        include "META-INF/mods.toml"
-        expand 'version': version, 'mc_version': mc_version, 'mc_version_range': mc_version_range, 'forge_version_range': forge_version_range
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
+// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
+            neo_version         : neo_version, neo_version_range: neo_version_range,
+            loader_version_range: loader_version_range,
+            mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors         : mod_authors, mod_description: mod_description, pack_format_number: pack_format_number,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
-    it.into "$buildDir/resources/main/"
 }
 
-processResources {
-    duplicatesStrategy(DuplicatesStrategy.FAIL)
-    exclude('META-INF/mods.toml')
-    configure { finalizedBy(replaceResources) }
-}
-
-classes.configure {
-    dependsOn(replaceResources)
-}
-
-jar {
-    manifest.attributes([
-            "Specification-Title": "Modular Routers",
-            "Specification-Vendor": "desht",
-            "Specification-Version": "38.0", // We are version 1 of the modlauncher specification
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${project.version}",
-            "Implementation-Vendor" :"desht",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-    ])
-    finalizedBy('reobfJar')
-}
-
-def mavenVer = ext.releaseTag == "" ? "${version}-SNAPSHOT" : "${version}"
+// Example configuration to allow publishing using the maven-publish plugin
 publishing {
     publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.archivesBaseName
+        register('mavenJava', MavenPublication) {
             from components.java
         }
     }
     repositories {
-        mavenLocal()
-    }
-    if (System.getenv("MODMAVEN_USER") != null) {
-        publications {
-            maven(MavenPublication) {
-                groupId = project.group
-                artifactId = project.archivesBaseName
-                version = mavenVer
-
-                // ForgeGradle will generate wild dependency definitions, see https://github.com/MinecraftForge/ForgeGradle/issues/584
-                // Since we don't actually depend on anything, just remove the entire node.
-                pom.withXml {
-                    asNode().remove(asNode().dependencies)
-                }
-
-                from components.java
-            }
+        maven {
+            url "file://${project.projectDir}/repo"
         }
-        repositories {
+        if (System.getenv("MODMAVEN_USER") != null) {
             maven {
                 name = "modmaven"
                 credentials {
@@ -210,13 +187,17 @@ publishing {
     }
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "${project.modrinth_project_id}"
     versionNumber = version.toString()
     versionType = relType
     uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = [ mc_version ] // Must be an array, even with only one version
+    gameVersions = [ minecraft_version ] // Must be an array, even with only one version
     changelog = System.getenv("CHANGELOG")
     dependencies { // A special DSL for creating dependencies
         // scope.type
@@ -234,22 +215,14 @@ if (System.getenv("CURSEFORGE_TOKEN")) {
             changelogType = "markdown"
             changelog = System.getenv("CHANGELOG")
             releaseType = relType
-            addGameVersion project.mc_version
+            addGameVersion project.minecraft_version
             addGameVersion "Forge"
             mainArtifact(jar.archiveFile) {
-                displayName = "${project.archivesBaseName} v${project.mc_version}-${semver}"
+                displayName = "${project.archivesBaseName} v${project.minecraft_version}-${semver}"
                 relations {
                     optionalDependency "patchouli"
                 }
             }
-        }
-    }
-}
-
-idea {
-    module {
-        for (String exclude in ['run', 'out', 'logs']) {
-            excludeDirs += file(exclude)
         }
     }
 }

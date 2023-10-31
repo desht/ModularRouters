@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.FilterSettingsMessage;

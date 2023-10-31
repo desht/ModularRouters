@@ -17,15 +17,15 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
@@ -37,8 +37,8 @@ public class ClientSetup {
 
     public static void initEarly() {
         FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
-        MinecraftForge.EVENT_BUS.register(ModuleTargetRenderer.class);
-        MinecraftForge.EVENT_BUS.register(MouseOverHelp.class);
+        NeoForge.EVENT_BUS.register(ModuleTargetRenderer.class);
+        NeoForge.EVENT_BUS.register(MouseOverHelp.class);
     }
 
     @SubscribeEvent

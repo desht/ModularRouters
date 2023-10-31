@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.util;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -19,7 +21,7 @@ import org.joml.Matrix4f;
 import java.util.Optional;
 
 public class ClientUtil {
-    public static Level theClientWorld() {
+    public static Level theClientLevel() {
         return Minecraft.getInstance().level;
     }
 
@@ -58,5 +60,11 @@ public class ClientUtil {
 
     public static FormattedCharSequence ellipsize(Font font, String str, int maxWidth) {
         return Language.getInstance().getVisualOrder(font.ellipsize(Component.literal(str), maxWidth));
+    }
+
+    public static void maybeGuiSync(ItemStack newStack) {
+        if (Minecraft.getInstance().screen instanceof IResyncableGui syncable) {
+            syncable.resync(newStack);
+        }
     }
 }

@@ -2,7 +2,6 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;
@@ -25,9 +24,9 @@ public class TextFieldManager {
     }
 
     public void tick() {
-        if (focusedField >= 0) {
-            textFields.get(focusedField).tick();
-        }
+//        if (focusedField >= 0) {
+//            textFields.get(focusedField).tick();
+//        }
     }
 
     public boolean mouseClicked(double x, double y, int btn) {
@@ -116,7 +115,7 @@ public class TextFieldManager {
         TextFieldWidgetMR tf = textFields.get(ordinal);
         if (newFocus) {
             focus(ordinal);
-            tf.moveCursorToEnd();
+            tf.moveCursorToEnd(true);
             tf.setHighlightPos(0);
         } else {
             tf.setHighlightPos(tf.getCursorPosition());

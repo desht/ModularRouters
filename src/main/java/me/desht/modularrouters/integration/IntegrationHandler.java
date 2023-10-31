@@ -1,7 +1,7 @@
 package me.desht.modularrouters.integration;
 
 import me.desht.modularrouters.integration.top.TOPCompatibility;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public class IntegrationHandler {
     public static void registerAll() {

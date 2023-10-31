@@ -1,10 +1,11 @@
 package me.desht.modularrouters.util;
+
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import me.desht.modularrouters.ModularRouters;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.fml.util.thread.EffectiveSide;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;

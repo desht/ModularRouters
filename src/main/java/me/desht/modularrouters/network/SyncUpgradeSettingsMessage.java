@@ -2,19 +2,18 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 /**
  * Received on: SERVER
  *
  * Sent by client when a new tuning value is entered via Sync Upgrade GUI
  */
-public class SyncUpgradeSettingsMessage {
+public class SyncUpgradeSettingsMessage implements SimpleMessage {
     private final int tunedValue;
     private final InteractionHand hand;
 
@@ -28,22 +27,20 @@ public class SyncUpgradeSettingsMessage {
         hand = buf.readEnum(InteractionHand.class);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(tunedValue);
-        buf.writeEnum(hand);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeInt(tunedValue);
+        buffer.writeEnum(hand);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            Player player = ctx.get().getSender();
-            if (player != null) {
-                ItemStack held = player.getItemInHand(hand);
-                if (held.getItem() instanceof SyncUpgrade) {
-                    SyncUpgrade.setTunedValue(held, tunedValue);
-                }
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
+        if (player != null) {
+            ItemStack held = player.getItemInHand(hand);
+            if (held.getItem() instanceof SyncUpgrade) {
+                SyncUpgrade.setTunedValue(held, tunedValue);
             }
-        });
-        ctx.get().setPacketHandled(true);
+        }
     }
-
 }

@@ -58,15 +58,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.common.capabilities.Capability;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -224,13 +224,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+        if (cap == Capabilities.ITEM_HANDLER) {
             return inventoryCap.cast();
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+        } else if (cap == Capabilities.FLUID_HANDLER) {
             return bufferHandler.getFluidCapability().cast();
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER_ITEM) {
+        } else if (cap == Capabilities.FLUID_HANDLER_ITEM) {
             return bufferHandler.getFluidItemCapability().cast();
-        } else if (cap == ForgeCapabilities.ENERGY) {
+        } else if (cap == Capabilities.ENERGY) {
             return energyStorage.getTransferRate() > 0 ? energyCap.cast() : bufferHandler.getEnergyCapability().cast();
         }
         return super.getCapability(cap, side);

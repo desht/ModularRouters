@@ -4,17 +4,15 @@ import me.desht.modularrouters.client.util.ClientUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 /**
  * Received on: CLIENT
  * Sent by server so clients promptly update an entity's velocity when it gets shoved by an extruded block.
  */
-public class PushEntityMessage {
+public class PushEntityMessage implements SimpleMessage {
     private final int id;
     private final Vec3 vec;
 
@@ -25,27 +23,23 @@ public class PushEntityMessage {
 
     public PushEntityMessage(FriendlyByteBuf buf) {
         id = buf.readInt();
-        vec = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        vec = buf.readVec3();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(id);
-        buf.writeDouble(vec.x);
-        buf.writeDouble(vec.y);
-        buf.writeDouble(vec.z);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeInt(id);
+        buffer.writeVec3(vec);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            Level w = ClientUtil.theClientWorld();
-            Entity entity = w.getEntity(id);
-            if (entity != null) {
-                entity.setDeltaMovement(vec.x, vec.y, vec.z);
-                entity.horizontalCollision = false;
-                entity.verticalCollision = false;
-                if (entity instanceof LivingEntity l) l.setJumping(true);
-            }
-        });
-        ctx.get().setPacketHandled(true);
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        Entity entity = ClientUtil.theClientLevel().getEntity(id);
+        if (entity != null) {
+            entity.setDeltaMovement(vec.x, vec.y, vec.z);
+            entity.horizontalCollision = false;
+            entity.verticalCollision = false;
+            if (entity instanceof LivingEntity l) l.setJumping(true);
+        }
     }
 }

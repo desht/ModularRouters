@@ -1,23 +1,24 @@
 package me.desht.modularrouters.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ClientConfig {
     public static class Misc {
-        public ForgeConfigSpec.BooleanValue heldRouterShowsCamoRouters;
-        public ForgeConfigSpec.BooleanValue alwaysShowModuleSettings;
-        public ForgeConfigSpec.BooleanValue moduleGuiBackgroundTint;
-        public ForgeConfigSpec.BooleanValue renderFlyingItems;
+        public ModConfigSpec.BooleanValue heldRouterShowsCamoRouters;
+        public ModConfigSpec.BooleanValue alwaysShowModuleSettings;
+        public ModConfigSpec.BooleanValue moduleGuiBackgroundTint;
+        public ModConfigSpec.BooleanValue renderFlyingItems;
     }
 
     public static class Sound {
-        public ForgeConfigSpec.DoubleValue bleepVolume;
+        public ModConfigSpec.DoubleValue bleepVolume;
     }
 
     public final Misc misc = new Misc();
     public final Sound sound = new Sound();
 
-    ClientConfig(ForgeConfigSpec.Builder builder) {
+    ClientConfig(ModConfigSpec.Builder builder) {
         builder.push("Misc");
         misc.alwaysShowModuleSettings = builder.comment("Should module tooltips always show module settings (without needing to hold Shift)?")
                 .translation("gui.config.alwaysShowSettings")

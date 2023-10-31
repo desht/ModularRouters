@@ -1,29 +1,27 @@
-modLoader="javafml" #mandatory
-loaderVersion="[47,)" #mandatory (24 is current forge version)
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
 issueTrackerURL="https://github.com/desht/ModularRouters/issues"
 displayURL="https://minecraft.curseforge.com/projects/modular-routers"
 credits=""
-authors="desht"
+authors="${mod_authors}"
 license="MIT"
 
 [[mods]] #mandatory
 modId="modularrouters" #mandatory
-version="${version}" #mandatory
+version="${mod_version}" #mandatory
 displayName="Modular Routers"
 updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.20.1-master/release_info.json" #optional
-description='''
-Modular Routers is a highly flexible mod for moving items around the world in various ways.
-'''
+description="${mod_description}"
 
 [[dependencies.modularrouters]]
-    modId="forge" #mandatory
+    modId="neoforge" #mandatory
     mandatory=true #mandatory
-    versionRange="${forge_version_range}" #mandatory
+    versionRange="${neo_version_range}" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]
     modId="minecraft"
     mandatory=true
-    versionRange="${mc_version_range}"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

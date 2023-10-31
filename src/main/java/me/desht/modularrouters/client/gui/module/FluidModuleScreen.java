@@ -1,13 +1,11 @@
 package me.desht.modularrouters.client.gui.module;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
@@ -24,7 +22,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.Range;
 
 import java.util.Collections;

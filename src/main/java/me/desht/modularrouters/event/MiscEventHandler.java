@@ -7,10 +7,10 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID)
 public class MiscEventHandler {

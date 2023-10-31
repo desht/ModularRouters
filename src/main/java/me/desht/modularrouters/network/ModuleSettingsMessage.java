@@ -10,17 +10,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * Received on: SERVER
  *
  * Sent by client when a player updates a module's settings via its GUI.
  */
-public class ModuleSettingsMessage {
+public class ModuleSettingsMessage implements SimpleMessage {
     private final MFLocator locator;
     private final CompoundTag payload;
 
@@ -34,33 +34,30 @@ public class ModuleSettingsMessage {
         this.payload = payload;
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
-        locator.writeBuf(buf);
-        buf.writeNbt(payload);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        locator.writeBuf(buffer);
+        buffer.writeNbt(payload);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
-            if (player != null) {
-                ItemStack moduleStack = locator.getModuleStack(player);
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
+        if (player != null) {
+            ItemStack moduleStack = locator.getModuleStack(player);
 
-                if (moduleStack.getItem() instanceof ModuleItem) {
-                    CompoundTag compound = ModuleHelper.validateNBT(moduleStack);
-                    for (String key : payload.getAllKeys()) {
-                        compound.put(key, Objects.requireNonNull(payload.get(key)));
-                    }
-                    if (locator.routerPos != null) {
-                        player.getCommandSenderWorld().getBlockEntity(locator.routerPos, ModBlockEntities.MODULAR_ROUTER.get())
-                                .ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES));
-                    }
-                } else {
-                    ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator);
+            if (moduleStack.getItem() instanceof ModuleItem) {
+                CompoundTag compound = ModuleHelper.validateNBT(moduleStack);
+                for (String key : payload.getAllKeys()) {
+                    compound.put(key, Objects.requireNonNull(payload.get(key)));
                 }
+                if (locator.routerPos != null) {
+                    player.getCommandSenderWorld().getBlockEntity(locator.routerPos, ModBlockEntities.MODULAR_ROUTER.get())
+                            .ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES));
+                }
+            } else {
+                ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for " + player.getDisplayName().getString() + " - expected module not found @ " + locator);
             }
-        });
-
-        ctx.get().setPacketHandled(true);
+        }
     }
-
 }

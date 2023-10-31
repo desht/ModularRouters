@@ -15,9 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -81,7 +81,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         Level level = router.nonNullLevel();
         for (int i = 1; i <= getRange(); i++) {
             BlockEntity te = level.getBlockEntity(pos);
-            if (te != null && te.getCapability(ForgeCapabilities.ITEM_HANDLER, getTarget().face).isPresent()) {
+            if (te != null && te.getCapability(Capabilities.ITEM_HANDLER, getTarget().face).isPresent()) {
                 GlobalPos gPos = MiscUtil.makeGlobalPos(level, pos.immutable());
                 return new ModuleTarget(gPos, face, BlockUtil.getBlockName(level, pos));
             } else if (!isPassable(level, pos, face)) {
@@ -97,7 +97,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         return !MiscUtil.blockHasSolidSide(state, w, pos, face.getOpposite()) || !state.isSolidRender(w, pos);
     }
 
-    record PositionedItemHandler(BlockPos pos, IItemHandler handler) {
+    public record PositionedItemHandler(BlockPos pos, IItemHandler handler) {
         static final PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
 
         boolean isValid() {

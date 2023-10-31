@@ -7,17 +7,17 @@ import me.desht.modularrouters.util.BeamData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Received on: CLIENT
  *
  * Sent by server to play an item beam between a router and another inventory
  */
-public class ItemBeamMessage {
+public class ItemBeamMessage implements SimpleMessage {
     private final BlockPos pos1;
     private final List<BeamData> beams;
 
@@ -41,18 +41,16 @@ public class ItemBeamMessage {
         this.beams = builder.build();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override
+    public void encode(FriendlyByteBuf buf) {
         buf.writeBlockPos(pos1);
         buf.writeVarInt(beams.size());
         beams.forEach(beam -> beam.toBytes(buf, pos1));
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() ->
-                ClientUtil.theClientWorld().getBlockEntity(pos1, ModBlockEntities.MODULAR_ROUTER.get())
-                        .ifPresent(te -> beams.forEach(te::addItemBeam))
-        );
-        ctx.get().setPacketHandled(true);
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        ClientUtil.theClientLevel().getBlockEntity(pos1, ModBlockEntities.MODULAR_ROUTER.get())
+                .ifPresent(te -> beams.forEach(te::addItemBeam));
     }
-
 }

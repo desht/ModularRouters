@@ -1,85 +1,82 @@
 package me.desht.modularrouters.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommonConfig {
     public static class Module {
-        public IntValue sender1BaseRange;
-        public IntValue sender1MaxRange;
-        public IntValue sender2BaseRange;
-        public IntValue sender2MaxRange;
-        public IntValue vacuumBaseRange;
-        public IntValue vacuumMaxRange;
-        public IntValue extruder1BaseRange;
-        public IntValue extruder1MaxRange;
-        public IntValue extruder2BaseRange;
-        public IntValue extruder2MaxRange;
-        public IntValue puller2BaseRange;
-        public IntValue puller2MaxRange;
-        public IntValue fluid2BaseRange;
-        public IntValue fluid2MaxRange;
-        public BooleanValue senderParticles;
-        public BooleanValue pullerParticles;
-        public BooleanValue placerParticles;
-        public BooleanValue breakerParticles;
-        public BooleanValue vacuumParticles;
-        public BooleanValue flingerEffects;
-        public BooleanValue extruderSound;
-        public BooleanValue extruderPushEntities;
-        public BooleanValue breakerHarvestLevelLimit;
-        public ConfigValue<List<String>> dimensionBlacklist;
+        public ModConfigSpec.IntValue sender1BaseRange;
+        public ModConfigSpec.IntValue sender1MaxRange;
+        public ModConfigSpec.IntValue sender2BaseRange;
+        public ModConfigSpec.IntValue sender2MaxRange;
+        public ModConfigSpec.IntValue vacuumBaseRange;
+        public ModConfigSpec.IntValue vacuumMaxRange;
+        public ModConfigSpec.IntValue extruder1BaseRange;
+        public ModConfigSpec.IntValue extruder1MaxRange;
+        public ModConfigSpec.IntValue extruder2BaseRange;
+        public ModConfigSpec.IntValue extruder2MaxRange;
+        public ModConfigSpec.IntValue puller2BaseRange;
+        public ModConfigSpec.IntValue puller2MaxRange;
+        public ModConfigSpec.IntValue fluid2BaseRange;
+        public ModConfigSpec.IntValue fluid2MaxRange;
+        public ModConfigSpec.BooleanValue senderParticles;
+        public ModConfigSpec.BooleanValue pullerParticles;
+        public ModConfigSpec.BooleanValue placerParticles;
+        public ModConfigSpec.BooleanValue breakerParticles;
+        public ModConfigSpec.BooleanValue vacuumParticles;
+        public ModConfigSpec.BooleanValue flingerEffects;
+        public ModConfigSpec.BooleanValue extruderSound;
+        public ModConfigSpec.BooleanValue extruderPushEntities;
+        public ModConfigSpec.BooleanValue breakerHarvestLevelLimit;
+        public ModConfigSpec.ConfigValue<List<String>> dimensionBlacklist;
     }
 
     public static class Router {
-        public BooleanValue blockBreakXPDrops;
-        public IntValue baseTickRate;
-        public IntValue ticksPerUpgrade;
-        public IntValue hardMinTickRate;
-        public IntValue ecoTimeout;
-        public IntValue lowPowerTickRate;
-        public IntValue fluidBaseTransferRate;
-        public IntValue fluidMaxTransferRate;
-        public IntValue mBperFluidUpgade;
-        public IntValue fePerEnergyUpgrade;
-        public IntValue feXferPerEnergyUpgrade;
+        public ModConfigSpec.BooleanValue blockBreakXPDrops;
+        public ModConfigSpec.IntValue baseTickRate;
+        public ModConfigSpec.IntValue ticksPerUpgrade;
+        public ModConfigSpec.IntValue hardMinTickRate;
+        public ModConfigSpec.IntValue ecoTimeout;
+        public ModConfigSpec.IntValue lowPowerTickRate;
+        public ModConfigSpec.IntValue fluidBaseTransferRate;
+        public ModConfigSpec.IntValue fluidMaxTransferRate;
+        public ModConfigSpec.IntValue mBperFluidUpgade;
+        public ModConfigSpec.IntValue fePerEnergyUpgrade;
+        public ModConfigSpec.IntValue feXferPerEnergyUpgrade;
     }
 
     public static class EnergyCosts {
-        public IntValue activatorModuleEnergyCost;
-        public IntValue activatorModuleEnergyCostAttack;
-        public IntValue breakerModuleEnergyCost;
-        public IntValue detectorModuleEnergyCost;
-        public IntValue distributorModuleEnergyCost;
-        public IntValue dropperModuleEnergyCost;
-        public IntValue energydistributorModuleEnergyCost;
-        public IntValue energyoutputModuleEnergyCost;
-        public IntValue extruderModule1EnergyCost;
-        public IntValue extruderModule2EnergyCost;
-        public IntValue flingerModuleEnergyCost;
-        public IntValue fluidModuleEnergyCost;
-        public IntValue fluidModule2EnergyCost;
-        public IntValue placerModuleEnergyCost;
-        public IntValue playerModuleEnergyCost;
-        public IntValue pullerModule1EnergyCost;
-        public IntValue pullerModule2EnergyCost;
-        public IntValue senderModule1EnergyCost;
-        public IntValue senderModule2EnergyCost;
-        public IntValue senderModule3EnergyCost;
-        public IntValue vacuumModuleEnergyCost;
-        public IntValue voidModuleEnergyCost;
+        public ModConfigSpec.IntValue activatorModuleEnergyCost;
+        public ModConfigSpec.IntValue activatorModuleEnergyCostAttack;
+        public ModConfigSpec.IntValue breakerModuleEnergyCost;
+        public ModConfigSpec.IntValue detectorModuleEnergyCost;
+        public ModConfigSpec.IntValue distributorModuleEnergyCost;
+        public ModConfigSpec.IntValue dropperModuleEnergyCost;
+        public ModConfigSpec.IntValue energydistributorModuleEnergyCost;
+        public ModConfigSpec.IntValue energyoutputModuleEnergyCost;
+        public ModConfigSpec.IntValue extruderModule1EnergyCost;
+        public ModConfigSpec.IntValue extruderModule2EnergyCost;
+        public ModConfigSpec.IntValue flingerModuleEnergyCost;
+        public ModConfigSpec.IntValue fluidModuleEnergyCost;
+        public ModConfigSpec.IntValue fluidModule2EnergyCost;
+        public ModConfigSpec.IntValue placerModuleEnergyCost;
+        public ModConfigSpec.IntValue playerModuleEnergyCost;
+        public ModConfigSpec.IntValue pullerModule1EnergyCost;
+        public ModConfigSpec.IntValue pullerModule2EnergyCost;
+        public ModConfigSpec.IntValue senderModule1EnergyCost;
+        public ModConfigSpec.IntValue senderModule2EnergyCost;
+        public ModConfigSpec.IntValue senderModule3EnergyCost;
+        public ModConfigSpec.IntValue vacuumModuleEnergyCost;
+        public ModConfigSpec.IntValue voidModuleEnergyCost;
     }
 
     public final Module module = new Module();
     public final Router router = new Router();
     public final EnergyCosts energyCosts = new EnergyCosts();
 
-    CommonConfig(ForgeConfigSpec.Builder builder) {
+    CommonConfig(ModConfigSpec.Builder builder) {
         builder.push("Module");
         module.sender1BaseRange = builder.comment("Base range for Sender Mk1 (no range upgrades)")
                 .translation("modularrouters.gui.config.sender1BaseRange")

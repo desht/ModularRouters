@@ -32,8 +32,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -248,7 +248,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
     private double getPlayerReachDistance(Player player) {
         if (player != null) {
-            AttributeInstance attr = player.getAttribute(ForgeMod.BLOCK_REACH.get());
+            AttributeInstance attr = player.getAttribute(NeoForgeMod.BLOCK_REACH.get());
             if (attr != null) return attr.getValue() + 1D;
         }
         return 4.5D;

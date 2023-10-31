@@ -1,22 +1,19 @@
 package me.desht.modularrouters.recipe;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.crafting.MultiItemValue;
+import net.neoforged.neoforge.common.ToolActions;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
@@ -26,11 +23,11 @@ import java.util.stream.Stream;
  * For modules which need a pickaxe in their recipe to set their harvest level.
  */
 public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
-    PickaxeModuleRecipe(ResourceLocation resourceLocation, ItemStack result, NonNullList<Ingredient> ingredients, CraftingBookCategory category) {
-        super(resourceLocation, "", category, result, ingredients);
+    PickaxeModuleRecipe(String name, ItemStack result, NonNullList<Ingredient> ingredients, CraftingBookCategory category) {
+        super(name, category, result, ingredients);
 
         Validate.isTrue(result.getItem() instanceof IPickaxeUser,
-                "recipe " + resourceLocation + ": result is not a IPickaxeUser!");
+                "recipe " + name + ": result is not a IPickaxeUser!");
     }
 
     @Override
@@ -68,8 +65,8 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     }
 
     public static class BreakerModuleRecipe extends PickaxeModuleRecipe {
-        public BreakerModuleRecipe(ResourceLocation resourceLocation, CraftingBookCategory category) {
-            super(resourceLocation, new ItemStack(ModItems.BREAKER_MODULE.get()), ingredients(), category);
+        public BreakerModuleRecipe(CraftingBookCategory category) {
+            super("modularrouters:breaker", new ItemStack(ModItems.BREAKER_MODULE.get()), ingredients(), category);
         }
 
         private static NonNullList<Ingredient> ingredients() {
@@ -86,8 +83,8 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     }
 
     public static class ExtruderModule1Recipe extends PickaxeModuleRecipe {
-        public ExtruderModule1Recipe(ResourceLocation resourceLocation, CraftingBookCategory category) {
-            super(resourceLocation, new ItemStack(ModItems.EXTRUDER_MODULE_1.get()), ingredients(), category);
+        public ExtruderModule1Recipe(CraftingBookCategory category) {
+            super("modularrouters:extruder1", new ItemStack(ModItems.EXTRUDER_MODULE_1.get()), ingredients(), category);
         }
 
         private static NonNullList<Ingredient> ingredients() {
@@ -107,13 +104,15 @@ public abstract class PickaxeModuleRecipe extends ShapelessRecipe {
     private static class PickaxeIngredient extends Ingredient {
         PickaxeIngredient() {
             // this is for the benefit of getMatchingStacks()
-            super(Stream.of(new MultiItemValue(ImmutableList.of(
-                    new ItemStack(Items.WOODEN_PICKAXE),
-                    new ItemStack(Items.STONE_PICKAXE),
-                    new ItemStack(Items.IRON_PICKAXE),
-                    new ItemStack(Items.DIAMOND_PICKAXE),
-                    new ItemStack(Items.NETHERITE_PICKAXE)
-            ))));
+            super(Stream.of(new TagValue(ItemTags.PICKAXES)));
+
+//                    Tags.Items.ImmutableList.of(
+//                    new ItemStack(Items.WOODEN_PICKAXE),
+//                    new ItemStack(Items.STONE_PICKAXE),
+//                    new ItemStack(Items.IRON_PICKAXE),
+//                    new ItemStack(Items.DIAMOND_PICKAXE),
+//                    new ItemStack(Items.NETHERITE_PICKAXE)
+//            ))));
         }
 
         @Override

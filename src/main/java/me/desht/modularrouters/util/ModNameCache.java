@@ -3,9 +3,9 @@ package me.desht.modularrouters.util;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforgespi.language.IModInfo;
 
 import java.util.Map;
 

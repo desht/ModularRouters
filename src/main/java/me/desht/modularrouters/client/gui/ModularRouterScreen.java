@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.gui.widgets.WidgetEnergy;
@@ -30,12 +29,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
 
 import java.util.Collections;
 import java.util.List;
 
-import static me.desht.modularrouters.client.util.ClientUtil.*;
+import static me.desht.modularrouters.client.util.ClientUtil.theClientLevel;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> implements ISendToServer, MenuAccess<RouterMenu> {
@@ -126,7 +126,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         boolean hasEnergyUpgrade = menu.getRouter().getEnergyCapacity() > 0;
         energyWidget.visible = hasEnergyUpgrade;
         energyDirButton.visible = hasEnergyUpgrade
-                && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(ForgeCapabilities.ENERGY).isPresent();
+                && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(Capabilities.ENERGY).isPresent();
 
         energyWarning.setX(hasEnergyUpgrade ? leftPos - 22 : leftPos + 4);
 
@@ -236,7 +236,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         @Override
         protected XYPoint getTextureXY() {
             boolean lowEnergy = menu.getRouter().getEnergyStorage().getEnergyStored() < energyUsage;
-            return new XYPoint(240, lowEnergy && theClientWorld().getGameTime() % 40 < 35 ? 0 : 240);
+            return new XYPoint(240, lowEnergy && theClientLevel().getGameTime() % 40 < 35 ? 0 : 240);
         }
     }
 }

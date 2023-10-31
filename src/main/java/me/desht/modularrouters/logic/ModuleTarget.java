@@ -10,10 +10,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -73,7 +73,7 @@ public class ModuleTarget {
      * @return a (lazy optional) item handler
      */
     public boolean hasItemHandlerClientSide() {
-        Level w = ClientUtil.theClientWorld();
+        Level w = ClientUtil.theClientLevel();
         return isSameWorld(w) && getItemHandlerFor(w).isPresent();
     }
 
@@ -94,7 +94,7 @@ public class ModuleTarget {
                 cachedItemCap = LazyOptional.empty();
             } else {
                 BlockEntity te = w.getBlockEntity(pos);
-                cachedItemCap = te == null ? LazyOptional.empty() : te.getCapability(ForgeCapabilities.ITEM_HANDLER, face);
+                cachedItemCap = te == null ? LazyOptional.empty() : te.getCapability(Capabilities.ITEM_HANDLER, face);
             }
             if (cachedItemCap.isPresent()) cachedItemCap.addListener(c -> cachedItemCap = LazyOptional.empty());
         }
@@ -114,7 +114,7 @@ public class ModuleTarget {
                 cachedEnergyCap = LazyOptional.empty();
             } else {
                 BlockEntity te = w.getBlockEntity(pos);
-                cachedEnergyCap = te == null ? LazyOptional.empty() : te.getCapability(ForgeCapabilities.ENERGY, face);
+                cachedEnergyCap = te == null ? LazyOptional.empty() : te.getCapability(Capabilities.ENERGY, face);
             }
             if (cachedEnergyCap.isPresent()) cachedEnergyCap.addListener(c -> cachedEnergyCap = LazyOptional.empty());
         }

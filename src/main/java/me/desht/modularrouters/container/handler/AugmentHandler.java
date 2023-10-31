@@ -6,7 +6,7 @@ import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;

@@ -7,17 +7,15 @@ import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.SimpleMessage;
 
 /**
  * Received on: BOTH
- *
  * Sent by client to update router settings from GUI
  * Sent by server to sync router settings when GUI is opened
  */
-public class RouterSettingsMessage {
+public class RouterSettingsMessage implements SimpleMessage {
     private final boolean ecoMode;
     private final RouterRedstoneBehaviour redstoneBehaviour;
     private final ModularRouterBlockEntity.EnergyDirection energyDirection;
@@ -37,22 +35,23 @@ public class RouterSettingsMessage {
         energyDirection = buffer.readEnum(ModularRouterBlockEntity.EnergyDirection.class);
     }
 
-    public void toBytes(FriendlyByteBuf byteBuf) {
-        byteBuf.writeBlockPos(pos);
-        byteBuf.writeByte(redstoneBehaviour.ordinal());
-        byteBuf.writeBoolean(ecoMode);
-        byteBuf.writeEnum(energyDirection);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeBlockPos(pos);
+        buffer.writeByte(redstoneBehaviour.ordinal());
+        buffer.writeBoolean(ecoMode);
+        buffer.writeEnum(energyDirection);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            Level w = ctx.get().getSender() == null ? ClientUtil.theClientWorld() : ctx.get().getSender().level();
-            w.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
+    @Override
+    public void handleMainThread(NetworkEvent.Context context) {
+        Level level = context.getSender() == null ? ClientUtil.theClientLevel() : context.getSender().level();
+        if (level != null && level.isLoaded(pos)) {
+            level.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
                 router.setRedstoneBehaviour(redstoneBehaviour);
                 router.setEcoMode(ecoMode);
                 router.setEnergyDirection(energyDirection);
             });
-        });
-        ctx.get().setPacketHandled(true);
+        }
     }
 }
