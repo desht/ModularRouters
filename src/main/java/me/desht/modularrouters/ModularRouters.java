@@ -84,18 +84,16 @@ public class ModularRouters {
             DataGenerator generator = event.getGenerator();
             CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
             ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-            if (event.includeServer()) {
-                generator.addProvider(event.includeClient(), new ModRecipeProvider(generator, lookupProvider));
-                ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(generator, lookupProvider, existingFileHelper);
-                generator.addProvider(event.includeClient(), blockTagsProvider);
-                generator.addProvider(event.includeClient(), new ModItemTagsProvider(generator, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-                generator.addProvider(event.includeClient(), new ModLootTableProvider(generator));
-                generator.addProvider(event.includeClient(), new ModEntityTypeTagsProvider(generator, lookupProvider, existingFileHelper));
-            }
-            if (event.includeClient()) {
-                generator.addProvider(event.includeClient(), new ModBlockStateProvider(generator, existingFileHelper));
-                generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, existingFileHelper));
-            }
+
+            generator.addProvider(event.includeServer(), new ModRecipeProvider(generator, lookupProvider));
+            ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(generator, lookupProvider, existingFileHelper);
+            generator.addProvider(event.includeServer(), blockTagsProvider);
+            generator.addProvider(event.includeServer(), new ModItemTagsProvider(generator, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
+            generator.addProvider(event.includeServer(), new ModLootTableProvider(generator));
+            generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(generator, lookupProvider, existingFileHelper));
+
+            generator.addProvider(event.includeClient(), new ModBlockStateProvider(generator, existingFileHelper));
+            generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, existingFileHelper));
         }
     }
 }

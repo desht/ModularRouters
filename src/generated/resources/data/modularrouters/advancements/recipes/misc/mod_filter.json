@@ -22,8 +22,8 @@
   },
   "requirements": [
     [
-      "has_bulk_item_filter",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_bulk_item_filter"
     ]
   ],
   "rewards": {
