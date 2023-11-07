@@ -1,0 +1,10 @@
+{
+  "type": "modularrouters:guide_book",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "patchouli"
+    }
+  ]
+}

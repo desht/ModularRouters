@@ -3,7 +3,6 @@ package me.desht.modularrouters.datagen;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
-import me.desht.modularrouters.recipe.GuideBookRecipe;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
@@ -16,7 +15,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
-import net.neoforged.neoforge.common.crafting.ConditionalRecipeBuilder;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
@@ -339,10 +337,9 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         SpecialRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
-//        new ConditionalRecipeBuilder()
-//                .withCondition(new ModLoadedCondition("patchouli"))
-//                .withRecipe(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, GuideBookRecipe.makeGuideBook().getItem()))
-//                .save(consumer, RL("guide_book"));
+
+        SpecialRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get())
+                .save(consumer.withConditions(new ModLoadedCondition("patchouli")), RL("guide_book"));
     }
 
     private <T extends ItemLike> ShapedRecipeBuilder shaped(T result, T required, String pattern, Object... keys) {
