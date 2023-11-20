@@ -6,6 +6,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -22,12 +23,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.annotation.CheckForNull;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -147,19 +150,11 @@ public class MiscUtil {
 
     public static Set<TagKey<Item>> itemTags(Item item) {
         //noinspection deprecation
-        return ForgeRegistries.ITEMS.getHolder(item).orElseThrow().tags().collect(Collectors.toSet());
+        return BuiltInRegistries.ITEM.getTagNames().collect(Collectors.toSet());
     }
 
     public static Set<TagKey<Fluid>> fluidTags(Fluid fluid) {
-        return ForgeRegistries.FLUIDS.getHolder(fluid).orElseThrow().tags().collect(Collectors.toSet());
-    }
-
-    public static Optional<ResourceLocation> getRegistryName(Item item) {
-        return Optional.ofNullable(ForgeRegistries.ITEMS.getKey(item));
-    }
-
-    public static Optional<ResourceLocation> getRegistryName(Block block) {
-        return Optional.ofNullable(ForgeRegistries.BLOCKS.getKey(block));
+        return BuiltInRegistries.FLUID.getTagNames().collect(Collectors.toSet());
     }
 
     public static boolean sameItemStackIgnoreDurability(ItemStack stack1, ItemStack stack2) {

@@ -114,7 +114,7 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         this.imageHeight = GUI_HEIGHT;
         this.mouseOverHelp = new MouseOverHelp(this);
 
-        NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener(this::onInitGui);
     }
 
     @Override
@@ -166,7 +166,6 @@ public class AbstractModuleScreen extends AbstractMRContainerScreen<ModuleMenu> 
         return tf;
     }
 
-    @SubscribeEvent
     public void onInitGui(ScreenEvent.Init.Post event) {
         getMenu().removeSlotListener(this);
         getMenu().addSlotListener(this);

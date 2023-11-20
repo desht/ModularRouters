@@ -11,13 +11,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 @Mod.EventBusSubscriber(modid = ModularRouters.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ColorHandlers {
     @SubscribeEvent
     public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
-        for (RegistryObject<Item> item : ModItems.ITEMS.getEntries()) {
+        for (DeferredHolder<Item, ? extends Item> item : ModItems.ITEMS.getEntries()) {
             if (item.get() instanceof ModItems.ITintable tintable) {
                 event.register((stack, tintIndex) -> switch (tintIndex) {
                     case 0, 2 -> TintColor.WHITE.getRGB();

@@ -85,6 +85,6 @@ public class CamouflageUpgrade extends UpgradeItem {
     private static boolean isBlockOKForCamo(BlockState state) {
         // trying to camo a router as itself = recursion hell
         return state.getRenderShape() == RenderShape.MODEL && state.getBlock() != ModBlocks.MODULAR_ROUTER.get()
-                && !MiscUtil.getRegistryName(state.getBlock()).orElseThrow().getNamespace().equals("chiselsandbits");
+                && !BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().equals("chiselsandbits");
     }
 }

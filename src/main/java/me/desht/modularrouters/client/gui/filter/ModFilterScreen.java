@@ -13,6 +13,7 @@ import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -101,7 +102,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             modId = modName = "";
         } else if (!inSlot.isEmpty() && (prevInSlot.isEmpty() || !MiscUtil.sameItemStackIgnoreDurability(inSlot, prevInSlot))) {
-            modId = MiscUtil.getRegistryName(inSlot.getItem()).map(ResourceLocation::getNamespace).orElse("?");
+            modId = BuiltInRegistries.ITEM.getKey(inSlot.getItem()).getNamespace();
             modName = ModNameCache.getModName(modId);
         }
         prevInSlot = inSlot;

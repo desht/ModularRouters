@@ -13,7 +13,7 @@ import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +34,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        for (RegistryObject<? extends Item> registryObject : ModItems.REGISTRY_OBJECTS) {
+        for (DeferredItem<? extends Item> registryObject : ModItems.REGISTRY_OBJECTS) {
             String name = registryObject.getId().getPath();
             Item item = registryObject.get();
             if (item instanceof ModuleItem) {
@@ -77,7 +77,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent("manual", GENERATED).texture("layer0", modid("item/manual"));
     }
 
-    private ItemModelBuilder simpleItem(RegistryObject<? extends Item> item, String... textures) {
+    private ItemModelBuilder simpleItem(DeferredItem<? extends Item> item, String... textures) {
         return simpleItem(item.getId(), textures);
     }
 
@@ -89,7 +89,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         return builder;
     }
 
-    private ItemModelBuilder simpleItemVariant(RegistryObject<? extends Item> item, String suffix, String... textures) {
+    private ItemModelBuilder simpleItemVariant(DeferredItem<? extends Item> item, String suffix, String... textures) {
         ItemModelBuilder builder = withExistingParent(item.getId().getPath() + suffix, GENERATED);
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);

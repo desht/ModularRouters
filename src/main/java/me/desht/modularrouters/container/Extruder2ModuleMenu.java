@@ -5,6 +5,7 @@ import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -76,7 +77,7 @@ public class Extruder2ModuleMenu extends ModuleMenu {
         if (stack.getItem() instanceof BlockItem bi) {
             Block b = bi.getBlock();
             return b.defaultBlockState().getRenderShape() == RenderShape.MODEL
-                    && !MiscUtil.getRegistryName(b).orElseThrow().getNamespace().equals("chiselsandbits");
+                    && !BuiltInRegistries.BLOCK.getKey(b).getNamespace().equals("chiselsandbits");
         } else {
             return true;  // non-block items are allowed - they act as spacers
         }

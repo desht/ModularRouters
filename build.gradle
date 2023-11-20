@@ -1,11 +1,14 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.5'
-    id 'com.modrinth.minotaur' version '2.+'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
+//    id 'com.modrinth.minotaur' version '2.+'
+//    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "me.modmuss50.mod-publish-plugin" version "0.4.2"
 }
 
 version = mod_version
@@ -191,38 +194,84 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "${project.modrinth_project_id}"
-    versionNumber = version.toString()
-    versionType = relType
-    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = [ minecraft_version ] // Must be an array, even with only one version
-    changelog = System.getenv("CHANGELOG")
-    dependencies { // A special DSL for creating dependencies
-        // scope.type
-        // The scope can be `required`, `optional`, or `incompatible`
-        // The type can either be `project` or `version`
-        optional.project "nU0bVIaL"  // Patchouli
+Closure<ReleaseType> getReleaseType = { type ->
+    switch(type) {
+        case "alpha": return ReleaseType.ALPHA
+        case "beta": return ReleaseType.BETA
+        default: return ReleaseType.STABLE
     }
 }
 
-if (System.getenv("CURSEFORGE_TOKEN")) {
+publishMods {
+    type = getReleaseType(relType)
+    changelog = providers.environmentVariable("CHANGELOG").orElse("dryrun")
+    file = jar.archiveFile
+    displayName = mod_name
+    version = mod_version
+    modLoaders.add("neoforge")
+    dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+
     curseforge {
-        apiKey = System.getenv("CURSEFORGE_TOKEN")
-        project {
-            id = project.curse_project_id
-            changelogType = "markdown"
-            changelog = System.getenv("CHANGELOG")
-            releaseType = relType
-            addGameVersion project.minecraft_version
-            addGameVersion "Forge"
-            mainArtifact(jar.archiveFile) {
-                displayName = "${project.archivesBaseName} v${project.minecraft_version}-${semver}"
-                relations {
-                    optionalDependency "patchouli"
-                }
-            }
+        projectId = curse_project_id
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        projectSlug = "modular-routers"
+        announcementTitle = "Download from Curseforge"
+        optional {
+            slug = "patchouli"
         }
     }
+
+    modrinth {
+        projectId = modrinth_project_id
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        announcementTitle = "Download from Modrinth"
+        optional {
+            id = "nU0bVIaL"
+            slug = "patchouli"
+        }
+    }
+
+//    discord {
+//        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
+//        content = changelog.map { "# A new version of Modular Routers has been released! \n" + it}
+////        setPlatforms(platforms.curseforge, platforms.modrinth)
+//    }
 }
+
+//modrinth {
+//    token = System.getenv("MODRINTH_TOKEN")
+//    projectId = "${project.modrinth_project_id}"
+//    versionNumber = version.toString()
+//    versionType = relType
+//    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+//    gameVersions = [ minecraft_version ] // Must be an array, even with only one version
+//    changelog = System.getenv("CHANGELOG")
+//    dependencies { // A special DSL for creating dependencies
+//        // scope.type
+//        // The scope can be `required`, `optional`, or `incompatible`
+//        // The type can either be `project` or `version`
+//        optional.project "nU0bVIaL"  // Patchouli
+//    }
+//}
+//
+//if (System.getenv("CURSEFORGE_TOKEN")) {
+//    curseforge {
+//        apiKey = System.getenv("CURSEFORGE_TOKEN")
+//        project {
+//            id = project.curse_project_id
+//            changelogType = "markdown"
+//            changelog = System.getenv("CHANGELOG")
+//            releaseType = relType
+//            addGameVersion project.minecraft_version
+//            addGameVersion "NeoForge"
+//            mainArtifact(jar.archiveFile) {
+//                displayName = "${project.archivesBaseName} v${project.minecraft_version}-${semver}"
+//                relations {
+//                    optionalDependency "patchouli"
+//                }
+//            }
+//        }
+//    }
+//}

@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,9 +44,8 @@ public abstract class MRBaseItem extends Item {
     }
 
     protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
-        MiscUtil.getRegistryName(itemstack.getItem())
-                .ifPresent(regName -> MiscUtil.appendMultilineText(list, ChatFormatting.GRAY,
-                        "modularrouters.itemText.usage.item." + regName.getPath(), getExtraUsageParams()));
+        MiscUtil.appendMultilineText(list, ChatFormatting.GRAY,
+                "modularrouters.itemText.usage.item." + BuiltInRegistries.ITEM.getKey(itemstack.getItem()).getPath(), getExtraUsageParams());
     }
 
     protected abstract void addExtraInformation(ItemStack stack, List<Component> list);

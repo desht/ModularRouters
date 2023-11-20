@@ -4,6 +4,7 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -389,7 +389,7 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private <T extends ItemLike> String safeName(T required) {
-        ResourceLocation key = ForgeRegistries.ITEMS.getKey(required.asItem());
-        return key == null ? "" : key.getPath().replace('/', '_');
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(required.asItem());
+        return key.getPath().replace('/', '_');
     }
 }

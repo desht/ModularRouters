@@ -13,17 +13,17 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModularRouters.MODID);
 
-    public static final RegistryObject<CreativeModeTab> DEFAULT = TABS.register("default", ModCreativeModeTabs::buildDefaultTab);
+    public static final Supplier<CreativeModeTab> DEFAULT = TABS.register("default", ModCreativeModeTabs::buildDefaultTab);
 
     private static CreativeModeTab buildDefaultTab() {
         List<ItemStack> items = ModItems.ITEMS.getEntries().stream()

@@ -15,7 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +28,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        for (RegistryObject<Item> ro : ModItems.ITEMS.getEntries()) {
+        for (DeferredHolder<Item, ? extends Item> ro : ModItems.ITEMS.getEntries()) {
             if (ro.get() instanceof ModuleItem) {
                 addItemsToTag(ModularRoutersTags.Items.MODULES, ro);
             } else if (ro.get() instanceof UpgradeItem) {

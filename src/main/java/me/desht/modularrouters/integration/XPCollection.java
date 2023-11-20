@@ -1,5 +1,6 @@
 package me.desht.modularrouters.integration;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -7,7 +8,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -30,10 +30,10 @@ public class XPCollection {
     private static ItemStack getIconForResource(XPCollectionType type) {
         if (!ICONS.containsKey(type)) {
             if (type.isSolid()) {
-                ICONS.put(type, new ItemStack(ForgeRegistries.ITEMS.getValue(type.getRegistryName())));
+                ICONS.put(type, new ItemStack(BuiltInRegistries.ITEM.get(type.getRegistryName())));
             } else {
-                Fluid fluid = ForgeRegistries.FLUIDS.getValue(type.getRegistryName());
-                ICONS.put(type, fluid == null || fluid == Fluids.EMPTY ?
+                Fluid fluid = BuiltInRegistries.FLUID.get(type.getRegistryName());
+                ICONS.put(type, fluid == Fluids.EMPTY ?
                         ItemStack.EMPTY :
                         FluidUtil.getFilledBucket(new FluidStack(fluid, 1000)));
             }
@@ -86,7 +86,7 @@ public class XPCollection {
         }
 
         public Fluid getFluid() {
-            return ForgeRegistries.FLUIDS.getValue(registryName);
+            return BuiltInRegistries.FLUID.get(registryName);
         }
 
         public String getModId() {

@@ -248,7 +248,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
     private double getPlayerReachDistance(Player player) {
         if (player != null) {
-            AttributeInstance attr = player.getAttribute(NeoForgeMod.BLOCK_REACH.get());
+            AttributeInstance attr = player.getAttribute(NeoForgeMod.BLOCK_REACH.value());
             if (attr != null) return attr.getValue() + 1D;
         }
         return 4.5D;

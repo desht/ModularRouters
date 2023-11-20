@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.filter.matchers;
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -17,6 +18,6 @@ public class ModMatcher implements IItemMatcher {
 
     @Override
     public boolean matchItem(ItemStack stack, Filter.Flags flags) {
-        return !stack.isEmpty() && modSet.contains(MiscUtil.getRegistryName(stack.getItem()).orElseThrow().getNamespace());
+        return !stack.isEmpty() && modSet.contains(BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace());
     }
 }

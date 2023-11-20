@@ -9,16 +9,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ModBlocks {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModularRouters.MODID);
-    public static final DeferredRegister<Item> ITEMS = ModItems.ITEMS;
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ModularRouters.MODID);
+    public static final DeferredRegister.Items ITEMS = ModItems.ITEMS;
 
     private static final BlockBehaviour.Properties ROUTER_PROPS = Block.Properties.of()
             .mapColor(MapColor.METAL)
@@ -29,30 +28,30 @@ public class ModBlocks {
             .isValidSpawn((state, world, pos, entityType) -> false)
             .noOcclusion();
 
-    public static final RegistryObject<ModularRouterBlock> MODULAR_ROUTER = register("modular_router",
+    public static final DeferredBlock<ModularRouterBlock> MODULAR_ROUTER = register("modular_router",
             () -> new ModularRouterBlock(ROUTER_PROPS));
-    public static final RegistryObject<TemplateFrameBlock> TEMPLATE_FRAME = registerNoItem("template_frame",
+    public static final Supplier<TemplateFrameBlock> TEMPLATE_FRAME = registerNoItem("template_frame",
             () -> new TemplateFrameBlock(TEMPLATE_FRAME_PROPS));
 
-    private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup) {
+    private static <T extends Block> DeferredBlock<T> register(String name, Supplier<? extends T> sup) {
         return register(name, sup, ModBlocks::itemDefault);
     }
 
-    private static <T extends Block> RegistryObject<T> register(String name, Supplier<? extends T> sup, Function<RegistryObject<T>, Supplier<? extends Item>> itemCreator) {
-        RegistryObject<T> ret = registerNoItem(name, sup);
+    private static <T extends Block> DeferredBlock<T> register(String name, Supplier<? extends T> sup, Function<Supplier<T>, Supplier<? extends Item>> itemCreator) {
+        DeferredBlock<T> ret = registerNoItem(name, sup);
         ITEMS.register(name, itemCreator.apply(ret));
         return ret;
     }
 
-    private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<? extends T> sup) {
+    private static <T extends Block> DeferredBlock<T> registerNoItem(String name, Supplier<? extends T> sup) {
         return BLOCKS.register(name, sup);
     }
 
-    private static Supplier<BlockItem> itemDefault(final RegistryObject<? extends Block> block) {
+    private static Supplier<BlockItem> itemDefault(final Supplier<? extends Block> block) {
         return item(block);
     }
 
-    private static Supplier<BlockItem> item(final RegistryObject<? extends Block> block) {
+    private static Supplier<BlockItem> item(final Supplier<? extends Block> block) {
         return () -> new BlockItem(block.get(), new Item.Properties());
     }
 }
