@@ -6,22 +6,18 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.5'
-//    id 'com.modrinth.minotaur' version '2.+'
-//    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id "me.modmuss50.mod-publish-plugin" version "0.4.2"
+    id "me.modmuss50.mod-publish-plugin" version "0.4.5"
 }
 
-version = mod_version
+version = "${mod_version}+mc${minecraft_version}"
 group = mod_group_id
 
-ext.releaseTag = System.getenv('TAG') ?: ""
+ext.releaseTag = providers.environmentVariable("TAG").orElse("")
 ext.isAlpha = ext.releaseTag.contains("alpha")
 ext.isBeta = ext.releaseTag.contains("beta")
-
-def semver = mod_version
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
 
-// All jar files from this folder will be added automatically as runtime mod dependencies
+// All jar files from this folder will be added automatically as runtime-only mod dependencies
 def extraModsDir = "extra-mods-${minecraft_version}"
 
 repositories {
@@ -54,7 +50,7 @@ repositories {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = archive_base_name
 }
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -203,13 +199,13 @@ Closure<ReleaseType> getReleaseType = { type ->
 }
 
 publishMods {
-    type = getReleaseType(relType)
+    dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
     changelog = providers.environmentVariable("CHANGELOG").orElse("dryrun")
+    version = mod_version
+    type = getReleaseType(relType)
     file = jar.archiveFile
     displayName = mod_name
-    version = mod_version
     modLoaders.add("neoforge")
-    dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
 
     curseforge {
         projectId = curse_project_id
@@ -227,51 +223,15 @@ publishMods {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(minecraft_version)
         announcementTitle = "Download from Modrinth"
-        optional {
-            id = "nU0bVIaL"
-            slug = "patchouli"
-        }
+//        optional {
+//            id = "nU0bVIaL"
+//            slug = "patchouli"
+//        }
     }
 
-//    discord {
-//        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
-//        content = changelog.map { "# A new version of Modular Routers has been released! \n" + it}
-////        setPlatforms(platforms.curseforge, platforms.modrinth)
-//    }
+    discord {
+        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
+        content = changelog.map { "# A new version of Modular Routers has been released! \n" + it}
+//        setPlatforms(platforms.curseforge, platforms.modrinth)
+    }
 }
-
-//modrinth {
-//    token = System.getenv("MODRINTH_TOKEN")
-//    projectId = "${project.modrinth_project_id}"
-//    versionNumber = version.toString()
-//    versionType = relType
-//    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-//    gameVersions = [ minecraft_version ] // Must be an array, even with only one version
-//    changelog = System.getenv("CHANGELOG")
-//    dependencies { // A special DSL for creating dependencies
-//        // scope.type
-//        // The scope can be `required`, `optional`, or `incompatible`
-//        // The type can either be `project` or `version`
-//        optional.project "nU0bVIaL"  // Patchouli
-//    }
-//}
-//
-//if (System.getenv("CURSEFORGE_TOKEN")) {
-//    curseforge {
-//        apiKey = System.getenv("CURSEFORGE_TOKEN")
-//        project {
-//            id = project.curse_project_id
-//            changelogType = "markdown"
-//            changelog = System.getenv("CHANGELOG")
-//            releaseType = relType
-//            addGameVersion project.minecraft_version
-//            addGameVersion "NeoForge"
-//            mainArtifact(jar.archiveFile) {
-//                displayName = "${project.archivesBaseName} v${project.minecraft_version}-${semver}"
-//                relations {
-//                    optionalDependency "patchouli"
-//                }
-//            }
-//        }
-//    }
-//}
