@@ -12,7 +12,7 @@ plugins {
 version = "${mod_version}+mc${minecraft_version}"
 group = mod_group_id
 
-ext.releaseTag = providers.environmentVariable("TAG").orElse("")
+ext.releaseTag = providers.environmentVariable("TAG").orElse("").toString()
 ext.isAlpha = ext.releaseTag.contains("alpha")
 ext.isBeta = ext.releaseTag.contains("beta")
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
