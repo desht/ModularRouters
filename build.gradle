@@ -204,7 +204,7 @@ publishMods {
     version = mod_version
     type = getReleaseType(relType)
     file = jar.archiveFile
-    displayName = mod_name
+    displayName = "${mod_name} ${mod_version} MC-${minecraft_version}"
     modLoaders.add("neoforge")
 
     curseforge {
