@@ -229,13 +229,7 @@ publishMods {
 //        }
     }
 
-    discord("announceDiscordBuild") {
-        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
-        content = "A dev build of Modular Routers has been uploaded"
-//        setPlatforms(platforms.curseforge, platforms.modrinth)
-    }
-
-    discord("announceDiscordRelease") {
+    discord {
         webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
         content = changelog.map { "# A new version of Modular Routers has been released! \n" + it}
 //        setPlatforms(platforms.curseforge, platforms.modrinth)
