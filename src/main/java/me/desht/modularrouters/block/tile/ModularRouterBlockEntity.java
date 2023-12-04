@@ -892,10 +892,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         compileUpgrades();
     }
 
-    @Override
     public AABB getRenderBoundingBox() {
         if (cachedRenderAABB == null) {
-            cachedRenderAABB = super.getRenderBoundingBox();
+            cachedRenderAABB = new AABB(getBlockPos());
             beams.forEach(beam -> cachedRenderAABB = cachedRenderAABB.minmax(beam.getAABB(getBlockPos())));
         }
         return cachedRenderAABB;

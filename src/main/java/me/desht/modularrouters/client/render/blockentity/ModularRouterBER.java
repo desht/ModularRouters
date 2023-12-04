@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
@@ -34,6 +35,11 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
 
     @SuppressWarnings("unused")
     public ModularRouterBER(BlockEntityRendererProvider.Context ctx) {
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(ModularRouterBlockEntity blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 
     @Override

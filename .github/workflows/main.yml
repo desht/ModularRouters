@@ -44,10 +44,13 @@ jobs:
         with:
           arguments: publishMavenPublicationToModmavenRepository --no-daemon
       - name: Discord notification
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        if:
-          env.DISCORD_WEBHOOK != null
+        uses: gradle/gradle-build-action@v2
         with:
-          args: 'Build complete for project {{ EVENT_PAYLOAD.repository.full_name }} (Minecraft ${{ steps.mod_meta.outputs.mc_version}}): ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}.'
+          arguments: announceDiscordBuild
+#        uses: Ilshidur/action-discord@master
+#        env:
+#          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+#        if:
+#          env.DISCORD_WEBHOOK != null
+#        with:
+#          args: 'Build complete for project {{ EVENT_PAYLOAD.repository.full_name }} (Minecraft ${{ steps.mod_meta.outputs.mc_version}}): ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}.'

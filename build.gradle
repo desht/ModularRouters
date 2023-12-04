@@ -213,9 +213,9 @@ publishMods {
         minecraftVersions.add(minecraft_version)
         projectSlug = "modular-routers"
         announcementTitle = "Download from Curseforge"
-        optional {
-            slug = "patchouli"
-        }
+//        optional {
+//            slug = "patchouli"
+//        }
     }
 
     modrinth {
@@ -229,7 +229,13 @@ publishMods {
 //        }
     }
 
-    discord {
+    discord("announceDiscordBuild") {
+        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
+        content = "A dev build of Modular Routers has been uploaded"
+//        setPlatforms(platforms.curseforge, platforms.modrinth)
+    }
+
+    discord("announceDiscordRelease") {
         webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK").orElse("dryrun")
         content = changelog.map { "# A new version of Modular Routers has been released! \n" + it}
 //        setPlatforms(platforms.curseforge, platforms.modrinth)
