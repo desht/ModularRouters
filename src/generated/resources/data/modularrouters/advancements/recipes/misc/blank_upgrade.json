@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:blank_upgrade"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

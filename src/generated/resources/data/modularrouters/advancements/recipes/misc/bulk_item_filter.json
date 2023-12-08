@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:bulk_item_filter"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

@@ -19,7 +19,7 @@ public interface IPickaxeUser {
 
     default ItemStack setPickaxe(ItemStack moduleStack, ItemStack pickaxeStack) {
         CompoundTag tag = moduleStack.getOrCreateTagElement(ModularRouters.MODID);
-        tag.put(NBT_PICKAXE, pickaxeStack.serializeNBT());
+        tag.put(NBT_PICKAXE, pickaxeStack.save(new CompoundTag()));
         return moduleStack;
     }
 }

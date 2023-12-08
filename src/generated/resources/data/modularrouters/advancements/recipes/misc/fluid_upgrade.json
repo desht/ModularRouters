@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:fluid_upgrade"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

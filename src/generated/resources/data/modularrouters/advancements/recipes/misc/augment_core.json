@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:augment_core"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

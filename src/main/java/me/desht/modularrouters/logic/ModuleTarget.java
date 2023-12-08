@@ -1,22 +1,22 @@
 package me.desht.modularrouters.logic;
 
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Represents the target for a given module, including the dimension, blockpos
@@ -27,8 +27,9 @@ public class ModuleTarget {
     public final Direction face;
     public final String blockTranslationKey;
 
-    private LazyOptional<IItemHandler> cachedItemCap = LazyOptional.empty();
-    private LazyOptional<IEnergyStorage> cachedEnergyCap = LazyOptional.empty();
+    private BlockCapabilityCache<IItemHandler,Direction> itemCapCache;
+    private BlockCapabilityCache<IFluidHandler,Direction> fluidCapCache;
+    private BlockCapabilityCache<IEnergyStorage,Direction> energyCapCache;
 
     public ModuleTarget(GlobalPos gPos, Direction face, String blockTranslationKey) {
         this.gPos = gPos;
@@ -73,52 +74,57 @@ public class ModuleTarget {
      * @return a (lazy optional) item handler
      */
     public boolean hasItemHandlerClientSide() {
-        Level w = ClientUtil.theClientLevel();
-        return isSameWorld(w) && getItemHandlerFor(w).isPresent();
+        // TODO rework - no querying of caps on the client
+        return false;
     }
 
     /**
      * Get an item handler for the module target.  Only call this server-side.
      *
-     * @return a (lazy optional) item handler
+     * @return an optional item handler
      */
-    public LazyOptional<IItemHandler> getItemHandler() {
-        return getItemHandlerFor(MiscUtil.getWorldForGlobalPos(gPos));
+    public Optional<IItemHandler> getItemHandler() {
+        if (itemCapCache == null) {
+            ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
+            if (level == null) {
+                return Optional.empty();
+            }
+            itemCapCache = BlockCapabilityCache.create(Capabilities.ItemHandler.BLOCK, level, gPos.pos(), face);
+        }
+
+        return Optional.ofNullable(itemCapCache.getCapability());
     }
 
-    private LazyOptional<IItemHandler> getItemHandlerFor(Level w) {
-        // called both client and server side...
-        if (!cachedItemCap.isPresent()) {
-            BlockPos pos = gPos.pos();
-            if (w == null || !w.isLoaded(pos)) {
-                cachedItemCap = LazyOptional.empty();
-            } else {
-                BlockEntity te = w.getBlockEntity(pos);
-                cachedItemCap = te == null ? LazyOptional.empty() : te.getCapability(Capabilities.ITEM_HANDLER, face);
+    /**
+     * Try to get a fluid handler for this module target.  Only call this server-side.
+     *
+     * @return an optional fluid handler
+     */
+    public Optional<IFluidHandler> getFluidHandler() {
+        if (fluidCapCache == null) {
+            ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
+            if (level == null) {
+                return Optional.empty();
             }
-            if (cachedItemCap.isPresent()) cachedItemCap.addListener(c -> cachedItemCap = LazyOptional.empty());
+            fluidCapCache = BlockCapabilityCache.create(Capabilities.FluidHandler.BLOCK, level, gPos.pos(), face);
         }
-        return cachedItemCap;
+        return Optional.ofNullable(fluidCapCache.getCapability());
     }
 
     /**
      * Try to get an energy handler for this module target.  Only call this server-side.
      *
-     * @return a (lazy optional) energy handler
+     * @return an optional energy handler
      */
-    public LazyOptional<IEnergyStorage> getEnergyHandler() {
-        if (!cachedEnergyCap.isPresent()) {
-            BlockPos pos = gPos.pos();
-            Level w = MiscUtil.getWorldForGlobalPos(gPos);
-            if (w == null || !w.isLoaded(pos)) {
-                cachedEnergyCap = LazyOptional.empty();
-            } else {
-                BlockEntity te = w.getBlockEntity(pos);
-                cachedEnergyCap = te == null ? LazyOptional.empty() : te.getCapability(Capabilities.ENERGY, face);
+    public Optional<IEnergyStorage> getEnergyHandler() {
+        if (energyCapCache == null) {
+            ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
+            if (level == null) {
+                return Optional.empty();
             }
-            if (cachedEnergyCap.isPresent()) cachedEnergyCap.addListener(c -> cachedEnergyCap = LazyOptional.empty());
+            energyCapCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, level, gPos.pos(), face);
         }
-        return cachedEnergyCap;
+        return Optional.ofNullable(energyCapCache.getCapability());
     }
 
     @Override

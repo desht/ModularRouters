@@ -1,5 +1,6 @@
 package me.desht.modularrouters.logic.compiled;
 
+import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.IHasTranslationKey;
@@ -48,8 +49,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     private final Operation operation;
     private final Section section;
-    private final UUID playerId;
-    private final String playerName;
+    private final GameProfile playerProfile;
     private WeakReference<Player> playerRef;
 
     public CompiledPlayerModule(ModularRouterBlockEntity router, ItemStack stack) {
@@ -57,12 +57,11 @@ public class CompiledPlayerModule extends CompiledModule {
 
         CompoundTag compound = stack.getTagElement(ModularRouters.MODID);
         if (compound != null) {
-            playerName = ((PlayerModule) stack.getItem()).getOwnerName(stack);
-            playerId = ((PlayerModule) stack.getItem()).getOwnerID(stack);
+            playerProfile = ((PlayerModule) stack.getItem()).getOwnerProfile(stack).orElse(null);
             operation = Operation.values()[compound.getInt(NBT_OPERATION)];
             section = Section.values()[compound.getInt(NBT_SECTION)];
             if (router != null && !router.nonNullLevel().isClientSide) {
-                Player player = playerId == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
+                Player player = playerProfile == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerProfile.getId());
                 playerRef = new WeakReference<>(player);
             } else {
                 playerRef = new WeakReference<>(null);
@@ -70,8 +69,7 @@ public class CompiledPlayerModule extends CompiledModule {
         } else {
             operation = Operation.EXTRACT;
             section = Section.MAIN;
-            playerId = null;
-            playerName = null;
+            playerProfile = null;
         }
     }
 
@@ -137,14 +135,14 @@ public class CompiledPlayerModule extends CompiledModule {
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity().getUUID().equals(playerId)) {
+        if (event.getEntity().getUUID().equals(getPlayerId())) {
             playerRef = new WeakReference<>(event.getEntity());
         }
     }
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity().getUUID().equals(playerId)) {
+        if (event.getEntity().getUUID().equals(getPlayerId())) {
             playerRef = new WeakReference<>(null);
         }
     }
@@ -165,8 +163,12 @@ public class CompiledPlayerModule extends CompiledModule {
         }
     }
 
+    public UUID getPlayerId() {
+        return playerProfile == null ? null : playerProfile.getId();
+    }
+
     public String getPlayerName() {
-        return playerName;
+        return playerProfile == null ? null : playerProfile.getName();
     }
 
     public Operation getOperation() {

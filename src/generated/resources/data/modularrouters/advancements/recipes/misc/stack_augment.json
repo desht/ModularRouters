@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:stack_augment"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

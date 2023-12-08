@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,9 +23,11 @@ public class TemplateFrameBlock extends CamouflageableBlock implements EntityBlo
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
-        ICamouflageable camo = getCamoState(world, pos);
-        if (camo == null) return super.getCloneItemStack(state, target, world, pos, player);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        ICamouflageable camo = getCamoState(level, pos);
+        if (camo == null) {
+            return super.getCloneItemStack(level, pos, state);
+        }
         ItemStack stack = new ItemStack(camo.getCamouflage().getBlock().asItem());
         return stack.setHoverName(stack.getHoverName().plainCopy().append("..?"));
     }

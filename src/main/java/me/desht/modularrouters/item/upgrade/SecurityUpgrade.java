@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.upgrade;
 
 import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
@@ -27,14 +28,14 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
 
     @Override
     public void addExtraInformation(ItemStack itemstack,  List<Component> list) {
-        String owner = getOwnerName(itemstack);
-        if (owner == null) owner = "-";
+        String owner = getOwnerProfile(itemstack).map(GameProfile::getName).orElse("-");
+
         list.add(ClientUtil.xlate("modularrouters.itemText.security.owner", ChatFormatting.AQUA + owner));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
             list.add(ClientUtil.xlate("modularrouters.itemText.security.count", names.size(), MAX_PLAYERS));
             list.addAll(names.stream()
-                    .map(name -> " \u2022 " + ChatFormatting.YELLOW + name)
+                    .map(name -> " • " + ChatFormatting.YELLOW + name)
                     .sorted()
                     .map(Component::literal)
                     .toList());
@@ -55,23 +56,23 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
     private Set<UUID> getPlayerIDs(ItemStack stack) {
         CompoundTag compound = stack.getTag();
         if (compound == null) {
-            return Collections.emptySet();
+            return Set.of();
         }
 
-        Set<UUID> res = Sets.newHashSet();
-        UUID ownerID = getOwnerID(stack);
-        if (ownerID == null) return Collections.emptySet();
-        res.add(ownerID);
+        return getOwnerProfile(stack).map(profile -> {
+            Set<UUID> res = Sets.newHashSet();
+            res.add(profile.getId());
 
-        if (compound.contains(NBT_PLAYERS)) {
-            CompoundTag p = compound.getCompound(NBT_PLAYERS);
-            res.addAll(p.getAllKeys().stream().map(UUID::fromString).toList());
-        }
-        return res;
+            if (compound.contains(NBT_PLAYERS)) {
+                CompoundTag p = compound.getCompound(NBT_PLAYERS);
+                res.addAll(p.getAllKeys().stream().map(UUID::fromString).toList());
+            }
+            return res;
+        }).orElse(Set.of());
     }
 
     /**
-     * Get a items of player names added to this security upgrade, not including the owner.
+     * Get a set of player names added to this security upgrade, not including the owner.
      *
      * @param stack the upgrade itemstack
      * @return set of (displayable) player names

@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:xp_vacuum_augment"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

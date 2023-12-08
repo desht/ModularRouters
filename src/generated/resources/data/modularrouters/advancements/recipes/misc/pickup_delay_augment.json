@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:pickup_delay_augment"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

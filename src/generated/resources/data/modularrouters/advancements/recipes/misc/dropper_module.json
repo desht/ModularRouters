@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:dropper_module"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

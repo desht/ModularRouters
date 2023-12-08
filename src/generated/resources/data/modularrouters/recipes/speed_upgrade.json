@@ -29,6 +29,5 @@
   "result": {
     "count": 3,
     "item": "modularrouters:speed_upgrade"
-  },
-  "show_notification": true
+  }
 }

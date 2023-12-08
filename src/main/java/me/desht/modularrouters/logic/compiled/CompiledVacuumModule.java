@@ -20,18 +20,18 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,8 +44,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private final boolean autoEjecting;
     private final FluidStack xpJuiceStack;
 
-    private BlockEntity fluidReceiver = null;
-    private Direction fluidReceiverFace = null;
+    private BlockCapabilityCache<IFluidHandler,Direction> fluidReceiverCache = null;
 
     // temporary small xp buffer (generally around an orb or less)
     // does not survive router recompilation...
@@ -67,9 +66,6 @@ public class CompiledVacuumModule extends CompiledModule {
             if (xpMode) {
                 Fluid xpFluid = xpCollectionType.getFluid();
                 xpJuiceStack = xpFluid == Fluids.EMPTY ? FluidStack.EMPTY : new FluidStack(xpFluid, 1000);
-                if (router != null) {
-                    findFluidReceiver(router);
-                }
             } else {
                 xpJuiceStack = FluidStack.EMPTY;
             }
@@ -91,25 +87,19 @@ public class CompiledVacuumModule extends CompiledModule {
 
     @Override
     public void onNeighbourChange(ModularRouterBlockEntity router) {
-        findFluidReceiver(router);
+        fluidReceiverCache = null;
     }
 
-    private void findFluidReceiver(ModularRouterBlockEntity router) {
-        if (!xpMode || xpJuiceStack.isEmpty()) return;
-
-        fluidReceiver = null;
-        for (Direction face : MiscUtil.DIRECTIONS) {
-            BlockEntity te = router.nonNullLevel().getBlockEntity(router.getBlockPos().relative(face));
-            if (te != null) {
-                te.getCapability(Capabilities.FLUID_HANDLER, face.getOpposite()).ifPresent(handler -> {
-                    if (handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
-                        fluidReceiver = te;
-                        fluidReceiverFace = face.getOpposite();
-                    }
-                });
-            }
-            if (fluidReceiver != null) break;
+    @Override
+    public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
+        if (router == null) {
+            return null;
         }
+        ModuleItem.RelativeDirection dir = getDirection();
+        int offset = dir == ModuleItem.RelativeDirection.NONE ? 0 : getRange() + 1;
+        Direction facing = router.getAbsoluteFacing(dir);
+        GlobalPos gPos = MiscUtil.makeGlobalPos(router.nonNullLevel(), router.getBlockPos().relative(facing, offset));
+        return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 
     private boolean handleItemMode(ModularRouterBlockEntity router) {
@@ -121,8 +111,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
-        List<ItemEntity> items = router.nonNullLevel().getEntitiesOfClass(ItemEntity.class,
-                new AABB(centrePos.offset(-range, -range, -range), centrePos.offset(range + 1, range + 1, range + 1)));
+        List<ItemEntity> items = router.nonNullLevel().getEntitiesOfClass(ItemEntity.class, new AABB(centrePos).inflate(range));
 
         int toPickUp = getItemsPerTick(router);
 
@@ -158,7 +147,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
     private boolean handleXpMode(ModularRouterBlockEntity router) {
         int spaceForXp;
-        LazyOptional<IFluidHandler> lazyFluidHandler = LazyOptional.empty();
+        IFluidHandler fluidHandler = null;
 
         if (xpCollectionType.isSolid()) {
             ItemStack inRouterStack = router.getBufferItemStack();
@@ -167,14 +156,13 @@ public class CompiledVacuumModule extends CompiledModule {
             }
             spaceForXp = (inRouterStack.getMaxStackSize() - inRouterStack.getCount()) * xpCollectionType.getXpRatio();
         } else {
-            if (fluidReceiver != null && fluidReceiver.isRemoved()) {
-                findFluidReceiver(router);
+            fluidHandler = getFluidReceiver(router);
+            if (fluidHandler == null) {
+                fluidHandler = router.getFluidHandler();
             }
-            lazyFluidHandler = fluidReceiver != null ?
-                fluidReceiver.getCapability(Capabilities.FLUID_HANDLER, fluidReceiverFace) :
-                router.getCapability(Capabilities.FLUID_HANDLER);
-            spaceForXp = lazyFluidHandler.map(this::findSpaceForXPFluid).orElse(0);
+            spaceForXp = findSpaceForXPFluid(fluidHandler);
         }
+
         if (spaceForXp == 0) {
             return false;
         }
@@ -204,9 +192,8 @@ public class CompiledVacuumModule extends CompiledModule {
                         InventoryUtils.dropItems(router.nonNullLevel(), Vec3.atCenterOf(router.getBlockPos()), excess);
                     }
                 }
-            } else {
-                boolean filledAll = lazyFluidHandler.map(xpHandler -> doFluidXPFill(orb, xpHandler)).orElse(false);
-                if (!filledAll) spaceForXp = 0;
+            } else if (!doFluidXPFill(orb, fluidHandler)) {
+                spaceForXp = 0;
             }
             spaceForXp -= orb.getValue();
             orb.remove(Entity.RemovalReason.DISCARDED);
@@ -215,7 +202,30 @@ public class CompiledVacuumModule extends CompiledModule {
         return initialSpaceForXp - spaceForXp > 0;
     }
 
-    private boolean doFluidXPFill(ExperienceOrb orb, IFluidHandler xpHandler) {
+    private IFluidHandler getFluidReceiver(ModularRouterBlockEntity router) {
+        if (!xpMode || xpJuiceStack.isEmpty() || !(router.getLevel() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+
+        if (fluidReceiverCache == null) {
+            for (Direction face : MiscUtil.DIRECTIONS) {
+                BlockPos pos = router.getBlockPos().relative(face);
+                IFluidHandler handler = serverLevel.getCapability(Capabilities.FluidHandler.BLOCK, pos, face.getOpposite());
+                if (handler != null && handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
+                    fluidReceiverCache = BlockCapabilityCache.create(Capabilities.FluidHandler.BLOCK, serverLevel, pos, face.getOpposite(),
+                            () -> true, () -> fluidReceiverCache = null);
+                    break;
+                }
+            }
+        }
+
+        return fluidReceiverCache == null ? null : fluidReceiverCache.getCapability();
+    }
+
+    private boolean doFluidXPFill(ExperienceOrb orb, @Nullable IFluidHandler xpHandler) {
+        if (xpHandler == null) {
+            return false;
+        }
         FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getValue() * xpCollectionType.getXpRatio() + xpBuffered);
         int filled = xpHandler.fill(xpStack, IFluidHandler.FluidAction.EXECUTE);
         if (filled < xpStack.getAmount()) {
@@ -228,30 +238,20 @@ public class CompiledVacuumModule extends CompiledModule {
         }
     }
 
-    private int findSpaceForXPFluid(IFluidHandler xpHandler) {
+    private int findSpaceForXPFluid(@Nullable IFluidHandler xpHandler) {
         int space = 0;
 
-        for (int idx = 0; idx < xpHandler.getTanks(); idx++) {
-            if (xpHandler.isFluidValid(idx, xpJuiceStack)) {
-                FluidStack fluidStack = xpHandler.getFluidInTank(idx);
-                if (fluidStack.isEmpty() || fluidStack.getFluid() == xpCollectionType.getFluid()) {
-                    space += (xpHandler.getTankCapacity(idx) - fluidStack.getAmount()) / xpCollectionType.getXpRatio();
+        if (xpHandler != null) {
+            for (int idx = 0; idx < xpHandler.getTanks(); idx++) {
+                if (xpHandler.isFluidValid(idx, xpJuiceStack)) {
+                    FluidStack fluidStack = xpHandler.getFluidInTank(idx);
+                    if (fluidStack.isEmpty() || fluidStack.getFluid() == xpCollectionType.getFluid()) {
+                        space += (xpHandler.getTankCapacity(idx) - fluidStack.getAmount()) / xpCollectionType.getXpRatio();
+                    }
                 }
             }
         }
         return space;
-    }
-
-    @Override
-    public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        if (router == null) {
-            return null;
-        }
-        ModuleItem.RelativeDirection dir = getDirection();
-        int offset = dir == ModuleItem.RelativeDirection.NONE ? 0 : getRange() + 1;
-        Direction facing = router.getAbsoluteFacing(dir);
-        GlobalPos gPos = MiscUtil.makeGlobalPos(router.nonNullLevel(), router.getBlockPos().relative(facing, offset));
-        return Collections.singletonList(new ModuleTarget(gPos, facing));
     }
 
     public XPCollectionType getXPCollectionType() {

@@ -4,46 +4,40 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-
-
 public class BufferHandler extends ItemStackHandler {
     private final ModularRouterBlockEntity router;
-    private boolean hasFluidCap;
-    private boolean hasEnergyCap;
 
-    private final IFluidHandler adapter = new FluidItemAdapter(0);
-    private final LazyOptional<IFluidHandler> fluidAdapter = LazyOptional.of(() -> adapter);
+    private IEnergyStorage energyStorage;
+    private IFluidHandlerItem fluidHandler;
 
     public BufferHandler(ModularRouterBlockEntity router) {
         super(router.getBufferSlotCount());
         this.router = router;
-        this.hasFluidCap = hasCap(getStackInSlot(0), Capabilities.FLUID_HANDLER_ITEM);
-        this.hasEnergyCap = hasCap(getStackInSlot(0), Capabilities.ENERGY);
+
+        setupFluidEnergyCaps();
     }
 
     @Override
     public void onContentsChanged(int slot) {
         ItemStack stack = getStackInSlot(slot);
 
-        boolean newFluidCap = hasCap(stack, Capabilities.FLUID_HANDLER_ITEM);
-        boolean newEnergyCap = hasCap(stack, Capabilities.ENERGY);
+        IFluidHandlerItem newFluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        IEnergyStorage newEnergyStorage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
 
-        if (newFluidCap != hasFluidCap || newEnergyCap != hasEnergyCap) {
+        if (newFluidHandler != fluidHandler || newEnergyStorage != energyStorage) {
+            fluidHandler = newFluidHandler;
+            energyStorage = newEnergyStorage;
+
+            router.invalidateCapabilities();
+
             // in case any pipes/cables need to connect/disconnect
             router.nonNullLevel().updateNeighborsAt(router.getBlockPos(), ModBlocks.MODULAR_ROUTER.get());
         }
-        hasFluidCap = newFluidCap;
-        hasEnergyCap = newEnergyCap;
 
         router.setChanged();  // will also update comparator output
     }
@@ -52,88 +46,21 @@ public class BufferHandler extends ItemStackHandler {
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
 
+        setupFluidEnergyCaps();
+    }
+
+    public IFluidHandlerItem getFluidHandler() {
+        return fluidHandler;
+    }
+
+    public IEnergyStorage getEnergyStorage() {
+        return energyStorage;
+    }
+
+    private void setupFluidEnergyCaps() {
         ItemStack stack = getStackInSlot(0);
-        this.hasFluidCap = hasCap(stack, Capabilities.FLUID_HANDLER_ITEM);
-        this.hasEnergyCap = hasCap(stack, Capabilities.ENERGY);
-    }
 
-    public LazyOptional<IFluidHandlerItem> getFluidItemCapability() {
-        ItemStack stack = getStackInSlot(0);
-        return stack.getCount() == 1 ? getStackInSlot(0).getCapability(Capabilities.FLUID_HANDLER_ITEM) : LazyOptional.empty();
-    }
-
-    public LazyOptional<IFluidHandler> getFluidCapability() {
-        return hasFluidCap ? fluidAdapter : LazyOptional.empty();
-    }
-
-    public LazyOptional<IEnergyStorage> getEnergyCapability() {
-        return getStackInSlot(0).getCapability(Capabilities.ENERGY);
-    }
-
-    private boolean hasCap(ItemStack stack, Capability<?> cap) {
-        return stack.getCount() == 1 && stack.getCapability(cap).isPresent();
-    }
-
-    public void invalidateCaps() {
-        getFluidCapability().invalidate();
-        getEnergyCapability().invalidate();
-    }
-
-    private class FluidItemAdapter implements IFluidHandler {
-        private final int slot;
-
-        FluidItemAdapter(int slot) {
-            this.slot = slot;
-        }
-
-        @Override
-        public int getTanks() {
-            return getFluidItemCapability().map(IFluidHandler::getTanks).orElse(0);
-        }
-
-        @Nonnull
-        @Override
-        public FluidStack getFluidInTank(int tank) {
-            return getFluidItemCapability().map(h -> h.getFluidInTank(tank)).orElse(FluidStack.EMPTY);
-        }
-
-        @Override
-        public int getTankCapacity(int tank) {
-            return getFluidItemCapability().map(h -> h.getTankCapacity(tank)).orElse(0);
-        }
-
-        @Override
-        public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-            return getFluidItemCapability().map(h -> h.isFluidValid(tank, stack)).orElse(false);
-        }
-
-        @Override
-        public int fill(FluidStack resource, FluidAction action) {
-            return getFluidItemCapability().map(h -> {
-                int filled = h.fill(resource, action);
-                if (action.execute() && filled != 0) setStackInSlot(slot, h.getContainer());
-                return filled;
-            }).orElse(0);
-        }
-
-        @Nonnull
-        @Override
-        public FluidStack drain(FluidStack resource, FluidAction action) {
-            return getFluidItemCapability().map(h -> {
-                FluidStack drained = h.drain(resource, action);
-                if (action.execute() && !drained.isEmpty()) setStackInSlot(slot, h.getContainer());
-                return drained;
-            }).orElse(FluidStack.EMPTY);
-        }
-
-        @Nonnull
-        @Override
-        public FluidStack drain(int maxDrain, FluidAction action) {
-            return getFluidItemCapability().map(h -> {
-                FluidStack drained = h.drain(maxDrain, action);
-                if (action.execute() && !drained.isEmpty()) setStackInSlot(slot, h.getContainer());
-                return drained;
-            }).orElse(FluidStack.EMPTY);
-        }
+        fluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        energyStorage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
     }
 }

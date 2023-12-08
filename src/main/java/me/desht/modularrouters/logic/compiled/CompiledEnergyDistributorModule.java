@@ -7,11 +7,10 @@ import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 
 public class CompiledEnergyDistributorModule extends CompiledModule {
@@ -26,29 +25,32 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
                 .toList();
         if (inRange.isEmpty()) return false;
 
-        int total = router.getCapability(Capabilities.ENERGY).map(routerHandler -> {
-            int toSend = routerHandler.getEnergyStored() / inRange.size();
-            int total1 = 0;
+        int total = 0;
+
+        IEnergyStorage storage = router.getEnergyStorage();
+        if (storage != null) {
+            int toSend = storage.getEnergyStored() / inRange.size();
             boolean doBeam = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2;
             for (ModuleTarget target : inRange) {
-                total1 += target.getEnergyHandler().map(handler -> {
-                    int toExtract = routerHandler.extractEnergy(toSend, true);
+                total += target.getEnergyHandler().map(handler -> {
+                    int toExtract = storage.extractEnergy(toSend, true);
                     int sent = handler.receiveEnergy(toExtract, false);
-                    routerHandler.extractEnergy(sent, false);
+                    storage.extractEnergy(sent, false);
                     if (sent > 0 && doBeam) {
                         router.addItemBeam(new BeamData(router.getTickRate(), target.gPos.pos(), 0xE04040));
                     }
                     return sent;
                 }).orElse(0);
             }
-            return total1;
-        }).orElse(0);
+        }
 
         return total > 0;
     }
 
     @Override
     public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        return router == null ? Collections.emptyList() : ImmutableList.copyOf(TargetedModule.getTargets(stack, !router.getLevel().isClientSide));
+        return router == null ?
+                List.of() :
+                ImmutableList.copyOf(TargetedModule.getTargets(stack, !router.getLevel().isClientSide));
     }
 }

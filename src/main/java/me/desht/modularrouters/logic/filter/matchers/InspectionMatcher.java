@@ -6,11 +6,10 @@ import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -157,9 +156,8 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private static Optional<Integer> getEnergyPercent(ItemStack stack) {
-            return stack.getCapability(Capabilities.ENERGY, null)
-                    .map(handler -> Optional.of(asPercentage(handler.getEnergyStored(), handler.getMaxEnergyStored())))
-                    .orElse(Optional.empty());
+            IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+            return storage == null ? Optional.empty() : Optional.of(asPercentage(storage.getEnergyStored(), storage.getMaxEnergyStored()));
         }
 
         private static Optional<Integer> getFluidPercent(ItemStack stack) {
@@ -183,13 +181,9 @@ public class InspectionMatcher implements IItemMatcher {
             return values()[n];
         }
 
-        private static final BigDecimal HUNDRED = new BigDecimal(100);
-        private static int asPercentage(long val, long max) {
+        private static int asPercentage(int val, int max) {
             if (max == 0) return 0;  // https://github.com/desht/ModularRouters/issues/82
-            // BigDecimal is a bit overkill perhaps, but guarantees no danger of overflow here
-            BigDecimal a = new BigDecimal(val);
-            BigDecimal b = new BigDecimal(max);
-            return a.multiply(HUNDRED).divide(b, RoundingMode.DOWN).intValue();
+            return (int) (val / (float) max) * 100;
         }
     }
 

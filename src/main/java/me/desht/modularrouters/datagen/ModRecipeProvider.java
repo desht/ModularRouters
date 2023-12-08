@@ -2,7 +2,9 @@ package me.desht.modularrouters.datagen;
 
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.core.ModRecipes;
+import me.desht.modularrouters.recipe.GuideBookRecipe;
+import me.desht.modularrouters.recipe.PickaxeModuleRecipe;
+import me.desht.modularrouters.recipe.ResetModuleRecipe;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
@@ -122,7 +124,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         // modules
-        SpecialRecipeBuilder.special(ModRecipes.EXTRUDER_MODULE_1.get())
+        SpecialRecipeBuilder.special(PickaxeModuleRecipe.ExtruderModule1Recipe::new)
                 .save(consumer, RL("extruder_module_1").toString());
 
         shaped(ModItems.FLUID_MODULE.get(), ModItems.BLANK_MODULE.get(),
@@ -160,7 +162,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.SENDER_MODULE_1.get(), Items.ENDER_PEARL
         ).save(consumer);
 
-        SpecialRecipeBuilder.special(ModRecipes.BREAKER_MODULE.get())
+        SpecialRecipeBuilder.special(PickaxeModuleRecipe.BreakerModuleRecipe::new)
                 .save(consumer, RL("breaker_module").toString());
 
         shapeless(ModItems.DROPPER_MODULE.get(), ModItems.BLANK_MODULE.get(),
@@ -336,9 +338,10 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.BULK_ITEM_FILTER.get(), Items.COMPARATOR
         ).save(consumer);
 
-        SpecialRecipeBuilder.special(ModRecipes.MODULE_RESET.get()).save(consumer, RL("reset_module").toString());
+        SpecialRecipeBuilder.special(ResetModuleRecipe::new)
+                .save(consumer, RL("reset_module"));
 
-        SpecialRecipeBuilder.special(ModRecipes.GUIDE_BOOK.get())
+        SpecialRecipeBuilder.special(GuideBookRecipe::new)
                 .save(consumer.withConditions(new ModLoadedCondition("patchouli")), RL("guide_book"));
     }
 

@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:puller_module_2_x4"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

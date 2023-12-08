@@ -22,6 +22,5 @@
   "result": {
     "count": 16,
     "item": "modularrouters:sync_upgrade"
-  },
-  "show_notification": true
+  }
 }

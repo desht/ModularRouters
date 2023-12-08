@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:filter_round_robin_augment"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

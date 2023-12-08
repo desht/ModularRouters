@@ -222,22 +222,24 @@ public abstract class CompiledModule {
 
         ItemStack transferred = ItemStack.EMPTY;
         for (int i = 0; i < handler.getSlots(); i++) {
-            int pos = getLastMatchPos(key, i, handler.getSlots());
-            ItemStack toPull = handler.extractItem(pos, wanted.getCount(), true);
+            int slot = getLastMatchPos(key, i, handler.getSlots());
+            ItemStack toPull = handler.extractItem(slot, wanted.getCount(), true);
             if (toPull.isEmpty()) {
-                // we'd found an item to pull but it looks like this handler doesn't allow us to extract it
-                // give up, but advance the last match pos so we don't get stuck trying this slot forever
-                setLastMatchPos(key, (pos + 1) % handler.getSlots());
+                // we'd found an item to pull, but it looks like this handler doesn't allow us to extract it
+                // give up, but advance the last match pos, so we don't get stuck trying this slot forever
+                setLastMatchPos(key, (slot + 1) % handler.getSlots());
                 return transferred;
             }
             if (ItemHandlerHelper.canItemStacksStack(wanted, toPull)) {
                 // this item is suitable for pulling
                 ItemStack notInserted = router.insertBuffer(toPull);
                 int inserted = toPull.getCount() - notInserted.getCount();
-                transferred = handler.extractItem(pos, inserted, false);
+                transferred = handler.extractItem(slot, inserted, false);
                 wanted.shrink(inserted);
                 if (wanted.isEmpty() || router.isBufferFull()) {
-                    setLastMatchPos(key, handler.getStackInSlot(pos).isEmpty() ? (pos + 1) % handler.getSlots() : pos);
+                    if (handler.getSlots() > 0) {
+                        setLastMatchPos(key, handler.getStackInSlot(slot).isEmpty() ? (slot + 1) % handler.getSlots() : slot);
+                    }
                     return transferred;
                 }
             }

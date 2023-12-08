@@ -12,12 +12,15 @@ import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +47,7 @@ public class ModularRouters {
         }
 
         modBus.addListener(this::commonSetup);
+        modBus.addListener(this::registerCaps);
 
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
@@ -52,6 +56,20 @@ public class ModularRouters {
         ModSounds.SOUNDS.register(modBus);
         ModRecipes.RECIPES.register(modBus);
         ModCreativeModeTabs.TABS.register(modBus);
+    }
+
+    private void registerCaps(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.MODULAR_ROUTER.get(),
+                (be, side) -> be.getBuffer());
+
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                ModBlockEntities.MODULAR_ROUTER.get(),
+                (be, side) -> be.getFluidHandler());
+
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+                ModBlockEntities.MODULAR_ROUTER.get(),
+                (be, side) -> be.getEnergyStorage());
     }
 
     public static WildcardedRLMatcher getDimensionBlacklist() {

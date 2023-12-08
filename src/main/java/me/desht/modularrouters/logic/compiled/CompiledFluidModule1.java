@@ -21,8 +21,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -31,6 +29,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CompiledFluidModule1 extends CompiledModule {
     public static final String NBT_FORCE_EMPTY = "ForceEmpty";
@@ -59,43 +58,38 @@ public class CompiledFluidModule1 extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (getTarget() == null) return false;
 
-        LazyOptional<IFluidHandlerItem> routerCap = router.getCapability(Capabilities.FLUID_HANDLER_ITEM);
-
-        if (!routerCap.isPresent()) {
-            return false;
-        }
+        IFluidHandlerItem routerHandler = router.getFluidHandler();
+        if (routerHandler == null) return false;
 
         Level world = Objects.requireNonNull(router.getLevel());
-        BlockPos pos = getTarget().gPos.pos();
-        LazyOptional<IFluidHandler> worldFluidCap = FluidUtil.getFluidHandler(world, pos, getFacing().getOpposite());
+        Optional<IFluidHandler> targetFluidHandler = getTarget().getFluidHandler();
 
         boolean didWork;
-        if (worldFluidCap.isPresent()) {
+        if (targetFluidHandler.isPresent()) {
             // there's a block entity with a fluid capability; try to interact with that
             didWork = switch (fluidDirection) {
-                case IN -> worldFluidCap.map(srcHandler ->
-                        routerCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.IN)).orElse(false))
+                case IN -> targetFluidHandler.map(worldHandler -> doTransfer(router, worldHandler, routerHandler, FluidDirection.IN))
                         .orElse(false);
-                case OUT -> routerCap.map(srcHandler ->
-                        worldFluidCap.map(dstHandler -> doTransfer(router, srcHandler, dstHandler, FluidDirection.OUT)).orElse(false))
+                case OUT -> targetFluidHandler.map(worldHandler -> doTransfer(router, routerHandler, worldHandler, FluidDirection.OUT))
                         .orElse(false);
             };
         } else {
             // no block entity at the target position; try to interact with a fluid block in the world
             boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
+            BlockPos pos = getTarget().gPos.pos();
             didWork = switch (fluidDirection) {
-                case IN -> tryPickupFluid(router, routerCap, world, pos, playSound);
-                case OUT -> tryPourOutFluid(router, routerCap, world, pos, playSound);
+                case IN -> tryPickupFluid(router, routerHandler, world, pos, playSound);
+                case OUT -> tryPourOutFluid(router, routerHandler, world, pos, playSound);
             };
         }
 
         if (didWork) {
-            routerCap.ifPresent(h -> router.setBufferItemStack(h.getContainer()));
+            router.setBufferItemStack(routerHandler.getContainer());
         }
         return didWork;
     }
 
-    private boolean tryPickupFluid(ModularRouterBlockEntity router, LazyOptional<IFluidHandlerItem> routerCap, Level world, BlockPos pos, boolean playSound) {
+    private boolean tryPickupFluid(ModularRouterBlockEntity router, IFluidHandler routerHandler, Level world, BlockPos pos, boolean playSound) {
         BlockState state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof BucketPickup bucketPickup)) {
             return false;
@@ -109,74 +103,63 @@ public class CompiledFluidModule1 extends CompiledModule {
         }
         FluidTank tank = new FluidTank(BUCKET_VOLUME);
         tank.setFluid(new FluidStack(fluid, BUCKET_VOLUME));
-        FluidStack maybeSent = routerCap.map(
-                h -> FluidUtil.tryFluidTransfer(h, tank, BUCKET_VOLUME, false)
-        ).orElse(FluidStack.EMPTY);
+        FluidStack maybeSent = FluidUtil.tryFluidTransfer(routerHandler, tank, BUCKET_VOLUME, false);
         if (maybeSent.getAmount() != BUCKET_VOLUME) {
             return false;
         }
         // actually do the pickup & transfer now
         bucketPickup.pickupBlock(router.getFakePlayer(), world, pos, state);
-        FluidStack transferred = routerCap.map(destHandler ->
-                FluidUtil.tryFluidTransfer(destHandler, tank, BUCKET_VOLUME, true))
-                .orElse(FluidStack.EMPTY);
+        FluidStack transferred = FluidUtil.tryFluidTransfer(routerHandler, tank, BUCKET_VOLUME, true);
         if (!transferred.isEmpty() && playSound) {
             playFillSound(world, pos, fluid);
         }
         return !transferred.isEmpty();
     }
 
-    private boolean tryPourOutFluid(ModularRouterBlockEntity router, LazyOptional<IFluidHandlerItem> routerFluidCap, Level world, BlockPos pos, boolean playSound) {
+    private boolean tryPourOutFluid(ModularRouterBlockEntity router, IFluidHandler routerHandler, Level world, BlockPos pos, boolean playSound) {
         if (!forceEmpty && !(world.isEmptyBlock(pos) || world.getBlockState(pos).getBlock() instanceof LiquidBlockContainer)) {
             return false;
         }
 
         // code partially lifted from BucketItem
-//        Material material = blockstate.getMaterial();
-//        boolean isNotSolid = !material.isSolid();
 
-        boolean didWork = routerFluidCap.map(handler -> {
-            FluidStack toPlace = handler.drain(BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
-            if (toPlace.getAmount() < BUCKET_VOLUME) {
-                return false;  // must be a full bucket's worth to place in the world
-            }
-            Fluid fluid = toPlace.getFluid();
-            if (!getFilter().testFluid(toPlace.getFluid())) {
-                return false;
-            }
-            BlockState blockstate = world.getBlockState(pos);
-            boolean isReplaceable = blockstate.canBeReplaced(fluid);
-            Block block = blockstate.getBlock();
-            if (world.isEmptyBlock(pos) /*|| isNotSolid*/ || isReplaceable
-                    || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(router.getFakePlayer(), world, pos, blockstate, toPlace.getFluid())) {
-                if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
-                    // no pouring water in the nether!
-                    playEvaporationEffects(world, pos, fluid);
-                } else if (block instanceof LiquidBlockContainer liq) {
-                    // a block which can take fluid, e.g. waterloggable block like a slab
-                    FluidState still = fluid instanceof FlowingFluid ff ? ff.getSource(false) : fluid.defaultFluidState();
-                    if (liq.placeLiquid(world, pos, blockstate, still) && playSound) {
-                        playEmptySound(world, pos, fluid);
-                    }
-                } else {
-                    // air or some non-solid/replaceable block: just overwrite with the fluid
-                    if (playSound) {
-                        playEmptySound(world, pos, fluid);
-                    }
-                    if (/*isNotSolid ||*/ isReplaceable) {
-                        world.destroyBlock(pos, true);
-                    }
-                    world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Block.UPDATE_ALL_IMMEDIATE);
-                }
-                return true;
-            }
-            return false;
-        }).orElse(false);
-
-        if (didWork) {
-            routerFluidCap.ifPresent(handler -> handler.drain(BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE));
+        FluidStack toPlace = routerHandler.drain(BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
+        if (toPlace.getAmount() < BUCKET_VOLUME) {
+            return false;  // must be a full bucket's worth to place in the world
         }
-        return didWork;
+        Fluid fluid = toPlace.getFluid();
+        if (!getFilter().testFluid(toPlace.getFluid())) {
+            return false;
+        }
+        BlockState blockstate = world.getBlockState(pos);
+        boolean isReplaceable = blockstate.canBeReplaced(fluid);
+        Block block = blockstate.getBlock();
+        if (world.isEmptyBlock(pos) || isReplaceable
+                || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(router.getFakePlayer(), world, pos, blockstate, toPlace.getFluid())) {
+            if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
+                // no pouring water in the nether!
+                playEvaporationEffects(world, pos, fluid);
+            } else if (block instanceof LiquidBlockContainer liq) {
+                // a block which can take fluid, e.g. waterloggable block like a slab
+                FluidState still = fluid instanceof FlowingFluid ff ? ff.getSource(false) : fluid.defaultFluidState();
+                if (liq.placeLiquid(world, pos, blockstate, still) && playSound) {
+                    playEmptySound(world, pos, fluid);
+                }
+            } else {
+                // air or some non-solid/replaceable block: just overwrite with the fluid
+                if (playSound) {
+                    playEmptySound(world, pos, fluid);
+                }
+                if (isReplaceable) {
+                    world.destroyBlock(pos, true);
+                }
+                world.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Block.UPDATE_ALL_IMMEDIATE);
+            }
+        }
+
+        routerHandler.drain(BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+
+        return true;
     }
 
     private void playEmptySound(Level world, BlockPos pos, Fluid fluid) {

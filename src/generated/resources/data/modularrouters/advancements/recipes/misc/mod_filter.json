@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:mod_filter"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

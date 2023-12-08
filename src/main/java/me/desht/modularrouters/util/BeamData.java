@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -77,7 +78,7 @@ public class BeamData {
     }
 
     public AABB getAABB(BlockPos basePos) {
-        return new AABB(basePos, dest);
+        return AABB.of(BoundingBox.fromCorners(basePos, dest));
     }
 
     public ItemStack getStack() {

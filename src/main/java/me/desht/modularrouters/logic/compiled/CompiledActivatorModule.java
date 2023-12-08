@@ -231,12 +231,16 @@ public class CompiledActivatorModule extends CompiledModule {
 
         double reachDist = Math.pow(getPlayerReachDistance(fp), 2);
         for (; targetPos.distSqr(routerPos) <= reachDist; targetPos.move(xOff, yOff, zOff)) {
-            if (fp.level().isEmptyBlock(targetPos)) continue;
+            if (fp.level().isEmptyBlock(targetPos)) {
+                continue;
+            }
             VoxelShape shape = fp.level().getBlockState(targetPos).getShape(fp.level(), targetPos);
-            if (shape.isEmpty()) continue;
+            if (shape.isEmpty()) {
+                continue;
+            }
             Vec3 targetVec = shape.toAabbs().get(0).getCenter().add(Vec3.atLowerCornerOf(targetPos));
-            BlockHitResult res = fp.level().clip(new ClipContext(
-                    fpVec, targetVec, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY, null)
+            BlockHitResult res = fp.level().clip(
+                    new ClipContext(fpVec, targetVec, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY, fp)
             );
             if (res.getType() == HitResult.Type.BLOCK) {
                 return res;

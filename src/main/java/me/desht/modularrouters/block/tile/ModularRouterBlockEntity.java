@@ -59,11 +59,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -104,13 +102,14 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private RouterRedstoneBehaviour redstoneBehaviour = RouterRedstoneBehaviour.ALWAYS;
 
     private final BufferHandler bufferHandler = new BufferHandler(this);
-    private final LazyOptional<IItemHandler> inventoryCap = LazyOptional.of(() -> bufferHandler);
-
+//    private final LazyOptional<IItemHandler> inventoryCap = LazyOptional.of(() -> bufferHandler);
+//
     private final ItemStackHandler modulesHandler = new ModuleHandler();
     private final ItemStackHandler upgradesHandler = new UpgradeHandler();
 
     private final RouterEnergyBuffer energyStorage = new RouterEnergyBuffer(0);
-    private final LazyOptional<IEnergyStorage> energyCap = LazyOptional.of(() -> energyStorage);
+//    private final LazyOptional<IEnergyStorage> energyCap = LazyOptional.of(() -> energyStorage);
+
     public final TrackedEnergy trackedEnergy = new TrackedEnergy();
     private EnergyDirection energyDirection = EnergyDirection.FROM_ROUTER;
 
@@ -221,27 +220,26 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         energyStorage.updateForEnergyUpgrades(compound.getInt(NBT_ENERGY_UPGRADES));
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == Capabilities.ITEM_HANDLER) {
-            return inventoryCap.cast();
-        } else if (cap == Capabilities.FLUID_HANDLER) {
-            return bufferHandler.getFluidCapability().cast();
-        } else if (cap == Capabilities.FLUID_HANDLER_ITEM) {
-            return bufferHandler.getFluidItemCapability().cast();
-        } else if (cap == Capabilities.ENERGY) {
-            return energyStorage.getTransferRate() > 0 ? energyCap.cast() : bufferHandler.getEnergyCapability().cast();
-        }
-        return super.getCapability(cap, side);
-    }
+//    @Nonnull
+//    @Override
+//    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+//        if (cap == Capabilities.ITEM_HANDLER) {
+//            return inventoryCap.cast();
+//        } else if (cap == Capabilities.FLUID_HANDLER) {
+//            return bufferHandler.getFluidCapability().cast();
+//        } else if (cap == Capabilities.FLUID_HANDLER_ITEM) {
+//            return bufferHandler.getFluidItemCapability().cast();
+//        } else if (cap == Capabilities.ENERGY) {
+//            return energyStorage.getTransferRate() > 0 ? energyCap.cast() : bufferHandler.getEnergyCapability().cast();
+//        }
+//        return super.getCapability(cap, side);
+//    }
 
     @Override
     public void setRemoved() {
         super.setRemoved();
 
-        inventoryCap.invalidate();
-        bufferHandler.invalidateCaps();
+//        bufferHandler.invalidateCaps();
     }
 
     @Override
@@ -352,17 +350,20 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private void maybeDoEnergyTransfer() {
         if (getEnergyCapacity() > 0 && !getBufferItemStack().isEmpty() && redstoneBehaviour.shouldRun(getRedstonePower() > 0, false)) {
-            switch (energyDirection) {
-                case FROM_ROUTER -> bufferHandler.getEnergyCapability().ifPresent(energyHandler -> {
-                    int toExtract = getEnergyStorage().extractEnergy(getEnergyXferRate(), true);
-                    int received = energyHandler.receiveEnergy(toExtract, false);
-                    getEnergyStorage().extractEnergy(received, false);
-                });
-                case TO_ROUTER -> bufferHandler.getEnergyCapability().ifPresent(energyHandler -> {
-                    int toExtract = energyHandler.extractEnergy(getEnergyXferRate(), true);
-                    int received = energyStorage.receiveEnergy(toExtract, false);
-                    energyHandler.extractEnergy(received, false);
-                });
+            IEnergyStorage energyHandler = bufferHandler.getEnergyStorage();
+            if (energyHandler != null) {
+                switch (energyDirection) {
+                    case FROM_ROUTER -> {
+                        int toExtract = getEnergyStorage().extractEnergy(getEnergyXferRate(), true);
+                        int received = energyHandler.receiveEnergy(toExtract, false);
+                        getEnergyStorage().extractEnergy(received, false);
+                    }
+                    case TO_ROUTER -> {
+                        int toExtract = energyHandler.extractEnergy(getEnergyXferRate(), true);
+                        int received = energyStorage.receiveEnergy(toExtract, false);
+                        energyHandler.extractEnergy(received, false);
+                    }
+                }
             }
         }
     }
@@ -382,11 +383,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         for (int i = 0; i < getUpgrades().getSlots(); i++) {
             ItemStack stack = getUpgrades().getStackInSlot(i);
             if (stack.getItem() instanceof SecurityUpgrade securityUpgrade) {
-                String name = securityUpgrade.getOwnerName(stack);
-                UUID id = securityUpgrade.getOwnerID(stack);
-                if (id != null || name != null) {
-                    return new GameProfile(id, name);
-                }
+                Optional<GameProfile> opt = securityUpgrade.getOwnerProfile(stack);
+                if (opt.isPresent()) return opt.get();
             }
         }
         return DEFAULT_FAKEPLAYER_PROFILE;
@@ -919,6 +917,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public IEnergyStorage getEnergyStorage() {
         return energyStorage;
+//        return getUpgradeCount(ModItems.ENERGY_UPGRADE.get()) > 0 ? energyStorage : bufferHandler.getEnergyStorage();
     }
 
     public void setEnergyDirection(EnergyDirection energyDirection) {
@@ -932,6 +931,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public int getModuleCount() {
         return compiledModules.size();
+    }
+
+    public IFluidHandlerItem getFluidHandler() {
+        return bufferHandler.getFluidHandler();
     }
 
     public enum EnergyDirection implements IHasTranslationKey {

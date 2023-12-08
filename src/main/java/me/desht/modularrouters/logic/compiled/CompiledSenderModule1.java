@@ -13,9 +13,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
@@ -80,8 +79,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         Direction face = getTarget().face;
         Level level = router.nonNullLevel();
         for (int i = 1; i <= getRange(); i++) {
-            BlockEntity te = level.getBlockEntity(pos);
-            if (te != null && te.getCapability(Capabilities.ITEM_HANDLER, getTarget().face).isPresent()) {
+            if (level.getCapability(Capabilities.ItemHandler.BLOCK, pos, getTarget().face) != null) {
                 GlobalPos gPos = MiscUtil.makeGlobalPos(level, pos.immutable());
                 return new ModuleTarget(gPos, face, BlockUtil.getBlockName(level, pos));
             } else if (!isPassable(level, pos, face)) {

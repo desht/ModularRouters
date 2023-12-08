@@ -9,11 +9,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.simple.SimpleMessage;
+
+import java.util.Optional;
 
 /**
  * Received on: SERVER
@@ -61,7 +62,7 @@ public class FilterSettingsMessage implements SimpleMessage {
         return payload;
     }
 
-    public LazyOptional<IItemHandler> getTargetInventory() {
+    public Optional<IItemHandler> getTargetInventory() {
         ModuleTarget target = ModuleTarget.fromNBT(payload);
         return target.getItemHandler();
     }

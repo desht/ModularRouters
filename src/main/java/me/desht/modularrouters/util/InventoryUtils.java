@@ -5,15 +5,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 public class InventoryUtils {
@@ -48,9 +47,8 @@ public class InventoryUtils {
         }
     }
 
-    public static LazyOptional<IItemHandler> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
-        BlockEntity te = world.getBlockEntity(pos);
-        return te == null ? LazyOptional.empty() : te.getCapability(Capabilities.ITEM_HANDLER, side);
+    public static Optional<IItemHandler> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
+        return Optional.ofNullable(world.getCapability(Capabilities.ItemHandler.BLOCK, pos, side));
     }
 
     /**

@@ -30,6 +30,5 @@
     "recipes": [
       "modularrouters:sender_module_1_alt"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }
