@@ -55,7 +55,9 @@ public class XPCollection {
         BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
         MEMORY_ESSENCE(false, 20, "pneumaticcraft:memory_essence"),
         CYCLIC_XP_JUICE(false, 20, "cyclic:xpjuice"),
-        IF_ESSENCE(false, 20, "industrialforegoing:essence");
+        IF_ESSENCE(false, 20, "industrialforegoing:essence"),
+		NUGGET_OF_EXPERIENCE(true, 7, "create:experience_nugget"),
+		BLOCK_OF_EXPERIENCE(true, 63, "create:experience_block");
 
         // TODO 1.15 other mod exp levels... should be in config or data pack, really
 //        XPJUICE(20, "xpjuice"),  // Enderio/Openblocks/Cyclic/Reliquary
