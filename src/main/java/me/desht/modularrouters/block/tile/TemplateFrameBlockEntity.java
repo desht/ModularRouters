@@ -72,7 +72,9 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     public void saveAdditional(CompoundTag compound) {
         super.saveAdditional(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
-        compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
+        if (camouflage != null) {
+            compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
+        }
     }
 
     @Override
