@@ -14,6 +14,8 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
+    id("com.modrinth.minotaur") version "2.+"
+    id('com.matthewprenger.cursegradle') version "1.4.0"
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
@@ -23,14 +25,15 @@ apply plugin: 'maven-publish'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 version = "${mod_version}"
-group = "me.desht"
+group = "me.desht.modularrouters"
 archivesBaseName = "${modid}-${mc_version}"
 
-if (System.getenv().BUILD_NUMBER != null) {
-    version += "-${System.getenv().BUILD_NUMBER}"
-} else {
-    version += "-CUSTOM"
-}
+ext.releaseTag = System.getenv('TAG') ?: ""
+ext.isAlpha = ext.releaseTag.contains("alpha")
+ext.isBeta = ext.releaseTag.contains("beta")
+
+def semver = mod_version
+def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
@@ -88,28 +91,25 @@ repositories {
         dir file(extraModsDir)
     }
     maven {
+        name "K-4u Mod maven"
+        url "https://modmaven.dev/"
+        content {
+            includeGroup "mcjty.theoneprobe"
+        }
+    }
+    maven {
         url "https://www.cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
     maven {
-        // location of the maven that hosts JEI files since January 2023
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-
-//    maven { // TOP
-//        name = "tterrag maven"
-//        url = "https://maven.tterrag.com/"
-//    }
-//    maven {
-//        name = "K-4u Mod maven"
-//        url = "https://modmaven.dev/"
-//    }
-    maven {
         name = 'Patchouli'
         url = 'https://maven.blamejared.com/'
+        content {
+            includeGroup "vazkii.patchouli"
+            includeGroup "mezz.jei"
+        }
     }
 }
 
@@ -152,15 +152,78 @@ jar {
     finalizedBy('reobfJar')
 }
 
+def mavenVer = ext.releaseTag == "" ? "${version}-SNAPSHOT" : "${version}"
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
+        mavenCommon(MavenPublication) {
+            artifactId = rootProject.archivesBaseName
+            from components.java
         }
     }
     repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
+        mavenLocal()
+    }
+    if (System.getenv("MODMAVEN_USER") != null) {
+        publications {
+            maven(MavenPublication) {
+                groupId = project.group
+                artifactId = project.archivesBaseName
+                version = mavenVer
+
+                // ForgeGradle will generate wild dependency definitions, see https://github.com/MinecraftForge/ForgeGradle/issues/584
+                // Since we don't actually depend on anything, just remove the entire node.
+                pom.withXml {
+                    asNode().remove(asNode().dependencies)
+                }
+
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                name = "modmaven"
+                credentials {
+                    username System.getenv("MODMAVEN_USER")
+                    password System.getenv("MODMAVEN_PASSWORD")
+                }
+                url = "https://modmaven.dev/artifactory/local-releases/"
+            }
+        }
+    }
+
+    modrinth {
+        token = System.getenv("MODRINTH_TOKEN")
+        projectId = "${project.modrinth_project_id}"
+        versionNumber = version.toString()
+        versionType = relType
+        uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+        gameVersions = [mc_version] // Must be an array, even with only one version
+        changelog = System.getenv("CHANGELOG")
+        dependencies { // A special DSL for creating dependencies
+            // scope.type
+            // The scope can be `required`, `optional`, or `incompatible`
+            // The type can either be `project` or `version`
+            optional.project "nU0bVIaL"  // Patchouli
+        }
+    }
+
+    if (System.getenv("CURSEFORGE_TOKEN")) {
+        curseforge {
+            apiKey = System.getenv("CURSEFORGE_TOKEN")
+            project {
+                id = project.curse_project_id
+                changelogType = "markdown"
+                changelog = System.getenv("CHANGELOG")
+                releaseType = relType
+                addGameVersion project.mc_version
+                addGameVersion "Forge"
+                mainArtifact(jar.archiveFile) {
+                    displayName = "${project.archivesBaseName} v${project.mc_version}-${semver}"
+                    relations {
+                        optionalDependency "patchouli"
+                    }
+                }
+            }
         }
     }
 }
