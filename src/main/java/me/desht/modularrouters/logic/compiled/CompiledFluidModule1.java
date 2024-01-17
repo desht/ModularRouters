@@ -45,7 +45,7 @@ public class CompiledFluidModule1 extends CompiledModule {
     public CompiledFluidModule1(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        CompoundTag compound = setupNBT(stack);
+        CompoundTag compound = ModuleHelper.validateNBT(stack);
         maxTransfer = compound.getInt(NBT_MAX_TRANSFER);
         fluidDirection = FluidDirection.values()[compound.getByte(NBT_FLUID_DIRECTION)];
         forceEmpty = compound.getBoolean(NBT_FORCE_EMPTY);
@@ -211,7 +211,7 @@ public class CompiledFluidModule1 extends CompiledModule {
                 return false;
             }
         }
-        int amount = Math.min(maxTransfer, router.getCurrentFluidTransferAllowance(direction));
+        int amount = Math.min(getMaxTransfer(), router.getCurrentFluidTransferAllowance(direction));
         FluidStack newStack = FluidUtil.tryFluidTransfer(dest, src, amount, false);
         if (!newStack.isEmpty() && getFilter().testFluid(newStack.getFluid())) {
             newStack = FluidUtil.tryFluidTransfer(dest, src, newStack.getAmount(), true);
@@ -240,23 +240,12 @@ public class CompiledFluidModule1 extends CompiledModule {
         }
     }
 
-    private CompoundTag setupNBT(ItemStack stack) {
-        CompoundTag compound = ModuleHelper.validateNBT(stack);
-        if (!compound.contains(NBT_MAX_TRANSFER)) {
-            compound.putInt(NBT_MAX_TRANSFER, BUCKET_VOLUME);
-        }
-        if (!compound.contains(NBT_FLUID_DIRECTION)) {
-            compound.putByte(NBT_FLUID_DIRECTION, (byte) FluidDirection.IN.ordinal());
-        }
-        return compound;
-    }
-
     public FluidDirection getFluidDirection() {
         return fluidDirection;
     }
 
     public int getMaxTransfer() {
-        return maxTransfer;
+        return maxTransfer == 0 ? BUCKET_VOLUME : maxTransfer;
     }
 
     public boolean isForceEmpty() {

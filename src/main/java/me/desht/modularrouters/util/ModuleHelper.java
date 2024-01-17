@@ -29,11 +29,12 @@ public class ModuleHelper {
 
     @Nonnull
     public static CompoundTag validateNBT(ItemStack stack) {
-        CompoundTag compound = stack.getOrCreateTagElement(ModularRouters.MODID);
-        if (compound.getTagType(NBT_FILTER) != Tag.TAG_COMPOUND) {
-            compound.put(NBT_FILTER, new CompoundTag());
-        }
-        return compound;
+        return stack.hasTag() ? stack.getTag().getCompound(ModularRouters.MODID) : new CompoundTag();
+    }
+
+    @Nonnull
+    public static CompoundTag validateNBTForWriting(ItemStack stack) {
+        return stack.getOrCreateTagElement(ModularRouters.MODID);
     }
 
     public static boolean isBlacklist(ItemStack stack) {
@@ -64,18 +65,17 @@ public class ModuleHelper {
                     Termination.valueOf(compound.getString(ModuleHelper.NBT_TERMINATION)) :
                     Termination.NONE;
         } catch (IllegalArgumentException e) {
-            compound.putString(ModuleHelper.NBT_TERMINATION, Termination.NONE.toString());
             return Termination.NONE;
         }
     }
 
     public static RelativeDirection getRelativeDirection(ItemStack stack) {
-        if (stack.getItem() instanceof ModuleItem && ((ModuleItem) stack.getItem()).isDirectional()) {
+        if (stack.getItem() instanceof ModuleItem m && m.isDirectional()) {
             CompoundTag compound = validateNBT(stack);
             try {
-                return RelativeDirection.valueOf(compound.getString(NBT_DIRECTION));
+                String dirStr = compound.getString(NBT_DIRECTION);
+                return dirStr.isEmpty() ? RelativeDirection.NONE : RelativeDirection.valueOf(dirStr);
             } catch (IllegalArgumentException e) {
-                compound.putString(NBT_DIRECTION, RelativeDirection.NONE.toString());
                 return RelativeDirection.NONE;
             }
         } else {
@@ -111,7 +111,7 @@ public class ModuleHelper {
     }
 
     public static void setRoundRobinCounter(ItemStack moduleStack, int counter) {
-        CompoundTag tag = validateNBT(moduleStack);
+        CompoundTag tag = validateNBTForWriting(moduleStack);
         tag.putInt(NBT_RR_COUNTER, counter);
     }
 

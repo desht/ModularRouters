@@ -22,7 +22,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         this.router = router;
         this.tagName = tagName;
 
-        deserializeNBT(holderStack.getOrCreateTagElement(ModularRouters.MODID).getCompound(tagName));
+        deserializeNBT(ModuleHelper.validateNBT(holderStack).getCompound(tagName));
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * Save the contents of the item handler onto the holder item stack's NBT
      */
     public void save() {
-        holderStack.getOrCreateTagElement(ModularRouters.MODID).put(tagName, serializeNBT());
+        ModuleHelper.validateNBTForWriting(holderStack).put(tagName, serializeNBT());
     }
 
     public static class BulkFilterHandler extends BaseModuleHandler {

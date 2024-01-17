@@ -18,8 +18,8 @@ public class CompiledDetectorModule extends CompiledModule {
     public CompiledDetectorModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        CompoundTag compound = setupNBT(stack);
-        signalLevel = compound.getByte(NBT_SIGNAL_LEVEL);
+        CompoundTag compound = ModuleHelper.validateNBT(stack);
+        signalLevel = compound.contains(NBT_SIGNAL_LEVEL) ? compound.getByte(NBT_SIGNAL_LEVEL) : 15;
         strongSignal = compound.getBoolean(NBT_STRONG_SIGNAL);
     }
 
@@ -39,17 +39,6 @@ public class CompiledDetectorModule extends CompiledModule {
         router.emitRedstone(getDirection(), getSignalLevel(), DetectorModule.SignalType.getType(isStrongSignal()));
 
         return true;
-    }
-
-    private CompoundTag setupNBT(ItemStack stack) {
-        CompoundTag compound = ModuleHelper.validateNBT(stack);
-        if (!compound.contains(NBT_SIGNAL_LEVEL)) {
-            compound.putInt(NBT_SIGNAL_LEVEL, 15);
-        }
-        if (!compound.contains(NBT_STRONG_SIGNAL)) {
-            compound.putBoolean(NBT_STRONG_SIGNAL, false);
-        }
-        return compound;
     }
 
     public int getSignalLevel() {

@@ -282,9 +282,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (redstoneBehaviour != RouterRedstoneBehaviour.ALWAYS) nbt.putString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
         if (energyStorage.getCapacity() > 0) nbt.put(NBT_ENERGY, energyStorage.serializeNBT());
         if (energyDirection != EnergyDirection.FROM_ROUTER) nbt.putString(NBT_ENERGY_DIR, energyDirection.name());
-        nbt.putBoolean(NBT_ACTIVE, active);
-        nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
-        nbt.putBoolean(NBT_ECO_MODE, ecoMode);
+        if (active) nbt.putBoolean(NBT_ACTIVE, true);
+        if (activeTimer != 0) nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
+        if (ecoMode) nbt.putBoolean(NBT_ECO_MODE, true);
 
         CompoundTag ext = new CompoundTag();
         CompoundTag ext1 = getExtensionData();
@@ -292,7 +292,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             //noinspection ConstantConditions
             ext.put(key, ext1.get(key));
         }
-        nbt.put(NBT_EXTRA, ext);
+        if (!ext.isEmpty()) nbt.put(NBT_EXTRA, ext);
     }
 
     private boolean hasItems(IItemHandler handler) {
@@ -1074,9 +1074,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         @Override
         public Tag serializeNBT() {
             CompoundTag tag = new CompoundTag();
-            tag.putInt("Energy", energy);
-            tag.putInt("Capacity", capacity);
-            tag.putInt("Excess", excess);
+            if (energy > 0) tag.putInt("Energy", energy);
+            if (capacity > 0) tag.putInt("Capacity", capacity);
+            if (excess > 0) tag.putInt("Excess", excess);
             return tag;
         }
 
