@@ -10,6 +10,12 @@ Changes are in reverse chronological order; newest changes at the top.
 
 * Added a new smart filter: the Tag Filter!
   * Can be used to select [item tags](https://minecraft.fandom.com/wiki/Tag) which can be filtered against
+  * More precise than just enabling the tag mode option in the module GUI
+* Fixed NPE when saving Template blocks (as extruded by the Extruder Mk2)
+* Volume of the "bleep" sound when setting up modules is now quieter by default
+  * Volume can also be configured in client config; see `bleepVolume` in `modularrouters-client.toml`
+* Fixed a couple of GUI spots where text was being wrongly rendered with a drop shadow
+* Cleaned up mod's handling of NBT on module items; modules now have no NBT until configured
 
 ### [12.0.2]
 
