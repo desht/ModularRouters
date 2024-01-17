@@ -22,7 +22,7 @@ public class AugmentHandler extends ItemStackHandler {
         Validate.isTrue(holderStack.getItem() instanceof ModuleItem, "holder stack must be a module!");
 
         this.holderStack = holderStack;
-        deserializeNBT(holderStack.getOrCreateTagElement(ModularRouters.MODID).getCompound(ModuleHelper.NBT_AUGMENTS));
+        deserializeNBT(ModuleHelper.validateNBT(holderStack).getCompound(ModuleHelper.NBT_AUGMENTS));
     }
 
     public ItemStack getHolderStack() {
@@ -57,7 +57,7 @@ public class AugmentHandler extends ItemStackHandler {
     }
 
     private void save() {
-        holderStack.getOrCreateTagElement(ModularRouters.MODID).put(ModuleHelper.NBT_AUGMENTS, serializeNBT());
+        ModuleHelper.validateNBTForWriting(holderStack).put(ModuleHelper.NBT_AUGMENTS, serializeNBT());
         if (router != null) {
             router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
         }

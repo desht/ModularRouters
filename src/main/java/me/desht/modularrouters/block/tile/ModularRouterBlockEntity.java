@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.ModularRouterBlock;
-import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.RouterMenu;
 import me.desht.modularrouters.container.handler.BufferHandler;
@@ -28,6 +27,7 @@ import me.desht.modularrouters.network.messages.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -65,7 +65,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -234,12 +233,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         activeTimer = nbt.getInt(NBT_ACTIVE_TIMER);
         ecoMode = nbt.getBoolean(NBT_ECO_MODE);
 
-        CompoundTag ext = nbt.getCompound(NBT_EXTRA);
+        CompoundTag ext = new CompoundTag();
         CompoundTag ext1 = getExtensionData();
         for (String key : ext.getAllKeys()) {
             //noinspection ConstantConditions
             ext1.put(key, ext.get(key));
         }
+        if (!ext.isEmpty()) nbt.put(NBT_EXTRA, ext);
 
         // When restoring, give the counter a random initial value to avoid all saved routers
         // having the same counter and firing simultaneously, which could conceivably cause lag
@@ -258,9 +258,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (redstoneBehaviour != RouterRedstoneBehaviour.ALWAYS) nbt.putString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
         if (energyStorage.getCapacity() > 0) nbt.put(NBT_ENERGY, energyStorage.serializeNBT());
         if (energyDirection != EnergyDirection.FROM_ROUTER) nbt.putString(NBT_ENERGY_DIR, energyDirection.name());
-        nbt.putBoolean(NBT_ACTIVE, active);
-        nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
-        nbt.putBoolean(NBT_ECO_MODE, ecoMode);
+        if (active) nbt.putBoolean(NBT_ACTIVE, true);
+        if (activeTimer != 0) nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
+        if (ecoMode) nbt.putBoolean(NBT_ECO_MODE, true);
 
         nbt.put(NBT_EXTRA, Util.make(new CompoundTag(), tag -> {
             CompoundTag ext1 = getExtensionData();
@@ -1059,9 +1059,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         @Override
         public Tag serializeNBT() {
             return Util.make(new CompoundTag(), tag -> {
-                tag.putInt("Energy", energy);
-                tag.putInt("Capacity", capacity);
-                tag.putInt("Excess", excess);
+                if (energy > 0) tag.putInt("Energy", energy);
+                if (capacity > 0) tag.putInt("Capacity", capacity);
+                if (excess > 0) tag.putInt("Excess", excess);
             });
         }
 

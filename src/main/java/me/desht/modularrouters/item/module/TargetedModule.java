@@ -13,6 +13,7 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -175,14 +176,13 @@ public abstract class TargetedModule extends ModuleItem {
             ModularRouters.LOGGER.warn("TargetModule.setTarget() should not be called client-side!");
             return;
         }
-        CompoundTag compound = ModuleHelper.validateNBT(stack);
+        CompoundTag compound = ModuleHelper.validateNBTForWriting(stack);
         if (pos == null) {
             compound.remove(NBT_TARGET);
         } else {
             ModuleTarget mt = new ModuleTarget(MiscUtil.makeGlobalPos(world, pos), face, BlockUtil.getBlockName(world, pos));
             compound.put(NBT_TARGET, mt.toNBT());
         }
-        stack.getOrCreateTag().put(ModularRouters.MODID, compound);
     }
 
     /**
@@ -221,7 +221,7 @@ public abstract class TargetedModule extends ModuleItem {
      *
      * @param stack the module item stack
      * @param checkBlockName verify the name of the target block - only works server-side
-     * @return a list of targets for the module
+     * @return a set of targets for the module
      */
     public static Set<ModuleTarget> getTargets(ItemStack stack, boolean checkBlockName) {
         Set<ModuleTarget> result = Sets.newHashSet();
@@ -243,13 +243,8 @@ public abstract class TargetedModule extends ModuleItem {
     }
 
     private static void setTargets(ItemStack stack, Set<ModuleTarget> targets) {
-        CompoundTag compound = ModuleHelper.validateNBT(stack);
-        ListTag list = new ListTag();
-        for (ModuleTarget target : targets) {
-            list.add(target.toNBT());
-        }
-        compound.put(NBT_MULTI_TARGET, list);
-        stack.getOrCreateTag().put(ModularRouters.MODID, compound);
+        CompoundTag compound = ModuleHelper.validateNBTForWriting(stack);
+        compound.put(NBT_MULTI_TARGET, Util.make(new ListTag(), l -> targets.forEach(t -> l.add(t.toNBT()))));
     }
 
     private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {

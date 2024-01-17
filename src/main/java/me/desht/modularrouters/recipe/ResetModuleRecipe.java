@@ -45,10 +45,9 @@ public class ResetModuleRecipe extends CustomRecipe {
 
         if (!moduleStack.isEmpty()) {
             ItemStack newStack = new ItemStack(moduleStack.getItem());
-            ModuleHelper.validateNBT(newStack);
-            if (moduleStack.getItem() instanceof IPickaxeUser) {
-                ItemStack pick = ((IPickaxeUser) moduleStack.getItem()).getPickaxe(moduleStack);
-                if (!pick.isEmpty()) ((IPickaxeUser) moduleStack.getItem()).setPickaxe(newStack, pick);
+            if (moduleStack.getItem() instanceof IPickaxeUser pickaxeUser) {
+                ItemStack pick = pickaxeUser.getPickaxe(moduleStack);
+                if (!pick.isEmpty()) pickaxeUser.setPickaxe(newStack, pick);
             }
             return newStack;
         } else {

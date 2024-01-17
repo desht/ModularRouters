@@ -81,7 +81,7 @@ public enum ServerPayloadHandler {
             ItemStack moduleStack = locator.getModuleStack(player);
 
             if (moduleStack.getItem() instanceof ModuleItem) {
-                CompoundTag compound = ModuleHelper.validateNBT(moduleStack);
+                CompoundTag compound = ModuleHelper.validateNBTForWriting(moduleStack);
                 for (String key : payload.getAllKeys()) {
                     compound.put(key, Objects.requireNonNull(payload.get(key)));
                 }

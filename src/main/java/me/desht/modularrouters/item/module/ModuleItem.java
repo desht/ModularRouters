@@ -326,11 +326,10 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     @Nonnull
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        ModuleHelper.validateNBT(stack);
         if (!player.isCrouching()) {
-            if (player instanceof ServerPlayer sp) {
+            if (!world.isClientSide) {
                 MFLocator locator = MFLocator.heldModule(hand);
-                sp.openMenu(new ModuleMenuProvider(player, locator), locator::writeBuf);
+                player.openMenu(new ModuleMenuProvider(player, locator), locator::writeBuf);
             }
         } else {
             return onSneakRightClick(stack, world, player, hand);
