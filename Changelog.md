@@ -8,6 +8,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ### [12.1.1]
 * Fixed bug in Breaker Module crafting causing pickaxe type to always be iron (bug introduced in 12.1.0)
+* Fixed NPE if an unconfigured Player Module (e.g. as pulled from creative/JEI) is inserted into a router
 
 ### [12.1.0]
 
