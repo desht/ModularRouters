@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.20
 
+### [12.1.1]
+* Fixed bug in Breaker Module crafting causing pickaxe type to always be iron (bug introduced in 12.1.0)
+
 ### [12.1.0]
 
 * Added a new smart filter: the Tag Filter!
