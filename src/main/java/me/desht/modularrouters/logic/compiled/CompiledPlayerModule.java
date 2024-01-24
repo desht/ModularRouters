@@ -132,7 +132,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     private Player getPlayer() {
-        return playerRef.get();
+        return playerRef == null ? null : playerRef.get();
     }
 
     @SubscribeEvent
