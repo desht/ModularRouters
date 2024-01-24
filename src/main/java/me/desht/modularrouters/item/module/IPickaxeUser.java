@@ -18,7 +18,7 @@ public interface IPickaxeUser {
     }
 
     default ItemStack setPickaxe(ItemStack moduleStack, ItemStack pickaxeStack) {
-        ModuleHelper.validateNBTForWriting(pickaxeStack).put(NBT_PICKAXE, pickaxeStack.serializeNBT());
+        ModuleHelper.validateNBTForWriting(moduleStack).put(NBT_PICKAXE, pickaxeStack.serializeNBT());
         return moduleStack;
     }
 }
