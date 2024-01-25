@@ -54,7 +54,7 @@ public abstract class TargetedModule extends ModuleItem {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        if (ctx.getPlayer() != null && ctx.getPlayer().isCrouching()) {
+        if (canPlayerUse(ctx.getPlayer())) {
             if (isValidTarget(ctx)) {
                 if (getMaxTargets() == 1) {
                     handleSingleTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
@@ -67,6 +67,14 @@ public abstract class TargetedModule extends ModuleItem {
             }
         } else {
             return InteractionResult.PASS;
+        }
+    }
+
+    private boolean canPlayerUse(Player p) {
+        if (p != null) {
+            return (p.isCrouching() || (p.isShiftKeyDown() && (p.isVisuallyCrawling() || p.isVisuallySwimming())));
+        } else {
+            return false;
         }
     }
 
