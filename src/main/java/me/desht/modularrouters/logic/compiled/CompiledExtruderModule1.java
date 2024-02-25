@@ -4,8 +4,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.IPickaxeUser;
-import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.network.PushEntityMessage;
+import me.desht.modularrouters.network.messages.PushEntityMessage;
 import me.desht.modularrouters.util.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,7 +103,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
                 entity.horizontalCollision = false;
                 entity.verticalCollision = false;
                 if (entity instanceof LivingEntity) ((LivingEntity) entity).setJumping(true);
-                PacketHandler.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new PushEntityMessage(entity, v));
+                PacketDistributor.TRACKING_ENTITY.with(entity).send(new PushEntityMessage(entity, v));
             }
         }
     }

@@ -1,20 +1,19 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
-import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.item.module.FluidModule1.FluidDirection;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
-import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -25,7 +24,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.Range;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -50,16 +49,13 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
         CompiledFluidModule1 cfm = new CompiledFluidModule1(null, moduleItemStack);
 
-        TextFieldManager manager = getOrCreateTextFieldManager();
-
         int max = ConfigHolder.common.router.baseTickRate.get() * ConfigHolder.common.router.fluidMaxTransferRate.get();
-        maxTransferField = new IntegerTextField(manager, font, leftPos + 152, topPos + 23, 34, 12,
+        maxTransferField = new IntegerTextField(font, leftPos + 152, topPos + 23, 34, 12,
                 Range.between(0, max));
         maxTransferField.setValue(cfm.getMaxTransfer());
         maxTransferField.setResponder(str -> sendModuleSettingsDelayed(5));
         maxTransferField.setIncr(100, 10, 10);
         maxTransferField.useGuiTextBackground();
-        manager.focus(0);
 
         addRenderableWidget(new TooltipButton(leftPos + 130, topPos + 19, 16, 16, bucketStack));
         addRenderableWidget(fluidDirButton = new FluidDirectionButton(leftPos + 148, topPos + 44, cfm.getFluidDirection()));
@@ -72,8 +68,8 @@ public class FluidModuleScreen extends AbstractModuleScreen {
     }
 
     @Override
-    protected IntegerTextField buildRegulationTextField(TextFieldManager manager) {
-        IntegerTextField tf = new IntegerTextField(manager, font, leftPos + 128, topPos + 90, 40, 12, Range.between(0, Integer.MAX_VALUE));
+    protected IntegerTextField buildRegulationTextField() {
+        IntegerTextField tf = new IntegerTextField(font, leftPos + 128, topPos + 90, 40, 12, Range.between(0, Integer.MAX_VALUE));
         tf.setValue(getRegulatorAmount());
         tf.setResponder((str) -> {
             setRegulatorAmount(str.isEmpty() ? 0 : Integer.parseInt(str));
@@ -115,26 +111,28 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
     @Override
     protected CompoundTag buildMessageData() {
-        CompoundTag compound = super.buildMessageData();
-        compound.putInt(CompiledFluidModule1.NBT_MAX_TRANSFER, maxTransferField.getIntValue());
-        compound.putByte(CompiledFluidModule1.NBT_FLUID_DIRECTION, (byte) fluidDirButton.getState().ordinal());
-        compound.putBoolean(CompiledFluidModule1.NBT_FORCE_EMPTY, forceEmptyButton.isToggled());
-        compound.putBoolean(CompiledFluidModule1.NBT_REGULATE_ABSOLUTE, regulationTypeButton.regulateAbsolute);
-        return compound;
+        return Util.make(super.buildMessageData(), compound -> {
+            compound.putInt(CompiledFluidModule1.NBT_MAX_TRANSFER, maxTransferField.getIntValue());
+            compound.putByte(CompiledFluidModule1.NBT_FLUID_DIRECTION, (byte) fluidDirButton.getState().ordinal());
+            compound.putBoolean(CompiledFluidModule1.NBT_FORCE_EMPTY, forceEmptyButton.isToggled());
+            compound.putBoolean(CompiledFluidModule1.NBT_REGULATE_ABSOLUTE, regulationTypeButton.regulateAbsolute);
+        });
     }
 
     private class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidTransferTooltip");
-            tooltip1.add(Component.empty().plainCopy());
+            List<Component> tooltip = new ArrayList<>();
+            tooltip.add(xlate("modularrouters.guiText.tooltip.fluidTransferTooltip"));
+            tooltip.add(Component.empty());
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
-                tooltip1.add(xlate("modularrouters.guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
-                tooltip1.add(Component.empty().plainCopy());
+                tooltip.add(xlate("modularrouters.guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));
+                tooltip.add(Component.empty().plainCopy());
             });
-            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
+            tooltip.add(xlate("modularrouters.guiText.tooltip.numberFieldTooltip"));
+            ClientUtil.setMultilineTooltip(this, tooltip);
         }
 
         @Override
@@ -150,23 +148,13 @@ public class FluidModuleScreen extends AbstractModuleScreen {
     }
 
     private class FluidDirectionButton extends TexturedCyclerButton<FluidDirection> {
-        private final List<List<Component>> tooltips = Lists.newArrayList();
-
         FluidDirectionButton(int x, int y, FluidDirection initialVal) {
             super(x, y, 16, 16, initialVal, FluidModuleScreen.this);
-            for (FluidDirection dir : FluidDirection.values()) {
-                tooltips.add(Collections.singletonList(xlate(dir.getTranslationKey())));
-            }
         }
 
         @Override
         protected XYPoint getTextureXY() {
             return new XYPoint(160 + getState().ordinal() * 16, 16);
-        }
-
-        @Override
-        public List<Component> getTooltipLines() {
-            return tooltips.get(getState().ordinal());
         }
     }
 
@@ -176,8 +164,10 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
         ForceEmptyButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, FluidModuleScreen.this);
-            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.false");
-            MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.fluidForceEmpty.true");
+            setTooltips(
+                    Tooltip.create(xlate("modularrouters.guiText.tooltip.fluidForceEmpty.false")),
+                    Tooltip.create(xlate("modularrouters.guiText.tooltip.fluidForceEmpty.true"))
+            );
         }
 
         @Override

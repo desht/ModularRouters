@@ -1,6 +1,7 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
@@ -39,7 +40,7 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
     public BulkItemFilterMenu(int windowId, Inventory invPlayer, MFLocator loc) {
         super(ModMenuTypes.BULK_FILTER_MENU.get(), windowId, invPlayer, loc);
 
-        this.handler = new BulkFilterHandler(filterStack, router);
+        this.handler = new BulkFilterHandler(filterStack, router, loc.getModuleStack(invPlayer.player), loc.filterSlot(), !invPlayer.player.level().isClientSide);
         this.currentSlot = invPlayer.selected + HOTBAR_START;
 
         // slots for the (ghost) filter items

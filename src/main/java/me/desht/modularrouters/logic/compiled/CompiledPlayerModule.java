@@ -3,7 +3,7 @@ package me.desht.modularrouters.logic.compiled;
 import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.item.module.PlayerModule;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.WildcardedRLMatcher;
@@ -27,7 +27,7 @@ public class CompiledPlayerModule extends CompiledModule {
     public static final String NBT_OPERATION = "Operation";
     public static final String NBT_SECTION = "Section";
 
-    public enum Operation implements IHasTranslationKey {
+    public enum Operation implements TranslatableEnum {
         EXTRACT, INSERT;
 
         public String getSymbol() { return this == INSERT ? "⟹" : "⟸"; }
@@ -38,7 +38,7 @@ public class CompiledPlayerModule extends CompiledModule {
         }
     }
 
-    public enum Section implements IHasTranslationKey {
+    public enum Section implements TranslatableEnum {
         MAIN, MAIN_NO_HOTBAR, ARMOR, OFFHAND, ENDER;
 
         @Override
@@ -130,7 +130,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     private Player getPlayer() {
-        return playerRef.get();
+        return playerRef == null ? null : playerRef.get();
     }
 
     @SubscribeEvent

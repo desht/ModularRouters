@@ -1,17 +1,17 @@
 {
   "error" : {
     "category" : "master",
-    "subtitle" : "chatText.subtitle.error",
+    "subtitle" : "modularrouters.chatText.subtitle.error",
     "sounds" : [ "modularrouters:error"]
   },
   "success" : {
     "category" : "master",
-    "subtitle" : "chatText.subtitle.success",
+    "subtitle" : "modularrouters.chatText.subtitle.success",
     "sounds" : [ "modularrouters:success"]
   },
   "thud" : {
     "category" : "master",
-    "subtitle" : "chatText.subtitle.thud",
+    "subtitle" : "modularrouters.chatText.subtitle.thud",
     "sounds" : [ "modularrouters:thud"]
   }
 }

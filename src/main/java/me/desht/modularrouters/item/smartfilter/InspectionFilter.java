@@ -6,8 +6,8 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Comparison;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.GuiSyncMessage;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
+import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
@@ -75,17 +75,17 @@ public class InspectionFilter extends SmartFilterItem {
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         ComparisonList comparisonList = getComparisonList(filterStack);
 
-        switch (message.getOp()) {
+        switch (message.op()) {
             case ADD_STRING -> {
                 if (comparisonList.items.size() < MAX_SIZE) {
-                    Comparison c = Comparison.fromString(message.getPayload().getString(NBT_COMPARISON));
+                    Comparison c = Comparison.fromString(message.payload().getString(NBT_COMPARISON));
                     comparisonList.items.add(c);
                     setComparisonList(filterStack, comparisonList);
                     return new GuiSyncMessage(filterStack);
                 }
             }
             case REMOVE_AT -> {
-                int pos = message.getPayload().getInt("Pos");
+                int pos = message.payload().getInt("Pos");
                 if (pos >= 0 && pos < comparisonList.items.size()) {
                     comparisonList.items.remove(pos);
                     setComparisonList(filterStack, comparisonList);
@@ -93,7 +93,7 @@ public class InspectionFilter extends SmartFilterItem {
                 }
             }
             case ANY_ALL_FLAG -> {
-                comparisonList.setMatchAll(message.getPayload().getBoolean(NBT_MATCH_ALL));
+                comparisonList.setMatchAll(message.payload().getBoolean(NBT_MATCH_ALL));
                 setComparisonList(filterStack, comparisonList);
                 return new GuiSyncMessage(filterStack);
             }

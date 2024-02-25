@@ -1,7 +1,9 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class FloatTextField extends TextFieldWidgetMR {
@@ -12,8 +14,8 @@ public class FloatTextField extends TextFieldWidgetMR {
     private float coarse = 5.0f;
     private String precStr = "%.1f";
 
-    public FloatTextField(TextFieldManager parent, Font fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
-        super(parent, fontrendererObj, x, y, par5Width, par6Height);
+    public FloatTextField(Font fontrendererObj, int x, int y, int par5Width, int par6Height, float min, float max) {
+        super(fontrendererObj, x, y, par5Width, par6Height);
         this.min = min;
         this.max = max;
 
@@ -49,8 +51,9 @@ public class FloatTextField extends TextFieldWidgetMR {
     }
 
     @Override
-    public void onMouseWheel(int direction) {
-        adjustField(direction > 0 ? incr : -incr);
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
+        adjustField(pMouseY > 0 ? incr : -incr);
+        return true;
     }
 
     public void setValue(float newVal) {

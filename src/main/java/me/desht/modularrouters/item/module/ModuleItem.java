@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.container.RouterMenu;
@@ -39,7 +39,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -123,7 +122,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         }
     }
 
-    public enum Termination implements IHasTranslationKey {
+    public enum Termination implements TranslatableEnum {
         NONE,
         RAN,
         NOT_RAN;
@@ -196,7 +195,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, world, list, flag);
 
-        if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot) {
+        if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot && !ClientUtil.isKeyDown(ClientSetup.keybindModuleInfo)) {
             String s = ClientSetup.keybindConfigure.getKey().getName();
             list.add(xlate("modularrouters.itemText.misc.configureHint", s.charAt(s.length() - 1)));
         }
@@ -329,9 +328,9 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         ItemStack stack = player.getItemInHand(hand);
         ModuleHelper.validateNBT(stack);
         if (!player.isCrouching()) {
-            if (!world.isClientSide) {
+            if (player instanceof ServerPlayer sp) {
                 MFLocator locator = MFLocator.heldModule(hand);
-                NetworkHooks.openScreen((ServerPlayer) player, new ModuleMenuProvider(player, locator), locator::writeBuf);
+                sp.openMenu(new ModuleMenuProvider(player, locator), locator::writeBuf);
             }
         } else {
             return onSneakRightClick(stack, world, player, hand);

@@ -1,9 +1,13 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
+import me.desht.modularrouters.util.TranslatableEnum;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 
-public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedButton {
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+
+public abstract class TexturedCyclerButton<T extends Enum<T> & TranslatableEnum> extends TexturedButton {
     private T state;
     private final int len;
 
@@ -12,7 +16,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
             ((TexturedCyclerButton<?>) button).cycle(!Screen.hasShiftDown());
             dataSyncer.sendToServer();
         });
-        state = initialVal;
+        setState(initialVal);
         len = initialVal.getClass().getEnumConstants().length;
     }
 
@@ -20,7 +24,14 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
         return state;
     }
 
-    public void setState(T newState) { state = newState; }
+    public void setState(T newState) {
+        state = newState;
+        setTooltip(state.getTranslationKey() == null ? null : makeTooltip(state));
+    }
+
+    protected Tooltip makeTooltip(T object) {
+        return Tooltip.create(xlate(object.getTranslationKey()));
+    }
 
     public void cycle(boolean forward) {
         int b = state.ordinal();
@@ -33,6 +44,6 @@ public abstract class TexturedCyclerButton<T extends Enum<T>> extends TexturedBu
         }
 
         //noinspection unchecked
-        state = (T) state.getClass().getEnumConstants()[b];  // should be a safe cast here; state is of class T
+        setState((T) state.getClass().getEnumConstants()[b]);  // should be a safe cast here; state is of class T
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.ModularRoutersTags;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.util.MiscUtil;
@@ -62,7 +62,7 @@ public class CompiledActivatorModule extends CompiledModule {
     private static final Set<Item> itemBlacklist = new HashSet<>();
     private static final Set<Block> blockBlacklist = new HashSet<>();
 
-    public enum ActionType implements IHasTranslationKey {
+    public enum ActionType implements TranslatableEnum {
         ITEM_OR_BLOCK(false),
         USE_ITEM_ON_ENTITY(true),
         ATTACK_ENTITY(true);
@@ -83,7 +83,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    public enum LookDirection implements IHasTranslationKey {
+    public enum LookDirection implements TranslatableEnum {
         LEVEL(0f),
         ABOVE(-45f),
         BELOW(45f);
@@ -100,7 +100,7 @@ public class CompiledActivatorModule extends CompiledModule {
         }
     }
 
-    public enum EntityMode implements IHasTranslationKey {
+    public enum EntityMode implements TranslatableEnum {
         NEAREST,
         RANDOM,
         ROUND_ROBIN;

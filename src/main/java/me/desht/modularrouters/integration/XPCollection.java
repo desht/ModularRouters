@@ -1,5 +1,6 @@
 package me.desht.modularrouters.integration;
 
+import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -49,7 +50,7 @@ public class XPCollection {
         return xpType;
     }
 
-    public enum XPCollectionType {
+    public enum XPCollectionType implements TranslatableEnum {
         // note: bottles o' enchanting are randomly worth 3-11 experience, so let's use an average of 7
         SOLIDIFIED_EXPERIENCE(true, 8, "actuallyadditions:item_solidified_experience"),
         BOTTLE_O_ENCHANTING(true, 7, "minecraft:experience_bottle"),
@@ -103,6 +104,11 @@ public class XPCollection {
 
         public Component getDisplayName() {
             return getIconForResource(this).getHoverName();
+        }
+
+        @Override
+        public String getTranslationKey() {
+            return null;
         }
     }
 }

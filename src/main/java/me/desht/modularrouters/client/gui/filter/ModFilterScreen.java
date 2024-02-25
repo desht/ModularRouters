@@ -6,11 +6,11 @@ import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
-import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.network.FilterOp;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -49,23 +50,21 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     public void init() {
         super.init();
 
-        if (menu.getLocator().filterSlot >= 0) {
+        if (menu.getLocator().filterSlot() >= 0) {
             addRenderableWidget(new BackButton(leftPos - 12, topPos, p -> closeGUI()));
         }
         addRenderableWidget(new Buttons.AddButton(leftPos + 154, topPos + 19, p -> {
             if (!modId.isEmpty()) {
-                CompoundTag ext = new CompoundTag();
-                ext.putString("ModId", modId);
-                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ADD_STRING, menu.getLocator(), ext));
+                CompoundTag ext = Util.make(new CompoundTag(), tag -> tag.putString("ModId", modId));
+                PacketDistributor.SERVER.noArg().send(new FilterSettingsMessage(FilterOp.ADD_STRING, menu.getLocator(), ext));
                 getMenu().slots.get(0).set(ItemStack.EMPTY);
             }
         }));
         deleteButtons.clear();
         for (int i = 0; i < ModFilter.MAX_SIZE; i++) {
             DeleteButton b = new DeleteButton(leftPos + 8, topPos + 44 + i * 19, i, button -> {
-                CompoundTag ext = new CompoundTag();
-                ext.putInt("Pos", ((DeleteButton) button).getId());
-                PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.REMOVE_AT, menu.getLocator(), ext));
+                CompoundTag ext = Util.make(new CompoundTag(), tag -> tag.putInt("Pos", ((DeleteButton) button).getId()));
+                PacketDistributor.SERVER.noArg().send(new FilterSettingsMessage(FilterOp.REMOVE_AT, menu.getLocator(), ext));
             });
             addRenderableWidget(b);
             deleteButtons.add(b);

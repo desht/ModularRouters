@@ -1,25 +1,23 @@
 package me.desht.modularrouters.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.ClientSetup;
-import me.desht.modularrouters.client.gui.widgets.WidgetEnergy;
+import me.desht.modularrouters.client.gui.widgets.EnergyWidget;
 import me.desht.modularrouters.client.gui.widgets.button.RedstoneBehaviourButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.RouterMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
-import me.desht.modularrouters.network.OpenGuiMessage;
-import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.network.RouterSettingsMessage;
+import me.desht.modularrouters.network.messages.OpenGuiMessage;
+import me.desht.modularrouters.network.messages.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
-import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.sounds.SoundManager;
@@ -30,16 +28,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Collections;
 import java.util.List;
 
-import static me.desht.modularrouters.client.util.ClientUtil.theClientLevel;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
-public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> implements ISendToServer, MenuAccess<RouterMenu> {
+public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> implements ISendToServer, MenuAccess<RouterMenu> {
     private static final ResourceLocation TEXTURE_LOCATION = RL("textures/gui/router.png");
 
     private static final int LABEL_YPOS = 5;
@@ -57,7 +54,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
     private RedstoneBehaviourButton redstoneBehaviourButton;
     private EcoButton ecoButton;
     private EnergyDirectionButton energyDirButton;
-    private WidgetEnergy energyWidget;
+    private EnergyWidget energyWidget;
     private EnergyWarningButton energyWarning;
     private int energyUsage;
 
@@ -66,8 +63,6 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
 
         this.imageWidth = GUI_WIDTH;
         this.imageHeight = GUI_HEIGHT;
-
-//        this.passEvents = true;
     }
 
     @Override
@@ -79,9 +74,16 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         addRenderableWidget(redstoneBehaviourButton = new RedstoneBehaviourButton(this.leftPos + 152, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
         addRenderableWidget(ecoButton = new EcoButton(this.leftPos + 132, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
         addRenderableWidget(energyDirButton = new EnergyDirectionButton(this.leftPos - 8, this.topPos + 40, router.getEnergyDirection()));
-        addRenderableWidget(energyWidget = new WidgetEnergy(this.leftPos - 22, this.topPos + 15, router.getEnergyStorage()));
+        addRenderableWidget(energyWidget = new EnergyWidget(this.leftPos - 22, this.topPos + 15, router.getEnergyStorage()));
         addRenderableWidget(energyWarning = new EnergyWarningButton(this.leftPos + 4, this.topPos + 4));
         energyWidget.visible = energyDirButton.visible = router.getEnergyCapacity() > 0;
+    }
+
+    @Override
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+
+        renderTooltip(pGuiGraphics, pMouseX, pMouseY);
     }
 
     @Override
@@ -130,7 +132,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
                 && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(Capabilities.EnergyStorage.ITEM) != null;
 
         energyWarning.setX(hasEnergyUpgrade ? leftPos - 22 : leftPos + 4);
-
+        energyWarning.tick();
     }
 
     private boolean handleModuleConfig() {
@@ -139,7 +141,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
             return false;
         }
         MFLocator locator = MFLocator.moduleInRouter(menu.getRouter().getBlockPos(), slot.index - MODULE_START);
-        PacketHandler.NETWORK.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
+        PacketDistributor.SERVER.noArg().send(OpenGuiMessage.openModuleInRouter(locator));
         return true;
     }
 
@@ -150,7 +152,7 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         router.setRedstoneBehaviour(redstoneBehaviourButton.getState());
         router.setEcoMode(ecoButton.isToggled());
         router.setEnergyDirection(energyDirButton.getState());
-        PacketHandler.NETWORK.sendToServer(new RouterSettingsMessage(router));
+        PacketDistributor.SERVER.noArg().send(new RouterSettingsMessage(router));
     }
 
     public List<Rect2i> getExtraArea() {
@@ -166,18 +168,17 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
 
         EcoButton(int x, int y, int width, int height, boolean initialVal) {
             super(x, y, width, height, initialVal, ModularRouterScreen.this);
+            setTooltips(
+                    xlate("modularrouters.guiText.tooltip.eco.false"),
+                    xlate("modularrouters.guiText.tooltip.eco.true",
+                            ConfigHolder.common.router.ecoTimeout.get() / 20.f,
+                            ConfigHolder.common.router.lowPowerTickRate.get() / 20.f)
+            );
         }
 
         @Override
         protected XYPoint getTextureXY() {
             return isToggled() ? TEXTURE_XY_TOGGLED : TEXTURE_XY;
-        }
-
-        @Override
-        public List<Component> getTooltipLines() {
-            return GuiUtil.xlateAndSplit("modularrouters.guiText.tooltip.eco." + isToggled(),
-                    ConfigHolder.common.router.ecoTimeout.get() / 20.f,
-                    ConfigHolder.common.router.lowPowerTickRate.get() / 20.f);
         }
     }
 
@@ -200,33 +201,33 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
         protected boolean drawStandardBackground() {
             return false;
         }
-
-        @Override
-        public List<Component> getTooltipLines() {
-            return ImmutableList.of(
-                    xlate(getState().getTranslationKey()),
-                    xlate("modularrouters.guiText.tooltip.energy.rate",
-                            MiscUtil.commify(menu.getRouter().getEnergyXferRate()))
-                            .withStyle(ChatFormatting.GRAY)
-            );
-        }
     }
 
     private class EnergyWarningButton extends TexturedButton {
+        private EnergyStatus prevStatus;
+
         public EnergyWarningButton(int x, int y) {
             super(x, y, 16, 16, b -> {});
         }
 
-        @Override
-        public List<Component> getTooltipLines() {
-            if (energyUsage <= menu.getRouter().getEnergyStorage().getEnergyStored()) return Collections.emptyList();
-            return menu.getRouter().getEnergyCapacity() > 0 ?
-                    GuiUtil.xlateAndSplit("modularrouters.itemText.misc.energyWarning") :
-                    GuiUtil.xlateAndSplit("modularrouters.itemText.misc.energyWarning.noBuffer");
+        private void tick() {
+            EnergyStatus status;
+            if (energyUsage <= menu.getRouter().getEnergyStorage().getEnergyStored()) {
+                status = EnergyStatus.OK;
+            } else if (menu.getRouter().getEnergyCapacity() > 0) {
+                status = EnergyStatus.ENERGY_LOW;
+            } else {
+                status = EnergyStatus.NO_UPGRADES;
+            }
+            if (status != prevStatus) {
+                setTooltip(status.getTooltip());
+                prevStatus = status;
+            }
+            visible = status != EnergyStatus.OK;
         }
 
         @Override
-        public void playDownSound(SoundManager p_230988_1_) {
+        public void playDownSound(SoundManager soundManager) {
         }
 
         @Override
@@ -236,9 +237,23 @@ public class ModularRouterScreen extends AbstractMRContainerScreen<RouterMenu> i
 
         @Override
         protected XYPoint getTextureXY() {
-            IEnergyStorage storage = menu.getRouter().getEnergyStorage();
-            boolean lowEnergy = storage != null && storage.getEnergyStored() < energyUsage;
-            return new XYPoint(240, lowEnergy && theClientLevel().getGameTime() % 40 < 35 ? 0 : 240);
+            return new XYPoint(240, Minecraft.getInstance().level.getGameTime() % 40 < 35 ? 0 : 240);
+        }
+    }
+
+    private enum EnergyStatus {
+        OK(null),
+        NO_UPGRADES(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning.noBuffer"))),
+        ENERGY_LOW(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning")));
+
+        private final Tooltip tooltip;
+
+        EnergyStatus(Tooltip tooltip) {
+            this.tooltip = tooltip;
+        }
+
+        public Tooltip getTooltip() {
+            return tooltip;
         }
     }
 }

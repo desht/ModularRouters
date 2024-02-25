@@ -11,8 +11,8 @@ import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.filter.Filter.Flags;
 import me.desht.modularrouters.logic.filter.matchers.BulkItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.GuiSyncMessage;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
+import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModuleHelper;
@@ -68,7 +68,7 @@ public class BulkItemFilter extends SmartFilterItem {
         ItemStack stack = ctx.getItemInHand();
         if (world.isClientSide) {
             return InteractionResult.SUCCESS;
-        } else if (player != null && player.isSteppingCarefully()) {
+        } else if (player != null && player.isShiftKeyDown()) {
             return InventoryUtils.getInventory(world, ctx.getClickedPos(), ctx.getClickedFace()).map(handler -> {
                 int nAdded = mergeInventory(stack, handler);
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.inventoryMerged", nAdded, stack.getHoverName()), false);
@@ -85,11 +85,11 @@ public class BulkItemFilter extends SmartFilterItem {
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         if (player.containerMenu instanceof BulkItemFilterMenu con) {
             Flags flags = moduleStack.isEmpty() ? Flags.DEFAULT_FLAGS : new Flags(moduleStack);
-            switch (message.getOp()) {
+            switch (message.op()) {
                 case CLEAR_ALL -> con.clearSlots();
                 case MERGE -> message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, false));
                 case LOAD -> message.getTargetInventory().ifPresent(h -> con.mergeInventory(h, flags, true));
-                default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
+                default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.op() + " for " + filterStack);
             }
         }
         return null;

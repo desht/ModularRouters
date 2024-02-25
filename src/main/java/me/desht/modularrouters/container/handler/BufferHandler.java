@@ -19,7 +19,7 @@ public class BufferHandler extends ItemStackHandler {
         super(router.getBufferSlotCount());
         this.router = router;
 
-        setupFluidEnergyCaps();
+        setupFluidAndEnergyCaps();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BufferHandler extends ItemStackHandler {
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
 
-        setupFluidEnergyCaps();
+        setupFluidAndEnergyCaps();
     }
 
     public IFluidHandlerItem getFluidHandler() {
@@ -57,7 +57,7 @@ public class BufferHandler extends ItemStackHandler {
         return energyStorage;
     }
 
-    private void setupFluidEnergyCaps() {
+    private void setupFluidAndEnergyCaps() {
         ItemStack stack = getStackInSlot(0);
 
         fluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);

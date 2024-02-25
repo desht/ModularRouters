@@ -6,9 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## Minecraft 1.20.2
 
+### [12.3.0]
+
+* Initial port to Minecraft 1.20.4
+  * This release is built for [Neoforge](https://neoforged.net/), and will _not_ work on [MinecraftForge](https://files.minecraftforge.net/)!
+
 ### [12.2.0]
 
-* Initial port to Minecraft 1.20.2.
+* Initial port to Minecraft 1.20.2
   * This release will _not_ work on 1.20.1!
   * This release is built for [Neoforge](https://neoforged.net/), and will _not_ work on [MinecraftForge](https://files.minecraftforge.net/)!
 

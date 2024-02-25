@@ -1,10 +1,14 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
+import me.desht.modularrouters.util.TranslatableEnum;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+
+public class ItemStackCyclerButton<T extends Enum<T> & TranslatableEnum> extends ItemStackButton {
     private T state;
     private final int len;
     private final ItemStack[] stacks;
@@ -14,11 +18,11 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
             ((ItemStackCyclerButton<?>) button).cycle(!Screen.hasShiftDown());
             dataSyncer.sendToServer();
         });
-        state = initialVal;
         len = initialVal.getClass().getEnumConstants().length;
         if (stacks.length != len) {
             throw new IllegalArgumentException("stacks parameter must have length=" + len);
         }
+        setState(initialVal);
         this.stacks = stacks;
     }
 
@@ -26,9 +30,16 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
         return state;
     }
 
-    public void setState(T newState) { state = newState; }
+    public void setState(T newState) {
+        state = newState;
+        setTooltip(makeTooltip(state));
+    }
 
-    public T cycle(boolean forward) {
+    protected Tooltip makeTooltip(T object) {
+        return Tooltip.create(xlate(object.getTranslationKey()));
+    }
+
+    private void cycle(boolean forward) {
         int b = state.ordinal();
 
         T newState;
@@ -44,7 +55,6 @@ public class ItemStackCyclerButton<T extends Enum<T>> extends ItemStackButton {
         } while (!isApplicable(newState) && b != state.ordinal());
 
         setState(newState);
-        return state;
     }
 
     public boolean isApplicable(T state) {

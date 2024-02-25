@@ -25,8 +25,8 @@ import java.util.concurrent.CompletableFuture;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModRecipeProvider extends RecipeProvider {
-    public ModRecipeProvider(DataGenerator generator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(generator.getPackOutput(), lookupProvider);
+    public ModRecipeProvider(DataGenerator generator) {
+        super(generator.getPackOutput());
     }
 
     @Override

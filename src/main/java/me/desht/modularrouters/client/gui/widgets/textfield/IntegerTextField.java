@@ -1,7 +1,9 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
@@ -16,8 +18,8 @@ public class IntegerTextField extends TextFieldWidgetMR {
 
     private static final Pattern INT_MATCHER = Pattern.compile("^-?[0-9]+$");
 
-    public IntegerTextField(TextFieldManager parent, Font fontrendererObj, int x, int y, int par5Width, int par6Height, Range<Integer> range) {
-        super(parent, fontrendererObj, x, y, par5Width, par6Height);
+    public IntegerTextField(Font fontrendererObj, int x, int y, int w, int h, Range<Integer> range) {
+        super(fontrendererObj, x, y, w, h);
 
         setRange(range);
 
@@ -55,8 +57,9 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     @Override
-    public void onMouseWheel(int direction) {
-        adjustField(direction > 0 ? getAdjustment() : -getAdjustment());
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
+        adjustField(pScrollY > 0 ? getAdjustment() : -getAdjustment());
+        return true;
     }
 
     public void setValue(int val) {

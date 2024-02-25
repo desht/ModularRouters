@@ -3,23 +3,18 @@ package me.desht.modularrouters.client.gui.widgets.button;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class TexturedButton extends ExtendedButton implements ITooltipButton {
+public abstract class TexturedButton extends ExtendedButton /*implements ITooltipButton*/ {
     static final ResourceLocation TEXTURE = new ResourceLocation(ModularRouters.MODID, "textures/gui/widgets.png");
-
-    protected final List<Component> tooltip1;
 
     public TexturedButton(int x, int y, int width, int height, OnPress pressable) {
         super(x, y, width, height, Component.empty(), pressable);
-        this.tooltip1 = new ArrayList<>();
     }
 
     @Override
@@ -34,6 +29,9 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
                 graphics.blit(TEXTURE, this.getX(), this.getY(), i * 16, 0, this.width, this.height);
             }
             graphics.blit(TEXTURE, this.getX(), this.getY(), getTextureX(), getTextureY(), this.width, this.height);
+            if (isHoveredOrFocused()) {
+                GuiUtil.drawFrame(graphics, this, 0xffffffff);
+            }
         }
     }
 
@@ -62,7 +60,4 @@ public abstract class TexturedButton extends ExtendedButton implements ITooltipB
         return getTextureXY().y();
     }
 
-    public List<Component> getTooltipLines() {
-        return tooltip1;
-    }
 }

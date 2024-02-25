@@ -2,12 +2,10 @@ package me.desht.modularrouters.client.gui.module;
 
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
-import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
-import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.Range;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class DetectorModuleScreen extends AbstractModuleScreen {
     private static final ItemStack redstoneStack = new ItemStack(Items.REDSTONE);
@@ -34,21 +34,17 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
 
         CompiledDetectorModule cdm = new CompiledDetectorModule(null, moduleItemStack);
 
-        TextFieldManager manager = getOrCreateTextFieldManager();
-
-        intField = new IntegerTextField(manager, font, leftPos + 152, topPos + 19, 20, 12, Range.between(0, 15));
+        intField = new IntegerTextField(font, leftPos + 152, topPos + 19, 20, 12, Range.between(0, 15));
         intField.setValue(cdm.getSignalLevel());
         intField.setResponder((str) -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);
         intField.useGuiTextBackground();
 
-        manager.focus(0);
-
-        Component label = ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + cdm.isStrongSignal());
+        Component label = xlate("modularrouters.itemText.misc.strongSignal." + cdm.isStrongSignal());
         isStrong = cdm.isStrongSignal();
         addRenderableWidget(new ExtendedButton(leftPos + 138, topPos + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
-            button.setMessage(ClientUtil.xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
+            button.setMessage(xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
             DetectorModuleScreen.this.sendToServer();
         }));
 
@@ -67,17 +63,19 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
 
     @Override
     protected CompoundTag buildMessageData() {
-        CompoundTag compound = super.buildMessageData();
-        compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) intField.getIntValue());
-        compound.putBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
-        return compound;
+        return Util.make(super.buildMessageData(), compound -> {
+            compound.putByte(CompiledDetectorModule.NBT_SIGNAL_LEVEL, (byte) intField.getIntValue());
+            compound.putBoolean(CompiledDetectorModule.NBT_STRONG_SIGNAL, isStrong);
+        });
     }
 
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
-            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.detectorTooltip");
-            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.guiText.tooltip.numberFieldTooltip");
+            ClientUtil.setMultilineTooltip(this,
+                    xlate("modularrouters.guiText.tooltip.detectorTooltip"),
+                    xlate("modularrouters.guiText.tooltip.numberFieldTooltip")
+            );
         }
 
         @Override

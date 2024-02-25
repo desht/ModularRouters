@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+
 public class MouseOverHelp {
     private static final int TEXT_MARGIN = 8;
 
@@ -135,8 +137,7 @@ public class MouseOverHelp {
 
         public Button(int x, int y) {
             super(x, y, 16, 16, false, null);
-            tooltip1.addAll(MiscUtil.wrapStringAsTextComponent(I18n.get("modularrouters.guiText.tooltip.mouseOverHelp.false")));
-            tooltip2.addAll(MiscUtil.wrapStringAsTextComponent(I18n.get("modularrouters.guiText.tooltip.mouseOverHelp.true")));
+            setTooltips(xlate("modularrouters.guiText.tooltip.mouseOverHelp.false"), xlate("modularrouters.guiText.tooltip.mouseOverHelp.true"));
         }
 
         @Override

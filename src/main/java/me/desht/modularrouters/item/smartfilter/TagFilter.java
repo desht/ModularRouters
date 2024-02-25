@@ -6,8 +6,8 @@ import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.TagFilterMenu;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.TagMatcher;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.GuiSyncMessage;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
+import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
@@ -76,10 +76,10 @@ public class TagFilter extends SmartFilterItem {
     @Override
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<TagKey<Item>> tagList;
-        switch (message.getOp()) {
+        switch (message.op()) {
             case ADD_STRING -> {
                 tagList = new ArrayList<>(getTagList(filterStack));
-                String t = message.getPayload().getString("Tag");
+                String t = message.payload().getString("Tag");
                 if (tagList.size() < MAX_SIZE && ResourceLocation.isValidResourceLocation(t)) {
                     TagKey<Item> tag = TagKey.create(Registries.ITEM, new ResourceLocation(t));
                     if (!tagList.contains(tag)) {
@@ -90,7 +90,7 @@ public class TagFilter extends SmartFilterItem {
                 }
             }
             case REMOVE_AT -> {
-                int pos = message.getPayload().getInt("Pos");
+                int pos = message.payload().getInt("Pos");
                 tagList = new ArrayList<>(getTagList(filterStack));
                 if (pos >= 0 && pos < tagList.size()) {
                     tagList.remove(pos);
@@ -98,7 +98,7 @@ public class TagFilter extends SmartFilterItem {
                     return new GuiSyncMessage(filterStack);
                 }
             }
-            default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
+            default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.op() + " for " + filterStack);
         }
         return null;
     }

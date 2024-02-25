@@ -9,6 +9,7 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Operation;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -34,7 +35,7 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
             MAIN_INV_STACK, MAIN_NO_HOTBAR_INV_STACK, ARMOUR_STACK, OFFHAND_STACK, ENDER_STACK
     };
 
-    private SectionButton secButton;
+    private ItemStackCyclerButton<Section> secButton;
     private OperationButton opButton;
 
     public PlayerModuleScreen(ModuleMenu container, Inventory inv, Component displayName) {
@@ -47,7 +48,7 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, moduleItemStack);
 
-        addRenderableWidget(secButton = new SectionButton(leftPos + 169, topPos + 32, 16, 16, true, STACKS, cpm.getSection()));
+        addRenderableWidget(secButton = new ItemStackCyclerButton<>(leftPos + 169, topPos + 32, 16, 16, true, STACKS, cpm.getSection(), this));
         addRenderableWidget(opButton = new OperationButton(leftPos + 148, topPos + 32, cpm.getOperation()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 127, topPos + 29, leftPos + 187, topPos + 50, "modularrouters.guiText.popup.player.control");
@@ -64,47 +65,20 @@ public class PlayerModuleScreen extends AbstractModuleScreen {
 
     @Override
     protected CompoundTag buildMessageData() {
-        CompoundTag compound = super.buildMessageData();
-        compound.putInt(CompiledPlayerModule.NBT_OPERATION, opButton.getState().ordinal());
-        compound.putInt(CompiledPlayerModule.NBT_SECTION, secButton.getState().ordinal());
-        return compound;
-    }
-
-    private class SectionButton extends ItemStackCyclerButton<Section> {
-        private final List<List<Component>> tips = Lists.newArrayList();
-
-        SectionButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, Section initialVal) {
-            super(x, y, width, height, flat, stacks, initialVal, PlayerModuleScreen.this);
-            for (Section sect : Section.values()) {
-                tips.add(Collections.singletonList(xlate(sect.getTranslationKey())));
-            }
-        }
-
-        @Override
-        public List<Component> getTooltipLines() {
-            return tips.get(getState().ordinal());
-        }
+        return Util.make(super.buildMessageData(), compound -> {
+            compound.putInt(CompiledPlayerModule.NBT_OPERATION, opButton.getState().ordinal());
+            compound.putInt(CompiledPlayerModule.NBT_SECTION, secButton.getState().ordinal());
+        });
     }
 
     private class OperationButton extends TexturedCyclerButton<Operation> {
-        private final List<List<Component>> tooltips = Lists.newArrayList();
-
         OperationButton(int x, int y, Operation initialVal) {
             super(x, y, 16, 16, initialVal, PlayerModuleScreen.this);
-
-            for (Operation op : Operation.values()) {
-                tooltips.add(Collections.singletonList(xlate(op.getTranslationKey())));
-            }
         }
 
         @Override
         protected XYPoint getTextureXY() {
             return new XYPoint(160 + getState().ordinal() * 16, 16);
-        }
-
-        @Override
-        public List<Component> getTooltipLines() {
-            return tooltips.get(getState().ordinal());
         }
     }
 }

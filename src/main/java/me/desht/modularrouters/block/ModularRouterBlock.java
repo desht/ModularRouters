@@ -6,9 +6,8 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
-import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.network.RouterSettingsMessage;
-import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
+import me.desht.modularrouters.network.messages.RouterSettingsMessage;
+import me.desht.modularrouters.network.messages.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -45,7 +44,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -171,11 +169,11 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockRayTraceResult) {
         if (!player.isSteppingCarefully()) {
             return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).map(router -> {
-                if (router.isPermitted(player) && !world.isClientSide) {
+                if (player instanceof ServerPlayer sp && router.isPermitted(player)) {
                     // TODO combine into one packet?
-                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterSettingsMessage(router));
-                    PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(router));
-                    NetworkHooks.openScreen((ServerPlayer) player, router, pos);
+                    PacketDistributor.PLAYER.with(sp).send(new RouterSettingsMessage(router));
+                    PacketDistributor.PLAYER.with(sp).send(RouterUpgradesSyncMessage.forRouter(router));
+                    sp.openMenu(router, pos);
                 } else if (!router.isPermitted(player) && world.isClientSide) {
                     player.displayClientMessage(ClientUtil.xlate("modularrouters.chatText.security.accessDenied"), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);

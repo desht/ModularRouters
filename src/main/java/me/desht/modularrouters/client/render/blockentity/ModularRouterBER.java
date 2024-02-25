@@ -76,7 +76,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         double start = (1 - CAMO_HIGHLIGHT_SIZE) / 2.0;
         poseStack.translate(start, start, start);
         addVertices(buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE), poseStack.last().pose());
-        LevelRenderer.renderLineBox(poseStack, buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE), 0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0.5F, 0.5F, 1.0F, 1.0F);//, 0.5F, 0.5F, 1.0F);
+        LevelRenderer.renderLineBox(poseStack, buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE), 0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0.5F, 0.5F, 1.0F, 1.0F);
         poseStack.popPose();
     }
 

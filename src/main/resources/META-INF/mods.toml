@@ -10,18 +10,18 @@ license="MIT"
 modId="modularrouters" #mandatory
 version="${mod_version}" #mandatory
 displayName="Modular Routers"
-updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.20.1-master/release_info.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/desht/ModularRouters/MC1.20.4-master/release_info.json" #optional
 description="${mod_description}"
 
 [[dependencies.modularrouters]]
     modId="neoforge" #mandatory
-    mandatory=true #mandatory
+    type="required" #mandatory
     versionRange="${neo_version_range}" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.modularrouters]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
@@ -31,7 +31,7 @@ public class FluidModule1 extends ModuleItem {
         super(ModItems.defaultProps(), CompiledFluidModule1::new);
     }
 
-    public enum FluidDirection implements IHasTranslationKey {
+    public enum FluidDirection implements TranslatableEnum {
         IN,  // to router
         OUT;  // from router
 

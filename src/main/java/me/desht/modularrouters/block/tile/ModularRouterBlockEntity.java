@@ -5,7 +5,7 @@ import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.ModularRouterBlock;
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.RouterMenu;
 import me.desht.modularrouters.container.handler.BufferHandler;
@@ -23,13 +23,13 @@ import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
-import me.desht.modularrouters.network.ItemBeamMessage;
-import me.desht.modularrouters.network.PacketHandler;
-import me.desht.modularrouters.network.RouterUpgradesSyncMessage;
+import me.desht.modularrouters.network.messages.ItemBeamMessage;
+import me.desht.modularrouters.network.messages.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModuleHelper;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -65,6 +65,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -175,22 +176,21 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public CompoundTag getUpdateTag() {
-        CompoundTag compound = new CompoundTag();
+        return Util.make(new CompoundTag(), tag -> {
+            tag.putInt("x", worldPosition.getX());
+            tag.putInt("y", worldPosition.getY());
+            tag.putInt("z", worldPosition.getZ());
 
-        compound.putInt("x", worldPosition.getX());
-        compound.putInt("y", worldPosition.getY());
-        compound.putInt("z", worldPosition.getZ());
+            if (camouflage != null) {
+                tag.put(CamouflageUpgrade.NBT_STATE_NAME, NbtUtils.writeBlockState(camouflage));
+            }
 
-        if (camouflage != null) {
-            compound.put(CamouflageUpgrade.NBT_STATE_NAME, NbtUtils.writeBlockState(camouflage));
-        }
-
-        // energy upgrade count sync'd so clientside TE knows if neighbouring cables should be able to connect
-        int nEnergy = getUpgradeCount(ModItems.ENERGY_UPGRADE.get());
-        if (nEnergy > 0) {
-            compound.putInt(NBT_ENERGY_UPGRADES, nEnergy);
-        }
-        return compound;
+            // energy upgrade count sync'd so clientside TE knows if neighbouring cables should be able to connect
+            int nEnergy = getUpgradeCount(ModItems.ENERGY_UPGRADE.get());
+            if (nEnergy > 0) {
+                tag.putInt(NBT_ENERGY_UPGRADES, nEnergy);
+            }
+        });
     }
 
     @Override
@@ -218,28 +218,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         energyStorage.updateForEnergyUpgrades(compound.getInt(NBT_ENERGY_UPGRADES));
-    }
-
-//    @Nonnull
-//    @Override
-//    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-//        if (cap == Capabilities.ITEM_HANDLER) {
-//            return inventoryCap.cast();
-//        } else if (cap == Capabilities.FLUID_HANDLER) {
-//            return bufferHandler.getFluidCapability().cast();
-//        } else if (cap == Capabilities.FLUID_HANDLER_ITEM) {
-//            return bufferHandler.getFluidItemCapability().cast();
-//        } else if (cap == Capabilities.ENERGY) {
-//            return energyStorage.getTransferRate() > 0 ? energyCap.cast() : bufferHandler.getEnergyCapability().cast();
-//        }
-//        return super.getCapability(cap, side);
-//    }
-
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-
-//        bufferHandler.invalidateCaps();
     }
 
     @Override
@@ -284,13 +262,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
         nbt.putBoolean(NBT_ECO_MODE, ecoMode);
 
-        CompoundTag ext = new CompoundTag();
-        CompoundTag ext1 = getExtensionData();
-        for (String key : ext1.getAllKeys()) {
+        nbt.put(NBT_EXTRA, Util.make(new CompoundTag(), tag -> {
+            CompoundTag ext1 = getExtensionData();
             //noinspection ConstantConditions
-            ext.put(key, ext1.get(key));
-        }
-        nbt.put(NBT_EXTRA, ext);
+            ext1.getAllKeys().forEach(key -> tag.put(key, ext1.get(key)));
+        }));
     }
 
     private boolean hasItems(IItemHandler handler) {
@@ -402,26 +378,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                 Arrays.fill(newRedstoneLevels, 0);
                 Arrays.fill(newSignalType, SignalType.NONE);
             }
-            for (CompiledIndexedModule cim : compiledModules) {
-                CompiledModule cm = cim.compiledModule;
-                if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed))
-                    if (cm.execute(this)) {
-                        cm.getFilter().cycleRoundRobin().ifPresent(counter -> {
-                            ItemStack moduleStack = modulesHandler.getStackInSlot(cim.index);
-                            ModuleHelper.setRoundRobinCounter(moduleStack, counter);
-                        });
-                        getEnergyStorage().extractEnergy(cm.getEnergyCost(), false);
-                        newActive = true;
-                        if (cm.termination() == ModuleItem.Termination.RAN) {
-                            break;
-                        }
-                    } else if (cm.termination() == ModuleItem.Termination.NOT_RAN) {
-                        break;
-                    }
-            }
+
+            newActive = runAllModules(powered, pulsed);
+
             if (!pendingBeams.isEmpty()) {
-                PacketHandler.NETWORK.send(PacketDistributor.TRACKING_CHUNK.with(() -> nonNullLevel().getChunkAt(getBlockPos())),
-                        new ItemBeamMessage(this, pendingBeams));
+                PacketDistributor.TRACKING_CHUNK.with(nonNullLevel().getChunkAt(getBlockPos()))
+                        .send(new ItemBeamMessage(this, pendingBeams));
                 pendingBeams.clear();
             }
             if (prevCanEmit || canEmit) {
@@ -431,6 +393,29 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         setActive(newActive);
         prevCanEmit = canEmit;
         executing = false;
+    }
+
+    private boolean runAllModules(boolean powered, boolean pulsed) {
+        boolean newActive = false;
+
+        for (CompiledIndexedModule cim : compiledModules) {
+            CompiledModule cm = cim.compiledModule;
+            if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed))
+                if (cm.execute(this)) {
+                    cm.getFilter().cycleRoundRobin().ifPresent(counter -> {
+                        ItemStack moduleStack = modulesHandler.getStackInSlot(cim.index);
+                        ModuleHelper.setRoundRobinCounter(moduleStack, counter);
+                    });
+                    getEnergyStorage().extractEnergy(cm.getEnergyCost(), false);
+                    newActive = true;
+                    if (cm.termination() == ModuleItem.Termination.RAN) {
+                        break;
+                    }
+                } else if (cm.termination() == ModuleItem.Termination.NOT_RAN) {
+                    break;
+                }
+        }
+        return newActive;
     }
 
     public int getTickRate() {
@@ -593,8 +578,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private void notifyWatchingPlayers() {
         for (Player player : nonNullLevel().players()) {
-            if (player.containerMenu instanceof RouterMenu c && c.getRouter() == this) {
-                PacketHandler.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new RouterUpgradesSyncMessage(this));
+            if (player instanceof ServerPlayer sp && player.containerMenu instanceof RouterMenu c && c.getRouter() == this) {
+                PacketDistributor.PLAYER.with(sp).send(RouterUpgradesSyncMessage.forRouter(this));
             }
         }
     }
@@ -621,6 +606,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public int getUpgradeCount(Item type) {
         return upgradeCount.getOrDefault(type, 0);
+    }
+
+    public Map<Item,Integer> getAllUpgrades() {
+        return Collections.unmodifiableMap(upgradeCount);
     }
 
     public void recompileNeeded(int what) {
@@ -879,12 +868,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     /**
      * Set the upgrades to the given set.  Used client-side for upgrade sync'ing.
      *
-     * @param handler item handler containing new set of upgrades
+     * @param upgradeCount item handler containing new set of upgrades
      */
-    public void setUpgradesFrom(IItemHandler handler) {
-        if (handler.getSlots() == upgradesHandler.getSlots()) {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                upgradesHandler.setStackInSlot(i, handler.getStackInSlot(i));
+    public void setUpgradesFrom(IItemHandler upgradeCount) {
+        if (upgradeCount.getSlots() == upgradesHandler.getSlots()) {
+            for (int i = 0; i < upgradeCount.getSlots(); i++) {
+                upgradesHandler.setStackInSlot(i, upgradeCount.getStackInSlot(i).copy());
             }
         }
         compileUpgrades();
@@ -917,7 +906,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public IEnergyStorage getEnergyStorage() {
         return energyStorage;
-//        return getUpgradeCount(ModItems.ENERGY_UPGRADE.get()) > 0 ? energyStorage : bufferHandler.getEnergyStorage();
     }
 
     public void setEnergyDirection(EnergyDirection energyDirection) {
@@ -937,7 +925,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return bufferHandler.getFluidHandler();
     }
 
-    public enum EnergyDirection implements IHasTranslationKey {
+    public enum EnergyDirection implements TranslatableEnum {
         FROM_ROUTER("from_router"),
         TO_ROUTER("to_router"),
         NONE("none");
@@ -1008,8 +996,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-            if (!(stack.getItem() instanceof UpgradeItem)) return 0;
-            return ((UpgradeItem) stack.getItem()).getStackLimit(slot);
+            return stack.getItem() instanceof UpgradeItem u ? u.getStackLimit(slot) : 0;
         }
     }
 
@@ -1025,17 +1012,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         @Override
-        public boolean canExtract() {
-            return super.canExtract() && getRedstoneBehaviour().shouldRun(getRedstonePower() > 0, false);
-        }
-
-        @Override
-        public boolean canReceive() {
-            return super.canReceive() && getRedstoneBehaviour().shouldRun(getRedstonePower() > 0, false);
-        }
-
-        @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
+            if (!getRedstoneBehaviour().shouldRun(getRedstonePower() > 0, false)) {
+                return 0;
+            }
             int n = super.receiveEnergy(maxReceive, simulate);
             if (n != 0 && !simulate) setChanged();
             return n;
@@ -1043,6 +1023,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         public int extractEnergy(int maxExtract, boolean simulate) {
+            if (!getRedstoneBehaviour().shouldRun(getRedstonePower() > 0, false)) {
+                return 0;
+            }
             int n = super.extractEnergy(maxExtract, simulate);
             if (n != 0 && !simulate) setChanged();
             return n;
@@ -1075,11 +1058,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         public Tag serializeNBT() {
-            CompoundTag tag = new CompoundTag();
-            tag.putInt("Energy", energy);
-            tag.putInt("Capacity", capacity);
-            tag.putInt("Excess", excess);
-            return tag;
+            return Util.make(new CompoundTag(), tag -> {
+                tag.putInt("Energy", energy);
+                tag.putInt("Capacity", capacity);
+                tag.putInt("Excess", excess);
+            });
         }
 
         @Override

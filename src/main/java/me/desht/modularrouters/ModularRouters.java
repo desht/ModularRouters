@@ -6,18 +6,15 @@ import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
-import me.desht.modularrouters.network.PacketHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -37,13 +34,11 @@ public class ModularRouters {
 
     private static WildcardedRLMatcher dimensionBlacklist;
 
-    public ModularRouters() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-
-        ConfigHolder.init();
+    public ModularRouters(IEventBus modBus) {
+        ConfigHolder.init(modBus);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientSetup.initEarly();
+            ClientSetup.initEarly(modBus);
         }
 
         modBus.addListener(this::commonSetup);
@@ -86,8 +81,6 @@ public class ModularRouters {
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info(MODNAME + " is loading!");
 
-        PacketHandler.setupNetwork();
-
         event.enqueueWork(() -> {
             IntegrationHandler.registerAll();
             XPCollection.detectXPTypes();
@@ -103,7 +96,7 @@ public class ModularRouters {
             CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
             ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-            generator.addProvider(event.includeServer(), new ModRecipeProvider(generator, lookupProvider));
+            generator.addProvider(event.includeServer(), new ModRecipeProvider(generator));
             ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(generator, lookupProvider, existingFileHelper);
             generator.addProvider(event.includeServer(), blockTagsProvider);
             generator.addProvider(event.includeServer(), new ModItemTagsProvider(generator, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));

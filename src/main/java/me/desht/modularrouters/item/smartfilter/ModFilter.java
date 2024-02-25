@@ -7,8 +7,8 @@ import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.ModFilterMenu;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.ModMatcher;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.GuiSyncMessage;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
+import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.ChatFormatting;
@@ -76,9 +76,9 @@ public class ModFilter extends SmartFilterItem {
     @Override
     public GuiSyncMessage onReceiveSettingsMessage(Player player, FilterSettingsMessage message, ItemStack filterStack, ItemStack moduleStack) {
         List<String> l;
-        switch (message.getOp()) {
+        switch (message.op()) {
             case ADD_STRING -> {
-                String modId = message.getPayload().getString("ModId");
+                String modId = message.payload().getString("ModId");
                 l = getModList(filterStack);
                 if (l.size() < MAX_SIZE && !l.contains(modId)) {
                     l.add(modId);
@@ -87,7 +87,7 @@ public class ModFilter extends SmartFilterItem {
                 }
             }
             case REMOVE_AT -> {
-                int pos = message.getPayload().getInt("Pos");
+                int pos = message.payload().getInt("Pos");
                 l = getModList(filterStack);
                 if (pos >= 0 && pos < l.size()) {
                     l.remove(pos);
@@ -95,7 +95,7 @@ public class ModFilter extends SmartFilterItem {
                     return new GuiSyncMessage(filterStack);
                 }
             }
-            default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.getOp() + " for " + filterStack);
+            default -> ModularRouters.LOGGER.warn("received unexpected message type " + message.op() + " for " + filterStack);
         }
         return null;
     }

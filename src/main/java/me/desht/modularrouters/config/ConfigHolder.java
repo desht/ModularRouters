@@ -1,6 +1,7 @@
 package me.desht.modularrouters.config;
 
 import me.desht.modularrouters.ModularRouters;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -14,7 +15,7 @@ public class ConfigHolder {
     private static ModConfigSpec configCommonSpec;
     private static ModConfigSpec configClientSpec;
 
-    public static void init() {
+    public static void init(IEventBus modBus) {
         final Pair<ClientConfig, ModConfigSpec> spec1 = new ModConfigSpec.Builder().configure(ClientConfig::new);
         client = spec1.getLeft();
         configClientSpec = spec1.getRight();
@@ -26,7 +27,7 @@ public class ConfigHolder {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.configCommonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHolder.configClientSpec);
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ConfigHolder::onConfigChanged);
+        modBus.addListener(ConfigHolder::onConfigChanged);
     }
 
     private static void onConfigChanged(final ModConfigEvent event) {

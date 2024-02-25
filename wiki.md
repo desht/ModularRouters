@@ -4,8 +4,6 @@
 
 Welcome to Modular Routers!  This is a low-tech, but (hopefully) situationally very useful mod for moving items around in various ways.  With a single block - the Item Router - and one or more plug-in modules, you can pull items from an inventory (including modded inventories like Storage Drawers), send them to other inventories near & far, place items as blocks, break blocks, drop items into the world, and more.  Think of the Item Router like a super-configurable Hopper on steroids...
 
-This mod is for Minecraft 1.10.2 only.  It _might_ work on 1.9.4 but no support will be given here.  It will _not_ work (and will not be ported to) any earlier Minecraft version.
-
 ## The Item Router
 
 ![Item Router will Puller and Dropper modules installed](https://github.com/desht/ModularRouters/blob/master/images/router_gui.png)

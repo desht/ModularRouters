@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The $(thing)Modular Router/$ is core of the system. It is responsible for executing all the modules plugged into it, moving items, blocks and fluids around in various ways."
+      "text": "The $(thing)Modular Router/$ is the core of the routing system. It is responsible for executing all the modules plugged into it; moving items, blocks and fluids around in various ways."
     },
     {
       "type": "image",

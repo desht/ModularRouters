@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.base.Joiner;
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -117,7 +117,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
     }
 
-    public enum InspectionSubject implements IHasTranslationKey {
+    public enum InspectionSubject implements TranslatableEnum {
         NONE("", stack -> Optional.empty()),
         DURABILITY("%", InspectionSubject::getDurabilityPercent),
         FLUID("%", InspectionSubject::getFluidPercent),
@@ -187,7 +187,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
     }
 
-    public enum InspectionOp implements IHasTranslationKey, BiPredicate<Long,Long> {
+    public enum InspectionOp implements TranslatableEnum, BiPredicate<Long,Long> {
         NONE((val, target) -> false),
         GT((val, target) -> val > target),
         LT((val, target) -> val < target),

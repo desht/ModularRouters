@@ -49,7 +49,7 @@ public class AugmentHandler extends ItemStackHandler {
             return augment.getMaxAugments((ModuleItem) holderStack.getItem());
         }
         return 0;
-    }
+}
 
     @Override
     protected void onContentsChanged(int slot) {

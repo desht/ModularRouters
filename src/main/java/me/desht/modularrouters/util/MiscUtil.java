@@ -7,12 +7,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -65,7 +64,7 @@ public class MiscUtil {
 
         StringBuilder builder = new StringBuilder(text.length());
         String format = "";
-        for (String para : text.split(Pattern.quote("${br}"))) {
+        for (String para : text.split(Pattern.quote("\n"))) {
             StringTokenizer tok = new StringTokenizer(para, " ");
             int lineLen = 0;
             while (tok.hasMoreTokens()) {
@@ -122,16 +121,12 @@ public class MiscUtil {
         return Component.literal(prefix).append(c);  // appendSibling
     }
 
-    public static CompoundTag serializeGlobalPos(GlobalPos globalPos) {
-        CompoundTag tag = new CompoundTag();
-        tag.put("pos", net.minecraft.nbt.NbtUtils.writeBlockPos(globalPos.pos()));
-        tag.putString("dim", globalPos.dimension().location().toString());
-        return tag;
+    public static Tag serializeGlobalPos(GlobalPos globalPos) {
+        return GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, globalPos).result().orElseThrow();
     }
 
     public static GlobalPos deserializeGlobalPos(CompoundTag tag) {
-        ResourceKey<Level> worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString("dim")));
-        return GlobalPos.of(worldKey, NbtUtils.readBlockPos(tag.getCompound("pos")));
+        return GlobalPos.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseThrow();
     }
 
     @CheckForNull
@@ -150,7 +145,7 @@ public class MiscUtil {
 
     public static Set<TagKey<Item>> itemTags(Item item) {
         //noinspection deprecation
-        return BuiltInRegistries.ITEM.getTagNames().collect(Collectors.toSet());
+        return item.builtInRegistryHolder().tags().collect(Collectors.toSet());
     }
 
     public static Set<TagKey<Fluid>> fluidTags(Fluid fluid) {

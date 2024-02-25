@@ -10,10 +10,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class BaseModuleHandler extends GhostItemHandler {
     private final ItemStack holderStack;
-    private final ModularRouterBlockEntity router;
+    protected final ModularRouterBlockEntity router;
     private final String tagName;
 
     public BaseModuleHandler(ItemStack holderStack, ModularRouterBlockEntity router, int size, String tagName) {
@@ -74,13 +75,37 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
     }
 
     public static class BulkFilterHandler extends BaseModuleHandler {
-        public BulkFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
+        private final ItemStack moduleStack;
+        private final int filterSlot;
+        private final boolean shouldSave;
+
+        public BulkFilterHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router) {
+            this(holderStack, router, ItemStack.EMPTY, 0, true);
+        }
+
+        public BulkFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router, ItemStack moduleStack, int filterSlot, boolean shouldSave) {
             super(holderStack, router, BulkItemFilter.FILTER_SIZE, ModuleHelper.NBT_FILTER);
+            this.moduleStack = moduleStack;
+            this.filterSlot = filterSlot;
+            this.shouldSave = shouldSave;
+        }
+
+        @Override
+        public void save() {
+            if (shouldSave) {
+                super.save();
+
+                if (!moduleStack.isEmpty()) {
+                    var h = new ModuleFilterHandler(moduleStack, router);
+                    h.setStackInSlot(filterSlot, getHolderStack());
+                    h.save();
+                }
+            }
         }
     }
 
     public static class ModuleFilterHandler extends BaseModuleHandler {
-        public ModuleFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
+        public ModuleFilterHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router) {
             super(holderStack, router, Filter.FILTER_SIZE, ModuleHelper.NBT_FILTER);
         }
 

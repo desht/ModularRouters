@@ -19,43 +19,33 @@ import java.util.Optional;
 /**
  * Unified object to locate a module or filter.
  */
-@SuppressWarnings("ClassCanBeRecord")
-public class MFLocator {
+public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot, ItemType itemType) {
     public enum ItemType { MODULE, FILTER }
-    public final InteractionHand hand;   // hand the player is holding the module/filter
-    public final BlockPos routerPos;  // router the module is installed in
-    public final int routerSlot;  // router slot that the module is in
-    public final int filterSlot;  // module slot that the filter is in
-    private final ItemType itemType;
 
-    private MFLocator(ItemType itemType, InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot) {
-        this.itemType = itemType;
-        this.hand = hand;
-        this.routerPos = routerPos;
-        this.routerSlot = routerSlot;
-        this.filterSlot = filterSlot;
-
+    private static MFLocator create(ItemType itemType, InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot) {
         Validate.isTrue(hand != null || routerPos != null && routerSlot >= 0);
+
+        return new MFLocator(hand, routerPos, routerSlot, filterSlot, itemType);
     }
 
     public static MFLocator heldModule(InteractionHand hand) {
-        return new MFLocator(ItemType.MODULE, hand, null, -1, -1);
+        return create(ItemType.MODULE, hand, null, -1, -1);
     }
 
     public static MFLocator heldFilter(InteractionHand hand) {
-        return new MFLocator(ItemType.FILTER, hand, null, -1, -1);
+        return create(ItemType.FILTER, hand, null, -1, -1);
     }
 
     public static MFLocator moduleInRouter(BlockPos routerPos, int routerSlot) {
-        return new MFLocator(ItemType.MODULE, null, routerPos, routerSlot, -1);
+        return create(ItemType.MODULE, null, routerPos, routerSlot, -1);
     }
 
     public static MFLocator filterInHeldModule(InteractionHand hand, int filterSlot) {
-        return new MFLocator(ItemType.FILTER, hand, null, -1, filterSlot);
+        return create(ItemType.FILTER, hand, null, -1, filterSlot);
     }
 
     public static MFLocator filterInInstalledModule(BlockPos routerPos, int routerSlot, int filterSlot) {
-        return new MFLocator(ItemType.FILTER, null, routerPos, routerSlot, filterSlot);
+        return create(ItemType.FILTER, null, routerPos, routerSlot, filterSlot);
     }
 
     public static MFLocator fromBuffer(FriendlyByteBuf buf) {
@@ -70,7 +60,7 @@ public class MFLocator {
             hand = buf.readEnum(InteractionHand.class);
         }
         int filterSlot = buf.readByte();
-        return new MFLocator(type, hand, routerPos, routerSlot, filterSlot);
+        return create(type, hand, routerPos, routerSlot, filterSlot);
     }
 
     public void writeBuf(FriendlyByteBuf buf) {

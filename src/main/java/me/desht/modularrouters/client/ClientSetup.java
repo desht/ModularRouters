@@ -14,16 +14,16 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
@@ -35,8 +35,8 @@ public class ClientSetup {
     public static KeyMapping keybindConfigure;
     public static KeyMapping keybindModuleInfo;
 
-    public static void initEarly() {
-        FMLJavaModLoadingContext.get().getModEventBus().register(ModelBakeEventHandler.class);
+    public static void initEarly(IEventBus modBus) {
+        modBus.register(ModelBakeEventHandler.class);
         NeoForge.EVENT_BUS.register(ModuleTargetRenderer.class);
         NeoForge.EVENT_BUS.register(MouseOverHelp.class);
     }
@@ -44,8 +44,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            // these all add stuff to non-threadsafe hashmaps - defer to the main thread
-            registerScreenFactories();
+            // non-thread-safe work here
             registerItemModelOverrides();
         });
 
@@ -54,7 +53,7 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
-    public static void init(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.MODULAR_ROUTER.get(), ModularRouterBER::new);
     }
 
@@ -69,6 +68,26 @@ public class ClientSetup {
         event.register(keybindModuleInfo);
     }
 
+    @SubscribeEvent
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(ModMenuTypes.ROUTER_MENU.get(), ModularRouterScreen::new);
+
+        event.register(ModMenuTypes.BASE_MODULE_MENU.get(), AbstractModuleScreen::new);
+        event.register(ModMenuTypes.ACTIVATOR_MENU.get(), ActivatorModuleScreen::new);
+        event.register(ModMenuTypes.BREAKER_MENU.get(), BreakerModuleScreen::new);
+        event.register(ModMenuTypes.DETECTOR_MENU.get(), DetectorModuleScreen::new);
+        event.register(ModMenuTypes.DISTRIBUTOR_MENU.get(), DistributorModuleScreen::new);
+        event.register(ModMenuTypes.EXTRUDER2_MENU.get(), ExtruderModule2Screen::new);
+        event.register(ModMenuTypes.FLINGER_MENU.get(), FlingerModuleScreen::new);
+        event.register(ModMenuTypes.FLUID_MENU.get(), FluidModuleScreen::new);
+        event.register(ModMenuTypes.PLAYER_MENU.get(), PlayerModuleScreen::new);
+        event.register(ModMenuTypes.VACUUM_MENU.get(), VacuumModuleScreen::new);
+
+        event.register(ModMenuTypes.BULK_FILTER_MENU.get(), BulkItemFilterScreen::new);
+        event.register(ModMenuTypes.MOD_FILTER_MENU.get(), ModFilterScreen::new);
+        event.register(ModMenuTypes.TAG_FILTER_MENU.get(), TagFilterScreen::new);
+    }
+
     private static void registerItemModelOverrides() {
         ItemProperties.register(ModItems.DISTRIBUTOR_MODULE.get(), RL("mode"), (stack, world, entity, n) -> {
             if (entity != null) {
@@ -79,24 +98,5 @@ public class ClientSetup {
             }
             return 0f;
         });
-    }
-
-    private static void registerScreenFactories() {
-        MenuScreens.register(ModMenuTypes.ROUTER_MENU.get(), ModularRouterScreen::new);
-
-        MenuScreens.register(ModMenuTypes.BASE_MODULE_MENU.get(), AbstractModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.ACTIVATOR_MENU.get(), ActivatorModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.BREAKER_MENU.get(), BreakerModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.DETECTOR_MENU.get(), DetectorModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.DISTRIBUTOR_MENU.get(), DistributorModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.EXTRUDER2_MENU.get(), ExtruderModule2Screen::new);
-        MenuScreens.register(ModMenuTypes.FLINGER_MENU.get(), FlingerModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.FLUID_MENU.get(), FluidModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.PLAYER_MENU.get(), PlayerModuleScreen::new);
-        MenuScreens.register(ModMenuTypes.VACUUM_MENU.get(), VacuumModuleScreen::new);
-
-        MenuScreens.register(ModMenuTypes.BULK_FILTER_MENU.get(), BulkItemFilterScreen::new);
-        MenuScreens.register(ModMenuTypes.MOD_FILTER_MENU.get(), ModFilterScreen::new);
-        MenuScreens.register(ModMenuTypes.TAG_FILTER_MENU.get(), TagFilterScreen::new);
     }
 }

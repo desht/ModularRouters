@@ -5,8 +5,8 @@ import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.GuiSyncMessage;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
+import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,8 +70,8 @@ public abstract class SmartFilterItem extends MRBaseItem {
         ItemStack stack = player.getItemInHand(hand);
         SmartFilterItem filter = (SmartFilterItem) stack.getItem();
         MFLocator loc = MFLocator.heldFilter(hand);
-        if (!world.isClientSide && filter.hasMenu()) {
-            NetworkHooks.openScreen((ServerPlayer) player, new FilterMenuProvider(player, loc), loc::writeBuf);
+        if (player instanceof ServerPlayer sp && filter.hasMenu()) {
+            sp.openMenu(new FilterMenuProvider(player, loc), loc::writeBuf);
         } else if (world.isClientSide && !hasMenu()) {
             FilterScreenFactory.openFilterGui(loc);
         }

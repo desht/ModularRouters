@@ -4,16 +4,15 @@ import com.google.common.base.Joiner;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
-import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.InspectionOp;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.InspectionSubject;
-import me.desht.modularrouters.network.FilterSettingsMessage;
-import me.desht.modularrouters.network.FilterSettingsMessage.Operation;
-import me.desht.modularrouters.network.PacketHandler;
+import me.desht.modularrouters.network.FilterOp;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -21,6 +20,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -56,7 +56,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-        if (locator.filterSlot >= 0) {
+        if (locator.filterSlot() >= 0) {
             addRenderableWidget(new BackButton(xPos - 12, yPos, button -> closeGUI()));
         }
 
@@ -73,9 +73,8 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
 
         matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()), button -> {
-            CompoundTag ext = new CompoundTag();
-            ext.putBoolean("MatchAll", !comparisonList.isMatchAll());
-            PacketHandler.NETWORK.sendToServer(new FilterSettingsMessage(Operation.ANY_ALL_FLAG, locator, ext));
+            CompoundTag ext = Util.make(new CompoundTag(), tag -> tag.putBoolean("MatchAll", !comparisonList.isMatchAll()));
+            PacketDistributor.SERVER.noArg().send(new FilterSettingsMessage(FilterOp.ANY_ALL_FLAG, locator, ext));
         });
         addRenderableWidget(matchButton);
 
@@ -87,8 +86,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         }
         updateDeleteButtonVisibility();
 
-        TextFieldManager manager = getOrCreateTextFieldManager().clear();
-        valueTextField = new IntegerTextField(manager, font, xPos + 120, yPos + 28, 20, 14, Range.between(0, 100)) {
+        valueTextField = new IntegerTextField(font, xPos + 120, yPos + 28, 20, 14, Range.between(0, 100)) {
             @Override
             public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
                 if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
@@ -99,6 +97,8 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
             }
         };
         valueTextField.useGuiTextBackground();
+
+        addRenderableWidget(valueTextField);
     }
 
     private void updateDeleteButtonVisibility() {
@@ -117,18 +117,21 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
 
         for (int i = 0; i < comparisonList.items.size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items.get(i);
             graphics.drawString(font, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080, false);
         }
+    }
 
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    @Override
+    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
 
+        graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }
 
     @Override

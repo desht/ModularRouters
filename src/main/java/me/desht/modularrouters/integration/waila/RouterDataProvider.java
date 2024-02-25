@@ -2,6 +2,7 @@ package me.desht.modularrouters.integration.waila;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -39,9 +40,7 @@ public class RouterDataProvider implements IServerDataProvider<BlockAccessor> {
                 counts.put(stack.getItem(), counts.getOrDefault(stack.getItem(), 0) + stack.getCount());
             }
         }
-        CompoundTag upgrades = new CompoundTag();
-        counts.forEach((k, v) -> upgrades.putInt(k.getDescriptionId(), v));
-        return upgrades;
+        return Util.make(new CompoundTag(), tag -> counts.forEach((k, v) -> tag.putInt(k.getDescriptionId(), v)));
     }
 
     @Override

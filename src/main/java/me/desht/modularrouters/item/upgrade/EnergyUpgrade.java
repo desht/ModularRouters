@@ -1,7 +1,6 @@
 package me.desht.modularrouters.item.upgrade;
 
 import me.desht.modularrouters.client.util.ClientUtil;
-import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import net.minecraft.network.chat.Component;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.commify;
 
 public class EnergyUpgrade extends UpgradeItem {
@@ -31,7 +31,7 @@ public class EnergyUpgrade extends UpgradeItem {
     public void addUsageInformation(ItemStack itemstack, List<Component> list) {
         super.addUsageInformation(itemstack, list);
         ClientUtil.getOpenItemRouter().ifPresent(router -> {
-            list.addAll(GuiUtil.xlateAndSplit("modularrouters.itemText.usage.item.energyUpgradeRouter",
+            list.add(xlate("modularrouters.itemText.usage.item.energyUpgradeRouter",
                     commify(router.getEnergyCapacity()), commify(router.getEnergyXferRate())));
         });
     }

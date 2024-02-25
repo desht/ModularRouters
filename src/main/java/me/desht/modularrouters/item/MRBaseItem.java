@@ -29,17 +29,15 @@ public abstract class MRBaseItem extends Item {
 
         Component text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage();
 
-        if (ClientSetup.keybindModuleInfo.isDown()) {
+        if (ClientUtil.isKeyDown(ClientSetup.keybindModuleInfo)) {
             addUsageInformation(stack, list);
         } else if (ConfigHolder.client.misc.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
-            if (ClientUtil.thisScreenPassesEvents()) {
-                list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
-            }
+            list.add(Component.empty());
+            list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
         } else if (!ConfigHolder.client.misc.alwaysShowModuleSettings.get()) {
-            if (ClientUtil.thisScreenPassesEvents()) {
-                list.add(xlate("modularrouters.itemText.misc.holdShiftKey", text.getString()));
-            }
+            list.add(Component.empty());
+            list.add(xlate("modularrouters.itemText.misc.holdShiftKey", text.getString()));
         }
     }
 

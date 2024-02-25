@@ -1,11 +1,17 @@
 package me.desht.modularrouters.client.util;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.locale.Language;
@@ -18,6 +24,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 public class ClientUtil {
@@ -31,10 +39,6 @@ public class ClientUtil {
         } else {
             return Optional.empty();
         }
-    }
-
-    public static boolean thisScreenPassesEvents() {
-        return Minecraft.getInstance().screen == null/* || Minecraft.getInstance().screen.passEvents*/;
     }
 
     public static MutableComponent xlate(String key, Object... args) {
@@ -52,7 +56,7 @@ public class ClientUtil {
     }
 
     public static Slot getHoveredSlot() {
-        if (Minecraft.getInstance().screen instanceof ContainerScreen cs) {
+        if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> cs) {
             return cs.getSlotUnderMouse();
         }
         return null;
@@ -62,9 +66,19 @@ public class ClientUtil {
         return Language.getInstance().getVisualOrder(font.ellipsize(Component.literal(str), maxWidth));
     }
 
-    public static void maybeGuiSync(ItemStack newStack) {
-        if (Minecraft.getInstance().screen instanceof IResyncableGui syncable) {
-            syncable.resync(newStack);
-        }
+    public static boolean isKeyDown(KeyMapping key) {
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue()) && key.getKeyConflictContext().isActive();
+    }
+
+    public static void setMultilineTooltip(AbstractWidget w, Component... lines) {
+        Arrays.stream(lines).reduce((c1, c2) -> c1.copy().append("\n").append(c2))
+                .ifPresentOrElse(c -> w.setTooltip(Tooltip.create(c)),
+                        () -> w.setTooltip(null));
+    }
+
+    public static void setMultilineTooltip(AbstractWidget w, Collection<Component> lines) {
+        lines.stream().reduce((c1, c2) -> c1.copy().append("\n").append(c2))
+                .ifPresentOrElse(c -> w.setTooltip(Tooltip.create(c)),
+                        () -> w.setTooltip(null));
     }
 }

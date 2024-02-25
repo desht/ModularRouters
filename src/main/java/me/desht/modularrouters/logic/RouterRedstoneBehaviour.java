@@ -1,8 +1,8 @@
 package me.desht.modularrouters.logic;
 
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 
-public enum RouterRedstoneBehaviour implements IHasTranslationKey {
+public enum RouterRedstoneBehaviour implements TranslatableEnum {
     ALWAYS, LOW, HIGH, NEVER, PULSE;
 
     public static RouterRedstoneBehaviour forValue(String string) {

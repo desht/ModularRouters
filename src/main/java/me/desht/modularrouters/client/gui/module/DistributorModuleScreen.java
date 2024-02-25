@@ -13,7 +13,9 @@ import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -22,6 +24,8 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class DistributorModuleScreen extends AbstractModuleScreen {
     private static final ItemStack ROUTER_STACK = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
@@ -51,10 +55,10 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
 
     @Override
     protected CompoundTag buildMessageData() {
-        CompoundTag tag = super.buildMessageData();
-        tag.putInt(CompiledDistributorModule.NBT_STRATEGY, sb.getState().ordinal());
-        tag.putBoolean(CompiledDistributorModule.NBT_PULLING, db.isToggled());
-        return tag;
+        return Util.make(super.buildMessageData(), tag -> {
+            tag.putInt(CompiledDistributorModule.NBT_STRATEGY, sb.getState().ordinal());
+            tag.putBoolean(CompiledDistributorModule.NBT_PULLING, db.isToggled());
+        });
     }
 
     @Override
@@ -65,23 +69,13 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
     }
 
     private class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
-        private final List<List<Component>> tooltips = Lists.newArrayList();
-
         StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
             super(x, y, width, height, initialVal, DistributorModuleScreen.this);
-            for (DistributionStrategy strategy : DistributionStrategy.values()) {
-                tooltips.add(Collections.singletonList(ClientUtil.xlate(strategy.getTranslationKey())));
-            }
         }
 
         @Override
         protected XYPoint getTextureXY() {
             return new XYPoint(160 + getState().ordinal() * 16, 32);
-        }
-
-        @Override
-        public List<Component> getTooltipLines() {
-            return tooltips.get(getState().ordinal());
         }
     }
 
@@ -92,8 +86,7 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
         public DirectionButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, DistributorModuleScreen.this);
 
-            MiscUtil.appendMultilineText(tooltip1, ChatFormatting.WHITE, "modularrouters.itemText.fluid.direction.OUT");
-            MiscUtil.appendMultilineText(tooltip2, ChatFormatting.WHITE, "modularrouters.itemText.fluid.direction.IN");
+            setTooltips(xlate("modularrouters.itemText.fluid.direction.OUT"),xlate("modularrouters.itemText.fluid.direction.IN"));
         }
 
         @Override
@@ -107,7 +100,7 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
 
         TooltipButton(int x, int y) {
             super(x, y, 16, 16, new ItemStack(ModItems.DISTRIBUTOR_MODULE.get()), true, p -> {});
-            tooltip1.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy"));
+            setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.distributor.strategy")));
         }
 
         @Override

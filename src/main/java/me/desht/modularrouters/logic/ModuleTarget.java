@@ -1,7 +1,9 @@
 package me.desht.modularrouters.logic;
 
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
@@ -46,11 +48,11 @@ public class ModuleTarget {
     }
 
     public CompoundTag toNBT() {
-        CompoundTag ext = new CompoundTag();
-        ext.put("Pos", MiscUtil.serializeGlobalPos(gPos));
-        ext.putByte("Face", (byte) face.get3DDataValue());
-        ext.putString("InvName", blockTranslationKey);
-        return ext;
+        return Util.make(new CompoundTag(), ext -> {
+            ext.put("Pos", MiscUtil.serializeGlobalPos(gPos));
+            ext.putByte("Face", (byte) face.get3DDataValue());
+            ext.putString("InvName", blockTranslationKey);
+        });
     }
 
     public static ModuleTarget fromNBT(CompoundTag nbt) {
@@ -74,8 +76,7 @@ public class ModuleTarget {
      * @return a (lazy optional) item handler
      */
     public boolean hasItemHandlerClientSide() {
-        // TODO rework - no querying of caps on the client
-        return false;
+        return ClientUtil.theClientLevel().getCapability(Capabilities.ItemHandler.BLOCK, gPos.pos(), face) != null;
     }
 
     /**

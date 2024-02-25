@@ -1,7 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.util.IHasTranslationKey;
+import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.IPickaxeUser;
@@ -64,7 +64,7 @@ public class CompiledBreakerModule extends CompiledModule {
         return matchType;
     }
 
-    public enum MatchType implements IHasTranslationKey {
+    public enum MatchType implements TranslatableEnum {
         ITEM,
         BLOCK;
 

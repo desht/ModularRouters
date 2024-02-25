@@ -3,7 +3,6 @@ package me.desht.modularrouters.client.gui.filter;
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
-import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldManager;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
@@ -44,13 +43,10 @@ public class RegexFilterScreen extends AbstractFilterScreen {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-        TextFieldManager manager = getOrCreateTextFieldManager().clear();
         regexTextField = new RegexTextField(this, 1, font, xPos + 10, yPos + 27, 144, 18);
         regexTextField.useGuiTextBackground();
 
-        manager.focus(0);
-
-        if (locator.filterSlot >= 0) {
+        if (locator.filterSlot() >= 0) {
             addRenderableWidget(new BackButton(xPos - 12, yPos, p -> closeGUI()));
         }
 
@@ -71,9 +67,8 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
         graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
 
         for (int i = 0; i < regexList.size(); i++) {
@@ -84,8 +79,13 @@ public class RegexFilterScreen extends AbstractFilterScreen {
         if (!errorMsg.isEmpty()) {
             graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
         }
+    }
 
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    @Override
+    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
+
+        graphics.blit(TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT);
     }
 
     @Override
@@ -102,7 +102,6 @@ public class RegexFilterScreen extends AbstractFilterScreen {
             Pattern.compile(regex);
             sendAddStringMessage("String", regex);
             regexTextField.setValue("");
-            getOrCreateTextFieldManager().focus(0);
             errorMsg = "";
         } catch (PatternSyntaxException e) {
             minecraft.player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
@@ -128,7 +127,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
         private final RegexFilterScreen parent;
 
         RegexTextField(RegexFilterScreen parent, int componentId, Font fontrendererObj, int x, int y, int par5Width, int par6Height) {
-            super(parent.getOrCreateTextFieldManager(), fontrendererObj, x, y, par5Width, par6Height);
+            super(fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
             setMaxLength(40);
         }
