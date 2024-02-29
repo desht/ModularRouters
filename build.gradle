@@ -9,9 +9,6 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "0.4.5"
 }
 
-version = "${mod_version}+mc${minecraft_version}"
-group = mod_group_id
-
 ext.releaseTag = providers.environmentVariable("TAG").orElse("").toString()
 ext.isAlpha = ext.releaseTag.contains("alpha")
 ext.isBeta = ext.releaseTag.contains("beta")
@@ -149,7 +146,7 @@ publishing {
         register('mavenJava', MavenPublication) {
             artifactId = archive_base_name
             groupId = mod_group_id
-            version = mod_version
+            version = "${mod_version}+mc${minecraft_version}"
             from components.java
         }
     }
@@ -201,7 +198,7 @@ publishMods {
 //            slug = "patchouli"
 //        }
     }
-
+"${mod_version}+mc${minecraft_version}"
     modrinth {
         projectId = modrinth_project_id
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
