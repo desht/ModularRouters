@@ -147,6 +147,9 @@ tasks.withType(ProcessResources).configureEach {
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
+            artifactId = archive_base_name
+            groupId = mod_group_id
+            version = mod_version
             from components.java
         }
     }
