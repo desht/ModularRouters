@@ -16,6 +16,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
     private final ItemStack holderStack;
     protected final ModularRouterBlockEntity router;
     private final String tagName;
+    private boolean autoSave = true;
 
     public BaseModuleHandler(ItemStack holderStack, ModularRouterBlockEntity router, int size, String tagName) {
         super(size);
@@ -24,6 +25,10 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         this.tagName = tagName;
 
         deserializeNBT(ModuleHelper.validateNBT(holderStack).getCompound(tagName));
+    }
+
+    public void setAutoSave(boolean autoSave) {
+        this.autoSave = autoSave;
     }
 
     /**
@@ -37,10 +42,12 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
 
     @Override
     protected void onContentsChanged(int slot) {
-        save();
+        if (autoSave) {
+            save();
 
-        if (router != null) {
-            router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
+            if (router != null) {
+                router.recompileNeeded(ModularRouterBlockEntity.COMPILE_MODULES);
+            }
         }
     }
 

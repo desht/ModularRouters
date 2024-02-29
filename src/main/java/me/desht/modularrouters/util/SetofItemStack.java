@@ -46,7 +46,7 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                itemStacks.add(stack);
+                itemStacks.add(stack.copy());
             }
         }
         return new SetofItemStack(itemStacks, filterFlags);

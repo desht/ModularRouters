@@ -22,14 +22,8 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.Objects;
 
-public enum ServerPayloadHandler {
-    INSTANCE;
-
-    public static ServerPayloadHandler getInstance() {
-        return INSTANCE;
-    }
-
-    public void handleData(FilterSettingsMessage message, PlayPayloadContext context) {
+public class ServerPayloadHandler {
+    public static void handleData(FilterSettingsMessage message, PlayPayloadContext context) {
         context.player().ifPresent(player ->  context.workHandler().submitAsync(() -> {
             MFLocator locator = message.locator();
             ItemStack moduleStack = locator.getModuleStack(player);
@@ -60,7 +54,7 @@ public enum ServerPayloadHandler {
         }));
     }
 
-    public void handleData(ModuleFilterMessage message, PlayPayloadContext context) {
+    public static void handleData(ModuleFilterMessage message, PlayPayloadContext context) {
         context.player().ifPresent(player -> context.workHandler().submitAsync(() -> {
             AbstractContainerMenu c = player.containerMenu;
             int slot = message.slot();
@@ -74,7 +68,7 @@ public enum ServerPayloadHandler {
         return c instanceof ModuleMenu || c instanceof BulkItemFilterMenu;
     }
 
-    public void handleData(ModuleSettingsMessage message, PlayPayloadContext context) {
+    public static void handleData(ModuleSettingsMessage message, PlayPayloadContext context) {
         context.player().ifPresent(player -> context.workHandler().submitAsync(() -> {
             MFLocator locator = message.locator();
             CompoundTag payload = message.payload();
@@ -95,7 +89,7 @@ public enum ServerPayloadHandler {
         }));
     }
 
-    public void handleData(OpenGuiMessage message, PlayPayloadContext context) {
+    public static void handleData(OpenGuiMessage message, PlayPayloadContext context) {
         context.player().ifPresent(player -> context.workHandler().submitAsync(() -> {
             MFLocator locator = message.locator();
             switch (message.op()) {
@@ -121,7 +115,7 @@ public enum ServerPayloadHandler {
         }));
     }
 
-    public void handleData(SyncUpgradeSettingsMessage message, PlayPayloadContext context) {
+    public static void handleData(SyncUpgradeSettingsMessage message, PlayPayloadContext context) {
         context.player().ifPresent(player -> context.workHandler().submitAsync(() -> {
             ItemStack held = player.getItemInHand(message.hand());
             if (held.getItem() instanceof SyncUpgrade) {
@@ -130,7 +124,7 @@ public enum ServerPayloadHandler {
         }));
     }
 
-    public void handleData(ValidateModuleMessage message, PlayPayloadContext context) {
+    public static void handleData(ValidateModuleMessage message, PlayPayloadContext context) {
         context.player().ifPresent(player -> context.workHandler().submitAsync(() -> {
             ItemStack stack = player.getItemInHand(message.hand());
             if (stack.getItem() instanceof ModuleItem moduleItem && player instanceof ServerPlayer sp) {

@@ -14,6 +14,7 @@ import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 public class NetworkHandler {
     private static final String NETWORK_VERSION = "1.0";
 
+    @SuppressWarnings("Convert2MethodRef")
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlerEvent event) {
         final IPayloadRegistrar registrar = event.registrar(ModularRouters.MODID)
@@ -21,27 +22,27 @@ public class NetworkHandler {
 
         // clientbound
         registrar.play(GuiSyncMessage.ID, GuiSyncMessage::new, handler -> handler
-                .client(ClientPayloadHandler.getInstance()::handleData));
+                .client((message, context) -> ClientPayloadHandler.handleData(message, context)));
         registrar.play(ItemBeamMessage.ID, ItemBeamMessage::fromNetwork, handler -> handler
-                .client(ClientPayloadHandler.getInstance()::handleData));
+                .client((message, context) -> ClientPayloadHandler.handleData(message, context)));
         registrar.play(PushEntityMessage.ID, PushEntityMessage::new, handler -> handler
-                .client(ClientPayloadHandler.getInstance()::handleData));
+                .client((message, context) -> ClientPayloadHandler.handleData(message, context)));
         registrar.play(RouterUpgradesSyncMessage.ID, RouterUpgradesSyncMessage::new, handler -> handler
-                .client(ClientPayloadHandler.getInstance()::handleData));
+                .client((message, context) -> ClientPayloadHandler.handleData(message, context)));
 
         // serverbound
         registrar.play(FilterSettingsMessage.ID, FilterSettingsMessage::new, handler -> handler
-                .server(ServerPayloadHandler.getInstance()::handleData));
+                .server((message, context) -> ServerPayloadHandler.handleData(message, context)));
         registrar.play(ModuleFilterMessage.ID, ModuleFilterMessage::new, handler -> handler
-                .server(ServerPayloadHandler.getInstance()::handleData));
+                .server((message, context) -> ServerPayloadHandler.handleData(message, context)));
         registrar.play(ModuleSettingsMessage.ID, ModuleSettingsMessage::new, handler -> handler
-                .server(ServerPayloadHandler.getInstance()::handleData));
+                .server((message, context) -> ServerPayloadHandler.handleData(message, context)));
         registrar.play(OpenGuiMessage.ID, OpenGuiMessage::new, handler -> handler
-                .server(ServerPayloadHandler.getInstance()::handleData));
+                .server((message, context) -> ServerPayloadHandler.handleData(message, context)));
         registrar.play(SyncUpgradeSettingsMessage.ID, SyncUpgradeSettingsMessage::new, handler -> handler
-                .server(ServerPayloadHandler.getInstance()::handleData));
+                .server((message, context) -> ServerPayloadHandler.handleData(message, context)));
         registrar.play(ValidateModuleMessage.ID, ValidateModuleMessage::new, handler -> handler
-                .server(ServerPayloadHandler.getInstance()::handleData));
+                .server((message, context) -> ServerPayloadHandler.handleData(message, context)));
 
         // bidirectional
         registrar.play(RouterSettingsMessage.ID, RouterSettingsMessage::new, handler -> handler

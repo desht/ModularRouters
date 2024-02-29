@@ -61,9 +61,11 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
     }
 
     public void clearSlots() {
+        handler.setAutoSave(false);
         for (int i = 0; i < handler.getSlots(); i++) {
             handler.setStackInSlot(i, ItemStack.EMPTY);
         }
+        handler.setAutoSave(true);
         handler.save();
 
         if (getRouter() != null && !getRouter().getLevel().isClientSide) {
@@ -86,12 +88,15 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
         }
 
         int slot = 0;
+        handler.setAutoSave(false);
         for (ItemStack stack : stacks.sortedList()) {
             handler.setStackInSlot(slot++, stack);
         }
         while (slot < handler.getSlots()) {
             handler.setStackInSlot(slot++, ItemStack.EMPTY);
         }
+
+        handler.setAutoSave(true);
         handler.save();
 
         if (getRouter() != null && !getRouter().getLevel().isClientSide) {

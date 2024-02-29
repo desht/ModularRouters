@@ -29,10 +29,10 @@ public record RouterSettingsMessage(boolean ecoMode, RouterRedstoneBehaviour red
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        buffer.writeBlockPos(pos);
-        buffer.writeByte(redstoneBehaviour.ordinal());
         buffer.writeBoolean(ecoMode);
+        buffer.writeByte(redstoneBehaviour.ordinal());
         buffer.writeEnum(energyDirection);
+        buffer.writeBlockPos(pos);
     }
 
     @Override

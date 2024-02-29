@@ -13,14 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-public enum ClientPayloadHandler {
-    INSTANCE;
-
-    public static ClientPayloadHandler getInstance() {
-        return INSTANCE;
-    }
-
-    public void handleData(GuiSyncMessage message, PlayPayloadContext context) {
+public class ClientPayloadHandler {
+    public static void handleData(GuiSyncMessage message, PlayPayloadContext context) {
         context.workHandler().submitAsync(() -> {
             if (Minecraft.getInstance().screen instanceof IResyncableGui syncable) {
                 syncable.resync(message.newStack());
@@ -28,13 +22,13 @@ public enum ClientPayloadHandler {
         });
     }
 
-    public void handleData(ItemBeamMessage message, PlayPayloadContext context) {
+    public static void handleData(ItemBeamMessage message, PlayPayloadContext context) {
         context.workHandler().submitAsync(() ->
                 Minecraft.getInstance().level.getBlockEntity(message.pos(), ModBlockEntities.MODULAR_ROUTER.get())
                         .ifPresent(te -> message.beams().forEach(te::addItemBeam)));
     }
 
-    public void handleData(PushEntityMessage message, PlayPayloadContext context) {
+    public static void handleData(PushEntityMessage message, PlayPayloadContext context) {
         context.workHandler().submitAsync(() -> {
             Entity entity = Minecraft.getInstance().level.getEntity(message.entityId());
             if (entity != null) {
@@ -47,7 +41,7 @@ public enum ClientPayloadHandler {
         });
     }
 
-    public void handleData(RouterUpgradesSyncMessage message, PlayPayloadContext context) {
+    public static void handleData(RouterUpgradesSyncMessage message, PlayPayloadContext context) {
         context.workHandler().submitAsync(() -> {
             Level level = Minecraft.getInstance().level;
             if (level != null && level.isLoaded(message.pos())) {
