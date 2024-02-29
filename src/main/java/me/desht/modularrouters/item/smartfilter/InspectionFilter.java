@@ -9,7 +9,6 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Compariso
 import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -20,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class InspectionFilter extends SmartFilterItem {
     private static final String NBT_MATCH_ALL = "MatchAll";
@@ -42,9 +43,9 @@ public class InspectionFilter extends SmartFilterItem {
         super.addExtraInformation(itemstack, list);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.items.isEmpty()) {
-            list.add(Component.literal(ChatFormatting.YELLOW + I18n.get("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()) + ":"));
+            list.add(xlate("modularrouters.guiText.label.matchAll." + comparisonList.isMatchAll()).append(":").withStyle(ChatFormatting.YELLOW));
             for (Comparison c : comparisonList.items) {
-                list.add(Component.literal(ChatFormatting.AQUA + "\u2022 ").append(c.asLocalizedText()));
+                list.add(Component.literal("• ").append(c.asLocalizedText().withStyle(ChatFormatting.AQUA)));
             }
         }
     }

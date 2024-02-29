@@ -3,10 +3,10 @@ package me.desht.modularrouters.item.upgrade;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.upgrade.SyncUpgradeScreen;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModSounds;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -18,12 +18,17 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
+import static me.desht.modularrouters.client.util.ClientUtil.colorText;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+
 public class SyncUpgrade extends UpgradeItem {
     private static final String NBT_TUNING = "Tuning";
 
     @Override
     public void addExtraInformation(ItemStack itemstack, List<Component> list) {
-        list.add(ClientUtil.xlate("modularrouters.itemText.sync.tuning", getTunedValue(itemstack)));
+        int val = getTunedValue(itemstack);
+        list.add(xlate("modularrouters.itemText.sync.tuning", colorText(val, ChatFormatting.AQUA))
+                .withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

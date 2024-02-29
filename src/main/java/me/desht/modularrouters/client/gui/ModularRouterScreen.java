@@ -14,6 +14,7 @@ import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.network.messages.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -243,8 +244,8 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
     private enum EnergyStatus {
         OK(null),
-        NO_UPGRADES(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning.noBuffer"))),
-        ENERGY_LOW(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning")));
+        NO_UPGRADES(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning.noBuffer").withStyle(ChatFormatting.GOLD))),
+        ENERGY_LOW(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning").withStyle(ChatFormatting.GOLD)));
 
         private final Tooltip tooltip;
 

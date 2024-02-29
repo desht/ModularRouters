@@ -1,7 +1,6 @@
 package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
@@ -51,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.desht.modularrouters.block.tile.ModularRouterBlockEntity.*;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class ModularRouterBlock extends CamouflageableBlock implements EntityBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
@@ -112,7 +112,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter player, List<Component> tooltip, TooltipFlag advanced) {
         if (stack.hasTag()) {
             CompoundTag compound = stack.getTag().getCompound("BlockEntityTag");
-            tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.routerConfigured")
+            tooltip.add(xlate("modularrouters.itemText.misc.routerConfigured")
                     .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
             if (compound.contains(NBT_MODULES)) {
                 List<Component> moduleText = new ArrayList<>();
@@ -128,7 +128,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     }
                 }
                 if (!moduleText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("modularrouters.guiText.label.modules").withStyle(ChatFormatting.YELLOW));
+                    tooltip.add(xlate("modularrouters.guiText.label.modules").withStyle(ChatFormatting.YELLOW));
                     tooltip.addAll(moduleText);
                 }
             }
@@ -146,17 +146,17 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     }
                 }
                 if (!upgradeText.isEmpty()) {
-                    tooltip.add(ClientUtil.xlate("modularrouters.itemText.misc.upgrades").withStyle(ChatFormatting.YELLOW));
+                    tooltip.add(xlate("modularrouters.itemText.misc.upgrades").withStyle(ChatFormatting.YELLOW));
                     tooltip.addAll(upgradeText);
                 }
             }
             if (compound.contains(NBT_REDSTONE_MODE)) {
                 try {
                     RouterRedstoneBehaviour rrb = RouterRedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-                    tooltip.add(ClientUtil.xlate("modularrouters.guiText.tooltip.redstone.label")
+                    tooltip.add(xlate("modularrouters.guiText.tooltip.redstone.label")
                             .append(": ")
                             .withStyle(ChatFormatting.YELLOW)
-                            .append(ClientUtil.xlate("modularrouters.guiText.tooltip.redstone." + rrb)
+                            .append(xlate("modularrouters.guiText.tooltip.redstone." + rrb)
                                     .withStyle(ChatFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
@@ -175,7 +175,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     PacketDistributor.PLAYER.with(sp).send(RouterUpgradesSyncMessage.forRouter(router));
                     sp.openMenu(router, pos);
                 } else if (!router.isPermitted(player) && world.isClientSide) {
-                    player.displayClientMessage(ClientUtil.xlate("modularrouters.chatText.security.accessDenied"), false);
+                    player.displayClientMessage(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
                 return InteractionResult.SUCCESS;

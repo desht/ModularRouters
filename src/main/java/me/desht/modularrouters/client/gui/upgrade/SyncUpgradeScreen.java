@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.item.upgrade.SyncUpgrade;
 import me.desht.modularrouters.network.messages.SyncUpgradeSettingsMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -55,7 +56,7 @@ public class SyncUpgradeScreen extends Screen {
         yPos = (height - GUI_HEIGHT) / 2;
 
         intField = new IntegerTextField(font,
-                xPos + 77, yPos + 27, 25, 16, Range.between(0, ConfigHolder.common.router.baseTickRate.get() - 1));
+                xPos + 77, yPos + 27, 25, 16, Range.of(0, ConfigHolder.common.router.baseTickRate.get() - 1));
         intField.setValue(currentVal);
         intField.useGuiTextBackground();
         intField.setFocused(true);
@@ -98,7 +99,7 @@ public class SyncUpgradeScreen extends Screen {
         TooltipButton(int x, int y, int width, int height) {
             super(x, y, width, height, clockStack, true, p -> {});
             ClientUtil.setMultilineTooltip(this,
-                    xlate("modularrouters.guiText.tooltip.tunedValue", 0, ConfigHolder.common.router.baseTickRate.get() - 1),
+                    xlate("modularrouters.guiText.tooltip.tunedValue", 0, ConfigHolder.common.router.baseTickRate.get() - 1).withStyle(ChatFormatting.AQUA),
                     xlate("modularrouters.guiText.tooltip.numberFieldTooltip")
             );
         }

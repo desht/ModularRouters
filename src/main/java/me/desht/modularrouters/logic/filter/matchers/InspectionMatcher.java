@@ -1,9 +1,10 @@
 package me.desht.modularrouters.logic.filter.matchers;
 
 import com.google.common.base.Joiner;
-import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -107,7 +108,7 @@ public class InspectionMatcher implements IItemMatcher {
             return Joiner.on(" ").join(subject, op, target);
         }
 
-        public Component asLocalizedText() {
+        public MutableComponent asLocalizedText() {
             if (subject == null || op == null) return Component.literal("<?>");
             return Component.literal(" ")
                     .append(Component.translatable("modularrouters.guiText.label.inspectionSubject." + subject))

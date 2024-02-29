@@ -34,7 +34,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -246,8 +245,10 @@ public class AbstractModuleScreen extends AbstractContainerScreen<ModuleMenu> im
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        Component title = moduleItemStack.getHoverName().copy().append(routerPos != null ? " " + I18n.get("modularrouters.guiText.label.installed") : "");
-        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 5, getFgColor(module.getItemTint()), false);
+        Component txt = moduleItemStack.getHoverName().copy().append(" ").append(
+                routerPos != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
+        );
+        graphics.drawString(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 5, getFgColor(module.getItemTint()), false);
     }
 
     @Override

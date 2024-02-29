@@ -1,7 +1,6 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.TagFilterMenu;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -62,13 +61,13 @@ public class TagFilter extends SmartFilterItem {
         super.addExtraInformation(stack, list);
         if (stack.getTagElement(ModularRouters.MODID) != null) {
             List<TagKey<Item>> l = getTagList(stack);
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", l.size()));
+            addCountInfo(list, l.size());
             list.addAll(l.stream()
                     .map(s -> " • " + ChatFormatting.AQUA + s.location())
                     .map(Component::literal)
                     .toList());
         } else {
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", 0));
+            addCountInfo(list, 0);
         }
     }
 

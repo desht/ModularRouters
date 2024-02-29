@@ -48,9 +48,9 @@ public class DistributorModuleScreen extends AbstractModuleScreen {
         addRenderableWidget(db = new DirectionButton(leftPos + 147, topPos + 43, cdm.isPulling()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 21, leftPos + 165, topPos + 41,
-                "modularrouters.guiText.popup.distributor.strategy");
+                xlate("modularrouters.guiText.popup.distributor.strategy").withStyle(ChatFormatting.YELLOW));
         getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 41, leftPos + 165, topPos + 61,
-                "modularrouters.guiText.popup.distributor.direction");
+                xlate("modularrouters.guiText.popup.distributor.direction").withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

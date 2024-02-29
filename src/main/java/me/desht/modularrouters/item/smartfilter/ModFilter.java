@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.ModFilterMenu;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
@@ -57,14 +56,14 @@ public class ModFilter extends SmartFilterItem {
         super.addExtraInformation(stack, list);
         if (stack.getTagElement(ModularRouters.MODID) != null) {
             List<String> l = getModList(stack);
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", l.size()));
+            addCountInfo(list, l.size());
             list.addAll(l.stream()
                     .map(ModNameCache::getModName)
-                    .map(s -> " \u2022 " + ChatFormatting.AQUA + s)
+                    .map(s -> " • " + ChatFormatting.AQUA + s)
                     .map(Component::literal)
                     .toList());
         } else {
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", 0));
+            addCountInfo(list, 0);
         }
     }
 

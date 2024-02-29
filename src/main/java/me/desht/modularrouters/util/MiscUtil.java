@@ -1,8 +1,6 @@
 package me.desht.modularrouters.util;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -41,18 +39,8 @@ public class MiscUtil {
 
     private static final int WRAP_LENGTH = 45;
 
-    public static void appendMultilineText(List<Component> result, ChatFormatting formatting, String key, Object... args) {
-        for (String s : I18n.get(key, args).split(Pattern.quote("${br}"))) {
-            result.add(Component.literal(s).withStyle(formatting));
-        }
-    }
-
-    public static MutableComponent asFormattable(Component component) {
-        return component instanceof MutableComponent ? (MutableComponent) component : component.plainCopy();
-    }
-
-    public static List<? extends Component> wrapStringAsTextComponent(String text) {
-        return wrapString(text, WRAP_LENGTH).stream().map(Component::literal).toList();
+    public static MutableComponent asMutableComponent(Component component) {
+        return component instanceof MutableComponent m ? m : component.copy();
     }
 
     public static String commify(int n) {

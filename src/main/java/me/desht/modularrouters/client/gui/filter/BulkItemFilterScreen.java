@@ -12,10 +12,10 @@ import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.network.FilterOp;
 import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -61,14 +61,14 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
             target = cm.getEffectiveTarget(router);
             if (target.hasItemHandlerClientSide()) {
                 addRenderableWidget(new MergeButton(leftPos + 28, topPos + 130, target.toString(),
-                        I18n.get(target.blockTranslationKey), p -> {
+                        xlate(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketDistributor.SERVER.noArg().send(new FilterSettingsMessage(
                                 FilterOp.MERGE, menu.getLocator(), target.toNBT()));
                     }
                 }));
                 addRenderableWidget(new LoadButton(leftPos + 48, topPos + 130, target.toString(),
-                        I18n.get(target.blockTranslationKey), p -> {
+                        xlate(target.blockTranslationKey), p -> {
                     if (target != null) {
                         PacketDistributor.SERVER.noArg().send(new FilterSettingsMessage(
                                 FilterOp.LOAD, menu.getLocator(), target.toNBT()));
@@ -96,18 +96,18 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
     }
 
     static class MergeButton extends Buttons.AddButton {
-        MergeButton(int x, int y, String locStr, String name, OnPress pressable) {
+        MergeButton(int x, int y, String locStr, Component name, OnPress pressable) {
             super(x, y, pressable);
-            setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.mergeFilter", name, locStr)));
+            setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.mergeFilter", name.copy().withStyle(ChatFormatting.YELLOW), locStr)));
         }
     }
 
     static class LoadButton extends TexturedButton {
         private static final XYPoint TEXTURE_XY = new XYPoint(144, 16);
 
-        LoadButton(int x, int y, String locStr, String name, OnPress pressable) {
+        LoadButton(int x, int y, String locStr, Component name, OnPress pressable) {
             super( x, y, 16, 16, pressable);
-            setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.loadFilter", name, locStr)));
+            setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.loadFilter", name.copy().withStyle(ChatFormatting.YELLOW), locStr)));
         }
 
         @Override

@@ -39,7 +39,7 @@ class TOPInfoProvider {
                         .append(Component.translatable(router.getRedstoneBehaviour().getTranslationKey()))
                 );
             } else {
-                probeInfo.text(Component.translatable("modularrouters.chatText.security.accessDenied"));
+                probeInfo.text(Component.translatable("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED));
             }
         });
     }

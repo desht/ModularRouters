@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
@@ -93,7 +94,7 @@ public class FlingerModuleScreen extends AbstractModuleScreen {
             super(x, y, 16, 16, p -> {});
             this.buttonId = buttonId;
             ClientUtil.setMultilineTooltip(this,
-                    xlate("modularrouters.guiText.tooltip.flinger." + key, min, max),
+                    xlate("modularrouters.guiText.tooltip.flinger." + key, min, max).withStyle(ChatFormatting.AQUA),
                     xlate("modularrouters.guiText.tooltip.numberFieldTooltip")
             );
         }

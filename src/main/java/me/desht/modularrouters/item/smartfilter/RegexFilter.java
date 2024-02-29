@@ -2,7 +2,6 @@ package me.desht.modularrouters.item.smartfilter;
 
 import com.google.common.collect.Lists;
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import me.desht.modularrouters.network.messages.FilterSettingsMessage;
@@ -53,10 +52,10 @@ public class RegexFilter extends SmartFilterItem {
         CompoundTag compound = itemstack.getTag();
         if (compound != null) {
             List<String> l = getRegexList(itemstack);
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", l.size()));
-            list.addAll(l.stream().map(s -> " \u2022 " + ChatFormatting.AQUA + "/" + s + "/").map(Component::literal).toList());
+            addCountInfo(list, l.size());
+            list.addAll(l.stream().map(s -> " • " + ChatFormatting.AQUA + "/" + s + "/").map(Component::literal).toList());
         } else {
-            list.add(ClientUtil.xlate("modularrouters.itemText.misc.regexFilter.count", 0));
+            addCountInfo(list, 0);
         }
     }
 

@@ -1,16 +1,19 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.logic.compiled.CompiledFlingerModule;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+
+import static me.desht.modularrouters.client.util.ClientUtil.colorText;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class FlingerModule extends DropperModule {
     public static final float MIN_SPEED = 0.0f;
@@ -29,7 +32,11 @@ public class FlingerModule extends DropperModule {
     public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledFlingerModule fs = new CompiledFlingerModule(null, itemstack);
-        list.add(ClientUtil.xlate("modularrouters.itemText.misc.flingerDetails", fs.getSpeed(), fs.getPitch(), fs.getYaw()));
+        list.add(xlate("modularrouters.itemText.misc.flingerDetails",
+                colorText(fs.getSpeed(), ChatFormatting.AQUA),
+                colorText(fs.getPitch(), ChatFormatting.AQUA),
+                colorText(fs.getYaw(), ChatFormatting.AQUA)
+        ).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

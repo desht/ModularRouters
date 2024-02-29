@@ -9,7 +9,7 @@ import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
@@ -17,6 +17,8 @@ import org.lwjgl.glfw.GLFW;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class RegexFilterScreen extends AbstractFilterScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/regexfilter.png");
@@ -26,7 +28,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
     private int xPos, yPos;
     private RegexTextField regexTextField;
-    private String errorMsg = "";
+    private Component errorMsg = Component.empty();
     private int errorTimer = 60;  // 3 seconds
 
     private final List<String> regexList = Lists.newArrayList();
@@ -76,9 +78,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
             graphics.drawString(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080, false);
         }
 
-        if (!errorMsg.isEmpty()) {
-            graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
-        }
+        graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     @Override
     public void tick() {
         if (errorTimer > 0 && --errorTimer == 0) {
-            errorMsg = "";
+            errorMsg = Component.empty();
         }
         super.tick();
     }
@@ -102,10 +102,10 @@ public class RegexFilterScreen extends AbstractFilterScreen {
             Pattern.compile(regex);
             sendAddStringMessage("String", regex);
             regexTextField.setValue("");
-            errorMsg = "";
+            errorMsg = Component.empty();
         } catch (PatternSyntaxException e) {
             minecraft.player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
-            errorMsg = I18n.get("modularrouters.guiText.label.regexError");
+            errorMsg = xlate("modularrouters.guiText.label.regexError");
             errorTimer = 60;
         }
     }

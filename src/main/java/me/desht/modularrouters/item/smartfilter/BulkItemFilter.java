@@ -1,7 +1,6 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.container.BulkItemFilterMenu;
@@ -53,7 +52,7 @@ public class BulkItemFilter extends SmartFilterItem {
     @Override
     public void addExtraInformation(ItemStack itemstack, List<Component> list) {
         super.addExtraInformation(itemstack, list);
-        list.add(ClientUtil.xlate("modularrouters.itemText.misc.bulkItemFilter.count", getSize(itemstack)));
+        addCountInfo(list, getSize(itemstack));
     }
 
     @Override

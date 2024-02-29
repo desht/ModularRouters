@@ -40,7 +40,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
-import static me.desht.modularrouters.util.MiscUtil.asFormattable;
+import static me.desht.modularrouters.util.MiscUtil.asMutableComponent;
 
 /**
  * Represents a module with a specific target block or blocks (blockpos stored in itemstack NBT).
@@ -122,7 +122,7 @@ public abstract class TargetedModule extends ModuleItem {
     @Override
     public void addUsageInformation(ItemStack itemstack, List<Component> list) {
         super.addUsageInformation(itemstack, list);
-        MiscUtil.appendMultilineText(list, ChatFormatting.YELLOW, getMaxTargets() > 1 ? "modularrouters.itemText.targetingHintMulti" : "modularrouters.itemText.targetingHint");
+        list.add(xlate(getMaxTargets() > 1 ? "modularrouters.itemText.targetingHintMulti" : "modularrouters.itemText.targetingHint").withStyle(ChatFormatting.YELLOW));
     }
 
     @Override
@@ -139,7 +139,7 @@ public abstract class TargetedModule extends ModuleItem {
 
         for (ModuleTarget target : targets) {
             if (target != null) {
-                Component msg = Component.literal("\u25b6 ").append(asFormattable(target.getTextComponent()).withStyle(ChatFormatting.WHITE));
+                Component msg = Component.literal("▶ ").append(asMutableComponent(target.getTextComponent()).withStyle(ChatFormatting.WHITE));
                 list.add(msg);
                 ClientUtil.getOpenItemRouter().ifPresent(router -> {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
@@ -269,7 +269,7 @@ public abstract class TargetedModule extends ModuleItem {
         for (ModuleTarget target : targets) {
             if (target != null) {
                 TargetValidation v = validateTarget(stack, src, target, true);
-                MutableComponent msg = MiscUtil.asFormattable(target.getTextComponent())
+                MutableComponent msg = MiscUtil.asMutableComponent(target.getTextComponent())
                         .append(" ").append(Component.translatable(v.translationKey()).withStyle(v.getColor()));
                 player.displayClientMessage(msg, false);
             }

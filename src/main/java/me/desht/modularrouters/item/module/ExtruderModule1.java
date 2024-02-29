@@ -6,6 +6,7 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledExtruderModule1;
 import me.desht.modularrouters.util.ModuleHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,7 +23,7 @@ public class ExtruderModule1 extends ModuleItem implements IRangedModule, IPicka
     @Override
     public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
-        list.add(ClientUtil.xlate("modularrouters.itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)));
+        list.add(ClientUtil.xlate("modularrouters.itemText.extruder.mode." + ModuleHelper.getRedstoneBehaviour(itemstack)).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

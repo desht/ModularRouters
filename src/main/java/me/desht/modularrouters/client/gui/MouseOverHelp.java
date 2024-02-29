@@ -2,13 +2,14 @@ package me.desht.modularrouters.client.gui;
 
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ComponentRenderUtils;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ContainerScreenEvent;
 
@@ -38,8 +39,17 @@ public class MouseOverHelp {
         addHelpRegion(x1, y1, x2, y2, key, HelpRegion.YES);
     }
 
+    public void addHelpRegion(int x1, int y1, int x2, int y2, Component key) {
+        addHelpRegion(x1, y1, x2, y2, key, HelpRegion.YES);
+    }
+
     public void addHelpRegion(int x1, int y1, int x2, int y2, String key, Predicate<AbstractContainerScreen<?>> showPredicate) {
-        helpRegions.add(new HelpRegion(x1, y1, x2, y2, MiscUtil.wrapString(I18n.get(key), 35), showPredicate));
+        addHelpRegion(x1, y1, x2, y2, xlate(key), showPredicate);
+    }
+
+    public void addHelpRegion(int x1, int y1, int x2, int y2, Component key, Predicate<AbstractContainerScreen<?>> showPredicate) {
+        List<FormattedCharSequence> l = ComponentRenderUtils.wrapComponents(key, screen.getXSize(), screen.getMinecraft().font);
+        helpRegions.add(HelpRegion.create(x1, y1, x2, y2, l, showPredicate));
     }
 
     private void onMouseOver(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -61,13 +71,13 @@ public class MouseOverHelp {
         return null;
     }
 
-    private static Rect2i calcBounds(AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, List<String> helpText) {
+    private static Rect2i calcBounds(AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, List<FormattedCharSequence> helpText) {
         int boxWidth, boxHeight;
 
         if (helpText != null && !helpText.isEmpty()) {
             boxWidth = 0;
             boxHeight = helpText.size() * fontRenderer.lineHeight;
-            for (String s : helpText) {
+            for (FormattedCharSequence s : helpText) {
                 boxWidth = Math.max(boxWidth, fontRenderer.width(s));
             }
             // enlarge box width & height for a text margin
@@ -79,7 +89,7 @@ public class MouseOverHelp {
         }
     }
 
-    private static void showPopupBox(GuiGraphics graphics, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<String> helpText) {
+    private static void showPopupBox(GuiGraphics graphics, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<FormattedCharSequence> helpText) {
         Rect2i actualRect = calcBounds(screen, fontRenderer, rect, helpText);
 
         int x1 = actualRect.getX() - screen.getGuiLeft();
@@ -96,7 +106,7 @@ public class MouseOverHelp {
         graphics.fill(x2, y1, x2 + 1, y2 + 1, borderColor);
 
         if (helpText != null) {
-            for (String s : helpText) {
+            for (FormattedCharSequence s : helpText) {
                 graphics.drawString(fontRenderer, s, x1 + TEXT_MARGIN / 2, y1 + TEXT_MARGIN / 2, textColor);
                 y1 += fontRenderer.lineHeight;
             }
@@ -105,20 +115,11 @@ public class MouseOverHelp {
         graphics.pose().popPose();
     }
 
-    public static class HelpRegion {
-        final Rect2i extent;
-        final List<String> text;
-        final Predicate<AbstractContainerScreen<?>> showPredicate;
+    public record HelpRegion(Rect2i extent, List<FormattedCharSequence> text, Predicate<AbstractContainerScreen<?>> showPredicate) {
         static final Predicate<AbstractContainerScreen<?>> YES = guiContainer -> true;
 
-        HelpRegion(int x1, int y1, int x2, int y2, List<String> text) {
-            this(x1, y1, x2, y2, text, YES);
-        }
-
-        HelpRegion(int x1, int y1, int x2, int y2, List<String> text, Predicate<AbstractContainerScreen<?>> showPredicate) {
-            this.extent = new Rect2i(x1, y1, x2 - x1, y2 - y1);
-            this.text = text;
-            this.showPredicate = showPredicate;
+        static HelpRegion create(int x1, int y1, int x2, int y2, List<FormattedCharSequence> text, Predicate<AbstractContainerScreen<?>> showPredicate) {
+            return new HelpRegion(new Rect2i(x1, y1, x2 -x1, y2 - y1), text, showPredicate);
         }
     }
 

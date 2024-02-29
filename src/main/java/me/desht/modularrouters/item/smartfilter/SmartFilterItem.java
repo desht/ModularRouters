@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.smartfilter;
 
 import me.desht.modularrouters.client.gui.filter.FilterScreenFactory;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.MRBaseItem;
@@ -8,6 +9,7 @@ import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.network.messages.GuiSyncMessage;
 import me.desht.modularrouters.util.MFLocator;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -63,6 +65,10 @@ public abstract class SmartFilterItem extends MRBaseItem {
     @Override
     protected void addExtraInformation(ItemStack stack, List<Component> list) {
         // nothing - override in subclasses
+    }
+
+    protected final void addCountInfo(List<Component> list, int count) {
+        list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", count).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

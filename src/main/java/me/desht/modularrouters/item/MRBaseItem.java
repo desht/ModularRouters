@@ -3,11 +3,11 @@ package me.desht.modularrouters.item;
 import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -27,23 +27,23 @@ public abstract class MRBaseItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
         if (world == null) return;
 
-        Component text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage();
+        MutableComponent text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.DARK_AQUA);
 
         if (ClientUtil.isKeyDown(ClientSetup.keybindModuleInfo)) {
             addUsageInformation(stack, list);
         } else if (ConfigHolder.client.misc.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);
             list.add(Component.empty());
-            list.add(xlate("modularrouters.itemText.misc.holdKey", text.getString()));
+            list.add(xlate("modularrouters.itemText.misc.holdKey", text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         } else if (!ConfigHolder.client.misc.alwaysShowModuleSettings.get()) {
             list.add(Component.empty());
-            list.add(xlate("modularrouters.itemText.misc.holdShiftKey", text.getString()));
+            Component shift = Component.literal("Shift").withStyle(ChatFormatting.DARK_AQUA);
+            list.add(xlate("modularrouters.itemText.misc.holdShiftKey", shift, text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }
 
     protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
-        MiscUtil.appendMultilineText(list, ChatFormatting.GRAY,
-                "modularrouters.itemText.usage.item." + BuiltInRegistries.ITEM.getKey(itemstack.getItem()).getPath(), getExtraUsageParams());
+        list.add(xlate("modularrouters.itemText.usage.item." + BuiltInRegistries.ITEM.getKey(itemstack.getItem()).getPath(), getExtraUsageParams()));
     }
 
     protected abstract void addExtraInformation(ItemStack stack, List<Component> list);

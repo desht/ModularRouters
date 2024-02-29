@@ -5,6 +5,7 @@ import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
@@ -73,7 +74,7 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
             ClientUtil.setMultilineTooltip(this,
-                    xlate("modularrouters.guiText.tooltip.detectorTooltip"),
+                    xlate("modularrouters.guiText.tooltip.detectorTooltip").withStyle(ChatFormatting.AQUA),
                     xlate("modularrouters.guiText.tooltip.numberFieldTooltip")
             );
         }

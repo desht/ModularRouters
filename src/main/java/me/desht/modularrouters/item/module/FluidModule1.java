@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
@@ -11,7 +10,8 @@ import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import me.desht.modularrouters.logic.filter.matchers.IItemMatcher;
 import me.desht.modularrouters.util.ModuleHelper;
-import net.minecraft.client.resources.language.I18n;
+import me.desht.modularrouters.util.TranslatableEnum;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
@@ -21,6 +21,7 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 
 import java.util.List;
 
+import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class FluidModule1 extends ModuleItem {
@@ -96,8 +97,9 @@ public class FluidModule1 extends ModuleItem {
 
     static void addFluidModuleInformation(ItemStack stack, List<Component> list) {
         CompiledFluidModule1 cfm = new CompiledFluidModule1(null, stack);
-        String dir = I18n.get("modularrouters.itemText.fluid.direction." + cfm.getFluidDirection());
-        list.add(xlate("modularrouters.itemText.fluid.direction", dir));
-        list.add(xlate("modularrouters.itemText.fluid.maxTransfer", cfm.getMaxTransfer()));
+        list.add(xlate("modularrouters.itemText.fluid.direction",
+                xlate(cfm.getFluidDirection().getTranslationKey()).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
+        list.add(xlate("modularrouters.itemText.fluid.maxTransfer",
+                colorText(cfm.getMaxTransfer(), ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
     }
 }

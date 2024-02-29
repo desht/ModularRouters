@@ -1,18 +1,19 @@
 package me.desht.modularrouters.item.module;
 
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class DetectorModule extends ModuleItem {
 
@@ -39,8 +40,10 @@ public class DetectorModule extends ModuleItem {
     public void addSettingsInformation(ItemStack itemstack, List<Component> list) {
         super.addSettingsInformation(itemstack, list);
         CompiledDetectorModule ds = new CompiledDetectorModule(null, itemstack);
-        list.add(ClientUtil.xlate("modularrouters.itemText.misc.redstoneLevel",
-                ds.getSignalLevel(), I18n.get("modularrouters.itemText.misc.strongSignal." + ds.isStrongSignal())));
+        list.add(xlate("modularrouters.itemText.misc.redstoneLevel",
+                ds.getSignalLevel(),
+                xlate("modularrouters.itemText.misc.strongSignal." + ds.isStrongSignal()).withStyle(ChatFormatting.AQUA)
+        ).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

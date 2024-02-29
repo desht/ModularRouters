@@ -8,13 +8,12 @@ import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.TagFilter;
-import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.network.FilterOp;
+import me.desht.modularrouters.network.messages.FilterSettingsMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +27,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class TagFilterScreen extends AbstractFilterContainerScreen {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(ModularRouters.MODID, "textures/gui/tagfilter.png");
@@ -111,8 +112,10 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        String title = filterStack.getHoverName().getString() + (menu.getRouter() != null ? I18n.get("modularrouters.guiText.label.installed") : "");
-        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0x404040, false);
+        Component txt = filterStack.getHoverName().copy().append(" ").append(
+                menu.getRouter() != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
+        );
+        graphics.drawString(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0x404040, false);
 
         if (selectedTag != null) {
             int maxW = selectButton.visible ? 190 : 205;

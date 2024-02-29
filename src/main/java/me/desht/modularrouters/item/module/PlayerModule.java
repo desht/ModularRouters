@@ -1,7 +1,6 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.ModularRouters;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
@@ -9,9 +8,7 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.IPlayerOwned;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 
 import java.util.List;
+
+import static me.desht.modularrouters.client.util.ClientUtil.colorText;
+import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
@@ -36,15 +36,18 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
         CompiledPlayerModule cpm = new CompiledPlayerModule(null, itemstack);
         String owner = cpm.getPlayerName() == null ? "-" : cpm.getPlayerName();
-        list.add(MiscUtil.settingsStr(ChatFormatting.YELLOW.toString(),
-                ClientUtil.xlate("modularrouters.itemText.security.owner", owner)));
+        list.add(xlate("modularrouters.itemText.security.owner", colorText(owner, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
 
-        String s = String.format(ChatFormatting.YELLOW + "%s: " + ChatFormatting.AQUA + "%s %s %s",
-                I18n.get("modularrouters.itemText.misc.operation"),
-                I18n.get("block.modularrouters.modular_router"),
-                cpm.getOperation().getSymbol(),
-                I18n.get("modularrouters.guiText.label.playerSect." + cpm.getSection()));
-        list.add(Component.literal(s));
+        Component c = xlate("modularrouters.itemText.misc.operation").withStyle(ChatFormatting.YELLOW)
+                .append(": ")
+                .append(xlate("block.modularrouters.modular_router")
+                        .append(" ")
+                        .append(cpm.getOperation().getSymbol())
+                        .append(" ")
+                        .append(xlate(cpm.getSection().getTranslationKey()))
+                        .withStyle(ChatFormatting.AQUA)
+                );
+        list.add(c);
     }
 
     @Override
