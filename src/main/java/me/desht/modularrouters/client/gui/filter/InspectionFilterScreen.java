@@ -86,7 +86,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         }
         updateDeleteButtonVisibility();
 
-        valueTextField = new IntegerTextField(font, xPos + 120, yPos + 28, 20, 14, Range.between(0, 100)) {
+        valueTextField = new IntegerTextField(font, xPos + 120, yPos + 28, 20, 14, Range.of(0, 100)) {
             @Override
             public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
                 if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {

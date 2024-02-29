@@ -45,7 +45,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
         xPos = (width - GUI_WIDTH) / 2;
         yPos = (height - GUI_HEIGHT) / 2;
 
-        regexTextField = new RegexTextField(this, 1, font, xPos + 10, yPos + 27, 144, 18);
+        regexTextField = new RegexTextField(this, font, xPos + 10, yPos + 27, 144, 18);
         regexTextField.useGuiTextBackground();
 
         if (locator.filterSlot() >= 0) {
@@ -126,7 +126,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     private static class RegexTextField extends TextFieldWidgetMR {
         private final RegexFilterScreen parent;
 
-        RegexTextField(RegexFilterScreen parent, int componentId, Font fontrendererObj, int x, int y, int par5Width, int par6Height) {
+        RegexTextField(RegexFilterScreen parent, Font fontrendererObj, int x, int y, int par5Width, int par6Height) {
             super(fontrendererObj, x, y, par5Width, par6Height);
             this.parent = parent;
             setMaxLength(40);

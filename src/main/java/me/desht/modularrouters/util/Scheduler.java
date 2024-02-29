@@ -110,7 +110,7 @@ public final class Scheduler extends AbstractListeningExecutorService {
             while (idx < size) {
                 Task t = activeTasks[idx];
                 if (!checkedExecute(t)) {
-                    // task needs to be removed, null out it's slot
+                    // task needs to be removed, null out its slot
                     activeTasks[idx] = null;
                     if (free == -1) {
                         // if this is the first task to be removed, set it as the compaction target
@@ -195,13 +195,7 @@ public final class Scheduler extends AbstractListeningExecutorService {
         }
     }
 
-    private static class WrappedRunnable implements Task {
-        private final Runnable task;
-
-        public WrappedRunnable(Runnable task) {
-            this.task = task;
-        }
-
+    private record WrappedRunnable(Runnable task) implements Task {
         @Override
         public boolean execute() {
             task.run();
@@ -257,7 +251,7 @@ public final class Scheduler extends AbstractListeningExecutorService {
      * @param timeout the timeout
      * @param unit    TimeUnit
      * @return always false
-     * @throws InterruptedException
+     * @throws InterruptedException if interrupted
      * @deprecated this ExecutorService cannot be shut down, always returns false after sleeping for the specified
      * amount of time
      */

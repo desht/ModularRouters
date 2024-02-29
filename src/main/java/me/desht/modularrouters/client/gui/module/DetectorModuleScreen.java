@@ -35,7 +35,7 @@ public class DetectorModuleScreen extends AbstractModuleScreen {
 
         CompiledDetectorModule cdm = new CompiledDetectorModule(null, moduleItemStack);
 
-        intField = new IntegerTextField(font, leftPos + 152, topPos + 19, 20, 12, Range.between(0, 15));
+        intField = new IntegerTextField(font, leftPos + 152, topPos + 19, 20, 12, Range.of(0, 15));
         intField.setValue(cdm.getSignalLevel());
         intField.setResponder((str) -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);

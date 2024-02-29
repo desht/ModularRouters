@@ -4,7 +4,6 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.util.MFLocator;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

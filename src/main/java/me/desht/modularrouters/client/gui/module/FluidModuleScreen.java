@@ -51,7 +51,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
         int max = ConfigHolder.common.router.baseTickRate.get() * ConfigHolder.common.router.fluidMaxTransferRate.get();
         maxTransferField = new IntegerTextField(font, leftPos + 152, topPos + 23, 34, 12,
-                Range.between(0, max));
+                Range.of(0, max));
         maxTransferField.setValue(cfm.getMaxTransfer());
         maxTransferField.setResponder(str -> sendModuleSettingsDelayed(5));
         maxTransferField.setIncr(100, 10, 10);
@@ -69,7 +69,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
     @Override
     protected IntegerTextField buildRegulationTextField() {
-        IntegerTextField tf = new IntegerTextField(font, leftPos + 128, topPos + 90, 40, 12, Range.between(0, Integer.MAX_VALUE));
+        IntegerTextField tf = new IntegerTextField(font, leftPos + 128, topPos + 90, 40, 12, Range.of(0, Integer.MAX_VALUE));
         tf.setValue(getRegulatorAmount());
         tf.setResponder((str) -> {
             setRegulatorAmount(str.isEmpty() ? 0 : Integer.parseInt(str));
@@ -105,7 +105,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
         regulationTypeButton.visible = regulatorTextField.visible;
         regulationTypeButton.setText();
-        regulatorTextField.setRange(Range.between(0, regulationTypeButton.regulateAbsolute ? Integer.MAX_VALUE : 100));
+        regulatorTextField.setRange(Range.of(0, regulationTypeButton.regulateAbsolute ? Integer.MAX_VALUE : 100));
         forceEmptyButton.visible = fluidDirButton.getState() == FluidDirection.OUT;
     }
 
@@ -143,7 +143,7 @@ public class FluidModuleScreen extends AbstractModuleScreen {
 
     private void toggleRegulationType() {
         regulationTypeButton.toggle();
-        regulatorTextField.setRange(regulationTypeButton.regulateAbsolute ? Range.between(0, Integer.MAX_VALUE) : Range.between(0, 100));
+        regulatorTextField.setRange(regulationTypeButton.regulateAbsolute ? Range.of(0, Integer.MAX_VALUE) : Range.of(0, 100));
         sendToServer();
     }
 

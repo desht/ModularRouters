@@ -19,7 +19,7 @@ public class FilterScreenFactory {
     }
 
     /**
-     * Open a (non-container-based) GUI for a filter module.  Container-based GUI's are opened via the usual server-side
+     * Open a (non-container-based) GUI for a filter module.  Container-based GUIs are opened via the usual server-side
      * container mechanism.
      *
      * @param locator the filter location; could be in a player's hand, or in a module (which may or may not be in a router)

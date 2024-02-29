@@ -5,10 +5,6 @@ import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.logic.RouterRedstoneBehaviour;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.network.chat.Component;
-
-import java.util.Collections;
-import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 

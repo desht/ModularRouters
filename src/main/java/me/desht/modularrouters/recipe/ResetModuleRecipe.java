@@ -3,7 +3,6 @@ package me.desht.modularrouters.recipe;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.item.module.ModuleItem;
-import me.desht.modularrouters.util.ModuleHelper;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;

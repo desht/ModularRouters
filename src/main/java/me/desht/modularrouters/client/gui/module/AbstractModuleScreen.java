@@ -159,7 +159,7 @@ public class AbstractModuleScreen extends AbstractContainerScreen<ModuleMenu> im
     }
 
     protected IntegerTextField buildRegulationTextField() {
-        IntegerTextField tf = new IntegerTextField(font, leftPos + 166, topPos + 75, 20, 12, Range.between(0, 64));
+        IntegerTextField tf = new IntegerTextField(font, leftPos + 166, topPos + 75, 20, 12, Range.of(0, 64));
         tf.setValue(regulatorAmount);
         tf.setResponder((str) -> {
             regulatorAmount = str.isEmpty() ? 0 : Integer.parseInt(str);

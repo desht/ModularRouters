@@ -3,7 +3,6 @@ package me.desht.modularrouters.block.tile;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.util.Scheduler;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;

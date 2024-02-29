@@ -4,7 +4,6 @@ import me.desht.modularrouters.ModularRouters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -37,50 +36,12 @@ public class MiscUtil {
             Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
     };
 
-    private static final int WRAP_LENGTH = 45;
-
     public static MutableComponent asMutableComponent(Component component) {
         return component instanceof MutableComponent m ? m : component.copy();
     }
 
     public static String commify(int n) {
         return NumberFormat.getNumberInstance().format(n);
-    }
-
-    public static List<String> wrapString(String text, int maxCharPerLine) {
-        List<String> result = new ArrayList<>();
-
-        StringBuilder builder = new StringBuilder(text.length());
-        String format = "";
-        for (String para : text.split(Pattern.quote("\n"))) {
-            StringTokenizer tok = new StringTokenizer(para, " ");
-            int lineLen = 0;
-            while (tok.hasMoreTokens()) {
-                String word = tok.nextToken();
-                int idx = word.lastIndexOf("\u00a7");
-                if (idx >= 0 && idx < word.length() - 1) {
-                    // note the formatting sequence so we can apply to next line if any
-                    format = word.substring(idx, idx + 2);
-                    // formatting sequence does not contribute to line length
-                    lineLen -= 2;
-                }
-                if (lineLen + word.length() > maxCharPerLine) {
-                    result.add(builder.toString());
-                    builder.delete(0, builder.length());
-                    builder.append(format);
-                    lineLen = 0;
-                } else if (lineLen > 0) {
-                    builder.append(" ");
-                    lineLen++;
-                }
-                builder.append(word);
-                lineLen += word.length();
-            }
-            result.add(builder.toString());
-            builder.delete(0, builder.length());
-            builder.append(format);
-        }
-        return result;
     }
 
     public static String locToString(ResourceLocation dim, BlockPos pos) {
@@ -137,7 +98,7 @@ public class MiscUtil {
     }
 
     public static Set<TagKey<Fluid>> fluidTags(Fluid fluid) {
-        return BuiltInRegistries.FLUID.getTagNames().collect(Collectors.toSet());
+        return fluid.builtInRegistryHolder().tags().collect(Collectors.toSet());
     }
 
     public static boolean sameItemStackIgnoreDurability(ItemStack stack1, ItemStack stack2) {

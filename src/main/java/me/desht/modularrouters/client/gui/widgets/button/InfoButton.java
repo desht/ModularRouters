@@ -1,8 +1,6 @@
 package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.util.XYPoint;
-import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Tooltip;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;

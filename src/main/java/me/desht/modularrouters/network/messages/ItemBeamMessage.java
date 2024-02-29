@@ -1,7 +1,6 @@
 package me.desht.modularrouters.network.messages;
 
 import com.google.common.collect.ImmutableList;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.core.BlockPos;
@@ -9,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.fml.common.Mod;
 
 import java.util.List;
 

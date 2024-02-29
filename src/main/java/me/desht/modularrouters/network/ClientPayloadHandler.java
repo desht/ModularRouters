@@ -29,10 +29,9 @@ public enum ClientPayloadHandler {
     }
 
     public void handleData(ItemBeamMessage message, PlayPayloadContext context) {
-        context.workHandler().submitAsync(() -> {
-            Minecraft.getInstance().level.getBlockEntity(message.pos(), ModBlockEntities.MODULAR_ROUTER.get())
-                    .ifPresent(te -> message.beams().forEach(te::addItemBeam));
-        });
+        context.workHandler().submitAsync(() ->
+                Minecraft.getInstance().level.getBlockEntity(message.pos(), ModBlockEntities.MODULAR_ROUTER.get())
+                        .ifPresent(te -> message.beams().forEach(te::addItemBeam)));
     }
 
     public void handleData(PushEntityMessage message, PlayPayloadContext context) {

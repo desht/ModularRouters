@@ -12,11 +12,11 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.commify;
 
 public class EnergyUpgrade extends UpgradeItem {
-    private static final TintColor TINT_COLOR = new TintColor(54, 1, 61);
+    private static final TintColor TINT_COLOR = new TintColor(79, 9, 90);
 
     @Override
     public TintColor getItemTint() {
-        return new TintColor(79, 9, 90);
+        return TINT_COLOR;
     }
 
     @Override
@@ -30,10 +30,9 @@ public class EnergyUpgrade extends UpgradeItem {
     @Override
     public void addUsageInformation(ItemStack itemstack, List<Component> list) {
         super.addUsageInformation(itemstack, list);
-        ClientUtil.getOpenItemRouter().ifPresent(router -> {
-            list.add(xlate("modularrouters.itemText.usage.item.energyUpgradeRouter",
-                    commify(router.getEnergyCapacity()), commify(router.getEnergyXferRate())));
-        });
+        ClientUtil.getOpenItemRouter().ifPresent(router ->
+                list.add(xlate("modularrouters.itemText.usage.item.energyUpgradeRouter",
+                        commify(router.getEnergyCapacity()), commify(router.getEnergyXferRate()))));
     }
 
     @Override

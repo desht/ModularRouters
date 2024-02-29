@@ -5,7 +5,6 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.recipe.GuideBookRecipe;
 import me.desht.modularrouters.recipe.PickaxeModuleRecipe;
 import me.desht.modularrouters.recipe.ResetModuleRecipe;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
@@ -20,7 +19,6 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 

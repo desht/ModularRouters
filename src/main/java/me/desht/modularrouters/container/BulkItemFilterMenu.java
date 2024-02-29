@@ -1,7 +1,6 @@
 package me.desht.modularrouters.container;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.container.handler.BaseModuleHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.BulkFilterHandler;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;

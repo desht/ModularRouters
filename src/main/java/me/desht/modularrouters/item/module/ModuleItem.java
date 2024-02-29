@@ -86,11 +86,11 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         FRONT(0x10, "▣"),
         BACK(0x20, "▤");
 
-        private final int mask;
+        private final byte mask;
         private final String symbol;
 
         RelativeDirection(int mask, String symbol) {
-            this.mask = mask;
+            this.mask = (byte) mask;
             this.symbol = symbol;
         }
 
@@ -109,7 +109,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             return symbol;
         }
 
-        public int getMask() {
+        public byte getMask() {
             return mask;
         }
 

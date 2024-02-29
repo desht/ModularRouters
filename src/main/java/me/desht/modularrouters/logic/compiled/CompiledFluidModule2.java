@@ -5,7 +5,6 @@ import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Collections;
 import java.util.List;
 
 public class CompiledFluidModule2 extends CompiledFluidModule1 {

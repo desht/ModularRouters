@@ -1,6 +1,5 @@
 package me.desht.modularrouters.container.handler;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;

@@ -1,12 +1,12 @@
 package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.ModuleHelper;
+import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;

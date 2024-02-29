@@ -1,9 +1,7 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class FloatTextField extends TextFieldWidgetMR {

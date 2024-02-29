@@ -1,7 +1,6 @@
 package me.desht.modularrouters.block;
 
 import me.desht.modularrouters.block.tile.ICamouflageable;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;

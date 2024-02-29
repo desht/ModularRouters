@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.util.XYPoint;
@@ -17,11 +16,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-
-import java.util.Collections;
-import java.util.List;
-
-import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class PlayerModuleScreen extends AbstractModuleScreen {
     private static final ItemStack MAIN_INV_STACK = new ItemStack(Blocks.CHEST);

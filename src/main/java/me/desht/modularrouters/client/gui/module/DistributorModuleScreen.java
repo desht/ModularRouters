@@ -1,17 +1,14 @@
 package me.desht.modularrouters.client.gui.module;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
-import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
-import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,9 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Collections;
-import java.util.List;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 

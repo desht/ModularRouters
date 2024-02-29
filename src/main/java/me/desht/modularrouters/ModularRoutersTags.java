@@ -16,10 +16,6 @@ public class ModularRoutersTags {
         private static TagKey<Item> modTag(String name) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(ModularRouters.MODID, name));
         }
-
-        private static TagKey<Item> forgeTag(String name) {
-            return TagKey.create(Registries.ITEM, new ResourceLocation("forge", name));
-        }
     }
 
     public static class EntityTypes {
@@ -30,16 +26,4 @@ public class ModularRoutersTags {
             return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(ModularRouters.MODID, name));
         }
     }
-
-//    static <T extends Tag<?>> T tag(Function<ResourceLocation, T> creator, String modid, String name) {
-//        return creator.apply(new ResourceLocation(modid, name));
-//    }
-//
-//    static <T extends Tag<?>> T modTag(Function<ResourceLocation, T> creator, String name) {
-//        return tag(creator, ModularRouters.MODID, name);
-//    }
-//
-//    static <T extends Tag<?>> T forgeTag(Function<ResourceLocation, T> creator, String name) {
-//        return tag(creator, "forge", name);
-//    }
 }
