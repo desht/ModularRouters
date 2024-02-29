@@ -30,7 +30,6 @@ public class ElementModule implements IElement {
     public void render(GuiGraphics graphics, int x, int y) {
         graphics.renderItem(stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2);
         graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2, dir.getSymbol());
-//        GuiUtil.renderItemStack(matrixStack, Minecraft.getInstance(), stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2, dir.getSymbol());
     }
 
     @Override

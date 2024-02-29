@@ -106,7 +106,7 @@ dependencies {
     //    exclude group: "net.minecraftforge", module: "forge"
     //}
 
-    compileOnly "mcjty.theoneprobe:theoneprobe:${top_version}"
+    implementation "mcjty.theoneprobe:theoneprobe:${top_version}"
 
     implementation "curse.maven:jade-324717:${jade_curse_id}"
 
