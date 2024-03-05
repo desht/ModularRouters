@@ -1,10 +1,11 @@
 {
   "homepage" : "https://minecraft.curseforge.com/projects/modular-routers",
   "promos" : {
-    "1.20.4-recommended" : "12.3.0",
-    "1.20.4-latest" : "12.3.0"
+    "1.20.4-recommended" : "12.3.1",
+    "1.20.4-latest" : "12.3.1"
   },
   "1.20.4" : {
-    "12.3.0": "https://github.com/desht/ModularRouters/blob/MC1.20.4-master/Changelog.md#1230"
+    "12.3.0": "https://github.com/desht/ModularRouters/blob/MC1.20.4-master/Changelog.md#1230",
+    "12.3.1": "https://github.com/desht/ModularRouters/blob/MC1.20.4-master/Changelog.md#1231"
   }
 }
