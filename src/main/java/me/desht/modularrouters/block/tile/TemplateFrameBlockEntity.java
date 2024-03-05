@@ -5,6 +5,7 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.util.Scheduler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -72,7 +73,9 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     public void saveAdditional(CompoundTag compound) {
         super.saveAdditional(compound);
         compound.putBoolean(NBT_MIMIC, extendedMimic);
-        compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
+        if (camouflage != null) {
+            compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
+        }
     }
 
     @Override
@@ -117,8 +120,10 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     }
 
     private BlockState getCamoStateFromNBT(CompoundTag tag) {
+        // level isn't necessarily available here
+        var lookup = level == null ? BuiltInRegistries.BLOCK.asLookup() : level.holderLookup(Registries.BLOCK);
         if (tag.contains(NBT_CAMO_NAME)) {
-            return NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK), tag.getCompound(NBT_CAMO_NAME));
+            return NbtUtils.readBlockState(lookup, tag.getCompound(NBT_CAMO_NAME));
         }
         return null;
     }
