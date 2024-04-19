@@ -1,6 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import me.desht.modularrouters.api.event.ExecuteModuleEvent;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem.AugmentCounter;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +43,8 @@ public abstract class CompiledModule {
     private final int regulationAmount;
     private final AugmentCounter augmentCounter;
     private final int range, rangeSquared;
+    @Nullable
+    private final ExecuteModuleEvent event;
 
     private int lastMatchPos = 0;
     private final Map<BlockPos,Integer> lastMatchPosMap = new Object2IntOpenHashMap<>();
@@ -69,6 +73,7 @@ public abstract class CompiledModule {
         regulationAmount = ModuleHelper.getRegulatorAmount(stack);
         facing = router == null ? null : router.getAbsoluteFacing(direction);
         routerFacing = router == null ? null : router.getAbsoluteFacing(RelativeDirection.FRONT);
+        this.event = router == null ? null : new ExecuteModuleEvent(router, this);
     }
 
     /**
@@ -319,5 +324,11 @@ public abstract class CompiledModule {
      */
     public ModuleItem getModule() {
         return module;
+    }
+
+    @Nullable
+    @ApiStatus.Internal
+    public ExecuteModuleEvent getEvent() {
+        return event;
     }
 }

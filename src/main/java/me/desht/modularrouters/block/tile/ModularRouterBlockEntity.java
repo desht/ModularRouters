@@ -60,6 +60,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
@@ -410,7 +411,24 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         for (CompiledIndexedModule cim : compiledModules) {
             CompiledModule cm = cim.compiledModule;
-            if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed))
+            if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed)) {
+                var event = cm.getEvent();
+                if (event != null) {
+                    event.setExecuted(false);
+                    event.setCanceled(false);
+                    NeoForge.EVENT_BUS.post(event);
+                    if (event.isExecuted()) {
+                        newActive = true;
+                    }
+
+                    if (event.isCanceled()) {
+                        if ((newActive && cm.termination() == ModuleItem.Termination.RAN) || cm.termination() == ModuleItem.Termination.NOT_RAN) {
+                            break;
+                        }
+                        continue;
+                    }
+                }
+
                 if (cm.execute(this)) {
                     cm.getFilter().cycleRoundRobin().ifPresent(counter -> {
                         ItemStack moduleStack = modulesHandler.getStackInSlot(cim.index);
@@ -424,6 +442,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                 } else if (cm.termination() == ModuleItem.Termination.NOT_RAN) {
                     break;
                 }
+            }
         }
         return newActive;
     }
