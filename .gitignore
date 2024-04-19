@@ -32,3 +32,5 @@ mcmodsrepo
 
 # datagen caches
 **/.cache
+
+repo/
