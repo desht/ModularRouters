@@ -984,11 +984,18 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-            // can't have the same upgrade in more than one slot
+            if (!super.isItemValid(slot, stack)) return false;
+            UpgradeItem item = (UpgradeItem) stack.getItem();
             for (int i = 0; i < getSlots(); i++) {
-                if (slot != i && stack.getItem() == getStackInSlot(i).getItem()) return false;
+                ItemStack inSlot = getStackInSlot(i);
+                if (inSlot.isEmpty() || slot == i) continue;
+                // can't have the same upgrade in more than one slot
+                // incompatible upgrades can't coexist
+                if (stack.getItem() == inSlot.getItem() || !((UpgradeItem) inSlot.getItem()).isCompatibleWith(item)) {
+                    return false;
+                }
             }
-            return super.isItemValid(slot, stack);
+            return true;
         }
 
         @Override

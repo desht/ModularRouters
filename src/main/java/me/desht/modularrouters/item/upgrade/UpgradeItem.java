@@ -28,6 +28,13 @@ public abstract class UpgradeItem extends MRBaseItem implements ModItems.ITintab
     }
 
     /**
+     * {@return {@code true} if this module can coexist with the {@code other} upgrade}
+     */
+    public boolean isCompatibleWith(UpgradeItem other) {
+        return true;
+    }
+
+    /**
      * Get the maximum number of this upgrade that can be put in an upgrade slot
      * @param slot the slot number
      * @return the max number of upgrades
