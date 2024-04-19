@@ -172,10 +172,6 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-tasks.configureEach {
-    if (it.name.startsWith('neoForm')) it.enabled = false
-}
-
 Closure<ReleaseType> getReleaseType = { type ->
     switch(type) {
         case "alpha": return ReleaseType.ALPHA
