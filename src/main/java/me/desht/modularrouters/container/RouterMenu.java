@@ -1,5 +1,6 @@
 package me.desht.modularrouters.container;
 
+import me.desht.modularrouters.api.event.RegisterRouterContainerData;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModMenuTypes;
@@ -12,8 +13,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
+
+import java.util.Comparator;
+import java.util.Map;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -79,6 +84,12 @@ public class RouterMenu extends AbstractMRContainerMenu {
         }
 
         addDataSlots(data);
+
+        final var event = new RegisterRouterContainerData(router);
+        NeoForge.EVENT_BUS.post(event);
+        event.getData().entrySet()
+                .stream().sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> addDataSlot(entry.getValue()));
     }
 
     @Override
