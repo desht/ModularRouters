@@ -53,7 +53,7 @@ public abstract class CompiledModule {
      * @param router router the module is installed in, may be null for an uninstalled module
      * @param stack item stack of the module item being compiled
      */
-    CompiledModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
+    protected CompiledModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         Validate.isTrue(stack.getItem() instanceof ModuleItem, "expected module item, got " + stack);
 
         module = (ModuleItem) stack.getItem();
@@ -100,7 +100,7 @@ public abstract class CompiledModule {
      *
      * @return the first target as set up by {@link #setupTargets(ModularRouterBlockEntity, ItemStack)}
      */
-    ModuleTarget getTarget() {
+    public ModuleTarget getTarget() {
         return targets == null || targets.isEmpty() ? null : targets.get(0);
     }
 
@@ -110,7 +110,7 @@ public abstract class CompiledModule {
      *
      * @return a list of the defined targets as set up by {@link #setupTargets(ModularRouterBlockEntity, ItemStack)}
      */
-    List<ModuleTarget> getTargets() {
+    public List<ModuleTarget> getTargets() {
         return targets;
     }
 
@@ -120,7 +120,7 @@ public abstract class CompiledModule {
         return termination;
     }
 
-    RouterRedstoneBehaviour getRedstoneBehaviour() {
+    public RouterRedstoneBehaviour getRedstoneBehaviour() {
         return behaviour;
     }
 
@@ -128,7 +128,7 @@ public abstract class CompiledModule {
         return augmentCounter.getAugmentCount(ModItems.REGULATOR_AUGMENT.get()) > 0 ? regulationAmount : 0;
     }
 
-    int getAugmentCount(Item augmentType) {
+    public int getAugmentCount(Item augmentType) {
         return augmentCounter.getAugmentCount(augmentType);
     }
 
@@ -139,7 +139,7 @@ public abstract class CompiledModule {
      *
      * @return absolute direction of the module
      */
-    Direction getFacing() {
+    public Direction getFacing() {
         return facing;
     }
 
@@ -198,7 +198,7 @@ public abstract class CompiledModule {
         return Collections.singletonList(new ModuleTarget(gPos, facing.getOpposite(), blockName));
     }
 
-    int getItemsPerTick(ModularRouterBlockEntity router) {
+    public int getItemsPerTick(ModularRouterBlockEntity router) {
         int n = augmentCounter.getAugmentCount(ModItems.STACK_AUGMENT.get());
         return n > 0 ? Math.min(1 << n, 64) : router.getItemsPerTick();
     }
@@ -212,7 +212,7 @@ public abstract class CompiledModule {
      * @param router the router
      * @return items actually transferred
      */
-    ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
+    public ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
         CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, key, getItemsPerTick(router), count);
@@ -281,17 +281,17 @@ public abstract class CompiledModule {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 
-    boolean isRegulationOK(ModularRouterBlockEntity router, boolean inbound) {
+    public boolean isRegulationOK(ModularRouterBlockEntity router, boolean inbound) {
         if (regulationAmount == 0) return true; // no regulation
         int items = router.getBufferItemStack().getCount();
         return inbound && regulationAmount > items || !inbound && regulationAmount < items;
     }
 
-    int getRange() {
+    public int getRange() {
         return range;
     }
 
-    int getRangeSquared() {
+    public int getRangeSquared() {
         return rangeSquared;
     }
 
@@ -299,7 +299,7 @@ public abstract class CompiledModule {
         return getAugmentCount(ModItems.RANGE_UP_AUGMENT.get()) - getAugmentCount(ModItems.RANGE_DOWN_AUGMENT.get());
     }
 
-    Direction getRouterFacing() {
+    protected Direction getRouterFacing() {
         return routerFacing;
     }
 
@@ -312,5 +312,12 @@ public abstract class CompiledModule {
 
     public boolean careAboutItemAttributes() {
         return false;
+    }
+
+    /**
+     * {@return the module type}
+     */
+    public ModuleItem getModule() {
+        return module;
     }
 }

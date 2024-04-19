@@ -33,6 +33,7 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -114,7 +115,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private byte recompileNeeded = COMPILE_MODULES | COMPILE_UPGRADES;
     private int tickRate = ConfigHolder.common.router.baseTickRate.get();
     private int itemsPerTick = 1;
-    private final Map<Item, Integer> upgradeCount = new HashMap<>();
+    private final Map<UpgradeItem, Integer> upgradeCount = new HashMap<>();
 
     private int fluidTransferRate;  // mB/t
     private int fluidTransferRemainingIn = 0;
@@ -186,6 +187,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             if (nEnergy > 0) {
                 tag.putInt(NBT_ENERGY_UPGRADES, nEnergy);
             }
+
+            getAllUpgrades().keySet().forEach(item -> {
+                final var updateTag = item.createUpdateTag(this);
+                if (updateTag != null) {
+                    tag.put(BuiltInRegistries.ITEM.getKey(item).toString(), updateTag);
+                }
+            });
         });
     }
 
@@ -214,6 +222,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         energyStorage.updateForEnergyUpgrades(compound.getInt(NBT_ENERGY_UPGRADES));
+
+        getAllUpgrades().keySet().forEach(item -> {
+            final var updateTag = compound.get(BuiltInRegistries.ITEM.getKey(item).toString());
+            item.processClientSync(this, (CompoundTag) updateTag);
+        });
     }
 
     @Override
@@ -550,7 +563,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             for (int i = 0; i < N_UPGRADE_SLOTS; i++) {
                 ItemStack stack = upgradesHandler.getStackInSlot(i);
                 if (stack.getItem() instanceof UpgradeItem upgradeItem) {
-                    upgradeCount.put(stack.getItem(), getUpgradeCount(stack.getItem()) + stack.getCount());
+                    upgradeCount.put(upgradeItem, getUpgradeCount(stack.getItem()) + stack.getCount());
                     upgradeItem.onCompiled(stack, this);
                 }
             }
@@ -605,7 +618,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return upgradeCount.getOrDefault(type, 0);
     }
 
-    public Map<Item,Integer> getAllUpgrades() {
+    public Map<UpgradeItem, Integer> getAllUpgrades() {
         return Collections.unmodifiableMap(upgradeCount);
     }
 
