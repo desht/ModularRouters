@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -17,6 +18,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,6 +35,7 @@ public class ModuleTarget {
     private BlockCapabilityCache<IItemHandler,Direction> itemCapCache;
     private BlockCapabilityCache<IFluidHandler,Direction> fluidCapCache;
     private BlockCapabilityCache<IEnergyStorage,Direction> energyCapCache;
+    private final Map<BlockCapability<?, ?>, BlockCapabilityCache<?, ?>> capabilityCache = new IdentityHashMap<>();
 
     public ModuleTarget(GlobalPos gPos, Direction face, String blockTranslationKey) {
         this.gPos = gPos;
@@ -126,6 +130,28 @@ public class ModuleTarget {
             energyCapCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, level, gPos.pos(), face);
         }
         return Optional.ofNullable(energyCapCache.getCapability());
+    }
+
+    /**
+     * Get a cached capability of the module target.
+     *
+     * @param capability the capability
+     * @param context    the capability context
+     * @return the capability
+     */
+    @Nullable
+    public <T, C> T getCapability(BlockCapability<T, C> capability, @Nullable C context) {
+        var cached = (BlockCapabilityCache<T, C>)capabilityCache.get(capability);
+        if (cached != null && Objects.equals(cached.context(), context)) {
+            return cached.getCapability();
+        }
+        ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
+        if (level == null) {
+            return null;
+        }
+        cached = BlockCapabilityCache.create(capability, level, gPos.pos(), context);
+        capabilityCache.put(capability, cached);
+        return cached.getCapability();
     }
 
     @Override

@@ -90,7 +90,7 @@ public abstract class CompiledModule {
         return filter;
     }
 
-    public RelativeDirection getDirection() {
+    public final RelativeDirection getDirection() {
         return direction;
     }
 
@@ -125,7 +125,7 @@ public abstract class CompiledModule {
         return termination;
     }
 
-    public RouterRedstoneBehaviour getRedstoneBehaviour() {
+    public final RouterRedstoneBehaviour getRedstoneBehaviour() {
         return behaviour;
     }
 
@@ -144,16 +144,18 @@ public abstract class CompiledModule {
      *
      * @return absolute direction of the module
      */
-    public Direction getFacing() {
+    public final Direction getFacing() {
         return facing;
     }
 
+    @ApiStatus.OverrideOnly
     public void onCompiled(ModularRouterBlockEntity router) {
         if (behaviour == RouterRedstoneBehaviour.PULSE) {
             router.setHasPulsedModules(true);
         }
     }
 
+    @ApiStatus.OverrideOnly
     public void cleanup(ModularRouterBlockEntity router) {
         // does nothing by default
     }
@@ -217,7 +219,7 @@ public abstract class CompiledModule {
      * @param router the router
      * @return items actually transferred
      */
-    public ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
+    public final ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
         CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, key, getItemsPerTick(router), count);
@@ -282,6 +284,7 @@ public abstract class CompiledModule {
         return getTarget();
     }
 
+    @ApiStatus.OverrideOnly
     public boolean shouldRun(boolean powered, boolean pulsed) {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
@@ -308,6 +311,7 @@ public abstract class CompiledModule {
         return routerFacing;
     }
 
+    @ApiStatus.OverrideOnly
     public void onNeighbourChange(ModularRouterBlockEntity router) {
     }
 
