@@ -543,7 +543,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     private boolean anyPlayerHasThisOpen() {
-        return nonNullLevel().players().stream()
+        return level.players().stream()
                 .anyMatch(p -> p.containerMenu instanceof RouterMenu menu && menu.getRouter() == this);
     }
 
@@ -988,19 +988,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return bufferHandler.getFluidHandler();
     }
 
-    /**
-     * Returns the capability of the item in the router's buffer of the given type.
-     * @param cap the capability
-     * @param <T> the capability type
-     */
-    @Nullable
-    public <T> T getBufferCapability(ItemCapability<T, Void> cap) {
-        return bufferHandler.getCapability(cap);
-    }
-
     public void sendBlockUpdateIfNeeded() {
-        if (!nonNullLevel().isClientSide && blockUpdateNeeded && !anyPlayerHasThisOpen()) {
-            nonNullLevel().sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        if (!level.isClientSide && blockUpdateNeeded && !anyPlayerHasThisOpen()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
             blockUpdateNeeded = false;
         }
     }
