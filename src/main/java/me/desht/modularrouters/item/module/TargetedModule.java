@@ -113,6 +113,7 @@ public abstract class TargetedModule extends ModuleItem {
                     .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
             world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS, ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.1f);
             setTargetList(stack, targets);
+            return InteractionResult.SUCCESS;
         }
 
         if (canSelectTarget(context)) {
