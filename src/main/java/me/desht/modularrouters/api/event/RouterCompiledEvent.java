@@ -27,7 +27,7 @@ public abstract sealed class RouterCompiledEvent extends Event {
     }
 
     /**
-     * Called when a router compiles its upgrades. This <strong>will</strong> be called on
+     * Called when a router (re)compiles its upgrades. This <strong>will</strong> be called on
      * the client-side too when the GUI is opened.
      */
     public final static class Upgrades extends RouterCompiledEvent {
@@ -38,7 +38,7 @@ public abstract sealed class RouterCompiledEvent extends Event {
     }
 
     /**
-     * Called when a router compiles its modules.
+     * Called when a router (re)compiles its modules.
      */
     public final static class Modules extends RouterCompiledEvent {
         public Modules(ModularRouterBlockEntity router) {
