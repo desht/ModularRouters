@@ -53,6 +53,8 @@ repositories {
     }
 }
 
+group = project.mod_group_id
+
 base {
     archivesName = "${archive_base_name}-${mod_version}+mc${minecraft_version}"
 }
