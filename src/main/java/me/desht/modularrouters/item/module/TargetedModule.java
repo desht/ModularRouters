@@ -2,6 +2,7 @@ package me.desht.modularrouters.item.module;
 
 import com.google.common.collect.Sets;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.api.event.AddModuleTargetEvent;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
@@ -32,6 +33,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.NeoForge;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Set;
@@ -51,23 +54,35 @@ public abstract class TargetedModule extends ModuleItem {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         if (ctx.getPlayer() != null && ctx.getPlayer().isShiftKeyDown()) {
-            if (isValidTarget(ctx)) {
-                if (getMaxTargets() == 1) {
+            if (getMaxTargets() == 1) {
+                if (canSelectTarget(ctx)) {
                     handleSingleTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
-                } else {
-                    handleMultiTarget(ctx.getItemInHand(), ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
+                    return InteractionResult.SUCCESS;
                 }
-                return InteractionResult.SUCCESS;
             } else {
-                return super.useOn(ctx);
+                var res = handleMultiTarget(ctx.getItemInHand(), ctx, ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
+                if (res == InteractionResult.PASS) return res;
             }
+            return super.useOn(ctx);
         } else {
             return InteractionResult.PASS;
         }
     }
 
+    /**
+     * <strong>Override-only</strong> method that checks whether this module can have the block of the context selected.
+     * <p>Note: it is not guaranteed that the module will only have blocks that pass this test selected, see {@link AddModuleTargetEvent}.
+     */
+    @ApiStatus.OverrideOnly
     protected boolean isValidTarget(UseOnContext ctx) {
         return InventoryUtils.getInventory(ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace()).isPresent();
+    }
+
+    /**
+     * Checks if the module can select the target of the {@code context}.
+     */
+    public boolean canSelectTarget(UseOnContext context) {
+        return NeoForge.EVENT_BUS.post(new AddModuleTargetEvent(this, context, isValidTarget(context))).isValid();
     }
 
     private void handleSingleTarget(ItemStack stack, Player player, Level world, BlockPos pos, Direction face) {
@@ -83,34 +98,43 @@ public abstract class TargetedModule extends ModuleItem {
         }
     }
 
-    private void handleMultiTarget(ItemStack stack, Player player, Level world, BlockPos pos, Direction face) {
-        if (!world.isClientSide) {
-            boolean removing = false;
-            String invName = BlockUtil.getBlockName(world, pos);
-            GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos);
-            ModuleTarget tgt = new ModuleTarget(gPos, face, invName);
-            Set<ModuleTarget> targets = getTargets(stack, true);
-            if (targets.contains(tgt)) {
-                targets.remove(tgt);
-                removing = true;
-                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
-                        .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
-            } else if (targets.size() < getMaxTargets()) {
+    private InteractionResult handleMultiTarget(ItemStack stack, UseOnContext context, Player player, Level world, BlockPos pos, Direction face) {
+        Set<ModuleTarget> targets = getTargets(stack, !world.isClientSide);
+        String invName = BlockUtil.getBlockName(world, pos);
+        GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos);
+        ModuleTarget tgt = new ModuleTarget(gPos, face, invName);
+
+        // Allow removing targets without checking if they're valid
+        if (targets.contains(tgt)) {
+            if (world.isClientSide) return InteractionResult.SUCCESS;
+            targets.remove(tgt);
+
+            player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetRemoved", targets.size(), getMaxTargets())
+                    .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
+            world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS, ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.1f);
+            setTargetList(stack, targets);
+        }
+
+        if (canSelectTarget(context)) {
+            if (world.isClientSide) return InteractionResult.SUCCESS;
+            if (targets.size() < getMaxTargets()) {
                 targets.add(tgt);
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetAdded", targets.size(), getMaxTargets())
                         .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
+
+                world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
+                        ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.3f);
+                setTargetList(stack, targets);
             } else {
                 // too many targets already
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.tooManyTargets", getMaxTargets())
                         .withStyle(ChatFormatting.RED), true);
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundSource.BLOCKS, 1.0f, 1.3f);
-                return;
             }
 
-            world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
-                    ConfigHolder.common.sound.bleepVolume.get().floatValue(), removing ? 1.1f : 1.3f);
-            setTargetList(stack, targets);
+            return InteractionResult.SUCCESS;
         }
+        return InteractionResult.PASS;
     }
 
 
