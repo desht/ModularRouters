@@ -57,7 +57,10 @@ base {
     archivesName = "${archive_base_name}-${mod_version}+mc${minecraft_version}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
 
 runs {
     // applies to all the run configs below
