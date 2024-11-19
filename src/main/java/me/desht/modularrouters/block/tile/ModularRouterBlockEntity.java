@@ -65,6 +65,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.energy.EnergyStorage;
@@ -975,6 +976,16 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public IFluidHandlerItem getFluidHandler() {
         return bufferHandler.getFluidHandler();
+    }
+
+    /**
+     * Returns the capability of the item in the router's buffer of the given type.
+     * @param cap the capability
+     * @param <T> the capability type
+     */
+    @Nullable
+    public <T> T getBufferCapability(ItemCapability<T, Void> cap) {
+        return bufferHandler.getCapability(cap);
     }
 
     public void sendBlockUpdateIfNeeded() {
