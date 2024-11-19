@@ -12,6 +12,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -19,6 +20,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,9 +34,8 @@ public class ModuleTarget {
     public final Direction face;
     public final String blockTranslationKey;
 
-    private BlockCapabilityCache<IItemHandler,Direction> itemCapCache;
-    private BlockCapabilityCache<IFluidHandler,Direction> fluidCapCache;
-    private BlockCapabilityCache<IEnergyStorage,Direction> energyCapCache;
+    // Expected max size of 2 given a 2/3 load factor, this is reasonable enough for most routers
+    private final IdentityHashMap<BlockCapability<?, ?>, BlockCapabilityCache<?, ?>> capCache = new IdentityHashMap<>(4);
 
     public static final Codec<ModuleTarget> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             GlobalPos.CODEC.fieldOf("pos").forGetter(t -> t.gPos),
@@ -87,15 +88,7 @@ public class ModuleTarget {
      * @return an optional item handler
      */
     public Optional<IItemHandler> getItemHandler() {
-        if (itemCapCache == null) {
-            ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
-            if (level == null) {
-                return Optional.empty();
-            }
-            itemCapCache = BlockCapabilityCache.create(Capabilities.ItemHandler.BLOCK, level, gPos.pos(), face);
-        }
-
-        return Optional.ofNullable(itemCapCache.getCapability());
+        return getCapability(Capabilities.ItemHandler.BLOCK);
     }
 
     /**
@@ -104,14 +97,7 @@ public class ModuleTarget {
      * @return an optional fluid handler
      */
     public Optional<IFluidHandler> getFluidHandler() {
-        if (fluidCapCache == null) {
-            ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
-            if (level == null) {
-                return Optional.empty();
-            }
-            fluidCapCache = BlockCapabilityCache.create(Capabilities.FluidHandler.BLOCK, level, gPos.pos(), face);
-        }
-        return Optional.ofNullable(fluidCapCache.getCapability());
+        return getCapability(Capabilities.FluidHandler.BLOCK);
     }
 
     /**
@@ -120,14 +106,36 @@ public class ModuleTarget {
      * @return an optional energy handler
      */
     public Optional<IEnergyStorage> getEnergyHandler() {
-        if (energyCapCache == null) {
-            ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
-            if (level == null) {
-                return Optional.empty();
-            }
-            energyCapCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, level, gPos.pos(), face);
+        return getCapability(Capabilities.EnergyStorage.BLOCK);
+    }
+
+    /**
+     * Try to get a capability from the target. Only call this server-side.
+     *
+     * @param cap the capability
+     * @param <T> the capability type
+     * @return an optional capability
+     * @implNote If the capability has the context of {@linkplain Direction}, the context will be the face of this target, otherwise it will be null
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public <T> Optional<T> getCapability(BlockCapability<T, ?> cap) {
+        ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
+        if (level == null) {
+            return Optional.empty();
         }
-        return Optional.ofNullable(energyCapCache.getCapability());
+
+        var cache = capCache.get(cap);
+        if (cache == null) {
+            if (cap.contextClass() == Direction.class) {
+                cache = BlockCapabilityCache.create((BlockCapability) cap, level, gPos.pos(), face);
+            } else {
+                cache = BlockCapabilityCache.create((BlockCapability) cap, level, gPos.pos(), null);
+            }
+
+            capCache.put(cap, cache);
+        }
+
+        return Optional.ofNullable((T) cache.getCapability());
     }
 
     @Override

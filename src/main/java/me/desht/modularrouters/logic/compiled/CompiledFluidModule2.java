@@ -13,7 +13,7 @@ public class CompiledFluidModule2 extends CompiledFluidModule1 {
     }
 
     @Override
-    List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         ModuleTarget target = TargetedModule.getTarget(stack, !router.nonNullLevel().isClientSide);
         return target == null ? List.of() : List.of(target);
     }

@@ -209,7 +209,7 @@ public abstract class CompiledModule {
      * @param stack the module itemstack
      * @return a list of router target objects (for most modules this is a singleton list)
      */
-    List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
         if (router == null || (module.isDirectional() && getDirection() == RelativeDirection.NONE)) {
             return null;
         }
