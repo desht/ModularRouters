@@ -16,7 +16,7 @@ public class ModuleScreenGhost implements IGhostIngredientHandler<ModuleScreen> 
         for (int i = 0; i < gui.getMenu().slots.size(); i++) {
             Slot s = gui.getMenu().getSlot(i);
             if (s instanceof FilterSlot) {
-                res.add(new GhostTarget<>(gui, s));
+                res.add(new GhostTarget<>(ingredient.getType(), gui, s));
             }
         }
         return res;

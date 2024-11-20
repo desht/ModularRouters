@@ -10,18 +10,36 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
+import mezz.jei.api.ingredients.IIngredientType;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IIngredientAliasRegistration;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @JeiPlugin
 public class JEIModularRoutersPlugin implements IModPlugin {
+    static final Map<IIngredientType<?>, Function<Object, ItemStack>> STACK_CREATORS = new IdentityHashMap<>();
+
+    public static synchronized <T> void registerGhostStackCreator(IIngredientType<T> type, Function<T, ItemStack> creator) {
+        STACK_CREATORS.put(type, object -> creator.apply((T) object));
+    }
+
+    public JEIModularRoutersPlugin() {
+        registerGhostStackCreator(VanillaTypes.ITEM_STACK, Function.identity());
+        registerGhostStackCreator(NeoForgeTypes.FLUID_STACK, FluidUtil::getFilledBucket);
+    }
+
     @Override
     public ResourceLocation getPluginUid() {
         return RL("default");
