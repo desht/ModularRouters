@@ -41,7 +41,8 @@ public abstract class MRBaseItem extends Item {
     }
 
     protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
-        list.add(xlate("modularrouters.itemText.usage.item." + BuiltInRegistries.ITEM.getKey(itemstack.getItem()).getPath(), getExtraUsageParams()));
+        var key = BuiltInRegistries.ITEM.getKey(itemstack.getItem());
+        list.add(xlate(key.getNamespace() + ".itemText.usage.item." + key.getPath(), getExtraUsageParams()));
     }
 
     protected abstract void addExtraInformation(ItemStack stack, List<Component> list);
