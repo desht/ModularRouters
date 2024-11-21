@@ -15,11 +15,6 @@ public class PullerModule2 extends ModuleItem implements IRangedModule, IPositio
     }
 
     @Override
-    public boolean isDirectional() {
-        return false;
-    }
-
-    @Override
     public int getBaseRange() {
         return ConfigHolder.common.module.puller2BaseRange.get();
     }

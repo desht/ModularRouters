@@ -18,11 +18,6 @@ public class SenderModule3 extends ModuleItem implements IPositionProvider, ITar
     }
 
     @Override
-    public boolean isDirectional() {
-        return false;
-    }
-
-    @Override
     public boolean isRangeLimited() {
         return false;
     }

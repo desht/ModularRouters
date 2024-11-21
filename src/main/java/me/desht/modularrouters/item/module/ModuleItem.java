@@ -97,7 +97,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public abstract TintColor getItemTint();
 
     public boolean isDirectional() {
-        return true;
+        return !(this instanceof ITargetedModule);
     }
 
     public boolean isOmniDirectional() { return false; }

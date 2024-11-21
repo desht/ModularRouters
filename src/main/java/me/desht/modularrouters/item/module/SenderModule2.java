@@ -22,12 +22,6 @@ public class SenderModule2 extends ModuleItem implements IRangedModule, IPositio
     protected SenderModule2(Item.Properties properties, BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler) {
         super(properties, compiler);
     }
-
-    @Override
-    public boolean isDirectional() {
-        return false;
-    }
-
     @Override
     public int getBaseRange() {
         return ConfigHolder.common.module.sender2BaseRange.get();

@@ -112,7 +112,7 @@ public abstract class CompiledModule {
      * @return the first target as set up by {@link #setupTargets(ModularRouterBlockEntity, ItemStack)}
      */
     public ModuleTarget getTarget() {
-        return targets == null || targets.isEmpty() ? null : targets.getFirst();
+        return targets.isEmpty() ? null : targets.getFirst();
     }
 
     /**
@@ -125,7 +125,9 @@ public abstract class CompiledModule {
         return targets;
     }
 
-    public boolean hasTarget() { return targets != null && !targets.isEmpty(); }
+    public boolean hasTarget() {
+        return !targets.isEmpty();
+    }
 
     protected boolean isTargetValid(ModularRouterBlockEntity router, ModuleTarget target) {
         if (module instanceof ITargetedModule targetedModule && !targetedModule.isRangeLimited()) {
@@ -231,10 +233,8 @@ public abstract class CompiledModule {
      */
     @Unmodifiable
     protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        if (router == null) {
-            return null;
-        } else if (module.isDirectional() && getDirection() == RelativeDirection.NONE) {
-            return null;
+        if (router == null || (module.isDirectional() && getDirection() == RelativeDirection.NONE)) {
+            return List.of();
         } else if (module instanceof ITargetedModule) {
             return List.copyOf(ITargetedModule.getTargets(stack, !router.nonNullLevel().isClientSide));
         }

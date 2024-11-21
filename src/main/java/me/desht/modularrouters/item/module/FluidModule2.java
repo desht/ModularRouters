@@ -15,10 +15,6 @@ public class FluidModule2 extends FluidModule1 implements IRangedModule, IPositi
     }
 
     @Override
-    public boolean isDirectional() {
-        return false;
-    }
-    @Override
     public int getBaseRange() {
         return ConfigHolder.common.module.fluid2BaseRange.get();
     }
