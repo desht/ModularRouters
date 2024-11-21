@@ -53,6 +53,14 @@ repositories {
     }
 }
 
+sourceSets {
+    test {
+        runs {
+            modIdentifier 'modularrouterstest'
+        }
+    }
+}
+
 group = project.mod_group_id
 
 base {
@@ -81,10 +89,12 @@ runs {
 
         jvmArguments.addAll '-Xmx4G'
 
+        modSource project.sourceSets.test
         modSource project.sourceSets.main
     }
 
     client {
+        systemProperty 'neoforge.enableGameTest', 'true'
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
     }
@@ -112,6 +122,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
+    localRuntime(testImplementation("net.neoforged:testframework:${neo_version}"))
 
     implementation("mcjty.theoneprobe:theoneprobe:${top_version}") {
         transitive = false
