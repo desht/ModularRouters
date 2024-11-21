@@ -154,7 +154,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
         if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot && !ClientUtil.isKeyDown(ClientSetup.keybindModuleInfo)) {
             Component key = ClientSetup.keybindConfigure.getKey().getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
-            Component middleClick = Component.literal("Middle-Click").withStyle(ChatFormatting.DARK_AQUA);
+            Component middleClick = xlate("modularrouters.itemText.misc.middle_click").withStyle(ChatFormatting.DARK_AQUA);
             list.add(xlate("modularrouters.itemText.misc.configureHint", key, middleClick).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }

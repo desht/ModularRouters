@@ -294,6 +294,7 @@
    "modularrouters.itemText.misc.match_damage" : "Damage",
    "modularrouters.itemText.misc.match_components" : "Components",
    "modularrouters.itemText.misc.match_item_tags" : "Tags",
+   "modularrouters.itemText.misc.middle_click" : "Middle-Click",
    "modularrouters.itemText.misc.itemList" : "Item List",
    "modularrouters.itemText.misc.matchAll" : "All",
    "modularrouters.itemText.misc.matchAny" : "Any",
