@@ -63,7 +63,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
             ModularRouterBlockEntity router = menu.getRouter();
             CompiledModule cm = ((ModuleItem) moduleStack.getItem()).compile(router, moduleStack);
             target = cm.getEffectiveTarget(router);
-            if (target.hasItemHandler(Minecraft.getInstance().level)) {
+            if (target != null && target.hasItemHandler(Minecraft.getInstance().level)) {
                 MutableComponent title = xlate(target.blockTranslationKey);
                 addRenderableWidget(new MergeButton(leftPos + 28, topPos + 130, target.toString(), title, p -> {
                     if (target != null) {
