@@ -1,18 +1,13 @@
 package me.desht.modularrouters.item.module;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.neoforged.neoforge.capabilities.Capabilities;
-
-import javax.annotation.Nonnull;
-import java.util.List;
 
 public class EnergyDistributorModule extends ModuleItem implements IRangedModule, IPositionProvider, ITargetedModule {
     private static final TintColor TINT_COLOR = new TintColor(79, 9, 90);
@@ -40,11 +35,6 @@ public class EnergyDistributorModule extends ModuleItem implements IRangedModule
     @Override
     public int getHardMaxRange() {
         return 48;
-    }
-
-    @Override
-    public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        return ImmutableList.copyOf(ITargetedModule.getTargets(stack, false));
     }
 
     @Override

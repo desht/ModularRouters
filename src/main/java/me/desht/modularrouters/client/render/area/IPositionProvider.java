@@ -19,7 +19,10 @@ public interface IPositionProvider {
      * @return a list of block positions that has been retrieved from the itemstack
      */
     default List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        return List.copyOf(ITargetedModule.getTargets(stack, false));
+        if (stack.getItem() instanceof ITargetedModule) {
+            return List.copyOf(ITargetedModule.getTargets(stack, false));
+        }
+        return List.of();
     }
 
     /**

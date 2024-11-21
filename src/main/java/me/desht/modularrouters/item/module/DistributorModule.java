@@ -1,6 +1,5 @@
 package me.desht.modularrouters.item.module;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
@@ -8,7 +7,6 @@ import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributorSettings;
 import net.minecraft.ChatFormatting;
@@ -16,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DistributorModule extends SenderModule2 {
@@ -42,11 +39,6 @@ public class DistributorModule extends SenderModule2 {
     @Override
     public MenuType<? extends ModuleMenu> getMenuType() {
         return ModMenuTypes.DISTRIBUTOR_MENU.get();
-    }
-
-    @Override
-    public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        return ImmutableList.copyOf(ITargetedModule.getTargets(stack, false));
     }
 
     @Override
