@@ -1,0 +1,15 @@
+{
+  "name": "検出モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:detector_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールは実際にアイテムを操作するのではなく、ルーターのバッファ内の特定のアイテムを検出します。バッファの内容がモジュールのフィルターと一致すると、ルーターは$(l:intro/modules#direction)設定方向/$にレッドストーン信号を発します。$(p)信号レベル(デフォルト: 15)と信号タイプ(デフォルト: 弱)はモジュールのGUIから調整できます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:detector_module"
+    }
+  ]
+}

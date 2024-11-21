@@ -1,0 +1,19 @@
+{
+  "name": "配置モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:placer_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールはルーターのバッファからアイテムをブロックとして、モジュールの$(l:intro/modules#direction)設定方向/$にルーターに隣接して配置しようとします。$(li)アイテムがブロックでない場合、または宛先ブロックのスペースが遮られている場合は何も行われません。$(li)通常のMinecraftの配置ルールに従います。たとえば、サトウキビは砂/土の上の水の隣にのみ配置できます。"
+    },
+    {
+      "type": "text",
+      "text": "$(li)流体ブロックは置き換えられ、背の高い草などの置き換え可能なブロックも置き換えられます。$(li)配置モジュールは農地に種を植えたり、隣接するジャングルの原木にカカオ豆を植えたりすることができます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:placer_module"
+    }
+  ]
+}

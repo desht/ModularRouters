@@ -1,0 +1,15 @@
+{
+  "name": "高速ピックアップオーグメント",
+  "category": "modularrouters:augments",
+  "icon": "modularrouters:fast_pickup_augment",
+  "pages": [
+    {
+      "type": "text",
+      "text": "この拡張は$(l:modules/vacuum)吸引モジュール/$にのみ追加できます。これにより、吸引モジュールはドロップされたアイテムの通常のピックアップ遅延(プレイヤーがドロップしたアイテムの場合は40ティック、他の手段(ヒツジの毛刈りなど)でドロップされたアイテムの場合は10ティック)を無視し、アイテムを見つけるとすぐにピックアップできるようになります。$(p)最大1つの高速ピックアップオーグメントを追加できます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:fast_pickup_augment"
+    }
+  ]
+}

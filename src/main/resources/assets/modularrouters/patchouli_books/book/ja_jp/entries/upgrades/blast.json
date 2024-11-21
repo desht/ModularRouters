@@ -1,0 +1,15 @@
+{
+  "name": "耐爆アップグレード",
+  "category": "modularrouters:upgrades",
+  "icon": "modularrouters:blast_upgrade",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このアップグレードにより、ルーターは爆発によるダメージやボスによる破壊に対して完全に耐性を持つようになります。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:blast_upgrade"
+    }
+  ]
+}

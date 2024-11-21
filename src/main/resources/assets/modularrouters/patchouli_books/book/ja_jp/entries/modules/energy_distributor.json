@@ -1,0 +1,19 @@
+{
+  "name": "エネルギー分配モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:energy_distributor_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールは$(l:modules/energy_output)エネルギー出力モジュール/$と$(l:modules/distributor)分配モジュール/$を組み合わせたもので、最大8つの近くにあるエネルギーを受け付けるブロックに対してFE(Forgeエネルギー)をワイヤレスで分配できます。$(p)ブロックを$(thing)スニーク+右クリック/$してエネルギー分配モジュールに追加し、もう一度ブロックを$(thing)スニーク+右クリック/$して削除します。"
+    },
+    {
+      "type": "text",
+      "text": "$(l:modules/energy_output)エネルギー出力モジュール/$と同様に、このモジュールはルーターの内部エネルギーのバッファ($(l:upgrades/energy)エネルギーアップグレード/$がインストールされている場合)またはルーターのアイテムバッファ内のエネルギーを含むアイテムからエネルギーを抽出できます。内部エネルギーのバッファが優先的に使用されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:energy_distributor_module"
+    }
+  ]
+}

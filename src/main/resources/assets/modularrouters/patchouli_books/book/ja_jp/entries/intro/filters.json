@@ -1,0 +1,19 @@
+{
+  "name": "スマートフィルター",
+  "icon": "modularrouters:bulk_item_filter",
+  "category": "modularrouters:intro",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)スマートフィルター/$は通常のアイテムの代わりに$(l:intro/modules)モジュールの/$フィルタースロットに挿入できます。アイテムと直接一致させるだけでなく、フィルターには特別な一致機能があります。$(p)たとえば$(l:filters/bulk_item)一括アイテムフィルター/$は最大54個の異なるアイテムと効率的に一致させることができ、そのアイテムは既存のインベントリから構成できます。"
+    },
+    {
+      "type": "image",
+      "images": [
+        "modularrouters:textures/patchouli/bulk_filter.png"
+      ],
+      "text": "$(italic)引込モジュールMk2にインストールされた一括アイテムフィルター/$",
+      "border": true
+    }
+  ]
+}

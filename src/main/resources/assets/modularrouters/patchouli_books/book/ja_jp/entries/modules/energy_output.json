@@ -1,0 +1,15 @@
+{
+  "name": "エネルギー出力モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:energy_output_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールはルーターから設定方向に隣接するエネルギー受信ブロックに対してFE(Forgeエネルギー)を出力しようとします。モジュールはルーターの内部エネルギーのバッファ($(l:upgrades/energy)エネルギーアップグレード/$がインストールされている場合)またはルーターのアイテムバッファ内のエネルギーを含むアイテムからエネルギーを抽出できます。内部エネルギーのバッファが優先的に使用されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:energy_output_module"
+    }
+  ]
+}

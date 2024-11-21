@@ -1,0 +1,15 @@
+{
+  "name": "送信モジュールMk3",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:sender_module_3",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このトップエンドの送信モジュールは$(l:modules/sender_2)送信モジュールMk2/$と非常によく似ていますが、制限なしで任意のインベントリ(任意のディメンション)に送信できます！$(p)注: ターゲットのインベントリはチャンクが読み込まれている必要があります。$(modr)はこれを実行しません。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:sender_module_3"
+    }
+  ]
+}

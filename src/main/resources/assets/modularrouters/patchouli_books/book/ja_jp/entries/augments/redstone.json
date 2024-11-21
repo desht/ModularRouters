@@ -1,0 +1,15 @@
+{
+  "name": "レッドストーンオーグメント",
+  "category": "modularrouters:augments",
+  "icon": "modularrouters:redstone_augment",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このオーグメントはどのモジュールにも追加できます。$(p)通常、モジュールはルーターの実行時に何も質問されることなく実行されます。ただし、このオーグメントをモジュールに追加すると、そのモジュールは独自のレッドストーン動作を定義できます。これを制御するための追加ボタンがモジュールのGUIに追加されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:redstone_augment"
+    }
+  ]
+}

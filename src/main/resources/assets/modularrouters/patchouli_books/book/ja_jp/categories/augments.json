@@ -1,0 +1,6 @@
+{
+  "name": "オーグメント",
+  "description": "オーグメントはモジュールにインストールして機能を強化または拡張することができます。",
+  "icon": "modularrouters:xp_vacuum_augment",
+  "sortnum": 4
+}

@@ -1,0 +1,27 @@
+{
+  "name": "レギュレーターオーグメント",
+  "category": "modularrouters:augments",
+  "icon": "modularrouters:regulator_augment",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このオーグメントにより、インベントリまたはルーターのバッファに送ったり取り出したりできるアイテムの数を正確に制御できます。$(p)モジュールにレギュレーターオーグメントがある場合、GUIに追加の数値テキストフィールドが表示され、制限を設定できます。この制限は特定のモジュールによって解釈が異なります:"
+    },
+    {
+      "type": "text",
+      "text": "送信モジュール$(l:modules/sender_1)Mk1/$ / $(l:modules/sender_2)Mk2/$ / $(l:modules/sender_3)Mk3/$および$(l:modules/player)プレイヤーモジュール/$(挿入モード)の場合、モジュールはインベントリにすでに存在するアイテムの数が設定された数より少ない場合にのみアイテムをインベントリに送信します。$(li)引き込みモジュール$(l:modules/puller_1)Mk1/$ / $(l:modules/puller_2)Mk2/$および$(l:modules/player)プレイヤーモジュール/$(抽出モード)の場合、モジュールはインベントリにすでに存在するアイテムの数が設定された数より多い場合にのみアイテムをインベントリから引き出します。"
+    },
+    {
+      "type": "text",
+      "text": "$(li)$(l:modules/dropper)ドロッパー/$、$(l:modules/flinger)投げ出し/$、$(l:modules/placer)配置/$、および$(l:modules/void)虚空/$モジュールの場合、モジュールはルーターのバッファに設定された数より多いアイテムがある場合にのみ実行されます。$(li)$(l:modules/breaker)破壊/$および$(l:modules/vacuum)吸引/$モジュールの場合、モジュールはルーターのバッファに設定された数より少ないアイテムがある場合にのみ実行されます。"
+    },
+    {
+      "type": "text",
+      "text": "流体モジュール$(l:modules/fluid)Mk1/$ / $(l:modules/fluid_2)Mk2/$の場合、制限はアイテム数ではなくターゲッのタンク容量のパーセンテージまたはmB単位の絶対量(GUIで選択可能)にすることができます。流体を引き出す場合、モジュールはターゲット内の流体が設定された量よりも$(italic)多い/$場合にのみ実行されます。流体を押し出す場合、モジュールは設定された量より流体が$(italic)少ない/$場合にのみ実行されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:regulator_augment"
+    }
+  ]
+}

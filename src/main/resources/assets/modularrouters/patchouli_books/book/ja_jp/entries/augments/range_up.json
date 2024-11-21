@@ -1,0 +1,16 @@
+{
+  "name": "範囲拡大オーグメント",
+  "category": "modularrouters:augments",
+  "icon": "modularrouters:range_up_augment",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このオーグメントは範囲を持つ任意のモジュール(送信モジュール$(l:modules/sender_1)Mk1/$ / $(l:modules/sender_2)、引き込みモジュール$(l:modules/puller_1)Mk1/$ / $(l:modules/puller_2)Mk2/$、押し出しモジュール$(l:modules/extruder_1)Mk1/$ / $(l:modules/extruder_2)Mk2/$、$(l:modules/fluid_2)流体モジュールMk2/$、$(l:modules/vacuum)吸引モジュール/$)に追加できます。$(p)これはスタックすることができ、拡張ごとにモジュールの範囲が1ブロックずつ増加します。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:range_up_augment",
+      "recipe2": "modularrouters:range_up_from_down"
+    }
+  ]
+}

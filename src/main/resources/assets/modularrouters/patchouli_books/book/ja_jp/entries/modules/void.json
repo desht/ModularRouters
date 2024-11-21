@@ -1,0 +1,15 @@
+{
+  "name": "虚空モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:void_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "この危険なモジュールはルーターのバッファ内のアイテムを永久に破壊します！貴重なアイテムが誤って削除されるのを防ぐためにこのモジュールを$(l:intro/modules#filter)ホワイトリストフィルター/$で構成することを強くお勧めします..."
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:void_module"
+    }
+  ]
+}

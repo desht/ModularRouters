@@ -1,0 +1,15 @@
+{
+  "name": "引き込みモジュールMk1",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:puller_module_1",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールは$(l:intro/modules#direction)設定方向/$にある隣接するインベントリから最初の適格なアイテムをルーターのバッファに引き込もうとします。バッファがいっぱいの場合、またはインベントリに何もない状態でスタックされるものが含まれている場合は何も引き込まれません。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:puller_module_1"
+    }
+  ]
+}

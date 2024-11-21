@@ -1,0 +1,6 @@
+{
+  "name": "モジュール",
+  "description": "モジュールはモジュラールーターに配置され、ルーターの機能を定義します。",
+  "icon": "modularrouters:sender_module_1",
+  "sortnum": 2
+}

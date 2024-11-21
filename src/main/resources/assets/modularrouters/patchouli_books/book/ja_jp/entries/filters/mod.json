@@ -1,0 +1,19 @@
+{
+  "name": "Modフィルター",
+  "category": "modularrouters:filters",
+  "icon": "modularrouters:mod_filter",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このフィルターを使用すると、それらが属するMODでアイテムを一致させることができます。インストールされたフィルターごとに最大6つのMODを追加できます。$(li)フィルターを$(thing)右クリック/$(またはモジュールにインストールされているフィルターを$(thing)中クリック/$するか、$(bold)$(4)[$(k:modularrouters.configure)]/$キーを押下)するとGUIが開きます。"
+    },
+    {
+      "type": "text",
+      "text": "$(li)GUIの左上隅にあるアイテムスロットに任意のアイテムを配置します。アイテムのMOD名が右側に表示されます。$(bold)$(2)+/$ボタンをクリックして下のMODリストに追加します。$(li)エントリの横にある赤い$(bold)$(4)X/$ボタンをクリックすると、そのMODがリストから削除されます。$(p)バニラのアイテムも追加でき、それらの「MOD」は$(italic)Minecraft/$として表示されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:mod_filter"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "分配モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:distributor_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "これはアイテムを複数のターゲットに送信できる$(l:modules/sender_2)送信モジュールMk2/$の拡張バージョンです。インベントリを$(thing)スニーク+右クリック/$して分配モジュールに追加し、インベントリをもう一度$(thing)スニーク+右クリック/$して削除します。$(p)分配モジュールは最大8つのターゲットに分配できます。"
+    },
+    {
+      "type": "text",
+      "text": "右側のGUIコントロールから分配方法をさらに細かく制御できます: $(li)$(bold)ラウンドロビン/$ - 各インベントリに順番に、できるだけ均等に分配します。$(li)$(bold)ランダム/$ - ターゲットの1つをランダムに選択します。$(li)$(bold)最も近い/$ - 常に最も近いターゲットにアイテム用のスペースを埋めます。$(li)$(bold)最も遠い/$ - 常に最も遠いターゲットにアイテム用のスペースを埋めます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:distributor_module"
+    }
+  ]
+}

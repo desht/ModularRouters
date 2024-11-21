@@ -1,0 +1,19 @@
+{
+  "name": "オーグメント",
+  "icon": "modularrouters:augment_core",
+  "category": "modularrouters:intro",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)オーグメント/$は$(l:intro/upgrades)アップグレード/$のようなものですが$(l:intro/modular_router)モジュラールーター/$ではなく各$(l:intro/modules)モジュール/$に挿入されます。各モジュールには4つのオーグメント用スロットがあり、一部のオーグメントはスタック可能です。オーグメントはモジュールの機能を様々な方法で強化または拡張します。"
+    },
+    {
+      "type": "image",
+      "images": [
+        "modularrouters:textures/patchouli/augments.png"
+      ],
+      "text": "$(italic)6つの範囲拡大オーグメントと経験値吸引オーグメントを備えた吸引モジュール/$",
+      "border": true
+    }
+  ]
+}

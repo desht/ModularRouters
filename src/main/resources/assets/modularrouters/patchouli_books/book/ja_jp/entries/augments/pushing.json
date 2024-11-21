@@ -1,0 +1,15 @@
+{
+  "name": "押し込みオーグメント",
+  "category": "modularrouters:augments",
+  "icon": "modularrouters:pushing_augment",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このオーグメントは$(l:modules/extruder_1)押し出しモジュールMk1/$および$(l:modules/extruder_2)押し出しモジュールMk2/$にのみ追加できます。オーグメントはスタックすることができ、オーグメントごとにモジュールがブロックを押し出すときにエンティティが押し出される力が増します。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:pushing_augment"
+    }
+  ]
+}

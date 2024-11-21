@@ -1,0 +1,6 @@
+{
+  "name": "アップグレード",
+  "description": "モジュラールーターにアップグレードをインストールすることで機能を強化または変更できます。",
+  "icon": "modularrouters:speed_upgrade",
+  "sortnum": 3
+}

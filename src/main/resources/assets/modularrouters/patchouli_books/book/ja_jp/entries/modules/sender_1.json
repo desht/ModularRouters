@@ -1,0 +1,16 @@
+{
+  "name": "送信モジュールMk1",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:sender_module_1",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールはルーターのバッファからモジュールの$(l:intro/modules#direction)設定方向/$にあるインベントリにアイテムを送信しようとします。$(li)ターゲットのインベントリは最大8ブロック離れている($(l:augments/range_up)範囲拡大オーグメント/$により最大16ブロック)必要があります。$(li)ターゲットのインベントリはX、Y、またはZ軸に沿っている$(italic)必要があります/$。$(li)ルーターはターゲットに対して明確な視線を持っている$(italic)必要があります/$。不透過ブロックは不可ですが、ガラス、フェンス、鉄格子などの透過ブロックはOKです。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:sender_module_1",
+      "recipe2": "modularrouters:sender_module_1_alt"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "モジュラールーター",
+  "description": "モジュラールーターは$(modr)のMOD内の唯一のブロックです。",
+  "icon": "modularrouters:modular_router",
+  "sortnum": 1
+}

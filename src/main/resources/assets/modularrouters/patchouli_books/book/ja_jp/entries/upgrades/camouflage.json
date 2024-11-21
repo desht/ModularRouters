@@ -1,0 +1,15 @@
+{
+  "name": "偽装アップグレード",
+  "category": "modularrouters:upgrades",
+  "icon": "modularrouters:camouflage_upgrade",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このアップグレードによりルーターを別のブロックに偽装できます。ブロックに対してモジュールを$(thing)スニーク+右クリック/$すると、そのブロックが偽装アップグレードに記録されます。ルーターに挿入すると、そのルーターは記録されたブロックの外観になります。$(p)注: $(thing)モジュラールーター/$を手に持っていると、近くにある偽装されたルーターがハイライト表示されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:camouflage_upgrade"
+    }
+  ]
+}

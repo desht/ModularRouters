@@ -1,0 +1,15 @@
+{
+  "name": "流体転送アップグレード",
+  "category": "modularrouters:upgrades",
+  "icon": "modularrouters:fluid_upgrade",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このアップグレードは$(l:modules/fluid)流体モジュールMk1/$および$(l:modules/fluid_2)流体モジュールMk2/$にのみ影響します。$(p)$(l:router/modular_router)ルーター/$の全体的な流体転送速度(ルーターの入出力の各方向)が、基本速度50mB/ティックから10mB/ティックずつ増加し、最大400mB/ティックになります。したがって、ルーターの流体転送アップグレードの最大数は35です。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:fluid_upgrade"
+    }
+  ]
+}

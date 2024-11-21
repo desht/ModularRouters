@@ -1,0 +1,20 @@
+{
+  "name": "引き込みモジュールMk2",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:puller_module_2",
+  "pages": [
+    {
+      "type": "text",
+      "text": "これは$(l:modules/puller_1)引き込みモジュールMk1/$のように動作しますが、隣接していないインベントリからアイテムを引き出すことができます。$(p)インベントリは最大12ブロック($(l:augments/range_up)範囲拡大オーグメント/$により最大24ブロック)離れた場所に置くことができます。明確な視線は必要$(italic)ありません/$。"
+    },
+    {
+      "type": "text",
+      "text": "ターゲットのインベントリを選択するには引き込みモジュールMk2を手に持ち、ブロックを$(thing)スニーク+右クリック/$します。確認メッセージが表示されます。$(li)ターゲットが設定された引き込みモジュールMk2を保持している間、ターゲットブロックがハイライト表示されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:puller_module_2",
+      "recipe2": "modularrouters:puller_module_2_x4"
+    }
+  ]
+}

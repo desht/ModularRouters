@@ -1,0 +1,15 @@
+{
+  "name": "ピックアップ遅延オーグメント",
+  "category": "modularrouters:augments",
+  "icon": "modularrouters:pickup_delay_augment",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このオーグメントは$(l:modules/dropper)ドロッパーモジュール/$と$(l:modules/flinger)投げ出しモジュール/$にのみ追加できます。$(p)これはスタックすることができ、追加された各オーグメントはドロップ/投げられたアイテムのピックアップ遅延を10ティック(0.5秒)増加させます。これはたとえば、プレイヤーが近くにドロップされたアイテムを誤って拾ってしまうのを防ぎたい場合に役立ちます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:pickup_delay_augment"
+    }
+  ]
+}

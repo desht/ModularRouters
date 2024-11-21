@@ -1,0 +1,15 @@
+{
+  "name": "ドロッパ―モジュール",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:dropper_module",
+  "pages": [
+    {
+      "type": "text",
+      "text": "このモジュールはルーターのバッファからアイテムをアイテムエンティティとしてワールドにドロップしようとします。ドロップはモジュールの$(l:intro/modules#direction)設定方向/$でルーターに隣接します。アイテムエンティティはアイテムにイライラするランダムな速度を追加するバニラの$(item)ドロッパー/$とは異なり、ゼロ速度で配置されます。"
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:dropper_module"
+    }
+  ]
+}
