@@ -14,7 +14,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EnergyDistributorModule extends TargetedModule implements IRangedModule, IPositionProvider {
+public class EnergyDistributorModule extends ModuleItem implements IRangedModule, IPositionProvider, ITargetedModule {
     private static final TintColor TINT_COLOR = new TintColor(79, 9, 90);
 
     public EnergyDistributorModule() {
@@ -44,16 +44,16 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
 
     @Override
     public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        return ImmutableList.copyOf(TargetedModule.getTargets(stack, false));
+        return ImmutableList.copyOf(ITargetedModule.getTargets(stack, false));
     }
 
     @Override
-    protected boolean isValidTarget(UseOnContext ctx) {
+    public boolean isValidTarget(UseOnContext ctx) {
         return ctx.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, ctx.getClickedPos(), ctx.getClickedFace()) != null;
     }
 
     @Override
-    protected int getMaxTargets() {
+    public int getMaxTargets() {
         return 8;
     }
 

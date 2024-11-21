@@ -91,9 +91,9 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
     @Override
     public void doModuleValidation(ItemStack stack, ServerPlayer player) {
-        TargetedModule.TargetValidation v = ModularRouters.getDimensionBlacklist().test(player.level().dimension().location()) ?
-                TargetedModule.TargetValidation.BAD_DIMENSION :
-                TargetedModule.TargetValidation.OK;
+        TargetValidation v = ModularRouters.getDimensionBlacklist().test(player.level().dimension().location()) ?
+                TargetValidation.BAD_DIMENSION :
+                TargetValidation.OK;
         MutableComponent msg = Component.translatable(v.translationKey()).withStyle(v.getColor());
         player.displayClientMessage(msg, false);
     }

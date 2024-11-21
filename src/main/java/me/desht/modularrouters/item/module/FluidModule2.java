@@ -3,34 +3,14 @@ package me.desht.modularrouters.item.module;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.container.ModuleMenu;
-import me.desht.modularrouters.core.ModDataComponents;
-import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.core.ModMenuTypes;
-import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
-import me.desht.modularrouters.logic.ModuleTargetList;
-import me.desht.modularrouters.logic.compiled.CompiledFluidModule2;
-import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
-import me.desht.modularrouters.api.matching.IItemMatcher;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
 
-import java.util.List;
-
-public class FluidModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
+public class FluidModule2 extends FluidModule1 implements IRangedModule, IPositionProvider, ITargetedModule {
     private static final TintColor TINT_COLOR = new TintColor(64, 224, 255);
 
-    public FluidModule2() {
-        super(ModItems.moduleProps()
-                .component(ModDataComponents.MODULE_TARGET_LIST, ModuleTargetList.EMPTY), CompiledFluidModule2::new);
-    }
-
     @Override
-    protected boolean isValidTarget(UseOnContext ctx) {
+    public boolean isValidTarget(UseOnContext ctx) {
         return !ctx.getLevel().isEmptyBlock(ctx.getClickedPos());
     }
 
@@ -38,36 +18,6 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     public boolean isDirectional() {
         return false;
     }
-
-    @Override
-    public MenuType<? extends ModuleMenu> getMenuType() {
-        return ModMenuTypes.FLUID_MENU.get();
-    }
-
-    @Override
-    protected Component getFilterItemDisplayName(ItemStack stack) {
-        return FluidUtil.getFluidContained(stack).map(FluidStack::getHoverName).orElse(stack.getHoverName());
-    }
-
-    @Override
-    public boolean isItemValidForFilter(ItemStack stack) {
-        // only fluid-holding items or a smart filter item can go into a fluid module's filter
-        if (stack.isEmpty() || stack.getItem() instanceof SmartFilterItem) return true;
-        if (stack.getCount() > 1) return false;
-
-        return FluidUtil.getFluidContained(stack).map(fluidStack -> !fluidStack.isEmpty()).orElse(false);
-    }
-
-    @Override
-    public IItemMatcher getFilterItemMatcher(ItemStack stack) {
-        return new FluidMatcher(stack);
-    }
-
-    @Override
-    public boolean isFluidModule() {
-        return true;
-    }
-
     @Override
     public int getBaseRange() {
         return ConfigHolder.common.module.fluid2BaseRange.get();
@@ -81,12 +31,6 @@ public class FluidModule2 extends TargetedModule implements IRangedModule, IPosi
     @Override
     public TintColor getItemTint() {
         return TINT_COLOR;
-    }
-
-    @Override
-    protected void addExtraInformation(ItemStack stack, List<Component> list) {
-        super.addExtraInformation(stack, list);
-        FluidModule1.addFluidModuleInformation(stack, list);
     }
 
     @Override

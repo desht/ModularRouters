@@ -46,7 +46,7 @@ public class DistributorModule extends SenderModule2 {
 
     @Override
     public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        return ImmutableList.copyOf(TargetedModule.getTargets(stack, false));
+        return ImmutableList.copyOf(ITargetedModule.getTargets(stack, false));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DistributorModule extends SenderModule2 {
     }
 
     @Override
-    protected int getMaxTargets() {
+    public int getMaxTargets() {
         return 8;
     }
 

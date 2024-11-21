@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiFunction;
 
-public class SenderModule2 extends TargetedModule implements IRangedModule, IPositionProvider {
+public class SenderModule2 extends ModuleItem implements IRangedModule, IPositionProvider, ITargetedModule {
     private static final TintColor TINT_COLOR = new TintColor(149, 255, 93);
 
     public SenderModule2() {

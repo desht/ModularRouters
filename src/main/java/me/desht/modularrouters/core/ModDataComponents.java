@@ -64,10 +64,10 @@ public class ModDataComponents {
             .persistent(CompiledFlingerModule.FlingerSettings.CODEC)
             .networkSynchronized(CompiledFlingerModule.FlingerSettings.STREAM_CODEC)
     );
-    public static final Supplier<DataComponentType<CompiledFluidModule1.FluidModuleSettings>> FLUID_SETTINGS
+    public static final Supplier<DataComponentType<CompiledFluidModule.FluidModuleSettings>> FLUID_SETTINGS
             = COMPONENTS.registerComponentType("fluid_settings", builder -> builder
-            .persistent(CompiledFluidModule1.FluidModuleSettings.CODEC)
-            .networkSynchronized(CompiledFluidModule1.FluidModuleSettings.STREAM_CODEC)
+            .persistent(CompiledFluidModule.FluidModuleSettings.CODEC)
+            .networkSynchronized(CompiledFluidModule.FluidModuleSettings.STREAM_CODEC)
     );
     public static final Supplier<DataComponentType<CompiledPlayerModule.PlayerSettings>> PLAYER_SETTINGS
             = COMPONENTS.registerComponentType("player_settings", builder -> builder

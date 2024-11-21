@@ -10,7 +10,7 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModDataComponents;
-import me.desht.modularrouters.logic.compiled.CompiledFluidModule1;
+import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
@@ -47,7 +47,7 @@ public class FluidModuleScreen extends ModuleScreen {
     public void init() {
         super.init();
 
-        CompiledFluidModule1 cfm = new CompiledFluidModule1(null, moduleItemStack);
+        CompiledFluidModule cfm = new CompiledFluidModule(null, moduleItemStack);
 
         int max = ConfigHolder.common.router.baseTickRate.get() * ConfigHolder.common.router.fluidMaxTransferRate.get();
         maxTransferField = new IntegerTextField(font, leftPos + 152, topPos + 23, 34, 12,
@@ -113,7 +113,7 @@ public class FluidModuleScreen extends ModuleScreen {
     @Override
     protected ItemStack buildModifiedItemStack() {
         return Util.make(super.buildModifiedItemStack(), stack ->
-                stack.set(ModDataComponents.FLUID_SETTINGS, new CompiledFluidModule1.FluidModuleSettings(
+                stack.set(ModDataComponents.FLUID_SETTINGS, new CompiledFluidModule.FluidModuleSettings(
                         maxTransferField.getIntValue(),
                         fluidDirButton.getState(),
                         forceEmptyButton.isToggled(),

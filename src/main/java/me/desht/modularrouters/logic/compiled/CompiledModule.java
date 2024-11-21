@@ -6,6 +6,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem.AugmentCounter;
 import me.desht.modularrouters.item.module.IRangedModule;
+import me.desht.modularrouters.item.module.ITargetedModule;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.filter.Filter;
@@ -25,6 +26,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +40,7 @@ public abstract class CompiledModule {
     private final Filter filter;
     @Nullable
     private final Direction absoluteFacing;
+    @Unmodifiable
     private final List<ModuleTarget> targets;
     @Nullable
     private final Direction routerFacing;
@@ -65,7 +68,14 @@ public abstract class CompiledModule {
         commonSettings = ModuleItem.getCommonSettings(stack);
         range = module instanceof IRangedModule r ? r.getCurrentRange(getRangeModifier()) : 0;
         rangeSquared = range * range;
-        targets = setupTargets(router, stack);
+
+        if (router == null) {
+            targets = setupTargets(null, stack);
+        } else {
+            targets = setupTargets(router, stack)
+                    .stream().filter(t -> isTargetValid(router, t))
+                    .toList();
+        }
         filter = new Filter(stack, shouldStoreRawFilterItems(), augmentCounter.getAugmentCount(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get()) > 0);
         absoluteFacing = router == null ? null : router.getAbsoluteFacing(commonSettings.facing());
         routerFacing = router == null ? null : router.getAbsoluteFacing(RelativeDirection.FRONT);
@@ -116,6 +126,16 @@ public abstract class CompiledModule {
     }
 
     public boolean hasTarget() { return targets != null && !targets.isEmpty(); }
+
+    protected boolean isTargetValid(ModularRouterBlockEntity router, ModuleTarget target) {
+        if (module instanceof ITargetedModule targetedModule && !targetedModule.isRangeLimited()) {
+            return (target.isSameWorld(router.getLevel()) || targetedModule.canOperateInDimension(target.gPos.dimension()))
+                    && targetedModule.canOperateInDimension(router.getLevel().dimension());
+        } else if (module instanceof IRangedModule) {
+            return target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared();
+        }
+        return true;
+    }
 
     public ModuleTermination termination() {
         return commonSettings.termination();
@@ -209,9 +229,14 @@ public abstract class CompiledModule {
      * @param stack the module itemstack
      * @return a list of router target objects (for most modules this is a singleton list)
      */
+    @Unmodifiable
     protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        if (router == null || (module.isDirectional() && getDirection() == RelativeDirection.NONE)) {
+        if (router == null) {
             return null;
+        } else if (module.isDirectional() && getDirection() == RelativeDirection.NONE) {
+            return null;
+        } else if (module instanceof ITargetedModule) {
+            return List.copyOf(ITargetedModule.getTargets(stack, !router.nonNullLevel().isClientSide));
         }
         Direction facing = router.getAbsoluteFacing(getDirection());
         BlockPos pos = router.getBlockPos().relative(facing);
