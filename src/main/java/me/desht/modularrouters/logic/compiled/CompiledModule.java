@@ -125,7 +125,7 @@ public abstract class CompiledModule {
         return targets;
     }
 
-    public boolean hasTarget() {
+    public boolean shouldExecute() {
         return !targets.isEmpty();
     }
 
@@ -325,7 +325,7 @@ public abstract class CompiledModule {
     }
 
     @ApiStatus.OverrideOnly
-    public boolean shouldRun(boolean powered, boolean pulsed) {
+    public boolean shouldExecute(boolean powered, boolean pulsed) {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 

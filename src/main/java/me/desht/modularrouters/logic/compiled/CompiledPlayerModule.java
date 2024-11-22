@@ -50,7 +50,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public boolean hasTarget() {
+    public boolean shouldExecute() {
         return getPlayer() != null;
     }
 

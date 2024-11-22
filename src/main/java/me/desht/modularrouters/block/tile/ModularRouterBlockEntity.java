@@ -446,7 +446,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         for (CompiledIndexedModule cim : compiledModules) {
             CompiledModule cm = cim.compiledModule;
-            if (cm != null && cm.hasTarget() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldRun(powered, pulsed)) {
+            if (cm != null && cm.shouldExecute() && cm.getEnergyCost() <= getEnergyStorage().getEnergyStored() && cm.shouldExecute(powered, pulsed)) {
                 var event = cm.getEvent();
                 if (event != null) {
                     event.setExecuted(false);

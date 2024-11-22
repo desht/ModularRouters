@@ -1,8 +1,11 @@
 package me.desht.modularrouters.test;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import me.desht.modularrouters.config.ConfigHolder;
+import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModDataComponents;
+import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.ModuleTargetList;
 import me.desht.modularrouters.logic.settings.ModuleFlags;
@@ -21,39 +24,16 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.testframework.gametest.ExtendedGameTestHelper;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class RouterTestHelper extends ExtendedGameTestHelper {
     public RouterTestHelper(GameTestInfo info) {
         super(info);
     }
 
-    public ItemStack addDirectionalModule(ModularRouterBlockEntity router, Supplier<? extends Item> module, RelativeDirection direction) {
-        var stack = module.get().getDefaultInstance();
-        stack.set(ModDataComponents.COMMON_MODULE_SETTINGS, new ModuleSettings(
-                ModuleFlags.DEFAULT,
-                direction,
-                ModuleTermination.NONE,
-                RedstoneBehaviour.ALWAYS,
-                0
-        ));
-        return addModule(router, stack);
-    }
-
-    public ItemStack addTargetedModule(ModularRouterBlockEntity router, Supplier<? extends Item> module, int x, int y, int z, Direction face) {
-        var stack = module.get().getDefaultInstance();
-        stack.set(ModDataComponents.MODULE_TARGET_LIST, new ModuleTargetList(
-                List.of(new ModuleTarget(getLevel(), absolutePos(new BlockPos(x, y, z)), face))
-        ));
-        return addModule(router, stack);
-    }
-
-    public ItemStack addModule(ModularRouterBlockEntity router, ItemStack module) {
-        router.getModules().insertItem(0, module, false);
-        return module;
-    }
-
-    public ModularRouterBlockEntity placeRouter(int x, int y, int z) {
+    public RouterWrapper placeRouter(int x, int y, int z) {
         setBlock(x, y, z, ModBlocks.MODULAR_ROUTER.get());
         var router = getBlockEntity(x, y, z, ModularRouterBlockEntity.class);
         addEndListener(success -> {
@@ -71,11 +51,73 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
                 setBlock(x, y, z, Blocks.AIR);
             }
         });
-        return router;
+        return new RouterWrapper(router, this);
     }
 
     public ChestBlockEntity placeChest(int x, int y, int z) {
         setBlock(x, y, z, Blocks.CHEST);
         return getBlockEntity(x, y, z, ChestBlockEntity.class);
+    }
+
+    public record RouterWrapper(ModularRouterBlockEntity router, RouterTestHelper helper) {
+        public ItemStack addDirectionalModule(Supplier<? extends Item> module, RelativeDirection direction) {
+            var stack = module.get().getDefaultInstance();
+            stack.set(ModDataComponents.COMMON_MODULE_SETTINGS, new ModuleSettings(
+                    ModuleFlags.DEFAULT,
+                    direction,
+                    ModuleTermination.NONE,
+                    RedstoneBehaviour.ALWAYS,
+                    0
+            ));
+            return addModule(stack);
+        }
+
+        public ItemStack addTargetedModule(Supplier<? extends Item> module, int x, int y, int z, Direction face) {
+            var stack = module.get().getDefaultInstance();
+            stack.set(ModDataComponents.MODULE_TARGET_LIST, new ModuleTargetList(
+                    List.of(new ModuleTarget(helper.getLevel(), helper.absolutePos(new BlockPos(x, y, z)), face))
+            ));
+            return addModule(stack);
+        }
+
+        public ItemStack addModule(ItemStack module) {
+            router.getModules().insertItem(0, module, false);
+            return module;
+        }
+
+        public ItemStack addUpgrade(ItemStack module) {
+            router.getUpgrades().insertItem(0, module, false);
+            return module;
+        }
+
+        public ItemStack insertBuffer(ItemStack stack) {
+            router.insertBuffer(stack);
+            return stack;
+        }
+
+        public void modifyModule(int index, Consumer<ItemStack> mod) {
+            var module = router.getModules().getStackInSlot(index).copy();
+            mod.accept(module);
+            router.getModules().setStackInSlot(index, module);
+        }
+
+        public void modifyAugments(int moduleIndex, Consumer<AugmentHandler> handler) {
+            modifyModule(moduleIndex, stack -> handler.accept(new AugmentHandler(stack, router)));
+        }
+
+        public void clearBuffer() {
+            router.extractBuffer(router.getBufferItemStack().getCount());
+        }
+
+        public ItemStack getBuffer() {
+            return router.getBufferItemStack();
+        }
+
+        public int routerTicks(int routerTicks) {
+            return (20 - IntStream.range(0, router().getUpgradeSlotCount())
+                    .mapToObj(router().getUpgrades()::getStackInSlot)
+                    .filter(s -> !s.isEmpty() && s.is(ModItems.SPEED_UPGRADE))
+                    .mapToInt(ItemStack::getCount).sum() * 2) * routerTicks;
+        }
     }
 }
