@@ -25,4 +25,4 @@ jobs:
         run: ./gradlew build
 
       - name: Run gametests
-        run: ./gradlew gameTestServer
+        run: ./gradlew runGameTestServer
