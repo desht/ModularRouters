@@ -39,6 +39,6 @@ public class SenderModule3 extends ModuleItem implements IPositionProvider, ITar
 
     @Override
     public boolean canOperateInDimension(ResourceKey<Level> dimension) {
-        return ModularRouters.getDimensionBlacklist().test(dimension.location());
+        return !ModularRouters.getDimensionBlacklist().test(dimension.location());
     }
 }
