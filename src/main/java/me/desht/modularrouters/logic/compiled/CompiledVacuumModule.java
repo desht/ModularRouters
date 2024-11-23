@@ -94,6 +94,11 @@ public class CompiledVacuumModule extends CompiledModule {
         return List.of(new ModuleTarget(gPos, facing));
     }
 
+    @Override // the target is computed programmatically, their validity is not relevant
+    protected boolean isTargetValid(ModularRouterBlockEntity router, ModuleTarget target) {
+        return true;
+    }
+
     private boolean handleItemMode(ModularRouterBlockEntity router) {
         if (router.isBufferFull()) {
             return false;
@@ -146,7 +151,7 @@ public class CompiledVacuumModule extends CompiledModule {
             if (!inRouterStack.isEmpty() && !ItemStack.isSameItemSameComponents(inRouterStack, getXPCollectionType().getIcon())) {
                 return false;
             }
-            spaceForXp = (inRouterStack.getMaxStackSize() - inRouterStack.getCount()) * getXPCollectionType().getXpRatio();
+            spaceForXp = ((inRouterStack.isEmpty() ? getXPCollectionType().getIcon() : inRouterStack).getMaxStackSize() - inRouterStack.getCount()) * getXPCollectionType().getXpRatio();
         } else {
             fluidHandler = getFluidReceiver(router);
             if (fluidHandler == null) {
@@ -172,25 +177,32 @@ public class CompiledVacuumModule extends CompiledModule {
 
         int initialSpaceForXp = spaceForXp;
         for (ExperienceOrb orb : orbs) {
-            if (orb.getValue() > spaceForXp) {
-                break;
-            }
-            if (xpCollectionType.isSolid()) {
-                xpBuffered += orb.getValue();
-                if (xpBuffered > xpCollectionType.getXpRatio()) {
-                    int count = xpBuffered / xpCollectionType.getXpRatio();
-                    ItemStack stack = xpCollectionType.getIcon().copyWithCount(count);
-                    ItemStack excess = router.insertBuffer(stack);
-                    xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
-                    if (!excess.isEmpty()) {
-                        InventoryUtils.dropItems(router.nonNullLevel(), Vec3.atCenterOf(router.getBlockPos()), excess);
+            var rate = getItemsPerTick(router);
+            while (orb.getValue() <= spaceForXp && rate > 0) {
+                if (xpCollectionType.isSolid()) {
+                    xpBuffered += orb.getValue();
+                    if (xpBuffered > xpCollectionType.getXpRatio()) {
+                        int count = xpBuffered / xpCollectionType.getXpRatio();
+                        ItemStack stack = xpCollectionType.getIcon().copyWithCount(count);
+                        ItemStack excess = router.insertBuffer(stack);
+                        xpBuffered -= stack.getCount() * xpCollectionType.getXpRatio();
+                        if (!excess.isEmpty()) {
+                            InventoryUtils.dropItems(router.nonNullLevel(), Vec3.atCenterOf(router.getBlockPos()), excess);
+                        }
                     }
+                } else if (!doFluidXPFill(orb, fluidHandler)) {
+                    spaceForXp = 0;
                 }
-            } else if (!doFluidXPFill(orb, fluidHandler)) {
-                spaceForXp = 0;
+
+                spaceForXp -= orb.getValue();
+                orb.count--;
+                rate--;
+
+                if (orb.count <= 0) {
+                    orb.remove(Entity.RemovalReason.DISCARDED);
+                    break;
+                }
             }
-            spaceForXp -= orb.getValue();
-            orb.remove(Entity.RemovalReason.DISCARDED);
         }
 
         return initialSpaceForXp - spaceForXp > 0;

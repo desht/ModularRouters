@@ -325,7 +325,7 @@ public abstract class CompiledModule {
     }
 
     @ApiStatus.OverrideOnly
-    public boolean shouldExecute(boolean powered, boolean pulsed) {
+    public boolean checkRedstone(boolean powered, boolean pulsed) {
         return getRedstoneBehaviour().shouldRun(powered, pulsed);
     }
 

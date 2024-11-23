@@ -70,6 +70,15 @@ base {
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
+
+    registerFeature('testUtils') {
+        usingSourceSet(sourceSets.test)
+        withSourcesJar()
+    }
+}
+
+minecraft {
+    accessTransformers.file(project.file('src/main/resources/META-INF/accesstransformer.cfg'))
 }
 
 runs {
@@ -180,6 +189,7 @@ publishing {
     }
     repositories {
         maven {
+            name 'local'
             url "file://${project.projectDir}/repo"
         }
         if (System.getenv("MODMAVEN_USER") != null) {
