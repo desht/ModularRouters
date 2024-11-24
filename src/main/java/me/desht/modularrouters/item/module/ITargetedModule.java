@@ -68,7 +68,7 @@ public interface ITargetedModule {
         for (int i = 0; i < targets.size() && result.size() < max; i++) {
             var target = targets.get(i);
             if (checkBlockName) {
-                var newTarget = updateTargetBlockName(stack, target);
+                var newTarget = updateTargetBlockName(target);
                 if (newTarget != target) update = true;
                 target = newTarget;
             }
@@ -78,7 +78,7 @@ public interface ITargetedModule {
         }
 
         if (update) {
-            stack.set(ModDataComponents.MODULE_TARGET_LIST, new ModuleTargetList(List.copyOf(result)));
+            setTargets(stack, result);
         }
 
         return result;
@@ -101,7 +101,7 @@ public interface ITargetedModule {
         return NeoForge.EVENT_BUS.post(new AddModuleTargetEvent((ModuleItem) module, context, ((ITargetedModule) module).isValidTarget(context))).isValid();
     }
 
-    private static ModuleTarget updateTargetBlockName(ItemStack stack, ModuleTarget target) {
+    private static ModuleTarget updateTargetBlockName(ModuleTarget target) {
         ServerLevel level = MiscUtil.getWorldForGlobalPos(target.gPos);
         BlockPos pos = target.gPos.pos();
         if (level != null && level.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
