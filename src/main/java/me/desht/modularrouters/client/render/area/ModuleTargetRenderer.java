@@ -33,9 +33,14 @@ public class ModuleTargetRenderer {
     public static void clientTick(ClientTickEvent.Pre event) {
         if (Minecraft.getInstance().player != null) {
             ItemStack curItem = Minecraft.getInstance().player.getMainHandItem();
-            if (!ItemStack.matches(curItem, lastStack)) {
-                lastStack = curItem.copy();
-                compiledPos = curItem.getItem() instanceof IPositionProvider pp ? new CompiledPosition(curItem, pp) : null;
+            if (curItem.getItem() instanceof IPositionProvider posProvider) {
+                if (!ItemStack.matches(curItem, lastStack)) {
+                    lastStack = curItem.copy();
+                    compiledPos = new CompiledPosition(curItem, posProvider);
+                }
+            } else {
+                lastStack = ItemStack.EMPTY;
+                compiledPos = null;
             }
         }
     }
@@ -48,7 +53,7 @@ public class ModuleTargetRenderer {
 
             matrixStack.pushPose();
 
-            Vec3 projectedView = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+            Vec3 projectedView = event.getCamera().getPosition();
             matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
             render(buffer, matrixStack, compiledPos);
 
