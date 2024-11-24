@@ -1,6 +1,6 @@
 package me.desht.modularrouters.api.event;
 
-import me.desht.modularrouters.item.module.TargetedModule;
+import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.neoforged.bus.api.Event;
@@ -12,12 +12,12 @@ import org.jetbrains.annotations.ApiStatus;
  * This event can be used to allow a module to target blocks it otherwise couldn't in conjunction with {@link ExecuteModuleEvent}.
  */
 public final class AddModuleTargetEvent extends Event {
-    private final TargetedModule item;
+    private final ModuleItem item;
     private final UseOnContext context;
     private boolean valid;
 
     @ApiStatus.Internal
-    public AddModuleTargetEvent(TargetedModule item, UseOnContext context, boolean valid) {
+    public AddModuleTargetEvent(ModuleItem item, UseOnContext context, boolean valid) {
         this.item = item;
         this.context = context;
         this.valid = valid;
@@ -26,7 +26,7 @@ public final class AddModuleTargetEvent extends Event {
     /**
      * {@return the module type}
      */
-    public TargetedModule getModuleType() {
+    public ModuleItem getModuleType() {
         return item;
     }
 

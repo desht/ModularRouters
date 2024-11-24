@@ -1,4 +1,4 @@
-name: "Build applicable branches on push or pull request"
+name: "Build applicable branches on push"
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events for the branches listed

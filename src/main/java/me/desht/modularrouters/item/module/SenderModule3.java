@@ -5,10 +5,11 @@ import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.logic.compiled.CompiledSenderModule3;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-public class SenderModule3 extends TargetedModule implements IPositionProvider {
+public class SenderModule3 extends ModuleItem implements IPositionProvider, ITargetedModule {
     private static final TintColor TINT_COLOR = new TintColor(25, 255, 11);
 
     public SenderModule3(Properties properties) {
@@ -16,12 +17,7 @@ public class SenderModule3 extends TargetedModule implements IPositionProvider {
     }
 
     @Override
-    public boolean isDirectional() {
-        return false;
-    }
-
-    @Override
-    protected boolean isRangeLimited() {
+    public boolean isRangeLimited() {
         return false;
     }
 
@@ -41,7 +37,7 @@ public class SenderModule3 extends TargetedModule implements IPositionProvider {
     }
 
     @Override
-    protected boolean badDimension(ResourceLocation dimId) {
-        return ModularRouters.getDimensionBlacklist().test(dimId);
+    public boolean canOperateInDimension(ResourceKey<Level> dimension) {
+        return !ModularRouters.getDimensionBlacklist().test(dimension.location());
     }
 }

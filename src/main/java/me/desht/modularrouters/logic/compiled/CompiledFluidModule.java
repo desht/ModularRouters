@@ -39,10 +39,10 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CompiledFluidModule1 extends CompiledModule {
+public class CompiledFluidModule extends CompiledModule {
     private final FluidModuleSettings settings;
 
-    public CompiledFluidModule1(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledFluidModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.FLUID_SETTINGS.get(), FluidModuleSettings.DEFAULT);
@@ -254,12 +254,12 @@ public class CompiledFluidModule1 extends CompiledModule {
                         .forGetter(FluidModuleSettings::regulateAbsolute)
         ).apply(builder, FluidModuleSettings::new));
 
-        public static StreamCodec<FriendlyByteBuf, CompiledFluidModule1.FluidModuleSettings> STREAM_CODEC = StreamCodec.composite(
+        public static StreamCodec<FriendlyByteBuf, CompiledFluidModule.FluidModuleSettings> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.INT, FluidModuleSettings::maxTransfer,
                 NeoForgeStreamCodecs.enumCodec(TransferDirection.class), FluidModuleSettings::direction,
                 ByteBufCodecs.BOOL, FluidModuleSettings::forceEmpty,
                 ByteBufCodecs.BOOL, FluidModuleSettings::regulateAbsolute,
-                CompiledFluidModule1.FluidModuleSettings::new
+                CompiledFluidModule.FluidModuleSettings::new
         );
     }
 

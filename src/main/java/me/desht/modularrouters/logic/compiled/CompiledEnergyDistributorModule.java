@@ -1,9 +1,7 @@
 package me.desht.modularrouters.logic.compiled;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.module.TargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.world.item.ItemStack;
@@ -20,9 +18,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
 
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        List<ModuleTarget> inRange = getTargets().stream()
-                .filter(target -> target.isSameWorld(router.getLevel()) && router.getBlockPos().distSqr(target.gPos.pos()) <= getRangeSquared())
-                .toList();
+        List<ModuleTarget> inRange = getTargets();
         if (inRange.isEmpty()) return false;
 
         int total = 0;
@@ -45,12 +41,5 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
         }
 
         return total > 0;
-    }
-
-    @Override
-    public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        return router == null ?
-                List.of() :
-                ImmutableList.copyOf(TargetedModule.getTargets(stack, !router.getLevel().isClientSide));
     }
 }

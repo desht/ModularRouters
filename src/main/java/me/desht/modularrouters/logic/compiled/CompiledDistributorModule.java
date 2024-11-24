@@ -7,7 +7,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
-import me.desht.modularrouters.item.module.TargetedModule;
+import me.desht.modularrouters.item.module.ITargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import me.desht.modularrouters.util.BeamData;
@@ -85,7 +85,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        Set<ModuleTarget> t = TargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide);
+        Set<ModuleTarget> t = ITargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide);
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
         l.sort(Comparator.comparingDouble(o -> calcDist(o, router)));

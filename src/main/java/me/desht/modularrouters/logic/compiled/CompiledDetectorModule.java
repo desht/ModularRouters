@@ -23,7 +23,7 @@ public class CompiledDetectorModule extends CompiledModule {
     }
 
     @Override
-    public boolean hasTarget() {
+    public boolean shouldExecute() {
         return true;
     }
 

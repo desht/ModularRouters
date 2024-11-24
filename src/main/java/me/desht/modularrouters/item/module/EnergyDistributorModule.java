@@ -1,19 +1,14 @@
 package me.desht.modularrouters.item.module;
 
-import com.google.common.collect.ImmutableList;
 import me.desht.modularrouters.client.render.area.IPositionProvider;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class EnergyDistributorModule extends TargetedModule implements IRangedModule, IPositionProvider {
+public class EnergyDistributorModule extends ModuleItem implements IRangedModule, IPositionProvider, ITargetedModule {
     private static final TintColor TINT_COLOR = new TintColor(79, 9, 90);
 
     public EnergyDistributorModule(Properties properties) {
@@ -41,17 +36,12 @@ public class EnergyDistributorModule extends TargetedModule implements IRangedMo
     }
 
     @Override
-    public List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
-        return ImmutableList.copyOf(TargetedModule.getTargets(stack, false));
-    }
-
-    @Override
-    protected boolean isValidTarget(UseOnContext ctx) {
+    public boolean isValidTarget(UseOnContext ctx) {
         return ctx.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, ctx.getClickedPos(), ctx.getClickedFace()) != null;
     }
 
     @Override
-    protected int getMaxTargets() {
+    public int getMaxTargets() {
         return 8;
     }
 

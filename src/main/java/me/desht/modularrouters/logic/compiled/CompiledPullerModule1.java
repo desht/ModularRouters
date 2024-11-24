@@ -17,7 +17,7 @@ public class CompiledPullerModule1 extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (!router.isBufferFull()) {
             ModuleTarget target = getTarget();
-            if (target == null || !validateRange(router, getTarget())) {
+            if (target == null) {
                 return false;
             }
             return target.getItemHandler().map(handler -> {

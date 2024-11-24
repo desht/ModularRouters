@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+issueTrackerURL="https://github.com/desht/ModularRouters/issues"
+displayURL="https://minecraft.curseforge.com/projects/modular-routers"
+credits=""
+authors=""
+license="MIT"
+
+[[mods]] #mandatory
+modId="modularrouterstest" #mandatory
+version="1.0" #mandatory
+displayName="Modular Routers Test"
+description="Modular Routers Test"

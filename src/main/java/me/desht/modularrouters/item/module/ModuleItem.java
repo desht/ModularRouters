@@ -16,10 +16,16 @@ import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.MRBaseItem;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.augment.AugmentItem.AugmentCounter;
+import me.desht.modularrouters.item.module.adapter.IItemAdapter;
+import me.desht.modularrouters.item.module.adapter.TargetedModuleAdapter;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.filter.matchers.SimpleItemMatcher;
-import me.desht.modularrouters.logic.settings.*;
+import me.desht.modularrouters.logic.settings.ModuleFlags;
+import me.desht.modularrouters.logic.settings.ModuleSettings;
+import me.desht.modularrouters.logic.settings.ModuleTermination;
+import me.desht.modularrouters.logic.settings.RedstoneBehaviour;
+import me.desht.modularrouters.logic.settings.RelativeDirection;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -37,6 +43,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -53,6 +60,7 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintable {
     private final BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler;
+    private final IItemAdapter adapter;
 
     public ModuleItem(Properties props, BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler) {
         super(props
@@ -62,6 +70,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
                 .component(ModDataComponents.RR_COUNTER, 0)
         );
         this.compiler = compiler;
+
+        this.adapter = this instanceof ITargetedModule tm ? new TargetedModuleAdapter(tm) : new IItemAdapter.NoOp();
     }
 
     public static ModuleSettings getCommonSettings(ItemStack moduleStack) {
@@ -92,7 +102,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public abstract TintColor getItemTint();
 
     public boolean isDirectional() {
-        return true;
+        return !(this instanceof ITargetedModule);
     }
 
     public boolean isOmniDirectional() { return false; }
@@ -147,6 +157,12 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             Component middleClick = Component.literal("Middle-Click").withStyle(ChatFormatting.DARK_AQUA);
             list.add(xlate("modularrouters.itemText.misc.configureHint", key, middleClick).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
+    }
+
+    @Override
+    protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
+        super.addUsageInformation(itemstack, list);
+        adapter.addUsageInformation(itemstack, list);
     }
 
     @Override
@@ -212,6 +228,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         if (energy != 0) {
             list.add(xlate("modularrouters.itemText.misc.energyUsage", colorText(energy, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
         }
+
+        adapter.addSettingsInformation(stack, list);
     }
 
     public abstract int getEnergyCost(ItemStack stack);
@@ -297,6 +315,13 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     }
 
     @Override
+    public InteractionResult useOn(UseOnContext ctx) {
+        var res = adapter.useOn(ctx);
+        if (res != InteractionResult.PASS) return res;
+        return super.useOn(ctx);
+    }
+
+    @Override
     public boolean isFoil(ItemStack stack) {
         ItemStack pick = IPickaxeUser.getPickaxe(stack);
         return !pick.isEmpty() && EnchantmentHelper.hasAnyEnchantments(pick);
@@ -307,7 +332,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     }
 
     public InteractionResult onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
-        return InteractionResult.PASS;
+        return adapter.onSneakRightClick(stack, world, player, hand);
     }
 
     /**
@@ -317,6 +342,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
      * @param player the player holding the module
      */
     public void doModuleValidation(ItemStack stack, ServerPlayer player) {
+        adapter.doModuleValidation(stack, player);
     }
 
     public static class ModuleMenuProvider implements MenuProvider {

@@ -104,7 +104,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     }
 
     @Override
-    public boolean shouldRun(boolean powered, boolean pulsed) {
+    public boolean checkRedstone(boolean powered, boolean pulsed) {
         return true;
     }
 

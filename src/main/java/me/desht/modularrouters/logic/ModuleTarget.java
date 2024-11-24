@@ -2,8 +2,10 @@ package me.desht.modularrouters.logic;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import me.desht.modularrouters.util.BlockUtil;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -54,6 +56,10 @@ public class ModuleTarget {
         this.gPos = gPos;
         this.face = face;
         this.blockTranslationKey = blockTranslationKey;
+    }
+
+    public ModuleTarget(Level world, BlockPos pos, Direction face) {
+        this(MiscUtil.makeGlobalPos(world, pos), face, BlockUtil.getBlockName(world, pos));
     }
 
     public ModuleTarget(GlobalPos gPos, Direction face) {

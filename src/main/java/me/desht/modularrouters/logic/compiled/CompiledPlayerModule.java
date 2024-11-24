@@ -14,6 +14,7 @@ import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +51,7 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public boolean hasTarget() {
+    public boolean shouldExecute() {
         return getPlayer() != null;
     }
 
@@ -75,7 +76,7 @@ public class CompiledPlayerModule extends CompiledModule {
             case FROM_ROUTER -> {
                 if (getFilter().test(bufferStack)) {
                     if (getSection() == Section.ARMOR) {
-                        return insertArmor(router, itemHandler, bufferStack);
+                        return insertArmor(router, player, itemHandler, bufferStack);
                     } else {
                         int nToSend = getItemsPerTick(router);
                         if (getRegulationAmount() > 0) {
@@ -152,8 +153,8 @@ public class CompiledPlayerModule extends CompiledModule {
         return settings.section;
     }
 
-    private boolean insertArmor(ModularRouterBlockEntity router, IItemHandler itemHandler, ItemStack armorStack) {
-        int slot = getSlotForArmorItem(armorStack);
+    private boolean insertArmor(ModularRouterBlockEntity router, Player player, IItemHandler itemHandler, ItemStack armorStack) {
+        int slot = getSlotForArmorItem(player, armorStack);
         if (slot >= 0 && itemHandler.getStackInSlot(slot).isEmpty()) {
             ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
             if (extracted.isEmpty()) {
@@ -166,13 +167,13 @@ public class CompiledPlayerModule extends CompiledModule {
         }
     }
 
-    private int getSlotForArmorItem(ItemStack stack) {
-        return switch (stack.getEquipmentSlot()) {
+    private int getSlotForArmorItem(LivingEntity entity, ItemStack stack) {
+        return switch (entity.getEquipmentSlotForItem(stack)) {
             case HEAD -> 3;
             case CHEST -> 2;
             case LEGS -> 1;
             case FEET -> 0;
-            case null, default -> -1;
+            default -> -1;
         };
     }
 
