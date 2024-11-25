@@ -48,9 +48,9 @@ repositories {
     }
 }
 
-sourceSets {
-    test
-}
+//sourceSets {
+//    test
+//}
 
 group = project.mod_group_id
 
@@ -80,6 +80,15 @@ neoForge {
 
     validateAccessTransformers = true
 
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        "modularrouterstest" {
+            sourceSet sourceSets.test
+        }
+    }
+
     runs {
         // applies to all the run configs below
         configureEach {
@@ -104,6 +113,7 @@ neoForge {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             loadedMods = [mods.modularrouters, mods.modularrouterstest]
+            sourceSet = sourceSets.test
         }
 
         server {
@@ -118,19 +128,14 @@ neoForge {
         gameTestServer {
             type = "gameTestServer"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            loadedMods = [mods.modularrouters, mods.modularrouterstest]
+            sourceSet = sourceSets.test
         }
 
         data {
             data()
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-        }
-    }
-
-    mods {
-        "${mod_id}" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.test
         }
     }
 }
@@ -145,8 +150,6 @@ configurations {
 dependencies {
 //    implementation "net.neoforged:neoforge:${neo_version}"
     localRuntime(testImplementation("net.neoforged:testframework:${neo_version}"))
-
-//    implementation sourceSets.test.output
 
     compileOnly("mcjty.theoneprobe:theoneprobe:${top_version}") {
         transitive = false
