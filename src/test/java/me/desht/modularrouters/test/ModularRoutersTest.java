@@ -8,7 +8,6 @@ import net.neoforged.fml.loading.moddiscovery.locators.UserdevLocator;
 import net.neoforged.testframework.conf.ClientConfiguration;
 import net.neoforged.testframework.conf.Feature;
 import net.neoforged.testframework.conf.FrameworkConfiguration;
-import net.neoforged.testframework.conf.MissingDescriptionAction;
 import net.neoforged.testframework.impl.MutableTestFramework;
 import net.neoforged.testframework.summary.GitHubActionsStepSummaryDumper;
 import org.lwjgl.glfw.GLFW;

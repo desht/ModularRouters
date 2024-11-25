@@ -6,7 +6,11 @@ import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -17,6 +21,10 @@ import net.neoforged.testframework.registration.RegistrationHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class RouterTest {
+    private static final ResourceKey<Item> TEST_ID = ResourceKey.create(Registries.ITEM, ResourceLocation.parse("modularrouterstest:testmodule"));
+
+    private static final Item.Properties TEST_PROPS = new Item.Properties().setId(TEST_ID);
+
     @GameTest
     @TestHolder
     @EmptyTemplate
@@ -25,7 +33,7 @@ public class RouterTest {
                 .register("counter", () -> AttachmentType.builder(() -> 0)
                         .serialize(Codec.INT).build());
 
-        var module = reg.items().register("test_module", () -> new ModuleItem(ModItems.moduleProps(), (r, s) -> new CompiledModule(r, s) {
+        var module = reg.items().register("test_module", () -> new ModuleItem(TEST_PROPS, (r, s) -> new CompiledModule(r, s) {
             @Override
             public boolean execute(@NotNull ModularRouterBlockEntity router) {
                 router.setData(counter, router.getData(counter.get()) + 1);

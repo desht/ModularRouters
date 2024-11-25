@@ -5,7 +5,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.165'
+    id 'net.neoforged.moddev' version '2.0.47-beta'
     id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
 
@@ -14,15 +14,10 @@ ext.isAlpha = ext.releaseTag.contains("alpha")
 ext.isBeta = ext.releaseTag.contains("beta")
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
 
-// All jar files from this folder will be added automatically as runtime-only mod dependencies
-def extraModsDir = "extra-mods-${minecraft_version}"
+version = mod_version
 
 repositories {
     mavenLocal()
-    flatDir {
-        name "extra-mods"
-        dir file(extraModsDir)
-    }
     maven {
         name "K-4u Mod maven"
         url "https://modmaven.dev/"
@@ -54,11 +49,7 @@ repositories {
 }
 
 sourceSets {
-    test {
-        runs {
-            modIdentifier 'modularrouterstest'
-        }
-    }
+    test
 }
 
 group = project.mod_group_id
@@ -77,61 +68,85 @@ java {
     }
 }
 
-minecraft {
-    accessTransformers.file(project.file('src/main/resources/META-INF/accesstransformer.cfg'))
-}
+neoForge {
+    version = "${neo_version}"
 
-runs {
-    // applies to all the run configs below
-    configureEach {
-        // Recommended logging data for a userdev environment
-        // The markers can be added/remove as needed separated by commas.
-        // "SCAN": For mods scan.
-        // "REGISTRIES": For firing of registry events.
-        // "REGISTRYDUMP": For getting the contents of all registries.
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-        // Recommended logging level for the console
-        // You can set various levels here.
-        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        jvmArguments.addAll '-Xmx4G'
-
-        modSource project.sourceSets.test
-        modSource project.sourceSets.main
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
     }
 
-    client {
-        systemProperty 'neoforge.enableGameTest', 'true'
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    addModdingDependenciesTo(sourceSets.test)
+
+    validateAccessTransformers = true
+
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            systemProperty 'forge.logging.console.level', 'debug'
+
+            jvmArguments.addAll '-Xmx4G'
+        }
+
+        client {
+            client()
+            systemProperty 'neoforge.enableGameTest', 'true'
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            loadedMods = [mods.modularrouters, mods.modularrouterstest]
+        }
+
+        server {
+            server()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            programArgument '--nogui'
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            data()
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
     }
 
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        argument '--nogui'
-    }
-
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.test
+        }
     }
 }
 
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
-    implementation "net.neoforged:neoforge:${neo_version}"
+//    implementation "net.neoforged:neoforge:${neo_version}"
     localRuntime(testImplementation("net.neoforged:testframework:${neo_version}"))
+
+//    implementation sourceSets.test.output
 
     compileOnly("mcjty.theoneprobe:theoneprobe:${top_version}") {
         transitive = false
@@ -150,14 +165,14 @@ dependencies {
 //    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
-    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
-        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
-        def versionSep = basename.lastIndexOf('-')
-        assert versionSep != -1
-        def artifactId = basename.substring(0, versionSep)
-        def version = basename.substring(versionSep + 1)
-        runtimeOnly "extra-mods:$artifactId:$version"
-    }
+//    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
+//        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
+//        def versionSep = basename.lastIndexOf('-')
+//        assert versionSep != -1
+//        def artifactId = basename.substring(0, versionSep)
+//        def version = basename.substring(versionSep + 1)
+//        runtimeOnly "extra-mods:$artifactId:$version"
+//    }
 }
 
 tasks.withType(ProcessResources).configureEach {
