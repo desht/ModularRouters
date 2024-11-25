@@ -17,8 +17,8 @@ public sealed interface IItemAdapter permits TargetedModuleAdapter, IItemAdapter
         return InteractionResult.PASS;
     }
 
-    default InteractionResultHolder<ItemStack> onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
-        return InteractionResultHolder.pass(stack);
+    default InteractionResult onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
+        return InteractionResult.PASS;
     }
 
     default void doModuleValidation(ItemStack stack, ServerPlayer player) {

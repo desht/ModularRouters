@@ -20,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -49,14 +48,15 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
+    public InteractionResult onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
         if (!world.isClientSide && !ITargetedModule.getTargets(stack, false).isEmpty() && targeted.getMaxTargets() == 1) {
             ITargetedModule.setTargets(stack, Set.of());
             world.playSound(null, player.blockPosition(), ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
                     ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.1f);
             player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW), true);
+            return InteractionResult.SUCCESS_SERVER;
         }
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+        return InteractionResult.SUCCESS;
     }
 
     private void handleSingleTarget(ItemStack stack, Player player, Level world, BlockPos pos, Direction face) {
