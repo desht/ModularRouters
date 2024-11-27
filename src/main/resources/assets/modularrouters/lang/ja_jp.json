@@ -294,6 +294,7 @@
    "modularrouters.itemText.misc.match_damage" : "ダメージ",
    "modularrouters.itemText.misc.match_components" : "コンポーネント",
    "modularrouters.itemText.misc.match_item_tags" : "タグ",
+   "modularrouters.itemText.misc.middle_click" : "中クリック",
    "modularrouters.itemText.misc.itemList" : "アイテム一覧",
    "modularrouters.itemText.misc.matchAll" : "全て",
    "modularrouters.itemText.misc.matchAny" : "どれか",
