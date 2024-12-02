@@ -26,8 +26,8 @@ public class ActivatorModuleTest {
     @TestHolder
     @EmptyTemplate(floor = true)
     static void activatorTestBlock(final RouterTestHelper helper) {
-        var router = helper.placeRouter(0, 2, 1, Direction.EAST);
-        helper.setBlock(2, 2, 1, Blocks.LEVER);
+        var router = helper.placeRouter(0, 1, 1, Direction.EAST);
+        helper.setBlock(2, 1, 1, Blocks.LEVER);
 
         ItemStack activator = ModItems.ACTIVATOR_MODULE.toStack();
         activator.set(ModDataComponents.COMMON_MODULE_SETTINGS, ModuleSettingsBuilder.create().facing(RelativeDirection.FRONT).build());
@@ -35,7 +35,9 @@ public class ActivatorModuleTest {
 
         helper.startSequence()
                 .thenIdle(router.routerTicks(1))
-                .thenExecute(() -> helper.assertBlockProperty(new BlockPos(2, 2, 1), LeverBlock.POWERED, true))
+                .thenExecute(() -> helper.assertBlockProperty(new BlockPos(2, 1, 1), LeverBlock.POWERED, true))
+                .thenIdle(router.routerTicks(1))
+                .thenExecute(() -> helper.assertBlockProperty(new BlockPos(2, 1, 1), LeverBlock.POWERED, false))
                 .thenSucceed();
     }
 
@@ -43,8 +45,8 @@ public class ActivatorModuleTest {
     @TestHolder
     @EmptyTemplate(floor = true)
     static void activatorTestItem(final RouterTestHelper helper) {
-        var router = helper.placeRouter(1, 2, 1, Direction.EAST);
-        helper.setBlock(2, 2, 1, Blocks.AIR);
+        var router = helper.placeRouter(1, 1, 1, Direction.EAST);
+        helper.setBlock(2, 1, 1, Blocks.AIR);
 
         ItemStack activator = ModItems.ACTIVATOR_MODULE.toStack();
         activator.set(ModDataComponents.COMMON_MODULE_SETTINGS, ModuleSettingsBuilder.create().facing(RelativeDirection.FRONT).build());
@@ -56,7 +58,7 @@ public class ActivatorModuleTest {
 
         helper.startSequence()
                 .thenIdle(router.routerTicks(1))
-                .thenExecute(() -> helper.assertBlockPresent(Blocks.FIRE, 2,2 , 1))
+                .thenExecute(() -> helper.assertBlockPresent(Blocks.FIRE, 2,1 , 1))
                 .thenSucceed();
     }
 
