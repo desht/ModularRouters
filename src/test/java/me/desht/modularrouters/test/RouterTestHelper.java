@@ -1,5 +1,6 @@
 package me.desht.modularrouters.test;
 
+import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModBlocks;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.testframework.gametest.ExtendedGameTestHelper;
 
 import java.util.List;
@@ -37,7 +39,11 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
     }
 
     public RouterWrapper placeRouter(int x, int y, int z) {
-        setBlock(x, y, z, ModBlocks.MODULAR_ROUTER.get());
+        return placeRouter(x, y, z, Direction.NORTH);
+    }
+
+    public RouterWrapper placeRouter(int x, int y, int z, Direction routerFacing) {
+        setBlock(x, y, z, ModBlocks.MODULAR_ROUTER.get().defaultBlockState().setValue(ModularRouterBlock.FACING, routerFacing));
         var router = getBlockEntity(x, y, z, ModularRouterBlockEntity.class);
         addEndListener(success -> {
             if (success) {
@@ -88,13 +94,7 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
 
         public ItemStack addDirectionalModule(Supplier<? extends Item> module, RelativeDirection direction) {
             var stack = module.get().getDefaultInstance();
-            stack.set(ModDataComponents.COMMON_MODULE_SETTINGS, new ModuleSettings(
-                    ModuleFlags.DEFAULT,
-                    direction,
-                    ModuleTermination.NONE,
-                    RedstoneBehaviour.ALWAYS,
-                    0
-            ));
+            stack.set(ModDataComponents.COMMON_MODULE_SETTINGS, ModuleSettingsBuilder.create().facing(direction).build());
             return addModule(stack);
         }
 
@@ -107,13 +107,13 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
         }
 
         public ItemStack addModule(ItemStack module) {
-            router.getModules().insertItem(0, module, false);
+            ItemHandlerHelper.insertItem(router.getModules(), module, false);
             return module;
         }
 
-        public ItemStack addUpgrade(ItemStack module) {
-            router.getUpgrades().insertItem(0, module, false);
-            return module;
+        public ItemStack addUpgrade(ItemStack upgrade) {
+            ItemHandlerHelper.insertItem(router.getUpgrades(), upgrade, false);
+            return upgrade;
         }
 
         public ItemStack insertBuffer(ItemStack stack) {
@@ -173,7 +173,10 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
         private RedstoneBehaviour redstoneBehaviour;
         private int regulatorAmount;
 
-        public ModuleSettingsBuilder() {}
+        public static ModuleSettingsBuilder create() {
+            return new ModuleSettingsBuilder(ModuleSettings.DEFAULT);
+        }
+
         public ModuleSettingsBuilder(ModuleSettings settings) {
             this.flags = settings.flags();
             this.facing = settings.facing();
@@ -184,6 +187,26 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
 
         public ModuleSettingsBuilder facing(RelativeDirection direction) {
             this.facing = direction;
+            return this;
+        }
+
+        public ModuleSettingsBuilder flags(ModuleFlags moduleFlags) {
+            this.flags = moduleFlags;
+            return this;
+        }
+
+        public ModuleSettingsBuilder termination(ModuleTermination termination) {
+            this.termination = termination;
+            return this;
+        }
+
+        public ModuleSettingsBuilder redstone(RedstoneBehaviour redstoneBehaviour) {
+            this.redstoneBehaviour = redstoneBehaviour;
+            return this;
+        }
+
+        public ModuleSettingsBuilder regulated(int amount) {
+            this.regulatorAmount = amount;
             return this;
         }
 
