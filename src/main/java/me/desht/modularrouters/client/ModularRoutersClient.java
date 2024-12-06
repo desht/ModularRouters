@@ -31,7 +31,6 @@ import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = ModularRouters.MODID, dist = Dist.CLIENT)
 public class ModularRoutersClient {
-
     public ModularRoutersClient(ModContainer container, IEventBus modBus) {
         modBus.addListener(this::onClientSetup);
         modBus.addListener(this::registerRenderers);
@@ -64,6 +63,7 @@ public class ModularRoutersClient {
         event.register(ModMenuTypes.ACTIVATOR_MENU.get(), ActivatorModuleScreen::new);
         event.register(ModMenuTypes.BREAKER_MENU.get(), BreakerModuleScreen::new);
         event.register(ModMenuTypes.DETECTOR_MENU.get(), DetectorModuleScreen::new);
+        event.register(ModMenuTypes.ENERGY_DISTRIBUTOR_MENU.get(), EnergyDistributorModuleScreen::new);
         event.register(ModMenuTypes.DISTRIBUTOR_MENU.get(), DistributorModuleScreen::new);
         event.register(ModMenuTypes.EXTRUDER2_MENU.get(), ExtruderModule2Screen::new);
         event.register(ModMenuTypes.FLINGER_MENU.get(), FlingerModuleScreen::new);

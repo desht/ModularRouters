@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 
 public class CompiledDistributorModule extends CompiledSenderModule2 {
-    private final DistributorSettings settings;
-    private int nextTarget;
+    protected final DistributorSettings settings;
+    protected int nextTarget;
 
     public CompiledDistributorModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
@@ -42,7 +42,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return isPulling() ? executePull(router) : super.execute(router);
     }
 
-    private boolean executePull(ModularRouterBlockEntity router) {
+    protected boolean executePull(ModularRouterBlockEntity router) {
         if (router.isBufferFull()) return false;
 
         ModuleTarget tgt = getEffectiveTarget(router);
@@ -57,6 +57,10 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
             }
             return false;
         }).orElse(false);
+    }
+
+    protected boolean executePush(ModularRouterBlockEntity router) {
+        return super.execute(router);
     }
 
     public boolean isPulling() {
