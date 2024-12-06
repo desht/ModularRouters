@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client.gui.module;
 
+import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.widgets.button.ItemStackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
@@ -38,9 +39,9 @@ public class DistributorModuleScreen extends ModuleScreen {
 
         CompiledDistributorModule cdm = new CompiledDistributorModule(null, moduleItemStack);
 
-        addRenderableWidget(new TooltipButton(leftPos + 127, topPos + 23));
-        addRenderableWidget(sb = new StrategyButton(leftPos + 147, topPos + 23, 16, 16, cdm.getDistributionStrategy()));
-        addRenderableWidget(db = new DirectionButton(leftPos + 147, topPos + 43, cdm.isPulling()));
+        addRenderableWidget(new TooltipButton(leftPos + 127, topPos + 23, ModItems.DISTRIBUTOR_MODULE.toStack()));
+        addRenderableWidget(sb = new StrategyButton(leftPos + 147, topPos + 23, 16, 16, cdm.getDistributionStrategy(), this));
+        addRenderableWidget(db = new DirectionButton(leftPos + 147, topPos + 43, cdm.isPulling(), this));
 
         getMouseOverHelp().addHelpRegion(leftPos + 125, topPos + 21, leftPos + 165, topPos + 41,
                 xlate("modularrouters.guiText.popup.distributor.strategy").withStyle(ChatFormatting.YELLOW));
@@ -65,9 +66,9 @@ public class DistributorModuleScreen extends ModuleScreen {
         graphics.renderItem(ROUTER_STACK, leftPos + 127, topPos + 43);
     }
 
-    private class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
-        StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal) {
-            super(x, y, width, height, initialVal, DistributorModuleScreen.this);
+    static class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {
+        StrategyButton(int x, int y, int width, int height, DistributionStrategy initialVal, ISendToServer sendToServer) {
+            super(x, y, width, height, initialVal, sendToServer);
         }
 
         @Override
@@ -76,12 +77,12 @@ public class DistributorModuleScreen extends ModuleScreen {
         }
     }
 
-    private class DirectionButton extends TexturedToggleButton {
+    static class DirectionButton extends TexturedToggleButton {
         private static final XYPoint TEXTURE_XY = new XYPoint(176, 16);
         private static final XYPoint TEXTURE_XY_TOGGLED = new XYPoint(160, 16);
 
-        public DirectionButton(int x, int y, boolean initialVal) {
-            super(x, y, 16, 16, initialVal, DistributorModuleScreen.this);
+        public DirectionButton(int x, int y, boolean initialVal, ISendToServer sender) {
+            super(x, y, 16, 16, initialVal, sender);
 
             setTooltips(xlate("modularrouters.itemText.transfer_direction.from_router"),xlate("modularrouters.itemText.transfer_direction.to_router"));
         }
@@ -92,11 +93,11 @@ public class DistributorModuleScreen extends ModuleScreen {
         }
     }
 
-    private static class TooltipButton extends ItemStackButton {
+    static class TooltipButton extends ItemStackButton {
         private static final XYPoint TEXTURE_XY = new XYPoint(176, 16);
 
-        TooltipButton(int x, int y) {
-            super(x, y, 16, 16, new ItemStack(ModItems.DISTRIBUTOR_MODULE.get()), true, p -> {});
+        TooltipButton(int x, int y, ItemStack stack) {
+            super(x, y, 16, 16, stack, true, p -> {});
             setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.distributor.strategy")));
         }
 

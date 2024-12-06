@@ -27,6 +27,8 @@ public class ModMenuTypes {
             = register("module_detector", ModuleMenuFactories::createDetectorMenu);
     public static final Supplier<MenuType<ModuleMenu>> DISTRIBUTOR_MENU
             = register("module_distributor", ModuleMenuFactories::createDistributorMenu);
+    public static final Supplier<MenuType<ModuleMenu>> ENERGY_DISTRIBUTOR_MENU
+            = register("moduleenergy_distributor", ModuleMenuFactories::createEnergyDistributorMenu);
     public static final Supplier<MenuType<Extruder2ModuleMenu>> EXTRUDER2_MENU
             = register("module_extruder_2", ModuleMenuFactories::createExtruder2Menu);
     public static final Supplier<MenuType<ModuleMenu>> FLINGER_MENU

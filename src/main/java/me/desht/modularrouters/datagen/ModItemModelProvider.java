@@ -38,17 +38,17 @@ public class ModItemModelProvider extends ItemModelProvider {
             String name = registryObject.getId().getPath();
             switch (registryObject.get()) {
                 case ModuleItem moduleItem -> {
-                    if (moduleItem == ModItems.DISTRIBUTOR_MODULE.get()) {
+                    if (moduleItem == ModItems.DISTRIBUTOR_MODULE.get() || moduleItem == ModItems.ENERGY_DISTRIBUTOR_MODULE.get()) {
                         // special case; distributor module has a model override based on its mode
-                        ModelFile distributorPull = simpleItemVariant(ModItems.DISTRIBUTOR_MODULE, "_pull",
+                        ModelFile pullVariant = simpleItemVariant(registryObject, "_pull",
                                 modid("item/module/module_layer0"),
                                 modid("item/module/module_layer1"),
-                                modid("item/module/distributor_module_pull"));
-                        simpleItem(ModItems.DISTRIBUTOR_MODULE,
+                                modid("item/module/%s_pull", name));
+                        simpleItem(registryObject,
                                 modid("item/module/module_layer0"),
                                 modid("item/module/module_layer1"),
-                                modid("item/module/distributor_module"))
-                                .override().predicate(modLoc("mode"), 0.5f).model(distributorPull);
+                                modid("item/module/" + name))
+                                .override().predicate(modLoc("mode"), 0.5f).model(pullVariant);
                     } else {
                         simpleItem(registryObject,
                                 modid("item/module/module_layer0"),

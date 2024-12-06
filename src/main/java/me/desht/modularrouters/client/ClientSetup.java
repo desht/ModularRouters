@@ -31,6 +31,8 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.List;
+
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 @EventBusSubscriber(modid = ModularRouters.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -81,6 +83,7 @@ public class ClientSetup {
         event.register(ModMenuTypes.ACTIVATOR_MENU.get(), ActivatorModuleScreen::new);
         event.register(ModMenuTypes.BREAKER_MENU.get(), BreakerModuleScreen::new);
         event.register(ModMenuTypes.DETECTOR_MENU.get(), DetectorModuleScreen::new);
+        event.register(ModMenuTypes.ENERGY_DISTRIBUTOR_MENU.get(), EnergyDistributorModuleScreen::new);
         event.register(ModMenuTypes.DISTRIBUTOR_MENU.get(), DistributorModuleScreen::new);
         event.register(ModMenuTypes.EXTRUDER2_MENU.get(), ExtruderModule2Screen::new);
         event.register(ModMenuTypes.FLINGER_MENU.get(), FlingerModuleScreen::new);
@@ -94,11 +97,13 @@ public class ClientSetup {
     }
 
     private static void registerItemModelOverrides() {
-        ItemProperties.register(ModItems.DISTRIBUTOR_MODULE.get(), RL("mode"), (stack, world, entity, n) -> {
-            if (entity != null) {
-                return stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, DistributorSettings.DEFAULT).isPulling() ? 1f : 0f;
-            }
-            return 0f;
-        });
+        for (var ro : List.of(ModItems.DISTRIBUTOR_MODULE, ModItems.ENERGY_DISTRIBUTOR_MODULE)) {
+            ItemProperties.register(ro.get(), RL("mode"), (stack, world, entity, n) -> {
+                if (entity != null) {
+                    return stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, DistributorSettings.DEFAULT).isPulling() ? 1f : 0f;
+                }
+                return 0f;
+            });
+        }
     }
 }

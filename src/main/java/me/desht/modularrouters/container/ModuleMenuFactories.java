@@ -21,6 +21,10 @@ public class ModuleMenuFactories {
         return new ModuleMenu(ModMenuTypes.DISTRIBUTOR_MENU.get(), windowId, inv, extra);
     }
 
+    public static ModuleMenu createEnergyDistributorMenu(int windowId, Inventory inv, FriendlyByteBuf extra) {
+        return new ModuleMenu(ModMenuTypes.ENERGY_DISTRIBUTOR_MENU.get(), windowId, inv, extra);
+    }
+
     public static Extruder2ModuleMenu createExtruder2Menu(int windowId, Inventory inv, FriendlyByteBuf extra) {
         return new Extruder2ModuleMenu(windowId, inv, extra);
     }
