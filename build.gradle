@@ -14,15 +14,8 @@ ext.isAlpha = ext.releaseTag.contains("alpha")
 ext.isBeta = ext.releaseTag.contains("beta")
 def relType = ext.isAlpha ? "alpha" : (ext.isBeta ? "beta" : "release")
 
-// All jar files from this folder will be added automatically as runtime-only mod dependencies
-def extraModsDir = "extra-mods-${minecraft_version}"
-
 repositories {
     mavenLocal()
-    flatDir {
-        name "extra-mods"
-        dir file(extraModsDir)
-    }
     maven {
         name "K-4u Mod maven"
         url "https://modmaven.dev/"
@@ -110,7 +103,7 @@ runs {
 
     server {
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+        argument '--nogui'
     }
 
     // This run config launches GameTestServer and runs all registered gametests, then exits.
@@ -122,7 +115,7 @@ runs {
 
     data {
         // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -150,16 +143,6 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
     runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-
-    // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
-    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
-        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
-        def versionSep = basename.lastIndexOf('-')
-        assert versionSep != -1
-        def artifactId = basename.substring(0, versionSep)
-        def version = basename.substring(versionSep + 1)
-        runtimeOnly "extra-mods:$artifactId:$version"
-    }
 }
 
 tasks.withType(ProcessResources).configureEach {
