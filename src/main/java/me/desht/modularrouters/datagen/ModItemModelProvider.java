@@ -1,6 +1,7 @@
 package me.desht.modularrouters.datagen;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
@@ -11,10 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 
 import javax.annotation.Nonnull;
 
@@ -39,22 +38,15 @@ public class ModItemModelProvider extends ItemModelProvider {
             String name = registryObject.getId().getPath();
             switch (registryObject.get()) {
                 case ModuleItem moduleItem -> {
-                    if (moduleItem == ModItems.DISTRIBUTOR_MODULE.get() || moduleItem == ModItems.ENERGY_DISTRIBUTOR_MODULE.get()) {
-                        // special case; distributor module has a model override based on its mode
-                        ModelFile pullVariant = simpleItemVariant(registryObject, "_pull",
+                    simpleItem(registryObject,
+                            modid("item/module/module_layer0"),
+                            modid("item/module/module_layer1"),
+                            modid("item/module/" + name));
+                    if (moduleItem.getDefaultInstance().has(ModDataComponents.DISTRIBUTOR_SETTINGS)) {
+                        simpleItemVariant(registryObject, "_pull",
                                 modid("item/module/module_layer0"),
                                 modid("item/module/module_layer1"),
                                 modid("item/module/%s_pull", name));
-                        simpleItem(registryObject,
-                                modid("item/module/module_layer0"),
-                                modid("item/module/module_layer1"),
-                                modid("item/module/" + name))
-                                .override().predicate(modLoc("mode"), 0.5f).model(pullVariant);
-                    } else {
-                        simpleItem(registryObject,
-                                modid("item/module/module_layer0"),
-                                modid("item/module/module_layer1"),
-                                modid("item/module/" + name));
                     }
                 }
                 case UpgradeItem ignored -> simpleItem(registryObject,
@@ -65,8 +57,7 @@ public class ModItemModelProvider extends ItemModelProvider {
                         modid("item/augment/augment_layer0"),
                         modid("item/augment/" + name));
                 case SmartFilterItem ignored -> simpleItem(registryObject, modid("item/filter/" + name));
-                default -> {
-                }
+                default -> {}
             }
         }
 
@@ -90,7 +81,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         return builder;
     }
 
-    private ItemModelBuilder simpleItemVariant(DeferredItem<? extends Item> item, String suffix, String... textures) {
+    private ItemModelBuilder simpleItemVariant(DeferredHolder<Item, ? extends Item> item, String suffix, String... textures) {
         ItemModelBuilder builder = withExistingParent(item.getId().getPath() + suffix, GENERATED);
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);

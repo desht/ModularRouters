@@ -1,18 +1,51 @@
 {
-   "model" : {
-      "type" : "minecraft:model",
-      "model" : "modularrouters:item/energy_distributor_module",
-      "tints" : [
+   "model": {
+      "type": "minecraft:select",
+      "property": "modularrouters:distributor_mode",
+      "fallback": {
+         "type": "minecraft:model",
+         "model": "modularrouters:item/energy_distributor_module"
+      },
+      "cases": [
          {
-            "value" : 16777215,
-            "type" : "minecraft:constant"
+            "when": "from_router",
+            "model": {
+               "type": "minecraft:model",
+               "model": "modularrouters:item/energy_distributor_module",
+               "tints": [
+                  {
+                     "type": "minecraft:constant",
+                     "value": 16777215
+                  },
+                  {
+                     "type": "modularrouters:module_tint"
+                  },
+                  {
+                     "type": "minecraft:constant",
+                     "value": 16777215
+                  }
+               ]
+            }
          },
          {
-            "type" : "modularrouters:module_tint"
-         },
-         {
-            "type" : "minecraft:constant",
-            "value" : 16777215
+            "when": "to_router",
+            "model": {
+               "type": "minecraft:model",
+               "model": "modularrouters:item/energy_distributor_module_pull",
+               "tints": [
+                  {
+                     "type": "minecraft:constant",
+                     "value": 16777215
+                  },
+                  {
+                     "type": "modularrouters:module_tint"
+                  },
+                  {
+                     "type": "minecraft:constant",
+                     "value": 16777215
+                  }
+               ]
+            }
          }
       ]
    }

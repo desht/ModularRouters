@@ -1,7 +1,6 @@
 package me.desht.modularrouters.logic.settings;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.util.StringRepresentable;
 

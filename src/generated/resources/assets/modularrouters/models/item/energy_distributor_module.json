@@ -1,13 +1,5 @@
 {
   "parent": "minecraft:item/generated",
-  "overrides": [
-    {
-      "model": "modularrouters:item/energy_distributor_module_pull",
-      "predicate": {
-        "modularrouters:mode": 0.5
-      }
-    }
-  ],
   "textures": {
     "layer0": "modularrouters:item/module/module_layer0",
     "layer1": "modularrouters:item/module/module_layer1",

@@ -3,7 +3,6 @@ package me.desht.modularrouters.client.model;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
-//import net.minecraft.client.renderer.block.model.BakedOverrides;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
