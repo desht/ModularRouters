@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.api.MRCapabilities;
 import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.ClientSetup;
+import me.desht.modularrouters.client.KeyBindings;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.container.ModuleMenu;
@@ -152,8 +152,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         super.appendHoverText(stack, context, list, flag);
 
-        if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot && !ClientUtil.isKeyDown(ClientSetup.keybindModuleInfo)) {
-            Component key = ClientSetup.keybindConfigure.getKey().getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
+        if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot && !ClientUtil.isKeyDown(KeyBindings.keybindModuleInfo)) {
+            Component key = KeyBindings.keybindConfigure.getKey().getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
             Component middleClick = xlate("modularrouters.itemText.misc.middle_click").withStyle(ChatFormatting.DARK_AQUA);
             list.add(xlate("modularrouters.itemText.misc.configureHint", key, middleClick).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }

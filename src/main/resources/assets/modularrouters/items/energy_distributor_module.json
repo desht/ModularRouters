@@ -1,0 +1,19 @@
+{
+   "model" : {
+      "type" : "minecraft:model",
+      "model" : "modularrouters:item/energy_distributor_module",
+      "tints" : [
+         {
+            "value" : 16777215,
+            "type" : "minecraft:constant"
+         },
+         {
+            "type" : "modularrouters:module_tint"
+         },
+         {
+            "type" : "minecraft:constant",
+            "value" : 16777215
+         }
+      ]
+   }
+}

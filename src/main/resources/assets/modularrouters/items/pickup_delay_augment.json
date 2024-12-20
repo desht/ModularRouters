@@ -1,0 +1,6 @@
+{
+   "model" : {
+      "type" : "minecraft:model",
+      "model" : "modularrouters:item/pickup_delay_augment"
+   }
+}

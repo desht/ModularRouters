@@ -1,0 +1,6 @@
+{
+   "model" : {
+      "model" : "modularrouters:item/regex_filter",
+      "type" : "minecraft:model"
+   }
+}

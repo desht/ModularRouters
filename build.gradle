@@ -5,8 +5,8 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.47-beta'
-    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+    id 'net.neoforged.moddev' version '2.0.52-beta'
+    id "me.modmuss50.mod-publish-plugin" version "0.7.2"
 }
 
 ext.releaseTag = providers.environmentVariable("TAG").orElse("").toString()
@@ -128,7 +128,7 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }

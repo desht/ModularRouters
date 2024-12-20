@@ -1,80 +1,63 @@
 package me.desht.modularrouters.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
 import me.desht.modularrouters.client.gui.filter.*;
 import me.desht.modularrouters.client.gui.module.*;
+import me.desht.modularrouters.client.item.DistributorModeProperty;
+import me.desht.modularrouters.client.item.ModuleTintSource;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterBER;
 import me.desht.modularrouters.core.ModBlockEntities;
-import me.desht.modularrouters.core.ModDataComponents;
+import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
-import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributorSettings;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
-import org.lwjgl.glfw.GLFW;
 
-import static me.desht.modularrouters.util.MiscUtil.RL;
+@Mod(value = ModularRouters.MODID, dist = Dist.CLIENT)
+public class ModularRoutersClient {
 
-@EventBusSubscriber(modid = ModularRouters.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-public class ClientSetup {
-    public static KeyMapping keybindConfigure;
-    public static KeyMapping keybindModuleInfo;
+    public ModularRoutersClient(ModContainer container, IEventBus modBus) {
+        modBus.addListener(this::onClientSetup);
+        modBus.addListener(this::registerRenderers);
+        modBus.addListener(this::registerScreens);
+        modBus.addListener(this::registerItemTintSources);
+        modBus.addListener(this::registerItemModelProperties);
+        modBus.addListener(this::registerBlockColorHandlers);
+        modBus.addListener(KeyBindings::registerKeyBindings);
+        modBus.addListener(ModelBakeEventHandler::onModelBake);
 
-    public static void onModConstruction(ModContainer modContainer, IEventBus modBus) {
-        modBus.register(ModelBakeEventHandler.class);
         NeoForge.EVENT_BUS.register(ModuleTargetRenderer.class);
         NeoForge.EVENT_BUS.register(MouseOverHelp.class);
 
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            // non-thread-safe work here
-            registerItemModelOverrides();
-        });
-
+    private void onClientSetup(FMLClientSetupEvent event) {
         FilterScreenFactory.registerGuiHandler(ModItems.INSPECTION_FILTER.get(), InspectionFilterScreen::new);
         FilterScreenFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), RegexFilterScreen::new);
     }
 
-    @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.MODULAR_ROUTER.get(), ModularRouterBER::new);
     }
 
-    @SubscribeEvent
-    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
-        keybindConfigure = new KeyMapping("key.modularrouters.configure", KeyConflictContext.GUI,
-                InputConstants.getKey(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
-        keybindModuleInfo = new KeyMapping("key.modularrouters.moduleInfo", KeyConflictContext.GUI,
-                InputConstants.getKey(GLFW.GLFW_KEY_I, -1), "key.modularrouters.category");
-
-        event.register(keybindConfigure);
-        event.register(keybindModuleInfo);
-    }
-
-    @SubscribeEvent
-    public static void registerScreens(RegisterMenuScreensEvent event) {
+    private void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.ROUTER_MENU.get(), ModularRouterScreen::new);
 
         event.register(ModMenuTypes.BASE_MODULE_MENU.get(), ModuleScreen::new);
@@ -93,12 +76,23 @@ public class ClientSetup {
         event.register(ModMenuTypes.TAG_FILTER_MENU.get(), TagFilterScreen::new);
     }
 
-    private static void registerItemModelOverrides() {
-        ItemProperties.register(ModItems.DISTRIBUTOR_MODULE.get(), RL("mode"), (stack, world, entity, n) -> {
-            if (entity != null) {
-                return stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, DistributorSettings.DEFAULT).isPulling() ? 1f : 0f;
+    private void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(ModuleTintSource.ID, ModuleTintSource.CODEC);
+    }
+
+    private void registerItemModelProperties(RegisterSelectItemModelPropertyEvent event) {
+        event.register(DistributorModeProperty.ID, DistributorModeProperty.TYPE);
+    }
+
+    private void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
+        event.register((state, reader, pos, tintIndex) -> {
+            if (pos == null || reader == null) return -1;
+            BlockEntity te = reader.getBlockEntity(pos);
+            if (te instanceof ICamouflageable camouflageable && camouflageable.getCamouflage() != null) {
+                return event.getBlockColors().getColor(camouflageable.getCamouflage(), te.getLevel(), pos, tintIndex);
+            } else {
+                return 0xffffff;
             }
-            return 0f;
-        });
+        }, ModBlocks.MODULAR_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
     }
 }

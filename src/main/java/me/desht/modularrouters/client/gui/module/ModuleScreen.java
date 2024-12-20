@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui.module;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.ClientSetup;
+import me.desht.modularrouters.client.KeyBindings;
 import me.desht.modularrouters.client.gui.IMouseOverHelpProvider;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.client.gui.MouseOverHelp;
@@ -285,7 +285,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
             PacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()));
             return true;
-        } else if (ClientSetup.keybindConfigure.getKey().getValue() == keyCode) {
+        } else if (KeyBindings.keybindConfigure.getKey().getValue() == keyCode) {
             // trying to configure an installed smart filter, we're done
             return handleFilterConfig();
         } else {

@@ -1,0 +1,6 @@
+{
+   "model" : {
+      "model" : "modularrouters:item/regulator_augment",
+      "type" : "minecraft:model"
+   }
+}

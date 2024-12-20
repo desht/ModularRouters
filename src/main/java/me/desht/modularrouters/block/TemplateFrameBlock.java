@@ -4,6 +4,7 @@ import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.block.tile.TemplateFrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -22,10 +23,10 @@ public class TemplateFrameBlock extends CamouflageableBlock implements EntityBlo
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         ICamouflageable camo = getCamoState(level, pos);
         if (camo == null) {
-            return super.getCloneItemStack(level, pos, state);
+            return super.getCloneItemStack(level, pos, state, includeData, player);
         }
         ItemStack stack = new ItemStack(camo.getCamouflage().getBlock().asItem());
         stack.set(DataComponents.ITEM_NAME, stack.getHoverName().copy().append("..?"));

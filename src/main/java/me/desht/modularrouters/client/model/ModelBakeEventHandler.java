@@ -14,7 +14,6 @@ import java.util.function.Function;
 public class ModelBakeEventHandler {
     private ModelBakeEventHandler() {}
 
-    @SubscribeEvent
     public static void onModelBake(ModelEvent.ModifyBakingResult event) {
         override(event, ModBlocks.MODULAR_ROUTER.get(), CamouflagingModel.RouterModel::new);
         override(event, ModBlocks.TEMPLATE_FRAME.get(), CamouflagingModel.TemplateFrameModel::new);
@@ -23,9 +22,9 @@ public class ModelBakeEventHandler {
     private static void override(ModelEvent.ModifyBakingResult event, Block block, Function<BakedModel, CamouflagingModel> f) {
         for (BlockState state : block.getStateDefinition().getPossibleStates()) {
             ModelResourceLocation loc = BlockModelShaper.stateToModelLocation(state);
-            BakedModel model = event.getModels().get(loc);
+            BakedModel model = event.getBakingResult().blockStateModels().get(loc);
             if (model != null) {
-                event.getModels().put(loc, f.apply(model));
+                event.getBakingResult().blockStateModels().put(loc, f.apply(model));
             }
         }
     }

@@ -1,6 +1,6 @@
 package me.desht.modularrouters.item;
 
-import me.desht.modularrouters.client.ClientSetup;
+import me.desht.modularrouters.client.KeyBindings;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import net.minecraft.ChatFormatting;
@@ -25,9 +25,9 @@ public abstract class MRBaseItem extends Item {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         if (context.registries() == null) return;
 
-        MutableComponent text = ClientSetup.keybindModuleInfo.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.DARK_AQUA);
+        MutableComponent text = KeyBindings.keybindModuleInfo.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.DARK_AQUA);
 
-        if (ClientUtil.isKeyDown(ClientSetup.keybindModuleInfo)) {
+        if (ClientUtil.isKeyDown(KeyBindings.keybindModuleInfo)) {
             addUsageInformation(stack, list);
         } else if (ConfigHolder.client.misc.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
             addExtraInformation(stack, list);

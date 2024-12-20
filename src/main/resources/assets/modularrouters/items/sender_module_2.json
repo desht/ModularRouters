@@ -1,0 +1,19 @@
+{
+   "model" : {
+      "type" : "minecraft:model",
+      "model" : "modularrouters:item/sender_module_2",
+      "tints" : [
+         {
+            "value" : 16777215,
+            "type" : "minecraft:constant"
+         },
+         {
+            "type" : "modularrouters:module_tint"
+         },
+         {
+            "value" : 16777215,
+            "type" : "minecraft:constant"
+         }
+      ]
+   }
+}

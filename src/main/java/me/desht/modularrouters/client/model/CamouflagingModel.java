@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.model;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedOverrides;
+//import net.minecraft.client.renderer.block.model.BakedOverrides;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -65,10 +65,10 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
         return baseModel.isGui3d();
     }
 
-    @Override
-    public boolean isCustomRenderer() {
-        return baseModel.isCustomRenderer();
-    }
+//    @Override
+//    public boolean isCustomRenderer() {
+//        return baseModel.isCustomRenderer();
+//    }
 
     @Override
     public TextureAtlasSprite getParticleIcon() {
@@ -80,10 +80,10 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
         return baseModel.getTransforms();
     }
 
-    @Override
-    public BakedOverrides overrides() {
-        return baseModel.overrides();
-    }
+//    @Override
+//    public BakedOverrides overrides() {
+//        return baseModel.overrides();
+//    }
 
     @Override
     public boolean usesBlockLight() {

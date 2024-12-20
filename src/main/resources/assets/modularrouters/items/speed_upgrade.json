@@ -1,0 +1,19 @@
+{
+   "model" : {
+      "tints" : [
+         {
+            "type" : "minecraft:constant",
+            "value" : 16777215
+         },
+         {
+            "type" : "modularrouters:module_tint"
+         },
+         {
+            "type" : "minecraft:constant",
+            "value" : 16777215
+         }
+      ],
+      "model" : "modularrouters:item/speed_upgrade",
+      "type" : "minecraft:model"
+   }
+}

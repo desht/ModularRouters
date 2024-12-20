@@ -1,11 +1,15 @@
 package me.desht.modularrouters.logic.settings;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.util.StringRepresentable;
 
 public enum TransferDirection implements TranslatableEnum, StringRepresentable {
     TO_ROUTER("to_router"),
     FROM_ROUTER("from_router");
+
+    public static final Codec<TransferDirection> CODEC = StringRepresentable.fromEnum(TransferDirection::values);
 
     private final String name;
 

@@ -1,0 +1,19 @@
+{
+   "model" : {
+      "model" : "modularrouters:item/muffler_upgrade",
+      "type" : "minecraft:model",
+      "tints" : [
+         {
+            "type" : "minecraft:constant",
+            "value" : 16777215
+         },
+         {
+            "type" : "modularrouters:module_tint"
+         },
+         {
+            "value" : 16777215,
+            "type" : "minecraft:constant"
+         }
+      ]
+   }
+}

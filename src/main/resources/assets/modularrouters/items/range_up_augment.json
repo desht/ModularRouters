@@ -1,0 +1,6 @@
+{
+   "model" : {
+      "type" : "minecraft:model",
+      "model" : "modularrouters:item/range_up_augment"
+   }
+}

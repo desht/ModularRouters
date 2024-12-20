@@ -1,0 +1,6 @@
+{
+   "model" : {
+      "model" : "modularrouters:item/filter_round_robin_augment",
+      "type" : "minecraft:model"
+   }
+}

@@ -1,0 +1,52 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "modularrouters:distributor_mode",
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "modularrouters:item/distributor_module"
+    },
+    "cases": [
+      {
+        "when": "from_router",
+        "model": {
+          "type": "minecraft:model",
+          "model": "modularrouters:item/distributor_module",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": 16777215
+            },
+            {
+              "type": "modularrouters:module_tint"
+            },
+            {
+              "type": "minecraft:constant",
+              "value": 16777215
+            }
+          ]
+        }
+      },
+      {
+        "when": "to_router",
+        "model": {
+          "type": "minecraft:model",
+          "model": "modularrouters:item/distributor_module_pull",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": 16777215
+            },
+            {
+              "type": "modularrouters:module_tint"
+            },
+            {
+              "type": "minecraft:constant",
+              "value": 16777215
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

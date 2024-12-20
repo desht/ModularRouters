@@ -1,6 +1,5 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
@@ -11,14 +10,12 @@ import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -39,10 +36,6 @@ public class ModularRouters {
 
     public ModularRouters(ModContainer container, IEventBus modBus) {
         ConfigHolder.init(container, modBus);
-
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientSetup.onModConstruction(container, modBus);
-        }
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::registerCaps);
@@ -101,21 +94,21 @@ public class ModularRouters {
     @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
     public static class DataGenerators {
         @SubscribeEvent
-        public static void gatherData(GatherDataEvent event) {
+        public static void gatherData(GatherDataEvent.Client event) {
             DataGenerator generator = event.getGenerator();
             CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
             ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
             PackOutput output = generator.getPackOutput();
 
-            generator.addProvider(event.includeServer(), new ModRecipeProvider.Runner(output, lookupProvider));
+            generator.addProvider(true, new ModRecipeProvider.Runner(output, lookupProvider));
             ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(output, lookupProvider, existingFileHelper);
-            generator.addProvider(event.includeServer(), blockTagsProvider);
-            generator.addProvider(event.includeServer(), new ModItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-            generator.addProvider(event.includeServer(), new ModLootTableProvider(output, lookupProvider));
-            generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(output, lookupProvider, existingFileHelper));
+            generator.addProvider(true, blockTagsProvider);
+            generator.addProvider(true, new ModItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
+            generator.addProvider(true, new ModLootTableProvider(output, lookupProvider));
+            generator.addProvider(true, new ModEntityTypeTagsProvider(output, lookupProvider, existingFileHelper));
 
-            generator.addProvider(event.includeClient(), new ModBlockStateProvider(output, existingFileHelper));
-            generator.addProvider(event.includeClient(), new ModItemModelProvider(output, existingFileHelper));
+            generator.addProvider(true, new ModBlockStateProvider(output, existingFileHelper));
+            generator.addProvider(true, new ModItemModelProvider(output, existingFileHelper));
         }
     }
 }
