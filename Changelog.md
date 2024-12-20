@@ -4,9 +4,14 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+# Minecraft 1.21.4
+
+## [13.4.0]
+* Ported to Minecraft 1.21.4
+
 # Minecraft 1.21.3
 
-## [14.0.0]
+## [13.3.0]
 
 * Ported to Minecraft 1.21.3
 * Security Upgrades no longer work to set the fakeplayer owner
