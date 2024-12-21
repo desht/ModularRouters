@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.1]
+* Energy Distributor Upgrade can now be configured to pull (like the Distributor Module can)
+
 ## [13.2.0]
 * Multiple changes from @Matyrobbrt :
   * Some significant internal reworking to benefit addon mods

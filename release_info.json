@@ -3,10 +3,12 @@
   "promos" : {
     "1.21-recommended" : "13.0.3",
     "1.21-latest" : "13.0.3",
-    "1.21.1-recommended" : "13.1.0",
-    "1.21.1-latest" : "13.1.0"
+    "1.21.1-recommended" : "13.2.1",
+    "1.21.1-latest" : "13.2.1"
   },
   "1.21.1" : {
+    "13.2.1": "https://github.com/desht/ModularRouters/blob/MC1.21-master/Changelog.md#1321",
+    "13.2.0": "https://github.com/desht/ModularRouters/blob/MC1.21-master/Changelog.md#1320",
     "13.1.0": "https://github.com/desht/ModularRouters/blob/MC1.21-master/Changelog.md#1310"
   },
   "1.21" : {
