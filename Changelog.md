@@ -8,6 +8,7 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## [13.4.0]
 * Ported to Minecraft 1.21.4
+* Energy Distributor Upgrade can now be configured to pull (like the Distributor Module can)
 
 # Minecraft 1.21.3
 
