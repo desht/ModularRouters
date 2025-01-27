@@ -9,6 +9,10 @@ Changes are in reverse chronological order; newest changes at the top.
 ## [13.4.0]
 * Ported to Minecraft 1.21.4
 * Energy Distributor Upgrade can now be configured to pull (like the Distributor Module can)
+* Fixed crash when applying invalid camouflage to a router (specifically a Camouflage Upgrade which was clicked on an Extruder Mk2 template frame block)
+  * Existing invalid Camouflage Upgrades installed in routers will now do nothing (no camo, no crash!)
+  * Trying to click a block which is invalid for camo (modular router or template frame) with a Camouflage Upgrade now displays a client error message
+  * Added a `modularouters:camo_blacklist` block tag (empty by default) to which other blocks can be added if desired
 
 # Minecraft 1.21.3
 
