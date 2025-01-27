@@ -87,7 +87,7 @@ public abstract class CamouflageableBlock extends Block {
     ICamouflageable getCamoState(BlockGetter blockAccess, BlockPos pos) {
         if (blockAccess == null || pos == null) return null;
         BlockEntity te = blockAccess.getBlockEntity(pos);
-        return te instanceof ICamouflageable c && c.getCamouflage() != null ? c : null;
+        return te instanceof ICamouflageable c && c.getCamouflage() != null && !(c.getCamouflage().getBlock() instanceof CamouflageableBlock) ? c : null;
     }
 
     @Override

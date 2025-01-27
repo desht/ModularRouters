@@ -1,6 +1,7 @@
 package me.desht.modularrouters.datagen;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.ModularRoutersTags;
 import me.desht.modularrouters.core.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -20,5 +21,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MODULAR_ROUTER.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(ModBlocks.MODULAR_ROUTER.get());
+
+        tag(ModularRoutersTags.Blocks.CAMO_BLACKLIST);
     }
 }

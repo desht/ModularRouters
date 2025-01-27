@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public class ModularRoutersTags {
     public static class Items {
@@ -15,6 +16,14 @@ public class ModularRoutersTags {
 
         private static TagKey<Item> modTag(String name) {
             return TagKey.create(Registries.ITEM, MiscUtil.RL(name));
+        }
+    }
+
+    public static class Blocks {
+        public static final TagKey<Block> CAMO_BLACKLIST = modTag("camo_blacklist");
+
+        private static TagKey<Block> modTag(String name) {
+            return TagKey.create(Registries.BLOCK, MiscUtil.RL(name));
         }
     }
 

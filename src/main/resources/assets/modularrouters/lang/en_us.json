@@ -58,6 +58,7 @@
    "key.modularrouters.category" : "Modular Routers",
    "key.modularrouters.configure" : "Configure Installed Module (GUI)",
    "key.modularrouters.moduleInfo" : "Extra Tooltip Info (GUI)",
+   "modularrouters.chatText.misc.badCamoBlock" : "Invalid camouflage block!",
    "modularrouters.chatText.misc.inventoryMerged" : "Merged %d item(s) into the %s",
    "modularrouters.chatText.misc.targetAdded" : "Target added (%d/%d): ",
    "modularrouters.chatText.misc.targetCleared" : "Target cleared",
