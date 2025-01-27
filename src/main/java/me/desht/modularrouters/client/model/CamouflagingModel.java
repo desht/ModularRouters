@@ -36,8 +36,8 @@ public abstract class CamouflagingModel implements IDynamicBakedModel {
         if (renderType == null) {
             renderType = RenderType.solid(); // workaround for when this isn't set (digging, etc.)
         }
-        if (camoState == null && renderType == RenderType.solid()) {
-            // No camo
+        if ((camoState == null || camoState.getBlock() instanceof CamouflageableBlock) && renderType == RenderType.solid()) {
+            // No camo (or bad camo!)
             return baseModel.getQuads(state, side, rand, modelData, renderType);
         } else if (camoState != null && getRenderTypes(camoState, rand, modelData).contains(renderType)) {
             // Steal camo's model

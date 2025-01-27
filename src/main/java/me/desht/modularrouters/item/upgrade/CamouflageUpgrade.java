@@ -1,5 +1,7 @@
 package me.desht.modularrouters.item.upgrade;
 
+import me.desht.modularrouters.ModularRoutersTags;
+import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
@@ -62,6 +64,7 @@ public class CamouflageUpgrade extends UpgradeItem {
             return InteractionResult.SUCCESS;
         } else if (ctx.getLevel().isClientSide) {
             player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
+            player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.badCamoBlock").withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
         return InteractionResult.PASS;
@@ -79,8 +82,9 @@ public class CamouflageUpgrade extends UpgradeItem {
     }
 
     private static boolean isBlockOKForCamo(BlockState state) {
-        // trying to camo a router as itself = recursion hell
-        return state.getRenderShape() == RenderShape.MODEL && state.getBlock() != ModBlocks.MODULAR_ROUTER.get()
+        // trying to camo a router as another camo block = recursion hell
+        return state.getRenderShape() == RenderShape.MODEL && !(state.getBlock() instanceof CamouflageableBlock)
+                && !state.is(ModularRoutersTags.Blocks.CAMO_BLACKLIST)
                 && !BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().equals("chiselsandbits");
     }
 }
