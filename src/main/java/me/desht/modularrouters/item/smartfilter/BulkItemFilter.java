@@ -60,7 +60,7 @@ public class BulkItemFilter extends SmartFilterItem {
 
     @Override
     public int getSize(ItemStack filterStack) {
-        return BaseModuleHandler.getFilterItemCount(filterStack);
+        return BaseModuleHandler.getFilterItemCount(filterStack, BulkFilterHandler::new);
     }
 
     private InteractionResult handleUseServerSide(UseOnContext ctx) {
