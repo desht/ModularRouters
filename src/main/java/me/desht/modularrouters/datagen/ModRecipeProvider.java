@@ -159,7 +159,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         shapeless(ModItems.SENDER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.SENDER_MODULE_1.get(), Items.ENDER_PEARL
+                ModItems.SENDER_MODULE_1.get(), Tags.Items.ENDER_PEARLS
         ).save(consumer);
 
         SpecialRecipeBuilder.special(PickaxeModuleRecipe.BreakerModuleRecipe::new)
@@ -203,11 +203,13 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.SENDER_MODULE_1.get(),
                 ModItems.SENDER_MODULE_1.get(),
                 ModItems.SENDER_MODULE_1.get(),
-                Items.ENDER_PEARL
+                Tags.Items.ENDER_PEARLS
         ).save(consumer, RL("sender_module_2_x4"));
 
         shapeless(ModItems.PULLER_MODULE_2.get(), 4, ModItems.BLANK_MODULE.get(),
-                ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), Items.ENDER_PEARL
+                ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(),
+                ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(),
+                Tags.Items.ENDER_PEARLS
         ).save(consumer, RL("puller_module_2_x4"));
 
         shapeless(ModItems.VACUUM_MODULE.get(), ModItems.BLANK_MODULE.get(),
@@ -224,7 +226,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(consumer);
 
         shapeless(ModItems.PULLER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.PULLER_MODULE_1.get(), Items.ENDER_PEARL
+                ModItems.PULLER_MODULE_1.get(), Tags.Items.ENDER_PEARLS
         ).save(consumer);
 
         shapeless(ModItems.VOID_MODULE.get(), ModItems.BLANK_MODULE.get(),
