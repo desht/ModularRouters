@@ -9,10 +9,12 @@ import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
 public abstract class BaseModuleHandler extends GhostItemHandler {
@@ -74,8 +76,8 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      *
      * @return number of items in the filter
      */
-    public static int getFilterItemCount(ItemStack holderStack) {
-        ModuleFilterHandler handler = new ModuleFilterHandler(holderStack, null);
+    public static int getFilterItemCount(ItemStack holderStack, BiFunction<ItemStack, ModularRouterBlockEntity, BaseModuleHandler> factory) {
+        BaseModuleHandler handler = factory.apply(holderStack, null);
         return (int) IntStream.range(0, handler.getSlots())
                 .filter(i -> !handler.getStackInSlot(i).isEmpty())
                 .count();
