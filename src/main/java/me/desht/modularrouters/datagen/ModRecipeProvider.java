@@ -166,7 +166,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(output);
 
         shapeless(ModItems.SENDER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.SENDER_MODULE_1.get(), Items.ENDER_PEARL
+                ModItems.SENDER_MODULE_1.get(), Tags.Items.ENDER_PEARLS
         ).save(output);
 
         SpecialRecipeBuilder.special(PickaxeModuleRecipe.BreakerModuleRecipe::new)
@@ -210,12 +210,14 @@ public class ModRecipeProvider extends RecipeProvider {
                 ModItems.SENDER_MODULE_1.get(),
                 ModItems.SENDER_MODULE_1.get(),
                 ModItems.SENDER_MODULE_1.get(),
-                Items.ENDER_PEARL
-        ).save(output, withName("sender_module_2_x4"));
+                Tags.Items.ENDER_PEARLS
+        ).save(output, ResourceKey.create(Registries.RECIPE, RL("sender_module_2_x4")));
 
         shapeless(ModItems.PULLER_MODULE_2.get(), 4, ModItems.BLANK_MODULE.get(),
-                ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(), Items.ENDER_PEARL
-        ).save(output, withName("puller_module_2_x4"));
+                ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(),
+                ModItems.PULLER_MODULE_1.get(), ModItems.PULLER_MODULE_1.get(),
+                Tags.Items.ENDER_PEARLS
+        ).save(output, ResourceKey.create(Registries.RECIPE, RL("puller_module_2_x4")));
 
         shapeless(ModItems.VACUUM_MODULE.get(), ModItems.BLANK_MODULE.get(),
                 ModItems.BLANK_MODULE.get(), Items.HOPPER, Items.ENDER_EYE
@@ -231,7 +233,7 @@ public class ModRecipeProvider extends RecipeProvider {
         ).save(output);
 
         shapeless(ModItems.PULLER_MODULE_2.get(), ModItems.BLANK_MODULE.get(),
-                ModItems.PULLER_MODULE_1.get(), Items.ENDER_PEARL
+                ModItems.PULLER_MODULE_1.get(), Tags.Items.ENDER_PEARLS
         ).save(output);
 
         shapeless(ModItems.VOID_MODULE.get(), ModItems.BLANK_MODULE.get(),
