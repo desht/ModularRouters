@@ -68,7 +68,9 @@ public class ClientUtil {
     }
 
     public static boolean isKeyDown(KeyMapping key) {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue()) && key.getKeyConflictContext().isActive();
+        return !key.isUnbound()
+                && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue())
+                && key.getKeyConflictContext().isActive();
     }
 
     public static void setMultilineTooltip(AbstractWidget w, Component... lines) {
