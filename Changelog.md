@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.2]
+* Fixed some OpenGL logspam related to unbound keymappings
+
 ## [13.2.1]
 * Energy Distributor Upgrade can now be configured to pull (like the Distributor Module can)
 * Fixed crash when applying invalid camouflage to a router (specifically a Camouflage Upgrade which was clicked on an Extruder Mk2 template frame block)
