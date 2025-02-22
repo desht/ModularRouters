@@ -1,8 +1,5 @@
 ﻿{
    "block.modularrouters.modular_router" : "Маршрутизатор",
-   "item.modularrouters.energy_distributor_module" : "Модуль: Доставщик энергии",
-   "item.modularrouters.energy_output_module" : "Модуль: Вывод энергии",
-   "item.modularrouters.energy_upgrade" : "Улучшение: Энергия",
    "block.modularrouters.template_frame" : "Рамка Шаблона",
    "item.modularrouters.activator_module" : "Модуль: Активатор",
    "item.modularrouters.augment_core" : "Ядро дополнения",
@@ -16,6 +13,9 @@
    "item.modularrouters.detector_module" : "Модуль: Детектор",
    "item.modularrouters.distributor_module" : "Модуль: Распределитель",
    "item.modularrouters.dropper_module" : "Модуль: Выбрасыватель",
+   "item.modularrouters.energy_distributor_module" : "Модуль: Доставщик энергии",
+   "item.modularrouters.energy_output_module" : "Модуль: Вывод энергии",
+   "item.modularrouters.energy_upgrade" : "Улучшение: Энергия",
    "item.modularrouters.extruder_module_1" : "Модуль: Экструдер Мк1",
    "item.modularrouters.extruder_module_2" : "Модуль: Экструдер Мк2",
    "item.modularrouters.fast_pickup_augment" : "Дополнение: Быстрый подбор",
