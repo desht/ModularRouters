@@ -18,7 +18,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,20 +94,11 @@ public class ModularRouters {
     public static class DataGenerators {
         @SubscribeEvent
         public static void gatherData(GatherDataEvent.Client event) {
-            DataGenerator generator = event.getGenerator();
-            CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-            PackOutput output = generator.getPackOutput();
-
-            generator.addProvider(true, new ModRecipeProvider.Runner(output, lookupProvider));
-            ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(output, lookupProvider, existingFileHelper);
-            generator.addProvider(true, blockTagsProvider);
-            generator.addProvider(true, new ModItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-            generator.addProvider(true, new ModLootTableProvider(output, lookupProvider));
-            generator.addProvider(true, new ModEntityTypeTagsProvider(output, lookupProvider, existingFileHelper));
-
-            generator.addProvider(true, new ModBlockStateProvider(output, existingFileHelper));
-            generator.addProvider(true, new ModItemModelProvider(output, existingFileHelper));
+            event.createProvider(ModRecipeProvider.Runner::new);
+            event.createBlockAndItemTags(ModBlockTagsProvider::new, ModItemTagsProvider::new);
+            event.createProvider(ModLootTableProvider::new);
+            event.createProvider(ModEntityTypeTagsProvider::new);
+            event.createProvider(ModModelProvider::new);
         }
     }
 }

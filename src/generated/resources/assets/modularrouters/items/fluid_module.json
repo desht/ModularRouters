@@ -1,0 +1,19 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "modularrouters:item/module/fluid_module",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "modularrouters:module_tint"
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      }
+    ]
+  }
+}

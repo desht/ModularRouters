@@ -5,7 +5,8 @@
       "y": 90
     },
     "active=false,facing=north": {
-      "model": "modularrouters:block/modular_router_off"
+      "model": "modularrouters:block/modular_router_off",
+      "y": 0
     },
     "active=false,facing=south": {
       "model": "modularrouters:block/modular_router_off",
@@ -20,7 +21,8 @@
       "y": 90
     },
     "active=true,facing=north": {
-      "model": "modularrouters:block/modular_router_on"
+      "model": "modularrouters:block/modular_router_on",
+      "y": 0
     },
     "active=true,facing=south": {
       "model": "modularrouters:block/modular_router_on",

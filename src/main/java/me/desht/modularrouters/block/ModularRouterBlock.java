@@ -38,7 +38,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
@@ -55,9 +54,9 @@ import java.util.List;
 
 import static me.desht.modularrouters.block.tile.ModularRouterBlockEntity.*;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class ModularRouterBlock extends CamouflageableBlock implements EntityBlock {
-    public static final EnumProperty<Direction> FACING = EnumProperty.create("facing", Direction.class, Direction.Plane.HORIZONTAL);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty CAN_EMIT = BooleanProperty.create("can_emit");
 
@@ -65,18 +64,18 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
         super(props);
 
         registerDefaultState(this.getStateDefinition().any()
-                .setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(CAN_EMIT, false));
+                .setValue(HORIZONTAL_FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(CAN_EMIT, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, ACTIVE, CAN_EMIT);
+        builder.add(HORIZONTAL_FACING, ACTIVE, CAN_EMIT);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(HORIZONTAL_FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -256,12 +255,12 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
 
     @Override
     public BlockState rotate(BlockState state, Rotation rotation) {
-        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+        return state.setValue(HORIZONTAL_FACING, rotation.rotate(state.getValue(HORIZONTAL_FACING)));
     }
 
     @Override
     public BlockState mirror(BlockState state, Mirror mirror) {
-        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
+        return state.setValue(HORIZONTAL_FACING, mirror.mirror(state.getValue(HORIZONTAL_FACING)));
     }
 
     @Override

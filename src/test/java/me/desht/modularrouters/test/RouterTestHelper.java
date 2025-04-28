@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
@@ -43,7 +44,7 @@ public class RouterTestHelper extends ExtendedGameTestHelper {
     }
 
     public RouterWrapper placeRouter(int x, int y, int z, Direction routerFacing) {
-        setBlock(x, y, z, ModBlocks.MODULAR_ROUTER.get().defaultBlockState().setValue(ModularRouterBlock.FACING, routerFacing));
+        setBlock(x, y, z, ModBlocks.MODULAR_ROUTER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, routerFacing));
         var router = getBlockEntity(x, y, z, ModularRouterBlockEntity.class);
         addEndListener(success -> {
             if (success) {
