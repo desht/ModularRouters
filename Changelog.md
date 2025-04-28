@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.4
 
+## [13.4.1]
+* Updated to latest stable NeoForge 1.21.4
+* Fixed Breaker Modules not harvesting blocks they should be able to
+
 ## [13.4.0]
 * Ported to Minecraft 1.21.4
 * Energy Distributor Upgrade can now be configured to pull (like the Distributor Module can)
