@@ -100,7 +100,7 @@ public class BlockUtil {
             return false;
         }
 
-        if (ConfigHolder.common.module.breakerHarvestLevelLimit.get()) {
+        if (ConfigHolder.common.module.breakerHarvestLevelLimit.get() && state.requiresCorrectToolForDrops()) {
             Tool tool = pickaxe.get(DataComponents.TOOL);
             if (tool == null || !tool.isCorrectForDrops(state)) {
                 return false;
