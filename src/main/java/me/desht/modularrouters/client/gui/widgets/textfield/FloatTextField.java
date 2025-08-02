@@ -50,7 +50,7 @@ public class FloatTextField extends TextFieldWidgetMR {
 
     @Override
     public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
-        adjustField(pMouseY > 0 ? incr : -incr);
+        adjustField(pScrollY > 0 ? incr : -incr);
         return true;
     }
 
