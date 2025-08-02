@@ -1,23 +1,21 @@
 package me.desht.modularrouters;
 
-import me.desht.modularrouters.client.ClientSetup;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
+import me.desht.modularrouters.network.NetworkHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -39,12 +37,9 @@ public class ModularRouters {
     public ModularRouters(ModContainer container, IEventBus modBus) {
         ConfigHolder.init(container, modBus);
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientSetup.onModConstruction(container, modBus);
-        }
-
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::registerCaps);
+        modBus.addListener(NetworkHandler::register);
 
         IntegrationHandler.onModConstruction(modBus);
 
@@ -97,7 +92,7 @@ public class ModularRouters {
         });
     }
 
-    @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber
     public static class DataGenerators {
         @SubscribeEvent
         public static void gatherData(GatherDataEvent event) {

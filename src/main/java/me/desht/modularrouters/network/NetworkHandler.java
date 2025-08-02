@@ -2,16 +2,12 @@ package me.desht.modularrouters.network;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.network.messages.*;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@EventBusSubscriber(modid = ModularRouters.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class NetworkHandler {
     private static final String NETWORK_VERSION = "1.0";
 
-    @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(ModularRouters.MODID)
                 .versioned(NETWORK_VERSION);

@@ -18,9 +18,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
@@ -35,21 +34,25 @@ import java.util.List;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
-@EventBusSubscriber(modid = ModularRouters.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-public class ClientSetup {
+@Mod(value = ModularRouters.MODID, dist = Dist.CLIENT)
+public class ModularRoutersClient {
     public static KeyMapping keybindConfigure;
     public static KeyMapping keybindModuleInfo;
 
-    public static void onModConstruction(ModContainer modContainer, IEventBus modBus) {
+    public ModularRoutersClient(ModContainer modContainer, IEventBus modBus) {
         modBus.register(ModelBakeEventHandler.class);
+        modBus.addListener(this::onClientSetup);
+        modBus.addListener(this::registerRenderers);
+        modBus.addListener(this::registerKeyBindings);
+        modBus.addListener(this::registerScreens);
+
         NeoForge.EVENT_BUS.register(ModuleTargetRenderer.class);
         NeoForge.EVENT_BUS.register(MouseOverHelp.class);
 
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    public void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // non-thread-safe work here
             registerItemModelOverrides();
@@ -59,13 +62,11 @@ public class ClientSetup {
         FilterScreenFactory.registerGuiHandler(ModItems.REGEX_FILTER.get(), RegexFilterScreen::new);
     }
 
-    @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.MODULAR_ROUTER.get(), ModularRouterBER::new);
     }
 
-    @SubscribeEvent
-    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
+    public void registerKeyBindings(RegisterKeyMappingsEvent event) {
         keybindConfigure = new KeyMapping("key.modularrouters.configure", KeyConflictContext.GUI,
                 InputConstants.getKey(GLFW.GLFW_KEY_C, -1), "key.modularrouters.category");
         keybindModuleInfo = new KeyMapping("key.modularrouters.moduleInfo", KeyConflictContext.GUI,
@@ -75,8 +76,7 @@ public class ClientSetup {
         event.register(keybindModuleInfo);
     }
 
-    @SubscribeEvent
-    public static void registerScreens(RegisterMenuScreensEvent event) {
+    public void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.ROUTER_MENU.get(), ModularRouterScreen::new);
 
         event.register(ModMenuTypes.BASE_MODULE_MENU.get(), ModuleScreen::new);

@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.gui;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.client.ClientSetup;
+import me.desht.modularrouters.client.ModularRoutersClient;
 import me.desht.modularrouters.client.gui.widgets.EnergyWidget;
 import me.desht.modularrouters.client.gui.widgets.button.RedstoneBehaviourButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
@@ -107,7 +107,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return ClientSetup.keybindConfigure.getKey().getValue() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
+        return ModularRoutersClient.keybindConfigure.getKey().getValue() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
