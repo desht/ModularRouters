@@ -66,11 +66,11 @@ public class ActivatorModule extends ModuleItem implements IRangedModule {
 
     @Override
     public int getBaseRange() {
-        return 0;
+        return 5;
     }
 
     @Override
     public int getHardMaxRange() {
-        return 4;
+        return 10;
     }
 }

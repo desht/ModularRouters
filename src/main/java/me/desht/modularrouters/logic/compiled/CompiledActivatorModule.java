@@ -24,8 +24,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -169,7 +167,7 @@ public class CompiledActivatorModule extends CompiledModule {
             }
         }
 
-        double reachDist = Math.pow(getPlayerReachDistance(fp), 2);
+        double reachDist = getRangeSquared();
         for (; targetPos.distSqr(routerPos) <= reachDist; targetPos.move(xOff, yOff, zOff)) {
             if (fp.level().isEmptyBlock(targetPos)) {
                 continue;
@@ -188,14 +186,6 @@ public class CompiledActivatorModule extends CompiledModule {
         }
 
         return BlockHitResult.miss(fpVec.add(fp.getLookAngle()), getAbsoluteFacing().getOpposite(), routerPos.relative(getAbsoluteFacing()));
-    }
-
-    private double getPlayerReachDistance(Player player) {
-        if (player != null) {
-            AttributeInstance attr = player.getAttribute(getActionType().isEntityTarget() ? Attributes.ENTITY_INTERACTION_RANGE : Attributes.BLOCK_INTERACTION_RANGE);
-            if (attr != null) return attr.getValue() + 1D + getRange();
-        }
-        return 4.5D + getRange();
     }
 
     private boolean doAttackEntity(ModularRouterBlockEntity router, RouterFakePlayer fakePlayer) {
@@ -222,15 +212,15 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private <T extends Entity> T findEntity(ModularRouterBlockEntity router, Class<T> cls, Predicate<Entity> blacklistChecker) {
-        Direction face = getAbsoluteFacing();
+        final Direction face = Objects.requireNonNull(getAbsoluteFacing());
         final BlockPos pos = router.getBlockPos();
-        Vec3 vec = Vec3.atCenterOf(pos);
-        double expand = getRange() + 2.0;
-        double dist = expand + 0.5;
-        AABB box = new AABB(vec, vec)
-                .move(face.getStepX() * dist, face.getStepY() * dist, face.getStepZ() * dist)
+        final Vec3 vec = Vec3.atCenterOf(pos);
+        final double expand = getRange() / 2.0;
+        final double moveBy = expand + 0.5;
+        final AABB box = new AABB(vec, vec)
+                .move(face.getStepX() * moveBy, face.getStepY() * moveBy, face.getStepZ() * moveBy)
                 .inflate(expand);
-        List<T> l = Objects.requireNonNull(router.getLevel()).getEntitiesOfClass(cls, box, blacklistChecker);
+        final List<T> l = Objects.requireNonNull(router.getLevel()).getEntitiesOfClass(cls, box, blacklistChecker);
         if (l.isEmpty()) {
             return null;
         }
@@ -239,10 +229,10 @@ public class CompiledActivatorModule extends CompiledModule {
             case RANDOM:
                 return l.get(router.getLevel().random.nextInt(l.size()));
             case NEAREST:
-                l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())));
+                l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(vec)));
                 return l.getFirst();
             case ROUND_ROBIN:
-                l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())));
+                l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(vec)));
                 entityIdx = (entityIdx + 1) % l.size();
                 return l.get(entityIdx);
             default:
