@@ -79,7 +79,7 @@ public class RouterMenu extends AbstractMRContainerMenu {
         }
         // item router upgrades
         for (int slot = 0; slot < router.getUpgradeSlotCount(); slot++) {
-            addSlot(new SlotItemHandler(router.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
+            addSlot(new InstalledUpgradeSlot(router.getUpgrades(), slot, UPGRADE_XPOS + slot * SLOT_X_SPACING, UPGRADE_YPOS));
         }
 
         addDataSlots(data);
@@ -153,6 +153,17 @@ public class RouterMenu extends AbstractMRContainerMenu {
         // this is just so the slot can be easily identified for item tooltip purposes
         InstalledModuleSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
+        }
+    }
+
+    public static class InstalledUpgradeSlot extends SlotItemHandler {
+        public InstalledUpgradeSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, index, xPosition, yPosition);
+        }
+
+        @Override
+        public int getMaxStackSize(ItemStack stack) {
+            return stack.getItem() instanceof UpgradeItem u ? u.getInstalledStackLimit() : super.getMaxStackSize(stack);
         }
     }
 }

@@ -40,7 +40,7 @@ public class EnergyUpgrade extends UpgradeItem {
     }
 
     @Override
-    public int getStackLimit(int slot) {
+    public int getInstalledStackLimit() {
         return 64;
     }
 }

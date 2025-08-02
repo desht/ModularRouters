@@ -1091,7 +1091,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-            return stack.getItem() instanceof UpgradeItem u ? u.getStackLimit(slot) : 0;
+            return stack.getItem() instanceof UpgradeItem u ? u.getInstalledStackLimit() : 0;
         }
     }
 

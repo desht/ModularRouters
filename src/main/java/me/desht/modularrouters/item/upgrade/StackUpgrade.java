@@ -21,7 +21,7 @@ public class StackUpgrade extends UpgradeItem {
     }
 
     @Override
-    public int getStackLimit(int slot) {
+    public int getInstalledStackLimit() {
         return 6;
     }
 }
