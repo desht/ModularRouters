@@ -16,6 +16,7 @@ import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
@@ -111,14 +112,14 @@ public class FluidModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), stack ->
-                stack.set(ModDataComponents.FLUID_SETTINGS, new CompiledFluidModule.FluidModuleSettings(
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.FLUID_SETTINGS.get(), new CompiledFluidModule.FluidModuleSettings(
                         maxTransferField.getIntValue(),
                         fluidDirButton.getState(),
                         forceEmptyButton.isToggled(),
                         regulationTypeButton.regulateAbsolute
-                ))
+                )
         );
     }
 

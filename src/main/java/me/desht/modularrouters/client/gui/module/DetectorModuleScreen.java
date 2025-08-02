@@ -10,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -64,12 +65,12 @@ public class DetectorModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), stack ->
-            stack.set(ModDataComponents.DETECTOR_SETTINGS, new CompiledDetectorModule.DetectorSettings(
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.DETECTOR_SETTINGS.get(), new CompiledDetectorModule.DetectorSettings(
                     intField.getIntValue(),
                     isStrong
-            ))
+            )
         );
     }
 

@@ -10,6 +10,7 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Compariso
 import me.desht.modularrouters.logic.settings.ModuleSettings;
 import me.desht.modularrouters.logic.settings.RedstoneBehaviour;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
 
 public class ModDataComponents {
     public static final DeferredRegister.DataComponents COMPONENTS
-            = DeferredRegister.createDataComponents(ModularRouters.MODID);
+            = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ModularRouters.MODID);
 
     // a list of targets for a targeted module (usually one target, but distributor modules can have multiple)
     public static final Supplier<DataComponentType<ModuleTargetList>> MODULE_TARGET_LIST

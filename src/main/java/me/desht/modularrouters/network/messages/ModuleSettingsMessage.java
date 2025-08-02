@@ -1,10 +1,13 @@
 package me.desht.modularrouters.network.messages;
 
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -17,12 +20,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * <p>
  * Sent by client when a player updates a module's settings via its GUI.
  */
-public record ModuleSettingsMessage(MFLocator locator, ItemStack newStack) implements CustomPacketPayload {
+public record ModuleSettingsMessage(MFLocator locator, DataComponentPatch patch) implements CustomPacketPayload {
     public static final Type<ModuleSettingsMessage> TYPE = new Type<>(MiscUtil.RL("module_settings"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ModuleSettingsMessage> STREAM_CODEC = StreamCodec.composite(
             MFLocator.STREAM_CODEC, ModuleSettingsMessage::locator,
-            ItemStack.STREAM_CODEC, ModuleSettingsMessage::newStack,
+            DataComponentPatch.STREAM_CODEC, ModuleSettingsMessage::patch,
             ModuleSettingsMessage::new
     );
 
@@ -39,11 +42,11 @@ public record ModuleSettingsMessage(MFLocator locator, ItemStack newStack) imple
         }
 
         MFLocator locator = message.locator();
-        ItemStack newStack = message.newStack();
         ItemStack moduleStack = locator.getModuleStack(player);
 
-        if (moduleStack.getItem() instanceof ModuleItem && newStack.getItem() == moduleStack.getItem()) {
-            locator.setModuleStack(player, newStack);
+        if (moduleStack.getItem() instanceof ModuleItem && moduleStack.getComponents() instanceof PatchedDataComponentMap pdcm) {
+            pdcm.applyPatch(message.patch);
+            locator.getRouter(player.level()).ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES));
         } else {
             ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - expected module not found @ {}", player.getGameProfile().getName(), locator);
         }

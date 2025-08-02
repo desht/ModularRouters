@@ -193,9 +193,9 @@ public class CompiledActivatorModule extends CompiledModule {
     private double getPlayerReachDistance(Player player) {
         if (player != null) {
             AttributeInstance attr = player.getAttribute(getActionType().isEntityTarget() ? Attributes.ENTITY_INTERACTION_RANGE : Attributes.BLOCK_INTERACTION_RANGE);
-            if (attr != null) return attr.getValue() + 1D;
+            if (attr != null) return attr.getValue() + 1D + getRange();
         }
-        return 4.5D;
+        return 4.5D + getRange();
     }
 
     private boolean doAttackEntity(ModularRouterBlockEntity router, RouterFakePlayer fakePlayer) {
@@ -225,9 +225,11 @@ public class CompiledActivatorModule extends CompiledModule {
         Direction face = getAbsoluteFacing();
         final BlockPos pos = router.getBlockPos();
         Vec3 vec = Vec3.atCenterOf(pos);
+        double expand = getRange() + 2.0;
+        double dist = expand + 0.5;
         AABB box = new AABB(vec, vec)
-                .move(face.getStepX() * 2.5, face.getStepY() * 2.5, face.getStepZ() * 2.5)
-                .inflate(2.0);
+                .move(face.getStepX() * dist, face.getStepY() * dist, face.getStepZ() * dist)
+                .inflate(expand);
         List<T> l = Objects.requireNonNull(router.getLevel()).getEntitiesOfClass(cls, box, blacklistChecker);
         if (l.isEmpty()) {
             return null;

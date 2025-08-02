@@ -32,6 +32,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -46,8 +47,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.EnumMap;
-import java.util.Optional;
+import java.util.*;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -220,20 +220,21 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
 
     @Override
     public void sendToServer() {
-        PacketDistributor.sendToServer(new ModuleSettingsMessage(menu.getLocator(), buildModifiedItemStack()));
+        DataComponentPatch.Builder builder = DataComponentPatch.builder();
+        buildComponentPatch(builder);
+        PacketDistributor.sendToServer(new ModuleSettingsMessage(menu.getLocator(), builder.build()));
     }
 
     /**
-     * Build the updated item stack to be sent to the server. Components in this item stack will be copied
+     * Build the updated item stack to be sent to the server. Components in this builder will be copied
      * into the server-side item, after validation.
      * <p>
      * Important: Overriding subclasses <strong>must</strong> call this superclass method!
      *
-     * @return the message data NBT
+     * @param builder the data component patch builder
      */
-    protected ItemStack buildModifiedItemStack() {
-        ItemStack stack = moduleItemStack.copy();
-        stack.set(ModDataComponents.COMMON_MODULE_SETTINGS, new ModuleSettings(
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        builder.set(ModDataComponents.COMMON_MODULE_SETTINGS.get(), new ModuleSettings(
                 new ModuleFlags(
                         whiteListButton.isToggled(),
                         matchDamageButton.isToggled(),
@@ -246,7 +247,6 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
                 redstoneButton == null ? RedstoneBehaviour.ALWAYS : redstoneButton.getState(),
                 regulatorAmount
         ));
-        return stack;
     }
 
     @Override
