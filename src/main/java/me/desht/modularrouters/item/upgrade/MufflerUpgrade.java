@@ -9,7 +9,7 @@ public class MufflerUpgrade extends UpgradeItem {
     }
 
     @Override
-    public int getStackLimit(int slot) {
+    public int getInstalledStackLimit() {
         return 3;
     }
 }

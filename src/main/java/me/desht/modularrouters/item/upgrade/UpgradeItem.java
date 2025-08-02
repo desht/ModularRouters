@@ -68,10 +68,10 @@ public abstract class UpgradeItem extends MRBaseItem implements ModItems.ITintab
 
     /**
      * Get the maximum number of this upgrade that can be put in an upgrade slot
-     * @param slot the slot number
+     *
      * @return the max number of upgrades
      */
-    public int getStackLimit(int slot) {
+    public int getInstalledStackLimit() {
         return 1;
     }
 }
