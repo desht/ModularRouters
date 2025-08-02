@@ -18,6 +18,7 @@ Changes are in reverse chronological order; newest changes at the top.
   * Accepted values are now correctly 0..19, not 1..20
 * Fixed scroll wheel behaviour on float-value textfields (e.g. flinger module settings)
 * Fixed module settings sometimes getting lost for the Sender Mk3 (related to target not being chunkloaded)
+* Updated `ja_jp` translation (thanks @momo-i)
 
 ## [13.2.2]
 * Fixed some OpenGL logspam related to unbound keymappings
