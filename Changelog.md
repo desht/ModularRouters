@@ -6,6 +6,19 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.3]
+
+* The Activator Module is now a range module, accepting Range Augments
+  * Default base range is 5 blocks (for both block and entity modes), extendable to 10 blocks
+* Fixed module GUI allowing too many augments into its augment slots
+* Fixed router GUI allowing too many upgrades into its upgrade slots
+* Fixed filter item data sometimes getting lost during GUI edits, when other settings get changed
+* Fixed dupe issue with Regulator Augments
+* Fixed player kick bug due when a 0 tuning value was given to the Sync Upgrade
+  * Accepted values are now correctly 0..19, not 1..20
+* Fixed scroll wheel behaviour on float-value textfields (e.g. flinger module settings)
+* Fixed module settings sometimes getting lost for the Sender Mk3 (related to target not being chunkloaded)
+
 ## [13.2.2]
 * Fixed some OpenGL logspam related to unbound keymappings
 
