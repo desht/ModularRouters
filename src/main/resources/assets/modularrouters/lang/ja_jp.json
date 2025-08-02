@@ -58,6 +58,7 @@
    "key.modularrouters.category" : "Modular Routers",
    "key.modularrouters.configure" : "インストール済みのモジュールを構成(GUI)",
    "key.modularrouters.moduleInfo" : "追加のツールチップ情報(GUI)",
+   "modularrouters.chatText.misc.badCamoBlock" : "不正な偽装ブロックです！",
    "modularrouters.chatText.misc.inventoryMerged" : "%d個のアイテムを%sにマージしました",
    "modularrouters.chatText.misc.targetAdded" : "ターゲットが追加されました (%d/%d): ",
    "modularrouters.chatText.misc.targetCleared" : "ターゲットがクリアされました",
