@@ -138,7 +138,7 @@ public class ModDataComponents {
     // the tuning value for a sync upgrade
     public static final Supplier<DataComponentType<Integer>> SYNC_TUNING
             = COMPONENTS.registerComponentType("sync_tuning", builder -> builder
-            .persistent(ExtraCodecs.intRange(1, 20))
+            .persistent(ExtraCodecs.intRange(0, 19))
             .networkSynchronized(ByteBufCodecs.VAR_INT)
     );
     // the current round-robin value for a module with filter in round-robin mode
