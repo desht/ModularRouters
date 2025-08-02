@@ -103,15 +103,16 @@ public interface ITargetedModule {
 
     private static ModuleTarget updateTargetBlockName(ModuleTarget target) {
         ServerLevel level = MiscUtil.getWorldForGlobalPos(target.gPos);
+        if (level == null) {
+            return null;
+        }
         BlockPos pos = target.gPos.pos();
-        if (level != null && level.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+        if (level.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             String invName = BlockUtil.getBlockName(level, pos);
             if (!target.blockTranslationKey.equals(invName)) {
                 return new ModuleTarget(target.gPos, target.face, invName);
-            } else {
-                return target;
             }
         }
-        return null;
+        return target;
     }
 }
