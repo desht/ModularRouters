@@ -5,6 +5,7 @@ import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.container.handler.BaseModuleHandler.ModuleFilterHandler;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.filter.Filter;
 import me.desht.modularrouters.util.MFLocator;
@@ -64,7 +65,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
 
         // slots for the augments
         for (int i = 0; i < AugmentItem.SLOTS; i++) {
-            addSlot(new SlotItemHandler(augmentHandler, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)));
+            addSlot(new InstalledAugmentSlot(augmentHandler, i, 78 + SLOT_X_SPACING * (i % 2), 75 + SLOT_Y_SPACING * (i / 2)));
         }
 
         // player's main inventory - uses default locations for standard inventory texture file
@@ -214,5 +215,21 @@ public class ModuleMenu extends AbstractMRContainerMenu {
     @Override
     public boolean canDragTo(Slot p_94531_1_) {
         return false;
+    }
+
+    private static class InstalledAugmentSlot extends SlotItemHandler {
+        public InstalledAugmentSlot(AugmentHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, index, xPosition, yPosition);
+        }
+
+        @Override
+        public int getMaxStackSize(ItemStack stack) {
+            if (stack.getItem() instanceof AugmentItem augment && getItemHandler() instanceof AugmentHandler ah) {
+                if (ah.getHolderStack().getItem() instanceof ModuleItem module) {
+                    return augment.getMaxAugments(module);
+                }
+            }
+            return super.getMaxStackSize(stack);
+        }
     }
 }
