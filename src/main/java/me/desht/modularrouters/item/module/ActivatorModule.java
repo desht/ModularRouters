@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
-public class ActivatorModule extends ModuleItem {
+public class ActivatorModule extends ModuleItem implements IRangedModule {
     private static final TintColor TINT_COLOR = new TintColor(255, 255, 195);
 
     public ActivatorModule(Properties properties) {
@@ -61,5 +61,15 @@ public class ActivatorModule extends ModuleItem {
     @Override
     public TintColor getItemTint() {
         return TINT_COLOR;
+    }
+
+    @Override
+    public int getBaseRange() {
+        return 0;
+    }
+
+    @Override
+    public int getHardMaxRange() {
+        return 4;
     }
 }

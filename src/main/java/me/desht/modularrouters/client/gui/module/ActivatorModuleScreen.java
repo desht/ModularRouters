@@ -12,6 +12,7 @@ import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -75,14 +76,14 @@ public class ActivatorModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), stack ->
-                stack.set(ModDataComponents.ACTIVATOR_SETTINGS, new CompiledActivatorModule.ActivatorSettings(
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.ACTIVATOR_SETTINGS.get(), new CompiledActivatorModule.ActivatorSettings(
                         actionTypeButton.getState(),
                         lookDirectionButton.getState(),
                         entityModeButton.getState(),
                         sneakButton.isToggled()
-                ))
+                )
         );
     }
 

@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -65,13 +66,9 @@ public class VacuumModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), stack ->
-            stack.set(ModDataComponents.VACUUM_SETTINGS, new VacuumSettings(
-                    ejb.isToggled(),
-                    xpb.getState()
-            ))
-        );
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.VACUUM_SETTINGS.get(), new VacuumSettings(ejb.isToggled(), xpb.getState()));
     }
 
     private class XPTypeButton extends ItemStackCyclerButton<XPCollectionType> {

@@ -9,9 +9,9 @@ import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule;
 import me.desht.modularrouters.logic.compiled.CompiledPlayerModule.Section;
 import me.desht.modularrouters.logic.settings.TransferDirection;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -58,12 +58,12 @@ public class PlayerModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), stack ->
-            stack.set(ModDataComponents.PLAYER_SETTINGS, new CompiledPlayerModule.PlayerSettings(
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.PLAYER_SETTINGS.get(), new CompiledPlayerModule.PlayerSettings(
                     dirButton.getState(),
                     secButton.getState()
-            ))
+            )
         );
     }
 

@@ -5,9 +5,9 @@ import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule;
 import me.desht.modularrouters.logic.compiled.CompiledBreakerModule.MatchType;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -39,12 +39,10 @@ public class BreakerModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), s ->
-                s.set(ModDataComponents.BREAKER_SETTINGS, new CompiledBreakerModule.BreakerSettings(
-                        matchBlockButton.getState()
-                ))
-        );
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.BREAKER_SETTINGS.get(),
+                new CompiledBreakerModule.BreakerSettings(matchBlockButton.getState()));
     }
 
     @Override

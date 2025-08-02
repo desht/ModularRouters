@@ -17,6 +17,7 @@ import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -50,12 +51,12 @@ public class DistributorModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected ItemStack buildModifiedItemStack() {
-        return Util.make(super.buildModifiedItemStack(), stack ->
-                stack.set(ModDataComponents.DISTRIBUTOR_SETTINGS, new CompiledDistributorModule.DistributorSettings(
+    protected void buildComponentPatch(DataComponentPatch.Builder builder) {
+        super.buildComponentPatch(builder);
+        builder.set(ModDataComponents.DISTRIBUTOR_SETTINGS.get(), new CompiledDistributorModule.DistributorSettings(
                         sb.getState(),
                         db.isToggled() ? TransferDirection.TO_ROUTER : TransferDirection.FROM_ROUTER
-                ))
+                )
         );
     }
 
