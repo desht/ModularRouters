@@ -14,7 +14,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.asMutableComponent;
@@ -28,9 +30,10 @@ public class ExtruderModule2 extends ModuleItem implements IRangedModule {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addSettingsInformation(stack, tooltipAdder);
 
+        List<Component> list = new ArrayList<>();
         list.add(xlate("modularrouters.itemText.extruder2.template").withStyle(ChatFormatting.YELLOW));
 
         int size = list.size();
@@ -47,8 +50,9 @@ public class ExtruderModule2 extends ModuleItem implements IRangedModule {
                     .append(" ")
                     .append(xlate("modularrouters.itemText.misc.noItems").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC))
             );
-
         }
+
+        list.forEach(tooltipAdder);
     }
 
     @Override

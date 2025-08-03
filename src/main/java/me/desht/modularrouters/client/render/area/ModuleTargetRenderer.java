@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.render.area;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.desht.modularrouters.client.render.ModRenderTypes;
@@ -110,13 +109,11 @@ public class ModuleTargetRenderer {
             faceBuilder.addVertex(posMat, BOX_SIZE, BOX_SIZE, 0).setColor(r, g, b, alpha).setNormal(0, 1, 0);
             faceBuilder.addVertex(posMat, 0, BOX_SIZE, 0).setColor(r, g, b, alpha).setNormal(0, 1, 0);
 
-            RenderSystem.disableDepthTest();
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             VertexConsumer lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
             ShapeRenderer.renderLineBox(matrixStack, lineBuilder, 0, 0, 0, BOX_SIZE, BOX_SIZE, BOX_SIZE, 0.25f, 0.25f, 0.25f, 0.3125f);
 
-            RenderSystem.disableDepthTest();
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
             matrixStack.popPose();

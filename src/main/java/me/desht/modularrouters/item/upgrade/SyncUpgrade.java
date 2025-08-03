@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -25,9 +25,9 @@ public class SyncUpgrade extends UpgradeItem {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
+    public void addExtraInformation(ItemStack itemstack, Consumer<Component> consumer) {
         int val = getTunedValue(itemstack);
-        list.add(xlate("modularrouters.itemText.sync.tuning", colorText(val, ChatFormatting.AQUA))
+        consumer.accept(xlate("modularrouters.itemText.sync.tuning", colorText(val, ChatFormatting.AQUA))
                 .withStyle(ChatFormatting.YELLOW));
     }
 

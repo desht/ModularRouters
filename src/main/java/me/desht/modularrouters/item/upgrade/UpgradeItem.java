@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class UpgradeItem extends MRBaseItem implements ModItems.ITintable {
     public UpgradeItem(Item.Properties properties) {
@@ -51,7 +51,7 @@ public abstract class UpgradeItem extends MRBaseItem implements ModItems.ITintab
 
     }
 
-    protected void addExtraInformation(ItemStack stack, List<Component> list) {
+    protected void addExtraInformation(ItemStack stack, Consumer<Component> list) {
 
     }
 

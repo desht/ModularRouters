@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ModFilter extends SmartFilterItem {
     public static final int MAX_SIZE = 6;
@@ -36,16 +37,16 @@ public class ModFilter extends SmartFilterItem {
     }
 
     @Override
-    public void addExtraInformation(ItemStack stack, List<Component> list) {
-        super.addExtraInformation(stack, list);
+    public void addExtraInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addExtraInformation(stack, tooltipAdder);
 
         List<String> mods = getModList(stack);
-        addCountInfo(list, mods.size());
-        list.addAll(mods.stream()
+        addCountInfo(tooltipAdder, mods.size());
+        mods.stream()
                 .map(ModNameCache::getModName)
                 .map(s -> " • " + ChatFormatting.AQUA + s)
                 .map(Component::literal)
-                .toList());
+                .forEach(tooltipAdder);
     }
 
     @Override

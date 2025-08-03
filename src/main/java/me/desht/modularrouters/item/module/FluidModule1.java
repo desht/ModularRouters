@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -46,13 +46,13 @@ public class FluidModule1 extends ModuleItem {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<Component> list) {
+    protected void addExtraInformation(ItemStack stack, Consumer<Component> list) {
         super.addExtraInformation(stack, list);
 
         FluidModuleSettings settings = stack.getOrDefault(ModDataComponents.FLUID_SETTINGS.get(), FluidModuleSettings.DEFAULT);
-        list.add(xlate("modularrouters.itemText.transfer_direction",
+        list.accept(xlate("modularrouters.itemText.transfer_direction",
                 xlate(settings.direction().getTranslationKey()).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
-        list.add(xlate("modularrouters.itemText.fluid.maxTransfer",
+        list.accept(xlate("modularrouters.itemText.fluid.maxTransfer",
                 colorText(settings.maxTransfer(), ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
     }
 

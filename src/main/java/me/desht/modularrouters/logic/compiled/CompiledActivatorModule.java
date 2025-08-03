@@ -260,7 +260,7 @@ public class CompiledActivatorModule extends CompiledModule {
         // any items added to the fake player's inventory from using the held item need to be dropped into
         // the world, since the router has no access to them, and the player would otherwise lose them
         // e.g. milking a cow with a stack of buckets in the router slot
-        NonNullList<ItemStack> inv = fakePlayer.getInventory().items;
+        NonNullList<ItemStack> inv = fakePlayer.getInventory().getNonEquipmentItems();
         Vec3 where = Vec3.atCenterOf(router.getBlockPos().relative(getAbsoluteFacing()));
         // start at slot 1, since slot 0 is always used for the fake player's held item, which doesn't get dropped
         Level level = Objects.requireNonNull(router.getLevel());

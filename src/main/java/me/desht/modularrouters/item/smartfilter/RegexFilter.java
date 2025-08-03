@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class RegexFilter extends SmartFilterItem {
     public static final int MAX_SIZE = 6;
@@ -31,12 +32,12 @@ public class RegexFilter extends SmartFilterItem {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
-        super.addExtraInformation(itemstack, list);
+    public void addExtraInformation(ItemStack itemstack, Consumer<Component> tooltipAdder) {
+        super.addExtraInformation(itemstack, tooltipAdder);
 
         List<String> regexList = getRegexList(itemstack);
-        addCountInfo(list, regexList.size());
-        list.addAll(regexList.stream().map(s -> " • " + ChatFormatting.AQUA + "/" + s + "/").map(Component::literal).toList());
+        addCountInfo(tooltipAdder, regexList.size());
+        regexList.stream().map(s -> " • " + ChatFormatting.AQUA + "/" + s + "/").map(Component::literal).forEach(tooltipAdder);
     }
 
     @Override

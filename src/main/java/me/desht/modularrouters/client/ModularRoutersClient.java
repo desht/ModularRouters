@@ -8,7 +8,7 @@ import me.desht.modularrouters.client.gui.filter.*;
 import me.desht.modularrouters.client.gui.module.*;
 import me.desht.modularrouters.client.item.DistributorModeProperty;
 import me.desht.modularrouters.client.item.ModuleTintSource;
-import me.desht.modularrouters.client.model.ModelBakeEventHandler;
+import me.desht.modularrouters.client.render.ModRenderPipelines;
 import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterBER;
 import me.desht.modularrouters.core.ModBlockEntities;
@@ -21,10 +21,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -38,13 +35,19 @@ public class ModularRoutersClient {
         modBus.addListener(this::registerItemTintSources);
         modBus.addListener(this::registerItemModelProperties);
         modBus.addListener(this::registerBlockColorHandlers);
+        modBus.addListener(this::registerRenderPipelines);
         modBus.addListener(KeyBindings::registerKeyBindings);
-        modBus.addListener(ModelBakeEventHandler::onModelBake);
+//        modBus.addListener(ModelBakeEventHandler::onModelBake);
 
         NeoForge.EVENT_BUS.register(ModuleTargetRenderer.class);
         NeoForge.EVENT_BUS.register(MouseOverHelp.class);
 
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+    }
+
+    private void registerRenderPipelines(RegisterRenderPipelinesEvent event) {
+        event.registerPipeline(ModRenderPipelines.DEBUG_QUADS_NO_DEPTH);
+        event.registerPipeline(ModRenderPipelines.LINES_NO_DEPTH);
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {

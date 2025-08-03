@@ -8,7 +8,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.ItemAbilities;
 import org.apache.commons.lang3.Validate;
 
 import java.util.List;
@@ -110,6 +109,8 @@ public abstract class PickaxeModuleRecipe extends CustomRecipe {
     }
 
     private static boolean isValidPickaxe(ItemStack stack) {
-        return stack != null && stack.getItem().canPerformAction(stack, ItemAbilities.PICKAXE_DIG) && stack.getDamageValue() == 0;
+//        return stack != null && stack.getItem().canPerformAction(stack, ItemAbilities.PICKAXE_DIG) && stack.getDamageValue() == 0;
+        // TODO is this best way of identifying a pickaxe now?
+        return stack != null && stack.is(ItemTags.PICKAXES) && stack.getDamageValue() == 0;
     }
 }

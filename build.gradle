@@ -59,10 +59,10 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
 
-    registerFeature('testUtils') {
-        usingSourceSet(sourceSets.test)
-        withSourcesJar()
-    }
+//    registerFeature('testUtils') {
+//        usingSourceSet(sourceSets.test)
+//        withSourcesJar()
+//    }
 }
 
 neoForge {
@@ -81,9 +81,9 @@ neoForge {
         "${mod_id}" {
             sourceSet sourceSets.main
         }
-        "${gametest_mod_id}" {
-            sourceSet sourceSets.test
-        }
+//        "${gametest_mod_id}" {
+//            sourceSet sourceSets.test
+//        }
     }
 
     runs {
@@ -109,7 +109,7 @@ neoForge {
             systemProperty 'neoforge.enableGameTest', 'true'
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},${gametest_mod_id}"
-            sourceSet = sourceSets.test
+//            sourceSet = sourceSets.test
         }
 
         server {
@@ -121,11 +121,11 @@ neoForge {
         // This run config launches GameTestServer and runs all registered gametests, then exits.
         // By default, the server will crash when no gametests are provided.
         // The gametest system is also enabled by default for other run configs under the /test command.
-        gameTestServer {
-            type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},${gametest_mod_id}"
-            sourceSet = sourceSets.test
-        }
+//        gameTestServer {
+//            type = "gameTestServer"
+//            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},${gametest_mod_id}"
+//            sourceSet = sourceSets.test
+//        }
 
         data {
             clientData()
@@ -158,10 +158,10 @@ dependencies {
 //
     compileOnly "dev.ftb.mods:ftb-filter-system-neoforge:${ffs_version}" transitive false
 //
-    compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
-//    runtimeOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
-//    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
 //    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {

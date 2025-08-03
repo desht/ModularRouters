@@ -4,7 +4,6 @@ import me.desht.modularrouters.ModularRoutersTags;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModSounds;
 import net.minecraft.ChatFormatting;

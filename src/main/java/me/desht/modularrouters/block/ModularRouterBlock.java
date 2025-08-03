@@ -4,25 +4,18 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
-import me.desht.modularrouters.logic.settings.RedstoneBehaviour;
 import me.desht.modularrouters.network.messages.RouterSettingsMessage;
 import me.desht.modularrouters.network.messages.RouterUpgradesSyncMessage;
-import me.desht.modularrouters.util.InventoryUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -45,14 +38,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
-import static me.desht.modularrouters.block.tile.ModularRouterBlockEntity.*;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
@@ -89,14 +78,10 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
-            world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
-                InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
-                world.updateNeighbourForOutputSignal(pos, this);
-                super.onRemove(state, world, pos, newState, isMoving);
-            });
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+
+        level.updateNeighbourForOutputSignal(pos, this);
     }
 
     @Override
@@ -111,63 +96,63 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                 .orElse(0);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag advanced) {
-        HolderLookup.Provider lookupProvider = context.registries();
-        if (lookupProvider != null && stack.has(DataComponents.BLOCK_ENTITY_DATA)) {
-            CompoundTag compound = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
-            tooltip.add(xlate("modularrouters.itemText.misc.routerConfigured")
-                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-            if (compound.contains(NBT_MODULES)) {
-                List<Component> moduleText = new ArrayList<>();
-                ItemStackHandler modulesHandler = new ItemStackHandler(9);
-                modulesHandler.deserializeNBT(lookupProvider, compound.getCompound(NBT_MODULES));
-                for (int i = 0; i < modulesHandler.getSlots(); i++) {
-                    ItemStack moduleStack = modulesHandler.getStackInSlot(i);
-                    if (!moduleStack.isEmpty()) {
-                        moduleText.add(Component.literal("• ")
-                                .append(moduleStack.getHoverName())
-                                .withStyle(ChatFormatting.AQUA)
-                        );
-                    }
-                }
-                if (!moduleText.isEmpty()) {
-                    tooltip.add(xlate("modularrouters.guiText.label.modules").withStyle(ChatFormatting.YELLOW));
-                    tooltip.addAll(moduleText);
-                }
-            }
-            if (compound.contains(NBT_UPGRADES)) {
-                ItemStackHandler upgradesHandler = new ItemStackHandler();
-                upgradesHandler.deserializeNBT(lookupProvider, compound.getCompound(NBT_UPGRADES));
-                List<Component> upgradeText = new ArrayList<>();
-                for (int i = 0; i < upgradesHandler.getSlots(); i++) {
-                    ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
-                    if (!upgradeStack.isEmpty()) {
-                        upgradeText.add(Component.literal("• " + upgradeStack.getCount() + " x ")
-                                .append(upgradeStack.getHoverName())
-                                .withStyle(ChatFormatting.AQUA)
-                        );
-                    }
-                }
-                if (!upgradeText.isEmpty()) {
-                    tooltip.add(xlate("modularrouters.itemText.misc.upgrades").withStyle(ChatFormatting.YELLOW));
-                    tooltip.addAll(upgradeText);
-                }
-            }
-            if (compound.contains(NBT_REDSTONE_MODE)) {
-                try {
-                    RedstoneBehaviour rrb = RedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-                    tooltip.add(xlate("modularrouters.guiText.tooltip.redstone.label")
-                            .append(": ")
-                            .withStyle(ChatFormatting.YELLOW)
-                            .append(xlate("modularrouters.guiText.tooltip.redstone." + rrb)
-                                    .withStyle(ChatFormatting.RED))
-                    );
-                } catch (IllegalArgumentException ignored) {
-                }
-            }
-        }
-    }
+//    @Override
+//    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+//        HolderLookup.Provider lookupProvider = context.registries();
+//        if (lookupProvider != null && stack.has(DataComponents.BLOCK_ENTITY_DATA)) {
+//            CompoundTag compound = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
+//            tooltipAdder.accept(xlate("modularrouters.itemText.misc.routerConfigured")
+//                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+//            if (compound.contains(NBT_MODULES)) {
+//                List<Component> moduleText = new ArrayList<>();
+//                ItemStackHandler modulesHandler = new ItemStackHandler(9);
+//                compound.getCompound(NBT_MODULES).ifPresent(tag -> modulesHandler.deserializeNBT(lookupProvider, tag));
+//                for (int i = 0; i < modulesHandler.getSlots(); i++) {
+//                    ItemStack moduleStack = modulesHandler.getStackInSlot(i);
+//                    if (!moduleStack.isEmpty()) {
+//                        moduleText.add(Component.literal("• ")
+//                                .append(moduleStack.getHoverName())
+//                                .withStyle(ChatFormatting.AQUA)
+//                        );
+//                    }
+//                }
+//                if (!moduleText.isEmpty()) {
+//                    tooltipAdder.accept(xlate("modularrouters.guiText.label.modules").withStyle(ChatFormatting.YELLOW));
+//                    moduleText.forEach(tooltipAdder);
+//                }
+//            }
+//            if (compound.contains(NBT_UPGRADES)) {
+//                ItemStackHandler upgradesHandler = new ItemStackHandler();
+//                compound.getCompound(NBT_UPGRADES).ifPresent(tag -> upgradesHandler.deserializeNBT(lookupProvider, tag));
+//                List<Component> upgradeText = new ArrayList<>();
+//                for (int i = 0; i < upgradesHandler.getSlots(); i++) {
+//                    ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
+//                    if (!upgradeStack.isEmpty()) {
+//                        upgradeText.add(Component.literal("• " + upgradeStack.getCount() + " x ")
+//                                .append(upgradeStack.getHoverName())
+//                                .withStyle(ChatFormatting.AQUA)
+//                        );
+//                    }
+//                }
+//                if (!upgradeText.isEmpty()) {
+//                    tooltipAdder.accept(xlate("modularrouters.itemText.misc.upgrades").withStyle(ChatFormatting.YELLOW));
+//                    upgradeText.forEach(tooltipAdder);
+//                }
+//            }
+//            if (compound.contains(NBT_REDSTONE_MODE)) {
+//                try {
+//                    RedstoneBehaviour rrb = RedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
+//                    tooltipAdder.accept(xlate("modularrouters.guiText.tooltip.redstone.label")
+//                            .append(": ")
+//                            .withStyle(ChatFormatting.YELLOW)
+//                            .append(xlate("modularrouters.guiText.tooltip.redstone." + rrb)
+//                                    .withStyle(ChatFormatting.RED))
+//                    );
+//                } catch (IllegalArgumentException ignored) {
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockRayTraceResult) {

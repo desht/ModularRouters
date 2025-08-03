@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TagFilter extends SmartFilterItem {
     public TagFilter(Properties properties) {
@@ -42,15 +43,15 @@ public class TagFilter extends SmartFilterItem {
     }
 
     @Override
-    public void addExtraInformation(ItemStack stack, List<Component> list) {
-        super.addExtraInformation(stack, list);
+    public void addExtraInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addExtraInformation(stack, tooltipAdder);
 
         List<TagKey<Item>> l = getTagList(stack);
-        addCountInfo(list, l.size());
-        list.addAll(l.stream()
+        addCountInfo(tooltipAdder, l.size());
+        l.stream()
                 .map(s -> " • " + ChatFormatting.AQUA + s.location())
                 .map(Component::literal)
-                .toList());
+                .forEach(tooltipAdder);
     }
 
     @Override

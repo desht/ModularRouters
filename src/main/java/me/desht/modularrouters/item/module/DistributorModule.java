@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class DistributorModule extends SenderModule2 {
     private static final TintColor TINT_COLOR = new TintColor(240, 240, 60);
@@ -24,14 +24,14 @@ public class DistributorModule extends SenderModule2 {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addSettingsInformation(stack, tooltipAdder);
 
         DistributorSettings settings = stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, DistributorSettings.DEFAULT);
-        list.add(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy").withStyle(ChatFormatting.YELLOW)
+        tooltipAdder.accept(ClientUtil.xlate("modularrouters.guiText.tooltip.distributor.strategy").withStyle(ChatFormatting.YELLOW)
                 .append(": ").withStyle(ChatFormatting.YELLOW)
                 .append(ClientUtil.xlate(settings.strategy().getTranslationKey())).withStyle(ChatFormatting.AQUA));
-        list.add(ClientUtil.xlate(settings.direction().getTranslationKey()).withStyle(ChatFormatting.YELLOW));
+        tooltipAdder.accept(ClientUtil.xlate(settings.direction().getTranslationKey()).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

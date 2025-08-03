@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class ExtruderModule1 extends ModuleItem implements IRangedModule, IPickaxeUser {
 
@@ -23,11 +23,11 @@ public class ExtruderModule1 extends ModuleItem implements IRangedModule, IPicka
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> list) {
         super.addSettingsInformation(stack, list);
 
         ModuleSettings settings = ModuleItem.getCommonSettings(stack);
-        list.add(ClientUtil.xlate("modularrouters.itemText.extruder.mode." + settings.redstoneBehaviour().getSerializedName())
+        list.accept(ClientUtil.xlate("modularrouters.itemText.extruder.mode." + settings.redstoneBehaviour().getSerializedName())
                 .withStyle(ChatFormatting.YELLOW));
     }
 

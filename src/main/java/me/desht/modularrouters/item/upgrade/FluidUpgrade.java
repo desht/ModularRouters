@@ -6,7 +6,7 @@ import me.desht.modularrouters.config.ConfigHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class FluidUpgrade extends UpgradeItem {
     public FluidUpgrade(Properties properties) {
@@ -19,10 +19,10 @@ public class FluidUpgrade extends UpgradeItem {
     }
 
     @Override
-    public void addUsageInformation(ItemStack itemstack, List<Component> list) {
+    public void addUsageInformation(ItemStack itemstack, Consumer<Component> list) {
         super.addUsageInformation(itemstack, list);
         ClientUtil.getOpenItemRouter()
-                .ifPresent(router -> list.add(ClientUtil.xlate("modularrouters.itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate())));
+                .ifPresent(router -> list.accept(ClientUtil.xlate("modularrouters.itemText.usage.item.fluidUpgradeRouter", router.getFluidTransferRate())));
     }
 
     @Override

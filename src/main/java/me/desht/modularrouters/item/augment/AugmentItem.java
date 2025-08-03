@@ -10,8 +10,8 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class AugmentItem extends MRBaseItem {
@@ -22,7 +22,7 @@ public abstract class AugmentItem extends MRBaseItem {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<Component> list) {
+    protected void addExtraInformation(ItemStack stack, Consumer<Component> consumer) {
     }
 
     public abstract int getMaxAugments(ModuleItem moduleType);

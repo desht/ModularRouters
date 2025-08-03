@@ -23,8 +23,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class BulkItemFilter extends SmartFilterItem {
     public static final int FILTER_SIZE = 54;
@@ -47,7 +47,7 @@ public class BulkItemFilter extends SmartFilterItem {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
+    public void addExtraInformation(ItemStack itemstack, Consumer<Component> list) {
         super.addExtraInformation(itemstack, list);
         addCountInfo(list, getSize(itemstack));
     }

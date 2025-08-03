@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -32,11 +32,11 @@ public class FlingerModule extends DropperModule {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addSettingsInformation(stack, tooltipAdder);
 
         FlingerSettings settings = stack.getOrDefault(ModDataComponents.FLINGER_SETTINGS, FlingerSettings.DEFAULT);
-        list.add(xlate("modularrouters.itemText.misc.flingerDetails",
+        tooltipAdder.accept(xlate("modularrouters.itemText.misc.flingerDetails",
                 colorText(settings.speed(), ChatFormatting.AQUA),
                 colorText(settings.pitch(), ChatFormatting.AQUA),
                 colorText(settings.yaw(), ChatFormatting.AQUA)

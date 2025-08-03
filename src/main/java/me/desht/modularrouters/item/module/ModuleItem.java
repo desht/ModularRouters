@@ -35,10 +35,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -50,6 +50,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -145,38 +146,38 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-        super.appendHoverText(stack, context, list, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
 
         if (ClientUtil.getHoveredSlot() instanceof RouterMenu.InstalledModuleSlot && !ClientUtil.isKeyDown(KeyBindings.keybindModuleInfo)) {
             Component key = KeyBindings.keybindConfigure.getKey().getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
             Component middleClick = xlate("modularrouters.itemText.misc.middle_click").withStyle(ChatFormatting.DARK_AQUA);
-            list.add(xlate("modularrouters.itemText.misc.configureHint", key, middleClick).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            tooltipAdder.accept(xlate("modularrouters.itemText.misc.configureHint", key, middleClick).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }
 
     @Override
-    protected void addUsageInformation(ItemStack itemstack, List<Component> list) {
+    protected void addUsageInformation(ItemStack itemstack, Consumer<Component> list) {
         super.addUsageInformation(itemstack, list);
         adapter.addUsageInformation(itemstack, list);
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<Component> list) {
+    protected void addExtraInformation(ItemStack stack, Consumer<Component> list) {
         addSettingsInformation(stack, list);
         addAugmentInformation(stack, list);
     }
 
-    protected void addSettingsInformation(ItemStack stack, List<Component> list) {
+    protected void addSettingsInformation(ItemStack stack, Consumer<Component> consumer) {
         ModuleSettings settings = getCommonSettings(stack);
 
         if (isDirectional()) {
             MutableComponent dirStr = getDirectionString(settings.facing());
-            list.add(xlate("modularrouters.guiText.label.direction").withStyle(ChatFormatting.YELLOW)
+            consumer.accept(xlate("modularrouters.guiText.label.direction").withStyle(ChatFormatting.YELLOW)
                     .append(Component.literal(": "))
                     .append(dirStr.withStyle(ChatFormatting.AQUA)));
         }
-        addFilterInformation(stack, list);
+        addFilterInformation(stack, consumer);
 
         ModuleFlags flags = ModuleFlags.forItem(stack);
 
@@ -185,9 +186,9 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
                 .append(formatFlag("match_components", flags.matchComponents()))
                 .append(" | ")
                 .append(formatFlag("match_item_tags", flags.matchItemTags()));
-        list.add(xlate("modularrouters.itemText.misc.flags").withStyle(ChatFormatting.YELLOW).append(": ").append(flagText));
+        consumer.accept(xlate("modularrouters.itemText.misc.flags").withStyle(ChatFormatting.YELLOW).append(": ").append(flagText));
 
-        list.add(xlate("modularrouters.itemText.misc.match").withStyle(ChatFormatting.YELLOW)
+        consumer.accept(xlate("modularrouters.itemText.misc.match").withStyle(ChatFormatting.YELLOW)
                 .append(": ")
                 .append(xlate("modularrouters.itemText.misc." + (flags.matchAllItems() ? "matchAll" : "matchAny"))
                         .withStyle(ChatFormatting.AQUA)));
@@ -197,7 +198,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             ChatFormatting col = curRange > rm.getBaseRange() ?
                     ChatFormatting.GREEN : curRange < rm.getBaseRange() ?
                     ChatFormatting.RED : ChatFormatting.AQUA;
-            list.add(xlate("modularrouters.itemText.misc.rangeInfo",
+            consumer.accept(xlate("modularrouters.itemText.misc.rangeInfo",
                     colorText(rm.getCurrentRange(stack), col),
                     colorText(rm.getBaseRange(), ChatFormatting.AQUA),
                     colorText(rm.getHardMaxRange(), ChatFormatting.AQUA)
@@ -206,15 +207,15 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
         ModuleTermination termination = settings.termination();
         if (termination != ModuleTermination.NONE) {
-            list.add(xlate(termination.getTranslationKey() + ".header").withStyle(ChatFormatting.YELLOW));
+            consumer.accept(xlate(termination.getTranslationKey() + ".header").withStyle(ChatFormatting.YELLOW));
         }
 
         ItemStack pick = IPickaxeUser.getPickaxe(stack);
         if (this instanceof IPickaxeUser) {
-            list.add(xlate("modularrouters.itemText.misc.breakerPick").withStyle(ChatFormatting.YELLOW)
+            consumer.accept(xlate("modularrouters.itemText.misc.breakerPick").withStyle(ChatFormatting.YELLOW)
                     .append(pick.getHoverName().plainCopy().withStyle(ChatFormatting.AQUA)));
             pick.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet().forEach(holder -> {
-                list.add(Component.literal("▶ ")
+                consumer.accept(Component.literal("▶ ")
                         .append(Enchantment.getFullname(holder.getKey(), holder.getIntValue()).copy().withStyle(ChatFormatting.AQUA))
                         .withStyle(ChatFormatting.YELLOW));
             });
@@ -222,15 +223,15 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
 
         int energy = getEnergyCost(stack);
         if (energy != 0) {
-            list.add(xlate("modularrouters.itemText.misc.energyUsage", colorText(energy, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
+            consumer.accept(xlate("modularrouters.itemText.misc.energyUsage", colorText(energy, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
         }
 
-        adapter.addSettingsInformation(stack, list);
+        adapter.addSettingsInformation(stack, consumer);
     }
 
     public abstract int getEnergyCost(ItemStack stack);
 
-    private void addAugmentInformation(ItemStack stack, List<Component> list) {
+    private void addAugmentInformation(ItemStack stack, Consumer<Component> consumer) {
         AugmentCounter c = new AugmentCounter(stack);
         List<Component> toAdd = Lists.newArrayList();
         for (AugmentItem augment : c.getAugments()) {
@@ -244,8 +245,8 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             }
         }
         if (!toAdd.isEmpty()) {
-            list.add(xlate("modularrouters.itemText.augments").withStyle(ChatFormatting.GREEN));
-            list.addAll(toAdd);
+            consumer.accept(xlate("modularrouters.itemText.augments").withStyle(ChatFormatting.GREEN));
+            toAdd.forEach(consumer);
         }
     }
 
@@ -269,7 +270,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
         return xlate("modularrouters.itemText.misc." + (whiteList ? "whitelist" : "blacklist")).withStyle(ChatFormatting.YELLOW);
     }
 
-    private void addFilterInformation(ItemStack itemstack, List<Component> list) {
+    private void addFilterInformation(ItemStack itemstack, Consumer<Component> consumer) {
         List<Component> l2 = new ArrayList<>();
         ModuleFilterHandler filterHandler = new ModuleFilterHandler(itemstack, null);
         for (int i = 0; i < filterHandler.getSlots(); i++) {
@@ -285,12 +286,12 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             }
         }
         if (l2.isEmpty()) {
-            list.add(itemListHeader(itemstack).withStyle(ChatFormatting.YELLOW).append(": ")
+            consumer.accept(itemListHeader(itemstack).withStyle(ChatFormatting.YELLOW).append(": ")
                     .append(xlate("modularrouters.itemText.misc.noItems").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC))
             );
         } else {
-            list.add(itemListHeader(itemstack).withStyle(ChatFormatting.YELLOW).append(": "));
-            list.addAll(l2);
+            consumer.accept(itemListHeader(itemstack).withStyle(ChatFormatting.YELLOW).append(": "));
+            l2.forEach(consumer);
         }
     }
 

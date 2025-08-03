@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class SmartFilterItem extends MRBaseItem {
 //    public SmartFilterItem() {
@@ -52,12 +52,12 @@ public abstract class SmartFilterItem extends MRBaseItem {
     }
 
     @Override
-    protected void addExtraInformation(ItemStack stack, List<Component> list) {
+    protected void addExtraInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
         // nothing - override in subclasses
     }
 
-    protected final void addCountInfo(List<Component> list, int count) {
-        list.add(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", count).withStyle(ChatFormatting.YELLOW));
+    protected final void addCountInfo(Consumer<Component> consumer, int count) {
+        consumer.accept(ClientUtil.xlate("modularrouters.itemText.misc.filter.count", count).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

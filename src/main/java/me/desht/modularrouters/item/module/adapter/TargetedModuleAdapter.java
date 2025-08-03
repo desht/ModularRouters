@@ -25,8 +25,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.asMutableComponent;
@@ -113,18 +113,18 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> list) {
         Set<ModuleTarget> targets = ITargetedModule.getTargets(stack, false);
 
         for (ModuleTarget target : targets) {
             if (target != null) {
                 Component msg = Component.literal("▶ ").append(asMutableComponent(target.getTextComponent()).withStyle(ChatFormatting.WHITE));
-                list.add(msg);
+                list.accept(msg);
                 ClientUtil.getOpenItemRouter().ifPresent(router -> {
                     ModuleTarget moduleTarget = new ModuleTarget(router.getGlobalPos());
                     TargetValidation val = validateTarget(stack, moduleTarget, target, false);
                     if (val != TargetValidation.OK) {
-                        list.add(xlate(val.translationKey()).withStyle(val.getColor()));
+                        list.accept(xlate(val.translationKey()).withStyle(val.getColor()));
                     }
                 });
             }
@@ -186,7 +186,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
     }
 
     @Override
-    public void addUsageInformation(ItemStack itemstack, List<Component> list) {
-        list.add(xlate(targeted.getMaxTargets() > 1 ? "modularrouters.itemText.targetingHintMulti" : "modularrouters.itemText.targetingHint").withStyle(ChatFormatting.YELLOW));
+    public void addUsageInformation(ItemStack itemstack, Consumer<Component> list) {
+        list.accept(xlate(targeted.getMaxTargets() > 1 ? "modularrouters.itemText.targetingHintMulti" : "modularrouters.itemText.targetingHint").withStyle(ChatFormatting.YELLOW));
     }
 }

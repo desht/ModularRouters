@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributorSettings;
 
@@ -27,11 +27,11 @@ public class EnergyDistributorModule extends ModuleItem implements IRangedModule
     }
 
     @Override
-    protected void addSettingsInformation(ItemStack stack, List<Component> list) {
+    protected void addSettingsInformation(ItemStack stack, Consumer<Component> list) {
         super.addSettingsInformation(stack, list);
 
         DistributorSettings settings = stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, DistributorSettings.DEFAULT);
-        list.add(ClientUtil.xlate(settings.direction().getTranslationKey()).withStyle(ChatFormatting.YELLOW));
+        list.accept(ClientUtil.xlate(settings.direction().getTranslationKey()).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

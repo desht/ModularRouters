@@ -26,6 +26,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
@@ -36,18 +37,19 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
+    public void addExtraInformation(ItemStack itemstack, Consumer<Component> consumer) {
         String owner = getOwnerProfile(itemstack).map(GameProfile::getName).orElse("-");
 
-        list.add(ClientUtil.xlate("modularrouters.itemText.security.owner", ChatFormatting.AQUA + owner));
+        consumer.accept(ClientUtil.xlate("modularrouters.itemText.security.owner", ChatFormatting.AQUA + owner));
         Set<String> names = getPlayerNames(itemstack);
         if (!names.isEmpty()) {
-            list.add(ClientUtil.xlate("modularrouters.itemText.security.count", names.size(), MAX_PLAYERS));
-            list.addAll(names.stream()
+            consumer.accept(ClientUtil.xlate("modularrouters.itemText.security.count", names.size(), MAX_PLAYERS));
+
+            names.stream()
                     .map(name -> " • " + ChatFormatting.YELLOW + name)
                     .sorted()
                     .map(Component::literal)
-                    .toList());
+                    .forEach(consumer);
         }
     }
 
@@ -172,7 +174,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
         public static final SecurityList DEFAULT = new SecurityList(List.of());
 
         public static final Codec<SecurityList> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ResolvableProfile.CODEC.listOf(0, MAX_PLAYERS).fieldOf("trusted").forGetter(SecurityList::trusted)
+                ResolvableProfile.CODEC.listOf(0, MAX_PLAYERS).fieldOf("trusted").forGetter(SecurityList::trusted)
         ).apply(builder, SecurityList::new));
 
         public static StreamCodec<FriendlyByteBuf, SecurityList> STREAM_CODEC = StreamCodec.composite(

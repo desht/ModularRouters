@@ -11,6 +11,7 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -43,7 +44,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
     }
 
     @Override
-    public void render(ModularRouterBlockEntity te, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn) {
+    public void render(ModularRouterBlockEntity te, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn, Vec3 camera) {
         matrixStack.pushPose();
         matrixStack.translate(0.5, 0.5, 0.5);
 
@@ -76,7 +77,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         double start = (1 - CAMO_HIGHLIGHT_SIZE) / 2.0;
         poseStack.translate(start, start, start);
         addVertices(buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE), poseStack.last().pose());
-        ShapeRenderer.renderLineBox(poseStack, buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE), 0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0.5F, 0.5F, 1.0F, 1.0F);
+        ShapeRenderer.renderLineBox(poseStack, buffer.getBuffer(RenderType.secondaryBlockOutline()), 0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0.5F, 0.5F, 1.0F, 1.0F);
         poseStack.popPose();
     }
 

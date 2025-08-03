@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class VacuumModule extends ModuleItem implements IRangedModule {
     private static final TintColor TINT_COLOR = new TintColor(120, 48, 191);
@@ -34,8 +34,8 @@ public class VacuumModule extends ModuleItem implements IRangedModule {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addSettingsInformation(stack, tooltipAdder);
 
         boolean xpMode = new AugmentItem.AugmentCounter(stack).getAugmentCount(ModItems.XP_VACUUM_AUGMENT) > 0;
 
@@ -44,11 +44,11 @@ public class VacuumModule extends ModuleItem implements IRangedModule {
             XPCollection.XPCollectionType type = settings.collectionType();
             Component modName = Component.literal(ModNameCache.getModName(type.getModId())).withStyle(ChatFormatting.BLUE);
             Component title = type.getDisplayName().plainCopy().withStyle(ChatFormatting.AQUA);
-            list.add(ClientUtil.xlate("modularrouters.guiText.label.xpVacuum")
+            tooltipAdder.accept(ClientUtil.xlate("modularrouters.guiText.label.xpVacuum")
                     .append(": ").withStyle(ChatFormatting.YELLOW)
                     .append(title).append(" - ").append(modName));
             if (settings.autoEject() && !type.isSolid()) {
-                list.add(MiscUtil.settingsStr(ChatFormatting.GREEN.toString(), ClientUtil.xlate("modularrouters.guiText.tooltip.xpVacuum.ejectFluid")));
+                tooltipAdder.accept(MiscUtil.settingsStr(ChatFormatting.GREEN.toString(), ClientUtil.xlate("modularrouters.guiText.tooltip.xpVacuum.ejectFluid")));
             }
         }
     }

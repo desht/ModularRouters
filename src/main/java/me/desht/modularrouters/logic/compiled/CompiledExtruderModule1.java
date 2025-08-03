@@ -36,7 +36,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     public CompiledExtruderModule1(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        distance = router == null ? 0 : router.getExtensionData().getInt(NBT_EXTRUDER_DIST + getAbsoluteFacing());
+        distance = router == null ? 0 : router.getExtensionData().getIntOr(NBT_EXTRUDER_DIST + getAbsoluteFacing(), 0);
         pushingAugments = getAugmentCount(ModItems.PUSHING_AUGMENT);
         pickaxe = IPickaxeUser.getPickaxe(stack);
     }

@@ -189,7 +189,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     public static class PlayerMainInvNoHotbarWrapper extends RangedWrapper {
         PlayerMainInvNoHotbarWrapper(Inventory inv) {
-            super(new InvWrapper(inv), Inventory.getSelectionSize(), inv.items.size());
+            super(new InvWrapper(inv), Inventory.getSelectionSize(), inv.getNonEquipmentItems().size());
         }
     }
 

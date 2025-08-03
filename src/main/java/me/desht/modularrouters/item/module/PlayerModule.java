@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.item.context.UseOnContext;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -33,14 +33,14 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addSettingsInformation(stack, tooltipAdder);
 
         PlayerSettings settings = stack.getOrDefault(ModDataComponents.PLAYER_SETTINGS, PlayerSettings.DEFAULT);
         ResolvableProfile profile = stack.get(ModDataComponents.OWNER);
 
         String owner = profile == null ? "-" : profile.gameProfile().getName();
-        list.add(xlate("modularrouters.itemText.security.owner", colorText(owner, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
+        tooltipAdder.accept(xlate("modularrouters.itemText.security.owner", colorText(owner, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
 
         Component c = xlate("modularrouters.itemText.misc.operation").withStyle(ChatFormatting.YELLOW)
                 .append(": ")
@@ -51,7 +51,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
                         .append(xlate(settings.section().getTranslationKey()))
                         .withStyle(ChatFormatting.AQUA)
                 );
-        list.add(c);
+        tooltipAdder.accept(c);
     }
 
     @Override

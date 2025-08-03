@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -24,24 +24,24 @@ public class ActivatorModule extends ModuleItem {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> tooltipAdder) {
+        super.addSettingsInformation(stack, tooltipAdder);
 
         ActivatorSettings settings = stack.getOrDefault(ModDataComponents.ACTIVATOR_SETTINGS, ActivatorSettings.DEFAULT);
-        list.add(xlate("modularrouters.guiText.tooltip.activator.action").append(": ")
+        tooltipAdder.accept(xlate("modularrouters.guiText.tooltip.activator.action").append(": ")
                 .withStyle(ChatFormatting.YELLOW)
                 .append(xlate(settings.actionType().getTranslationKey()).withStyle(ChatFormatting.AQUA)));
         if (!settings.actionType().isEntityTarget()) {
-            list.add(xlate("modularrouters.guiText.tooltip.activator.lookDirection").append(": ")
+            tooltipAdder.accept(xlate("modularrouters.guiText.tooltip.activator.lookDirection").append(": ")
                     .withStyle(ChatFormatting.YELLOW)
                     .append(xlate(settings.lookDirection().getTranslationKey()).withStyle(ChatFormatting.AQUA)));
         } else {
-            list.add(xlate("modularrouters.guiText.tooltip.activator.entityMode").append(": ")
+            tooltipAdder.accept(xlate("modularrouters.guiText.tooltip.activator.entityMode").append(": ")
                     .withStyle(ChatFormatting.YELLOW)
                     .append(xlate(settings.entityMode().getTranslationKey()).withStyle(ChatFormatting.AQUA)));
         }
         if (settings.sneaking()) {
-            list.add(xlate("modularrouters.guiText.tooltip.activator.sneak").withStyle(ChatFormatting.YELLOW));
+            tooltipAdder.accept(xlate("modularrouters.guiText.tooltip.activator.sneak").withStyle(ChatFormatting.YELLOW));
         }
     }
 

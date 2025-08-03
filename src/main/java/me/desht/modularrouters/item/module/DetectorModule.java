@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -39,11 +39,11 @@ public class DetectorModule extends ModuleItem {
     }
 
     @Override
-    public void addSettingsInformation(ItemStack stack, List<Component> list) {
-        super.addSettingsInformation(stack, list);
+    public void addSettingsInformation(ItemStack stack, Consumer<Component> consumer) {
+        super.addSettingsInformation(stack, consumer);
 
         DetectorSettings settings = stack.getOrDefault(ModDataComponents.DETECTOR_SETTINGS, DetectorSettings.DEFAULT);
-        list.add(xlate("modularrouters.itemText.misc.redstoneLevel",
+        consumer.accept(xlate("modularrouters.itemText.misc.redstoneLevel",
                 settings.signalLevel(),
                 xlate("modularrouters.itemText.misc.strongSignal." + settings.strongSignal()).withStyle(ChatFormatting.AQUA)
         ).withStyle(ChatFormatting.YELLOW));

@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class BreakerModule extends ModuleItem implements IPickaxeUser {
     private static final TintColor TINT_COLOR = new TintColor(240, 208, 208);
@@ -37,11 +37,11 @@ public class BreakerModule extends ModuleItem implements IPickaxeUser {
     }
 
     @Override
-    protected void addSettingsInformation(ItemStack stack, List<Component> list) {
+    protected void addSettingsInformation(ItemStack stack, Consumer<Component> list) {
         super.addSettingsInformation(stack, list);
 
         BreakerSettings settings = stack.getOrDefault(ModDataComponents.BREAKER_SETTINGS, BreakerSettings.DEFAULT);
-        list.add(ClientUtil.xlate(settings.matchType().getTranslationKey()).withStyle(ChatFormatting.YELLOW));
+        list.accept(ClientUtil.xlate(settings.matchType().getTranslationKey()).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

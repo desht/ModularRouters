@@ -18,27 +18,22 @@ public class RouterComponentProvider implements IBlockComponentProvider {
     public void appendTooltip(ITooltip iTooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
         CompoundTag data = blockAccessor.getServerData();
         if (blockAccessor.getBlockEntity() instanceof ModularRouterBlockEntity) {
-            if (data.getBoolean("Denied")) {
+            if (data.getBooleanOr("Denied", false)) {
                 iTooltip.add(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED));
             } else {
-                if (data.getInt("ModuleCount") > 0) {
-                    iTooltip.add(xlate("modularrouters.itemText.misc.moduleCount", data.getInt("ModuleCount")));
-                }
-                CompoundTag upgrades = data.getCompound("Upgrades");
-                if (!upgrades.isEmpty()) {
+                data.getInt("ModuleCount").ifPresent(c -> iTooltip.add(xlate("modularrouters.itemText.misc.moduleCount", c)));
+                data.getCompound("Upgrades").ifPresent(upgrades -> {
                     iTooltip.add(xlate("modularrouters.itemText.misc.upgrades").append(":"));
-                    for (String k : upgrades.getAllKeys()) {
-                        iTooltip.add(xlate("modularrouters.itemText.misc.upgradeCount", upgrades.getInt(k), xlate(k)));
+                    for (String k : upgrades.keySet()) {
+                        upgrades.getInt(k).ifPresent(c -> iTooltip.add(xlate("modularrouters.itemText.misc.upgradeCount", c, xlate(k))));
                     }
-                }
-                RedstoneBehaviour rrb = RedstoneBehaviour.values()[data.getInt("RedstoneMode")];
+                });
+                RedstoneBehaviour rrb = RedstoneBehaviour.values()[data.getIntOr("RedstoneMode", 0)];
                 iTooltip.add(xlate("modularrouters.guiText.tooltip.redstone.label")
                         .append(": " + ChatFormatting.AQUA)
                         .append(xlate(rrb.getTranslationKey()))
                 );
-                if (data.getBoolean("EcoMode")) {
-                    iTooltip.add(xlate("modularrouters.itemText.misc.ecoMode").withStyle(ChatFormatting.GREEN));
-                }
+                data.getBoolean("EcoMode").ifPresent(b -> iTooltip.add(xlate("modularrouters.itemText.misc.ecoMode").withStyle(ChatFormatting.GREEN)));
             }
         }
     }

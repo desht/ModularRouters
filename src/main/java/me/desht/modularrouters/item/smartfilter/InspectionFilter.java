@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -31,14 +31,14 @@ public class InspectionFilter extends SmartFilterItem {
     }
 
     @Override
-    public void addExtraInformation(ItemStack itemstack, List<Component> list) {
-        super.addExtraInformation(itemstack, list);
+    public void addExtraInformation(ItemStack itemstack, Consumer<Component> tooltipAdder) {
+        super.addExtraInformation(itemstack, tooltipAdder);
         ComparisonList comparisonList = getComparisonList(itemstack);
         if (!comparisonList.isEmpty()) {
-            list.add(xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()).append(":").withStyle(ChatFormatting.YELLOW));
+            tooltipAdder.accept(xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()).append(":").withStyle(ChatFormatting.YELLOW));
             comparisonList.items().stream()
                     .map(c -> Component.literal("• ").append(c.asLocalizedText().withStyle(ChatFormatting.AQUA)))
-                    .forEach(list::add);
+                    .forEach(tooltipAdder);
         }
     }
 

@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,7 +66,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
         camouflage = getCamoStateFromNBT(compound, provider);
-        extendedMimic = compound.getBoolean(NBT_MIMIC);
+        extendedMimic = compound.getBooleanOr(NBT_MIMIC, false);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
         if (pkt.getTag() != null) {
             camouflage = getCamoStateFromNBT(pkt.getTag(), provider);
-            extendedMimic = pkt.getTag().getBoolean("Mimic");
+            extendedMimic = pkt.getTag().getBooleanOr(NBT_MIMIC, false);
             if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
                 Objects.requireNonNull(getLevel()).getChunkSource().getLightEngine().checkBlock(worldPosition);
             }
@@ -94,7 +94,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
         super.handleUpdateTag(tag, provider);
 
         camouflage = getCamoStateFromNBT(tag, provider);
-        extendedMimic = tag.getBoolean("Mimic");
+        extendedMimic = tag.getBooleanOr(NBT_MIMIC, false);
         if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
@@ -121,7 +121,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
 
     private BlockState getCamoStateFromNBT(CompoundTag tag, HolderLookup.Provider provider) {
         if (tag.contains(NBT_CAMO_NAME)) {
-            return NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag.getCompound(NBT_CAMO_NAME));
+            return NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag.getCompoundOrEmpty(NBT_CAMO_NAME));
         }
         return null;
     }

@@ -27,6 +27,7 @@ import me.desht.modularrouters.logic.settings.TransferDirection;
 import me.desht.modularrouters.network.messages.ItemBeamMessage;
 import me.desht.modularrouters.network.messages.RouterUpgradesSyncMessage;
 import me.desht.modularrouters.util.BeamData;
+import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
@@ -35,6 +36,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -67,7 +69,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -75,6 +76,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
@@ -228,13 +230,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private void processClientSync(CompoundTag compound, HolderLookup.Provider provider) {
         // called client-side on receipt of NBT
-        if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
-            setCamouflage(NbtUtils.readBlockState(provider.lookupOrThrow(Registries.BLOCK), compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
-        } else {
-            setCamouflage(null);
-        }
+        compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME).ifPresentOrElse(
+                tag -> setCamouflage(NbtUtils.readBlockState(provider.lookupOrThrow(Registries.BLOCK), tag)),
+                () -> setCamouflage(null)
+        );
 
-        energyStorage.updateForEnergyUpgrades(compound.getInt(NBT_ENERGY_UPGRADES));
+        compound.getInt(NBT_ENERGY_UPGRADES).ifPresent(energyStorage::updateForEnergyUpgrades);
 
         getAllUpgrades().keySet().forEach(item -> {
             final var updateTag = compound.get(BuiltInRegistries.ITEM.getKey(item).toString());
@@ -246,21 +247,22 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     public void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadAdditional(nbt, provider);
 
-        bufferHandler.deserializeNBT(provider, nbt.getCompound(NBT_BUFFER));
-        modulesHandler.deserializeNBT(provider, nbt.getCompound(NBT_MODULES));
-        upgradesHandler.deserializeNBT(provider, nbt.getCompound(NBT_UPGRADES));
-        energyStorage.deserializeNBT(provider, nbt.getCompound(NBT_ENERGY));
-        energyDirection = EnergyDirection.forValue(nbt.getString(NBT_ENERGY_DIR));
-        redstoneBehaviour = RedstoneBehaviour.forValue(nbt.getString(NBT_REDSTONE_MODE));
-        active = nbt.getBoolean(NBT_ACTIVE);
-        activeTimer = nbt.getInt(NBT_ACTIVE_TIMER);
-        ecoMode = nbt.getBoolean(NBT_ECO_MODE);
+        bufferHandler.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_BUFFER));
+        modulesHandler.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_MODULES));
+        upgradesHandler.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_UPGRADES));
+        energyStorage.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_ENERGY));
+        nbt.getString(NBT_ENERGY_DIR).ifPresent(s -> energyDirection = EnergyDirection.forValue(s));
+        nbt.getString(NBT_REDSTONE_MODE).ifPresent(s -> redstoneBehaviour = RedstoneBehaviour.forValue(s));
+
+        active = nbt.getBooleanOr(NBT_ACTIVE, false);
+        activeTimer = nbt.getIntOr(NBT_ACTIVE_TIMER, 0);
+        ecoMode = nbt.getBooleanOr(NBT_ECO_MODE, false);
         ownerID = ExtraCodecs.GAME_PROFILE.parse(NbtOps.INSTANCE, nbt.get(NBT_OWNER_PROFILE)).result()
                 .orElse(DEFAULT_FAKEPLAYER_PROFILE);
 
-        CompoundTag ext = nbt.getCompound(NBT_EXTRA);
+        CompoundTag ext = nbt.getCompoundOrEmpty(NBT_EXTRA);
         CompoundTag ext1 = getExtensionData();
-        for (String key : ext.getAllKeys()) {
+        for (String key : ext.keySet()) {
             //noinspection ConstantConditions
             ext1.put(key, ext.get(key));
         }
@@ -293,12 +295,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput input) {
-        super.applyImplicitComponents(input);
+    protected void applyImplicitComponents(DataComponentGetter getter) {
+        super.applyImplicitComponents(getter);
 
-        redstoneBehaviour = input.getOrDefault(ModDataComponents.REDSTONE_BEHAVIOUR, RedstoneBehaviour.ALWAYS);
-        modulesHandler.fillFrom(input.getOrDefault(ModDataComponents.SAVED_MODULES, ItemContainerContents.EMPTY));
-        upgradesHandler.fillFrom(input.getOrDefault(ModDataComponents.SAVED_UPGRADES, ItemContainerContents.EMPTY));
+        redstoneBehaviour = getter.getOrDefault(ModDataComponents.REDSTONE_BEHAVIOUR, RedstoneBehaviour.ALWAYS);
+        modulesHandler.fillFrom(getter.getOrDefault(ModDataComponents.SAVED_MODULES, ItemContainerContents.EMPTY));
+        upgradesHandler.fillFrom(getter.getOrDefault(ModDataComponents.SAVED_UPGRADES, ItemContainerContents.EMPTY));
     }
 
     @Override
@@ -308,6 +310,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         builder.set(ModDataComponents.REDSTONE_BEHAVIOUR, redstoneBehaviour);
         builder.set(ModDataComponents.SAVED_MODULES, modulesHandler.asContainerContents());
         builder.set(ModDataComponents.SAVED_UPGRADES, upgradesHandler.asContainerContents());
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+
+        InventoryUtils.dropInventoryItems(nonNullLevel(), pos, getBuffer());
     }
 
     private boolean hasItems(IItemHandler handler) {
@@ -389,7 +398,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (getLevel() instanceof ServerLevel serverLevel) {
             if (fakePlayer == null) {
                 fakePlayer = new RouterFakePlayer(this, serverLevel, getOwnerProfile());
-                fakePlayer.getInventory().selected = 0;  // held item always in slot 0
+                fakePlayer.getInventory().setSelectedSlot(0);  // held item always in slot 0
                 fakePlayer.setPosRaw(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
             }
             return fakePlayer;
@@ -861,7 +870,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         // currently being extruded on
         int power = 0;
         for (Direction facing : MiscUtil.DIRECTIONS) {
-            if (getExtensionData().getInt(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing) > 0) {
+            if (getExtensionData().getIntOr(CompiledExtruderModule1.NBT_EXTRUDER_DIST + facing, 0) > 0) {
                 // ignore signal from any side we're extruding on (don't let placed redstone emitters lock up the router)
                 continue;
             }
@@ -1156,9 +1165,9 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             if (!(nbt instanceof CompoundTag compound)) {
                 throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
             }
-            energy = compound.getInt("Energy");
-            capacity = compound.getInt("Capacity");
-            excess = compound.getInt("Excess");
+            energy = compound.getIntOr("Energy", 0);
+            capacity = compound.getIntOr("Capacity", 0);
+            excess = compound.getIntOr("Excess", 0);
         }
 
         public int getCapacity() {
