@@ -5,6 +5,7 @@ import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
 import me.desht.modularrouters.integration.XPCollection;
+import me.desht.modularrouters.network.NetworkHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import me.desht.modularrouters.util.WildcardedRLMatcher;
 import net.neoforged.bus.api.IEventBus;
@@ -33,6 +34,7 @@ public class ModularRouters {
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::registerCaps);
+        modBus.addListener(NetworkHandler::register);
 
         IntegrationHandler.onModConstruction(modBus);
 
@@ -85,7 +87,7 @@ public class ModularRouters {
         });
     }
 
-    @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber
     public static class DataGenerators {
         @SubscribeEvent
         public static void gatherData(GatherDataEvent.Client event) {
