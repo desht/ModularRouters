@@ -6,7 +6,7 @@
     "modularrouters:sender_module_1",
     "modularrouters:sender_module_1",
     "modularrouters:sender_module_1",
-    "minecraft:ender_pearl"
+    "#c:ender_pearls"
   ],
   "result": {
     "count": 4,

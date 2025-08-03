@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     "modularrouters:puller_module_1",
-    "minecraft:ender_pearl"
+    "#c:ender_pearls"
   ],
   "result": {
     "count": 1,
