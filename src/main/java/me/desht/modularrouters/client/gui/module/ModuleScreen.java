@@ -298,6 +298,15 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         return button == 2 ? handleFilterConfig() : super.mouseClicked(x, y, button);
     }
 
+    @Override
+    public boolean mouseScrolled(double x, double y, double xDir, double yDir) {
+        if (super.mouseScrolled(x, y, xDir, yDir)) {
+            return true;
+        } else {
+            return this.getChildAt(x, y).filter(w -> w.mouseScrolled(x, y, xDir, yDir)).isPresent();
+        }
+    }
+
     private boolean handleFilterConfig() {
         Slot slot = getSlotUnderMouse();
         if (slot == null || !(slot.getItem().getItem() instanceof SmartFilterItem filter) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
