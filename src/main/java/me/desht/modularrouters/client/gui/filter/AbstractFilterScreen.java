@@ -8,7 +8,7 @@ import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class AbstractFilterScreen extends Screen implements IResyncableGui {
@@ -37,13 +37,13 @@ public abstract class AbstractFilterScreen extends Screen implements IResyncable
     boolean closeGUI() {
         if (locator.routerPos() != null) {
             // need to re-open module GUI for module in router slot <moduleSlotIndex>
-            PacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
+            ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (locator.hand() != null) {
             ItemStack stack = getMinecraft().player.getItemInHand(locator.hand());
             if (stack.getItem() instanceof ModuleItem) {
                 // need to re-open module GUI for module in player's hand
-                PacketDistributor.sendToServer(OpenGuiMessage.openModuleInHand(locator));
+                ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInHand(locator));
                 return true;
             }
         }

@@ -16,13 +16,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.function.Consumer;
 
@@ -48,7 +48,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
         super.init();
 
         addRenderableWidget(new ClearButton(leftPos + 8, topPos + 130,
-                p -> PacketDistributor.sendToServer(BulkFilterUpdateMessage.untargeted(FilterOp.CLEAR_ALL, menu.getLocator()))
+                p -> ClientPacketDistributor.sendToServer(BulkFilterUpdateMessage.untargeted(FilterOp.CLEAR_ALL, menu.getLocator()))
         ));
 
         MFLocator locator = menu.getLocator();
@@ -67,12 +67,12 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
                 MutableComponent title = xlate(target.blockTranslationKey);
                 addRenderableWidget(new MergeButton(leftPos + 28, topPos + 130, target.toString(), title, p -> {
                     if (target != null) {
-                        PacketDistributor.sendToServer(BulkFilterUpdateMessage.targeted(FilterOp.MERGE, menu.getLocator(), target));
+                        ClientPacketDistributor.sendToServer(BulkFilterUpdateMessage.targeted(FilterOp.MERGE, menu.getLocator(), target));
                     }
                 }));
                 addRenderableWidget(new LoadButton(leftPos + 48, topPos + 130, target.toString(), title, p -> {
                     if (target != null) {
-                        PacketDistributor.sendToServer(BulkFilterUpdateMessage.targeted(FilterOp.LOAD, menu.getLocator(), target));
+                        ClientPacketDistributor.sendToServer(BulkFilterUpdateMessage.targeted(FilterOp.LOAD, menu.getLocator(), target));
                     }
                 }));
             }
@@ -86,7 +86,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, leftPos, topPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }
 
     static class ClearButton extends Buttons.DeleteButton {

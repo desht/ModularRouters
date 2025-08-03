@@ -91,8 +91,6 @@ public class MouseOverHelp {
         int x2 = x1 + actualRect.getWidth();
         int y2 = y1 + actualRect.getHeight();
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 300);
         graphics.fill(x1, y1, x2, y2, bgColor);
         graphics.fill(x1, y1, x2, y1 + 1, borderColor);
         graphics.fill(x1, y2, x2, y2 + 1, borderColor);
@@ -105,8 +103,6 @@ public class MouseOverHelp {
                 y1 += fontRenderer.lineHeight;
             }
         }
-
-        graphics.pose().popPose();
     }
 
     public record HelpRegion(Rect2i extent, List<FormattedCharSequence> text, Predicate<AbstractContainerScreen<?>> showPredicate) {

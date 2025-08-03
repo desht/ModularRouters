@@ -8,7 +8,6 @@ import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.Distribu
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;

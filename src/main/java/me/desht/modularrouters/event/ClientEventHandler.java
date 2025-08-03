@@ -8,6 +8,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -21,7 +22,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ModuleItem) {
-            PacketDistributor.sendToServer(new ValidateModuleMessage(event.getHand()));
+            ClientPacketDistributor.sendToServer(new ValidateModuleMessage(event.getHand()));
             event.setCanceled(true);
         }
     }
@@ -29,7 +30,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ModuleItem) {
-            PacketDistributor.sendToServer(new ValidateModuleMessage(event.getHand()));
+            ClientPacketDistributor.sendToServer(new ValidateModuleMessage(event.getHand()));
         }
     }
 }

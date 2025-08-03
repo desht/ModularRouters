@@ -15,6 +15,7 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
+import me.desht.modularrouters.network.messages.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -24,6 +25,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = ModularRouters.MODID, dist = Dist.CLIENT)
@@ -36,6 +38,7 @@ public class ModularRoutersClient {
         modBus.addListener(this::registerItemModelProperties);
         modBus.addListener(this::registerBlockColorHandlers);
         modBus.addListener(this::registerRenderPipelines);
+        modBus.addListener(this::registerClientNetwork);
         modBus.addListener(KeyBindings::registerKeyBindings);
 //        modBus.addListener(ModelBakeEventHandler::onModelBake);
 
@@ -97,5 +100,9 @@ public class ModularRoutersClient {
                 return 0xffffff;
             }
         }, ModBlocks.MODULAR_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
+    }
+
+    public void registerClientNetwork(final RegisterClientPayloadHandlersEvent event) {
+        event.register(RouterSettingsMessage.TYPE, RouterSettingsMessage::handleData);
     }
 }

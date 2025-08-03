@@ -16,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.model.data.ModelData;
 
 import javax.annotation.Nonnull;
@@ -63,38 +65,36 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.loadAdditional(compound, provider);
-        camouflage = getCamoStateFromNBT(compound, provider);
-        extendedMimic = compound.getBooleanOr(NBT_MIMIC, false);
+    public void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+
+        camouflage = getCamoStateFromInput(input);
+        extendedMimic = input.getBooleanOr(NBT_MIMIC, false);
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.saveAdditional(compound, provider);
-        compound.putBoolean(NBT_MIMIC, extendedMimic);
+    public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+
+        output.putBoolean(NBT_MIMIC, extendedMimic);
         if (camouflage != null) {
-            compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
+            output.store(NBT_CAMO_NAME, CompoundTag.CODEC, NbtUtils.writeBlockState(camouflage));
         }
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
-        if (pkt.getTag() != null) {
-            camouflage = getCamoStateFromNBT(pkt.getTag(), provider);
-            extendedMimic = pkt.getTag().getBooleanOr(NBT_MIMIC, false);
-            if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
-                Objects.requireNonNull(getLevel()).getChunkSource().getLightEngine().checkBlock(worldPosition);
-            }
+    public void onDataPacket(Connection net, ValueInput valueInput) {
+        camouflage = getCamoStateFromInput(valueInput);
+        extendedMimic = valueInput.getBooleanOr(NBT_MIMIC, false);
+        if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
+            Objects.requireNonNull(getLevel()).getChunkSource().getLightEngine().checkBlock(worldPosition);
         }
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
-        super.handleUpdateTag(tag, provider);
-
-        camouflage = getCamoStateFromNBT(tag, provider);
-        extendedMimic = tag.getBooleanOr(NBT_MIMIC, false);
+    public void handleUpdateTag(ValueInput input) {
+        camouflage = getCamoStateFromInput(input);
+        extendedMimic = input.getBooleanOr(NBT_MIMIC, false);
         if (camouflage != null && extendedMimic && camouflage.getLightEmission(getLevel(), getBlockPos()) > 0) {
             // this needs to be deferred a tick because the chunk isn't fully loaded,
             // so any attempt to relight will be ignored
@@ -119,11 +119,11 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
         return getNBTFromCamoState(compound, camouflage);
     }
 
-    private BlockState getCamoStateFromNBT(CompoundTag tag, HolderLookup.Provider provider) {
-        if (tag.contains(NBT_CAMO_NAME)) {
-            return NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag.getCompoundOrEmpty(NBT_CAMO_NAME));
-        }
-        return null;
+    @Nullable
+    private BlockState getCamoStateFromInput(ValueInput valueInput) {
+        return valueInput.read(NBT_CAMO_NAME, CompoundTag.CODEC)
+                .map(tag -> NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag))
+                .orElse(null);
     }
 
     private static CompoundTag getNBTFromCamoState(CompoundTag compound, BlockState camouflage) {

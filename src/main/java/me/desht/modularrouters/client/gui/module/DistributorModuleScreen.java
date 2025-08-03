@@ -13,7 +13,6 @@ import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.sounds.SoundManager;

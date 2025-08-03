@@ -11,13 +11,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.apache.commons.lang3.Range;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -78,7 +78,7 @@ public class SyncUpgradeScreen extends Screen {
     public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
-        pGuiGraphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
+        pGuiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class SyncUpgradeScreen extends Screen {
     public void onClose() {
         int newVal = intField.getIntValue();
         if (currentVal != newVal) {
-            PacketDistributor.sendToServer(new SyncUpgradeSettingsMessage(newVal, hand));
+            ClientPacketDistributor.sendToServer(new SyncUpgradeSettingsMessage(newVal, hand));
         }
 
         super.onClose();

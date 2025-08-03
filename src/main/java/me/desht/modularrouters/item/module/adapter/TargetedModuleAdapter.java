@@ -133,7 +133,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
 
     @Override
     public void doModuleValidation(ItemStack stack, ServerPlayer player) {
-        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.getCommandSenderWorld(), player.blockPosition()));
+        ModuleTarget src = new ModuleTarget(MiscUtil.makeGlobalPos(player.level(), player.blockPosition()));
         Set<ModuleTarget> targets = ITargetedModule.getTargets(stack, true);
         for (ModuleTarget target : targets) {
             if (target != null) {

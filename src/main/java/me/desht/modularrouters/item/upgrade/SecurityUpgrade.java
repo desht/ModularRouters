@@ -115,7 +115,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
     @Override
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!player.getCommandSenderWorld().isClientSide && player.isSteppingCarefully()) {
+        if (!player.level().isClientSide && player.isSteppingCarefully()) {
             setOwner(stack, player);
             Component displayName = Objects.requireNonNullElse(player.getDisplayName(), Component.literal("?"));
             player.displayClientMessage(Component.translatable("modularrouters.itemText.security.owner", displayName.getString()), false);

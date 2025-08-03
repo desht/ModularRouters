@@ -15,11 +15,11 @@ import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
@@ -73,7 +73,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
 
         matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), button -> {
             ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.setMatchAll(!comparisonList.matchAll())));
-            PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+            ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
         });
         addRenderableWidget(matchButton);
 
@@ -110,14 +110,14 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         if (currentOp != InspectionOp.NONE && currentSubject != InspectionSubject.NONE) {
             InspectionMatcher.Comparison newEntry = new InspectionMatcher.Comparison(currentSubject, currentOp, valueTextField.getIntValue());
             ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.addComparison(newEntry)));
-            PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+            ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
             valueTextField.setValue("");
         }
     }
 
     private void removeEntry(int pos) {
         ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.removeAt(pos)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
     }
 
     @Override
@@ -136,7 +136,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
     public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
 
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }
 
     @Override

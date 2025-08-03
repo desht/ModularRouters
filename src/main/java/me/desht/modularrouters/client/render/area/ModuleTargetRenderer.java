@@ -45,8 +45,8 @@ public class ModuleTargetRenderer {
     }
 
     @SubscribeEvent
-    public static void renderWorldLastEvent(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES && compiledPos != null) {
+    public static void renderModuleTargets(RenderLevelStageEvent.AfterParticles event) {
+        if (compiledPos != null) {
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             PoseStack matrixStack = event.getPoseStack();
 

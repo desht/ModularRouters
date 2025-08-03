@@ -7,9 +7,8 @@ import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.logic.compiled.CompiledDetectorModule;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
@@ -62,7 +61,7 @@ public class DetectorModuleScreen extends ModuleScreen {
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(graphics, partialTicks, mouseX, mouseY);
         // text entry field background - super has already bound the correct texture
-        graphics.blit(RenderType::guiTextured, GUI_TEXTURE, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x(), SMALL_TEXTFIELD_XY.y(), 21, 14, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos + 148, topPos + 16, SMALL_TEXTFIELD_XY.x(), SMALL_TEXTFIELD_XY.y(), 21, 14, 256, 256);
     }
 
     @Override

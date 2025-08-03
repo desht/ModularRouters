@@ -30,7 +30,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
@@ -43,12 +43,13 @@ import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Optional;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -143,7 +144,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         regulatorTooltipButton = addRenderableWidget(new RegulatorTooltipButton(regulatorTextField.getX() - 16, regulatorTextField.getY() - 2, module.isFluidModule()));
 
         if (routerPos != null) {
-            addRenderableWidget(new BackButton(leftPos + 2, topPos + 1, p -> PacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
+            addRenderableWidget(new BackButton(leftPos + 2, topPos + 1, p -> ClientPacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
         }
 
         mouseOverHelp.addHelpRegion(leftPos + 7, topPos + 16, leftPos + 60, topPos + 69, "modularrouters.guiText.popup.filter");
@@ -223,7 +224,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     public void sendToServer() {
         DataComponentPatch.Builder builder = DataComponentPatch.builder();
         buildComponentPatch(builder);
-        PacketDistributor.sendToServer(new ModuleSettingsMessage(menu.getLocator(), builder.build()));
+        ClientPacketDistributor.sendToServer(new ModuleSettingsMessage(menu.getLocator(), builder.build()));
     }
 
     /**
@@ -261,9 +262,9 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         TintColor c = getGuiBackgroundTint();
-        graphics.blit(RenderType::guiTextured, GUI_TEXTURE, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256, c.getRGB());
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256, c.getRGB());
         if (!module.isDirectional()) {
-            graphics.blit(RenderType::guiTextured, GUI_TEXTURE, leftPos + 69, topPos + 17, 204, 0, 52, 52, 256, 256, c.getRGB());
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos + 69, topPos + 17, 204, 0, 52, 52, 256, 256, c.getRGB());
         }
     }
 
@@ -283,7 +284,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
-            PacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()));
+            ClientPacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()));
             return true;
         } else if (KeyBindings.keybindConfigure.getKey().getValue() == keyCode) {
             // trying to configure an installed smart filter, we're done
@@ -317,7 +318,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
             // module is installed in a router
             MFLocator locator = MFLocator.filterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex);
             if (filter.hasMenu()) {
-                PacketDistributor.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
+                ClientPacketDistributor.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
                 FilterScreenFactory.openFilterGui(locator);
@@ -326,7 +327,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
             // module is in player's hand
             MFLocator locator = MFLocator.filterInHeldModule(hand, filterSlotIndex);
             if (filter.hasMenu()) {
-                PacketDistributor.sendToServer(OpenGuiMessage.openFilterInHeldModule(locator));
+                ClientPacketDistributor.sendToServer(OpenGuiMessage.openFilterInHeldModule(locator));
             } else {
                 // no container, just open the client-side GUI directly
                 FilterScreenFactory.openFilterGui(locator);
@@ -367,7 +368,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
                         bg.getGreen() * bg.getGreen() * 0.691 +
                         bg.getBlue() * bg.getBlue() * 0.068
         );
-        return luminance > THRESHOLD ? 0x404040 : 0xffffff;
+        return luminance > THRESHOLD ? 0xFF404040 : 0xFFFFFFFF;
     }
 
     @Override

@@ -21,7 +21,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -30,7 +30,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.List;
 
@@ -100,9 +100,9 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
     @Override
     protected void renderBg(GuiGraphics graphics, float v, int i, int i1) {
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         if (menu.getRouter().getEnergyCapacity() > 0) {
-            graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, leftPos - 27, topPos, 180, 0, 32, 100, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos - 27, topPos, 180, 0, 32, 100, 256, 256);
         }
     }
 
@@ -143,7 +143,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
             return false;
         }
         MFLocator locator = MFLocator.moduleInRouter(menu.getRouter().getBlockPos(), slot.index - MODULE_START);
-        PacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
+        ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
         return true;
     }
 
@@ -154,7 +154,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
         router.setRedstoneBehaviour(redstoneBehaviourButton.getState());
         router.setEcoMode(ecoButton.isToggled());
         router.setEnergyDirection(energyDirButton.getState());
-        PacketDistributor.sendToServer(RouterSettingsMessage.forRouter(router));
+        ClientPacketDistributor.sendToServer(RouterSettingsMessage.forRouter(router));
     }
 
     public List<Rect2i> getExtraArea() {

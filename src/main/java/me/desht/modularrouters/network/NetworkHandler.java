@@ -4,6 +4,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.network.messages.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -32,4 +33,5 @@ public class NetworkHandler {
         // bidirectional
         registrar.playBidirectional(RouterSettingsMessage.TYPE, RouterSettingsMessage.STREAM_CODEC, RouterSettingsMessage::handleData);
     }
+
 }

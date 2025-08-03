@@ -2,6 +2,7 @@ package me.desht.modularrouters.block.tile;
 
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
+import com.mojang.serialization.Codec;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.api.event.RouterCompiledEvent;
 import me.desht.modularrouters.block.CamouflageableBlock;
@@ -41,9 +42,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -52,6 +51,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -67,6 +67,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.energy.EnergyStorage;
@@ -194,20 +196,20 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                 tag.putInt(NBT_ENERGY_UPGRADES, nEnergy);
             }
 
-            getAllUpgrades().keySet().forEach(item -> {
-                final var updateTag = item.createUpdateTag(this);
-                if (updateTag != null) {
-                    tag.put(BuiltInRegistries.ITEM.getKey(item).toString(), updateTag);
-                }
-            });
+//            getAllUpgrades().keySet().forEach(item -> {
+//                final var updateTag = item.createUpdateTag(this);
+//                if (updateTag != null) {
+//                    tag.put(BuiltInRegistries.ITEM.getKey(item).toString(), updateTag);
+//                }
+//            });
         });
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
-        super.handleUpdateTag(tag, provider);
+    public void handleUpdateTag(ValueInput input) {
+        super.handleUpdateTag(input);
 
-        processClientSync(tag, provider);
+        processClientSync(input);
     }
 
     @Override
@@ -216,10 +218,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
-        super.onDataPacket(net, pkt, provider);
+    public void onDataPacket(Connection net, ValueInput valueInput) {
+        super.onDataPacket(net, valueInput);
 
-        processClientSync(pkt.getTag(), provider);
+        processClientSync(valueInput);
     }
 
     public void setOwner(Player player) {
@@ -227,44 +229,38 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         setChanged();
     }
 
-    private void processClientSync(CompoundTag compound, HolderLookup.Provider provider) {
+    private void processClientSync(ValueInput input) {
         // called client-side on receipt of NBT
-        compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME).ifPresentOrElse(
-                tag -> setCamouflage(NbtUtils.readBlockState(provider.lookupOrThrow(Registries.BLOCK), tag)),
+        input.read(CamouflageUpgrade.NBT_STATE_NAME, CompoundTag.CODEC).ifPresentOrElse(
+                tag -> setCamouflage(NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag)),
                 () -> setCamouflage(null)
         );
 
-        compound.getInt(NBT_ENERGY_UPGRADES).ifPresent(energyStorage::updateForEnergyUpgrades);
+        input.getInt(NBT_ENERGY_UPGRADES).ifPresent(energyStorage::updateForEnergyUpgrades);
 
-        getAllUpgrades().keySet().forEach(item -> {
-            final var updateTag = compound.get(BuiltInRegistries.ITEM.getKey(item).toString());
-            item.processClientSync(this, (CompoundTag) updateTag);
-        });
+//        getAllUpgrades().keySet().forEach(item -> {
+//            final var updateTag = compound.get(BuiltInRegistries.ITEM.getKey(item).toString());
+//            item.processClientSync(this, (CompoundTag) updateTag);
+//        });
     }
 
     @Override
-    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.loadAdditional(nbt, provider);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
 
-        bufferHandler.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_BUFFER));
-        modulesHandler.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_MODULES));
-        upgradesHandler.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_UPGRADES));
-        energyStorage.deserializeNBT(provider, nbt.getCompoundOrEmpty(NBT_ENERGY));
-        nbt.getString(NBT_ENERGY_DIR).ifPresent(s -> energyDirection = EnergyDirection.forValue(s));
-        nbt.getString(NBT_REDSTONE_MODE).ifPresent(s -> redstoneBehaviour = RedstoneBehaviour.forValue(s));
+        input.child(NBT_BUFFER).ifPresent(bufferHandler::deserialize);
+        input.child(NBT_MODULES).ifPresent(modulesHandler::deserialize);
+        input.child(NBT_UPGRADES).ifPresent(upgradesHandler::deserialize);
+        input.child(NBT_ENERGY).ifPresent(energyStorage::deserialize);
 
-        active = nbt.getBooleanOr(NBT_ACTIVE, false);
-        activeTimer = nbt.getIntOr(NBT_ACTIVE_TIMER, 0);
-        ecoMode = nbt.getBooleanOr(NBT_ECO_MODE, false);
-        ownerID = ExtraCodecs.GAME_PROFILE.parse(NbtOps.INSTANCE, nbt.get(NBT_OWNER_PROFILE)).result()
-                .orElse(DEFAULT_FAKEPLAYER_PROFILE);
+        energyDirection = input.read(NBT_ENERGY_DIR, EnergyDirection.CODEC).orElse(EnergyDirection.TO_ROUTER);
+        input.getString(NBT_REDSTONE_MODE).ifPresent(s -> redstoneBehaviour = RedstoneBehaviour.forValue(s));
+        active = input.getBooleanOr(NBT_ACTIVE, false);
+        activeTimer = input.getIntOr(NBT_ACTIVE_TIMER, 0);
+        ecoMode = input.getBooleanOr(NBT_ECO_MODE, false);
+        ownerID = input.read(NBT_OWNER_PROFILE, ExtraCodecs.GAME_PROFILE).orElse(DEFAULT_FAKEPLAYER_PROFILE);
 
-        CompoundTag ext = nbt.getCompoundOrEmpty(NBT_EXTRA);
-        CompoundTag ext1 = getExtensionData();
-        for (String key : ext.keySet()) {
-            //noinspection ConstantConditions
-            ext1.put(key, ext.get(key));
-        }
+        // TODO extension data
 
         // When restoring, give the counter a random initial value to avoid all saved routers
         // having the same counter and firing simultaneously, which could conceivably cause lag
@@ -274,23 +270,24 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.saveAdditional(nbt, provider);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
 
-        nbt.put(NBT_BUFFER, bufferHandler.serializeNBT(provider));
-        if (hasItems(modulesHandler)) nbt.put(NBT_MODULES, modulesHandler.serializeNBT(provider));
-        if (hasItems(upgradesHandler)) nbt.put(NBT_UPGRADES, upgradesHandler.serializeNBT(provider));
-        if (redstoneBehaviour != RedstoneBehaviour.ALWAYS) nbt.putString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
-        if (energyStorage.getCapacity() > 0) nbt.put(NBT_ENERGY, energyStorage.serializeNBT(provider));
-        if (energyDirection != EnergyDirection.FROM_ROUTER) nbt.putString(NBT_ENERGY_DIR, energyDirection.name());
-        if (active) nbt.putBoolean(NBT_ACTIVE, true);
-        if (activeTimer != 0) nbt.putInt(NBT_ACTIVE_TIMER, activeTimer);
-        if (ecoMode) nbt.putBoolean(NBT_ECO_MODE, true);
+        output.putChild(NBT_BUFFER, bufferHandler);
+        output.putChild(NBT_MODULES, modulesHandler);
+        output.putChild(NBT_UPGRADES, upgradesHandler);
+        if (energyStorage.getCapacity() > 0) output.putChild(NBT_ENERGY, energyStorage);
+
+        if (redstoneBehaviour != RedstoneBehaviour.ALWAYS) output.putString(NBT_REDSTONE_MODE, redstoneBehaviour.name());
+        if (energyDirection != EnergyDirection.FROM_ROUTER) output.store(NBT_ENERGY_DIR, EnergyDirection.CODEC, energyDirection);
+        if (active) output.putBoolean(NBT_ACTIVE, true);
+        if (activeTimer != 0) output.putInt(NBT_ACTIVE_TIMER, activeTimer);
+        if (ecoMode) output.putBoolean(NBT_ECO_MODE, true);
         if (ownerID != null) {
-            ExtraCodecs.GAME_PROFILE.encodeStart(NbtOps.INSTANCE, ownerID).result()
-                    .ifPresent(tag -> nbt.put(NBT_OWNER_PROFILE, tag));
+            output.store(NBT_OWNER_PROFILE, ExtraCodecs.GAME_PROFILE, ownerID);
         }
-        if (!getExtensionData().isEmpty()) nbt.put(NBT_EXTRA, getExtensionData());
+        // TODO extension data
+//        if (!getExtensionData().isEmpty()) nbt.put(NBT_EXTRA, getExtensionData());
     }
 
     @Override
@@ -994,15 +991,17 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
     }
 
-    public enum EnergyDirection implements TranslatableEnum {
+    public enum EnergyDirection implements TranslatableEnum, StringRepresentable {
         FROM_ROUTER("from_router"),
         TO_ROUTER("to_router"),
         NONE("none");
 
-        private final String text;
+        public static final Codec<EnergyDirection> CODEC = StringRepresentable.fromEnum(EnergyDirection::values);
 
-        EnergyDirection(String text) {
-            this.text = text;
+        private final String name;
+
+        EnergyDirection(String name) {
+            this.name = name;
         }
 
         public static EnergyDirection forValue(String string) {
@@ -1015,7 +1014,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.tooltip.energy." + text;
+            return "modularrouters.guiText.tooltip.energy." + name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
         }
     }
 
@@ -1141,22 +1145,17 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         @Override
-        public Tag serializeNBT(HolderLookup.Provider provider) {
-            return Util.make(new CompoundTag(), tag -> {
-                if (energy > 0) tag.putInt("Energy", energy);
-                if (capacity > 0) tag.putInt("Capacity", capacity);
-                if (excess > 0) tag.putInt("Excess", excess);
-            });
+        public void serialize(ValueOutput output) {
+            if (energy > 0) output.putInt("Energy", energy);
+            if (capacity > 0) output.putInt("Capacity", capacity);
+            if (excess > 0) output.putInt("Excess", excess);
         }
 
         @Override
-        public void deserializeNBT(HolderLookup.Provider provider, Tag nbt) {
-            if (!(nbt instanceof CompoundTag compound)) {
-                throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
-            }
-            energy = compound.getIntOr("Energy", 0);
-            capacity = compound.getIntOr("Capacity", 0);
-            excess = compound.getIntOr("Excess", 0);
+        public void deserialize(ValueInput input) {
+            energy = input.getIntOr("Energy", 0);
+            capacity = input.getIntOr("Capacity", 0);
+            excess = input.getIntOr("Excess", 0);
         }
 
         public int getCapacity() {

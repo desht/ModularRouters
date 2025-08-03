@@ -10,7 +10,6 @@ import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule.VacuumSettings;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.component.DataComponentPatch;

@@ -12,7 +12,7 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.*;
 
@@ -87,7 +87,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
 
     private void sendTagsToServer(Collection<TagKey<Item>> newTags) {
         ItemStack newStack = Util.make(filterStack.copy(), s -> TagFilter.setTagList(s, List.copyOf(newTags)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
     }
 
     private void updateButtonVisibility() {
@@ -159,7 +159,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override

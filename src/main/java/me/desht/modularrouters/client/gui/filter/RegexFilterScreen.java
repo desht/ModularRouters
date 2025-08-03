@@ -13,11 +13,11 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
     private void sendRegexToServer(Collection<String> newFilters) {
         ItemStack newStack = Util.make(filterStack.copy(), s -> ModFilter.setModList(s, List.copyOf(newFilters)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
     }
 
     @Override
@@ -98,7 +98,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
 
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
                 List<String> updatedList = new ArrayList<>(regexList);
                 updatedList.add(regex);
                 ItemStack newStack = Util.make(filterStack.copy(), s -> RegexFilter.setRegexList(s, updatedList));
-                PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+                ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
                 regexTextField.setValue("");
                 errorMsg = Component.empty();
             }

@@ -10,13 +10,13 @@ import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.*;
 
@@ -72,7 +72,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
 
     private void sendModsToServer(Collection<String> newMods) {
         ItemStack newStack = Util.make(filterStack.copy(), s -> ModFilter.setModList(s, List.copyOf(newMods)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
     }
 
     private void updateDeleteButtonVisibility() {
@@ -114,7 +114,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class AbstractFilterContainerScreen extends AbstractContainerScreen<AbstractSmartFilterMenu> implements IResyncableGui {
@@ -32,13 +32,13 @@ public abstract class AbstractFilterContainerScreen extends AbstractContainerScr
         MFLocator locator = menu.getLocator();
         if (locator.routerPos() != null) {
             // need to re-open module GUI for module in router slot
-            PacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
+            ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
             return true;
         } else if (hand != null) {
             ItemStack stack = getMinecraft().player.getItemInHand(hand);
             if (stack.getItem() instanceof ModuleItem) {
                 // need to re-open module GUI for module in player's hand
-                PacketDistributor.sendToServer(OpenGuiMessage.openModuleInHand(locator));
+                ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInHand(locator));
                 return true;
             }
         }

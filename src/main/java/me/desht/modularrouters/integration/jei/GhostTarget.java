@@ -6,6 +6,7 @@ import mezz.jei.api.ingredients.IIngredientType;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.inventory.Slot;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 record GhostTarget<I>(IIngredientType<I> type, AbstractContainerScreen<?> gui, Slot slot) implements IGhostIngredientHandler.Target<I> {
@@ -20,7 +21,7 @@ record GhostTarget<I>(IIngredientType<I> type, AbstractContainerScreen<?> gui, S
         if (creator != null) {
             var stack = creator.apply(ingredient);
             if (!stack.isEmpty()) {
-                PacketDistributor.sendToServer(new ModuleFilterMessage(slot.index, stack));
+                ClientPacketDistributor.sendToServer(new ModuleFilterMessage(slot.index, stack));
             }
         }
     }

@@ -24,7 +24,8 @@ public class RouterDataProvider implements IServerDataProvider<BlockAccessor> {
                 compoundTag.putInt("ModuleCount", router.getModuleCount());
                 compoundTag.putInt("RedstoneMode", router.getRedstoneBehaviour().ordinal());
                 if (router.getEcoMode()) compoundTag.putBoolean("EcoMode", true);
-                compoundTag.put("Upgrades", getUpgrades(router));
+                CompoundTag upgrades = getUpgrades(router);
+                if (!upgrades.isEmpty()) compoundTag.put("Upgrades", upgrades);
             } else {
                 compoundTag.putBoolean("Denied", true);
             }

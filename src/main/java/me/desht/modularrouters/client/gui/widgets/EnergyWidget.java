@@ -5,10 +5,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+
+import java.util.List;
 
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
@@ -28,14 +32,14 @@ public class EnergyWidget extends AbstractWidget {
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick){
         int amount = getScaled();
 
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, getX() + 1, getY(), 1, 0, width - 2, height, 32, 64);
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, getX() + 1, getY() + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, getX() + 1, getY(), 1, 0, width - 2, height, 32, 64);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, getX() + 1, getY() + DEFAULT_SCALE - amount, 17, DEFAULT_SCALE - amount, width - 2, amount, 32, 64);
 
         if (isHovered()) {
             // drawing the tooltip directly instead of using setTooltip() - that causes awful flickering if
             // energy levels are changing fast
             Component text = Component.literal(MiscUtil.commify(storage.getEnergyStored()) + " / " + MiscUtil.commify(storage.getMaxEnergyStored()) + " FE");
-            graphics.renderTooltip(Minecraft.getInstance().font, text, mouseX, mouseY);
+            graphics.renderTooltip(Minecraft.getInstance().font, List.of(ClientTooltipComponent.create(text.getVisualOrderText())), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
         }
     }
 

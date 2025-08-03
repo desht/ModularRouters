@@ -10,7 +10,6 @@ import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
