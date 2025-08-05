@@ -39,7 +39,7 @@ public class EnergyWidget extends AbstractWidget {
             // drawing the tooltip directly instead of using setTooltip() - that causes awful flickering if
             // energy levels are changing fast
             Component text = Component.literal(MiscUtil.commify(storage.getEnergyStored()) + " / " + MiscUtil.commify(storage.getMaxEnergyStored()) + " FE");
-            graphics.renderTooltip(Minecraft.getInstance().font, List.of(ClientTooltipComponent.create(text.getVisualOrderText())), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+            graphics.setTooltipForNextFrame(text, mouseX, mouseY);
         }
     }
 
