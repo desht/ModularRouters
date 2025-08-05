@@ -4,6 +4,13 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+# Minecraft 1.21.8
+
+## [13.5.0]
+* Updated to Minecraft 1.21.8
+* On par feature-wise and bugfix-wise with latest 1.21.1 release (13.2.3)
+* Known issue: camouflage upgrade only works with some blocks right now
+
 # Minecraft 1.21.4
 
 ## [13.4.1]
