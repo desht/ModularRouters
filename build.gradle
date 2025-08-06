@@ -223,7 +223,7 @@ publishMods {
 //            slug = "patchouli"
 //        }
     }
-"${mod_version}+mc${minecraft_version}"
+
     modrinth {
         projectId = modrinth_project_id
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
