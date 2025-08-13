@@ -69,7 +69,9 @@ public class CompiledActivatorModule extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         ItemStack stack = router.getBufferItemStack();
 
-        if (itemBlacklist.contains(stack.getItem())) return false;
+        if (stack.is(ModularRoutersTags.Items.ACTIVATOR_BLACKLIST) || itemBlacklist.contains(stack.getItem())) {
+            return false;
+        }
 
         // we'll allow an empty stack, since right-clicking with an empty hand is a valid operation
         // - but only if there's an empty or blacklist filter
