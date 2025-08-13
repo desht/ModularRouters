@@ -6,6 +6,10 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.4]
+* Added `modularrouters:activator_blacklist` item tag to prevent certain items being used by the Activator Module
+  * Contains the Acceleration Wand from Not Enough Wands by default (this can be a server-killer)
+
 ## [13.2.3]
 
 * The Activator Module is now a range module, accepting Range Augments
