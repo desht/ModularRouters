@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.8
 
+## [13.5.1]
+* Added `modularrouters:activator_blacklist` item tag to prevent certain items being used by the Activator Module
+
 ## [13.5.0]
 * Updated to Minecraft 1.21.8
 * On par feature-wise and bugfix-wise with latest 1.21.1 release (13.2.3)
