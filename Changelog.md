@@ -10,6 +10,8 @@ Changes are in reverse chronological order; newest changes at the top.
 
 * Router fake player will now accept XP given to it, and use it to create experience orbs near the router
 * Fixed Sync upgrades not working correctly in singleplayer
+* Added `modularrouters:activator_blacklist` item tag to prevent certain items being used by the Activator Module
+  * Contains the Acceleration Wand from Not Enough Wands by default (this can be a server-killer)
 
 ### [12.1.1]
 
