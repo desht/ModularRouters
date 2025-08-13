@@ -12,6 +12,7 @@ public class ModularRoutersTags {
         public static final TagKey<Item> UPGRADES = modTag("upgrades");
         public static final TagKey<Item> AUGMENTS = modTag("augments");
         public static final TagKey<Item> FILTERS = modTag("filters");
+        public static final TagKey<Item> ACTIVATOR_BLACKLIST = modTag("activator_blacklist");
 
         private static TagKey<Item> modTag(String name) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(ModularRouters.MODID, name));
