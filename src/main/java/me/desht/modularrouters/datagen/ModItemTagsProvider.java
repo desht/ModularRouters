@@ -8,8 +8,11 @@ import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -39,6 +42,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
                 addItemsToTag(ModularRoutersTags.Items.FILTERS, ro);
             }
         }
+        tag(ModularRoutersTags.Items.ACTIVATOR_BLACKLIST).addOptional(ResourceLocation.parse("notenoughwands:acceleration_wand"));
     }
 
     @SafeVarargs
