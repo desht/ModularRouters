@@ -102,13 +102,11 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {
-        ItemStack stack;
         Slot srcSlot = slots.get(index);
 
         if (srcSlot != null && srcSlot.hasItem()) {
             ItemStack stackInSlot = srcSlot.getItem();
-            stack = stackInSlot.copy();
-            stack.setCount(1);
+            ItemStack stack = stackInSlot.copyWithCount(1);
 
             if (index < handler.getSlots()) {
                 // shift-clicking in a filter slot: clear it from the filter
@@ -134,21 +132,13 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
 
     @Override
     public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
-        if (clickTypeIn == ClickType.PICKUP) {// normal left-click
+        if (clickTypeIn == ClickType.PICKUP || clickTypeIn == ClickType.QUICK_CRAFT) { // normal left-click (or with a bit of dragging)
             if (router == null && slot == currentSlot) {
                 // no messing with the module that triggered this container's creation
                 return;
             }
             if (slot < handler.getSlots() && slot >= 0) {
-                Slot s = slots.get(slot);
-                ItemStack stackOnCursor = getCarried();
-                if (!stackOnCursor.isEmpty()) {
-                    ItemStack stack1 = stackOnCursor.copy();
-                    stack1.setCount(1);
-                    s.set(stack1);
-                } else {
-                    s.set(ItemStack.EMPTY);
-                }
+                slots.get(slot).set(getCarried().isEmpty() ? ItemStack.EMPTY : getCarried().copyWithCount(1));
                 return;
             }
         }
