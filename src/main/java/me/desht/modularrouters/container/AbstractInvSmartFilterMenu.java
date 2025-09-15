@@ -43,20 +43,18 @@ public abstract class AbstractInvSmartFilterMenu extends AbstractSmartFilterMenu
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {
-        ItemStack stack;
         Slot slot = slots.get(index);
 
         if (slot != null && slot.hasItem()) {
             ItemStack stackInSlot = slot.getItem();
-            stack = stackInSlot.copy();
-            stack.setCount(1);
+            ItemStack stack = stackInSlot.copyWithCount(1);
 
             if (index == 0) {
                 // shift-clicking in the ghost slot: clear it from the filter
                 slot.set(ItemStack.EMPTY);
             } else if (index >= 1) {
                 // shift-clicking in player inventory: copy it into the ghost slot
-                // but don't remove it from playerpack inventory
+                // but don't remove it from player inventory
                 Slot s = slots.getFirst();
                 s.set(stack);
                 slot.set(stackInSlot);
@@ -69,16 +67,10 @@ public abstract class AbstractInvSmartFilterMenu extends AbstractSmartFilterMenu
     public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
         switch (clickTypeIn) {
             case PICKUP:
+            case QUICK_CRAFT:
                 // normal left-click
                 if (slot == 0) {
-                    Slot s = slots.get(slot);
-                    if (!getCarried().isEmpty()) {
-                        ItemStack stack1 = getCarried().copy();
-                        stack1.setCount(1);
-                        s.set(stack1);
-                    } else {
-                        s.set(ItemStack.EMPTY);
-                    }
+                    slots.get(slot).set(getCarried().isEmpty() ? ItemStack.EMPTY : getCarried().copyWithCount(1));
                     return;
                 }
             case THROW:
