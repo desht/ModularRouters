@@ -39,7 +39,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        return isPulling() ? executePull(router) : super.execute(router);
+        return isPulling() ? (router.getBufferItemStack().isEmpty() || getFilter().test(router.getBufferItemStack())) && executePull(router) : super.execute(router);
     }
 
     protected boolean executePull(ModularRouterBlockEntity router) {
@@ -111,14 +111,14 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         if (nTargets == 1) return getTargets().getFirst(); // degenerate case
 
         ModuleTarget res = null;
-        ItemStack stack = router.peekBuffer(getItemsPerTick(router));
+        ItemStack stackInRouter = router.peekBuffer(getItemsPerTick(router));
         switch (getDistributionStrategy()) {
             case ROUND_ROBIN:
                 for (int i = 1; i <= nTargets; i++) {
                     nextTarget++;
                     if (nextTarget >= nTargets) nextTarget -= nTargets;
                     ModuleTarget tgt = getTargets().get(nextTarget);
-                    if (okToInsert(tgt, stack)) {
+                    if (isPulling() ? okToExtract(tgt, stackInRouter) : okToInsert(tgt, stackInRouter)) {
                         res = tgt;
                         break;
                     }
@@ -130,7 +130,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
             case NEAREST_FIRST:
                 for (ModuleTarget tgt : getTargets()) {
-                    if (okToInsert(tgt, stack)) {
+                    if (isPulling() ? okToExtract(tgt, stackInRouter) : okToInsert(tgt, stackInRouter)) {
                         res = tgt;
                         break;
                     }
@@ -138,8 +138,9 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
             case FURTHEST_FIRST:
                 for (int i = getTargets().size() - 1; i >= 0; i--) {
-                    if (okToInsert(getTargets().get(i), stack)) {
-                        res = getTargets().get(i);
+                    ModuleTarget tgt = getTargets().get(i);
+                    if (isPulling() ? okToExtract(tgt, stackInRouter) : okToInsert(tgt, stackInRouter)) {
+                        res = tgt;
                         break;
                     }
                 }
@@ -149,8 +150,22 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return res;
     }
 
-    private boolean okToInsert(ModuleTarget target, ItemStack stack) {
-        return target.getItemHandler().map(h -> ItemHandlerHelper.insertItem(h, stack, true).isEmpty()).orElse(false);
+    private boolean okToInsert(ModuleTarget target, ItemStack stackInRouter) {
+        return target.getItemHandler().map(h -> ItemHandlerHelper.insertItem(h, stackInRouter, true).isEmpty()).orElse(false);
+    }
+
+    private boolean okToExtract(ModuleTarget target, ItemStack stackInRouter) {
+        return target.getItemHandler().map(h -> {
+            for (int i = 0; i < h.getSlots(); i++) {
+                int slot = getLastMatchPos(target.gPos.pos(), i, h.getSlots());
+                ItemStack s1 = h.getStackInSlot(slot);
+                if (getFilter().test(s1) && (stackInRouter.isEmpty() || ItemStack.isSameItemSameComponents(s1, stackInRouter)) && stackInRouter.getCount() + s1.getCount() <= s1.getMaxStackSize()) {
+                    setLastMatchPos(target.gPos.pos(), slot);
+                    return true;
+                }
+            }
+            return false;
+        }).orElse(false);
     }
 
     public enum DistributionStrategy implements TranslatableEnum, StringRepresentable {

@@ -76,7 +76,11 @@ public abstract class CompiledModule {
                     .stream().filter(t -> isTargetValid(router, t))
                     .toList();
         }
-        filter = new Filter(stack, shouldStoreRawFilterItems(), augmentCounter.getAugmentCount(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get()) > 0);
+        filter = new Filter(stack,
+                shouldStoreRawFilterItems(),
+                augmentCounter.getAugmentCount(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get()) > 0,
+                router != null && router.getLevel() != null ? router.getLevel().registryAccess() : null
+        );
         absoluteFacing = router == null ? null : router.getAbsoluteFacing(commonSettings.facing());
         routerFacing = router == null ? null : router.getAbsoluteFacing(RelativeDirection.FRONT);
         event = router == null ? null : new ExecuteModuleEvent(router, this);
@@ -205,7 +209,7 @@ public abstract class CompiledModule {
      * @param size size of the inventory being searched
      * @return the last position including offset, and wrapped to start of inventory if necessary
      */
-    private int getLastMatchPos(BlockPos key, int offset, int size) {
+    protected int getLastMatchPos(BlockPos key, int offset, int size) {
         int pos = (key == null ? lastMatchPos : lastMatchPosMap.getOrDefault(key, 0)) + offset;
         while (pos >= size) pos -= size;
         return pos;
@@ -216,7 +220,7 @@ public abstract class CompiledModule {
      *
      * @param lastMatchPos last matched position
      */
-    private void setLastMatchPos(BlockPos key, int lastMatchPos) {
+    protected void setLastMatchPos(BlockPos key, int lastMatchPos) {
         if (key == null)
             this.lastMatchPos = lastMatchPos;
         else

@@ -3,6 +3,7 @@ package me.desht.modularrouters.logic.filter.matchers;
 import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.util.ItemTagMatcher;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.Validate;
 
@@ -16,7 +17,7 @@ public class SimpleItemMatcher implements IItemMatcher {
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, IModuleFlags flags) {
+    public boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         if (filterStack.getItem() == stack.getItem()) {
             return (!flags.matchDamage() || matchDamage(stack, filterStack))
                     && (!flags.matchComponents() || ItemStack.isSameItemSameComponents(stack, filterStack));

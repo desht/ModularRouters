@@ -6,11 +6,13 @@ import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.logic.settings.ModuleFlags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -23,17 +25,21 @@ public class Filter implements Predicate<ItemStack> {
     private final List<ItemStack> rawStacks = Lists.newArrayList();
     private final boolean roundRobin;
     private int rrCounter = 0;
+    @Nullable
+    private final HolderLookup.Provider registryAccess;
 
     public Filter() {
         flags = ModuleFlags.DEFAULT;
         roundRobin = false;
+        registryAccess = null;
     }
 
-    public Filter(ItemStack moduleStack, boolean storeRaw, boolean roundRobin) {
+    public Filter(ItemStack moduleStack, boolean storeRaw, boolean roundRobin, @Nullable HolderLookup.Provider registryAccess) {
         Validate.isTrue(moduleStack.getItem() instanceof ModuleItem, "item stack is not a module item! " + moduleStack.getItem());
 
         this.roundRobin = roundRobin;
         this.rrCounter = roundRobin ? ModuleItem.getRoundRobinCounter(moduleStack) : 0;
+        this.registryAccess = registryAccess;
 
         flags = ModuleFlags.forItem(moduleStack);
 
@@ -88,13 +94,13 @@ public class Filter implements Predicate<ItemStack> {
 
         if (roundRobin && !matchers.isEmpty()) {
             // just match against a single item in the filter
-            return matchers.get(rrCounter).matchItem(stack, flags) == flags.whiteList();
+            return matchers.get(rrCounter).matchItem(stack, flags, registryAccess) == flags.whiteList();
         } else {
             // match against everything in the filter (either match any or match all)
             boolean matchAll = flags.matchAllItems();
 
             for (IItemMatcher matcher : matchers) {
-                boolean matchedOne = matcher.matchItem(stack, flags);
+                boolean matchedOne = matcher.matchItem(stack, flags, registryAccess);
                 if (!matchAll && matchedOne || matchAll && !matchedOne) {
                     return matchAll != flags.whiteList();
                 }
@@ -114,7 +120,7 @@ public class Filter implements Predicate<ItemStack> {
 
     public boolean testFluid(Fluid fluid) {
         for (IItemMatcher matcher : matchers) {
-            if (matcher.matchFluid(fluid, flags)) {
+            if (matcher.matchFluid(fluid, flags, registryAccess)) {
                 return flags.whiteList();
             }
         }
