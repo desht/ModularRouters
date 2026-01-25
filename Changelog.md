@@ -9,6 +9,8 @@ Changes are in reverse chronological order; newest changes at the top.
 ## [13.2.4]
 * Added `modularrouters:activator_blacklist` item tag to prevent certain items being used by the Activator Module
   * Contains the Acceleration Wand from Not Enough Wands by default (this can be a server-killer)
+* Updated to work with current release of FTB Filter System (21.1.4)
+* Fix items sometimes getting lost when clicking in filter screens
 
 ## [13.2.3]
 
