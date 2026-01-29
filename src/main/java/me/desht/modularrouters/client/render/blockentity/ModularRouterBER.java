@@ -10,14 +10,18 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,13 +29,22 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
-public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockEntity> {
+import java.util.ArrayList;
+
+public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockEntity, ModularRouterRenderState> {
     private static final Vector3f ROTATION = new Vector3f(0.15f, 1.0f, 0f);
     private static final float CAMO_HIGHLIGHT_SIZE = 0.75f;
+
+    private static final VoxelShape CAMO_HIGHLIGHT_SHAPE = Shapes.box(
+            0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE
+    );
+
     private static final float[] COLS = new float[] { 0.5f, 0.5f, 1.0f, 0.25f };
 
     @SuppressWarnings("unused")
@@ -44,40 +57,67 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
     }
 
     @Override
-    public void render(ModularRouterBlockEntity te, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn, Vec3 camera) {
-        matrixStack.pushPose();
-        matrixStack.translate(0.5, 0.5, 0.5);
+    public ModularRouterRenderState createRenderState() {
+        return null;
+    }
 
-        Vec3 routerVec = Vec3.atCenterOf(te.getBlockPos());
-        for (BeamData beam: te.beams) {
-            matrixStack.pushPose();
-            matrixStack.translate(-routerVec.x(), -routerVec.y(), -routerVec.z());
-            Vec3 startPos = beam.getStart(routerVec);
-            Vec3 endPos = beam.getEnd(routerVec);
-            float progress = beam.getProgress(partialTicks);
+    @Override
+    public void extractRenderState(ModularRouterBlockEntity blockEntity, ModularRouterRenderState renderState, float partialTick, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
+        renderState.beams = blockEntity.beams.stream().map(
+                e -> new BeamData.WithProgress(e, e.getProgress(partialTick))
+            ).toList();
+    }
+
+    @Override
+    public void submit(ModularRouterRenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0.5, 0.5);
+
+        Vec3 routerVec = Vec3.atCenterOf(renderState.blockPos);
+        for (BeamData.WithProgress beam: renderState.beams) {
+            poseStack.pushPose();
+            poseStack.translate(-routerVec.x(), -routerVec.y(), -routerVec.z());
+            Vec3 startPos = beam.beam().getStart(routerVec);
+            Vec3 endPos = beam.beam().getEnd(routerVec);
+            float progress = beam.progress();
             if (ConfigHolder.client.misc.renderFlyingItems.get()) {
-                renderFlyingItem(beam, matrixStack, buffer, progress, startPos, endPos);
+                renderFlyingItem(beam.beam(), poseStack, submitNodeCollector, progress, startPos, endPos);
             }
-            renderBeamLine(beam, matrixStack, buffer, progress, startPos, endPos);
-            matrixStack.popPose();
+            renderBeamLine(beam.beam(), poseStack, submitNodeCollector, progress, startPos, endPos);
+            poseStack.popPose();
         }
-        matrixStack.popPose();
+        poseStack.popPose();
 
         Player player = Minecraft.getInstance().player;
         if (ConfigHolder.client.misc.heldRouterShowsCamoRouters.get()
                 && te.getCamouflage() != null
                 && playerHoldingRouter(player)
-                && Vec3.atCenterOf(te.getBlockPos()).distanceToSqr(player.position()) < 256) {
-            renderCamoHighlight(matrixStack, buffer);
+                && Vec3.atCenterOf(renderState.blockPos).distanceToSqr(player.position()) < 256) {
+            renderCamoHighlight(poseStack, submitNodeCollector);
         }
     }
 
-    private void renderCamoHighlight(PoseStack poseStack, MultiBufferSource buffer) {
+    private void renderCamoHighlight(PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
         poseStack.pushPose();
         double start = (1 - CAMO_HIGHLIGHT_SIZE) / 2.0;
         poseStack.translate(start, start, start);
-        addVertices(buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_FACE), poseStack.last().pose());
-        ShapeRenderer.renderLineBox(poseStack, buffer.getBuffer(RenderType.secondaryBlockOutline()), 0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0.5F, 0.5F, 1.0F, 1.0F);
+
+        submitNodeCollector.submitCustomGeometry(poseStack, ModRenderTypes.BLOCK_HILIGHT_FACE, (pose, buffer) -> {
+            addVertices(buffer, pose.pose());
+        });
+
+        submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.secondaryBlockOutline(), (pose, buffer) -> {
+            ShapeRenderer.renderShape(
+                    poseStack,
+                    buffer,
+                    CAMO_HIGHLIGHT_SHAPE,
+                    0, 0, 0,
+                    ARGB.colorFromFloat(1.0F, 0.5F, 0.5F, 1.0F),
+                    3.0f // Line width
+            );
+        });
+
         poseStack.popPose();
     }
 
@@ -118,7 +158,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         return player.getMainHandItem().getItem() == router || player.getOffhandItem().getItem() == router;
     }
 
-    private void renderFlyingItem(BeamData beam, PoseStack matrixStack, MultiBufferSource buffer, float progress, Vec3 startPos, Vec3 endPos) {
+    private void renderFlyingItem(BeamData beam, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, float progress, Vec3 startPos, Vec3 endPos) {
         double ix = Mth.lerp(progress, startPos.x(), endPos.x());
         double iy = Mth.lerp(progress, startPos.y(), endPos.y());
         double iz = Mth.lerp(progress, startPos.z(), endPos.z());
@@ -136,13 +176,26 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
                     world.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
                 }
             }
-            Minecraft.getInstance().getItemRenderer()
-                    .renderStatic(beam.stack(), ItemDisplayContext.GROUND, 0x00F000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer, world, 0);
+
+            submitNodeCollector.submitItem(
+                    matrixStack,
+                    ItemDisplayContext.GROUND,
+                    0,
+                    0,
+                    OverlayTexture.NO_OVERLAY,
+                    new int[0],
+                    new ArrayList<>(),
+                    null,
+                    ItemStackRenderState.FoilType.STANDARD
+            );
+
+//            Minecraft.getInstance().getItemRenderer()
+//                    .renderStatic(beam.stack(), ItemDisplayContext.GROUND, 0x00F000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer, world, 0);
             matrixStack.popPose();
         }
     }
 
-    private void renderBeamLine(BeamData beam, PoseStack matrixStack, MultiBufferSource buffer, float progress, Vec3 startPos, Vec3 endPos) {
+    private void renderBeamLine(BeamData beam, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, float progress, Vec3 startPos, Vec3 endPos) {
         int alpha = (int) (Mth.sin((Minecraft.getInstance().level.getGameTime() % 20) / 20f * 3.1415927f) * 128 + 32);
         int[] colors = beam.getRGB();
         Matrix4f positionMatrix = matrixStack.last().pose();
@@ -151,21 +204,22 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         float yn = (float) ((endPos.y - startPos.y) / len);
         float zn = (float) ((endPos.z - startPos.z) / len);
 
-        VertexConsumer builder = buffer.getBuffer(ModRenderTypes.BEAM_LINE_THICK);
-        ClientUtil.posF(builder, positionMatrix, startPos)
-                .setColor(colors[0], colors[1], colors[2], alpha)
-                .setNormal(matrixStack.last(), xn, yn, zn);
-        ClientUtil.posF(builder, positionMatrix, endPos)
-                .setColor(colors[0], colors[1], colors[2], alpha)
-                .setNormal(matrixStack.last(), xn, yn, zn);
+        submitNodeCollector.submitCustomGeometry(matrixStack, ModRenderTypes.BEAM_LINE, (pose, buffer) -> {
+            ClientUtil.posF(buffer, positionMatrix, startPos, ModRenderTypes.THICK_LINE)
+                    .setColor(colors[0], colors[1], colors[2], alpha)
+                    .setNormal(pose, xn, yn, zn);
+            ClientUtil.posF(buffer, positionMatrix, endPos, ModRenderTypes.THICK_LINE)
+                    .setColor(colors[0], colors[1], colors[2], alpha)
+                    .setNormal(pose, xn, yn, zn);
+        });
 
-        VertexConsumer builder2 = buffer.getBuffer(ModRenderTypes.BEAM_LINE_THIN);
-        ClientUtil.posF(builder2, positionMatrix, startPos)
-                .setColor(colors[0], colors[1], colors[2], 192)
-                .setNormal(matrixStack.last(), xn, yn, zn);
-        ClientUtil.posF(builder2, positionMatrix, endPos)
-                .setColor(colors[0], colors[1], colors[2], 192)
-                .setNormal(matrixStack.last(), xn, yn, zn);
+        submitNodeCollector.submitCustomGeometry(matrixStack, ModRenderTypes.BEAM_LINE, (pose, buffer) -> {
+            ClientUtil.posF(buffer, positionMatrix, startPos, ModRenderTypes.THIN_LINE)
+                    .setColor(colors[0], colors[1], colors[2], 192)
+                    .setNormal(pose, xn, yn, zn);
+            ClientUtil.posF(buffer, positionMatrix, endPos, ModRenderTypes.THIN_LINE)
+                    .setColor(colors[0], colors[1], colors[2], 192)
+                    .setNormal(pose, xn, yn, zn);
+        });
     }
-
 }

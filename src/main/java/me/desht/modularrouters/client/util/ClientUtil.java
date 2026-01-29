@@ -52,8 +52,8 @@ public class ClientUtil {
         return keyCode == Minecraft.getInstance().options.keyInventory.getKey().getValue();
     }
 
-    public static VertexConsumer posF(VertexConsumer builder, Matrix4f posMat, Vec3 vec) {
-        return builder.addVertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z);
+    public static VertexConsumer posF(VertexConsumer builder, Matrix4f posMat, Vec3 vec, float lineWidth) {
+        return builder.addVertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z).setLineWidth(lineWidth);
     }
 
     public static Slot getHoveredSlot() {

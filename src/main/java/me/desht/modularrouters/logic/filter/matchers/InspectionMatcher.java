@@ -20,6 +20,10 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -176,22 +180,24 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private static Optional<Integer> getEnergyPercent(ItemStack stack) {
-            IEnergyStorage storage = stack.getCapability(Capabilities.Energy.ITEM);
-            return storage == null ? Optional.empty() : Optional.of(asPercentage(storage.getEnergyStored(), storage.getMaxEnergyStored()));
+            EnergyHandler storage = stack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(stack));
+            return storage == null ? Optional.empty() : Optional.of(asPercentage(storage.getAmountAsInt(), storage.getCapacityAsInt()));
         }
 
         private static Optional<Integer> getFluidPercent(ItemStack stack) {
-            return FluidUtil.getFluidHandler(stack)
-                    .map(handler -> {
-                        int total = 0;
-                        int max = 0;
-                        for (int idx = 0; idx < handler.getTanks(); idx++) {
-                            max += handler.getTankCapacity(idx);
-                            total += handler.getFluidInTank(idx).getAmount();
-                        }
-                        return Optional.of(asPercentage(total, max));
-                    })
-                    .orElse(Optional.empty());
+            ResourceHandler<FluidResource> capability = stack.getCapability(Capabilities.Fluid.ITEM, ItemAccess.forStack(stack));
+            if (capability == null) {
+                return Optional.empty();
+            }
+
+            int total = 0;
+            int max = 0;
+            for (int idx = 0; idx < capability.size(); idx++) {
+                max += capability.getCapacityAsInt(idx, capability.getResource(idx));
+                total += capability.getAmountAsInt(idx);
+            }
+
+            return Optional.of(asPercentage(total, max));
         }
 
         public InspectionSubject cycle(int direction) {

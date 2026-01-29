@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -112,7 +114,8 @@ public class ModuleTargetRenderer {
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
             VertexConsumer lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
-            ShapeRenderer.renderLineBox(matrixStack, lineBuilder, 0, 0, 0, BOX_SIZE, BOX_SIZE, BOX_SIZE, 0.25f, 0.25f, 0.25f, 0.3125f);
+            // last float is the line width
+            ShapeRenderer.renderShape(matrixStack, lineBuilder, Shapes.block(), 0, 0, 0, ARGB.colorFromFloat(0.3125f, 0.25f, 0.25f, 0.25f), 3f);
 
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
