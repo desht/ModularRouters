@@ -16,6 +16,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.attribute.EnvironmentAttribute;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -130,7 +132,7 @@ public class CompiledFluidModule extends CompiledModule {
         Block block = blockstate.getBlock();
         if (world.isEmptyBlock(pos) || isReplaceable
                 || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(router.getFakePlayer(), world, pos, blockstate, toPlace.getFluid())) {
-            if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
+            if (world.dimensionType().attributes().contains(EnvironmentAttributes.WATER_EVAPORATES) && fluid.is(FluidTags.WATER)) {
                 // no pouring water in the nether!
                 playEvaporationEffects(world, pos, fluid);
             } else if (block instanceof LiquidBlockContainer liq) {

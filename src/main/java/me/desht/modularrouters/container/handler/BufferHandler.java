@@ -59,11 +59,11 @@ public class BufferHandler extends ItemStackHandler {
     }
 
     public IFluidHandlerItem getFluidHandler() {
-        return getCapability(Capabilities.FluidHandler.ITEM);
+        return getCapability(Capabilities.Fluid.ITEM);
     }
 
     public IEnergyStorage getEnergyStorage() {
-        return getCapability(Capabilities.EnergyStorage.ITEM);
+        return getCapability(Capabilities.Energy.ITEM);
     }
 
     @Nullable

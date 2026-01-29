@@ -176,7 +176,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private static Optional<Integer> getEnergyPercent(ItemStack stack) {
-            IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+            IEnergyStorage storage = stack.getCapability(Capabilities.Energy.ITEM);
             return storage == null ? Optional.empty() : Optional.of(asPercentage(storage.getEnergyStored(), storage.getMaxEnergyStored()));
         }
 

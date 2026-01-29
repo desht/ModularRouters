@@ -21,7 +21,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ModuleItem) {
+        if (event.getLevel().isClientSide() && event.getItemStack().getItem() instanceof ModuleItem) {
             ClientPacketDistributor.sendToServer(new ValidateModuleMessage(event.getHand()));
             event.setCanceled(true);
         }
@@ -29,7 +29,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        if (event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ModuleItem) {
+        if (event.getLevel().isClientSide() && event.getItemStack().getItem() instanceof ModuleItem) {
             ClientPacketDistributor.sendToServer(new ValidateModuleMessage(event.getHand()));
         }
     }

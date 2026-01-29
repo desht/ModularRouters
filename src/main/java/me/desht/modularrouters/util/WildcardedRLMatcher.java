@@ -18,22 +18,22 @@
 package me.desht.modularrouters.util;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class WildcardedRLMatcher implements Predicate<ResourceLocation> {
+public class WildcardedRLMatcher implements Predicate<Identifier> {
     private final Set<String> namespaces = new ObjectOpenHashSet<>();
-    private final Set<ResourceLocation> reslocs = new ObjectOpenHashSet<>();
+    private final Set<Identifier> reslocs = new ObjectOpenHashSet<>();
 
     public WildcardedRLMatcher(Collection<String> toMatch) {
         for (String s : toMatch) {
             if (s.endsWith(":*")) {
                 namespaces.add(s.split(":")[0]);
-            } else if (ResourceLocation.tryParse(s) != null) {
-                reslocs.add(ResourceLocation.parse(s));
+            } else if (Identifier.tryParse(s) != null) {
+                reslocs.add(Identifier.parse(s));
             }
         }
     }
@@ -43,7 +43,7 @@ public class WildcardedRLMatcher implements Predicate<ResourceLocation> {
     }
 
     @Override
-    public boolean test(ResourceLocation resourceLocation) {
-        return reslocs.contains(resourceLocation) || namespaces.contains(resourceLocation.getNamespace());
+    public boolean test(Identifier Identifier) {
+        return reslocs.contains(Identifier) || namespaces.contains(Identifier.getNamespace());
     }
 }

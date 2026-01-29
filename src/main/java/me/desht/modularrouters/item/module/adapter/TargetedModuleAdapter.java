@@ -49,7 +49,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
 
     @Override
     public InteractionResult onSneakRightClick(ItemStack stack, Level world, Player player, InteractionHand hand) {
-        if (!world.isClientSide && !ITargetedModule.getTargets(stack, false).isEmpty() && targeted.getMaxTargets() == 1) {
+        if (!world.isClientSide() && !ITargetedModule.getTargets(stack, false).isEmpty() && targeted.getMaxTargets() == 1) {
             ITargetedModule.setTargets(stack, Set.of());
             world.playSound(null, player.blockPosition(), ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
                     ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.1f);
@@ -60,7 +60,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
     }
 
     private void handleSingleTarget(ItemStack stack, Player player, Level world, BlockPos pos, Direction face) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             ITargetedModule.setTargets(stack, Set.of(new ModuleTarget(world, pos, face)));
             var tgts = ITargetedModule.getTargets(stack, true);
             if (!tgts.isEmpty()) {
@@ -73,14 +73,14 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
     }
 
     private InteractionResult handleMultiTarget(ItemStack stack, UseOnContext context, Player player, Level world, BlockPos pos, Direction face) {
-        Set<ModuleTarget> targets = ITargetedModule.getTargets(stack, !world.isClientSide);
+        Set<ModuleTarget> targets = ITargetedModule.getTargets(stack, !world.isClientSide());
         String invName = BlockUtil.getBlockName(world, pos);
         GlobalPos gPos = MiscUtil.makeGlobalPos(world, pos);
         ModuleTarget tgt = new ModuleTarget(gPos, face, invName);
 
         // Allow removing targets without checking if they're valid
         if (targets.contains(tgt)) {
-            if (world.isClientSide) return InteractionResult.SUCCESS;
+            if (world.isClientSide()) return InteractionResult.SUCCESS;
             targets.remove(tgt);
 
             player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetRemoved", targets.size(), targeted.getMaxTargets())
@@ -91,7 +91,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
         }
 
         if (ITargetedModule.canSelectTarget(context)) {
-            if (world.isClientSide) return InteractionResult.SUCCESS;
+            if (world.isClientSide()) return InteractionResult.SUCCESS;
             if (targets.size() < targeted.getMaxTargets()) {
                 targets.add(tgt);
                 player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetAdded", targets.size(), targeted.getMaxTargets())

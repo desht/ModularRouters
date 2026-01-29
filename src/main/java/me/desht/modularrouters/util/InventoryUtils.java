@@ -40,7 +40,7 @@ public class InventoryUtils {
     }
 
     public static Optional<IItemHandler> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
-        return Optional.ofNullable(world.getCapability(Capabilities.ItemHandler.BLOCK, pos, side));
+        return Optional.ofNullable(world.getCapability(Capabilities.Item.BLOCK, pos, side));
     }
 
     /**
@@ -75,7 +75,7 @@ public class InventoryUtils {
      * @return true if the entity was spawned, false otherwise
      */
     public static boolean dropItems(Level world, Vec3 pos, ItemStack stack) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             ItemEntity item = new ItemEntity(world, pos.x(), pos.y(), pos.z(), stack);
             return world.addFreshEntity(item);
         }

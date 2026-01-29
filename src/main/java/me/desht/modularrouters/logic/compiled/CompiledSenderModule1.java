@@ -78,7 +78,7 @@ public class CompiledSenderModule1 extends CompiledModule {
             Direction face = getTarget().face;
             Level level = router.nonNullLevel();
             for (int i = 1; i <= getRange(); i++) {
-                if (level.getCapability(Capabilities.ItemHandler.BLOCK, pos, getTarget().face) != null) {
+                if (level.getCapability(Capabilities.Item.BLOCK, pos, getTarget().face) != null) {
                     GlobalPos gPos = MiscUtil.makeGlobalPos(level, pos.immutable());
                     return new ModuleTarget(gPos, face, BlockUtil.getBlockName(level, pos));
                 } else if (!isPassable(level, pos, face)) {

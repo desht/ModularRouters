@@ -38,7 +38,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
 
     @Override
     public void addExtraInformation(ItemStack itemstack, Consumer<Component> consumer) {
-        String owner = getOwnerProfile(itemstack).map(GameProfile::getName).orElse("-");
+        String owner = getOwnerProfile(itemstack).map(GameProfile::name).orElse("-");
 
         consumer.accept(ClientUtil.xlate("modularrouters.itemText.security.owner", ChatFormatting.AQUA + owner));
         Set<String> names = getPlayerNames(itemstack);
@@ -67,7 +67,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
 
     private Set<UUID> getPlayerIDs(ItemStack stack) {
         return stack.getOrDefault(ModDataComponents.SECURITY_LIST, SecurityList.DEFAULT).trusted().stream()
-                .map(tp -> tp.gameProfile().getId())
+                .map(tp -> tp.partialProfile().id())
                 .collect(Collectors.toSet());
     }
 
@@ -79,7 +79,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
      */
     private static Set<String> getPlayerNames(ItemStack stack) {
         return stack.getOrDefault(ModDataComponents.SECURITY_LIST, SecurityList.DEFAULT).trusted().stream()
-                .map(tp -> tp.gameProfile().getName())
+                .map(tp -> tp.partialProfile().name())
                 .collect(Collectors.toSet());
     }
 
@@ -115,7 +115,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
     @Override
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!player.level().isClientSide && player.isSteppingCarefully()) {
+        if (!player.level().isClientSide() && player.isSteppingCarefully()) {
             setOwner(stack, player);
             Component displayName = Objects.requireNonNullElse(player.getDisplayName(), Component.literal("?"));
             player.displayClientMessage(Component.translatable("modularrouters.itemText.security.owner", displayName.getString()), false);
@@ -129,12 +129,12 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
         if (entity instanceof Player targetPlayer) {
             GameProfile profile = targetPlayer.getGameProfile();
             Result res = player.isSteppingCarefully() ? removePlayer(stack, profile) : addPlayer(stack, profile);
-            if (player.level().isClientSide) {
+            if (player.level().isClientSide()) {
                 player.playSound(res.isError() ? ModSounds.ERROR.get() : ModSounds.SUCCESS.get(),
                         ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.0f);
                 return InteractionResult.SUCCESS;
             } else {
-                player.displayClientMessage(Component.translatable(res.getTranslationKey(), profile.getName()), false);
+                player.displayClientMessage(Component.translatable(res.getTranslationKey(), profile.name()), false);
                 return InteractionResult.SUCCESS_SERVER;
             }
         }
@@ -184,13 +184,14 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
 
         public SecurityList add(GameProfile profile) {
             Set<ResolvableProfile> l = new HashSet<>(trusted);
-            l.add(new ResolvableProfile(profile));
+            l.add(ResolvableProfile.createResolved(profile));
             return new SecurityList(List.copyOf(l));
         }
 
         public SecurityList remove(GameProfile profile) {
+            // TODO: Partial profile might not equal profile.
             List<ResolvableProfile> l = trusted.stream()
-                    .filter(rp -> !rp.gameProfile().equals(profile))
+                    .filter(rp -> !rp.partialProfile().equals(profile))
                     .toList();
             return new SecurityList(l);
         }

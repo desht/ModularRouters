@@ -59,7 +59,7 @@ public class BulkItemFilter extends SmartFilterItem {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        return ctx.getLevel().isClientSide ? InteractionResult.SUCCESS : handleUseServerSide(ctx);
+        return ctx.getLevel().isClientSide() ? InteractionResult.SUCCESS : handleUseServerSide(ctx);
     }
 
     @Override

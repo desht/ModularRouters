@@ -10,12 +10,14 @@ import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.Util;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
@@ -29,7 +31,7 @@ import java.util.regex.PatternSyntaxException;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class RegexFilterScreen extends AbstractFilterScreen {
-    private static final ResourceLocation TEXTURE_LOCATION = MiscUtil.RL("textures/gui/regexfilter.png");
+    private static final Identifier TEXTURE_LOCATION = MiscUtil.RL("textures/gui/regexfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 186;
@@ -151,23 +153,27 @@ public class RegexFilterScreen extends AbstractFilterScreen {
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (keyCode == GLFW.GLFW_KEY_ENTER) {
+        public boolean keyPressed(KeyEvent event) {
+            if (event.key() == GLFW.GLFW_KEY_ENTER) {
                 parent.addRegex();
                 return true;
             } else {
-                return super.keyPressed(keyCode, scanCode, modifiers);
+                return super.keyPressed(event);
             }
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+            var mouseX = event.x();
+            var mouseY = event.y();
+            var mouseButton = event.button();
+
             if (mouseX >= this.getX() && mouseX < this.getX() + this.width && mouseY >= this.getY() && mouseY < this.getY() + this.height) {
                 if (mouseButton == 1) {
                     setValue("");  // right click clears field
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, mouseButton);
+            return super.mouseClicked(event, flag);
         }
     }
 }

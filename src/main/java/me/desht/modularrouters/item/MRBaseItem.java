@@ -4,6 +4,7 @@ import me.desht.modularrouters.client.KeyBindings;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -30,7 +31,7 @@ public abstract class MRBaseItem extends Item {
 
         if (ClientUtil.isKeyDown(KeyBindings.keybindModuleInfo)) {
             addUsageInformation(stack, tooltipAdder);
-        } else if (ConfigHolder.client.misc.alwaysShowModuleSettings.get() || Screen.hasShiftDown()) {
+        } else if (ConfigHolder.client.misc.alwaysShowModuleSettings.get() || Minecraft.getInstance().hasShiftDown()) {
             addExtraInformation(stack, tooltipAdder);
             tooltipAdder.accept(Component.empty());
             tooltipAdder.accept(xlate("modularrouters.itemText.misc.holdKey", text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));

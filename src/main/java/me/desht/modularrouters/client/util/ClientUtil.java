@@ -69,7 +69,7 @@ public class ClientUtil {
 
     public static boolean isKeyDown(KeyMapping key) {
         return !key.isUnbound()
-                && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue())
+                && InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key.getKey().getValue())
                 && key.getKeyConflictContext().isActive();
     }
 

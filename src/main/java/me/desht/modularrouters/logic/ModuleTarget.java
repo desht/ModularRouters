@@ -84,8 +84,8 @@ public class ModuleTarget {
      * @return a (lazy optional) item handler
      */
     public boolean hasItemHandler(Level level) {
-        return level.dimension().location().equals(gPos.dimension().location())
-                && level.getCapability(Capabilities.ItemHandler.BLOCK, gPos.pos(), face) != null;
+        return level.dimension().identifier().equals(gPos.dimension().identifier())
+                && level.getCapability(Capabilities.Item.BLOCK, gPos.pos(), face) != null;
     }
 
     /**
@@ -94,7 +94,7 @@ public class ModuleTarget {
      * @return an optional item handler
      */
     public Optional<IItemHandler> getItemHandler() {
-        return getCapability(Capabilities.ItemHandler.BLOCK);
+        return getCapability(Capabilities.Item.BLOCK);
     }
 
     /**
@@ -103,7 +103,7 @@ public class ModuleTarget {
      * @return an optional fluid handler
      */
     public Optional<IFluidHandler> getFluidHandler() {
-        return getCapability(Capabilities.FluidHandler.BLOCK);
+        return getCapability(Capabilities.Fluid.BLOCK);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ModuleTarget {
      * @return an optional energy handler
      */
     public Optional<IEnergyStorage> getEnergyHandler() {
-        return getCapability(Capabilities.EnergyStorage.BLOCK);
+        return getCapability(Capabilities.Energy.BLOCK);
     }
 
     /**

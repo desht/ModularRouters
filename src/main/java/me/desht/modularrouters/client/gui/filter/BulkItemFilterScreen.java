@@ -19,7 +19,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
-    private static final ResourceLocation TEXTURE_LOCATION = MiscUtil.RL("textures/gui/bulkitemfilter.png");
+    private static final Identifier TEXTURE_LOCATION = MiscUtil.RL("textures/gui/bulkitemfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 233;

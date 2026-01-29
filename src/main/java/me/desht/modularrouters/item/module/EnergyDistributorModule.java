@@ -61,7 +61,7 @@ public class EnergyDistributorModule extends ModuleItem implements IRangedModule
 
     @Override
     public boolean isValidTarget(UseOnContext ctx) {
-        return ctx.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, ctx.getClickedPos(), ctx.getClickedFace()) != null;
+        return ctx.getLevel().getCapability(Capabilities.Energy.BLOCK, ctx.getClickedPos(), ctx.getClickedFace()) != null;
     }
 
     @Override

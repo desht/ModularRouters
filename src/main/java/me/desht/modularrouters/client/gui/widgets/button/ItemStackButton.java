@@ -23,7 +23,7 @@ public class ItemStackButton extends TexturedButton {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             if (!flat) {
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());

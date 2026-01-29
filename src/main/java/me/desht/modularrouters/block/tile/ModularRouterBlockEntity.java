@@ -32,7 +32,8 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
-import net.minecraft.Util;
+import net.minecraft.server.players.NameAndId;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -258,8 +259,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         active = input.getBooleanOr(NBT_ACTIVE, false);
         activeTimer = input.getIntOr(NBT_ACTIVE_TIMER, 0);
         ecoMode = input.getBooleanOr(NBT_ECO_MODE, false);
-        ownerID = input.read(NBT_OWNER_PROFILE, ExtraCodecs.GAME_PROFILE).orElse(DEFAULT_FAKEPLAYER_PROFILE);
-
+        var tmpOwnerID = input.read(NBT_OWNER_PROFILE, NameAndId.CODEC).orElse(new NameAndId(DEFAULT_FAKEPLAYER_PROFILE.id(), DEFAULT_FAKEPLAYER_PROFILE.name()));
+        ownerID = new GameProfile(tmpOwnerID.id(), tmpOwnerID.name());
         // TODO extension data
 
         // When restoring, give the counter a random initial value to avoid all saved routers
@@ -284,7 +285,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (activeTimer != 0) output.putInt(NBT_ACTIVE_TIMER, activeTimer);
         if (ecoMode) output.putBoolean(NBT_ECO_MODE, true);
         if (ownerID != null) {
-            output.store(NBT_OWNER_PROFILE, ExtraCodecs.GAME_PROFILE, ownerID);
+            output.store(NBT_OWNER_PROFILE, NameAndId.CODEC, new NameAndId(ownerID.id(), ownerID.name()));
         }
         // TODO extension data
 //        if (!getExtensionData().isEmpty()) nbt.put(NBT_EXTRA, getExtensionData());
@@ -526,7 +527,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         // some tile entity field changed that the client needs to know about
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         Level level = nonNullLevel();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (anyPlayerHasThisOpen()) {
                 blockUpdateNeeded = true;
             } else {
@@ -602,7 +603,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private void compileUpgrades() {
         // if called client-side, always recompile (it's due to an upgrade sync)
         Level level = nonNullLevel();
-        if (level.isClientSide || recompileNeeded.contains(RecompileFlag.UPGRADES)) {
+        if (level.isClientSide() || recompileNeeded.contains(RecompileFlag.UPGRADES)) {
             int prevMufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
             upgradeCount.clear();
             permitted.clear();
@@ -623,7 +624,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                     ConfigHolder.common.router.fluidBaseTransferRate.get() + getUpgradeCount(ModItems.FLUID_UPGRADE.get()) * ConfigHolder.common.router.mBperFluidUpgrade.get());
 
             energyStorage.updateForEnergyUpgrades(getUpgradeCount(ModItems.ENERGY_UPGRADE.get()));
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 int mufflers = getUpgradeCount(ModItems.MUFFLER_UPGRADE.get());
                 if (prevMufflers != mufflers) {
                     level.setBlock(worldPosition, getBlockState().setValue(ModularRouterBlock.ACTIVE, active && mufflers < 3), Block.UPDATE_CLIENTS);
@@ -947,7 +948,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public void addItemBeam(BeamData beamData) {
-        if (nonNullLevel().isClientSide) {
+        if (nonNullLevel().isClientSide()) {
             beams.add(beamData);
             cachedRenderAABB = null;
         } else {
@@ -985,7 +986,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public void sendBlockUpdateIfNeeded() {
-        if (!level.isClientSide && blockUpdateNeeded && !anyPlayerHasThisOpen()) {
+        if (!level.isClientSide() && blockUpdateNeeded && !anyPlayerHasThisOpen()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
             blockUpdateNeeded = false;
         }

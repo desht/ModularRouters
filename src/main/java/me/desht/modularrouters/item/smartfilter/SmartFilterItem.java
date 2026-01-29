@@ -67,10 +67,10 @@ public abstract class SmartFilterItem extends MRBaseItem {
         MFLocator loc = MFLocator.heldFilter(hand);
         if (player instanceof ServerPlayer sp && filter.hasMenu()) {
             sp.openMenu(new FilterMenuProvider(player, loc), loc::toNetwork);
-        } else if (world.isClientSide && !hasMenu()) {
+        } else if (world.isClientSide() && !hasMenu()) {
             FilterScreenFactory.openFilterGui(loc);
         }
-        return world.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+        return world.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     public static class FilterMenuProvider implements MenuProvider {

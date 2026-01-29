@@ -3,7 +3,7 @@ package me.desht.modularrouters.integration;
 import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
@@ -67,19 +67,19 @@ public class XPCollection {
 
         private final boolean solid;
         private final int xpRatio;  // XP points per item, or (for fluids) mB per XP
-        private final ResourceLocation registryName;
+        private final Identifier registryName;
 
         XPCollectionType(boolean solid, int xpRatio, String registryName) {
             this.solid = solid;
             this.xpRatio = xpRatio;
-            this.registryName = ResourceLocation.parse(registryName);
+            this.registryName = Identifier.parse(registryName);
         }
 
         public int getXpRatio() {
             return xpRatio;
         }
 
-        public ResourceLocation getRegistryName() {
+        public Identifier getRegistryName() {
             return registryName;
         }
 

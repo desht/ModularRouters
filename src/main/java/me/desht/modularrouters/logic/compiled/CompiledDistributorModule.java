@@ -89,7 +89,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        Set<ModuleTarget> t = ITargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide);
+        Set<ModuleTarget> t = ITargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide());
         List<ModuleTarget> l = Lists.newArrayList(t);
         if (router == null) return l;
         l.sort(Comparator.comparingDouble(o -> calcDist(o, router)));

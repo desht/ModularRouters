@@ -1,7 +1,9 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class FloatTextField extends TextFieldWidgetMR {
@@ -38,13 +40,13 @@ public class FloatTextField extends TextFieldWidgetMR {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return switch (keyCode) {
+    public boolean keyPressed(KeyEvent event) {
+        return switch (event.key()) {
             case GLFW.GLFW_KEY_UP -> adjustField(incr);
             case GLFW.GLFW_KEY_DOWN -> adjustField(-incr);
             case GLFW.GLFW_KEY_PAGE_UP -> adjustField(max);
             case GLFW.GLFW_KEY_PAGE_DOWN -> adjustField(-max);
-            default -> super.keyPressed(keyCode, scanCode, modifiers);
+            default -> super.keyPressed(event);
         };
     }
 
@@ -65,9 +67,9 @@ public class FloatTextField extends TextFieldWidgetMR {
     }
 
     private boolean adjustField(float adj) {
-        if (Screen.hasControlDown()) {
+        if (Minecraft.getInstance().hasControlDown()) {
             adj *= fine;
-        } else if (Screen.hasShiftDown()) {
+        } else if (Minecraft.getInstance().hasShiftDown()) {
             adj *= coarse;
         }
         float val;

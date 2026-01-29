@@ -56,7 +56,7 @@ public class CamouflageUpgrade extends UpgradeItem {
         BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
-            if (!ctx.getLevel().isClientSide) {
+            if (!ctx.getLevel().isClientSide()) {
                 player.displayClientMessage(Component.translatable("modularrouters.itemText.camouflage.held")
                         .append(ChatFormatting.AQUA.toString())
                         .append(getCamoStateDisplayName(stack))
@@ -65,7 +65,7 @@ public class CamouflageUpgrade extends UpgradeItem {
                 player.playSound(ModSounds.SUCCESS.get(), ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.5f);
             }
             return InteractionResult.SUCCESS;
-        } else if (ctx.getLevel().isClientSide) {
+        } else if (ctx.getLevel().isClientSide()) {
             player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
             player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.badCamoBlock").withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;

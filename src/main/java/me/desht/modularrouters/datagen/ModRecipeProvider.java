@@ -11,7 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -397,7 +397,7 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private <T extends ItemLike> String safeName(T required) {
-        ResourceLocation key = BuiltInRegistries.ITEM.getKey(required.asItem());
+        Identifier key = BuiltInRegistries.ITEM.getKey(required.asItem());
         return key.getPath().replace('/', '_');
     }
 

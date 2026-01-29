@@ -52,7 +52,7 @@ public class ModuleTargetRenderer {
 
             matrixStack.pushPose();
 
-            Vec3 projectedView = event.getCamera().getPosition();
+            Vec3 projectedView = event.getLevelRenderState().cameraRenderState.pos;
             matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
             render(buffer, matrixStack, compiledPos);
 

@@ -6,6 +6,7 @@ import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -26,12 +27,12 @@ public abstract class AbstractFilterScreen extends Screen implements IResyncable
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode)) /*&& (!hasTextFieldManager() || !getOrCreateTextFieldManager().isFocused())*/) {
+    public boolean keyPressed(KeyEvent event) {
+        if (event.key() == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(event.key())) /*&& (!hasTextFieldManager() || !getOrCreateTextFieldManager().isFocused())*/) {
             // Intercept ESC/<inv> and immediately reopen the previous GUI, if any
             if (closeGUI()) return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     boolean closeGUI() {

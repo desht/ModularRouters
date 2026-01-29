@@ -39,7 +39,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
         PlayerSettings settings = stack.getOrDefault(ModDataComponents.PLAYER_SETTINGS, PlayerSettings.DEFAULT);
         ResolvableProfile profile = stack.get(ModDataComponents.OWNER);
 
-        String owner = profile == null ? "-" : profile.gameProfile().getName();
+        String owner = profile == null ? "-" : profile.partialProfile().name();
         tooltipAdder.accept(xlate("modularrouters.itemText.security.owner", colorText(owner, ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
 
         Component c = xlate("modularrouters.itemText.misc.operation").withStyle(ChatFormatting.YELLOW)
@@ -66,7 +66,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        if (ctx.getLevel().isClientSide) {
+        if (ctx.getLevel().isClientSide()) {
             return InteractionResult.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItemInHand(), ctx.getPlayer());
@@ -89,7 +89,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
 
     @Override
     public void doModuleValidation(ItemStack stack, ServerPlayer player) {
-        TargetValidation v = ModularRouters.getDimensionBlacklist().test(player.level().dimension().location()) ?
+        TargetValidation v = ModularRouters.getDimensionBlacklist().test(player.level().dimension().identifier()) ?
                 TargetValidation.BAD_DIMENSION :
                 TargetValidation.OK;
         MutableComponent msg = Component.translatable(v.translationKey()).withStyle(v.getColor());
