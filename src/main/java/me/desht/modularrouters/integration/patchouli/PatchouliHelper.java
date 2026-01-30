@@ -1,14 +1,16 @@
 package me.desht.modularrouters.integration.patchouli;
 
 import me.desht.modularrouters.ModularRouters;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import vazkii.patchouli.api.PatchouliAPI;
+import net.minecraft.world.item.Items;
 
 public class PatchouliHelper {
-    private static final ResourceLocation BOOK_ID = ResourceLocation.fromNamespaceAndPath(ModularRouters.MODID, "book");
+    private static final Identifier BOOK_ID = Identifier.fromNamespaceAndPath(ModularRouters.MODID, "book");
 
+    // TODO: Reimplement once Patchouli is updated
     public static ItemStack makePatchouliBook() {
-        return PatchouliAPI.get().getBookStack(BOOK_ID);
+        return new ItemStack(Items.BOOK);
+//        return PatchouliAPI.get().getBookStack(BOOK_ID);
     }
 }

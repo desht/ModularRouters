@@ -90,7 +90,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos pos, Direction direction) {
         return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
                 .map(router -> ItemHandlerHelper.calcRedstoneFromInventory(router.getBuffer()))
                 .orElse(0);
@@ -163,7 +163,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     PacketDistributor.sendToPlayer(sp, RouterSettingsMessage.forRouter(router));
                     PacketDistributor.sendToPlayer(sp, RouterUpgradesSyncMessage.forRouter(router));
                     sp.openMenu(router, pos);
-                } else if (!router.isPermitted(player) && world.isClientSide) {
+                } else if (!router.isPermitted(player) && world.isClientSide()) {
                     player.displayClientMessage(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED), false);
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }

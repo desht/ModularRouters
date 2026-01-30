@@ -6,18 +6,18 @@ import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 
 public abstract class TexturedButton extends ExtendedButton /*implements ITooltipButton*/ {
-    static final ResourceLocation TEXTURE = MiscUtil.RL("textures/gui/widgets.png");
+    static final Identifier TEXTURE = MiscUtil.RL("textures/gui/widgets.png");
 
     public TexturedButton(int x, int y, int width, int height, OnPress pressable) {
         super(x, y, width, height, Component.empty(), pressable);
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             int i = getYImage(isHovered);

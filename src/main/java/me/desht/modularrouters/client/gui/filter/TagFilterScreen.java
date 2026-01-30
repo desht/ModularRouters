@@ -10,11 +10,11 @@ import me.desht.modularrouters.item.smartfilter.TagFilter;
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -27,7 +27,7 @@ import java.util.*;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class TagFilterScreen extends AbstractFilterContainerScreen {
-    private static final ResourceLocation TEXTURE_LOCATION = MiscUtil.RL("textures/gui/tagfilter.png");
+    private static final Identifier TEXTURE_LOCATION = MiscUtil.RL("textures/gui/tagfilter.png");
 
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 252;

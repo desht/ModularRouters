@@ -216,9 +216,9 @@ public class CompiledVacuumModule extends CompiledModule {
         if (fluidReceiverCache == null) {
             for (Direction face : MiscUtil.DIRECTIONS) {
                 BlockPos pos = router.getBlockPos().relative(face);
-                IFluidHandler handler = serverLevel.getCapability(Capabilities.FluidHandler.BLOCK, pos, face.getOpposite());
+                IFluidHandler handler = serverLevel.getCapability(Capabilities.Fluid.BLOCK, pos, face.getOpposite());
                 if (handler != null && handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
-                    fluidReceiverCache = BlockCapabilityCache.create(Capabilities.FluidHandler.BLOCK, serverLevel, pos, face.getOpposite(),
+                    fluidReceiverCache = BlockCapabilityCache.create(Capabilities.Fluid.BLOCK, serverLevel, pos, face.getOpposite(),
                             () -> true, () -> fluidReceiverCache = null);
                     break;
                 }

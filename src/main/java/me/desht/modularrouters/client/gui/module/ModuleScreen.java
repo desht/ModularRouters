@@ -30,12 +30,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -54,7 +57,7 @@ import java.util.Optional;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
-    protected static final ResourceLocation GUI_TEXTURE = MiscUtil.RL("textures/gui/module.png");
+    protected static final Identifier GUI_TEXTURE = MiscUtil.RL("textures/gui/module.png");
 
     // locations of extra textures on the gui module texture sheet
     protected static final XYPoint SMALL_TEXTFIELD_XY = new XYPoint(0, 198);
@@ -279,7 +282,8 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        var keyCode = event.key();
         if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode) && !isFocused())) && routerPos != null) {
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
@@ -290,13 +294,13 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
             // trying to configure an installed smart filter, we're done
             return handleFilterConfig();
         } else {
-            return super.keyPressed(keyCode, scanCode, modifiers);
+            return super.keyPressed(event);
         }
     }
 
     @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        return button == 2 ? handleFilterConfig() : super.mouseClicked(x, y, button);
+    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+        return event.button() == 2 ? handleFilterConfig() : super.mouseClicked(event, flag);
     }
 
     @Override
@@ -440,7 +444,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         }
 
         @Override
-        public void onPress() {
+        public void onPress(InputWithModifiers p_446034_) {
             for (RelativeDirection dir : RelativeDirection.values()) {
                 DirectionButton db = directionButtons.get(dir);
                 db.setToggled(false);
@@ -449,7 +453,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
                 }
             }
 
-            super.onPress();
+            super.onPress(p_446034_);
         }
     }
 

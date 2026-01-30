@@ -37,7 +37,7 @@ public record ModuleSettingsMessage(MFLocator locator, DataComponentPatch patch)
     public static void handleData(ModuleSettingsMessage message, IPayloadContext context) {
         Player player = context.player();
         if (!(player.containerMenu instanceof ModuleMenu)) {
-            ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - player does not have a module GUI open", player.getGameProfile().getName());
+            ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - player does not have a module GUI open", player.getGameProfile().name());
             return;
         }
 
@@ -48,7 +48,7 @@ public record ModuleSettingsMessage(MFLocator locator, DataComponentPatch patch)
             pdcm.applyPatch(message.patch);
             locator.getRouter(player.level()).ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES));
         } else {
-            ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - expected module not found @ {}", player.getGameProfile().getName(), locator);
+            ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - expected module not found @ {}", player.getGameProfile().name(), locator);
         }
     }
 }

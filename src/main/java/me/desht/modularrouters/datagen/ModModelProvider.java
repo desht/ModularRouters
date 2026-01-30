@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -47,7 +47,7 @@ public class ModModelProvider extends ModelProvider {
         ModularRouterBlock routerBlock = ModBlocks.MODULAR_ROUTER.get();
 
         var routerTemplate = ExtendedModelTemplateBuilder.builder()
-                .parent(ResourceLocation.withDefaultNamespace("block/block"))
+                .parent(Identifier.withDefaultNamespace("block/block"))
                 .element(elementBuilder -> {
                     elementBuilder.face(Direction.DOWN, faceBuilder -> faceBuilder.cullface(Direction.DOWN).texture(TextureSlot.BOTTOM));
                     elementBuilder.face(Direction.UP, faceBuilder -> faceBuilder.cullface(Direction.UP).texture(TextureSlot.TOP));

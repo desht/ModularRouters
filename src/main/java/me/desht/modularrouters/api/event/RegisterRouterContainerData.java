@@ -1,7 +1,7 @@
 package me.desht.modularrouters.api.event;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.DataSlot;
 import net.neoforged.bus.api.Event;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class RegisterRouterContainerData extends Event {
     private final ModularRouterBlockEntity router;
-    private final Map<ResourceLocation, DataSlot> data = new HashMap<>();
+    private final Map<Identifier, DataSlot> data = new HashMap<>();
 
     @ApiStatus.Internal
     public RegisterRouterContainerData(ModularRouterBlockEntity router) {
@@ -29,7 +29,7 @@ public class RegisterRouterContainerData extends Event {
      * @param id       the ID of the slot
      * @param dataSlot the slot to register
      */
-    public void register(ResourceLocation id, DataSlot dataSlot) {
+    public void register(Identifier id, DataSlot dataSlot) {
         data.put(id, dataSlot);
     }
 
@@ -41,7 +41,7 @@ public class RegisterRouterContainerData extends Event {
     }
 
     @ApiStatus.Internal
-    public Map<ResourceLocation, DataSlot> getData() {
+    public Map<Identifier, DataSlot> getData() {
         return Collections.unmodifiableMap(data);
     }
 }

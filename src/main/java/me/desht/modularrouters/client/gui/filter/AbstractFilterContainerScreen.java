@@ -8,6 +8,7 @@ import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,12 +47,12 @@ public abstract class AbstractFilterContainerScreen extends AbstractContainerScr
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || ClientUtil.isInvKey(keyCode))) {
+    public boolean keyPressed(KeyEvent event) {
+        if ((event.key() == GLFW.GLFW_KEY_ESCAPE || ClientUtil.isInvKey(event.key()))) {
             // Intercept ESC/E and immediately reopen the previous GUI, if any
             if (closeGUI()) return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override

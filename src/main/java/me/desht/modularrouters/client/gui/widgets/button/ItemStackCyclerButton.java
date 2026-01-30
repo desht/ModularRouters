@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.util.TranslatableEnum;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +16,7 @@ public class ItemStackCyclerButton<T extends Enum<T> & TranslatableEnum> extends
 
     public ItemStackCyclerButton(int x, int y, int width, int height, boolean flat, ItemStack[] stacks, T initialVal, ISendToServer dataSyncer) {
         super(x, y, width, height, null, flat, button -> {
-            ((ItemStackCyclerButton<?>) button).cycle(!Screen.hasShiftDown());
+            ((ItemStackCyclerButton<?>) button).cycle(!Minecraft.getInstance().hasShiftDown());
             dataSyncer.sendToServer();
         });
         len = initialVal.getClass().getEnumConstants().length;

@@ -42,8 +42,8 @@ public class CompiledPlayerModule extends CompiledModule {
         settings = stack.getOrDefault(ModDataComponents.PLAYER_SETTINGS, PlayerSettings.DEFAULT);
         playerProfile = ((IPlayerOwned) stack.getItem()).getOwnerProfile(stack).orElse(null);
 
-        if (router != null && !router.nonNullLevel().isClientSide) {
-            Player player = playerProfile == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerProfile.getId());
+        if (router != null && !router.nonNullLevel().isClientSide()) {
+            Player player = playerProfile == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerProfile.id());
             playerRef = new WeakReference<>(player);
         } else {
             playerRef = new WeakReference<>(null);
@@ -100,7 +100,7 @@ public class CompiledPlayerModule extends CompiledModule {
 
     private boolean isDimensionBlacklisted(ModularRouterBlockEntity router, Player player) {
         WildcardedRLMatcher matcher = ModularRouters.getDimensionBlacklist();
-        return matcher.test(router.nonNullLevel().dimension().location()) || matcher.test(player.level().dimension().location());
+        return matcher.test(router.nonNullLevel().dimension().identifier()) || matcher.test(player.level().dimension().identifier());
     }
 
     private Player getPlayer() {
@@ -124,7 +124,7 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public void onCompiled(ModularRouterBlockEntity router) {
         super.onCompiled(router);
-        if (!router.nonNullLevel().isClientSide) {
+        if (!router.nonNullLevel().isClientSide()) {
             NeoForge.EVENT_BUS.register(this);
         }
     }
@@ -132,17 +132,17 @@ public class CompiledPlayerModule extends CompiledModule {
     @Override
     public void cleanup(ModularRouterBlockEntity router) {
         super.cleanup(router);
-        if (!router.nonNullLevel().isClientSide) {
+        if (!router.nonNullLevel().isClientSide()) {
             NeoForge.EVENT_BUS.unregister(this);
         }
     }
 
     public UUID getPlayerId() {
-        return playerProfile == null ? null : playerProfile.getId();
+        return playerProfile == null ? null : playerProfile.id();
     }
 
     public String getPlayerName() {
-        return playerProfile == null ? null : playerProfile.getName();
+        return playerProfile == null ? null : playerProfile.name();
     }
 
     public TransferDirection getTransferDirection() {

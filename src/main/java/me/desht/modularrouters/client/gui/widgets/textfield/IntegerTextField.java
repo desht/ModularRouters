@@ -1,7 +1,9 @@
 package me.desht.modularrouters.client.gui.widgets.textfield;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.Range;
 import org.lwjgl.glfw.GLFW;
@@ -36,13 +38,13 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return switch (keyCode) {
+    public boolean keyPressed(KeyEvent event) {
+        return switch (event.key()) {
             case GLFW.GLFW_KEY_UP -> adjustField(getAdjustment());
             case GLFW.GLFW_KEY_DOWN -> adjustField(-getAdjustment());
             case GLFW.GLFW_KEY_PAGE_UP -> adjustField(range.getMaximum());
             case GLFW.GLFW_KEY_PAGE_DOWN -> adjustField(-range.getMaximum());
-            default -> super.keyPressed(keyCode, scanCode, modifiers);
+            default -> super.keyPressed(event);
         };
     }
 
@@ -87,9 +89,9 @@ public class IntegerTextField extends TextFieldWidgetMR {
     }
 
     private int getAdjustment() {
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             return coarseIncr;
-        } else if (Screen.hasControlDown()) {
+        } else if (Minecraft.getInstance().hasControlDown()) {
             return fineIncr;
         } else {
             return incr;

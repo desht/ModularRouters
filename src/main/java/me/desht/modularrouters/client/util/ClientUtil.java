@@ -52,8 +52,8 @@ public class ClientUtil {
         return keyCode == Minecraft.getInstance().options.keyInventory.getKey().getValue();
     }
 
-    public static VertexConsumer posF(VertexConsumer builder, Matrix4f posMat, Vec3 vec) {
-        return builder.addVertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z);
+    public static VertexConsumer posF(VertexConsumer builder, Matrix4f posMat, Vec3 vec, float lineWidth) {
+        return builder.addVertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z).setLineWidth(lineWidth);
     }
 
     public static Slot getHoveredSlot() {
@@ -69,7 +69,7 @@ public class ClientUtil {
 
     public static boolean isKeyDown(KeyMapping key) {
         return !key.isUnbound()
-                && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue())
+                && InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key.getKey().getValue())
                 && key.getKeyConflictContext().isActive();
     }
 

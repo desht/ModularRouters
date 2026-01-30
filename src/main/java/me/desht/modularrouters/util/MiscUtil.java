@@ -11,7 +11,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -42,17 +42,17 @@ public class MiscUtil {
         return NumberFormat.getNumberInstance().format(n);
     }
 
-    public static String locToString(ResourceLocation dim, BlockPos pos) {
+    public static String locToString(Identifier dim, BlockPos pos) {
         String s = dim.getNamespace().equals("minecraft") ? dim.getPath() : dim.toString();
         return String.format("%s [%d,%d,%d]", s, pos.getX(), pos.getY(), pos.getZ());
     }
 
     public static String locToString(GlobalPos pos) {
-        return locToString(pos.dimension().location(), pos.pos());
+        return locToString(pos.dimension().identifier(), pos.pos());
     }
 
-    public static ResourceLocation RL(String name) {
-        return ResourceLocation.fromNamespaceAndPath(ModularRouters.MODID, name);
+    public static Identifier RL(String name) {
+        return Identifier.fromNamespaceAndPath(ModularRouters.MODID, name);
     }
 
     public static int getYawFromFacing(Direction facing) {

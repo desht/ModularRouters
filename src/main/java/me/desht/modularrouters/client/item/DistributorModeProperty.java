@@ -8,7 +8,7 @@ import me.desht.modularrouters.logic.settings.TransferDirection;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperty;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public enum DistributorModeProperty implements SelectItemModelProperty<TransferDirection> {
     INSTANCE;
 
-    public static final ResourceLocation ID = MiscUtil.RL("distributor_mode");
+    public static final Identifier ID = MiscUtil.RL("distributor_mode");
     public static final SelectItemModelProperty.Type<DistributorModeProperty,TransferDirection> TYPE
             = SelectItemModelProperty.Type.create(MapCodec.unit(INSTANCE), TransferDirection.CODEC);
 

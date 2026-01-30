@@ -300,7 +300,7 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isShiftKeyDown()) {
-            if (!world.isClientSide) {
+            if (!world.isClientSide()) {
                 MFLocator locator = MFLocator.heldModule(hand);
                 player.openMenu(new ModuleMenuProvider(player, locator), locator::toNetwork);
                 return InteractionResult.SUCCESS_SERVER;

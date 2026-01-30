@@ -11,12 +11,14 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Inspectio
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -29,7 +31,7 @@ import java.util.List;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class InspectionFilterScreen extends AbstractFilterScreen {
-    private static final ResourceLocation TEXTURE_LOCATION = MiscUtil.RL("textures/gui/inspectionfilter.png");
+    private static final Identifier TEXTURE_LOCATION = MiscUtil.RL("textures/gui/inspectionfilter.png");
 
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 191;
@@ -60,12 +62,12 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         }
 
         addRenderableWidget(new ExtendedButton(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
-            currentSubject = currentSubject.cycle(Screen.hasShiftDown() ? -1 : 1);
+            currentSubject = currentSubject.cycle(Minecraft.getInstance().hasShiftDown() ? -1 : 1);
             button.setMessage(xlate(currentSubject.getTranslationKey()));
         }));
 
         addRenderableWidget(new ExtendedButton(xPos + 95, yPos + 22, 20, 20, xlate(currentOp.getTranslationKey()), button -> {
-            currentOp = currentOp.cycle(Screen.hasShiftDown() ? -1 : 1);
+            currentOp = currentOp.cycle(Minecraft.getInstance().hasShiftDown() ? -1 : 1);
             button.setMessage(xlate(currentOp.getTranslationKey()));
         }));
 
@@ -87,12 +89,12 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
 
         valueTextField = new IntegerTextField(font, xPos + 120, yPos + 28, 20, 14, Range.of(0, 100)) {
             @Override
-            public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-                if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            public boolean keyPressed(KeyEvent event) {
+                if (event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) {
                     addEntry();
                     return true;
                 }
-                return super.keyPressed(keyCode, scanCode, modifiers);
+                return super.keyPressed(event);
             }
         };
         valueTextField.useGuiTextBackground();

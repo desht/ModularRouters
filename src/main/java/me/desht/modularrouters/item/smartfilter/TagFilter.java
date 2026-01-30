@@ -9,7 +9,7 @@ import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -27,8 +27,8 @@ public class TagFilter extends SmartFilterItem {
     public static List<TagKey<Item>> getTagList(ItemStack filterStack) {
         List<String> strings = filterStack.getOrDefault(ModDataComponents.FILTER_STRINGS, List.of());
         return strings.stream()
-                .filter(rl -> ResourceLocation.tryParse(rl) != null)
-                .map(s -> TagKey.create(Registries.ITEM, ResourceLocation.parse(s)))
+                .filter(rl -> Identifier.tryParse(rl) != null)
+                .map(s -> TagKey.create(Registries.ITEM, Identifier.parse(s)))
                 .toList();
     }
 

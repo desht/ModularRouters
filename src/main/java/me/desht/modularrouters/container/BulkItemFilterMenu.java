@@ -38,7 +38,7 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
     public BulkItemFilterMenu(int windowId, Inventory invPlayer, MFLocator loc) {
         super(ModMenuTypes.BULK_FILTER_MENU.get(), windowId, invPlayer, loc);
 
-        this.handler = new BulkFilterHandler(filterStack, router, loc.getModuleStack(invPlayer.player), loc.filterSlot(), !invPlayer.player.level().isClientSide);
+        this.handler = new BulkFilterHandler(filterStack, router, loc.getModuleStack(invPlayer.player), loc.filterSlot(), !invPlayer.player.level().isClientSide());
         this.currentSlot = invPlayer.getSelectedSlot() + HOTBAR_START;
 
         // slots for the (ghost) filter items
@@ -66,7 +66,7 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
             }
         });
 
-        if (getRouter() != null && !getRouter().nonNullLevel().isClientSide) {
+        if (getRouter() != null && !getRouter().nonNullLevel().isClientSide()) {
             getRouter().recompileNeeded(RecompileFlag.MODULES);
         }
     }
@@ -95,7 +95,7 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
             }
         });
 
-        if (getRouter() != null && !getRouter().nonNullLevel().isClientSide) {
+        if (getRouter() != null && !getRouter().nonNullLevel().isClientSide()) {
             getRouter().recompileNeeded(RecompileFlag.MODULES);
         }
     }

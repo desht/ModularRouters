@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class EnergyWidget extends AbstractWidget {
-    private static final ResourceLocation TEXTURE_LOCATION = RL("textures/gui/energy_widget.png");
+    private static final Identifier TEXTURE_LOCATION = RL("textures/gui/energy_widget.png");
 
     private static final int DEFAULT_SCALE = 64;
 

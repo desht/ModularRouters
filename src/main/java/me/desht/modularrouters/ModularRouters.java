@@ -8,6 +8,7 @@ import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.NetworkHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import me.desht.modularrouters.util.WildcardedRLMatcher;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -53,15 +54,15 @@ public class ModularRouters {
     }
 
     private void registerCaps(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+        event.registerBlockEntity(Capabilities.Item.BLOCK,
                 ModBlockEntities.MODULAR_ROUTER.get(),
                 (be, side) -> be.getBuffer());
 
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK,
                 ModBlockEntities.MODULAR_ROUTER.get(),
                 (be, side) -> be.getFluidHandler());
 
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+        event.registerBlockEntity(Capabilities.Energy.BLOCK,
                 ModBlockEntities.MODULAR_ROUTER.get(),
                 (be, side) -> be.getEnergyStorage());
     }
@@ -97,5 +98,9 @@ public class ModularRouters {
             event.createProvider(ModEntityTypeTagsProvider::new);
             event.createProvider(ModModelProvider::new);
         }
+    }
+
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 }

@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,7 +23,7 @@ import org.apache.commons.lang3.Range;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class SyncUpgradeScreen extends Screen {
-    private static final ResourceLocation TEXTURE_LOCATION = MiscUtil.RL("textures/gui/sync_upgrade.png");
+    private static final Identifier TEXTURE_LOCATION = MiscUtil.RL("textures/gui/sync_upgrade.png");
     private static final ItemStack clockStack = new ItemStack(Items.CLOCK);
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 48;

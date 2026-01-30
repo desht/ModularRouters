@@ -2,6 +2,7 @@ package me.desht.modularrouters.client.gui.widgets.button;
 
 import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.util.TranslatableEnum;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -13,7 +14,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T> & TranslatableEnum>
 
     public TexturedCyclerButton(int x, int y, int width, int height, T initialVal, ISendToServer dataSyncer) {
         super(x, y, width, height, button -> {
-            ((TexturedCyclerButton<?>) button).cycle(!Screen.hasShiftDown());
+            ((TexturedCyclerButton<?>) button).cycle(!Minecraft.getInstance().hasShiftDown());
             dataSyncer.sendToServer();
         });
         setState(initialVal);

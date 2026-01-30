@@ -236,7 +236,7 @@ public abstract class CompiledModule {
         if (router == null || (module.isDirectional() && getDirection() == RelativeDirection.NONE)) {
             return List.of();
         } else if (module instanceof ITargetedModule) {
-            return List.copyOf(ITargetedModule.getTargets(stack, !router.nonNullLevel().isClientSide));
+            return List.copyOf(ITargetedModule.getTargets(stack, !router.nonNullLevel().isClientSide()));
         }
         Direction facing = router.getAbsoluteFacing(getDirection());
         BlockPos pos = router.getBlockPos().relative(facing);

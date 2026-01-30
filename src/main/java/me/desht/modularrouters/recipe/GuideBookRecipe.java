@@ -3,7 +3,7 @@ package me.desht.modularrouters.recipe;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.integration.patchouli.PatchouliHelper;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;

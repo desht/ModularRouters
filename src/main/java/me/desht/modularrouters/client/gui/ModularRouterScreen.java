@@ -20,12 +20,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +40,7 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static me.desht.modularrouters.util.MiscUtil.RL;
 
 public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> implements ISendToServer, MenuAccess<RouterMenu> {
-    private static final ResourceLocation TEXTURE_LOCATION = RL("textures/gui/router.png");
+    private static final Identifier TEXTURE_LOCATION = RL("textures/gui/router.png");
 
     private static final int LABEL_YPOS = 5;
     private static final int MODULE_LABEL_YPOS = 60;
@@ -107,13 +109,13 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return KeyBindings.keybindConfigure.getKey().getValue() == keyCode ? handleModuleConfig() : super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        return KeyBindings.keybindConfigure.getKey().getValue() == event.key() ? handleModuleConfig() : super.keyPressed(event);
     }
 
     @Override
-    public boolean mouseClicked(double x, double y, int btn) {
-        return btn == 2 ? handleModuleConfig() : super.mouseClicked(x, y, btn);
+    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+        return event.button() == 2 ? handleModuleConfig() : super.mouseClicked(event, flag);
     }
 
     @Override
@@ -131,7 +133,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
         boolean hasEnergyUpgrade = menu.getRouter().getEnergyCapacity() > 0;
         energyWidget.visible = hasEnergyUpgrade;
         energyDirButton.visible = hasEnergyUpgrade
-                && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(Capabilities.EnergyStorage.ITEM) != null;
+                && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(Capabilities.Energy.ITEM) != null;
 
         energyWarning.setX(hasEnergyUpgrade ? leftPos - 22 : leftPos + 4);
         energyWarning.tick();
