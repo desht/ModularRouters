@@ -17,9 +17,10 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
@@ -93,7 +94,7 @@ public class ModuleTarget {
      *
      * @return an optional item handler
      */
-    public Optional<IItemHandler> getItemHandler() {
+    public Optional<ResourceHandler<ItemResource>> getItemHandler() {
         return getCapability(Capabilities.Item.BLOCK);
     }
 
@@ -102,7 +103,7 @@ public class ModuleTarget {
      *
      * @return an optional fluid handler
      */
-    public Optional<IFluidHandler> getFluidHandler() {
+    public Optional<ResourceHandler<FluidResource>> getFluidHandler() {
         return getCapability(Capabilities.Fluid.BLOCK);
     }
 
@@ -111,7 +112,7 @@ public class ModuleTarget {
      *
      * @return an optional energy handler
      */
-    public Optional<IEnergyStorage> getEnergyHandler() {
+    public Optional<EnergyHandler> getEnergyHandler() {
         return getCapability(Capabilities.Energy.BLOCK);
     }
 

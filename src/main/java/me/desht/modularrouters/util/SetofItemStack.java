@@ -6,7 +6,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -40,10 +42,10 @@ public class SetofItemStack extends ObjectOpenCustomHashSet<ItemStack> {
         super(collection, new ItemStackHashingStrategy(filterFlags));
     }
 
-    public static SetofItemStack fromItemHandler(IItemHandler handler, ModuleFlags filterFlags) {
+    public static SetofItemStack fromResourceHandler(ResourceHandler<ItemResource> handler, ModuleFlags filterFlags) {
         NonNullList<ItemStack> itemStacks = NonNullList.create();
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlot(i);
+        for (int i = 0; i < handler.size(); i++) {
+            ItemStack stack = ItemUtil.getStack(handler, i);
             if (!stack.isEmpty()) {
                 itemStacks.add(stack.copy());
             }

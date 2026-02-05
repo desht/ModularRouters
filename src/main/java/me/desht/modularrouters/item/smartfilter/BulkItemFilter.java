@@ -19,7 +19,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -43,7 +45,7 @@ public class BulkItemFilter extends SmartFilterItem {
 
     private static SetofItemStack getFilterItems(ItemStack filterStack, ModuleFlags flags) {
         BulkFilterHandler handler = new BulkFilterHandler(filterStack, null);
-        return SetofItemStack.fromItemHandler(handler, flags);
+        return SetofItemStack.fromResourceHandler(handler, flags);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class BulkItemFilter extends SmartFilterItem {
 
     private InteractionResult handleUseServerSide(UseOnContext ctx) {
         if (ctx.getPlayer() instanceof ServerPlayer sp) {
-            Optional<IItemHandler> inventory = InventoryUtils.getInventory(ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
+            Optional<ResourceHandler<ItemResource>> inventory = InventoryUtils.getInventory(ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
             if (inventory.isPresent()) {
                 int nAdded = mergeInventory(ctx.getItemInHand(), inventory.get());
                 sp.displayClientMessage(Component.translatable("modularrouters.chatText.misc.inventoryMerged",
@@ -86,12 +88,12 @@ public class BulkItemFilter extends SmartFilterItem {
         return InteractionResult.PASS;
     }
 
-    private int mergeInventory(ItemStack filterStack, IItemHandler srcInventory) {
+    private int mergeInventory(ItemStack filterStack, ResourceHandler<ItemResource> srcInventory) {
         SetofItemStack stacks = getFilterItems(filterStack, ModuleFlags.DEFAULT);
         int origSize = stacks.size();
 
-        for (int i = 0; i < srcInventory.getSlots() && stacks.size() < FILTER_SIZE; i++) {
-            ItemStack stack = srcInventory.getStackInSlot(i);
+        for (int i = 0; i < srcInventory.size() && stacks.size() < FILTER_SIZE; i++) {
+            ItemStack stack = ItemUtil.getStack(srcInventory, i);
             if (!stack.isEmpty()) {
                 stacks.add(stack.copyWithCount(1));
             }

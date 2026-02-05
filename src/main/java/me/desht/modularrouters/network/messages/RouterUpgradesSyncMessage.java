@@ -9,9 +9,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 /**
  * Received on: CLIENT
@@ -19,7 +21,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * Sent when a router GUI is opened to sync all the upgrades to the clientside block entity.
  * Various GUI messages/tooltips/etc. depend on knowing what upgrades the router has.
  */
-public record RouterUpgradesSyncMessage(BlockPos pos, ItemStackHandler upgradesHandler) implements CustomPacketPayload {
+public record RouterUpgradesSyncMessage(BlockPos pos, ItemStacksResourceHandler upgradesHandler) implements CustomPacketPayload {
     public static final Type<RouterUpgradesSyncMessage> TYPE = new Type<>(MiscUtil.RL("router_upgrades_sync"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf,RouterUpgradesSyncMessage> STREAM_CODEC = StreamCodec.composite(
@@ -30,10 +32,10 @@ public record RouterUpgradesSyncMessage(BlockPos pos, ItemStackHandler upgradesH
 
     public static RouterUpgradesSyncMessage forRouter(ModularRouterBlockEntity router) {
         BlockPos pos = router.getBlockPos();
-        IItemHandler h = router.getUpgrades();
-        ItemStackHandler handler = new ItemStackHandler(h.getSlots());
-        for (int i = 0; i < h.getSlots(); i++) {
-            handler.setStackInSlot(i, h.getStackInSlot(i).copy());
+        ResourceHandler<ItemResource> h = router.getUpgrades();
+        ItemStacksResourceHandler handler = new ItemStacksResourceHandler(h.size());
+        for (int i = 0; i < h.size(); i++) {
+            handler.set(i, ItemResource.of(ItemUtil.getStack(h, i)), ItemUtil.getStack(h, i).getCount());
         }
         return new RouterUpgradesSyncMessage(pos, handler);
     }

@@ -7,12 +7,14 @@ import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 
-public class AugmentHandler extends ItemStackHandler {
+public class AugmentHandler extends ItemStacksResourceHandler {
     private final ItemStack holderStack;
     private final ModularRouterBlockEntity router;
 
@@ -39,28 +41,32 @@ public class AugmentHandler extends ItemStackHandler {
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        if (!(stack.getItem() instanceof AugmentItem augment)) return false;
+    public boolean isValid(int slot, @Nonnull ItemResource resource) {
+        if (resource.isEmpty()) return false;
+        if (!(resource.getItem() instanceof AugmentItem augment)) return false;
 
         if (augment.getMaxAugments((ModuleItem) holderStack.getItem()) == 0) return false;
 
         // can't have the same augment in multiple slots
-        for (int i = 0; i < getSlots(); i++) {
-            if (slot != i && stack.getItem() == getStackInSlot(i).getItem()) return false;
+        for (int i = 0; i < size(); i++) {
+            if (slot != i && resource.getItem() == getResource(i).getItem()) return false;
         }
 
         return true;
     }
 
     @Override
-    protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-        return stack.getItem() instanceof AugmentItem augment ?
+    protected int getCapacity(int slot, @Nonnull ItemResource resource) {
+        if (resource.isEmpty()) {
+            return AugmentItem.SLOTS;
+        }
+        return resource.getItem() instanceof AugmentItem augment ?
                 augment.getMaxAugments((ModuleItem) holderStack.getItem()) :
                 0;
     }
 
     @Override
-    protected void onContentsChanged(int slot) {
+    protected void onContentsChanged(int index, ItemStack previousContents) {
         save();
     }
 
@@ -70,5 +76,26 @@ public class AugmentHandler extends ItemStackHandler {
         if (router != null) {
             router.recompileNeeded(RecompileFlag.MODULES);
         }
+    }
+
+    /**
+     * Directly overwrites the contents of the handler at a specific index.
+     */
+    public void setStackInSlot(int slot, ItemStack stack) {
+        set(slot, ItemResource.of(stack), stack.getCount());
+    }
+
+    /**
+     * Get an ItemStack copy of the contents at the given slot.
+     */
+    public ItemStack getStackInSlot(int slot) {
+        return ItemUtil.getStack(this, slot);
+    }
+
+    /**
+     * Get the number of slots in this handler.
+     */
+    public int getSlots() {
+        return size();
     }
 }

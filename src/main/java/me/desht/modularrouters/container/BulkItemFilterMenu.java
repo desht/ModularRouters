@@ -13,7 +13,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -71,15 +73,15 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
         }
     }
 
-    public void mergeInventory(IItemHandler srcInv, ModuleFlags flags, boolean clearFirst) {
+    public void mergeInventory(ResourceHandler<ItemResource> srcInv, ModuleFlags flags, boolean clearFirst) {
         if (srcInv == null) {
             return;
         }
-        SetofItemStack stacks = clearFirst ? new SetofItemStack(flags) : SetofItemStack.fromItemHandler(handler, flags);
+        SetofItemStack stacks = clearFirst ? new SetofItemStack(flags) : SetofItemStack.fromResourceHandler(handler, flags);
         int origSize = stacks.size();
 
-        for (int i = 0; i < srcInv.getSlots() && stacks.size() < handler.getSlots(); i++) {
-            ItemStack stack = srcInv.getStackInSlot(i);
+        for (int i = 0; i < srcInv.size() && stacks.size() < handler.getSlots(); i++) {
+            ItemStack stack = ItemUtil.getStack(srcInv, i);
             if (!stack.isEmpty()) {
                 stacks.add(stack.copyWithCount(1));
             }

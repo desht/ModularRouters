@@ -21,10 +21,15 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.*;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.RangedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.item.PlayerInventoryWrapper;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
@@ -63,7 +68,7 @@ public class CompiledPlayerModule extends CompiledModule {
             return false;
         }
 
-        IItemHandler itemHandler = getHandler(player);
+        ResourceHandler<ItemResource> itemHandler = getHandler(player);
 
         ItemStack bufferStack = router.getBufferItemStack();
         switch (getTransferDirection()) {
@@ -153,15 +158,26 @@ public class CompiledPlayerModule extends CompiledModule {
         return settings.section;
     }
 
-    private boolean insertArmor(ModularRouterBlockEntity router, Player player, IItemHandler itemHandler, ItemStack armorStack) {
+    private boolean insertArmor(ModularRouterBlockEntity router, Player player, ResourceHandler<ItemResource> itemHandler, ItemStack armorStack) {
         int slot = getSlotForArmorItem(player, armorStack);
-        if (slot >= 0 && itemHandler.getStackInSlot(slot).isEmpty()) {
-            ItemStack extracted = router.getBuffer().extractItem(0, 1, false);
-            if (extracted.isEmpty()) {
+        if (slot >= 0 && ItemUtil.getStack(itemHandler, slot).isEmpty()) {
+            // Extract one item from the router buffer
+            ItemResource resource = router.getBuffer().getResource(0);
+            if (resource.isEmpty()) {
                 return false;
             }
-            ItemStack res = itemHandler.insertItem(slot, extracted, false);
-            return res.isEmpty();
+            try (var tx = Transaction.openRoot()) {
+                int extracted = router.getBuffer().extract(0, resource, 1, tx);
+                if (extracted == 0) {
+                    return false;
+                }
+                ItemStack res = ItemUtil.insertItemReturnRemaining(itemHandler, slot, resource.toStack(1), false, tx);
+                if (res.isEmpty()) {
+                    tx.commit();
+                    return true;
+                }
+                return false;
+            }
         } else {
             return false;
         }
@@ -177,20 +193,15 @@ public class CompiledPlayerModule extends CompiledModule {
         };
     }
 
-    private IItemHandler getHandler(Player player) {
+    private ResourceHandler<ItemResource> getHandler(Player player) {
+        PlayerInventoryWrapper wrapper = PlayerInventoryWrapper.of(player);
         return switch (getSection()) {
-            case MAIN -> new PlayerMainInvWrapper(player.getInventory());
-            case MAIN_NO_HOTBAR -> new PlayerMainInvNoHotbarWrapper(player.getInventory());
-            case ARMOR -> new PlayerArmorInvWrapper(player.getInventory());
-            case OFFHAND -> new PlayerOffhandInvWrapper(player.getInventory());
-            case ENDER -> new InvWrapper(player.getEnderChestInventory());
+            case MAIN -> wrapper.getMainSlots();
+            case MAIN_NO_HOTBAR -> RangedResourceHandler.of(wrapper, Inventory.getSelectionSize(), player.getInventory().getNonEquipmentItems().size());
+            case ARMOR -> wrapper.getArmorSlots();
+            case OFFHAND -> wrapper.getSlot(Inventory.SLOT_OFFHAND);
+            case ENDER -> VanillaContainerWrapper.of(player.getEnderChestInventory());
         };
-    }
-
-    public static class PlayerMainInvNoHotbarWrapper extends RangedWrapper {
-        PlayerMainInvNoHotbarWrapper(Inventory inv) {
-            super(new InvWrapper(inv), Inventory.getSelectionSize(), inv.getNonEquipmentItems().size());
-        }
     }
 
     public enum Section implements TranslatableEnum, StringRepresentable {

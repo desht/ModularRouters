@@ -37,7 +37,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -92,7 +92,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos pos, Direction direction) {
         return world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get())
-                .map(router -> ItemHandlerHelper.calcRedstoneFromInventory(router.getBuffer()))
+                .map(router -> ResourceHandlerUtil.getRedstoneSignalFromResourceHandler(router.getBuffer()))
                 .orElse(0);
     }
 

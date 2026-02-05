@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -18,7 +18,7 @@ public abstract class AbstractInvSmartFilterMenu extends AbstractSmartFilterMenu
     private static final int PLAYER_INV_Y = 162;
     private static final int PLAYER_HOTBAR_Y = 220;
 
-    public final IItemHandlerModifiable handler;
+    public final GhostItemHandler handler;
 
     protected AbstractInvSmartFilterMenu(MenuType<?> menuType, int windowId, Inventory invPlayer, MFLocator locator) {
         super(menuType, windowId, invPlayer, locator);

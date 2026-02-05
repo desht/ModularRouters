@@ -11,9 +11,11 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.items.IItemHandler;
+
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 import java.util.Optional;
 
@@ -46,7 +48,7 @@ public record BulkFilterUpdateMessage(FilterOp op, MFLocator locator, Optional<M
         return TYPE;
     }
 
-    public Optional<IItemHandler> getTargetInventory() {
+    public Optional<ResourceHandler<ItemResource>> getTargetInventory() {
         return targetInv.flatMap(ModuleTarget::getItemHandler);
     }
 

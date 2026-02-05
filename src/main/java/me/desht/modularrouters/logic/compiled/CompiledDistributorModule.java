@@ -18,7 +18,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 import javax.annotation.Nonnull;
@@ -150,7 +150,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     private boolean okToInsert(ModuleTarget target, ItemStack stack) {
-        return target.getItemHandler().map(h -> ItemHandlerHelper.insertItem(h, stack, true).isEmpty()).orElse(false);
+        return target.getItemHandler().map(h -> ItemUtil.insertItemReturnRemaining(h, stack, true, null).isEmpty()).orElse(false);
     }
 
     public enum DistributionStrategy implements TranslatableEnum, StringRepresentable {

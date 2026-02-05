@@ -32,6 +32,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.List;
@@ -77,7 +79,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
         addRenderableWidget(redstoneBehaviourButton = new RedstoneBehaviourButton(this.leftPos + 152, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
         addRenderableWidget(ecoButton = new EcoButton(this.leftPos + 132, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
         addRenderableWidget(energyDirButton = new EnergyDirectionButton(this.leftPos - 8, this.topPos + 40, router.getEnergyDirection()));
-        addRenderableWidget(energyWidget = new EnergyWidget(this.leftPos - 22, this.topPos + 15, router.getEnergyStorage()));
+        addRenderableWidget(energyWidget = new EnergyWidget(this.leftPos - 22, this.topPos + 15, (EnergyHandler) router.getEnergyStorage()));
         addRenderableWidget(energyWarning = new EnergyWarningButton(this.leftPos + 4, this.topPos + 4));
         energyWidget.visible = energyDirButton.visible = router.getEnergyCapacity() > 0;
         energyWarning.visible = false;
@@ -132,8 +134,10 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
         boolean hasEnergyUpgrade = menu.getRouter().getEnergyCapacity() > 0;
         energyWidget.visible = hasEnergyUpgrade;
+        ItemStack bufferStack = getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem();
         energyDirButton.visible = hasEnergyUpgrade
-                && getMenu().getSlot(RouterMenu.TE_FIRST_SLOT).getItem().getCapability(Capabilities.Energy.ITEM) != null;
+                && !bufferStack.isEmpty()
+                && bufferStack.getCapability(Capabilities.Energy.ITEM, ItemAccess.forStack(bufferStack)) != null;
 
         energyWarning.setX(hasEnergyUpgrade ? leftPos - 22 : leftPos + 4);
         energyWarning.tick();
@@ -216,7 +220,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
         private void tick() {
             EnergyStatus status;
-            if (energyUsage <= menu.getRouter().getEnergyStorage().getEnergyStored()) {
+            if (energyUsage <= ((EnergyHandler) menu.getRouter().getEnergyStorage()).getAmountAsInt()) {
                 status = EnergyStatus.OK;
             } else if (menu.getRouter().getEnergyCapacity() > 0) {
                 status = EnergyStatus.ENERGY_LOW;

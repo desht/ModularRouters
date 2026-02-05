@@ -14,6 +14,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -147,7 +151,8 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
             } else {
                 getRouter(player.level()).ifPresent(router -> {
                     // update filter in module installed in router
-                    ItemStack moduleStack = router.getModules().getStackInSlot(routerSlot);
+                    ResourceHandler<ItemResource> modules = router.getModules();
+                    ItemStack moduleStack = ItemUtil.getStack(modules, routerSlot);
                     setFilterInModule(moduleStack, newFilterStack);
                     router.setChanged();
                 });
@@ -157,12 +162,15 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
 
     @Nonnull
     private ItemStack getInstalledModule(Level level) {
-        return getRouter(level).map(router -> router.getModules().getStackInSlot(routerSlot)).orElse(ItemStack.EMPTY);
+        return getRouter(level)
+                .map(router -> ItemUtil.getStack((ResourceHandler<ItemResource>) router.getModules(), routerSlot))
+                .orElse(ItemStack.EMPTY);
     }
 
     private void setInstalledModule(Level level, ItemStack newStack) {
         getRouter(level).ifPresent(router -> {
-            router.getModules().setStackInSlot(routerSlot, newStack);
+            ItemStacksResourceHandler modules = (ItemStacksResourceHandler) router.getModules();
+            modules.set(routerSlot, ItemResource.of(newStack), newStack.getCount());
             router.recompileNeeded(RecompileFlag.MODULES);
             router.setChanged();
         });

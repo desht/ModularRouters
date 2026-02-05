@@ -2,6 +2,8 @@ package me.desht.modularrouters.logic.compiled;
 
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nonnull;
 
@@ -19,8 +21,15 @@ public class CompiledVoidModule extends CompiledModule  {
             if (toVoid <= 0) {
                 return false;
             }
-            ItemStack gone = router.getBuffer().extractItem(0, toVoid, false);
-            return !gone.isEmpty();
+            ItemResource resource = router.getBuffer().getResource(0);
+            if (resource.isEmpty()) {
+                return false;
+            }
+            try (var tx = Transaction.openRoot()) {
+                int extracted = router.getBuffer().extract(0, resource, toVoid, tx);
+                tx.commit();
+                return extracted > 0;
+            }
         }
         return false;
     }

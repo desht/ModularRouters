@@ -16,7 +16,8 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -139,7 +140,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
                         if (ItemStack.isSameItem(stack0, stack)) {
                             firstFree = i;
                             break;
-                        } else if (firstFree < 0 && stack0.isEmpty() && filterHandler.isItemValid(i, stack)) {
+                        } else if (firstFree < 0 && stack0.isEmpty() && filterHandler.isValid(i, ItemResource.of(stack))) {
                             firstFree = i;
                         }
                     }
@@ -201,7 +202,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
     }
 
     private boolean isItemOKForFilter(ItemStack stack, int slot) {
-        if (filterHandler.isItemValid(slot, stack)) {
+        if (filterHandler.isValid(slot, ItemResource.of(stack))) {
             for (int i = 0; i < filterHandler.getSlots(); i++) {
                 if (filterHandler.getStackInSlot(i).getItem() == stack.getItem() && !(stack.getItem() instanceof SmartFilterItem)) {
                     return false;
@@ -217,15 +218,18 @@ public class ModuleMenu extends AbstractMRContainerMenu {
         return false;
     }
 
-    private static class InstalledAugmentSlot extends SlotItemHandler {
+    private static class InstalledAugmentSlot extends ResourceHandlerSlot {
+        private final AugmentHandler augmentHandler;
+
         public InstalledAugmentSlot(AugmentHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(itemHandler, index, xPosition, yPosition);
+            super(itemHandler, itemHandler::set, index, xPosition, yPosition);
+            this.augmentHandler = itemHandler;
         }
 
         @Override
         public int getMaxStackSize(ItemStack stack) {
-            if (stack.getItem() instanceof AugmentItem augment && getItemHandler() instanceof AugmentHandler ah) {
-                if (ah.getHolderStack().getItem() instanceof ModuleItem module) {
+            if (stack.getItem() instanceof AugmentItem augment) {
+                if (augmentHandler.getHolderStack().getItem() instanceof ModuleItem module) {
                     return augment.getMaxAugments(module);
                 }
             }

@@ -6,7 +6,8 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,7 +25,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (!getTargets().isEmpty()) {
-            IEnergyStorage storage = router.getEnergyStorage();
+            EnergyHandler storage = router.getEnergyStorage();
             if (storage != null) {
                 boolean doBeam = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2;
                 return settings.isPulling() ?
@@ -35,15 +36,13 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
         return false;
     }
 
-    private int sendEnergy(@Nonnull ModularRouterBlockEntity router, IEnergyStorage storage, List<ModuleTarget> targets, boolean doBeam) {
+    private int sendEnergy(@Nonnull ModularRouterBlockEntity router, EnergyHandler storage, List<ModuleTarget> targets, boolean doBeam) {
         int total = 0;
-        int toSend = storage.getEnergyStored() / targets.size();
+        int toSend = storage.getAmountAsInt() / targets.size();
 
         for (ModuleTarget target : targets) {
             total += target.getEnergyHandler().map(handler -> {
-                int toExtract = storage.extractEnergy(toSend, true);
-                int sent = handler.receiveEnergy(toExtract, false);
-                storage.extractEnergy(sent, false);
+                int sent = EnergyHandlerUtil.move(storage, handler, toSend, null);
                 if (sent > 0 && doBeam) {
                     router.addItemBeam(new BeamData.Builder(router, target.gPos.pos(), 0xE0FF4040).build());
                 }
@@ -53,15 +52,13 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
         return total;
     }
 
-    private int pullEnergy(@Nonnull ModularRouterBlockEntity router, IEnergyStorage storage, List<ModuleTarget> targets, boolean doBeam) {
+    private int pullEnergy(@Nonnull ModularRouterBlockEntity router, EnergyHandler storage, List<ModuleTarget> targets, boolean doBeam) {
         int total = 0;
-        int toPull = (storage.getMaxEnergyStored() - storage.getEnergyStored()) / targets.size();
+        int toPull = (storage.getCapacityAsInt() - storage.getAmountAsInt()) / targets.size();
 
         for (ModuleTarget target : targets) {
             total += target.getEnergyHandler().map(handler -> {
-                int toExtract = handler.extractEnergy(toPull, true);
-                int received = storage.receiveEnergy(toExtract, false);
-                handler.extractEnergy(received, false);
+                int received = EnergyHandlerUtil.move(handler, storage, toPull, null);
                 if (received > 0 && doBeam) {
                     router.addItemBeam(new BeamData.Builder(router, target.gPos.pos(), 0xE0C040A0).reversed(true).build());
                 }

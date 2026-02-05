@@ -22,7 +22,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -259,7 +262,7 @@ public abstract class CompiledModule {
      * @param router the router
      * @return items actually transferred
      */
-    public final ItemStack transferToRouter(IItemHandler handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
+    public final ItemStack transferToRouter(ResourceHandler<ItemResource> handler, @Nullable BlockPos key, ModularRouterBlockEntity router) {
         CountedItemStacks count = getRegulationAmount() > 0 ? new CountedItemStacks(handler) : null;
 
         ItemStack wanted = findItemToPull(router, handler, key, getItemsPerTick(router), count);
@@ -268,24 +271,34 @@ public abstract class CompiledModule {
         }
 
         ItemStack transferred = ItemStack.EMPTY;
-        for (int i = 0; i < handler.getSlots(); i++) {
-            int slot = getLastMatchPos(key, i, handler.getSlots());
-            ItemStack toPull = handler.extractItem(slot, wanted.getCount(), true);
-            if (toPull.isEmpty()) {
-                // we'd found an item to pull, but it looks like this handler doesn't allow us to extract it
-                // give up, but advance the last match pos, so we don't get stuck trying this slot forever
-                setLastMatchPos(key, (slot + 1) % handler.getSlots());
+        ItemResource wantedResource = ItemResource.of(wanted);
+        for (int i = 0; i < handler.size(); i++) {
+            int slot = getLastMatchPos(key, i, handler.size());
+            // simulate extraction to check if this slot allows pulling
+            int extractable;
+            try (var tx = Transaction.openRoot()) {
+                extractable = handler.extract(slot, wantedResource, wanted.getCount(), tx);
+            }
+            if (extractable == 0) {
+                setLastMatchPos(key, (slot + 1) % handler.size());
                 return transferred;
             }
+            ItemStack toPull = wantedResource.toStack(extractable);
             if (ItemStack.isSameItemSameComponents(wanted, toPull)) {
                 // this item is suitable for pulling
                 ItemStack notInserted = router.insertBuffer(toPull);
                 int inserted = toPull.getCount() - notInserted.getCount();
-                transferred = handler.extractItem(slot, inserted, false);
+                if (inserted > 0) {
+                    try (var tx = Transaction.openRoot()) {
+                        handler.extract(slot, wantedResource, inserted, tx);
+                        tx.commit();
+                    }
+                    transferred = wantedResource.toStack(inserted);
+                }
                 wanted.shrink(inserted);
                 if (wanted.isEmpty() || router.isBufferFull()) {
-                    if (handler.getSlots() > 0) {
-                        setLastMatchPos(key, handler.getStackInSlot(slot).isEmpty() ? (slot + 1) % handler.getSlots() : slot);
+                    if (handler.size() > 0) {
+                        setLastMatchPos(key, ItemUtil.getStack(handler, slot).isEmpty() ? (slot + 1) % handler.size() : slot);
                     }
                     return transferred;
                 }
@@ -294,16 +307,16 @@ public abstract class CompiledModule {
         return transferred;
     }
 
-    private ItemStack findItemToPull(ModularRouterBlockEntity router, IItemHandler handler, BlockPos key, int nToTake, CountedItemStacks count) {
+    private ItemStack findItemToPull(ModularRouterBlockEntity router, ResourceHandler<ItemResource> handler, BlockPos key, int nToTake, CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter) && (count == null || count.getInt(stackInRouter) - nToTake >= getRegulationAmount())) {
             // something in the router - try to pull more of that
             return stackInRouter.copyWithCount(nToTake);
         } else if (stackInRouter.isEmpty()) {
             // router empty - just pull the next item that passes the filter
-            for (int i = 0; i < handler.getSlots(); i++) {
-                int pos = getLastMatchPos(key, i, handler.getSlots());
-                ItemStack stack = handler.getStackInSlot(pos);
+            for (int i = 0; i < handler.size(); i++) {
+                int pos = getLastMatchPos(key, i, handler.size());
+                ItemStack stack = ItemUtil.getStack(handler, pos);
                 if (getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
                     setLastMatchPos(key, pos);
                     return stack.copyWithCount(nToTake);

@@ -58,7 +58,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
 
     @Override
     public ModularRouterRenderState createRenderState() {
-        return null;
+        return new ModularRouterRenderState();
     }
 
     @Override
@@ -67,6 +67,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         renderState.beams = blockEntity.beams.stream().map(
                 e -> new BeamData.WithProgress(e, e.getProgress(partialTick))
             ).toList();
+        renderState.camouflage = blockEntity.getCamouflage();
     }
 
     @Override
@@ -91,7 +92,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
 
         Player player = Minecraft.getInstance().player;
         if (ConfigHolder.client.misc.heldRouterShowsCamoRouters.get()
-                && te.getCamouflage() != null
+                && renderState.camouflage != null
                 && playerHoldingRouter(player)
                 && Vec3.atCenterOf(renderState.blockPos).distanceToSqr(player.position()) < 256) {
             renderCamoHighlight(poseStack, submitNodeCollector);

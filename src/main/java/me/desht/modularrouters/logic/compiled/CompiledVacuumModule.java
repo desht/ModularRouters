@@ -30,9 +30,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,9 +48,9 @@ public class CompiledVacuumModule extends CompiledModule {
     private final VacuumSettings settings;
     private final boolean fastPickup;
     private final boolean xpMode;
-    private final FluidStack xpJuiceStack;
+    private final FluidResource xpJuiceResource;
 
-    private BlockCapabilityCache<IFluidHandler,Direction> fluidReceiverCache = null;
+    private BlockCapabilityCache<ResourceHandler<FluidResource>,Direction> fluidReceiverCache = null;
 
     // temporary small xp buffer (generally around an orb or less)
     // does not survive router recompilation...
@@ -62,9 +65,9 @@ public class CompiledVacuumModule extends CompiledModule {
 
         if (xpMode) {
             Fluid xpFluid = settings.collectionType.getFluid();
-            xpJuiceStack = xpFluid == Fluids.EMPTY ? FluidStack.EMPTY : new FluidStack(xpFluid, 1000);
+            xpJuiceResource = xpFluid == Fluids.EMPTY ? FluidResource.EMPTY : FluidResource.of(xpFluid);
         } else {
-            xpJuiceStack = FluidStack.EMPTY;
+            xpJuiceResource = FluidResource.EMPTY;
         }
     }
 
@@ -104,7 +107,7 @@ public class CompiledVacuumModule extends CompiledModule {
             return false;
         }
 
-        ItemStack bufferStack = router.getBuffer().getStackInSlot(0);
+        ItemStack bufferStack = ItemUtil.getStack(router.getBuffer(), 0);
 
         BlockPos centrePos = getTarget().gPos.pos();
         int range = getRange();
@@ -144,7 +147,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
     private boolean handleXpMode(ModularRouterBlockEntity router) {
         int spaceForXp;
-        IFluidHandler fluidHandler = null;
+        ResourceHandler<FluidResource> fluidHandler = null;
 
         if (getXPCollectionType().isSolid()) {
             ItemStack inRouterStack = router.getBufferItemStack();
@@ -208,19 +211,24 @@ public class CompiledVacuumModule extends CompiledModule {
         return initialSpaceForXp - spaceForXp > 0;
     }
 
-    private IFluidHandler getFluidReceiver(ModularRouterBlockEntity router) {
-        if (!xpMode || xpJuiceStack.isEmpty() || !(router.getLevel() instanceof ServerLevel serverLevel)) {
+    private ResourceHandler<FluidResource> getFluidReceiver(ModularRouterBlockEntity router) {
+        if (!xpMode || xpJuiceResource.isEmpty() || !(router.getLevel() instanceof ServerLevel serverLevel)) {
             return null;
         }
 
         if (fluidReceiverCache == null) {
             for (Direction face : MiscUtil.DIRECTIONS) {
                 BlockPos pos = router.getBlockPos().relative(face);
-                IFluidHandler handler = serverLevel.getCapability(Capabilities.Fluid.BLOCK, pos, face.getOpposite());
-                if (handler != null && handler.fill(xpJuiceStack, IFluidHandler.FluidAction.SIMULATE) > 0) {
-                    fluidReceiverCache = BlockCapabilityCache.create(Capabilities.Fluid.BLOCK, serverLevel, pos, face.getOpposite(),
-                            () -> true, () -> fluidReceiverCache = null);
-                    break;
+                ResourceHandler<FluidResource> handler = serverLevel.getCapability(Capabilities.Fluid.BLOCK, pos, face.getOpposite());
+                if (handler != null) {
+                    // check if the handler can accept XP fluid by simulating an insert
+                    try (var tx = Transaction.openRoot()) {
+                        if (handler.insert(xpJuiceResource, 1000, tx) > 0) {
+                            fluidReceiverCache = BlockCapabilityCache.create(Capabilities.Fluid.BLOCK, serverLevel, pos, face.getOpposite(),
+                                    () -> true, () -> fluidReceiverCache = null);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -228,31 +236,36 @@ public class CompiledVacuumModule extends CompiledModule {
         return fluidReceiverCache == null ? null : fluidReceiverCache.getCapability();
     }
 
-    private boolean doFluidXPFill(ExperienceOrb orb, @Nullable IFluidHandler xpHandler) {
+    private boolean doFluidXPFill(ExperienceOrb orb, @Nullable ResourceHandler<FluidResource> xpHandler) {
         if (xpHandler == null) {
             return false;
         }
-        FluidStack xpStack = new FluidStack(xpJuiceStack.getFluid(), orb.getValue() * getXPCollectionType().getXpRatio() + xpBuffered);
-        int filled = xpHandler.fill(xpStack, IFluidHandler.FluidAction.EXECUTE);
-        if (filled < xpStack.getAmount()) {
-            // tank is too full to store entire amount...
-            xpBuffered = xpStack.getAmount() - filled;
-            return false;
-        } else {
-            xpBuffered = 0;
-            return true;
+        int amount = orb.getValue() * getXPCollectionType().getXpRatio() + xpBuffered;
+        try (var tx = Transaction.openRoot()) {
+            int filled = xpHandler.insert(xpJuiceResource, amount, tx);
+            tx.commit();
+            if (filled < amount) {
+                // tank is too full to store entire amount...
+                xpBuffered = amount - filled;
+                return false;
+            } else {
+                xpBuffered = 0;
+                return true;
+            }
         }
     }
 
-    private int findSpaceForXPFluid(@Nullable IFluidHandler xpHandler) {
+    private int findSpaceForXPFluid(@Nullable ResourceHandler<FluidResource> xpHandler) {
         int space = 0;
 
         if (xpHandler != null) {
-            for (int idx = 0; idx < xpHandler.getTanks(); idx++) {
-                if (xpHandler.isFluidValid(idx, xpJuiceStack)) {
-                    FluidStack fluidStack = xpHandler.getFluidInTank(idx);
-                    if (fluidStack.isEmpty() || fluidStack.getFluid() == getXPCollectionType().getFluid()) {
-                        space += (xpHandler.getTankCapacity(idx) - fluidStack.getAmount()) / getXPCollectionType().getXpRatio();
+            for (int idx = 0; idx < xpHandler.size(); idx++) {
+                if (xpHandler.isValid(idx, xpJuiceResource)) {
+                    FluidResource fluidResource = xpHandler.getResource(idx);
+                    int amount = xpHandler.getAmountAsInt(idx);
+                    if (fluidResource.isEmpty() || fluidResource.getFluid() == getXPCollectionType().getFluid()) {
+                        int capacity = xpHandler.getCapacityAsInt(idx, xpJuiceResource);
+                        space += (capacity - amount) / getXPCollectionType().getXpRatio();
                     }
                 }
             }

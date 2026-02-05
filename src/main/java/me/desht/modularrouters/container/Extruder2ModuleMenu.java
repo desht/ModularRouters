@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 
+import net.neoforged.neoforge.transfer.item.ItemResource;
+
 import javax.annotation.Nonnull;
 import java.util.List;
 
@@ -91,8 +93,8 @@ public class Extruder2ModuleMenu extends ModuleMenu {
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-            return isItemOKForTemplate(stack);
+        public boolean isValid(int slot, @Nonnull ItemResource resource) {
+            return isItemOKForTemplate(resource.toStack());
         }
 
         public List<ItemStack> toTemplate(int rangeLimit) {

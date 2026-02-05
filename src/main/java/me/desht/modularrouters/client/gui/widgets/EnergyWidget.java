@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPosition
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 
 import java.util.List;
 
@@ -21,9 +21,9 @@ public class EnergyWidget extends AbstractWidget {
 
     private static final int DEFAULT_SCALE = 64;
 
-    private final IEnergyStorage storage;
+    private final EnergyHandler storage;
 
-    public EnergyWidget(int x, int y, IEnergyStorage storage) {
+    public EnergyWidget(int x, int y, EnergyHandler storage) {
         super(x, y, 16, DEFAULT_SCALE, Component.empty());
         this.storage = storage;
     }
@@ -38,17 +38,17 @@ public class EnergyWidget extends AbstractWidget {
         if (isHovered()) {
             // drawing the tooltip directly instead of using setTooltip() - that causes awful flickering if
             // energy levels are changing fast
-            Component text = Component.literal(MiscUtil.commify(storage.getEnergyStored()) + " / " + MiscUtil.commify(storage.getMaxEnergyStored()) + " FE");
+            Component text = Component.literal(MiscUtil.commify(storage.getAmountAsInt()) + " / " + MiscUtil.commify(storage.getCapacityAsInt()) + " FE");
             graphics.setTooltipForNextFrame(text, mouseX, mouseY);
         }
     }
 
     private int getScaled(){
-        if (storage.getMaxEnergyStored() <= 0) {
+        if (storage.getCapacityAsInt() <= 0) {
             return height;
         }
         // avoid integer overflow here
-        return (int)((long)storage.getEnergyStored() * height / storage.getMaxEnergyStored());
+        return (int)((long)storage.getAmountAsInt() * height / storage.getCapacityAsInt());
     }
 
     @Override

@@ -15,7 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nonnull;
 
@@ -26,8 +28,8 @@ public class CompiledSenderModule1 extends CompiledModule {
 
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        IItemHandler buffer = router.getBuffer();
-        ItemStack bufferStack = buffer.getStackInSlot(0);
+        ResourceHandler<ItemResource> buffer = router.getBuffer();
+        ItemStack bufferStack = ItemUtil.getStack(buffer, 0);
         if (getFilter().test(bufferStack)) {
             PositionedItemHandler positionedItemHandler = findTargetInventory(router);
             if (positionedItemHandler.isValid()) {
@@ -95,7 +97,7 @@ public class CompiledSenderModule1 extends CompiledModule {
         return !MiscUtil.blockHasSolidSide(state, w, pos, face.getOpposite()) || !state.isSolidRender();
     }
 
-    public record PositionedItemHandler(BlockPos pos, IItemHandler handler) {
+    public record PositionedItemHandler(BlockPos pos, ResourceHandler<ItemResource> handler) {
         static final PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
 
         boolean isValid() {

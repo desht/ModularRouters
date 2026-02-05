@@ -8,8 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -24,10 +26,10 @@ public class InventoryUtils {
      * @param pos blockpos to drop at (usually position of the item handler tile entity)
      * @param itemHandler the item handler
      */
-    public static void dropInventoryItems(Level world, BlockPos pos, IItemHandler itemHandler) {
+    public static void dropInventoryItems(Level world, BlockPos pos, ResourceHandler<ItemResource> itemHandler) {
         RandomSource random = world.random;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            ItemStack itemStack = itemHandler.getStackInSlot(i);
+        for (int i = 0; i < itemHandler.size(); i++) {
+            ItemStack itemStack = ItemUtil.getStack(itemHandler, i);
             if (!itemStack.isEmpty()) {
                 double offsetX = random.nextDouble() * 0.8 + 0.1;
                 double offsetY = random.nextDouble() * 0.8 + 0.1;
@@ -39,7 +41,7 @@ public class InventoryUtils {
         }
     }
 
-    public static Optional<IItemHandler> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
+    public static Optional<ResourceHandler<ItemResource>> getInventory(Level world, BlockPos pos, @Nullable Direction side) {
         return Optional.ofNullable(world.getCapability(Capabilities.Item.BLOCK, pos, side));
     }
 
@@ -52,18 +54,43 @@ public class InventoryUtils {
      * @param count number of items to attempt to transfer
      * @return number of items actually transferred
      */
-    public static int transferItems(IItemHandler from, IItemHandler to, int slot, int count) {
+    public static int transferItems(ResourceHandler<ItemResource> from, ResourceHandler<ItemResource> to, int slot, int count) {
         if (from == null || to == null || count == 0) {
             return 0;
         }
-        ItemStack toSend = from.extractItem(slot, count, true);
-        if (toSend.isEmpty()) {
+
+        ItemResource resource = from.getResource(slot);
+        if (resource.isEmpty()) {
             return 0;
         }
-        ItemStack excess = ItemHandlerHelper.insertItem(to, toSend, false);
-        int inserted = toSend.getCount() - excess.getCount();
-        from.extractItem(slot, inserted, false);
-        return inserted;
+
+        // Simulate to find out how much we can transfer
+        int insertable;
+        try (var tx = Transaction.openRoot()) {
+            int extractable = from.extract(slot, resource, count, tx);
+            if (extractable == 0) {
+                return 0;
+            }
+            insertable = to.insert(resource, extractable, tx);
+            // tx closes without commit, rolling back the simulation
+        }
+
+        if (insertable <= 0) {
+            return 0;
+        }
+
+        // Perform the real transfer
+        try (var tx = Transaction.openRoot()) {
+            int extracted = from.extract(slot, resource, insertable, tx);
+            if (extracted > 0) {
+                int inserted = to.insert(resource, extracted, tx);
+                if (inserted > 0) {
+                    tx.commit();
+                    return inserted;
+                }
+            }
+            return 0;
+        }
     }
 
     /**
@@ -91,10 +118,10 @@ public class InventoryUtils {
      * @param matchMeta whether to consider item metadata
      * @return number of items found, or the supplied max, whichever is smaller
      */
-    public static int countItems(ItemStack toCount, IItemHandler handler, int max, boolean matchMeta) {
+    public static int countItems(ItemStack toCount, ResourceHandler<ItemResource> handler, int max, boolean matchMeta) {
         int count = 0;
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlot(i);
+        for (int i = 0; i < handler.size(); i++) {
+            ItemStack stack = ItemUtil.getStack(handler, i);
             if (!stack.isEmpty()) {
                 boolean match;
                 if (matchMeta) {

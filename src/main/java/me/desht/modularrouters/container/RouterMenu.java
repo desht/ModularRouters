@@ -14,8 +14,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class RouterMenu extends AbstractMRContainerMenu {
         }
 
         // item router buffer
-        addSlot(new SlotItemHandler(router.getBuffer(), BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS));
+        addSlot(new ResourceHandlerSlot(router.getBuffer(), router.getBuffer()::set, BUFFER_SLOT, BUFFER_XPOS, BUFFER_YPOS));
 
         // item router modules
         for (int slot = 0; slot < router.getModuleSlotCount(); slot++) {
@@ -149,16 +150,16 @@ public class RouterMenu extends AbstractMRContainerMenu {
         return router;
     }
 
-    public static class InstalledModuleSlot extends SlotItemHandler {
+    public static class InstalledModuleSlot extends ResourceHandlerSlot {
         // this is just so the slot can be easily identified for item tooltip purposes
-        InstalledModuleSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(itemHandler, index, xPosition, yPosition);
+        InstalledModuleSlot(ItemStacksResourceHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, itemHandler::set, index, xPosition, yPosition);
         }
     }
 
-    public static class InstalledUpgradeSlot extends SlotItemHandler {
-        public InstalledUpgradeSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(itemHandler, index, xPosition, yPosition);
+    public static class InstalledUpgradeSlot extends ResourceHandlerSlot {
+        public InstalledUpgradeSlot(ItemStacksResourceHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, itemHandler::set, index, xPosition, yPosition);
         }
 
         @Override

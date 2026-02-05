@@ -3,7 +3,9 @@ package me.desht.modularrouters.util;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 public class CountedItemStacks extends Object2IntOpenCustomHashMap<ItemStack> {
     private static class ItemStackHashingStrategy implements Strategy<ItemStack> {
@@ -25,11 +27,11 @@ public class CountedItemStacks extends Object2IntOpenCustomHashMap<ItemStack> {
         super(new ItemStackHashingStrategy());
     }
 
-    public CountedItemStacks(IItemHandler handler) {
-        super(handler.getSlots(), new ItemStackHashingStrategy());
+    public CountedItemStacks(ResourceHandler<ItemResource> handler) {
+        super(handler.size(), new ItemStackHashingStrategy());
 
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlot(i);
+        for (int i = 0; i < handler.size(); i++) {
+            ItemStack stack = ItemUtil.getStack(handler, i);
             if (!stack.isEmpty()) {
                 put(stack, getOrDefault(stack, 0) + stack.getCount());
             }

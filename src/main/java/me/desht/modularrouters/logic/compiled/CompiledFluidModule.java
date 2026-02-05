@@ -16,7 +16,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.attribute.EnvironmentAttribute;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,13 +28,13 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -54,11 +53,11 @@ public class CompiledFluidModule extends CompiledModule {
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
         if (getTarget() == null) return false;
 
-        IFluidHandlerItem routerHandler = router.getFluidHandler();
+        ResourceHandler<FluidResource> routerHandler = router.getFluidHandler();
         if (routerHandler == null) return false;
 
         Level world = Objects.requireNonNull(router.getLevel());
-        Optional<IFluidHandler> targetFluidHandler = getTarget().getFluidHandler();
+        Optional<ResourceHandler<FluidResource>> targetFluidHandler = getTarget().getFluidHandler();
 
         boolean didWork;
         if (targetFluidHandler.isPresent()) {
@@ -79,13 +78,10 @@ public class CompiledFluidModule extends CompiledModule {
             };
         }
 
-        if (didWork) {
-            router.setBufferItemStack(routerHandler.getContainer());
-        }
         return didWork;
     }
 
-    private boolean tryPickupFluid(ModularRouterBlockEntity router, IFluidHandler routerHandler, Level world, BlockPos pos, boolean playSound) {
+    private boolean tryPickupFluid(ModularRouterBlockEntity router, ResourceHandler<FluidResource> routerHandler, Level world, BlockPos pos, boolean playSound) {
         BlockState state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof BucketPickup bucketPickup)) {
             return false;
@@ -97,41 +93,61 @@ public class CompiledFluidModule extends CompiledModule {
         if (fluid == Fluids.EMPTY || !fluid.isSource(fluidState) || !getFilter().testFluid(fluid)) {
             return false;
         }
-        FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
-        tank.setFluid(new FluidStack(fluid, FluidType.BUCKET_VOLUME));
-        FluidStack maybeSent = FluidUtil.tryFluidTransfer(routerHandler, tank, FluidType.BUCKET_VOLUME, false);
-        if (maybeSent.getAmount() != FluidType.BUCKET_VOLUME) {
-            return false;
+        FluidResource resource = FluidResource.of(fluid);
+        // simulate insertion to check if the router can accept the fluid
+        try (var tx = Transaction.openRoot()) {
+            int inserted = routerHandler.insert(resource, FluidType.BUCKET_VOLUME, tx);
+            if (inserted != FluidType.BUCKET_VOLUME) {
+                return false;
+            }
         }
         // actually do the pickup & transfer now
         bucketPickup.pickupBlock(router.getFakePlayer(), world, pos, state);
-        FluidStack transferred = FluidUtil.tryFluidTransfer(routerHandler, tank, FluidType.BUCKET_VOLUME, true);
-        if (!transferred.isEmpty() && playSound) {
-            playFillSound(world, pos, fluid);
+        try (var tx = Transaction.openRoot()) {
+            int inserted = routerHandler.insert(resource, FluidType.BUCKET_VOLUME, tx);
+            if (inserted > 0) {
+                tx.commit();
+                if (playSound) {
+                    playFillSound(world, pos, fluid);
+                }
+                return true;
+            }
         }
-        return !transferred.isEmpty();
+        return false;
     }
 
-    private boolean tryPourOutFluid(ModularRouterBlockEntity router, IFluidHandler routerHandler, Level world, BlockPos pos, boolean playSound) {
+    private boolean tryPourOutFluid(ModularRouterBlockEntity router, ResourceHandler<FluidResource> routerHandler, Level world, BlockPos pos, boolean playSound) {
         if (!isForceEmpty() && !(world.isEmptyBlock(pos) || world.getBlockState(pos).getBlock() instanceof LiquidBlockContainer)) {
             return false;
         }
 
-        // code partially lifted from BucketItem
-
-        FluidStack toPlace = routerHandler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
-        if (toPlace.getAmount() < FluidType.BUCKET_VOLUME) {
+        // find a fluid to extract from the router handler
+        FluidResource toPlaceResource = null;
+        int extractable;
+        try (var tx = Transaction.openRoot()) {
+            for (int idx = 0; idx < routerHandler.size(); idx++) {
+                FluidResource res = routerHandler.getResource(idx);
+                if (!res.isEmpty()) {
+                    extractable = routerHandler.extract(idx, res, FluidType.BUCKET_VOLUME, tx);
+                    if (extractable >= FluidType.BUCKET_VOLUME) {
+                        toPlaceResource = res;
+                        break;
+                    }
+                }
+            }
+        }
+        if (toPlaceResource == null) {
             return false;  // must be a full bucket's worth to place in the world
         }
-        Fluid fluid = toPlace.getFluid();
-        if (!getFilter().testFluid(toPlace.getFluid())) {
+        Fluid fluid = toPlaceResource.getFluid();
+        if (!getFilter().testFluid(fluid)) {
             return false;
         }
         BlockState blockstate = world.getBlockState(pos);
         boolean isReplaceable = blockstate.canBeReplaced(fluid);
         Block block = blockstate.getBlock();
         if (world.isEmptyBlock(pos) || isReplaceable
-                || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(router.getFakePlayer(), world, pos, blockstate, toPlace.getFluid())) {
+                || block instanceof LiquidBlockContainer liq && liq.canPlaceLiquid(router.getFakePlayer(), world, pos, blockstate, fluid)) {
             if (world.dimensionType().attributes().contains(EnvironmentAttributes.WATER_EVAPORATES) && fluid.is(FluidTags.WATER)) {
                 // no pouring water in the nether!
                 playEvaporationEffects(world, pos, fluid);
@@ -153,7 +169,11 @@ public class CompiledFluidModule extends CompiledModule {
             }
         }
 
-        routerHandler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+        // actually extract the fluid
+        try (var tx = Transaction.openRoot()) {
+            routerHandler.extract(toPlaceResource, FluidType.BUCKET_VOLUME, tx);
+            tx.commit();
+        }
 
         return true;
     }
@@ -185,7 +205,7 @@ public class CompiledFluidModule extends CompiledModule {
         }
     }
 
-    private boolean doTransfer(ModularRouterBlockEntity router, IFluidHandler src, IFluidHandler dest, TransferDirection direction) {
+    private boolean doTransfer(ModularRouterBlockEntity router, ResourceHandler<FluidResource> src, ResourceHandler<FluidResource> dest, TransferDirection direction) {
         if (getRegulationAmount() > 0) {
             if (direction == TransferDirection.TO_ROUTER && checkFluidInTank(src) <= getRegulationAmount()) {
                 return false;
@@ -194,29 +214,28 @@ public class CompiledFluidModule extends CompiledModule {
             }
         }
         int amount = Math.min(getMaxTransfer(), router.getCurrentFluidTransferAllowance(direction));
-        FluidStack newStack = FluidUtil.tryFluidTransfer(dest, src, amount, false);
-        if (!newStack.isEmpty() && getFilter().testFluid(newStack.getFluid())) {
-            newStack = FluidUtil.tryFluidTransfer(dest, src, newStack.getAmount(), true);
-            if (!newStack.isEmpty()) {
-                router.transferredFluid(newStack.getAmount(), direction);
-                return true;
-            }
+        // simulate transfer to check filter
+        int simulated = ResourceHandlerUtil.move(src, dest, r -> getFilter().testFluid(r.getFluid()), amount, null);
+        // ResourceHandlerUtil.move with null transaction auto-commits, so the above already did the transfer
+        if (simulated > 0) {
+            router.transferredFluid(simulated, direction);
+            return true;
         }
         return false;
     }
 
-    private int checkFluidInTank(IFluidHandler handler) {
+    private int checkFluidInTank(ResourceHandler<FluidResource> handler) {
         // note: total amount of all fluids in all tanks... not ideal for inventories with multiple tanks
         int total = 0, max = 0;
         if (isRegulateAbsolute()) {
-            for (int idx = 0; idx < handler.getTanks(); idx++) {
-                total += handler.getFluidInTank(idx).getAmount();
+            for (int idx = 0; idx < handler.size(); idx++) {
+                total += handler.getAmountAsInt(idx);
             }
             return total;
         } else {
-            for (int idx = 0; idx < handler.getTanks(); idx++) {
-                max += handler.getTankCapacity(idx);
-                total += handler.getFluidInTank(idx).getAmount();
+            for (int idx = 0; idx < handler.size(); idx++) {
+                max += handler.getCapacityAsInt(idx, handler.getResource(idx));
+                total += handler.getAmountAsInt(idx);
             }
             return max == 0 ? 0 : (total * 100) / max;
         }

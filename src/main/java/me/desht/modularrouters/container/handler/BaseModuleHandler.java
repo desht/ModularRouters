@@ -9,7 +9,7 @@ import me.desht.modularrouters.logic.filter.Filter;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,7 +60,8 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
     }
 
     @Override
-    protected void onContentsChanged(int slot) {
+    protected void onContentsChanged(int index, ItemStack previousContents) {
+        super.onContentsChanged(index, previousContents);
         if (autoSave) {
             save();
 
@@ -128,8 +129,9 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-            return ((ModuleItem) getHolderStack().getItem()).isItemValidForFilter(stack);
+        public boolean isValid(int index, @Nonnull ItemResource resource) {
+            if (resource.isEmpty()) return false;
+            return ((ModuleItem) getHolderStack().getItem()).isItemValidForFilter(resource.toStack());
         }
     }
 }

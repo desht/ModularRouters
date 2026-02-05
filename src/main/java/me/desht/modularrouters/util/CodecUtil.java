@@ -4,15 +4,17 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CodecUtil {
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackHandler> ITEM_HANDLER_STREAM_CODEC = new StreamCodec<>() {
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStacksResourceHandler> ITEM_HANDLER_STREAM_CODEC = new StreamCodec<>() {
         @Override
-        public ItemStackHandler decode(RegistryFriendlyByteBuf buf) {
+        public ItemStacksResourceHandler decode(RegistryFriendlyByteBuf buf) {
             int size = buf.readVarInt();
             int slotCount = buf.readVarInt();
             List<SlottedItem> slots = new ArrayList<>(slotCount);
@@ -26,15 +28,15 @@ public class CodecUtil {
         }
 
         @Override
-        public void encode(RegistryFriendlyByteBuf buf, ItemStackHandler handler) {
+        public void encode(RegistryFriendlyByteBuf buf, ItemStacksResourceHandler handler) {
             List<SlottedItem> slots = new ArrayList<>();
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack stack = handler.getStackInSlot(i);
+            for (int i = 0; i < handler.size(); i++) {
+                ItemStack stack = ItemUtil.getStack(handler, i);
                 if (!stack.isEmpty()) {
                     slots.add(new SlottedItem(i, stack));
                 }
             }
-            buf.writeVarInt(handler.getSlots());
+            buf.writeVarInt(handler.size());
             buf.writeVarInt(slots.size());
             slots.forEach(rec -> {
                 buf.writeVarInt(rec.slot);
@@ -43,10 +45,10 @@ public class CodecUtil {
         }
     };
 
-    private static ItemStackHandler createHandler(int handlerSize, List<SlottedItem> slots) {
-        ItemStackHandler h = new ItemStackHandler(handlerSize);
+    private static ItemStacksResourceHandler createHandler(int handlerSize, List<SlottedItem> slots) {
+        ItemStacksResourceHandler h = new ItemStacksResourceHandler(handlerSize);
         slots.forEach(rec -> {
-            h.setStackInSlot(rec.slot, rec.stack);
+            h.set(rec.slot, ItemResource.of(rec.stack), rec.stack.getCount());
         });
         return h;
     }

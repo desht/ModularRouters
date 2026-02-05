@@ -16,7 +16,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+
 
 import java.util.Iterator;
 
@@ -77,7 +77,7 @@ public class MiscEventHandler {
             if (!moduleStack.isEmpty()) {
                 AugmentHandler h = new AugmentHandler(moduleStack, null);
                 for (int i = 0; i < h.getSlots(); i++) {
-                    ItemHandlerHelper.giveItemToPlayer(event.getEntity(), h.getStackInSlot(i));
+                    event.getEntity().getInventory().placeItemBackInInventory(h.getStackInSlot(i));
                 }
             }
         }
