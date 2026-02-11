@@ -27,8 +27,10 @@ import me.desht.modularrouters.logic.settings.ModuleTermination;
 import me.desht.modularrouters.logic.settings.RedstoneBehaviour;
 import me.desht.modularrouters.logic.settings.RelativeDirection;
 import me.desht.modularrouters.util.MFLocator;
+
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,6 +50,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
+
+import net.neoforged.neoforge.common.CommonHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -212,9 +216,9 @@ public abstract class ModuleItem extends MRBaseItem implements ModItems.ITintabl
             ItemStack pick = pickaxeUser.getPickaxe(stack);
             list.add(xlate("modularrouters.itemText.misc.breakerPick").withStyle(ChatFormatting.YELLOW)
                     .append(pick.getHoverName().plainCopy().withStyle(ChatFormatting.AQUA)));
-            pick.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet().forEach(holder -> {
+			pick.getAllEnchantments(CommonHooks.resolveLookup(Registries.ENCHANTMENT)).entrySet().forEach(mapEntry -> {
                 list.add(Component.literal("▶ ")
-                        .append(Enchantment.getFullname(holder.getKey(), holder.getIntValue()).copy().withStyle(ChatFormatting.AQUA))
+                        .append(Enchantment.getFullname(mapEntry.getKey(), mapEntry.getIntValue()).copy().withStyle(ChatFormatting.AQUA))
                         .withStyle(ChatFormatting.YELLOW));
             });
         }

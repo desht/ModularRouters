@@ -8,6 +8,7 @@ import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidUtil;
@@ -171,7 +173,7 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         private static Optional<Integer> getHighestEnchantLevel(ItemStack stack) {
-            return stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet().stream()
+            return stack.getAllEnchantments(CommonHooks.resolveLookup(Registries.ENCHANTMENT)).entrySet().stream()
                     .map(Object2IntMap.Entry::getIntValue)
                     .max(Comparator.naturalOrder());
         }
