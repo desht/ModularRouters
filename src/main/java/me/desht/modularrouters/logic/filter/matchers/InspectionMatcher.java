@@ -39,7 +39,7 @@ public class InspectionMatcher implements IItemMatcher {
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, IModuleFlags flags) {
+    public boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         int matched = 0;
         if (comparisonList.items.isEmpty()) {
             return false;

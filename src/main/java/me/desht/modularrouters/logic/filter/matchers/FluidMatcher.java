@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.util.MiscUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -18,14 +19,14 @@ public class FluidMatcher implements IItemMatcher {
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, IModuleFlags flags) {
+    public boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         return FluidUtil.getFluidContained(stack)
-                .map(fluidStack -> matchFluid(fluidStack.getFluid(), flags))
+                .map(fluidStack -> matchFluid(fluidStack.getFluid(), flags, registryAccess))
                 .orElse(false);
     }
 
     @Override
-    public boolean matchFluid(Fluid fluid, IModuleFlags flags) {
+    public boolean matchFluid(Fluid fluid, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         return fluid == this.fluid || flags.matchItemTags() && !Sets.intersection(MiscUtil.fluidTags(fluid), MiscUtil.fluidTags(this.fluid)).isEmpty();
     }
 

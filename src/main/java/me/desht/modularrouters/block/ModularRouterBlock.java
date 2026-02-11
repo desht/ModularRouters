@@ -160,8 +160,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     tooltip.add(xlate("modularrouters.guiText.tooltip.redstone.label")
                             .append(": ")
                             .withStyle(ChatFormatting.YELLOW)
-                            .append(xlate("modularrouters.guiText.tooltip.redstone." + rrb)
-                                    .withStyle(ChatFormatting.RED))
+                            .append(xlate(rrb.getTranslationKey()).withStyle(ChatFormatting.RED))
                     );
                 } catch (IllegalArgumentException ignored) {
                 }
