@@ -36,7 +36,8 @@ public class GhostItemHandler extends ItemStacksResourceHandler {
      * Directly overwrites the contents of the handler at a specific index.
      */
     public void setStackInSlot(int slot, ItemStack stack) {
-        set(slot, ItemResource.of(stack), Math.min(stack.getCount(), 1));
+        ItemResource resource = ItemResource.of(stack);
+        set(slot, resource, Math.min(stack.getCount(), getCapacity(1, resource)));
     }
 
     /**

@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -37,7 +36,7 @@ public class JEIModularRoutersPlugin implements IModPlugin {
 
     public JEIModularRoutersPlugin() {
         registerGhostStackCreator(VanillaTypes.ITEM_STACK, Function.identity());
-        registerGhostStackCreator(NeoForgeTypes.FLUID_STACK, FluidUtil::getFilledBucket);
+        registerGhostStackCreator(NeoForgeTypes.FLUID_STACK, fs -> fs.getFluidType().getBucket(fs));
     }
 
     @Override

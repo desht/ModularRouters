@@ -184,7 +184,4 @@ public final class BeamData {
             return new BeamData(offset, duration, color, stack, fade, reversed);
         }
     }
-
-    public record WithProgress(BeamData beam, float progress) {
-    }
 }

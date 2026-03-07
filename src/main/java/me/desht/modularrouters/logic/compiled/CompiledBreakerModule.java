@@ -15,7 +15,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,16 +35,12 @@ public class CompiledBreakerModule extends CompiledModule {
 
     @Override
     public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        if (isRegulationOK(router, true)) {
-            Level world = router.getLevel();
-            if (!(world instanceof ServerLevel)) {
-                return false;
-            }
+        if (router.getLevel() instanceof ServerLevel level && isRegulationOK(router, true)) {
             BlockPos pos = getTarget().gPos.pos();
-            BlockState oldState = world.getBlockState(pos);
-            if (BlockUtil.tryBreakBlock(router, world, pos, getFilter(), pickaxe, getMatchType() == MatchType.BLOCK)) {
+            BlockState oldState = level.getBlockState(pos);
+            if (BlockUtil.tryBreakBlock(router, level, pos, getFilter(), pickaxe, getMatchType() == MatchType.BLOCK)) {
                 if (ConfigHolder.common.module.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
-                    world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
+                    level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
                 }
                 return true;
             }

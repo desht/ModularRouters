@@ -24,9 +24,9 @@ public class ModBlocks {
             .noOcclusion();
 
     public static final DeferredBlock<ModularRouterBlock> MODULAR_ROUTER
-            = BLOCKS.registerBlock("modular_router", ModularRouterBlock::new, ROUTER_PROPS);
+            = BLOCKS.registerBlock("modular_router", ModularRouterBlock::new, () -> ROUTER_PROPS);
     public static final DeferredBlock<TemplateFrameBlock> TEMPLATE_FRAME
-            = BLOCKS.registerBlock("template_frame",TemplateFrameBlock::new, TEMPLATE_FRAME_PROPS);
+            = BLOCKS.registerBlock("template_frame",TemplateFrameBlock::new, () -> TEMPLATE_FRAME_PROPS);
 
     static {
         ITEMS.registerSimpleBlockItem("modular_router", MODULAR_ROUTER);

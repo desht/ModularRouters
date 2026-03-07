@@ -59,8 +59,10 @@ public class ModuleMenu extends AbstractMRContainerMenu {
         this.augmentHandler = new AugmentHandler(moduleStack, router);
         this.currentSlot = inv.getSelectedSlot() + HOTBAR_START;
 
-        filterHandler.onSaved(stack -> locator.setModuleStack(inv.player, stack));
-        augmentHandler.onSaved(stack -> locator.setModuleStack(inv.player, stack));
+        if (!inv.player.level().isClientSide()) {
+            filterHandler.onSaved(stack -> locator.setModuleStack(inv.player, stack));
+            augmentHandler.onSaved(stack -> locator.setModuleStack(inv.player, stack));
+        }
 
         // slots for the (ghost) filter items
         for (int i = 0; i < Filter.FILTER_SIZE; i++) {

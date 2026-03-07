@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -37,6 +38,9 @@ public class Extruder2ModuleMenu extends ModuleMenu {
         TemplateHandler handler = new TemplateHandler(locator.getModuleStack(inv.player), router);
         for (int i = 0; i < TEMPLATE_SLOTS; i++) {
             addSlot(new FilterSlot(handler, i, 129 + SLOT_X_SPACING * (i % 3), 17 + SLOT_X_SPACING * (i / 3)));
+        }
+        if (!inv.player.level().isClientSide()) {
+            handler.onSaved(stack -> locator.setModuleStack(inv.player, stack));
         }
     }
 
@@ -95,6 +99,11 @@ public class Extruder2ModuleMenu extends ModuleMenu {
         @Override
         public boolean isValid(int slot, @Nonnull ItemResource resource) {
             return isItemOKForTemplate(resource.toStack());
+        }
+
+        @Override
+        protected int getCapacity(int index, ItemResource resource) {
+            return resource.isEmpty() ? Item.ABSOLUTE_MAX_STACK_SIZE : Math.min(resource.getMaxStackSize(), Item.ABSOLUTE_MAX_STACK_SIZE);
         }
 
         public List<ItemStack> toTemplate(int rangeLimit) {

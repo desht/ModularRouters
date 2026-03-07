@@ -14,8 +14,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
 import java.util.function.Consumer;
 
@@ -42,7 +41,8 @@ public class FluidModule1 extends ModuleItem {
 
     @Override
     protected Component getFilterItemDisplayName(ItemStack stack) {
-        return FluidUtil.getFluidContained(stack).map(FluidStack::getHoverName).orElse(stack.getHoverName());
+        var fs = FluidUtil.getFirstStackContained(stack);
+        return fs.isEmpty() ? stack.getHoverName() : fs.getHoverName();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class FluidModule1 extends ModuleItem {
         if (stack.isEmpty() || stack.getItem() instanceof SmartFilterItem) return true;
         if (stack.getCount() > 1) return false;
 
-        return FluidUtil.getFluidContained(stack).map(fluidStack -> !fluidStack.isEmpty()).orElse(false);
+        return !FluidUtil.getFirstStackContained(stack).isEmpty();
     }
 
     @Override

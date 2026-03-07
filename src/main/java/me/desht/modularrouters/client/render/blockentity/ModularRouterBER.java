@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.ModRenderTypes;
+import me.desht.modularrouters.client.render.blockentity.ModularRouterRenderState.RenderedBeamData;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
@@ -27,7 +28,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -36,8 +36,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
 
 public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockEntity, ModularRouterRenderState> {
     private static final Vector3f ROTATION = new Vector3f(0.15f, 1.0f, 0f);
@@ -69,13 +67,9 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
     @Override
     public void extractRenderState(ModularRouterBlockEntity blockEntity, ModularRouterRenderState renderState, float partialTick, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
-        renderState.beams = blockEntity.beams.stream().map(e -> new BeamData.WithProgress(e, e.getProgress(partialTick))).toList();
-        renderState.beamItems = new ArrayList<>(blockEntity.beams.size());
-        blockEntity.beams.forEach(beam -> {
-            ItemStackRenderState state = new ItemStackRenderState();
-            itemModelResolver.updateForTopItem(state, beam.stack(), ItemDisplayContext.GROUND, blockEntity.getLevel(), null, 0);
-            renderState.beamItems.add(state);
-        });
+        renderState.beams = blockEntity.beams.stream()
+                .map(beamData -> RenderedBeamData.create(beamData, blockEntity.getLevel(), partialTick, itemModelResolver))
+                .toList();
         renderState.camouflage = blockEntity.getCamouflage();
     }
 
@@ -85,17 +79,16 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         poseStack.translate(0.5, 0.5, 0.5);
 
         Vec3 routerVec = Vec3.atCenterOf(renderState.blockPos);
-        for (int i = 0; i < renderState.beams.size(); i++) {
-            BeamData.WithProgress beam = renderState.beams.get(i);
+        for (RenderedBeamData beam : renderState.beams) {
             poseStack.pushPose();
             poseStack.translate(-routerVec.x(), -routerVec.y(), -routerVec.z());
-            Vec3 startPos = beam.beam().getStart(routerVec);
-            Vec3 endPos = beam.beam().getEnd(routerVec);
+            Vec3 startPos = beam.beamData().getStart(routerVec);
+            Vec3 endPos = beam.beamData().getEnd(routerVec);
             float progress = beam.progress();
             if (ConfigHolder.client.misc.renderFlyingItems.get()) {
-                renderFlyingItem(beam.beam(), renderState.beamItems.get(i), poseStack, submitNodeCollector, progress, startPos, endPos);
+                renderFlyingItem(beam.beamData(), beam.renderState(), poseStack, submitNodeCollector, progress, startPos, endPos);
             }
-            renderBeamLine(beam.beam(), poseStack, submitNodeCollector, progress, startPos, endPos);
+            renderBeamLine(beam.beamData(), poseStack, submitNodeCollector, progress, startPos, endPos);
             poseStack.popPose();
         }
         poseStack.popPose();
@@ -221,4 +214,5 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
                     .setNormal(pose, xn, yn, zn);
         });
     }
+
 }
