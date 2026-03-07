@@ -32,8 +32,6 @@ import me.desht.modularrouters.util.InventoryUtils;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.TranslatableEnum;
 import me.desht.modularrouters.util.fake_player.RouterFakePlayer;
-import net.minecraft.server.players.NameAndId;
-import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -41,7 +39,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.Connection;
@@ -49,10 +46,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -72,16 +70,17 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.model.data.ModelData;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
-import net.neoforged.neoforge.model.data.ModelData;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -378,14 +377,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             EnergyHandler energyHandler = bufferHandler.getEnergyStorage();
             if (energyHandler != null) {
                 switch (energyDirection) {
-                    case FROM_ROUTER -> {
-                        int transferred = net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil.move(
-                                energyStorage, energyHandler, getEnergyXferRate(), null);
-                    }
-                    case TO_ROUTER -> {
-                        int transferred = net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil.move(
-                                energyHandler, energyStorage, getEnergyXferRate(), null);
-                    }
+                    case FROM_ROUTER -> EnergyHandlerUtil.move(energyStorage, energyHandler, getEnergyXferRate(), null);
+                    case TO_ROUTER -> EnergyHandlerUtil.move(energyHandler, energyStorage, getEnergyXferRate(), null);
                 }
             }
         }
@@ -463,6 +456,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
                     cm.getFilter().cycleRoundRobin().ifPresent(counter -> {
                         ItemStack moduleStack = ItemUtil.getStack(modulesHandler, cim.index);
                         ModuleItem.setRoundRobinCounter(moduleStack, counter);
+                        modulesHandler.setStackInSlot(cim.index, moduleStack);
                     });
                     try (var tx = Transaction.openRoot()) {
                         energyStorage.extract(cm.getEnergyCost(), tx);
@@ -943,7 +937,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     /**
      * Set the upgrades to the given set.  Used client-side for upgrade sync'ing.
      *
-     * @param upgradeCount item handler containing new set of upgrades
+     * @param upgradeHandler item handler containing new set of upgrades
      */
     public void setUpgradesFrom(ResourceHandler<ItemResource> upgradeHandler) {
         if (upgradeHandler.size() == upgradesHandler.size()) {
@@ -1081,13 +1075,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
     }
 
-    class ModuleHandler extends RouterItemHandler {
+    public class ModuleHandler extends RouterItemHandler {
         ModuleHandler() {
             super(RecompileFlag.MODULES, getModuleSlotCount(), s -> s.getItem() instanceof ModuleItem);
         }
     }
 
-    class UpgradeHandler extends RouterItemHandler {
+    public class UpgradeHandler extends RouterItemHandler {
         UpgradeHandler() {
             super(RecompileFlag.UPGRADES, getUpgradeSlotCount(), s -> s.getItem() instanceof UpgradeItem);
         }
@@ -1119,7 +1113,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private record CompiledIndexedModule(CompiledModule compiledModule, int index) {
     }
 
-    class RouterEnergyBuffer extends SimpleEnergyHandler {
+    public class RouterEnergyBuffer extends SimpleEnergyHandler {
         private int excess;  // "hidden" energy due to energy upgrades being removed
 
         public RouterEnergyBuffer(int capacity) {

@@ -75,7 +75,7 @@
    "modularrouters.chatText.subtitle.error" : "Error",
    "modularrouters.chatText.subtitle.success" : "Success",
    "modularrouters.chatText.subtitle.thud" : "*THUD*",
-   "modularrouters.chatText.targetValidation.not_inventory" : "✘ No Inventory",
+   "modularrouters.chatText.targetValidation.no_inventory" : "✘ No Inventory",
    "modularrouters.chatText.targetValidation.not_loaded" : "✘ Not Loaded",
    "modularrouters.chatText.targetValidation.ok" : "✔ Target OK",
    "modularrouters.chatText.targetValidation.out_of_range" : "✘ Out of Range",

@@ -163,13 +163,13 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
     @Nonnull
     private ItemStack getInstalledModule(Level level) {
         return getRouter(level)
-                .map(router -> ItemUtil.getStack((ResourceHandler<ItemResource>) router.getModules(), routerSlot))
+                .map(router -> ItemUtil.getStack(router.getModules(), routerSlot))
                 .orElse(ItemStack.EMPTY);
     }
 
     private void setInstalledModule(Level level, ItemStack newStack) {
         getRouter(level).ifPresent(router -> {
-            ItemStacksResourceHandler modules = (ItemStacksResourceHandler) router.getModules();
+            ItemStacksResourceHandler modules = router.getModules();
             modules.set(routerSlot, ItemResource.of(newStack), newStack.getCount());
             router.recompileNeeded(RecompileFlag.MODULES);
             router.setChanged();

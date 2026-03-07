@@ -46,6 +46,7 @@ public record ModuleSettingsMessage(MFLocator locator, DataComponentPatch patch)
 
         if (moduleStack.getItem() instanceof ModuleItem && moduleStack.getComponents() instanceof PatchedDataComponentMap pdcm) {
             pdcm.applyPatch(message.patch);
+            locator.setModuleStack(player, moduleStack);
             locator.getRouter(player.level()).ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES));
         } else {
             ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - expected module not found @ {}", player.getGameProfile().name(), locator);

@@ -112,8 +112,11 @@ public class CompiledActivatorModule extends CompiledModule {
             return false;
         }
         try {
-            return fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, InteractionHand.MAIN_HAND, hitResult).consumesAction()
+            fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, stack);
+            boolean result = fakePlayer.gameMode.useItemOn(fakePlayer, world, stack, InteractionHand.MAIN_HAND, hitResult).consumesAction()
                     || fakePlayer.gameMode.useItem(fakePlayer, world, stack, InteractionHand.MAIN_HAND).consumesAction();
+            router.setBufferItemStack(fakePlayer.getMainHandItem()); // in case using the item modified it
+            return result;
         } catch (Exception e) {
             handleBlacklisting(stack, state, e);
             return false;

@@ -6,6 +6,7 @@ import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
+import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -15,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 public abstract class BaseModuleHandler extends GhostItemHandler {
@@ -22,6 +24,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
     protected final ModularRouterBlockEntity router;
     private final DataComponentType<ItemContainerContents> componentType;
     private boolean autoSave = true;
+    private Consumer<ItemStack> onSaved = stack -> {};
 
     protected BaseModuleHandler(ItemStack holderStack, ModularRouterBlockEntity router, int size, DataComponentType<ItemContainerContents> componentType) {
         super(size);
@@ -36,6 +39,10 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         for (int i = 0; i < size && i < stackList.size(); i++) {
             setStackInSlot(i, stackList.get(i));
         }
+    }
+
+    public void onSaved(Consumer<ItemStack> onSaved) {
+        this.onSaved = onSaved;
     }
 
     /**
@@ -62,12 +69,9 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
     @Override
     protected void onContentsChanged(int index, ItemStack previousContents) {
         super.onContentsChanged(index, previousContents);
+
         if (autoSave) {
             save();
-
-            if (router != null) {
-                router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES);
-            }
         }
     }
 
@@ -88,7 +92,17 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      * Save the contents of the item handler onto the holder item stack's NBT
      */
     public void save() {
+        doSave();
+
+        onSaved.accept(holderStack);
+    }
+
+    private void doSave() {
         holderStack.set(componentType, ItemContainerContents.fromItems(stacks));
+
+        if (router != null) {
+            router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES);
+        }
     }
 
     public static class BulkFilterHandler extends BaseModuleHandler {
@@ -118,6 +132,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
                     h.setStackInSlot(filterSlot, getHolderStack());
                     h.save();
                     ModularRouters.LOGGER.info("saved!");
+                    // FIXME working on a copy of moduleStack here!
                 }
             }
         }

@@ -10,11 +10,13 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
@@ -47,8 +49,11 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
 
     private static final float[] COLS = new float[] { 0.5f, 0.5f, 1.0f, 0.25f };
 
+    private final ItemModelResolver itemModelResolver;
+
     @SuppressWarnings("unused")
     public ModularRouterBER(BlockEntityRendererProvider.Context ctx) {
+        itemModelResolver = ctx.itemModelResolver();
     }
 
     @Override
@@ -64,9 +69,13 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
     @Override
     public void extractRenderState(ModularRouterBlockEntity blockEntity, ModularRouterRenderState renderState, float partialTick, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
-        renderState.beams = blockEntity.beams.stream().map(
-                e -> new BeamData.WithProgress(e, e.getProgress(partialTick))
-            ).toList();
+        renderState.beams = blockEntity.beams.stream().map(e -> new BeamData.WithProgress(e, e.getProgress(partialTick))).toList();
+        renderState.beamItems = new ArrayList<>(blockEntity.beams.size());
+        blockEntity.beams.forEach(beam -> {
+            ItemStackRenderState state = new ItemStackRenderState();
+            itemModelResolver.updateForTopItem(state, beam.stack(), ItemDisplayContext.GROUND, blockEntity.getLevel(), null, 0);
+            renderState.beamItems.add(state);
+        });
         renderState.camouflage = blockEntity.getCamouflage();
     }
 
@@ -76,14 +85,15 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         poseStack.translate(0.5, 0.5, 0.5);
 
         Vec3 routerVec = Vec3.atCenterOf(renderState.blockPos);
-        for (BeamData.WithProgress beam: renderState.beams) {
+        for (int i = 0; i < renderState.beams.size(); i++) {
+            BeamData.WithProgress beam = renderState.beams.get(i);
             poseStack.pushPose();
             poseStack.translate(-routerVec.x(), -routerVec.y(), -routerVec.z());
             Vec3 startPos = beam.beam().getStart(routerVec);
             Vec3 endPos = beam.beam().getEnd(routerVec);
             float progress = beam.progress();
             if (ConfigHolder.client.misc.renderFlyingItems.get()) {
-                renderFlyingItem(beam.beam(), poseStack, submitNodeCollector, progress, startPos, endPos);
+                renderFlyingItem(beam.beam(), renderState.beamItems.get(i), poseStack, submitNodeCollector, progress, startPos, endPos);
             }
             renderBeamLine(beam.beam(), poseStack, submitNodeCollector, progress, startPos, endPos);
             poseStack.popPose();
@@ -159,7 +169,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         return player.getMainHandItem().getItem() == router || player.getOffhandItem().getItem() == router;
     }
 
-    private void renderFlyingItem(BeamData beam, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, float progress, Vec3 startPos, Vec3 endPos) {
+    private void renderFlyingItem(BeamData beam, ItemStackRenderState itemStackRenderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, float progress, Vec3 startPos, Vec3 endPos) {
         double ix = Mth.lerp(progress, startPos.x(), endPos.x());
         double iy = Mth.lerp(progress, startPos.y(), endPos.y());
         double iz = Mth.lerp(progress, startPos.z(), endPos.z());
@@ -167,32 +177,20 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         Level world = Minecraft.getInstance().level;
         VoxelShape shape = world.getBlockState(pos).getCollisionShape(world, pos);
         if (shape.isEmpty() || !shape.bounds().move(pos).contains(ix, iy, iz)) {
-            matrixStack.pushPose();
-            matrixStack.translate(ix, iy - 0.15, iz);
-            matrixStack.mulPose(Axis.of(ROTATION).rotationDegrees(progress * 360));
+            poseStack.pushPose();
+            poseStack.translate(ix, iy - 0.15, iz);
+            poseStack.mulPose(Axis.of(ROTATION).rotationDegrees(progress * 360));
             if (beam.fade()) {
-                matrixStack.translate(0, 0.15, 0);
-                matrixStack.scale(1.15f - progress, 1.15f - progress, 1.15f - progress);
+                poseStack.translate(0, 0.15, 0);
+                poseStack.scale(1.15f - progress, 1.15f - progress, 1.15f - progress);
                 if (progress > 0.95 && world.random.nextInt(3) == 0) {
                     world.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
                 }
             }
 
-            submitNodeCollector.submitItem(
-                    matrixStack,
-                    ItemDisplayContext.GROUND,
-                    0,
-                    0,
-                    OverlayTexture.NO_OVERLAY,
-                    new int[0],
-                    new ArrayList<>(),
-                    null,
-                    ItemStackRenderState.FoilType.STANDARD
-            );
+            itemStackRenderState.submit(poseStack, submitNodeCollector, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
 
-//            Minecraft.getInstance().getItemRenderer()
-//                    .renderStatic(beam.stack(), ItemDisplayContext.GROUND, 0x00F000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer, world, 0);
-            matrixStack.popPose();
+            poseStack.popPose();
         }
     }
 

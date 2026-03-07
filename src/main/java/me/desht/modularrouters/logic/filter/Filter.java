@@ -13,6 +13,7 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.Predicate;
 
 public class Filter implements Predicate<ItemStack> {
@@ -105,11 +106,11 @@ public class Filter implements Predicate<ItemStack> {
         }
     }
 
-    public Optional<Integer> cycleRoundRobin() {
+    public OptionalInt cycleRoundRobin() {
         if (roundRobin && ++rrCounter >= matchers.size()) {
             rrCounter = 0;
         }
-        return roundRobin ? Optional.of(rrCounter) : Optional.empty();
+        return roundRobin ? OptionalInt.of(rrCounter) : OptionalInt.empty();
     }
 
     public boolean testFluid(Fluid fluid) {
