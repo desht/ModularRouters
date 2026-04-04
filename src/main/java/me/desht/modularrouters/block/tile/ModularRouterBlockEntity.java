@@ -417,7 +417,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             newActive = runAllModules(powered, pulsed);
 
             if (!pendingBeams.isEmpty() && level instanceof ServerLevel serverLevel) {
-                PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(getBlockPos()), ItemBeamMessage.create(getBlockPos(), pendingBeams));
+                PacketDistributor.sendToPlayersTrackingChunk(serverLevel, ChunkPos.containing(getBlockPos()), ItemBeamMessage.create(getBlockPos(), pendingBeams));
                 pendingBeams.clear();
             }
             if (prevCanEmit || canEmit) {
@@ -567,7 +567,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         } else if (counter < 0) {
             // we've just restored from NBT - start off with a random counter value
             // to avoid lots of routers all ticking at the same time
-            counter = nonNullLevel().random.nextInt(tickRate);
+            counter = nonNullLevel().getRandom().nextInt(tickRate);
         }
 
         BlockState state = getBlockState();

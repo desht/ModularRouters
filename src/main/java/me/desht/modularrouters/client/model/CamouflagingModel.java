@@ -2,11 +2,11 @@ package me.desht.modularrouters.client.model;
 
 import me.desht.modularrouters.block.CamouflageableBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.DelegateBlockStateModel;
 import net.neoforged.neoforge.model.data.ModelData;
@@ -20,7 +20,7 @@ public abstract class CamouflagingModel extends DelegateBlockStateModel/*impleme
     }
 
     @Override
-    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         if (state == null || !(state.getBlock() instanceof CamouflageableBlock)) {
             super.collectParts(level, pos, state, random, parts);
         }
@@ -36,7 +36,7 @@ public abstract class CamouflagingModel extends DelegateBlockStateModel/*impleme
             super.collectParts(level, pos, state, random, parts);
         } else if (camoState != null /*&& getRenderTypes(camoState, rand, modelData).contains(renderType)*/) {
             // Steal camo's model
-            BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(camoState);
+            BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(camoState);
             model.collectParts(level, pos, state, random, parts);
         } else {
             // Not rendering in this layer

@@ -6,7 +6,7 @@ import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -21,8 +21,8 @@ public abstract class AbstractFilterContainerScreen extends AbstractContainerScr
     protected final String title;
     protected final ItemStack filterStack;
 
-    AbstractFilterContainerScreen(AbstractSmartFilterMenu container, Inventory inv, Component displayName) {
-        super(container, inv, displayName);
+    AbstractFilterContainerScreen(AbstractSmartFilterMenu container, Inventory inv, Component displayName, int width, int height) {
+        super(container, inv, displayName, width, height);
 
         this.hand = container.getLocator().hand();
         this.filterStack = container.getFilterStack();
@@ -55,12 +55,12 @@ public abstract class AbstractFilterContainerScreen extends AbstractContainerScr
         return super.keyPressed(event);
     }
 
-    @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY);
-    }
+//    @Override
+//    public void render(GuiGraphicsExtractor pGuiGraphicsExtractor, int pMouseX, int pMouseY, float pPartialTick) {
+//        super.render(pGuiGraphicsExtractor, pMouseX, pMouseY, pPartialTick);
+//
+//        renderTooltip(pGuiGraphicsExtractor, pMouseX, pMouseY);
+//    }
 
     @Override
     public void resync(ItemStack stack) {

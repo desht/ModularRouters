@@ -13,7 +13,7 @@ import me.desht.modularrouters.logic.compiled.CompiledDistributorModule;
 import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.DistributionStrategy;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.component.DataComponentPatch;
@@ -60,10 +60,10 @@ public class DistributorModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(graphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.renderItem(ROUTER_STACK, leftPos + 127, topPos + 43);
+        graphics.item(ROUTER_STACK, leftPos + 127, topPos + 43);
     }
 
     static class StrategyButton extends TexturedCyclerButton<DistributionStrategy> {

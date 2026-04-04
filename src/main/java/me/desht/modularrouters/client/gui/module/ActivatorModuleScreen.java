@@ -10,7 +10,7 @@ import me.desht.modularrouters.logic.compiled.CompiledActivatorModule;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.ActionType;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.EntityMode;
 import me.desht.modularrouters.logic.compiled.CompiledActivatorModule.LookDirection;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -54,15 +54,15 @@ public class ActivatorModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
 
-        graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040, false);
-        graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040, false);
         if (actionTypeButton.getState().isEntityTarget()) {
-            graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040, false);
+            graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040, false);
         } else {
-            graphics.drawString(font, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040, false);
+            graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040, false);
         }
     }
 

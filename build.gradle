@@ -46,6 +46,13 @@ repositories {
             includeGroup "dev.ftb.mods"
         }
     }
+    maven {
+        name "FTB Maven"
+        url "https://maven.ftb.dev/snapshots/"
+        content {
+            includeGroup "dev.ftb.mods"
+        }
+    }
 }
 
 version = mod_version
@@ -56,7 +63,7 @@ base {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
     withSourcesJar()
 
 //    registerFeature('testUtils') {
@@ -195,8 +202,7 @@ publishing {
         register('mavenJava', MavenPublication) {
             artifactId = archive_base_name
             groupId = mod_group_id
-            version = "${mod_version}+mc${minecraft_version}${snapExt}"
-            from components.java
+            version = "${mod_version}+mc${minecraft_version}${snapExt}" //from components.java
         }
     }
     repositories {

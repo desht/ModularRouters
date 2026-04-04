@@ -27,7 +27,7 @@ public class InventoryUtils {
      * @param itemHandler the item handler
      */
     public static void dropInventoryItems(Level world, BlockPos pos, ResourceHandler<ItemResource> itemHandler) {
-        RandomSource random = world.random;
+        RandomSource random = world.getRandom();
         for (int i = 0; i < itemHandler.size(); i++) {
             ItemStack itemStack = ItemUtil.getStack(itemHandler, i);
             if (!itemStack.isEmpty()) {

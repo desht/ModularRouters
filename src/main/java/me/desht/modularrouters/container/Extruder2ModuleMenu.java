@@ -10,14 +10,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-
 import net.neoforged.neoforge.transfer.item.ItemResource;
 
 import javax.annotation.Nonnull;
@@ -50,11 +49,11 @@ public class Extruder2ModuleMenu extends ModuleMenu {
     }
 
     @Override
-    protected void slotClickExtraSlot(int slot, int dragType, ClickType clickTypeIn, Player player) {
+    protected void slotClickExtraSlot(int slot, int dragType, ContainerInput clickTypeIn, Player player) {
         Slot s = slots.get(slot);
         ItemStack stackOnCursor = getCarried();
         ItemStack stackInSlot = s.getItem().copy();
-        if (clickTypeIn == ClickType.QUICK_MOVE) {
+        if (clickTypeIn == ContainerInput.QUICK_MOVE) {
             s.set(ItemStack.EMPTY);  // shift-left-click clears the slot
         } else if (!stackOnCursor.isEmpty() && !ItemStack.isSameItem(stackInSlot, stackOnCursor) && s.mayPlace(stackOnCursor)) {
             // placing a new item in the template buffer

@@ -4,7 +4,7 @@ import me.desht.modularrouters.container.handler.GhostItemHandler;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -64,7 +64,7 @@ public abstract class AbstractInvSmartFilterMenu extends AbstractSmartFilterMenu
     }
 
     @Override
-    public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+    public void clicked(int slot, int dragType, ContainerInput clickTypeIn, Player player) {
         switch (clickTypeIn) {
             case PICKUP:
             case QUICK_CRAFT:

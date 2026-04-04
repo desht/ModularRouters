@@ -83,7 +83,6 @@ public class ModularRouters {
 
         event.enqueueWork(() -> {
             IntegrationHandler.onCommonSetup();
-            XPCollection.detectXPTypes();
             ModNameCache.init();
         });
     }

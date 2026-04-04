@@ -53,18 +53,18 @@ public class SyncUpgrade extends UpgradeItem {
     }
 
     @Override
-    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (world.isClientSide() && !player.isShiftKeyDown()) {
+        if (level.isClientSide() && !player.isShiftKeyDown()) {
             SyncUpgradeScreen.openSyncGui(stack, hand);
         } else if (player.isShiftKeyDown()) {
-            if (!world.isClientSide()) {
-                setTunedValue(stack, world.random.nextInt(ConfigHolder.common.router.baseTickRate.get()));
-                player.displayClientMessage(Component.translatable("modularrouters.itemText.sync.tuning", getTunedValue(stack)), true);
+            if (!level.isClientSide()) {
+                setTunedValue(stack, level.getRandom().nextInt(ConfigHolder.common.router.baseTickRate.get()));
+                player.sendOverlayMessage(Component.translatable("modularrouters.itemText.sync.tuning", getTunedValue(stack)));
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.5f);
             }
         }
-        return world.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 }

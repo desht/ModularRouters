@@ -8,7 +8,7 @@ import me.desht.modularrouters.logic.compiled.CompiledDistributorModule.Distribu
 import me.desht.modularrouters.logic.compiled.CompiledEnergyDistributorModule;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,6 +38,13 @@ public class EnergyDistributorModuleScreen extends ModuleScreen {
     }
 
     @Override
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+
+        graphics.item(ROUTER_STACK, leftPos + 127, topPos + 43);
+    }
+
+    @Override
     protected void buildComponentPatch(DataComponentPatch.Builder builder) {
         super.buildComponentPatch(builder);
         builder.set(ModDataComponents.DISTRIBUTOR_SETTINGS.get(), new CompiledDistributorModule.DistributorSettings(
@@ -45,12 +52,5 @@ public class EnergyDistributorModuleScreen extends ModuleScreen {
                         db.isToggled() ? TransferDirection.TO_ROUTER : TransferDirection.FROM_ROUTER
                 )
         );
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(graphics, partialTicks, mouseX, mouseY);
-
-        graphics.renderItem(ROUTER_STACK, leftPos + 127, topPos + 43);
     }
 }

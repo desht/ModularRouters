@@ -16,6 +16,7 @@ public class FFSItemMatcher implements IItemMatcher {
 
     @Override
     public boolean matchItem(ItemStack stack, IModuleFlags flags) {
-        return FTBFilterSystemAPI.api().doesFilterMatch(ffsFilterStack, stack);
+        // FIXME registry access needed here
+        return FTBFilterSystemAPI.api().doesFilterMatch(ffsFilterStack, stack, null);
     }
 }

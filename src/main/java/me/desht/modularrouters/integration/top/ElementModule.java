@@ -5,7 +5,7 @@
 //import me.desht.modularrouters.item.module.ModuleItem;
 //import me.desht.modularrouters.logic.settings.RelativeDirection;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.network.RegistryFriendlyByteBuf;
 //import net.minecraft.resources.Identifier;
 //import net.minecraft.world.item.ItemStack;
@@ -27,7 +27,7 @@
 //    }
 //
 //    @Override
-//    public void render(GuiGraphics graphics, int x, int y) {
+//    public void render(GuiGraphicsExtractor graphics, int x, int y) {
 //        graphics.renderItem(stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2);
 //        graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x + (getWidth() - 18) / 2, y + (getHeight() - 18) / 2, dir.getSymbol());
 //    }

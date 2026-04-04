@@ -14,7 +14,7 @@ import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -37,10 +37,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
     private ModuleTarget target;
 
     public BulkItemFilterScreen(AbstractSmartFilterMenu container, Inventory inventory, Component displayName) {
-        super(container, inventory, displayName);
-
-        this.imageWidth = GUI_WIDTH;
-        this.imageHeight = GUI_HEIGHT;
+        super(container, inventory, displayName, GUI_WIDTH, GUI_HEIGHT);
     }
 
     @Override
@@ -80,12 +77,12 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0x404040, false);
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        graphics.text(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0x404040, false);
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }
 

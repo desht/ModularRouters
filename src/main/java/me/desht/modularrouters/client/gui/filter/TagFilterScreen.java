@@ -10,12 +10,12 @@ import me.desht.modularrouters.item.smartfilter.TagFilter;
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,10 +44,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     private final List<ExtendedButton> optionButtons = new ArrayList<>();
 
     public TagFilterScreen(AbstractSmartFilterMenu container, Inventory inv, Component displayName) {
-        super(container, inv, displayName);
-
-        this.imageWidth = GUI_WIDTH;
-        this.imageHeight = GUI_HEIGHT;
+        super(container, inv, displayName, GUI_WIDTH, GUI_HEIGHT);
 
         addedTags.addAll(TagFilter.getTagList(filterStack));
     }
@@ -112,25 +109,25 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         Component txt = filterStack.getHoverName().copy().append(" ").append(
                 menu.getRouter() != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
         );
-        graphics.drawString(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0x404040, false);
+        graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0x404040, false);
 
         if (selectedTag != null) {
             int maxW = selectButton.visible ? 190 : 205;
-            graphics.drawString(font, ClientUtil.ellipsize(font, selectedTag.location().toString(), maxW), 29, 23, 0x404040, false);
+            graphics.text(font, ClientUtil.ellipsize(font, selectedTag.location().toString(), maxW), 29, 23, 0x404040, false);
         } else if (candidateTags.size() > 1) {
-            graphics.drawString(font, ClientUtil.xlate("modularrouters.guiText.label.selectTag").withStyle(ChatFormatting.ITALIC), 29, 23, 0x808080, false);
+            graphics.text(font, ClientUtil.xlate("modularrouters.guiText.label.selectTag").withStyle(ChatFormatting.ITALIC), 29, 23, 0x808080, false);
         } else if (candidateTags.isEmpty()) {
-            graphics.drawString(font, ClientUtil.xlate("modularrouters.guiText.label.noTags").withStyle(ChatFormatting.ITALIC), 29, 23, 0x808080, false);
+            graphics.text(font, ClientUtil.xlate("modularrouters.guiText.label.noTags").withStyle(ChatFormatting.ITALIC), 29, 23, 0x808080, false);
         }
 
         if (!tagSelectorShowing) {
             for (int i = 0; i < addedTags.size(); i++) {
                 String tag = addedTags.get(i).location().toString();
-                graphics.drawString(font, ClientUtil.ellipsize(font, tag, 220), 28, 47 + i * 19, 0x404080, false);
+                graphics.text(font, ClientUtil.ellipsize(font, tag, 220), 28, 47 + i * 19, 0x404080, false);
             }
         }
     }
@@ -158,7 +155,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 

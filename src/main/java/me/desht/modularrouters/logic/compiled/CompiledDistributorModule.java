@@ -125,7 +125,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 }
                 break;
             case RANDOM:
-                int r = router.nonNullLevel().random.nextInt(getTargets().size());
+                int r = router.nonNullLevel().getRandom().nextInt(getTargets().size());
                 res = getTargets().get(r);
                 break;
             case NEAREST_FIRST:

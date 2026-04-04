@@ -27,7 +27,7 @@ import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -94,7 +94,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     private ModuleToggleButton matchItemTagButton;
 
     public ModuleScreen(ModuleMenu container, Inventory inventory, Component displayName) {
-        super(container, inventory, displayName);
+        super(container, inventory, displayName, GUI_WIDTH, GUI_HEIGHT);
 
         MFLocator locator = container.getLocator();
         moduleSlotIndex = locator.routerSlot();
@@ -109,8 +109,6 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         facing = settings.facing();
 
         augmentCounter = new AugmentItem.AugmentCounter(moduleItemStack);
-        imageWidth = GUI_WIDTH;
-        imageHeight = GUI_HEIGHT;
         mouseOverHelp = new MouseOverHelp(this);
 
         NeoForge.EVENT_BUS.addListener(this::onInitGui);
@@ -156,12 +154,12 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         mouseOverHelp.addHelpRegion(leftPos + 77, topPos + 74, leftPos + 112, topPos + 109, "modularrouters.guiText.popup.augments");
     }
 
-    @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY);
-    }
+//    @Override
+//    public void render(GuiGraphicsExtractor pGuiGraphicsExtractor, int pMouseX, int pMouseY, float pPartialTick) {
+//        super.render(pGuiGraphicsExtractor, pMouseX, pMouseY, pPartialTick);
+//
+//        renderTooltip(pGuiGraphicsExtractor, pMouseX, pMouseY);
+//    }
 
     protected IntegerTextField buildRegulationTextField() {
         IntegerTextField tf = new IntegerTextField(font, leftPos + 166, topPos + 75, 20, 12, Range.of(0, 64));
@@ -255,15 +253,15 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         Component txt = moduleItemStack.getHoverName().copy().append(" ").append(
                 routerPos != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
         );
-        graphics.drawString(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 5, getFgColor(module.getItemTint()), false);
+        graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 5, getFgColor(module.getItemTint()), false);
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         TintColor c = getGuiBackgroundTint();
         graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256, c.getRGB());
         if (!module.isDirectional()) {

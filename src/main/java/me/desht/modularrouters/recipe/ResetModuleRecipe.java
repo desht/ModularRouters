@@ -1,20 +1,22 @@
 package me.desht.modularrouters.recipe;
 
+import com.mojang.serialization.MapCodec;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.item.module.IPickaxeUser;
 import me.desht.modularrouters.item.module.ModuleItem;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class ResetModuleRecipe extends CustomRecipe {
-    public ResetModuleRecipe(CraftingBookCategory category) {
-        super(category);
-    }
+    public static final ResetModuleRecipe INSTANCE = new ResetModuleRecipe();
+    public static final MapCodec<ResetModuleRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ResetModuleRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<ResetModuleRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     @Override
     public boolean matches(CraftingInput inv, Level wrldIn) {
@@ -32,7 +34,7 @@ public class ResetModuleRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
+    public ItemStack assemble(CraftingInput inv) {
         ItemStack moduleStack = ItemStack.EMPTY;
         for (int i = 0; i < inv.size(); i++) {
             ItemStack stack = inv.getItem(i);

@@ -4,7 +4,7 @@ import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
 import me.desht.modularrouters.client.util.XYPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ComponentRenderUtils;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -53,7 +53,7 @@ public class MouseOverHelp {
         helpRegions.add(HelpRegion.create(x1, y1, x2, y2, l, showPredicate));
     }
 
-    private void onMouseOver(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void onMouseOver(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (active) {
             helpRegions.stream()
                     .filter(region -> region.extent.contains(mouseX, mouseY) && region.showPredicate.test(screen))
@@ -84,7 +84,7 @@ public class MouseOverHelp {
         }
     }
 
-    private static void showPopupBox(GuiGraphics graphics, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<FormattedCharSequence> helpText) {
+    private static void showPopupBox(GuiGraphicsExtractor graphics, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<FormattedCharSequence> helpText) {
         Rect2i actualRect = calcBounds(screen, fontRenderer, rect, helpText);
 
         int x1 = actualRect.getX() - screen.getGuiLeft();
@@ -100,7 +100,7 @@ public class MouseOverHelp {
 
         if (helpText != null) {
             for (FormattedCharSequence s : helpText) {
-                graphics.drawString(fontRenderer, s, x1 + TEXT_MARGIN / 2, y1 + TEXT_MARGIN / 2, textColor);
+                graphics.text(fontRenderer, s, x1 + TEXT_MARGIN / 2, y1 + TEXT_MARGIN / 2, textColor);
                 y1 += fontRenderer.lineHeight;
             }
         }

@@ -22,8 +22,9 @@ import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
@@ -78,7 +79,7 @@ public class ModModelProvider extends ModelProvider {
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(routerBlock).with(PropertyDispatch.initial(
-                        BlockStateProperties.HORIZONTAL_FACING, ModularRouterBlock.ACTIVE)
+                                BlockStateProperties.HORIZONTAL_FACING, ModularRouterBlock.ACTIVE)
                         .select(Direction.EAST, false, variant(offVariant.withYRot(Quadrant.R90)))
                         .select(Direction.EAST, true, variant(onVariant.withYRot(Quadrant.R90)))
                         .select(Direction.NORTH, false, variant(offVariant.withYRot(Quadrant.R0)))
@@ -151,14 +152,14 @@ public class ModModelProvider extends ModelProvider {
 
         itemModels.itemModelOutput.accept(ModItems.BLANK_MODULE.get(), ItemModelUtils.plainModel(
                 itemModels.generateLayeredItem(ModItems.BLANK_MODULE.get(),
-                        modLocation("item/module/module_layer0"),
-                        modLocation("item/module/module_layer1")
+                        new Material(modLocation("item/module/module_layer0")),
+                        new Material(modLocation("item/module/module_layer1"))
                 ))
         );
         itemModels.itemModelOutput.accept(ModItems.BLANK_UPGRADE.get(), ItemModelUtils.plainModel(
                 itemModels.generateLayeredItem(ModItems.BLANK_UPGRADE.get(),
-                        modLocation("item/upgrade/upgrade_layer0"),
-                        modLocation("item/upgrade/upgrade_layer1")
+                        new Material(modLocation("item/upgrade/upgrade_layer0")),
+                        new Material(modLocation("item/upgrade/upgrade_layer1"))
                 ))
         );
         itemModels.generateFlatItem(ModItems.AUGMENT_CORE.get(), ModelTemplates.FLAT_ITEM);
@@ -184,15 +185,15 @@ public class ModModelProvider extends ModelProvider {
     }
 
     private void filterItem(ItemModelGenerators gen, DeferredHolder<Item, ? extends Item> registryObject, String name) {
-        TextureMapping mapping = TextureMapping.layer0(modLocation("item/filter/" + name));
+        TextureMapping mapping = TextureMapping.layer0(new Material(modLocation("item/filter/" + name)));
         var loc = ModelTemplates.FLAT_ITEM.create(registryObject.get(), mapping, gen.modelOutput);
         gen.itemModelOutput.accept(registryObject.get(), ItemModelUtils.plainModel(loc));
     }
 
     private void augmentItem(ItemModelGenerators gen, DeferredHolder<Item, ? extends Item> registryObject, String name) {
         var loc = gen.generateLayeredItem(modLocation("item/augment/" + name),
-                modLocation("item/augment/augment_layer0"),
-                modLocation("item/augment/" + name));
+                new Material(modLocation("item/augment/augment_layer0")),
+                new Material(modLocation("item/augment/" + name)));
         gen.itemModelOutput.accept(registryObject.get(), ItemModelUtils.plainModel(loc));
     }
 
@@ -210,9 +211,9 @@ public class ModModelProvider extends ModelProvider {
         String name = holder.getId().getPath();
         String loc = "item/" + what + "/" + name + suffix;
         var modelLoc = ModelTemplates.THREE_LAYERED_ITEM.create(modLocation(loc), TextureMapping.layered(
-                modLocation(String.format("item/%s/%s_layer0", what, what)),
-                modLocation(String.format("item/%s/%s_layer1", what, what)),
-                modLocation(loc)
+                new Material( modLocation(String.format("item/%s/%s_layer0", what, what))),
+                new Material(modLocation(String.format("item/%s/%s_layer1", what, what))),
+                new Material( modLocation(loc))
         ), gen.modelOutput);
         return ItemModelUtils.tintedModel(modelLoc, BLANK_LAYER, ModuleTintSource.INSTANCE, BLANK_LAYER);
     }

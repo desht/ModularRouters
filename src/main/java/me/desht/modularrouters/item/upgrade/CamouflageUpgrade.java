@@ -57,17 +57,17 @@ public class CamouflageUpgrade extends UpgradeItem {
         if (isBlockOKForCamo(state)) {
             setCamoState(stack, state);
             if (!ctx.getLevel().isClientSide()) {
-                player.displayClientMessage(Component.translatable("modularrouters.itemText.camouflage.held")
+                player.sendOverlayMessage(Component.translatable("modularrouters.itemText.camouflage.held")
                         .append(ChatFormatting.AQUA.toString())
                         .append(getCamoStateDisplayName(stack))
-                        .withStyle(ChatFormatting.YELLOW), true);
+                        .withStyle(ChatFormatting.YELLOW));
             } else {
                 player.playSound(ModSounds.SUCCESS.get(), ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.5f);
             }
             return InteractionResult.SUCCESS;
         } else if (ctx.getLevel().isClientSide()) {
             player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
-            player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.badCamoBlock").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("modularrouters.chatText.misc.badCamoBlock").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
         return InteractionResult.PASS;

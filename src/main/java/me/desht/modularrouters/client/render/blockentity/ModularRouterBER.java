@@ -11,7 +11,6 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -20,12 +19,13 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -167,8 +167,8 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         double iy = Mth.lerp(progress, startPos.y(), endPos.y());
         double iz = Mth.lerp(progress, startPos.z(), endPos.z());
         BlockPos pos = BlockPos.containing(ix, iy, iz);
-        Level world = Minecraft.getInstance().level;
-        VoxelShape shape = world.getBlockState(pos).getCollisionShape(world, pos);
+        Level level = Minecraft.getInstance().level;
+        VoxelShape shape = level.getBlockState(pos).getCollisionShape(level, pos);
         if (shape.isEmpty() || !shape.bounds().move(pos).contains(ix, iy, iz)) {
             poseStack.pushPose();
             poseStack.translate(ix, iy - 0.15, iz);
@@ -176,12 +176,13 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
             if (beam.fade()) {
                 poseStack.translate(0, 0.15, 0);
                 poseStack.scale(1.15f - progress, 1.15f - progress, 1.15f - progress);
-                if (progress > 0.95 && world.random.nextInt(3) == 0) {
-                    world.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - world.random.nextDouble(), -0.5, 0.5 - world.random.nextDouble());
+                RandomSource random = level.getRandom();
+                if (progress > 0.95 && random.nextInt(3) == 0) {
+                    level.addParticle(ParticleTypes.PORTAL, endPos.x(), endPos.y(), endPos.z(), 0.5 - random.nextDouble(), -0.5, 0.5 - random.nextDouble());
                 }
             }
 
-            itemStackRenderState.submit(poseStack, submitNodeCollector, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
+            itemStackRenderState.submit(poseStack, submitNodeCollector, 0xF000F0, OverlayTexture.NO_OVERLAY, 0);
 
             poseStack.popPose();
         }

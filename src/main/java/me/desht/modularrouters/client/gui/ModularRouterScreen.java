@@ -16,7 +16,7 @@ import me.desht.modularrouters.network.messages.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -64,10 +64,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
     private int energyUsage;
 
     public ModularRouterScreen(RouterMenu container, Inventory inventoryPlayer, Component displayName) {
-        super(container, inventoryPlayer, displayName);
-
-        this.imageWidth = GUI_WIDTH;
-        this.imageHeight = GUI_HEIGHT;
+        super(container, inventoryPlayer, displayName, GUI_WIDTH, GUI_HEIGHT);
     }
 
     @Override
@@ -85,25 +82,25 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
         energyWarning.visible = false;
     }
 
-    @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+//    @Override
+//    public void extractRenderState(GuiGraphicsExtractor pGuiGraphicsExtractor, int pMouseX, int pMouseY, float pPartialTick) {
+//        super.extractRenderState(pGuiGraphicsExtractor, pMouseX, pMouseY, pPartialTick);
+//
+//        renderTooltip(pGuiGraphicsExtractor, pMouseX, pMouseY);
+//    }
 
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY);
-    }
-
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         MutableComponent title = xlate("block.modularrouters.modular_router");
-        graphics.drawString(font, title, this.imageWidth / 2 - font.width(title) / 2, LABEL_YPOS, 0xFF404040, false);
-        graphics.drawString(font, xlate("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040, false);
-        graphics.drawString(font, xlate("modularrouters.guiText.label.upgrades"), RouterMenu.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040, false);
-        graphics.drawString(font, xlate("modularrouters.guiText.label.modules"), RouterMenu.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040, false);
-        graphics.drawString(font, xlate("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040, false);
+        graphics.text(font, title, this.imageWidth / 2 - font.width(title) / 2, LABEL_YPOS, 0xFF404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.label.buffer"), 8, BUFFER_LABEL_YPOS, 0xFF404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.label.upgrades"), RouterMenu.UPGRADE_XPOS, UPGRADES_LABEL_YPOS, 0xFF404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.label.modules"), RouterMenu.MODULE_XPOS, MODULE_LABEL_YPOS, 0xFF404040, false);
+        graphics.text(font, xlate("container.inventory"), 8, this.imageHeight - 96 + 4, 0xFF404040, false);
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float v, int i, int i1) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         if (menu.getRouter().getEnergyCapacity() > 0) {
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos - 27, topPos, 180, 0, 32, 100, 256, 256);

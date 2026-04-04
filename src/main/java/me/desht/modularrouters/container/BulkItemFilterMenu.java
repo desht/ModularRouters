@@ -10,7 +10,7 @@ import me.desht.modularrouters.util.SetofItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -133,8 +133,8 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
     }
 
     @Override
-    public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
-        if (clickTypeIn == ClickType.PICKUP || clickTypeIn == ClickType.QUICK_CRAFT) { // normal left-click (or with a bit of dragging)
+    public void clicked(int slot, int dragType, ContainerInput clickTypeIn, Player player) {
+        if (clickTypeIn == ContainerInput.PICKUP || clickTypeIn == ContainerInput.QUICK_CRAFT) { // normal left-click (or with a bit of dragging)
             if (router == null && slot == currentSlot) {
                 // no messing with the module that triggered this container's creation
                 return;

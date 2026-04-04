@@ -74,8 +74,8 @@ public class BulkItemFilter extends SmartFilterItem {
             Optional<ResourceHandler<ItemResource>> inventory = InventoryUtils.getInventory(ctx.getLevel(), ctx.getClickedPos(), ctx.getClickedFace());
             if (inventory.isPresent()) {
                 int nAdded = mergeInventory(ctx.getItemInHand(), inventory.get());
-                sp.displayClientMessage(Component.translatable("modularrouters.chatText.misc.inventoryMerged",
-                        nAdded, ctx.getItemInHand().getHoverName()), false);
+                sp.sendSystemMessage(Component.translatable("modularrouters.chatText.misc.inventoryMerged",
+                        nAdded, ctx.getItemInHand().getHoverName()));
                 ctx.getLevel().playSound(null, ctx.getClickedPos(), ModSounds.SUCCESS.get(), SoundSource.MASTER,
                         ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.0f);
             } else {

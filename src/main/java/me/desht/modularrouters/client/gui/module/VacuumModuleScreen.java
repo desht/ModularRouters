@@ -10,7 +10,7 @@ import me.desht.modularrouters.integration.XPCollection.XPCollectionType;
 import me.desht.modularrouters.logic.compiled.CompiledVacuumModule.VacuumSettings;
 import me.desht.modularrouters.util.ModNameCache;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
@@ -54,12 +54,12 @@ public class VacuumModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
         if (augmentCounter.getAugmentCount(ModItems.XP_VACUUM_AUGMENT.get()) > 0) {
-            graphics.drawString(font, xlate("modularrouters.guiText.label.xpVacuum"), 127, 18, 0xFFFFFF);
+            graphics.text(font, xlate("modularrouters.guiText.label.xpVacuum"), 127, 18, 0xFFFFFF);
             if (!xpb.getState().isSolid()) {
-                graphics.drawString(font, xlate("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
+                graphics.text(font, xlate("modularrouters.guiText.label.xpVacuum.eject"), 127, 52, 0xFFFFFF);
             }
         }
     }

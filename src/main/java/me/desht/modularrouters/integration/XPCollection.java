@@ -8,8 +8,9 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -18,15 +19,17 @@ import java.util.Set;
 
 // FIXME redo this completely to use datapacks, and use "forge:experience" fluid tag
 public class XPCollection {
-    private static final Set<XPCollectionType> AVAILABLE = EnumSet.noneOf(XPCollectionType.class);
+    private static final Lazy<Set<XPCollectionType>> AVAILABLE_TYPES = Lazy.of(XPCollection::detectXPTypes);
     private static final Map<XPCollectionType, ItemStack> ICONS = new EnumMap<>(XPCollectionType.class);
 
-    public static void detectXPTypes() {
+    private static Set<XPCollectionType> detectXPTypes() {
         ICONS.clear();
 
+        Set<XPCollectionType> types = EnumSet.noneOf(XPCollectionType.class);
         for (XPCollectionType type : XPCollectionType.values()) {
-            if (!getIconForResource(type).isEmpty()) AVAILABLE.add(type);
+            if (!getIconForResource(type).isEmpty()) types.add(type);
         }
+        return types;
     }
 
     private static ItemStack getIconForResource(XPCollectionType type) {
@@ -37,7 +40,7 @@ public class XPCollection {
                 Fluid fluid = BuiltInRegistries.FLUID.getValue(type.getRegistryName());
                 ICONS.put(type, fluid == Fluids.EMPTY ?
                         ItemStack.EMPTY :
-                        FluidUtil.getFilledBucket(new FluidStack(fluid, 1000)));
+                        fluid.getFluidType().getBucket(new FluidStack(fluid, FluidType.BUCKET_VOLUME)));
             }
         }
         return ICONS.getOrDefault(type, ItemStack.EMPTY);
@@ -96,7 +99,7 @@ public class XPCollection {
         }
 
         public boolean isAvailable() {
-            return AVAILABLE.contains(this);
+            return AVAILABLE_TYPES.get().contains(this);
         }
 
         public ItemStack getIcon() {

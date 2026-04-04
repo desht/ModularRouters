@@ -1,7 +1,7 @@
 package me.desht.modularrouters.client.model;
 
 import me.desht.modularrouters.core.ModBlocks;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.ModelEvent;

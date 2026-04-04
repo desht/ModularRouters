@@ -12,7 +12,7 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.settings.TransferDirection;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
@@ -81,23 +81,23 @@ public class FluidModuleScreen extends ModuleScreen {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(graphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
 
         // text entry field custom background - super has already bound the correct texture
         graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos + 146, topPos + 20, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14, 256, 256);
 
-        graphics.renderItem(routerStack, leftPos + 128, topPos + 44);
-        graphics.renderItem(waterStack, leftPos + 168, topPos + 44);
+        graphics.item(routerStack, leftPos + 128, topPos + 44);
+        graphics.item(waterStack, leftPos + 168, topPos + 44);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        super.renderLabels(graphics, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
 
         if (forceEmptyButton.visible) {
             MutableComponent c = xlate("modularrouters.guiText.label.fluidForceEmpty");
-            graphics.drawString(font, c, 165 - font.width(c), 73, 0x202040, false);
+            graphics.text(font, c, 165 - font.width(c), 73, 0x202040, false);
         }
     }
 

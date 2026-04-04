@@ -33,7 +33,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         this.router = router;
         this.componentType = componentType;
 
-        List<ItemStack> stackList = holderStack.getOrDefault(componentType, ItemContainerContents.EMPTY).stream()
+        List<ItemStack> stackList = holderStack.getOrDefault(componentType, ItemContainerContents.EMPTY).nonEmptyItemCopyStream()
                 .limit(size)
                 .toList();
         for (int i = 0; i < size && i < stackList.size(); i++) {

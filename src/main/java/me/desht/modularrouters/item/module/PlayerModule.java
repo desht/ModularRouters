@@ -70,7 +70,7 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
             return InteractionResult.SUCCESS;
         } else if (ctx.getPlayer() != null && ctx.getPlayer().isSteppingCarefully()) {
             setOwner(ctx.getItemInHand(), ctx.getPlayer());
-            ctx.getPlayer().displayClientMessage(Component.translatable("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()), false);
+            ctx.getPlayer().sendSystemMessage(Component.translatable("modularrouters.itemText.security.owner", ctx.getPlayer().getDisplayName()));
             return InteractionResult.SUCCESS;
         } else {
             return super.useOn(ctx);
@@ -93,6 +93,6 @@ public class PlayerModule extends ModuleItem implements IPlayerOwned {
                 TargetValidation.BAD_DIMENSION :
                 TargetValidation.OK;
         MutableComponent msg = Component.translatable(v.translationKey()).withStyle(v.getColor());
-        player.displayClientMessage(msg, false);
+        player.sendSystemMessage(msg);
     }
 }

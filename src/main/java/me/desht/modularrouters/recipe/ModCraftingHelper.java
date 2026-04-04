@@ -19,6 +19,7 @@ package me.desht.modularrouters.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class ModCraftingHelper {
-    public static List<ItemStack> findItems(CraftingInput inv, List<? extends Predicate<ItemStack>> predicates) {
+    public static List<ItemStack> findItems(CraftingInput inv, List<Ingredient> predicates) {
         List<ItemStack> res = new ArrayList<>();
         BitSet matchedSlots = new BitSet(inv.size());
 
@@ -54,7 +55,7 @@ public class ModCraftingHelper {
         return res;
     }
 
-    public static boolean allPresent(CraftingInput inv, List<? extends Predicate<ItemStack>> predicates) {
+    public static boolean allPresent(CraftingInput inv, List<Ingredient> predicates) {
         return findItems(inv, predicates).size() == predicates.size();
     }
 }

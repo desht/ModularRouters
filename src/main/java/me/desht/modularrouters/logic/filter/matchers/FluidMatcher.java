@@ -6,22 +6,18 @@ import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
 public class FluidMatcher implements IItemMatcher {
     private final Fluid fluid;
 
     public FluidMatcher(ItemStack stack) {
-        fluid = FluidUtil.getFluidContained(stack).map(FluidStack::getFluid).orElse(Fluids.EMPTY);
+        fluid = FluidUtil.getFirstStackContained(stack).getFluid();
     }
 
     @Override
     public boolean matchItem(ItemStack stack, IModuleFlags flags) {
-        return FluidUtil.getFluidContained(stack)
-                .map(fluidStack -> matchFluid(fluidStack.getFluid(), flags))
-                .orElse(false);
+        return matchFluid(FluidUtil.getFirstStackContained(stack).getFluid(), flags);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package me.desht.modularrouters.client;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ICamouflageable;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
@@ -17,17 +18,26 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.network.messages.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
+
+import java.util.List;
 
 @Mod(value = ModularRouters.MODID, dist = Dist.CLIENT)
 public class ModularRoutersClient {
@@ -40,6 +50,7 @@ public class ModularRoutersClient {
         modBus.addListener(this::registerBlockColorHandlers);
         modBus.addListener(this::registerRenderPipelines);
         modBus.addListener(this::registerClientNetwork);
+        modBus.addListener(this::registerClientExtensions);
         modBus.addListener(KeyBindings::registerKeyBindings);
         modBus.addListener(ModelBakeEventHandler::onModelBake);
 
@@ -91,19 +102,27 @@ public class ModularRoutersClient {
         event.register(DistributorModeProperty.ID, DistributorModeProperty.TYPE);
     }
 
-    private void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
-        event.register((state, reader, pos, tintIndex) -> {
-            if (pos == null || reader == null) return -1;
-            BlockEntity te = reader.getBlockEntity(pos);
-            if (te instanceof ICamouflageable camouflageable && camouflageable.getCamouflage() != null) {
-                return event.getBlockColors().getColor(camouflageable.getCamouflage(), te.getLevel(), pos, tintIndex);
-            } else {
-                return 0xffffff;
-            }
-        }, ModBlocks.MODULAR_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
+    private void registerBlockColorHandlers(RegisterColorHandlersEvent.BlockTintSources event) {
+        // empty list: see COLOR_TINT_EXT
+        event.register(List.of(), ModBlocks.MODULAR_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
+    }
+
+    private void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerBlock(COLOR_TINT_EXT, ModBlocks.MODULAR_ROUTER.get(), ModBlocks.TEMPLATE_FRAME.get());
     }
 
     public void registerClientNetwork(final RegisterClientPayloadHandlersEvent event) {
         event.register(RouterSettingsMessage.TYPE, RouterSettingsMessage::handleData);
     }
+
+    public static final IClientBlockExtensions COLOR_TINT_EXT = new IClientBlockExtensions() {
+        @Override
+        public void collectDynamicTintValues(BlockState state, BlockAndTintGetter level, BlockPos pos, IntList tintValues) {
+            if (level.getBlockEntity(pos) instanceof ICamouflageable c && c.getCamouflage() instanceof BlockState camoState) {
+                for (var tintSource : Minecraft.getInstance().getBlockColors().getTintSources(camoState)) {
+                    tintValues.add(tintSource.colorInWorld(camoState, level, pos));
+                }
+            }
+        }
+    };
 }

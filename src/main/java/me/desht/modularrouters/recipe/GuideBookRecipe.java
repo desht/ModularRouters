@@ -1,8 +1,11 @@
 package me.desht.modularrouters.recipe;
 
+import com.mojang.serialization.MapCodec;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModRecipes;
 import me.desht.modularrouters.integration.patchouli.PatchouliHelper;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -16,14 +19,15 @@ import net.neoforged.fml.ModList;
 import java.util.List;
 
 public class GuideBookRecipe extends CustomRecipe {
+    public static final GuideBookRecipe INSTANCE = new GuideBookRecipe();
+    public static final MapCodec<GuideBookRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, GuideBookRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<GuideBookRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
     private static final List<Ingredient> INGREDIENTS = List.of(
             Ingredient.of(Items.BOOK),
             Ingredient.of(ModItems.BLANK_MODULE.get())
     );
-
-    public GuideBookRecipe(CraftingBookCategory category) {
-        super(category);
-    }
 
     public static ItemStack makeGuideBook() {
         return ModList.get().isLoaded("patchouli") ?
@@ -38,7 +42,7 @@ public class GuideBookRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput pInput, HolderLookup.Provider pRegistries) {
+    public ItemStack assemble(CraftingInput pInput) {
         return makeGuideBook();
     }
 

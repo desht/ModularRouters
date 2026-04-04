@@ -53,7 +53,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
             ITargetedModule.setTargets(stack, Set.of());
             world.playSound(null, player.blockPosition(), ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
                     ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.1f);
-            player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW), true);
+            player.sendOverlayMessage(Component.translatable("modularrouters.chatText.misc.targetCleared").withStyle(ChatFormatting.YELLOW));
             return InteractionResult.SUCCESS_SERVER;
         }
         return InteractionResult.SUCCESS;
@@ -65,7 +65,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
             var tgts = ITargetedModule.getTargets(stack, true);
             if (!tgts.isEmpty()) {
                 MutableComponent msg = Component.translatable("modularrouters.chatText.misc.targetSet").append(tgts.iterator().next().getTextComponent());
-                player.displayClientMessage(msg.withStyle(ChatFormatting.YELLOW), true);
+                player.sendOverlayMessage(msg.withStyle(ChatFormatting.YELLOW));
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
                         ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.3f);
             }
@@ -83,8 +83,8 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
             if (world.isClientSide()) return InteractionResult.SUCCESS;
             targets.remove(tgt);
 
-            player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetRemoved", targets.size(), targeted.getMaxTargets())
-                    .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
+            player.sendOverlayMessage(Component.translatable("modularrouters.chatText.misc.targetRemoved", targets.size(), targeted.getMaxTargets())
+                    .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW));
             world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS, ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.1f);
             ITargetedModule.setTargets(stack, targets);
             return InteractionResult.SUCCESS;
@@ -94,16 +94,16 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
             if (world.isClientSide()) return InteractionResult.SUCCESS;
             if (targets.size() < targeted.getMaxTargets()) {
                 targets.add(tgt);
-                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.targetAdded", targets.size(), targeted.getMaxTargets())
-                        .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW), true);
+                player.sendOverlayMessage(Component.translatable("modularrouters.chatText.misc.targetAdded", targets.size(), targeted.getMaxTargets())
+                        .append(tgt.getTextComponent()).withStyle(ChatFormatting.YELLOW));
 
                 world.playSound(null, pos, ModSounds.SUCCESS.get(), SoundSource.BLOCKS,
                         ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.3f);
                 ITargetedModule.setTargets(stack, targets);
             } else {
                 // too many targets already
-                player.displayClientMessage(Component.translatable("modularrouters.chatText.misc.tooManyTargets", targeted.getMaxTargets())
-                        .withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable("modularrouters.chatText.misc.tooManyTargets", targeted.getMaxTargets())
+                        .withStyle(ChatFormatting.RED));
                 world.playSound(null, pos, ModSounds.ERROR.get(), SoundSource.BLOCKS, 1.0f, 1.3f);
             }
 
@@ -140,7 +140,7 @@ public record TargetedModuleAdapter(ITargetedModule targeted) implements IItemAd
                 TargetValidation v = validateTarget(stack, src, target, true);
                 MutableComponent msg = MiscUtil.asMutableComponent(target.getTextComponent())
                         .append(" ").append(Component.translatable(v.translationKey()).withStyle(v.getColor()));
-                player.displayClientMessage(msg, false);
+                player.sendSystemMessage(msg);
             }
         }
     }

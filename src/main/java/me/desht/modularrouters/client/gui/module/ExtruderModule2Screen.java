@@ -2,7 +2,7 @@ package me.desht.modularrouters.client.gui.module;
 
 import me.desht.modularrouters.client.gui.widgets.button.InfoButton;
 import me.desht.modularrouters.container.ModuleMenu;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,8 +22,8 @@ public class ExtruderModule2Screen extends ModuleScreen {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(graphics, partialTicks, mouseX, mouseY);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos + 128, topPos + 16, 202, 52, 54, 54, 256, 256, getGuiBackgroundTint().getRGB());
 
     }

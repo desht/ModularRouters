@@ -3,7 +3,7 @@ package me.desht.modularrouters.client.gui.widgets.button;
 import me.desht.modularrouters.client.util.GuiUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -17,7 +17,7 @@ public abstract class TexturedButton extends ExtendedButton /*implements IToolti
     }
 
     @Override
-    public void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             int i = getYImage(isHovered);

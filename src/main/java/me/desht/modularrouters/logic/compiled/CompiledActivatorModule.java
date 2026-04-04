@@ -208,7 +208,7 @@ public class CompiledActivatorModule extends CompiledModule {
         if (entity == null) {
             return false;
         }
-        InteractionResult result = fakePlayer.interactOn(entity, InteractionHand.MAIN_HAND);
+        InteractionResult result = fakePlayer.interactOn(entity, InteractionHand.MAIN_HAND, entity.getEyePosition());
         if (result.consumesAction()) {
             router.setBufferItemStack(fakePlayer.getMainHandItem());
             return true;
@@ -232,7 +232,7 @@ public class CompiledActivatorModule extends CompiledModule {
 
         switch (settings.entityMode) {
             case RANDOM:
-                return l.get(router.getLevel().random.nextInt(l.size()));
+                return l.get(router.getLevel().getRandom().nextInt(l.size()));
             case NEAREST:
                 l.sort(Comparator.comparingDouble(o -> o.distanceToSqr(vec)));
                 return l.getFirst();
@@ -246,11 +246,11 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean passesAttackBlacklist(Entity e) {
-        return !e.getType().is(ModularRoutersTags.EntityTypes.activatorAttackBlacklist);
+        return !e.is(ModularRoutersTags.EntityTypes.activatorAttackBlacklist);
     }
 
     private boolean passesUseBlacklist(Entity e) {
-        return !e.getType().is(ModularRoutersTags.EntityTypes.activatorInteractBlacklist);
+        return !e.is(ModularRoutersTags.EntityTypes.activatorInteractBlacklist);
     }
 
     private void dropExtraItems(ModularRouterBlockEntity router, Player fakePlayer) {

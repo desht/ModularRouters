@@ -14,7 +14,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.Util;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -83,22 +83,22 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.drawString(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
+        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            graphics.drawString(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080, false);
+            graphics.text(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080, false);
         }
 
-        graphics.drawString(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
+        graphics.text(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
+    public void extractBackground(GuiGraphicsExtractor graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractBackground(graphics, pMouseX, pMouseY, pPartialTick);
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, xPos, yPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }

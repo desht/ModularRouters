@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -37,8 +37,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 
 import javax.annotation.Nullable;
 
@@ -73,7 +73,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     }
 
     @Override
-    public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter world, BlockPos pos, FluidState fluidState) {
+    public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndLightGetter level, BlockPos pos, FluidState fluidState) {
         return true;
     }
 
@@ -164,7 +164,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                     PacketDistributor.sendToPlayer(sp, RouterUpgradesSyncMessage.forRouter(router));
                     sp.openMenu(router, pos);
                 } else if (!router.isPermitted(player) && world.isClientSide()) {
-                    player.displayClientMessage(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED), false);
+                    player.sendSystemMessage(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED));
                     player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
                 }
                 return InteractionResult.SUCCESS;

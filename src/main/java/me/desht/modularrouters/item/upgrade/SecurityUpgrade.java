@@ -118,7 +118,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
         if (!player.level().isClientSide() && player.isSteppingCarefully()) {
             setOwner(stack, player);
             Component displayName = Objects.requireNonNullElse(player.getDisplayName(), Component.literal("?"));
-            player.displayClientMessage(Component.translatable("modularrouters.itemText.security.owner", displayName.getString()), false);
+            player.sendSystemMessage(Component.translatable("modularrouters.itemText.security.owner", displayName.getString()));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
@@ -134,7 +134,7 @@ public class SecurityUpgrade extends UpgradeItem implements IPlayerOwned {
                         ConfigHolder.common.sound.bleepVolume.get().floatValue(), 1.0f);
                 return InteractionResult.SUCCESS;
             } else {
-                player.displayClientMessage(Component.translatable(res.getTranslationKey(), profile.name()), false);
+                player.sendSystemMessage(Component.translatable(res.getTranslationKey(), profile.name()));
                 return InteractionResult.SUCCESS_SERVER;
             }
         }
