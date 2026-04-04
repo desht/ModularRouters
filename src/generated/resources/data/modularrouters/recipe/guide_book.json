@@ -5,6 +5,5 @@
       "modid": "patchouli"
     }
   ],
-  "type": "modularrouters:guide_book",
-  "category": "misc"
+  "type": "modularrouters:guide_book"
 }

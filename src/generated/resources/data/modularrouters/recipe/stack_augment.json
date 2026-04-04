@@ -6,7 +6,6 @@
     "modularrouters:stack_upgrade"
   ],
   "result": {
-    "count": 1,
     "id": "modularrouters:stack_augment"
   }
 }

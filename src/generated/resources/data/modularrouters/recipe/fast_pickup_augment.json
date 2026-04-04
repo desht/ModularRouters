@@ -6,7 +6,6 @@
     "minecraft:fishing_rod"
   ],
   "result": {
-    "count": 1,
     "id": "modularrouters:fast_pickup_augment"
   }
 }

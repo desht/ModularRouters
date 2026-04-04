@@ -9,6 +9,8 @@ import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
+import me.desht.modularrouters.item.module.DistributorModule;
+import me.desht.modularrouters.item.module.EnergyDistributorModule;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
@@ -130,7 +132,7 @@ public class ModModelProvider extends ModelProvider {
             String name = registryObject.getId().getPath();
             switch (registryObject.get()) {
                 case ModuleItem moduleItem -> {
-                    if (moduleItem.getDefaultInstance().has(ModDataComponents.DISTRIBUTOR_SETTINGS)) {
+                    if (moduleItem instanceof DistributorModule || moduleItem instanceof EnergyDistributorModule) {
                         ItemModel.Unbaked distPush = makeThreeLayerTintedModel(itemModels, registryObject, "");
                         ItemModel.Unbaked distPull = makeThreeLayerTintedModel(itemModels, registryObject, "_pull");
                         itemModels.itemModelOutput.accept(moduleItem, ItemModelUtils.select(

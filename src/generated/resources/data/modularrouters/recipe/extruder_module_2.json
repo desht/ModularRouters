@@ -6,7 +6,6 @@
     "#c:chests/wooden"
   ],
   "result": {
-    "count": 1,
     "id": "modularrouters:extruder_module_2"
   }
 }

@@ -6,7 +6,6 @@
     "minecraft:clock"
   ],
   "result": {
-    "count": 1,
     "id": "modularrouters:filter_round_robin_augment"
   }
 }
