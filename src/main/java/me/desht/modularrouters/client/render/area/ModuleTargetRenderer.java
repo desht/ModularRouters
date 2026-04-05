@@ -11,8 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -26,6 +27,11 @@ import java.util.Map;
 public class ModuleTargetRenderer {
     private static final float BOX_SIZE = 0.5f;
     private static final float BOX_START = (1f - BOX_SIZE) / 2f;
+
+    private static final VoxelShape BOX_SHAPE = Block.box(
+            BOX_START * 16, BOX_START  * 16, BOX_START * 16,
+            16 - BOX_START * 16, 16 - BOX_START * 16, 16 - BOX_START * 16
+    );
 
     private static ItemStack lastStack = ItemStack.EMPTY;
     private static CompiledPosition compiledPos = null;
@@ -113,9 +119,11 @@ public class ModuleTargetRenderer {
 
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_FACE);
 
+            matrixStack.translate(-BOX_START, -BOX_START, -BOX_START);
+
             VertexConsumer lineBuilder = buffer.getBuffer(ModRenderTypes.BLOCK_HILIGHT_LINE);
-            // last float is the line width
-            ShapeRenderer.renderShape(matrixStack, lineBuilder, Shapes.block(), 0, 0, 0, ARGB.colorFromFloat(0.3125f, 0.25f, 0.25f, 0.25f), 3f);
+            ShapeRenderer.renderShape(matrixStack, lineBuilder, BOX_SHAPE, 0, 0, 0,
+                    ARGB.colorFromFloat(0.3125f, 0.25f, 0.25f, 0.25f), 3f);
 
             buffer.endBatch(ModRenderTypes.BLOCK_HILIGHT_LINE);
 
