@@ -6,7 +6,6 @@ import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.client.item.DistributorModeProperty;
 import me.desht.modularrouters.client.item.ModuleTintSource;
 import me.desht.modularrouters.core.ModBlocks;
-import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.DistributorModule;
@@ -68,15 +67,8 @@ public class ModModelProvider extends ModelProvider {
                 .build();
 
         var routerOff = routerTemplate.createWithSuffix(routerBlock, "_off", routerTex(routerBlock, false), blockModels.modelOutput);
-        var routerOn = routerTemplate.createWithSuffix(routerBlock, "_on", routerTex(routerBlock, true), blockModels.modelOutput);
-
-//        PropertyDispatch<VariantMutator> horiz = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
-//                        .select(Direction.EAST, BlockModelGenerators.Y_ROT_90)
-//                        .select(Direction.NORTH, BlockModelGenerators.NOP)
-//                        .select(Direction.WEST, BlockModelGenerators.Y_ROT_270)
-//                        .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180);
-
         Variant offVariant = new Variant(routerOff);
+        var routerOn = routerTemplate.createWithSuffix(routerBlock, "_on", routerTex(routerBlock, true), blockModels.modelOutput);
         Variant onVariant = new Variant(routerOn);
 
         blockModels.blockStateOutput.accept(
@@ -93,36 +85,6 @@ public class ModModelProvider extends ModelProvider {
 
                 )
         );
-
-//        blockModels.blockStateOutput.accept(
-//                MultiVariantGenerator.multiVariant(routerBlock)
-//                        .with(PropertyDispatch.properties(BlockStateProperties.HORIZONTAL_FACING, ModularRouterBlock.ACTIVE)
-//                                .select(Direction.EAST, false, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOff)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-//                                .select(Direction.EAST, true, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOn)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-//                                .select(Direction.NORTH, false, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOff)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R0))
-//                                .select(Direction.NORTH, true, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOn)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R0))
-//                                .select(Direction.WEST, false, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOff)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-//                                .select(Direction.WEST, true, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOn)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-//                                .select(Direction.SOUTH, false, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOff)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
-//                                .select(Direction.SOUTH, true, Variant.variant()
-//                                        .with(VariantProperties.MODEL, routerOn)
-//                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
-//                        )
-//        );
 
         blockModels.registerSimpleItemModel(ModBlocks.MODULAR_ROUTER.asItem(), modLocation("block/modular_router_off"));
 
@@ -206,8 +168,8 @@ public class ModModelProvider extends ModelProvider {
     private ItemModel.Unbaked makeThreeLayerTintedModel(ItemModelGenerators gen, DeferredHolder<Item, ? extends Item> holder, String suffix) {
         String what;
         switch (holder.get()) {
-            case ModuleItem ignored -> what = "module";
-            case UpgradeItem ignored -> what = "upgrade";
+            case ModuleItem _ -> what = "module";
+            case UpgradeItem _ -> what = "upgrade";
             default -> throw new IllegalArgumentException("expecting module or upgrade!");
         }
         String name = holder.getId().getPath();
