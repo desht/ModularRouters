@@ -107,17 +107,19 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
 
     public static class BulkFilterHandler extends BaseModuleHandler {
         private final ItemStack moduleStack;
+        private final int moduleSlot; // when installed in router
         private final int filterSlot;
         private final boolean shouldSave;
 
         public BulkFilterHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router) {
-            this(holderStack, router, ItemStack.EMPTY, 0, true);
+            this(holderStack, router, ItemStack.EMPTY, 0, 0, true);
         }
 
-        public BulkFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router, ItemStack moduleStack, int filterSlot, boolean shouldSave) {
+        public BulkFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router, ItemStack moduleStack, int moduleSlot, int filterSlot, boolean shouldSave) {
             super(holderStack, router, BulkItemFilter.FILTER_SIZE, ModDataComponents.FILTER.get());
 
             this.moduleStack = moduleStack;
+            this.moduleSlot = moduleSlot;
             this.filterSlot = filterSlot;
             this.shouldSave = shouldSave;
         }
@@ -131,8 +133,10 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
                     var h = new ModuleFilterHandler(moduleStack, router);
                     h.setStackInSlot(filterSlot, getHolderStack());
                     h.save();
-                    ModularRouters.LOGGER.info("saved!");
-                    // FIXME working on a copy of moduleStack here!
+                    if (router != null) {
+                        // since moduleStack is a copy of the actual stack in the router...
+                        router.getModules().set(moduleSlot, ItemResource.of(moduleStack), 1);
+                    }
                 }
             }
         }

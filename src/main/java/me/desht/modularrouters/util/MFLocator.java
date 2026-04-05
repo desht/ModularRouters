@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.StreamDecoder;
+import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,36 +31,33 @@ import java.util.Optional;
 public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot, ItemType itemType) {
     public enum ItemType { MODULE, FILTER;}
 
-    public static final StreamCodec<FriendlyByteBuf,MFLocator> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public MFLocator decode(FriendlyByteBuf buf) {
-            ItemType type = buf.readEnum(ItemType.class);
-            InteractionHand hand = null;
-            BlockPos routerPos = null;
-            int routerSlot  = -1;
-            if (buf.readBoolean()) {
-                routerPos = buf.readBlockPos();
-                routerSlot = buf.readByte();
-            } else {
-                hand = buf.readEnum(InteractionHand.class);
+    public static final StreamCodec<FriendlyByteBuf,MFLocator> STREAM_CODEC = StreamCodec.of(
+            (buf, locator) -> {
+                buf.writeEnum(locator.itemType);
+                buf.writeBoolean(locator.routerPos != null);
+                if (locator.routerPos != null) {
+                    buf.writeBlockPos(locator.routerPos);
+                    buf.writeByte(locator.routerSlot);
+                } else {
+                    buf.writeEnum(locator.hand);
+                }
+                buf.writeByte(locator.filterSlot);
+            },
+            buf -> {
+                ItemType type = buf.readEnum(ItemType.class);
+                InteractionHand hand = null;
+                BlockPos routerPos = null;
+                int routerSlot  = -1;
+                if (buf.readBoolean()) {
+                    routerPos = buf.readBlockPos();
+                    routerSlot = buf.readByte();
+                } else {
+                    hand = buf.readEnum(InteractionHand.class);
+                }
+                int filterSlot = buf.readByte();
+                return create(type, hand, routerPos, routerSlot, filterSlot);
             }
-            int filterSlot = buf.readByte();
-            return create(type, hand, routerPos, routerSlot, filterSlot);
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf buf, MFLocator locator) {
-            buf.writeEnum(locator.itemType);
-            buf.writeBoolean(locator.routerPos != null);
-            if (locator.routerPos != null) {
-                buf.writeBlockPos(locator.routerPos);
-                buf.writeByte(locator.routerSlot);
-            } else {
-                buf.writeEnum(locator.hand);
-            }
-            buf.writeByte(locator.filterSlot);
-        }
-    };
+    );
 
     public static MFLocator fromNetwork(FriendlyByteBuf buf) {
         return STREAM_CODEC.decode(buf);
