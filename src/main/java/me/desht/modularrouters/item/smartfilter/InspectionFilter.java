@@ -7,7 +7,6 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Compariso
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -21,7 +20,7 @@ public class InspectionFilter extends SmartFilterItem {
     }
 
     @Override
-    public @NotNull IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new InspectionMatcher(getComparisonList(filterStack));
     }
 
@@ -43,7 +42,7 @@ public class InspectionFilter extends SmartFilterItem {
     }
 
     public static ComparisonList getComparisonList(ItemStack filterStack) {
-        return filterStack.get(ModDataComponents.COMPARISON_LIST.get());
+        return filterStack.getOrDefault(ModDataComponents.COMPARISON_LIST.get(), ComparisonList.DEFAULT);
     }
 
     public static void setComparisonList(ItemStack filterStack, ComparisonList comparisonList) {

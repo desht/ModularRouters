@@ -49,8 +49,8 @@ public class ActivatorModuleScreen extends ModuleScreen {
 
         getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 18, leftPos + 183, topPos + 37, "modularrouters.guiText.popup.activator.action");
         getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 39, leftPos + 183, topPos + 56, "modularrouters.guiText.popup.activator.sneak");
-        getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 59, leftPos + 183, topPos + 76, "modularrouters.guiText.popup.activator.look", guiContainer -> lookDirectionButton.visible);
-        getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 59, leftPos + 183, topPos + 76, "modularrouters.guiText.popup.activator.look", guiContainer -> entityModeButton.visible);
+        getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 59, leftPos + 183, topPos + 76, "modularrouters.guiText.popup.activator.look", _ -> lookDirectionButton.visible);
+        getMouseOverHelp().addHelpRegion(leftPos + 130, topPos + 59, leftPos + 183, topPos + 76, "modularrouters.guiText.popup.activator.look", _ -> entityModeButton.visible);
     }
 
     @Override

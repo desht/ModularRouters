@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
@@ -30,7 +29,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         boolean extend = shouldExtend(router);
         Level world = router.nonNullLevel();
 
@@ -40,6 +39,7 @@ public class CompiledExtruderModule2 extends CompiledExtruderModule1 {
                 // non-block item; it's a spacer so just skip over
                 router.getExtensionData().putInt(NBT_EXTRUDER_DIST + getAbsoluteFacing(), ++distance);
             } else {
+                assert getAbsoluteFacing() != null && getRouterFacing() != null;
                 BlockPos placePos = router.getBlockPos().relative(getAbsoluteFacing(), distance + 1);
                 BlockState state = ModBlocks.TEMPLATE_FRAME.get().defaultBlockState();
                 if (BlockUtil.tryPlaceBlock(router, state, world, placePos)) {

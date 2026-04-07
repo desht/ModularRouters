@@ -1,19 +1,16 @@
 package me.desht.modularrouters.container.handler;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.filter.Filter;
-import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -21,12 +18,13 @@ import java.util.stream.IntStream;
 
 public abstract class BaseModuleHandler extends GhostItemHandler {
     private final ItemStack holderStack;
+    @Nullable
     protected final ModularRouterBlockEntity router;
     private final DataComponentType<ItemContainerContents> componentType;
     private boolean autoSave = true;
-    private Consumer<ItemStack> onSaved = stack -> {};
+    private Consumer<ItemStack> onSaved = _ -> {};
 
-    protected BaseModuleHandler(ItemStack holderStack, ModularRouterBlockEntity router, int size, DataComponentType<ItemContainerContents> componentType) {
+    protected BaseModuleHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router, int size, DataComponentType<ItemContainerContents> componentType) {
         super(size);
 
         this.holderStack = holderStack;
@@ -81,7 +79,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
      *
      * @return number of items in the filter
      */
-    public static int getFilterItemCount(ItemStack holderStack, BiFunction<ItemStack, ModularRouterBlockEntity, BaseModuleHandler> factory) {
+    public static int getFilterItemCount(ItemStack holderStack, BiFunction<ItemStack, @Nullable ModularRouterBlockEntity, BaseModuleHandler> factory) {
         BaseModuleHandler handler = factory.apply(holderStack, null);
         return (int) IntStream.range(0, handler.getSlots())
                 .filter(i -> !handler.getStackInSlot(i).isEmpty())
@@ -115,7 +113,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
             this(holderStack, router, ItemStack.EMPTY, 0, 0, true);
         }
 
-        public BulkFilterHandler(ItemStack holderStack, ModularRouterBlockEntity router, ItemStack moduleStack, int moduleSlot, int filterSlot, boolean shouldSave) {
+        public BulkFilterHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router, ItemStack moduleStack, int moduleSlot, int filterSlot, boolean shouldSave) {
             super(holderStack, router, BulkItemFilter.FILTER_SIZE, ModDataComponents.FILTER.get());
 
             this.moduleStack = moduleStack;
@@ -148,7 +146,7 @@ public abstract class BaseModuleHandler extends GhostItemHandler {
         }
 
         @Override
-        public boolean isValid(int index, @Nonnull ItemResource resource) {
+        public boolean isValid(int index, ItemResource resource) {
             if (resource.isEmpty()) return false;
             return ((ModuleItem) getHolderStack().getItem()).isItemValidForFilter(resource.toStack());
         }

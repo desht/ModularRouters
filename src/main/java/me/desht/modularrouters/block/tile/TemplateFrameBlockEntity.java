@@ -1,6 +1,5 @@
 package me.desht.modularrouters.block.tile;
 
-import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.util.Scheduler;
 import net.minecraft.core.BlockPos;
@@ -19,15 +18,15 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.model.data.ModelData;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflageable {
     private static final String NBT_CAMO_NAME = "CamouflageName";
     private static final String NBT_MIMIC = "Mimic";
 
+    @Nullable
     private BlockState camouflage = null;  // block to masquerade as
     private boolean extendedMimic; // true if extra mimicking is done (light, hardness, blast resistance)
 
@@ -36,7 +35,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    public BlockState getCamouflage() {
+    public @Nullable BlockState getCamouflage() {
         return camouflage;
     }
 
@@ -46,12 +45,9 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
         setChanged();
     }
 
-    @Nonnull
     @Override
     public ModelData getModelData() {
-        return ModelData.builder()
-                .with(CamouflageableBlock.CAMOUFLAGE_STATE, camouflage)
-                .build();
+        return ICamouflageable.makeModelData(camouflage);
     }
 
     @Override
@@ -126,7 +122,7 @@ public class TemplateFrameBlockEntity extends BlockEntity implements ICamouflage
                 .orElse(null);
     }
 
-    private static CompoundTag getNBTFromCamoState(CompoundTag compound, BlockState camouflage) {
+    private static CompoundTag getNBTFromCamoState(CompoundTag compound, @Nullable BlockState camouflage) {
         if (camouflage != null) {
             compound.put(NBT_CAMO_NAME, NbtUtils.writeBlockState(camouflage));
         }

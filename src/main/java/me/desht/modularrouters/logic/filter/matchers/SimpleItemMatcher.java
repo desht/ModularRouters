@@ -3,12 +3,14 @@ package me.desht.modularrouters.logic.filter.matchers;
 import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.util.ItemTagMatcher;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.apache.commons.lang3.Validate;
 
 public class SimpleItemMatcher implements IItemMatcher {
     private final ItemStack filterStack;
-    private ItemTagMatcher tagMatcher;
+    private final Lazy<ItemTagMatcher> tagMatcher = Lazy.of(this::makeTagMatcher);
 
     public SimpleItemMatcher(ItemStack stack) {
         Validate.isTrue(!stack.isEmpty());
@@ -16,7 +18,7 @@ public class SimpleItemMatcher implements IItemMatcher {
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, IModuleFlags flags) {
+    public boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         if (filterStack.getItem() == stack.getItem()) {
             return (!flags.matchDamage() || matchDamage(stack, filterStack))
                     && (!flags.matchComponents() || ItemStack.isSameItemSameComponents(stack, filterStack));
@@ -27,11 +29,13 @@ public class SimpleItemMatcher implements IItemMatcher {
         }
     }
 
-    private ItemTagMatcher getTagMatcher() {
-        if (tagMatcher == null) tagMatcher = new ItemTagMatcher(filterStack);
-        return tagMatcher;
+    private ItemTagMatcher makeTagMatcher() {
+        return new ItemTagMatcher(filterStack);
     }
 
+    private ItemTagMatcher getTagMatcher() {
+        return tagMatcher.get();
+    }
 
     private boolean matchDamage(ItemStack stack1, ItemStack stack2) {
         // items are already checked to be the same, only interested in durability here

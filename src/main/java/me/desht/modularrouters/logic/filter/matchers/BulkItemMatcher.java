@@ -6,6 +6,7 @@ import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.logic.settings.ModuleFlags;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.SetofItemStack;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +28,7 @@ public class BulkItemMatcher implements IItemMatcher {
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, IModuleFlags flags) {
+    public boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         if (stacks.contains(stack)) {
             return true;
         } else {

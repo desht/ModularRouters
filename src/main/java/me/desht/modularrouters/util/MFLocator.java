@@ -10,8 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.codec.StreamDecoder;
-import net.minecraft.network.codec.StreamEncoder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,15 +19,15 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.apache.commons.lang3.Validate;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
  * Unified object to locate a module or filter.
  */
-public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot, ItemType itemType) {
-    public enum ItemType { MODULE, FILTER;}
+public record MFLocator(@Nullable InteractionHand hand, @Nullable BlockPos routerPos, int routerSlot, int filterSlot, ItemType itemType) {
+    public enum ItemType { MODULE, FILTER }
 
     public static final StreamCodec<FriendlyByteBuf,MFLocator> STREAM_CODEC = StreamCodec.of(
             (buf, locator) -> {
@@ -39,6 +37,7 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
                     buf.writeBlockPos(locator.routerPos);
                     buf.writeByte(locator.routerSlot);
                 } else {
+                    assert locator.hand != null;
                     buf.writeEnum(locator.hand);
                 }
                 buf.writeByte(locator.filterSlot);
@@ -63,7 +62,7 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         return STREAM_CODEC.decode(buf);
     }
 
-    private static MFLocator create(ItemType itemType, InteractionHand hand, BlockPos routerPos, int routerSlot, int filterSlot) {
+    private static MFLocator create(ItemType itemType, @Nullable InteractionHand hand, @Nullable BlockPos routerPos, int routerSlot, int filterSlot) {
         Validate.isTrue(hand != null || routerPos != null && routerSlot >= 0);
 
         return new MFLocator(hand, routerPos, routerSlot, filterSlot, itemType);
@@ -93,7 +92,6 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         return create(ItemType.FILTER, null, routerPos, routerSlot, filterSlot);
     }
 
-    @Nonnull
     public ItemStack getTargetItem(Player player) {
         if (itemType == ItemType.MODULE) {
             if (hand != null) {
@@ -111,7 +109,6 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         return ItemStack.EMPTY;
     }
 
-    @Nonnull
     public ItemStack getModuleStack(Player player) {
         if (hand != null) {
             return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
@@ -139,6 +136,7 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
     public void setFilterStack(Player player, ItemStack newFilterStack) {
         if (newFilterStack.getItem() instanceof SmartFilterItem) {
             if (routerPos == null) {
+                assert hand != null;
                 ItemStack heldStack = player.getItemInHand(hand);
                 if (heldStack.getItem() instanceof SmartFilterItem) {
                     // just replace filter in player's hand
@@ -159,7 +157,6 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         }
     }
 
-    @Nonnull
     private ItemStack getInstalledModule(Level level) {
         return getRouter(level)
                 .map(router -> ItemUtil.getStack(router.getModules(), routerSlot))
@@ -175,8 +172,7 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         });
     }
 
-    @Nonnull
-    private ItemStack getFilterForStack(@Nonnull ItemStack stack) {
+    private ItemStack getFilterForStack(ItemStack stack) {
         if (stack.getItem() instanceof SmartFilterItem) {
             return stack;
         } else if (stack.getItem() instanceof ModuleItem && filterSlot >= 0) {
@@ -190,5 +186,8 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         ModuleFilterHandler handler = new ModuleFilterHandler(moduleStack, null);
         handler.setStackInSlot(filterSlot, filterStack);
         handler.save();
+    }
+
+    public record RouterSlot(BlockPos pos, int slot) {
     }
 }

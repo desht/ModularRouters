@@ -20,8 +20,8 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class CompiledExtruderModule1 extends CompiledModule {
@@ -33,7 +33,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     private final int pushingAugments;
     private final ItemStack pickaxe;
 
-    public CompiledExtruderModule1(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledExtruderModule1(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         distance = router == null ? 0 : router.getExtensionData().getIntOr(NBT_EXTRUDER_DIST + getAbsoluteFacing(), 0);
@@ -42,7 +42,7 @@ public class CompiledExtruderModule1 extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         boolean extend = shouldExtend(router);
         Level world = router.nonNullLevel();
         Direction dir = Objects.requireNonNull(getAbsoluteFacing());  // should always be non-null at this point

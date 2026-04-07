@@ -47,7 +47,7 @@ public class ActivatorModule extends ModuleItem implements IRangedModule {
 
     @Override
     public int getEnergyCost(ItemStack stack) {
-        ActivatorSettings settings = stack.get(ModDataComponents.ACTIVATOR_SETTINGS);
+        ActivatorSettings settings = stack.getOrDefault(ModDataComponents.ACTIVATOR_SETTINGS, ActivatorSettings.DEFAULT);
         return settings.actionType() == CompiledActivatorModule.ActionType.ATTACK_ENTITY ?
                 ConfigHolder.common.energyCosts.activatorModuleEnergyCostAttack.get() :
                 ConfigHolder.common.energyCosts.activatorModuleEnergyCost.get();

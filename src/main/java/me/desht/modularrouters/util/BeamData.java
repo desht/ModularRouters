@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -23,30 +24,27 @@ public final class BeamData {
 
     private int ticksLived = 0;
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, BeamData> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public BeamData decode(RegistryFriendlyByteBuf buf) {
-            ByteOffset offset = ByteOffset.STREAM_CODEC.decode(buf);
-            int duration = buf.readVarInt();
-            int color = buf.readInt();
-            ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
-            return !stack.isEmpty() ?
-                    new BeamData(offset, duration, color, stack, buf.readBoolean(), buf.readBoolean()) :
-                    new BeamData(offset, duration, color, stack, false, false);
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buf, BeamData beamData) {
-            ByteOffset.STREAM_CODEC.encode(buf, beamData.offset);
-            buf.writeVarInt(beamData.duration);
-            buf.writeInt(beamData.color);
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, beamData.stack);
-            if (!beamData.stack.isEmpty()) {
-                buf.writeBoolean(beamData.fade);
-                buf.writeBoolean(beamData.reversed);
+    public static final StreamCodec<RegistryFriendlyByteBuf, BeamData> STREAM_CODEC = StreamCodec.of(
+            (buf, beamData) -> {
+                ByteOffset.STREAM_CODEC.encode(buf, beamData.offset);
+                buf.writeVarInt(beamData.duration);
+                buf.writeInt(beamData.color);
+                ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, beamData.stack);
+                if (!beamData.stack.isEmpty()) {
+                    buf.writeBoolean(beamData.fade);
+                    buf.writeBoolean(beamData.reversed);
+                }
+            },
+            buf -> {
+                ByteOffset offset = ByteOffset.STREAM_CODEC.decode(buf);
+                int duration = buf.readVarInt();
+                int color = buf.readInt();
+                ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                return !stack.isEmpty() ?
+                        new BeamData(offset, duration, color, stack, buf.readBoolean(), buf.readBoolean()) :
+                        new BeamData(offset, duration, color, stack, false, false);
             }
-        }
-    };
+    );
 
     public BeamData(ByteOffset offset, int duration, int color, ItemStack stack, boolean fade, boolean reversed) {
         this.offset = offset;
@@ -66,7 +64,7 @@ public final class BeamData {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (BeamData) obj;

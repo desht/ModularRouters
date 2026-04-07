@@ -18,6 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.BitSet;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ public class ModuleTargetRenderer {
     );
 
     private static ItemStack lastStack = ItemStack.EMPTY;
+    @Nullable
     private static CompiledPosition compiledPos = null;
 
     @SubscribeEvent

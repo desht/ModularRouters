@@ -12,7 +12,7 @@ import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.IdentityHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -93,7 +93,7 @@ public class BufferHandler extends ItemStacksResourceHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T maskNull(T value) {
+    private static <T> T maskNull(@Nullable T value) {
         return value == null ? (T) NULL : value;
     }
 

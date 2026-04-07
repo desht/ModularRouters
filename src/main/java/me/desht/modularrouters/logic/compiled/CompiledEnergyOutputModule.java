@@ -4,9 +4,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class CompiledEnergyOutputModule extends CompiledModule {
     public CompiledEnergyOutputModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
@@ -14,17 +12,17 @@ public class CompiledEnergyOutputModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        if (getTarget() == null) return false;
+    public boolean execute(ModularRouterBlockEntity router) {
+        return getTarget().map(target -> {
+            EnergyHandler routerStorage = router.getEnergyStorage();
+            EnergyHandler otherStorage = target.getEnergyHandler().orElse(null);
 
-        EnergyHandler routerStorage = router.getEnergyStorage();
-        EnergyHandler otherStorage = getTarget().getEnergyHandler().orElse(null);
+            if (routerStorage.getCapacityAsInt() > 0 && otherStorage != null) {
+                int transferred = EnergyHandlerUtil.move(routerStorage, otherStorage, router.getEnergyXferRate(), null);
+                return transferred > 0;
+            }
 
-        if (routerStorage != null && otherStorage != null) {
-            int transferred = EnergyHandlerUtil.move(routerStorage, otherStorage, router.getEnergyXferRate(), null);
-            return transferred > 0;
-        }
-
-        return false;
+            return false;
+        }).orElse(false);
     }
 }

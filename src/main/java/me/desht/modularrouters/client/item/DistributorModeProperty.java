@@ -12,7 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum DistributorModeProperty implements SelectItemModelProperty<TransferDirection> {
     INSTANCE;
@@ -22,7 +22,7 @@ public enum DistributorModeProperty implements SelectItemModelProperty<TransferD
             = SelectItemModelProperty.Type.create(MapCodec.unit(INSTANCE), TransferDirection.CODEC);
 
     @Override
-    public @Nullable TransferDirection get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, ItemDisplayContext context) {
+    public TransferDirection get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, ItemDisplayContext context) {
         return stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, CompiledDistributorModule.DistributorSettings.DEFAULT).direction();
     }
 

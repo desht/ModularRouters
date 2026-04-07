@@ -98,7 +98,7 @@ public class SyncUpgradeScreen extends Screen {
 
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height) {
-            super(x, y, width, height, clockStack, true, p -> {});
+            super(x, y, width, height, clockStack, true, _ -> {});
             ClientUtil.setMultilineTooltip(this,
                     xlate("modularrouters.guiText.tooltip.tunedValue", 0, ConfigHolder.common.router.baseTickRate.get() - 1).withStyle(ChatFormatting.AQUA),
                     xlate("modularrouters.guiText.tooltip.numberFieldTooltip")

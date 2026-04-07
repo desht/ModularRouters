@@ -10,13 +10,12 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.Nullable;
 
 public class CompiledDetectorModule extends CompiledModule {
     private final DetectorSettings settings;
 
-    public CompiledDetectorModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledDetectorModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.DETECTOR_SETTINGS, DetectorSettings.DEFAULT);
@@ -28,7 +27,7 @@ public class CompiledDetectorModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         ItemStack stack = router.getBufferItemStack();
 
         if (!getFilter().test(stack)) {

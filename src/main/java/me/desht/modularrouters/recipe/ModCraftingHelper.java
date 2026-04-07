@@ -24,7 +24,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class ModCraftingHelper {
     public static List<ItemStack> findItems(CraftingInput inv, List<Ingredient> predicates) {

@@ -7,7 +7,6 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
-import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.settings.RelativeDirection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,32 +19,32 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.Nullable;
 
 public class CompiledFlingerModule extends CompiledDropperModule {
     private final FlingerSettings settings;
 
-    public CompiledFlingerModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledFlingerModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.FLINGER_SETTINGS, FlingerSettings.DEFAULT);
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         boolean fired = super.execute(router);
 
         if (fired && ConfigHolder.common.module.flingerEffects.get()) {
-            ModuleTarget target = getTarget();
-            int n = Math.round(getSpeed() * 5);
-            BlockPos pos = target.gPos.pos();
-            if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2 && router.getLevel() instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
-                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
-                        0.0, 0.0, 0.0, 0.0);
-            }
-            router.playSound(null, pos, ModSounds.THUD.get(), SoundSource.BLOCKS, 0.5f + getSpeed(), 1.0f);
+            getTarget().ifPresent(target -> {
+                int n = Math.round(getSpeed() * 5);
+                BlockPos pos = target.gPos.pos();
+                if (router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2 && router.getLevel() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, n,
+                            0.0, 0.0, 0.0, 0.0);
+                }
+                router.playSound(null, pos, ModSounds.THUD.get(), SoundSource.BLOCKS, 0.5f + getSpeed(), 1.0f);
+            });
         }
 
         return fired;
@@ -77,7 +76,10 @@ public class CompiledFlingerModule extends CompiledDropperModule {
                 basePitch = -90.0f;
                 baseYaw = yawFromFacing(routerFacing);
             }
-            default -> baseYaw = yawFromFacing(getAbsoluteFacing());
+            default -> {
+                assert getAbsoluteFacing() != null;
+                baseYaw = yawFromFacing(getAbsoluteFacing());
+            }
         }
 
         double yawRad = Math.toRadians(baseYaw + getYaw()), pitchRad = Math.toRadians(basePitch + getPitch());

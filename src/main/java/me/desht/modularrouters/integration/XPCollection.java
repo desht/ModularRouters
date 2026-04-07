@@ -112,7 +112,7 @@ public class XPCollection {
 
         @Override
         public String getTranslationKey() {
-            return null;
+            return "";
         }
 
         @Override

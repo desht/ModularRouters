@@ -6,9 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -22,8 +19,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.CheckForNull;
 import java.text.NumberFormat;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,15 +65,7 @@ public class MiscUtil {
         return Component.literal(prefix).append(c);  // appendSibling
     }
 
-    public static Tag serializeGlobalPos(GlobalPos globalPos) {
-        return GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, globalPos).result().orElseThrow();
-    }
-
-    public static GlobalPos deserializeGlobalPos(CompoundTag tag) {
-        return GlobalPos.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseThrow();
-    }
-
-    @CheckForNull
+    @Nullable
     public static ServerLevel getWorldForGlobalPos(GlobalPos pos) {
         return ServerLifecycleHooks.getCurrentServer().getLevel(pos.dimension());
     }

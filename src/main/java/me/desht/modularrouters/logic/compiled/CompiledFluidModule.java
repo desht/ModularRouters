@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
+import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -33,31 +34,32 @@ import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
-import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
 
 public class CompiledFluidModule extends CompiledModule {
     private final FluidModuleSettings settings;
 
-    public CompiledFluidModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledFluidModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.FLUID_SETTINGS.get(), FluidModuleSettings.DEFAULT);
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        if (getTarget() == null) return false;
+    public boolean execute(ModularRouterBlockEntity router) {
+        if (getTarget().isEmpty()) return false;
+
+        ModuleTarget target = getTarget().get();
 
         ResourceHandler<FluidResource> routerHandler = router.getFluidHandler();
         if (routerHandler == null) return false;
 
         Level world = Objects.requireNonNull(router.getLevel());
-        Optional<ResourceHandler<FluidResource>> targetFluidHandler = getTarget().getFluidHandler();
+        Optional<ResourceHandler<FluidResource>> targetFluidHandler = target.getFluidHandler();
 
         boolean didWork;
         if (targetFluidHandler.isPresent()) {
@@ -71,7 +73,7 @@ public class CompiledFluidModule extends CompiledModule {
         } else {
             // no block entity at the target position; try to interact with a fluid block in the world
             boolean playSound = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0;
-            BlockPos pos = getTarget().gPos.pos();
+            BlockPos pos = target.gPos.pos();
             didWork = switch (getFluidDirection()) {
                 case TO_ROUTER -> tryPickupFluid(router, routerHandler, world, pos, playSound);
                 case FROM_ROUTER -> tryPourOutFluid(router, routerHandler, world, pos, playSound);

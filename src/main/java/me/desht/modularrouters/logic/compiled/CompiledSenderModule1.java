@@ -18,21 +18,21 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class CompiledSenderModule1 extends CompiledModule {
-    public CompiledSenderModule1(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledSenderModule1(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         ResourceHandler<ItemResource> buffer = router.getBuffer();
         ItemStack bufferStack = ItemUtil.getStack(buffer, 0);
         if (getFilter().test(bufferStack)) {
-            PositionedItemHandler positionedItemHandler = findTargetInventory(router);
-            if (positionedItemHandler.isValid()) {
+            return findTargetInventory(router).map(positionedItemHandler -> {
                 int nToSend = getItemsPerTick(router);
                 if (getRegulationAmount() > 0) {
                     int existing = InventoryUtils.countItems(bufferStack, positionedItemHandler.handler, getRegulationAmount(), !getFilter().getFlags().matchDamage());
@@ -50,7 +50,7 @@ public class CompiledSenderModule1 extends CompiledModule {
                 } else {
                     return false;
                 }
-            }
+            }).orElse(false);
         }
         return false;
     }
@@ -65,31 +65,31 @@ public class CompiledSenderModule1 extends CompiledModule {
         return 0xFFC000;
     }
 
-    protected PositionedItemHandler findTargetInventory(ModularRouterBlockEntity router) {
-        ModuleTarget target = getEffectiveTarget(router);
-        if (target != null) {
-            return target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.pos(), h)).orElse(PositionedItemHandler.INVALID);
-        }
-        return PositionedItemHandler.INVALID;
+    protected Optional<PositionedItemHandler> findTargetInventory(ModularRouterBlockEntity router) {
+        return getEffectiveTarget(router).flatMap(target ->
+                target.getItemHandler().map(h -> new PositionedItemHandler(target.gPos.pos(), h)));
     }
 
     @Override
-    public ModuleTarget getEffectiveTarget(ModularRouterBlockEntity router) {
-        if (getAbsoluteFacing() != null) {
-            BlockPos.MutableBlockPos pos = getTarget().gPos.pos().mutable();
-            Direction face = getTarget().face;
+    public Optional<ModuleTarget> getEffectiveTarget(ModularRouterBlockEntity router) {
+        if (getAbsoluteFacing() == null) {
+            return Optional.empty();
+        }
+
+        return getTarget().map(target -> {
+            BlockPos.MutableBlockPos pos = target.gPos.pos().mutable();
+            Direction face = target.face;
             Level level = router.nonNullLevel();
             for (int i = 1; i <= getRange(); i++) {
-                if (level.getCapability(Capabilities.Item.BLOCK, pos, getTarget().face) != null) {
-                    GlobalPos gPos = MiscUtil.makeGlobalPos(level, pos.immutable());
-                    return new ModuleTarget(gPos, face, BlockUtil.getBlockName(level, pos));
+                if (level.getCapability(Capabilities.Item.BLOCK, pos, target.face) != null) {
+                    return Optional.of(new ModuleTarget(GlobalPos.of(level.dimension(), pos.immutable()), face, BlockUtil.getBlockName(level, pos)));
                 } else if (!isPassable(level, pos, face)) {
-                    return null;
+                    return Optional.<ModuleTarget>empty();
                 }
                 pos.move(getAbsoluteFacing());
             }
-        }
-        return null;
+            return Optional.<ModuleTarget>empty();
+        }).orElse(Optional.empty());
     }
 
     private boolean isPassable(Level w, BlockPos pos, Direction face) {
@@ -98,10 +98,5 @@ public class CompiledSenderModule1 extends CompiledModule {
     }
 
     public record PositionedItemHandler(BlockPos pos, ResourceHandler<ItemResource> handler) {
-        static final PositionedItemHandler INVALID = new PositionedItemHandler(null, null);
-
-        boolean isValid() {
-            return pos != null && handler != null;
-        }
     }
 }

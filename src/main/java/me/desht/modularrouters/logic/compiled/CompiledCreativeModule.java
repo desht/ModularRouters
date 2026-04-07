@@ -3,7 +3,6 @@ package me.desht.modularrouters.logic.compiled;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class CompiledCreativeModule extends CompiledModule {
@@ -14,7 +13,7 @@ public class CompiledCreativeModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         List<ItemStack> stacks = getFilter().getRawStacks();
         if (stacks.isEmpty()) return false;
 

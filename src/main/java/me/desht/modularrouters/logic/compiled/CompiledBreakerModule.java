@@ -19,14 +19,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
-
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.Nullable;
 
 public class CompiledBreakerModule extends CompiledModule {
     private final ItemStack pickaxe;
     private final BreakerSettings settings;
 
-    public CompiledBreakerModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledBreakerModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.BREAKER_SETTINGS, BreakerSettings.DEFAULT);
@@ -34,16 +33,19 @@ public class CompiledBreakerModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         if (router.getLevel() instanceof ServerLevel level && isRegulationOK(router, true)) {
-            BlockPos pos = getTarget().gPos.pos();
-            BlockState oldState = level.getBlockState(pos);
-            if (BlockUtil.tryBreakBlock(router, level, pos, getFilter(), pickaxe, getMatchType() == MatchType.BLOCK)) {
-                if (ConfigHolder.common.module.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
-                    level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
+            return getTarget().map(target -> {
+                BlockPos pos = target.gPos.pos();
+                BlockState oldState = level.getBlockState(pos);
+                if (BlockUtil.tryBreakBlock(router, level, pos, getFilter(), pickaxe, getMatchType() == MatchType.BLOCK)) {
+                    if (ConfigHolder.common.module.breakerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
+                        level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
+                    }
+                    return true;
                 }
-                return true;
-            }
+                return false;
+            }).orElse(false);
         }
         return false;
     }

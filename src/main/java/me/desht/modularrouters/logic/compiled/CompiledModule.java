@@ -28,13 +28,12 @@ import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public abstract class CompiledModule {
@@ -79,7 +78,11 @@ public abstract class CompiledModule {
                     .stream().filter(t -> isTargetValid(router, t))
                     .toList();
         }
-        filter = new Filter(stack, shouldStoreRawFilterItems(), augmentCounter.getAugmentCount(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get()) > 0);
+        filter = new Filter(stack,
+                shouldStoreRawFilterItems(),
+                augmentCounter.getAugmentCount(ModItems.FILTER_ROUND_ROBIN_AUGMENT.get()) > 0,
+                router == null ? null : router.getLevel().registryAccess()
+        );
         absoluteFacing = router == null ? null : router.getAbsoluteFacing(commonSettings.facing());
         routerFacing = router == null ? null : router.getAbsoluteFacing(RelativeDirection.FRONT);
         event = router == null ? null : new ExecuteModuleEvent(router, this);
@@ -92,9 +95,8 @@ public abstract class CompiledModule {
      * @param router router the module is installed in, may <strong>not</strong> be null
      * @return true if the module did some work, false otherwise
      */
-    public abstract boolean execute(@Nonnull ModularRouterBlockEntity router);
+    public abstract boolean execute(ModularRouterBlockEntity router);
 
-    @Nonnull
     public Filter getFilter() {
         return filter;
     }
@@ -114,8 +116,8 @@ public abstract class CompiledModule {
      *
      * @return the first target as set up by {@link #setupTargets(ModularRouterBlockEntity, ItemStack)}
      */
-    public ModuleTarget getTarget() {
-        return targets.isEmpty() ? null : targets.getFirst();
+    public Optional<ModuleTarget> getTarget() {
+        return targets.isEmpty() ? Optional.empty() : Optional.of(targets.getFirst());
     }
 
     /**
@@ -182,7 +184,7 @@ public abstract class CompiledModule {
      * @param router the router this module is installed in
      */
     @ApiStatus.OverrideOnly
-    public void onCompiled(@NotNull ModularRouterBlockEntity router) {
+    public void onCompiled(ModularRouterBlockEntity router) {
         if (getRedstoneBehaviour() == RedstoneBehaviour.PULSE) {
             router.setHasPulsedModules(true);
         }
@@ -208,7 +210,7 @@ public abstract class CompiledModule {
      * @param size size of the inventory being searched
      * @return the last position including offset, and wrapped to start of inventory if necessary
      */
-    private int getLastMatchPos(BlockPos key, int offset, int size) {
+    private int getLastMatchPos(@Nullable BlockPos key, int offset, int size) {
         int pos = (key == null ? lastMatchPos : lastMatchPosMap.getOrDefault(key, 0)) + offset;
         while (pos >= size) pos -= size;
         return pos;
@@ -219,7 +221,7 @@ public abstract class CompiledModule {
      *
      * @param lastMatchPos last matched position
      */
-    private void setLastMatchPos(BlockPos key, int lastMatchPos) {
+    private void setLastMatchPos(@Nullable BlockPos key, int lastMatchPos) {
         if (key == null)
             this.lastMatchPos = lastMatchPos;
         else
@@ -235,7 +237,7 @@ public abstract class CompiledModule {
      * @return a list of router target objects (for most modules this is a singleton list)
      */
     @Unmodifiable
-    protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
+    protected List<ModuleTarget> setupTargets(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         if (router == null || (module.isDirectional() && getDirection() == RelativeDirection.NONE)) {
             return List.of();
         } else if (module instanceof ITargetedModule) {
@@ -307,7 +309,7 @@ public abstract class CompiledModule {
         return transferred;
     }
 
-    private ItemStack findItemToPull(ModularRouterBlockEntity router, ResourceHandler<ItemResource> handler, BlockPos key, int nToTake, CountedItemStacks count) {
+    private ItemStack findItemToPull(ModularRouterBlockEntity router, ResourceHandler<ItemResource> handler, @Nullable BlockPos key, int nToTake, @Nullable CountedItemStacks count) {
         ItemStack stackInRouter = router.peekBuffer(1);
         if (!stackInRouter.isEmpty() && getFilter().test(stackInRouter) && (count == null || count.getInt(stackInRouter) - nToTake >= getRegulationAmount())) {
             // something in the router - try to pull more of that
@@ -333,7 +335,7 @@ public abstract class CompiledModule {
      *
      * @return the real target for this module
      */
-    public ModuleTarget getEffectiveTarget(ModularRouterBlockEntity router) {
+    public Optional<ModuleTarget> getEffectiveTarget(ModularRouterBlockEntity router) {
         return getTarget();
     }
 

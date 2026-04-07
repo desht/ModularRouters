@@ -5,7 +5,6 @@ import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.network.messages.RouterSettingsMessage;
-import me.desht.modularrouters.network.messages.RouterUpgradesSyncMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,8 +38,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
@@ -161,7 +159,7 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                 if (player instanceof ServerPlayer sp && router.isPermitted(player)) {
                     // TODO combine into one packet?
                     PacketDistributor.sendToPlayer(sp, RouterSettingsMessage.forRouter(router));
-                    PacketDistributor.sendToPlayer(sp, RouterUpgradesSyncMessage.forRouter(router));
+//                    PacketDistributor.sendToPlayer(sp, RouterUpgradesSyncMessage.forRouter(router));
                     sp.openMenu(router, pos);
                 } else if (!router.isPermitted(player) && world.isClientSide()) {
                     player.sendSystemMessage(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED));

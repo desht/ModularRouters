@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class BlockUtil {
      * @param facing direction the placer is facing
      * @return the new block state if successful, null otherwise
      */
+    @Nullable
     public static BlockState tryPlaceAsBlock(ModularRouterBlockEntity router, ItemStack toPlace, Level world, BlockPos pos, Direction facing) {
         if (!(toPlace.getItem() instanceof BlockItem)) {
             return null;
@@ -121,8 +123,8 @@ public class BlockUtil {
         return (allDrops.isEmpty() || !groups.get(true).isEmpty()) && fakePlayer.gameMode.destroyBlock(pos);
     }
 
-    public static String getBlockName(Level w, BlockPos pos) {
-        return w == null || !w.isLoaded(pos) ? "" : w.getBlockState(pos).getBlock().getDescriptionId();
+    public static String getBlockName(@Nullable Level level, BlockPos pos) {
+        return level == null || !level.isLoaded(pos) ? "" : level.getBlockState(pos).getBlock().getDescriptionId();
     }
 
     private static float getYawFromFacing(Direction facing) {

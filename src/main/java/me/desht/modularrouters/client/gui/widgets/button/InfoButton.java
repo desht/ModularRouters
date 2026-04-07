@@ -9,7 +9,7 @@ public class InfoButton extends TexturedButton {
     private static final XYPoint TEXTURE_XY = new XYPoint(128, 0);
 
     public InfoButton(int x, int y, String key) {
-        super(x, y, 16, 16, p -> {});
+        super(x, y, 16, 16, _ -> {});
         setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip." + key)));
     }
 

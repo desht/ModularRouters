@@ -2,7 +2,6 @@ package me.desht.modularrouters.client.gui.widgets.textfield;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -78,7 +77,7 @@ public class FloatTextField extends TextFieldWidgetMR {
         } catch (NumberFormatException e) {
             val = min;
         }
-        float newVal = Math.max(min, Math.min(max, val + adj));
+        float newVal = Math.clamp(val + adj, min, max);
         if (newVal != val) {
             setValue("");
             insertText(String.format(precStr, newVal));

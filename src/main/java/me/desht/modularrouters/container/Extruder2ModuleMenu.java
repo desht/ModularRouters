@@ -18,8 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
@@ -91,12 +91,12 @@ public class Extruder2ModuleMenu extends ModuleMenu {
     }
 
     public static class TemplateHandler extends BaseModuleHandler {
-        public TemplateHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
+        public TemplateHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router) {
             super(holderStack, router, TEMPLATE_SLOTS, ModDataComponents.EXTRUDER2_TEMPLATE.get());
         }
 
         @Override
-        public boolean isValid(int slot, @Nonnull ItemResource resource) {
+        public boolean isValid(int slot, ItemResource resource) {
             return isItemOKForTemplate(resource.toStack());
         }
 

@@ -4,7 +4,6 @@ import me.desht.modularrouters.item.module.ITargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -18,7 +17,7 @@ public interface IPositionProvider {
      * @param stack the itemstack
      * @return a list of block positions that has been retrieved from the itemstack
      */
-    default List<ModuleTarget> getStoredPositions(@Nonnull ItemStack stack) {
+    default List<ModuleTarget> getStoredPositions(ItemStack stack) {
         if (stack.getItem() instanceof ITargetedModule) {
             return List.copyOf(ITargetedModule.getTargets(stack, false));
         }

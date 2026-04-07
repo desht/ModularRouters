@@ -4,8 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Workaround for a problem in the Forge EntityPlaceEvent where the new blockstate isn't available in the event
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class CustomEntityPlaceEvent extends BlockEvent.EntityPlaceEvent {
     private final BlockState newState;
 
-    public CustomEntityPlaceEvent(@NotNull BlockSnapshot blockSnapshot, @NotNull BlockState placedAgainst, @Nullable Entity entity, @NotNull BlockState newState) {
+    public CustomEntityPlaceEvent(BlockSnapshot blockSnapshot, BlockState placedAgainst, @Nullable Entity entity, BlockState newState) {
         super(blockSnapshot, placedAgainst, entity);
         this.newState = newState;
     }

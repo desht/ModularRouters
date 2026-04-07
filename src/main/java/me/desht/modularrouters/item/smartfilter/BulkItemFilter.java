@@ -22,7 +22,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class BulkItemFilter extends SmartFilterItem {
     }
 
     @Override
-    public @NotNull IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         ModuleFlags flags = ModuleFlags.forItem(moduleStack);
 
         SetofItemStack stacks = getFilterItems(filterStack, flags);

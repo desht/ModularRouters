@@ -16,13 +16,17 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ClientUtil {
@@ -56,6 +60,7 @@ public class ClientUtil {
         return builder.addVertex(posMat, (float)vec.x, (float)vec.y, (float)vec.z).setLineWidth(lineWidth);
     }
 
+    @Nullable
     public static Slot getHoveredSlot() {
         if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> cs) {
             return cs.getSlotUnderMouse();
@@ -83,5 +88,13 @@ public class ClientUtil {
         lines.stream().reduce((c1, c2) -> c1.copy().append("\n").append(c2))
                 .ifPresentOrElse(c -> w.setTooltip(Tooltip.create(c)),
                         () -> w.setTooltip(null));
+    }
+
+    public static Level getClientLevel() {
+        return Objects.requireNonNull(Minecraft.getInstance().level);
+    }
+
+    public static Player getClientPlayer() {
+        return Objects.requireNonNull(Minecraft.getInstance().player);
     }
 }

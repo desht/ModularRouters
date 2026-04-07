@@ -7,6 +7,7 @@ import me.desht.modularrouters.client.gui.widgets.button.RedstoneBehaviourButton
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedCyclerButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedToggleButton;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.RouterMenu;
@@ -15,7 +16,6 @@ import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.network.messages.RouterSettingsMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -32,9 +32,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.transfer.access.ItemAccess;
-import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -76,18 +76,11 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
         addRenderableWidget(redstoneBehaviourButton = new RedstoneBehaviourButton(this.leftPos + 152, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getRedstoneBehaviour(), this));
         addRenderableWidget(ecoButton = new EcoButton(this.leftPos + 132, this.topPos + 10, BUTTON_WIDTH, BUTTON_HEIGHT, router.getEcoMode()));
         addRenderableWidget(energyDirButton = new EnergyDirectionButton(this.leftPos - 8, this.topPos + 40, router.getEnergyDirection()));
-        addRenderableWidget(energyWidget = new EnergyWidget(this.leftPos - 22, this.topPos + 15, (EnergyHandler) router.getEnergyStorage()));
+        addRenderableWidget(energyWidget = new EnergyWidget(this.leftPos - 22, this.topPos + 15, router.getEnergyStorage()));
         addRenderableWidget(energyWarning = new EnergyWarningButton(this.leftPos + 4, this.topPos + 4));
         energyWidget.visible = energyDirButton.visible = router.getEnergyCapacity() > 0;
         energyWarning.visible = false;
     }
-
-//    @Override
-//    public void extractRenderState(GuiGraphicsExtractor pGuiGraphicsExtractor, int pMouseX, int pMouseY, float pPartialTick) {
-//        super.extractRenderState(pGuiGraphicsExtractor, pMouseX, pMouseY, pPartialTick);
-//
-//        renderTooltip(pGuiGraphicsExtractor, pMouseX, pMouseY);
-//    }
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
@@ -101,6 +94,8 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         if (menu.getRouter().getEnergyCapacity() > 0) {
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos - 27, topPos, 180, 0, 32, 100, 256, 256);
@@ -209,15 +204,15 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
     }
 
     private class EnergyWarningButton extends TexturedButton {
-        private EnergyStatus prevStatus;
+        private EnergyStatus prevStatus = EnergyStatus.OK;
 
         public EnergyWarningButton(int x, int y) {
-            super(x, y, 16, 16, b -> {});
+            super(x, y, 16, 16, _ -> {});
         }
 
         private void tick() {
             EnergyStatus status;
-            if (energyUsage <= ((EnergyHandler) menu.getRouter().getEnergyStorage()).getAmountAsInt()) {
+            if (energyUsage <= menu.getRouter().getEnergyStorage().getAmountAsInt()) {
                 status = EnergyStatus.OK;
             } else if (menu.getRouter().getEnergyCapacity() > 0) {
                 status = EnergyStatus.ENERGY_LOW;
@@ -242,7 +237,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
 
         @Override
         protected XYPoint getTextureXY() {
-            return new XYPoint(240, Minecraft.getInstance().level.getGameTime() % 40 < 35 ? 0 : 240);
+            return new XYPoint(240, ClientUtil.getClientLevel().getGameTime() % 40 < 35 ? 0 : 240);
         }
     }
 
@@ -251,12 +246,14 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
         NO_UPGRADES(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning.noBuffer").withStyle(ChatFormatting.GOLD))),
         ENERGY_LOW(Tooltip.create(xlate("modularrouters.itemText.misc.energyWarning").withStyle(ChatFormatting.GOLD)));
 
+        @Nullable
         private final Tooltip tooltip;
 
-        EnergyStatus(Tooltip tooltip) {
+        EnergyStatus(@Nullable Tooltip tooltip) {
             this.tooltip = tooltip;
         }
 
+        @Nullable
         public Tooltip getTooltip() {
             return tooltip;
         }

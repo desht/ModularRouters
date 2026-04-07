@@ -18,19 +18,20 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class CompiledDistributorModule extends CompiledSenderModule2 {
     protected final DistributorSettings settings;
     protected int nextTarget;
 
-    public CompiledDistributorModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledDistributorModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.DISTRIBUTOR_SETTINGS, DistributorSettings.DEFAULT);
@@ -38,16 +39,14 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         return isPulling() ? executePull(router) : super.execute(router);
     }
 
     protected boolean executePull(ModularRouterBlockEntity router) {
         if (router.isBufferFull()) return false;
 
-        ModuleTarget tgt = getEffectiveTarget(router);
-        if (tgt == null) return false;
-        return tgt.getItemHandler().map(handler -> {
+        return getEffectiveTarget(router).map(tgt -> tgt.getItemHandler().map(handler -> {
             ItemStack taken = transferToRouter(handler, tgt.gPos.pos(), router);
             if (!taken.isEmpty()) {
                 if (ConfigHolder.common.module.pullerParticles.get()) {
@@ -56,11 +55,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 return true;
             }
             return false;
-        }).orElse(false);
-    }
-
-    protected boolean executePush(ModularRouterBlockEntity router) {
-        return super.execute(router);
+        }).orElse(false)).orElse(false);
     }
 
     public boolean isPulling() {
@@ -88,15 +83,16 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    protected List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
-        Set<ModuleTarget> t = ITargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide());
-        List<ModuleTarget> l = Lists.newArrayList(t);
-        if (router == null) return l;
-        l.sort(Comparator.comparingDouble(o -> calcDist(o, router)));
-        return l;
+    protected List<ModuleTarget> setupTargets(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
+        Set<ModuleTarget> targetSet = ITargetedModule.getTargets(stack, router != null && !router.nonNullLevel().isClientSide());
+        List<ModuleTarget> targetList = Lists.newArrayList(targetSet);
+        if (router != null) {
+            targetList.sort(Comparator.comparingDouble(o -> calcDist(o, router)));
+        }
+        return targetList;
     }
 
-    private static double calcDist(ModuleTarget tgt, @Nonnull BlockEntity blockEntity) {
+    private static double calcDist(ModuleTarget tgt, BlockEntity blockEntity) {
         double distance = tgt.gPos.pos().distSqr(blockEntity.getBlockPos());
         if (!tgt.isSameWorld(blockEntity.getLevel())) {
             distance += 100_000_000;  // cross-dimension penalty
@@ -105,10 +101,10 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
     }
 
     @Override
-    public ModuleTarget getEffectiveTarget(ModularRouterBlockEntity router) {
-        if (getTargets() == null || getTargets().isEmpty()) return null;
+    public Optional<ModuleTarget> getEffectiveTarget(ModularRouterBlockEntity router) {
+        if (getTargets().isEmpty()) return Optional.empty();
         int nTargets = getTargets().size();
-        if (nTargets == 1) return getTargets().getFirst(); // degenerate case
+        if (nTargets == 1) return Optional.of(getTargets().getFirst()); // degenerate case
 
         ModuleTarget res = null;
         ItemStack stack = router.peekBuffer(getItemsPerTick(router));
@@ -146,7 +142,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
         }
 
-        return res;
+        return Optional.ofNullable(res);
     }
 
     private boolean okToInsert(ModuleTarget target, ItemStack stack) {

@@ -30,18 +30,20 @@ import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.item.PlayerInventoryWrapper;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 import java.util.UUID;
 
 public class CompiledPlayerModule extends CompiledModule {
     private final PlayerSettings settings;
+    @Nullable
     private final GameProfile playerProfile;
-
+    @Nullable
     private WeakReference<Player> playerRef;
 
-    public CompiledPlayerModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledPlayerModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.PLAYER_SETTINGS, PlayerSettings.DEFAULT);
@@ -51,7 +53,7 @@ public class CompiledPlayerModule extends CompiledModule {
             Player player = playerProfile == null ? null : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerProfile.id());
             playerRef = new WeakReference<>(player);
         } else {
-            playerRef = new WeakReference<>(null);
+            playerRef = null;
         }
     }
 
@@ -61,8 +63,8 @@ public class CompiledPlayerModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
-        Player player = getPlayer();  // will be non-null if we get here
+    public boolean execute(ModularRouterBlockEntity router) {
+        Player player = Objects.requireNonNull(getPlayer());  // will be non-null if we get here
 
         if (isDimensionBlacklisted(router, player)) {
             return false;
@@ -108,6 +110,7 @@ public class CompiledPlayerModule extends CompiledModule {
         return matcher.test(router.nonNullLevel().dimension().identifier()) || matcher.test(player.level().dimension().identifier());
     }
 
+    @Nullable
     private Player getPlayer() {
         return playerRef == null ? null : playerRef.get();
     }
@@ -122,7 +125,7 @@ public class CompiledPlayerModule extends CompiledModule {
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity().getUUID().equals(getPlayerId())) {
-            playerRef = new WeakReference<>(null);
+            playerRef = null;
         }
     }
 
@@ -142,12 +145,9 @@ public class CompiledPlayerModule extends CompiledModule {
         }
     }
 
+    @Nullable
     public UUID getPlayerId() {
         return playerProfile == null ? null : playerProfile.id();
-    }
-
-    public String getPlayerName() {
-        return playerProfile == null ? null : playerProfile.name();
     }
 
     public TransferDirection getTransferDirection() {

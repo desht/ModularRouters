@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 
-public abstract class TexturedButton extends ExtendedButton /*implements ITooltipButton*/ {
+public abstract class TexturedButton extends ExtendedButton {
     static final Identifier TEXTURE = MiscUtil.RL("textures/gui/widgets.png");
 
     public TexturedButton(int x, int y, int width, int height, OnPress pressable) {

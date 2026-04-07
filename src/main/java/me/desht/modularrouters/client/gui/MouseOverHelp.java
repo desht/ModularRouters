@@ -60,7 +60,7 @@ public class MouseOverHelp {
                     .findFirst()
                     .ifPresent(r -> {
                         Font font = Minecraft.getInstance().font;
-                        showPopupBox(graphics, screen, font, r.extent, 0xC0000000, 0x6040FFFF, 0x0, null);
+                        showPopupBox(graphics, screen, font, r.extent, 0xC0000000, 0x6040FFFF, 0x0, List.of());
                         showPopupBox(graphics, screen, font, r.extent, 0xC0000000, 0xE0202020, 0xFFE0E0E0, r.text);
                     });
         }
@@ -69,7 +69,7 @@ public class MouseOverHelp {
     private static Rect2i calcBounds(AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, List<FormattedCharSequence> helpText) {
         int boxWidth, boxHeight;
 
-        if (helpText != null && !helpText.isEmpty()) {
+        if (!helpText.isEmpty()) {
             boxWidth = 0;
             boxHeight = helpText.size() * fontRenderer.lineHeight;
             for (FormattedCharSequence s : helpText) {
@@ -98,7 +98,7 @@ public class MouseOverHelp {
         graphics.fill(x1, y1, x1 + 1, y2, borderColor);
         graphics.fill(x2, y1, x2 + 1, y2 + 1, borderColor);
 
-        if (helpText != null) {
+        if (!helpText.isEmpty()) {
             for (FormattedCharSequence s : helpText) {
                 graphics.text(fontRenderer, s, x1 + TEXT_MARGIN / 2, y1 + TEXT_MARGIN / 2, textColor);
                 y1 += fontRenderer.lineHeight;

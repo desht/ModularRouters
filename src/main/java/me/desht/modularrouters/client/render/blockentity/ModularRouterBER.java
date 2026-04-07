@@ -3,31 +3,28 @@ package me.desht.modularrouters.client.render.blockentity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterRenderState.RenderedBeamData;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
-import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.ARGB;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -96,7 +93,7 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         Player player = Minecraft.getInstance().player;
         if (ConfigHolder.client.misc.heldRouterShowsCamoRouters.get()
                 && renderState.camouflage != null
-                && playerHoldingRouter(player)
+                && playerHoldingMRItem(player)
                 && Vec3.atCenterOf(renderState.blockPos).distanceToSqr(player.position()) < 256) {
             renderCamoHighlight(poseStack, submitNodeCollector);
         }
@@ -111,15 +108,13 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
             addVertices(buffer, pose.pose());
         });
 
-        submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.secondaryBlockOutline(), (pose, buffer) -> {
-            ShapeRenderer.renderShape(
-                    poseStack,
-                    buffer,
-                    CAMO_HIGHLIGHT_SHAPE,
-                    0, 0, 0,
-                    ARGB.colorFromFloat(1.0F, 0.5F, 0.5F, 1.0F),
-                    3.0f // Line width
-            );
+        submitNodeCollector.submitCustomGeometry(poseStack, ModRenderTypes.BLOCK_HILIGHT_LINE, (pose, buffer) -> {
+            int color = 0xFF8080FF;
+            CAMO_HIGHLIGHT_SHAPE.forAllEdges((x1, y1, z1, x2, y2, z2) -> {
+                Vector3f normal = new Vector3f((float)(x2 - x1), (float)(y2 - y1), (float)(z2 - z1)).normalize();
+                buffer.addVertex(pose, (float) x1, (float) y1, (float) z1).setColor(color).setNormal(pose, normal).setLineWidth(3f);
+                buffer.addVertex(pose, (float) x2, (float) y2, (float) z2).setColor(color).setNormal(pose, normal).setLineWidth(3f);
+            });
         });
 
         poseStack.popPose();
@@ -157,9 +152,8 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 1, 0);
     }
 
-    private static boolean playerHoldingRouter(Player player) {
-        Item router = ModBlocks.MODULAR_ROUTER.get().asItem();
-        return player.getMainHandItem().getItem() == router || player.getOffhandItem().getItem() == router;
+    private static boolean playerHoldingMRItem(@Nullable Player player) {
+        return player != null && BuiltInRegistries.ITEM.getKey(player.getMainHandItem().getItem()).getNamespace().equals(ModularRouters.MODID);
     }
 
     private void renderFlyingItem(BeamData beam, ItemStackRenderState itemStackRenderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, float progress, Vec3 startPos, Vec3 endPos) {

@@ -14,6 +14,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.model.data.ModelProperty;
+import org.jspecify.annotations.Nullable;
 
 public abstract class CamouflageableBlock extends Block {
     public static final ModelProperty<BlockState> CAMOUFLAGE_STATE = new ModelProperty<>();
@@ -84,7 +85,8 @@ public abstract class CamouflageableBlock extends Block {
 //        return camo == null ? super.propagatesSkylightDown(state, reader, pos) : camo.getCamouflage().propagatesSkylightDown(reader, pos);
 //    }
 
-    ICamouflageable getCamoState(BlockGetter blockAccess, BlockPos pos) {
+    @Nullable
+    ICamouflageable getCamoState(@Nullable BlockGetter blockAccess, @Nullable BlockPos pos) {
         if (blockAccess == null || pos == null) return null;
         BlockEntity te = blockAccess.getBlockEntity(pos);
         return te instanceof ICamouflageable c && c.getCamouflage() != null && !(c.getCamouflage().getBlock() instanceof CamouflageableBlock) ? c : null;

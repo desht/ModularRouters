@@ -35,9 +35,8 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class CompiledVacuumModule extends CompiledModule {
@@ -49,6 +48,7 @@ public class CompiledVacuumModule extends CompiledModule {
     private final boolean xpMode;
     private final FluidResource xpJuiceResource;
 
+    @Nullable
     private BlockCapabilityCache<ResourceHandler<FluidResource>,Direction> fluidReceiverCache = null;
 
     // temporary small xp buffer (generally around an orb or less)
@@ -71,9 +71,9 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         if (xpMode) {
-            return handleXpMode(router);
+            return getTarget().map(target -> handleXpMode(router, target)).orElse(false);
         } else {
             return handleItemMode(router);
         }
@@ -85,9 +85,9 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     @Override
-    public List<ModuleTarget> setupTargets(ModularRouterBlockEntity router, ItemStack stack) {
+    public List<ModuleTarget> setupTargets(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         if (router == null) {
-            return null;
+            return List.of();
         }
         RelativeDirection dir = getDirection();
         int offset = dir == RelativeDirection.NONE ? 0 : getRange() + 1;
@@ -102,13 +102,14 @@ public class CompiledVacuumModule extends CompiledModule {
     }
 
     private boolean handleItemMode(ModularRouterBlockEntity router) {
-        if (router.isBufferFull()) {
+        if (router.isBufferFull() || getTarget().isEmpty()) {
             return false;
         }
 
+        ModuleTarget target = getTarget().get();
         ItemStack bufferStack = ItemUtil.getStack(router.getBuffer(), 0);
 
-        BlockPos centrePos = getTarget().gPos.pos();
+        BlockPos centrePos = target.gPos.pos();
         int range = getRange();
         List<ItemEntity> items = router.nonNullLevel().getEntitiesOfClass(ItemEntity.class, new AABB(centrePos).inflate(range));
 
@@ -126,7 +127,7 @@ public class CompiledVacuumModule extends CompiledModule {
                         stackOnGround.getMaxStackSize() - inRouter;
                 ItemStack vacuumed = stackOnGround.split(Math.min(getItemsPerTick(router), spaceInRouter));
                 ItemStack excess = router.insertBuffer(vacuumed);
-                int remaining = excess == null ? 0 : excess.getCount();
+                int remaining = excess.getCount();
                 stackOnGround.grow(remaining);
                 int inserted = vacuumed.getCount() - remaining;
                 toPickUp -= inserted;
@@ -144,7 +145,7 @@ public class CompiledVacuumModule extends CompiledModule {
         return toPickUp < getItemsPerTick(router);
     }
 
-    private boolean handleXpMode(ModularRouterBlockEntity router) {
+    private boolean handleXpMode(ModularRouterBlockEntity router, ModuleTarget target) {
         int spaceForXp;
         ResourceHandler<FluidResource> fluidHandler = null;
 
@@ -168,7 +169,7 @@ public class CompiledVacuumModule extends CompiledModule {
 
         List<ExperienceOrb> orbs = router.nonNullLevel().getEntitiesOfClass(
                 ExperienceOrb.class,
-                new AABB(getTarget().gPos.pos()).inflate(getRange()),
+                new AABB(target.gPos.pos()).inflate(getRange()),
                 Entity::isAlive
         );
         if (orbs.isEmpty()) {
@@ -210,6 +211,7 @@ public class CompiledVacuumModule extends CompiledModule {
         return initialSpaceForXp - spaceForXp > 0;
     }
 
+    @Nullable
     private ResourceHandler<FluidResource> getFluidReceiver(ModularRouterBlockEntity router) {
         if (!xpMode || xpJuiceResource.isEmpty() || !(router.getLevel() instanceof ServerLevel serverLevel)) {
             return null;

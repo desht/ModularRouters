@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Codec;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.api.event.RouterCompiledEvent;
-import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.ModularRouterBlock;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.RouterMenu;
@@ -70,6 +69,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -81,14 +81,13 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
 public class ModularRouterBlockEntity extends BlockEntity implements ICamouflageable, MenuProvider {
-    public static final GameProfile DEFAULT_FAKEPLAYER_PROFILE = new GameProfile(
+    public static final NameAndId DEFAULT_FAKEPLAYER_PROFILE = new NameAndId(
             UUID.nameUUIDFromBytes(ModularRouters.MODID.getBytes()),
             "[" + ModularRouters.MODNAME + "]"
     );
@@ -103,12 +102,12 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private static final String NBT_BUFFER = "Buffer";
     public static final String NBT_MODULES = "Modules";
     public static final String NBT_UPGRADES = "Upgrades";
-    private static final String NBT_EXTRA = "Extra";
     public static final String NBT_REDSTONE_MODE = "Redstone";
     private static final String NBT_ENERGY = "EnergyBuffer";
     private static final String NBT_ENERGY_DIR = "EnergyDirection";
     private static final String NBT_ENERGY_UPGRADES = "EnergyUpgrades";
     private static final String NBT_OWNER_PROFILE = "OwnerProfile";
+    private static final String NBT_EXTRA = "Extra";
 
     private int counter = 0;
     private int pulseCounter = 0;
@@ -149,19 +148,22 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private boolean ecoMode = false;  // track eco-mode
     private int ecoCounter = ConfigHolder.common.router.ecoTimeout.get();
     private boolean hasPulsedModules = false;
-    private CompoundTag extData;  // extra (persisted) data which various modules can set & read
+    @Nullable
     private BlockState camouflage = null;  // block to masquerade as, set by Camo Upgrade
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
     private boolean executing;       // are we currently executing modules?
     private boolean careAboutItemAttributes;  // whether to bother transferring item attributes to fake player
     private boolean blockUpdateNeeded;  // for deferred block update sending
+    private CompoundTag extData = new CompoundTag();  // extra (persisted) data which various modules can set & read
 
     public final List<BeamData> beams = new ArrayList<>(); // client-side: beams being rendered
     public final List<BeamData> pendingBeams = new ArrayList<>(); // server-side: beams to be sent to client
 
-    private AABB cachedRenderAABB;
+    public final Lazy<AABB> cachedRenderAABB = Lazy.of(this::buildCachedRenderAABB);
 
-    private GameProfile ownerID;
+    @Nullable
+    private NameAndId ownerID;
+    @Nullable
     private RouterFakePlayer fakePlayer;
 
     public ModularRouterBlockEntity(BlockPos pos, BlockState state) {
@@ -180,7 +182,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return upgradesHandler;
     }
 
-    @Nonnull
     public Level nonNullLevel() {
         return Objects.requireNonNull(level);
     }
@@ -197,13 +198,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             if (nEnergy > 0) {
                 tag.putInt(NBT_ENERGY_UPGRADES, nEnergy);
             }
-
-//            getAllUpgrades().keySet().forEach(item -> {
-//                final var updateTag = item.createUpdateTag(this);
-//                if (updateTag != null) {
-//                    tag.put(BuiltInRegistries.ITEM.getKey(item).toString(), updateTag);
-//                }
-//            });
         });
     }
 
@@ -227,7 +221,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public void setOwner(Player player) {
-        ownerID = player.getGameProfile();
+        ownerID = player.nameAndId();
         setChanged();
     }
 
@@ -239,11 +233,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         );
 
         input.getInt(NBT_ENERGY_UPGRADES).ifPresent(energyStorage::updateForEnergyUpgrades);
-
-//        getAllUpgrades().keySet().forEach(item -> {
-//            final var updateTag = compound.get(BuiltInRegistries.ITEM.getKey(item).toString());
-//            item.processClientSync(this, (CompoundTag) updateTag);
-//        });
     }
 
     @Override
@@ -260,9 +249,8 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         active = input.getBooleanOr(NBT_ACTIVE, false);
         activeTimer = input.getIntOr(NBT_ACTIVE_TIMER, 0);
         ecoMode = input.getBooleanOr(NBT_ECO_MODE, false);
-        var tmpOwnerID = input.read(NBT_OWNER_PROFILE, NameAndId.CODEC).orElse(new NameAndId(DEFAULT_FAKEPLAYER_PROFILE.id(), DEFAULT_FAKEPLAYER_PROFILE.name()));
-        ownerID = new GameProfile(tmpOwnerID.id(), tmpOwnerID.name());
-        // TODO extension data
+        ownerID = input.read(NBT_OWNER_PROFILE, NameAndId.CODEC).orElse(DEFAULT_FAKEPLAYER_PROFILE);
+        extData = input.read(NBT_EXTRA, CompoundTag.CODEC).orElseGet(CompoundTag::new);
 
         // When restoring, give the counter a random initial value to avoid all saved routers
         // having the same counter and firing simultaneously, which could conceivably cause lag
@@ -288,8 +276,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         if (ownerID != null) {
             output.store(NBT_OWNER_PROFILE, NameAndId.CODEC, new NameAndId(ownerID.id(), ownerID.name()));
         }
-        // TODO extension data
-//        if (!getExtensionData().isEmpty()) nbt.put(NBT_EXTRA, getExtensionData());
+        if (!getExtensionData().isEmpty()) output.store(NBT_EXTRA, CompoundTag.CODEC, getExtensionData());
     }
 
     @Override
@@ -317,20 +304,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         InventoryUtils.dropInventoryItems(nonNullLevel(), pos, getBuffer());
     }
 
-    private boolean hasItems(ResourceHandler<ItemResource> handler) {
-        for (int i = 0; i < handler.size(); i++) {
-            if (!ItemUtil.getStack(handler, i).isEmpty()) return true;
-        }
-        return false;
-    }
-
     public void clientTick() {
         for (Iterator<BeamData> iterator = beams.iterator(); iterator.hasNext(); ) {
             BeamData beam = iterator.next();
             beam.tick();
             if (beam.isExpired()) {
                 iterator.remove();
-                cachedRenderAABB = null;
+                cachedRenderAABB.invalidate();
             }
         }
     }
@@ -387,18 +367,15 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     public RouterFakePlayer getFakePlayer() {
         if (getLevel() instanceof ServerLevel serverLevel) {
             if (fakePlayer == null) {
-                fakePlayer = new RouterFakePlayer(this, serverLevel, getOwnerProfile());
+                assert ownerID != null;
+                fakePlayer = new RouterFakePlayer(this, serverLevel, new GameProfile(ownerID.id(), ownerID.name()));
                 fakePlayer.getInventory().setSelectedSlot(0);  // held item always in slot 0
                 fakePlayer.setPosRaw(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
             }
             return fakePlayer;
+        } else {
+            throw new IllegalStateException("can't get fake player on the client!");
         }
-
-        return null;
-    }
-
-    private GameProfile getOwnerProfile() {
-        return Objects.requireNonNullElse(ownerID, DEFAULT_FAKEPLAYER_PROFILE);
     }
 
     private void executeModules(boolean pulsed) {
@@ -434,7 +411,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         for (CompiledIndexedModule cim : compiledModules) {
             CompiledModule cm = cim.compiledModule;
-            if (cm != null && cm.shouldExecute() && cm.getEnergyCost() <= getEnergyStorage().getAmountAsInt() && cm.checkRedstone(powered, pulsed)) {
+            if (cm.shouldExecute() && cm.getEnergyCost() <= getEnergyStorage().getAmountAsInt() && cm.checkRedstone(powered, pulsed)) {
                 var event = cm.getEvent();
                 if (event != null) {
                     event.setExecuted(false);
@@ -509,11 +486,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     @Override
-    public BlockState getCamouflage() {
+    public @Nullable BlockState getCamouflage() {
         return camouflage;
     }
 
-    public void setCamouflage(BlockState newCamouflage) {
+    public void setCamouflage(@org.jspecify.annotations.Nullable BlockState newCamouflage) {
         if (newCamouflage != camouflage) {
             this.camouflage = newCamouflage;
             handleSync(true);
@@ -526,6 +503,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         Level level = nonNullLevel();
         if (!level.isClientSide()) {
             if (anyPlayerHasThisOpen()) {
+                // don't sync immediately; this can mess up the GUI for players who have it open now
                 blockUpdateNeeded = true;
             } else {
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
@@ -537,16 +515,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     private boolean anyPlayerHasThisOpen() {
-        return level.players().stream()
+        return nonNullLevel().players().stream()
                 .anyMatch(p -> p.containerMenu instanceof RouterMenu menu && menu.getRouter() == this);
     }
 
-    @Nonnull
     @Override
     public ModelData getModelData() {
-        return ModelData.builder()
-                .with(CamouflageableBlock.CAMOUFLAGE_STATE, camouflage)
-                .build();
+        return ICamouflageable.makeModelData(camouflage);
     }
 
     public boolean caresAboutItemAttributes() {
@@ -633,6 +608,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
     }
 
+    public int getModuleCount() {
+        return compiledModules.size();
+    }
+
     private void notifyWatchingPlayers() {
         for (Player player : nonNullLevel().players()) {
             if (player instanceof ServerPlayer sp && player.containerMenu instanceof RouterMenu c && c.getRouter() == this) {
@@ -663,10 +642,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     public int getUpgradeCount(UpgradeItem type) {
         return upgradeCount.getOrDefault(type, 0);
-    }
-
-    public Map<UpgradeItem, Integer> getAllUpgrades() {
-        return Collections.unmodifiableMap(upgradeCount);
     }
 
     public void recompileNeeded(RecompileFlag what) {
@@ -891,13 +866,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     }
 
     public CompoundTag getExtensionData() {
-        if (extData == null) {
-            extData = new CompoundTag();
-        }
         return extData;
     }
 
-    public void playSound(Player player, BlockPos pos, SoundEvent sound, SoundSource category, float volume, float pitch) {
+    public void playSound(@Nullable Player player, BlockPos pos, SoundEvent sound, SoundSource category, float volume, float pitch) {
         if (getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
             nonNullLevel().playSound(player, pos, sound, category, volume, pitch);
         }
@@ -948,18 +920,19 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         compileUpgrades();
     }
 
-    public AABB getRenderBoundingBox() {
-        if (cachedRenderAABB == null) {
-            cachedRenderAABB = new AABB(getBlockPos());
-            beams.forEach(beam -> cachedRenderAABB = cachedRenderAABB.minmax(beam.getAABB(getBlockPos())));
+
+    private AABB buildCachedRenderAABB() {
+        AABB box = new AABB(getBlockPos());
+        for (BeamData beam : beams) {
+            box = box.minmax(beam.getAABB(getBlockPos()));
         }
-        return cachedRenderAABB;
+        return box;
     }
 
     public void addItemBeam(BeamData beamData) {
         if (nonNullLevel().isClientSide()) {
             beams.add(beamData);
-            cachedRenderAABB = null;
+            cachedRenderAABB.invalidate();
         } else {
             pendingBeams.add(beamData);
         }
@@ -986,10 +959,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return energyDirection;
     }
 
-    public int getModuleCount() {
-        return compiledModules.size();
-    }
-
+    @Nullable
     public ResourceHandler<FluidResource> getFluidHandler() {
         return bufferHandler.getFluidHandler();
     }
@@ -999,6 +969,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
             blockUpdateNeeded = false;
         }
+    }
+
+    public AABB getRenderBoundingBox() {
+        return cachedRenderAABB.get();
     }
 
     public enum EnergyDirection implements TranslatableEnum, StringRepresentable {
@@ -1044,7 +1018,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         @Override
-        public boolean isValid(int index, @Nonnull ItemResource resource) {
+        public boolean isValid(int index, ItemResource resource) {
             return !resource.isEmpty() && validator.test(resource.toStack());
         }
 
@@ -1087,7 +1061,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         @Override
-        public boolean isValid(int index, @Nonnull ItemResource resource) {
+        public boolean isValid(int index, ItemResource resource) {
             if (!super.isValid(index, resource)) return false;
             ItemStack stack = resource.toStack();
             UpgradeItem item = (UpgradeItem) stack.getItem();
@@ -1104,7 +1078,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         }
 
         @Override
-        protected int getCapacity(int index, @Nonnull ItemResource resource) {
+        protected int getCapacity(int index, ItemResource resource) {
             if (resource.isEmpty()) return 64;
             return resource.getItem() instanceof UpgradeItem u ? u.getInstalledStackLimit() : 0;
         }

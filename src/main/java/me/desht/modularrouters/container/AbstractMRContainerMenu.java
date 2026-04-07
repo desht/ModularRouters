@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractMRContainerMenu extends AbstractContainerMenu {
     AbstractMRContainerMenu(@Nullable MenuType<?> type, int id) {

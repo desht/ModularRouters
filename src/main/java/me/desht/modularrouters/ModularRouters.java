@@ -4,7 +4,6 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.*;
 import me.desht.modularrouters.datagen.*;
 import me.desht.modularrouters.integration.IntegrationHandler;
-import me.desht.modularrouters.integration.XPCollection;
 import me.desht.modularrouters.network.NetworkHandler;
 import me.desht.modularrouters.util.ModNameCache;
 import me.desht.modularrouters.util.WildcardedRLMatcher;
@@ -17,6 +16,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +28,9 @@ public class ModularRouters {
 
     public static final Logger LOGGER = LogManager.getLogger(MODNAME);
 
-    private static WildcardedRLMatcher dimensionBlacklist;
+    private static final Lazy<WildcardedRLMatcher> dimensionBlacklist = Lazy.of(() ->
+            new WildcardedRLMatcher(ConfigHolder.common.module.dimensionBlacklist.get())
+    );
 
     public ModularRouters(ModContainer container, IEventBus modBus) {
         ConfigHolder.init(container, modBus);
@@ -56,26 +58,23 @@ public class ModularRouters {
     private void registerCaps(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.Item.BLOCK,
                 ModBlockEntities.MODULAR_ROUTER.get(),
-                (be, side) -> be.getBuffer());
+                (be, _) -> be.getBuffer());
 
         event.registerBlockEntity(Capabilities.Fluid.BLOCK,
                 ModBlockEntities.MODULAR_ROUTER.get(),
-                (be, side) -> be.getFluidHandler());
+                (be, _) -> be.getFluidHandler());
 
         event.registerBlockEntity(Capabilities.Energy.BLOCK,
                 ModBlockEntities.MODULAR_ROUTER.get(),
-                (be, side) -> be.getEnergyStorage());
+                (be, _) -> be.getEnergyStorage());
     }
 
     public static WildcardedRLMatcher getDimensionBlacklist() {
-        if (dimensionBlacklist == null) {
-            dimensionBlacklist = new WildcardedRLMatcher(ConfigHolder.common.module.dimensionBlacklist.get());
-        }
-        return dimensionBlacklist;
+        return dimensionBlacklist.get();
     }
 
     public static void clearDimensionBlacklist() {
-        dimensionBlacklist = null;
+        dimensionBlacklist.invalidate();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

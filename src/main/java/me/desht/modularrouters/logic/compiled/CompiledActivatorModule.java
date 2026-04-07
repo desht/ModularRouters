@@ -39,8 +39,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -59,14 +59,14 @@ public class CompiledActivatorModule extends CompiledModule {
     private static final Set<Item> itemBlacklist = new HashSet<>();
     private static final Set<Block> blockBlacklist = new HashSet<>();
 
-    public CompiledActivatorModule(ModularRouterBlockEntity router, ItemStack stack) {
+    public CompiledActivatorModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
         settings = stack.getOrDefault(ModDataComponents.ACTIVATOR_SETTINGS, ActivatorSettings.DEFAULT);
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         ItemStack stack = router.getBufferItemStack();
 
         if (stack.is(ModularRoutersTags.Items.ACTIVATOR_BLACKLIST) || itemBlacklist.contains(stack.getItem())) {
@@ -82,6 +82,7 @@ public class CompiledActivatorModule extends CompiledModule {
         RouterFakePlayer fakePlayer = router.getFakePlayer();
         Vec3 centre = Vec3.atCenterOf(router.getBlockPos());
         // place the fake player just outside the router, on the correct face
+        assert getAbsoluteFacing() != null;
         fakePlayer.setPos(centre.x() + getAbsoluteFacing().getStepX() * 0.501, centre.y() + getAbsoluteFacing().getStepY() * 0.501, centre.z() + getAbsoluteFacing().getStepZ() * 0.501);
         fakePlayer.setShiftKeyDown(settings.sneaking);
         fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, stack);
@@ -101,6 +102,7 @@ public class CompiledActivatorModule extends CompiledModule {
     }
 
     private boolean doUseItem(ModularRouterBlockEntity router, FakePlayer fakePlayer) {
+        assert getAbsoluteFacing() != null;
         BlockPos pos = router.getBlockPos();
         Level world = Objects.requireNonNull(router.getLevel());
         ItemStack stack = router.getBufferItemStack();
@@ -144,6 +146,7 @@ public class CompiledActivatorModule extends CompiledModule {
     private BlockHitResult doRayTrace(BlockPos routerPos, FakePlayer fp) {
         Vec3 fpVec = fp.position(); // ray trace starts at this point
 
+        assert getAbsoluteFacing() != null;
         int xOff = getAbsoluteFacing().getStepX();
         int yOff = getAbsoluteFacing().getStepY();
         int zOff = getAbsoluteFacing().getStepZ();
@@ -216,6 +219,7 @@ public class CompiledActivatorModule extends CompiledModule {
         return false;
     }
 
+    @Nullable
     private <T extends Entity> T findEntity(ModularRouterBlockEntity router, Class<T> cls, Predicate<Entity> blacklistChecker) {
         final Direction face = Objects.requireNonNull(getAbsoluteFacing());
         final BlockPos pos = router.getBlockPos();
@@ -257,6 +261,7 @@ public class CompiledActivatorModule extends CompiledModule {
         // any items added to the fake player's inventory from using the held item need to be dropped into
         // the world, since the router has no access to them, and the player would otherwise lose them
         // e.g. milking a cow with a stack of buckets in the router slot
+        assert getAbsoluteFacing() != null;
         NonNullList<ItemStack> inv = fakePlayer.getInventory().getNonEquipmentItems();
         Vec3 where = Vec3.atCenterOf(router.getBlockPos().relative(getAbsoluteFacing()));
         // start at slot 1, since slot 0 is always used for the fake player's held item, which doesn't get dropped

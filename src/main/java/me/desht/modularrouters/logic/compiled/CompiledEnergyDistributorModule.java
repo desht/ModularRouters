@@ -8,9 +8,8 @@ import me.desht.modularrouters.util.BeamData;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class CompiledEnergyDistributorModule extends CompiledModule {
@@ -23,10 +22,10 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         if (!getTargets().isEmpty()) {
             EnergyHandler storage = router.getEnergyStorage();
-            if (storage != null) {
+            if (storage.getCapacityAsInt() > 0) {
                 boolean doBeam = router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) < 2;
                 return settings.isPulling() ?
                         pullEnergy(router, storage, getTargets(), doBeam) > 0 :
@@ -36,7 +35,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
         return false;
     }
 
-    private int sendEnergy(@Nonnull ModularRouterBlockEntity router, EnergyHandler storage, List<ModuleTarget> targets, boolean doBeam) {
+    private int sendEnergy(ModularRouterBlockEntity router, EnergyHandler storage, List<ModuleTarget> targets, boolean doBeam) {
         int total = 0;
         int toSend = storage.getAmountAsInt() / targets.size();
 
@@ -52,7 +51,7 @@ public class CompiledEnergyDistributorModule extends CompiledModule {
         return total;
     }
 
-    private int pullEnergy(@Nonnull ModularRouterBlockEntity router, EnergyHandler storage, List<ModuleTarget> targets, boolean doBeam) {
+    private int pullEnergy(ModularRouterBlockEntity router, EnergyHandler storage, List<ModuleTarget> targets, boolean doBeam) {
         int total = 0;
         int toPull = (storage.getCapacityAsInt() - storage.getAmountAsInt()) / targets.size();
 

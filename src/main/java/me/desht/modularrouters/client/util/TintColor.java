@@ -44,7 +44,7 @@ public class TintColor {
 
     public static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
         float hue, saturation, brightness;
-        if (hsbvals == null) {
+        if (hsbvals.length == 0) {
             hsbvals = new float[3];
         }
         int cmax = Math.max(r, g);

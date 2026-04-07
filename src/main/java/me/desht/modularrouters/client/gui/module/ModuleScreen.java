@@ -49,6 +49,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.Range;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.EnumMap;
@@ -71,8 +72,10 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
 
     protected final ItemStack moduleItemStack;
     private final ModuleItem module;
+    @Nullable
     private final BlockPos routerPos;
     private final int moduleSlotIndex;
+    @Nullable
     private final InteractionHand hand;
     private final ModuleSettings settings;
     private int sendDelay;
@@ -153,13 +156,6 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         mouseOverHelp.addHelpRegion(leftPos + 68, topPos + 16, leftPos + 121, topPos + 69, module.isDirectional() ? "modularrouters.guiText.popup.direction" : "modularrouters.guiText.popup.noDirection");
         mouseOverHelp.addHelpRegion(leftPos + 77, topPos + 74, leftPos + 112, topPos + 109, "modularrouters.guiText.popup.augments");
     }
-
-//    @Override
-//    public void render(GuiGraphicsExtractor pGuiGraphicsExtractor, int pMouseX, int pMouseY, float pPartialTick) {
-//        super.render(pGuiGraphicsExtractor, pMouseX, pMouseY, pPartialTick);
-//
-//        renderTooltip(pGuiGraphicsExtractor, pMouseX, pMouseY);
-//    }
 
     protected IntegerTextField buildRegulationTextField() {
         IntegerTextField tf = new IntegerTextField(font, leftPos + 166, topPos + 75, 20, 12, Range.of(0, 64));
@@ -272,7 +268,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     protected TintColor getGuiBackgroundTint() {
         if (ConfigHolder.client.misc.moduleGuiBackgroundTint.get()) {
             TintColor c = module.getItemTint();
-            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+            float[] hsb = TintColor.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), new float[0]);
             return TintColor.getHSBColor(hsb[0], hsb[1] * 0.5f, hsb[2]);
         } else {
             return TintColor.WHITE;

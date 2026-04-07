@@ -11,15 +11,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nonnull;
-
 public class CompiledPlacerModule extends CompiledModule {
     public CompiledPlacerModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         if (!isRegulationOK(router, false)) {
             return false;
         }
@@ -28,16 +26,19 @@ public class CompiledPlacerModule extends CompiledModule {
             return false;
         }
         Level level = router.nonNullLevel();
-        BlockPos pos = getTarget().gPos.pos();
-        BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, level, pos, getAbsoluteFacing());
-        if (newState != null) {
-            if (ConfigHolder.common.module.placerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
-                level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(newState));
+        return getTarget().map(target -> {
+            BlockPos pos = target.gPos.pos();
+            assert getAbsoluteFacing() != null;
+            BlockState newState = BlockUtil.tryPlaceAsBlock(router, toPlace, level, pos, getAbsoluteFacing());
+            if (newState != null) {
+                if (ConfigHolder.common.module.placerParticles.get() && router.getUpgradeCount(ModItems.MUFFLER_UPGRADE.get()) == 0) {
+                    level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(newState));
+                }
+                router.extractBuffer(1);
+                return true;
+            } else {
+                return false;
             }
-            router.extractBuffer(1);
-            return true;
-        } else {
-            return false;
-        }
+        }).orElse(false);
     }
 }

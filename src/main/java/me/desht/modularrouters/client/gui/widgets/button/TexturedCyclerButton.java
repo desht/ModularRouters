@@ -4,7 +4,6 @@ import me.desht.modularrouters.client.gui.ISendToServer;
 import me.desht.modularrouters.util.TranslatableEnum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.Screen;
 
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
@@ -27,7 +26,7 @@ public abstract class TexturedCyclerButton<T extends Enum<T> & TranslatableEnum>
 
     public void setState(T newState) {
         state = newState;
-        setTooltip(state.getTranslationKey() == null ? null : makeTooltip(state));
+        setTooltip(state.getTranslationKey().isEmpty() ? null : makeTooltip(state));
     }
 
     protected Tooltip makeTooltip(T object) {

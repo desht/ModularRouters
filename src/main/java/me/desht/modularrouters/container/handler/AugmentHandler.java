@@ -6,27 +6,15 @@ import me.desht.modularrouters.item.augment.AugmentItem;
 import me.desht.modularrouters.item.module.ModuleItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ItemResource;
-
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.Nullable;
 
 public class AugmentHandler extends BaseModuleHandler {
-    public AugmentHandler(ItemStack holderStack, ModularRouterBlockEntity router) {
+    public AugmentHandler(ItemStack holderStack, @Nullable ModularRouterBlockEntity router) {
         super(holderStack, router, AugmentItem.SLOTS, ModDataComponents.AUGMENTS.get());
-
-//        Validate.isTrue(holderStack.getItem() instanceof ModuleItem, "holder stack must be a module!");
-
-//        var augmentStacks = holderStack.getOrDefault(ModDataComponents.AUGMENTS, ItemContainerContents.EMPTY).stream()
-//                .limit(AugmentItem.SLOTS)
-//                .toList();
-//        for (int i = 0; i < AugmentItem.SLOTS && i < augmentStacks.size(); i++) {
-//            if (augmentStacks.get(i).getItem() instanceof AugmentItem) {
-//                setStackInSlot(i, augmentStacks.get(i));
-//            }
-//        }
     }
 
     @Override
-    public boolean isValid(int slot, @Nonnull ItemResource resource) {
+    public boolean isValid(int slot, ItemResource resource) {
         if (!(resource.getItem() instanceof AugmentItem augment)) return false;
 
         if (augment.getMaxAugments((ModuleItem) getHolderStack().getItem()) == 0) return false;
@@ -40,7 +28,7 @@ public class AugmentHandler extends BaseModuleHandler {
     }
 
     @Override
-    protected int getCapacity(int slot, @Nonnull ItemResource resource) {
+    protected int getCapacity(int slot, ItemResource resource) {
         if (resource.isEmpty()) {
             return AugmentItem.SLOTS;
         }
@@ -48,38 +36,4 @@ public class AugmentHandler extends BaseModuleHandler {
                 augment.getMaxAugments((ModuleItem) getHolderStack().getItem()) :
                 0;
     }
-
-//    @Override
-//    protected void onContentsChanged(int index, ItemStack previousContents) {
-//        save();
-//    }
-
-//    private void save() {
-//        holderStack.set(ModDataComponents.AUGMENTS, ItemContainerContents.fromItems(stacks));
-//
-//        if (router != null) {
-//            router.recompileNeeded(RecompileFlag.MODULES);
-//        }
-//    }
-
-//    /**
-//     * Directly overwrites the contents of the handler at a specific index.
-//     */
-//    public void setStackInSlot(int slot, ItemStack stack) {
-//        set(slot, ItemResource.of(stack), stack.getCount());
-//    }
-//
-//    /**
-//     * Get an ItemStack copy of the contents at the given slot.
-//     */
-//    public ItemStack getStackInSlot(int slot) {
-//        return ItemUtil.getStack(this, slot);
-//    }
-//
-//    /**
-//     * Get the number of slots in this handler.
-//     */
-//    public int getSlots() {
-//        return size();
-//    }
 }

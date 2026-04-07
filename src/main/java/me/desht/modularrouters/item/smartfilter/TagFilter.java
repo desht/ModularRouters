@@ -14,7 +14,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -36,7 +35,6 @@ public class TagFilter extends SmartFilterItem {
         filterStack.set(ModDataComponents.FILTER_STRINGS, tags.stream().map(t -> t.location().toString()).toList());
     }
 
-    @NotNull
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new TagMatcher(getTagList(filterStack));

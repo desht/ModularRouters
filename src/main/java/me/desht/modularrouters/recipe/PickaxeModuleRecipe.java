@@ -72,7 +72,7 @@ public abstract class PickaxeModuleRecipe extends CustomRecipe {
 
     private static boolean isValidPickaxe(ItemStack stack) {
         // TODO is this best way of identifying a pickaxe now?
-        return stack != null && stack.is(ItemTags.PICKAXES) && stack.getDamageValue() == 0;
+        return stack.is(ItemTags.PICKAXES) && stack.getDamageValue() == 0;
     }
 
     public static class BreakerModuleRecipe extends PickaxeModuleRecipe {

@@ -6,7 +6,6 @@ import me.desht.modularrouters.container.AbstractSmartFilterMenu;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.util.MFLocator;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;

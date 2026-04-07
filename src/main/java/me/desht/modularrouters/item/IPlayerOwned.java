@@ -3,7 +3,6 @@ package me.desht.modularrouters.item;
 import com.mojang.authlib.GameProfile;
 import me.desht.modularrouters.core.ModDataComponents;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ResolvableProfile;
 

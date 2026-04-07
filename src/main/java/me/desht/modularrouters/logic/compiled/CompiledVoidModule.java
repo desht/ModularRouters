@@ -5,15 +5,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 
-import javax.annotation.Nonnull;
-
 public class CompiledVoidModule extends CompiledModule  {
     public CompiledVoidModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
     }
 
     @Override
-    public boolean execute(@Nonnull ModularRouterBlockEntity router) {
+    public boolean execute(ModularRouterBlockEntity router) {
         ItemStack stack = router.getBufferItemStack();
         if (getFilter().test(stack)) {
             // bye bye items

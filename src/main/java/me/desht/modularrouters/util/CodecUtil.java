@@ -3,6 +3,7 @@ package me.desht.modularrouters.util;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
@@ -46,11 +47,8 @@ public class CodecUtil {
     };
 
     private static ItemStacksResourceHandler createHandler(int handlerSize, List<SlottedItem> slots) {
-        ItemStacksResourceHandler h = new ItemStacksResourceHandler(handlerSize);
-        slots.forEach(rec -> {
-            h.set(rec.slot, ItemResource.of(rec.stack), rec.stack.getCount());
-        });
-        return h;
+        return Util.make(new ItemStacksResourceHandler(handlerSize), h ->
+                slots.forEach(rec -> h.set(rec.slot, ItemResource.of(rec.stack), rec.stack.getCount())));
     }
 
     private record SlottedItem(int slot, ItemStack stack) {

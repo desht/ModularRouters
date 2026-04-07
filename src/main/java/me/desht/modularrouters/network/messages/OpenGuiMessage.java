@@ -11,6 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.Objects;
+
 /**
  * Received on: SERVER
  * <p>
@@ -61,21 +63,21 @@ public record OpenGuiMessage(OpenGuiOp op, MFLocator locator) implements CustomP
             case ROUTER ->
                 // item router GUI
                     locator.getRouter(player.level())
-                            .ifPresent(router -> player.openMenu(router, locator.routerPos()));
+                            .ifPresent(router -> player.openMenu(router, Objects.requireNonNull(locator.routerPos())));
             case MODULE_HELD ->
                 // module held in player's hand
                     player.openMenu(new ModuleItem.ModuleMenuProvider(player, locator), locator::toNetwork);
             case MODULE_INSTALLED ->
                 // module installed in a router
                     locator.getRouter(player.level())
-                            .ifPresent(router -> player.openMenu(new ModuleItem.ModuleMenuProvider(player, locator), locator::toNetwork));
+                            .ifPresent(_ -> player.openMenu(new ModuleItem.ModuleMenuProvider(player, locator), locator::toNetwork));
             case FILTER_HELD ->
                 // filter is in a module in player's hand
                     player.openMenu(new SmartFilterItem.FilterMenuProvider(player, locator), locator::toNetwork);
             case FILTER_INSTALLED ->
                 // filter is in a module in a router
                     locator.getRouter(player.level())
-                            .ifPresent(router -> player.openMenu(new SmartFilterItem.FilterMenuProvider(player, locator), locator::toNetwork));
+                            .ifPresent(_ -> player.openMenu(new SmartFilterItem.FilterMenuProvider(player, locator), locator::toNetwork));
         }
     }
 

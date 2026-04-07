@@ -7,10 +7,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import me.desht.modularrouters.api.matching.IItemMatcher;
 import me.desht.modularrouters.api.matching.IModuleFlags;
 import me.desht.modularrouters.util.TranslatableEnum;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -39,7 +39,7 @@ public class InspectionMatcher implements IItemMatcher {
     }
 
     @Override
-    public boolean matchItem(ItemStack stack, IModuleFlags flags) {
+    public boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.Provider registryAccess) {
         int matched = 0;
         if (comparisonList.items.isEmpty()) {
             return false;
@@ -113,9 +113,6 @@ public class InspectionMatcher implements IItemMatcher {
 
         @Override
         public boolean test(ItemStack stack) {
-            if (op == null || subject == null) {
-                return false;
-            }
             Optional<Integer> val = subject.evaluator.apply(stack);
             return op.test(Long.valueOf(val.orElse(-1)), (long) target);
         }
@@ -126,7 +123,6 @@ public class InspectionMatcher implements IItemMatcher {
         }
 
         public MutableComponent asLocalizedText() {
-            if (subject == null || op == null) return Component.literal("<?>");
             return xlate(subject.getTranslationKey())
                     .append(" ")
                     .append(xlate(op.getTranslationKey()))

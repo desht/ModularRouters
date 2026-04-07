@@ -3,13 +3,16 @@ package me.desht.modularrouters.client.gui.widgets.button;
 import me.desht.modularrouters.client.gui.ISendToServer;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 
 public abstract class TexturedToggleButton extends TexturedButton implements IToggleButton {
     private boolean toggled;
+    @Nullable
     private Tooltip untoggledTooltip;
+    @Nullable
     private Tooltip toggledTooltip;
 
-    public TexturedToggleButton(int x, int y, int width, int height, boolean toggled, ISendToServer dataSyncer) {
+    public TexturedToggleButton(int x, int y, int width, int height, boolean toggled, @Nullable ISendToServer dataSyncer) {
         super(x, y, width, height, button -> {
             ((TexturedToggleButton) button).toggle();
             if (dataSyncer != null) dataSyncer.sendToServer();

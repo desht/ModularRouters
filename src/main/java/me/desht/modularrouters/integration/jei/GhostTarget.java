@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 record GhostTarget<I>(IIngredientType<I> type, AbstractContainerScreen<?> gui, Slot slot) implements IGhostIngredientHandler.Target<I> {
     @Override

@@ -18,6 +18,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
+import org.jspecify.annotations.Nullable;
 
 import static me.desht.modularrouters.container.Layout.SLOT_X_SPACING;
 import static me.desht.modularrouters.container.Layout.SLOT_Y_SPACING;
@@ -36,6 +37,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
     private final ModuleFilterHandler filterHandler;
     private final AugmentHandler augmentHandler;
     private final int currentSlot;  // currently-selected slot for player
+    @Nullable
     protected final ModularRouterBlockEntity router;
     private final MFLocator locator;
 
@@ -91,6 +93,7 @@ public class ModuleMenu extends AbstractMRContainerMenu {
         return locator;
     }
 
+    @Nullable
     public ModularRouterBlockEntity getRouter() {
         return router;
     }

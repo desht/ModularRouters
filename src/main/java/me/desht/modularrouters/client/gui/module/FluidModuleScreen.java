@@ -54,7 +54,7 @@ public class FluidModuleScreen extends ModuleScreen {
         maxTransferField = new IntegerTextField(font, leftPos + 152, topPos + 23, 34, 12,
                 Range.of(0, max));
         maxTransferField.setValue(cfm.getMaxTransfer());
-        maxTransferField.setResponder(str -> sendModuleSettingsDelayed(5));
+        maxTransferField.setResponder(_ -> sendModuleSettingsDelayed(5));
         maxTransferField.setIncr(100, 10, 10);
         maxTransferField.useGuiTextBackground();
         addRenderableWidget(maxTransferField);
@@ -62,7 +62,7 @@ public class FluidModuleScreen extends ModuleScreen {
         addRenderableWidget(new TooltipButton(leftPos + 130, topPos + 19, 16, 16, bucketStack));
         addRenderableWidget(fluidDirButton = new FluidDirectionButton(leftPos + 148, topPos + 44, cfm.getFluidDirection()));
         addRenderableWidget(forceEmptyButton = new ForceEmptyButton(leftPos + 168, topPos + 69, cfm.isForceEmpty()));
-        addRenderableWidget(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.getX() + regulatorTextField.getWidth() + 2, regulatorTextField.getY() - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
+        addRenderableWidget(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.getX() + regulatorTextField.getWidth() + 2, regulatorTextField.getY() - 1, 18, 14, _ -> toggleRegulationType(), cfm.isRegulateAbsolute()));
 
         getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 17, leftPos + 183, topPos + 35, "modularrouters.guiText.popup.fluid.maxTransfer");
         getMouseOverHelp().addHelpRegion(leftPos + 126, topPos + 42, leftPos + 185, topPos + 61, "modularrouters.guiText.popup.fluid.direction");
@@ -125,7 +125,7 @@ public class FluidModuleScreen extends ModuleScreen {
 
     private class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
-            super(x, y, width, height, renderStack, true, p -> {});
+            super(x, y, width, height, renderStack, true, _ -> {});
             List<Component> tooltip = new ArrayList<>();
             tooltip.add(xlate("modularrouters.guiText.tooltip.fluidTransferTooltip"));
             tooltip.add(Component.empty());

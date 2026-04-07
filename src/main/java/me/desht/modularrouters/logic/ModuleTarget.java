@@ -21,8 +21,8 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -68,7 +68,7 @@ public class ModuleTarget {
     }
 
     public ModuleTarget(GlobalPos gPos) {
-        this(gPos, null);
+        this(gPos, Direction.UP);  // arbitrary direction
     }
 
     public boolean isSameWorld(@Nullable Level world) {

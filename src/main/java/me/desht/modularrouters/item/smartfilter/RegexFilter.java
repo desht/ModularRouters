@@ -6,7 +6,6 @@ import me.desht.modularrouters.logic.filter.matchers.RegexMatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -41,7 +40,7 @@ public class RegexFilter extends SmartFilterItem {
     }
 
     @Override
-    public @NotNull IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
+    public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new RegexMatcher(getRegexList(filterStack));
     }
 
