@@ -59,7 +59,7 @@ version = mod_version
 group = project.mod_group_id
 
 base {
-    archivesName = "${archive_base_name}-${mod_version}+mc${minecraft_version}"
+//    archivesName = "${archive_base_name}-${mod_version}"
 }
 
 java {
@@ -164,21 +164,11 @@ dependencies {
 //    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
 //
     compileOnly "dev.ftb.mods:ftb-filter-system-neoforge:${ffs_version}" transitive false
-//
+
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
     runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-
-    // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
-//    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
-//        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
-//        def versionSep = basename.lastIndexOf('-')
-//        assert versionSep != -1
-//        def artifactId = basename.substring(0, versionSep)
-//        def version = basename.substring(versionSep + 1)
-//        runtimeOnly "extra-mods:$artifactId:$version"
-//    }
 }
 
 tasks.withType(ProcessResources).configureEach {
