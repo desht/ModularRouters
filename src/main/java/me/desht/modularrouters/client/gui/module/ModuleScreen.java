@@ -13,7 +13,6 @@ import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.client.util.XYPoint;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
-import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.item.augment.AugmentItem;
@@ -26,7 +25,6 @@ import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -35,11 +33,9 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
@@ -49,12 +45,12 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.Range;
-import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.EnumMap;
 import java.util.Optional;
 
+import static me.desht.modularrouters.client.util.ClientUtil.getClientLevel;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 
 public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
@@ -72,11 +68,6 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
 
     protected final ItemStack moduleItemStack;
     private final ModuleItem module;
-    @Nullable
-    private final BlockPos routerPos;
-    private final int moduleSlotIndex;
-    @Nullable
-    private final InteractionHand hand;
     private final ModuleSettings settings;
     private int sendDelay;
     private final MouseOverHelp mouseOverHelp;
@@ -100,9 +91,6 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         super(container, inventory, displayName, GUI_WIDTH, GUI_HEIGHT);
 
         MFLocator locator = container.getLocator();
-        moduleSlotIndex = locator.routerSlot();
-        hand = locator.hand();
-        routerPos = locator.routerPos();
         moduleItemStack = locator.getModuleStack(inventory.player);
 
         module = (ModuleItem) moduleItemStack.getItem();
@@ -147,9 +135,11 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         regulatorTextField = addRenderableWidget(buildRegulationTextField());
         regulatorTooltipButton = addRenderableWidget(new RegulatorTooltipButton(regulatorTextField.getX() - 16, regulatorTextField.getY() - 2, module.isFluidModule()));
 
-        if (routerPos != null) {
-            addRenderableWidget(new BackButton(leftPos + 2, topPos + 1, p -> ClientPacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator()))));
-        }
+        getRouter().ifPresent(_ ->
+                addRenderableWidget(new BackButton(leftPos + 2, topPos + 1,
+                        _ -> ClientPacketDistributor.sendToServer(OpenGuiMessage.openRouter(menu.getLocator())))
+                )
+        );
 
         mouseOverHelp.addHelpRegion(leftPos + 7, topPos + 16, leftPos + 60, topPos + 69, "modularrouters.guiText.popup.filter");
         mouseOverHelp.addHelpRegion(leftPos + 5, topPos + 73, leftPos + 62, topPos + 110, "modularrouters.guiText.popup.filterControl");
@@ -251,13 +241,15 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         Component txt = moduleItemStack.getHoverName().copy().append(" ").append(
-                routerPos != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
+                menu.getLocator().routerAndSlot().isPresent() ? xlate("modularrouters.guiText.label.installed") : Component.empty()
         );
         graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 5, getFgColor(module.getItemTint()), false);
     }
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+
         TintColor c = getGuiBackgroundTint();
         graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256, c.getRGB());
         if (!module.isDirectional()) {
@@ -278,7 +270,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     @Override
     public boolean keyPressed(KeyEvent event) {
         var keyCode = event.key();
-        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode) && !isFocused())) && routerPos != null) {
+        if ((keyCode == GLFW.GLFW_KEY_ESCAPE || (ClientUtil.isInvKey(keyCode) && !isFocused())) && getRouter().isPresent()) {
             // Intercept ESC/E and immediately reopen the router GUI - this avoids an
             // annoying screen flicker between closing the module GUI and reopen the router GUI.
             // Sending the reopen message will also close this gui, triggering onGuiClosed()
@@ -312,17 +304,8 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
             return false;
         }
         int filterSlotIndex = slot.index;
-        if (routerPos != null) {
-            // module is installed in a router
-            MFLocator locator = MFLocator.filterInInstalledModule(routerPos, moduleSlotIndex, filterSlotIndex);
-            if (filter.hasMenu()) {
-                ClientPacketDistributor.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
-            } else {
-                // no container, just open the client-side GUI directly
-                FilterScreenFactory.openFilterGui(locator);
-            }
-        } else if (hand != null) {
-            // module is in player's hand
+
+        menu.getLocator().either().ifLeft(hand -> {
             MFLocator locator = MFLocator.filterInHeldModule(hand, filterSlotIndex);
             if (filter.hasMenu()) {
                 ClientPacketDistributor.sendToServer(OpenGuiMessage.openFilterInHeldModule(locator));
@@ -330,7 +313,15 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
                 // no container, just open the client-side GUI directly
                 FilterScreenFactory.openFilterGui(locator);
             }
-        }
+        }).ifRight(routerSlot -> {
+            MFLocator locator = MFLocator.filterInInstalledModule(routerSlot.pos(), routerSlot.slot(), filterSlotIndex);
+            if (filter.hasMenu()) {
+                ClientPacketDistributor.sendToServer(OpenGuiMessage.openFilterInInstalledModule(locator));
+            } else {
+                // no container, just open the client-side GUI directly
+                FilterScreenFactory.openFilterGui(locator);
+            }
+        });
         return true;
     }
 
@@ -342,8 +333,8 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         }
     }
 
-    protected Optional<ModularRouterBlockEntity> getItemRouter() {
-        return routerPos != null ? Minecraft.getInstance().level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get()) : Optional.empty();
+    protected Optional<ModularRouterBlockEntity> getRouter() {
+        return menu.getLocator().getRouter(getClientLevel());
     }
 
     @Override
@@ -378,7 +369,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
         private static final XYPoint TEXTURE_XY = new XYPoint(112, 0);
 
         RegulatorTooltipButton(int x, int y, boolean isFluid) {
-            super(x, y, 16, 16, p -> {});
+            super(x, y, 16, 16, _ -> {});
             ClientUtil.setMultilineTooltip(this,
                     Component.translatable(isFluid ?  "modularrouters.guiText.tooltip.fluidRegulatorTooltip" : "modularrouters.guiText.tooltip.regulatorTooltip"),
                     Component.translatable("modularrouters.guiText.tooltip.numberFieldTooltip"));

@@ -103,6 +103,11 @@ public class ActivatorModuleScreen extends ModuleScreen {
 
         SneakButton(int x, int y, boolean initialVal) {
             super(x, y, 16, 16, initialVal, ActivatorModuleScreen.this);
+
+            setTooltips(
+                    xlate("options.off.composed", xlate("modularrouters.guiText.tooltip.activator.sneak")),
+                    xlate("options.on.composed", xlate("modularrouters.guiText.tooltip.activator.sneak"))
+            );
         }
 
         @Override

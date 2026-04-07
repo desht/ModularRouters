@@ -15,7 +15,7 @@ public interface IItemMatcher {
      *
      * @param stack          the stack to test
      * @param flags          the current matching flags for the module
-     * @param registryAccess registry access
+     * @param registryAccess registry access (if needed but null, the method should return false)
      * @return true if the item matches, false otherwise
      */
     boolean matchItem(ItemStack stack, IModuleFlags flags, HolderLookup.@Nullable Provider registryAccess);
@@ -25,11 +25,12 @@ public interface IItemMatcher {
      * to work on fluid-containing items. By default, this always returns false, but Fluid Modules provide an item
      * matcher which does check for contained fluids.
      *
-     * @param fluid the fluid to test
-     * @param flags the current matching flags for the module
+     * @param fluid          the fluid to test
+     * @param flags          the current matching flags for the module
+     * @param registryAccess registry access (if needed but null, the method should return false)
      * @return true if the fluid matches, false otherwise
      */
-    default boolean matchFluid(Fluid fluid, IModuleFlags flags) {
+    default boolean matchFluid(Fluid fluid, IModuleFlags flags, HolderLookup.@Nullable Provider registryAccess) {
         return false;
     }
 }

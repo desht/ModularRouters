@@ -21,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -37,6 +38,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
 
     private ItemStack prevInSlot = ItemStack.EMPTY;
     private final List<TagKey<Item>> candidateTags = new ArrayList<>();
+    @Nullable
     private TagKey<Item> selectedTag = null;
     private boolean tagSelectorShowing = false;
 
@@ -54,9 +56,9 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
         super.init();
 
         if (menu.getLocator().filterSlot() >= 0) {
-            addRenderableWidget(new BackButton(leftPos - 12, topPos, p -> closeGUI()));
+            addRenderableWidget(new BackButton(leftPos - 12, topPos, _ -> closeGUI()));
         }
-        addRenderableWidget(new Buttons.AddButton(leftPos + 234, topPos + 19, p -> {
+        addRenderableWidget(new Buttons.AddButton(leftPos + 234, topPos + 19, _ -> {
             if (selectedTag != null) {
                 Set<TagKey<Item>> updatedTags = new LinkedHashSet<>(addedTags);
                 updatedTags.add(selectedTag);
@@ -65,14 +67,13 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
         }));
         deleteButtons.clear();
         for (int i = 0; i < ModFilter.MAX_SIZE; i++) {
-            DeleteButton b = new DeleteButton(leftPos + 8, topPos + 44 + i * 19, i, button -> {
-                sendTagsToServer(button.removeFromList(new ArrayList<>(addedTags)));
-            });
+            DeleteButton b = new DeleteButton(leftPos + 8, topPos + 44 + i * 19, i,
+                    button -> sendTagsToServer(button.removeFromList(new ArrayList<>(addedTags))));
             addRenderableWidget(b);
             deleteButtons.add(b);
         }
 
-        selectButton = new ExtendedButton(leftPos + 218, topPos + 20, 14, 14, Component.literal("▼"), p -> {
+        selectButton = new ExtendedButton(leftPos + 218, topPos + 20, 14, 14, Component.literal("▼"), _ -> {
              tagSelectorShowing = !tagSelectorShowing;
              updateButtonVisibility();
         });
@@ -136,7 +137,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     public void containerTick() {
         super.containerTick();
 
-        ItemStack inSlot = getMenu().getItems().get(0);
+        ItemStack inSlot = getMenu().getItems().getFirst();
         if (inSlot.isEmpty() && !prevInSlot.isEmpty()) {
             candidateTags.clear();
             selectedTag = null;
@@ -147,7 +148,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
             List<TagKey<Item>> l = MiscUtil.itemTags(inSlot.getItem()).stream().sorted(Comparator.comparing(TagKey::location)).toList();
             candidateTags.clear();
             candidateTags.addAll(l);
-            selectedTag = candidateTags.size() == 1 ? l.get(0) : null;
+            selectedTag = candidateTags.size() == 1 ? l.getFirst() : null;
             rebuildOptionButtons();
             updateButtonVisibility();
         }
@@ -156,6 +157,8 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 
@@ -169,7 +172,7 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
 
     private class SelectorButton extends ExtendedButton {
         public SelectorButton(int xPos, int yPos, TagKey<Item> tag) {
-            super(xPos, yPos, 239, font.lineHeight + 5, Component.literal(tag.location().toString()), p -> {
+            super(xPos, yPos, 239, font.lineHeight + 5, Component.literal(tag.location().toString()), _ -> {
                 selectedTag = tag;
                 tagSelectorShowing = false;
                 TagFilterScreen.this.updateButtonVisibility();

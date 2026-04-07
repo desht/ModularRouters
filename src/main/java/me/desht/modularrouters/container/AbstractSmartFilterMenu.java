@@ -6,10 +6,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractSmartFilterMenu extends AbstractMRContainerMenu {
     protected final ItemStack filterStack;
     protected final MFLocator locator;
+    @Nullable
     protected final ModularRouterBlockEntity router;
 
     AbstractSmartFilterMenu(MenuType<?> type, int windowId, Inventory inv, MFLocator locator) {
@@ -33,6 +35,7 @@ public abstract class AbstractSmartFilterMenu extends AbstractMRContainerMenu {
         return filterStack;
     }
 
+    @Nullable
     public ModularRouterBlockEntity getRouter() {
         return router;
     }

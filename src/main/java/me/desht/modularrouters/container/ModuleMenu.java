@@ -54,7 +54,6 @@ public class ModuleMenu extends AbstractMRContainerMenu {
 
         this.locator = locator;
         this.router = locator.getRouter(inv.player.level()).orElse(null);
-        assert router != null || locator.hand() != null;
 
         ItemStack moduleStack = locator.getModuleStack(inv.player);
         this.filterHandler = new ModuleFilterHandler(moduleStack, router);

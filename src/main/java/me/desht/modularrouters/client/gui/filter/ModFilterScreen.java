@@ -46,9 +46,9 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         super.init();
 
         if (menu.getLocator().filterSlot() >= 0) {
-            addRenderableWidget(new BackButton(leftPos - 12, topPos, p -> closeGUI()));
+            addRenderableWidget(new BackButton(leftPos - 12, topPos, _ -> closeGUI()));
         }
-        addRenderableWidget(new Buttons.AddButton(leftPos + 154, topPos + 19, p -> {
+        addRenderableWidget(new Buttons.AddButton(leftPos + 154, topPos + 19, _ -> {
             if (!modId.isEmpty()) {
                 Set<String> updatedMods = new LinkedHashSet<>(mods);
                 updatedMods.add(modId);
@@ -58,9 +58,8 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         }));
         deleteButtons.clear();
         for (int i = 0; i < ModFilter.MAX_SIZE; i++) {
-            DeleteButton b = new DeleteButton(leftPos + 8, topPos + 44 + i * 19, i, button -> {
-                sendModsToServer(button.removeFromList(new ArrayList<>(mods)));
-            });
+            DeleteButton b = new DeleteButton(leftPos + 8, topPos + 44 + i * 19, i,
+                    button -> sendModsToServer(button.removeFromList(new ArrayList<>(mods))));
             addRenderableWidget(b);
             deleteButtons.add(b);
         }
@@ -111,6 +110,8 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 

@@ -14,7 +14,7 @@ import net.neoforged.neoforge.model.data.ModelData;
 import java.util.List;
 
 // TODO only partially works
-public abstract class CamouflagingModel extends DelegateBlockStateModel/*implements IDynamicBakedModel*/ {
+public abstract class CamouflagingModel extends DelegateBlockStateModel {
     protected CamouflagingModel(BlockStateModel delegate) {
         super(delegate);
     }
@@ -34,12 +34,10 @@ public abstract class CamouflagingModel extends DelegateBlockStateModel/*impleme
         if ((camoState == null || camoState.getBlock() instanceof CamouflageableBlock) /*&& renderType == RenderType.solid()*/) {
             // No camo (or bad camo!)
             super.collectParts(level, pos, state, random, parts);
-        } else if (camoState != null /*&& getRenderTypes(camoState, rand, modelData).contains(renderType)*/) {
+        } else {
             // Steal camo's model
             BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(camoState);
             model.collectParts(level, pos, state, random, parts);
-        } else {
-            // Not rendering in this layer
         }
     }
 

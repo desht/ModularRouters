@@ -5,7 +5,7 @@ package me.desht.modularrouters.api.matching;
  */
 public interface IModuleFlags {
     /**
-     * {@return true if this module is in whitelist mode}
+     * {@return true if this module is in whitelist mode, false if in blacklist mode}
      */
     boolean whiteList();
 

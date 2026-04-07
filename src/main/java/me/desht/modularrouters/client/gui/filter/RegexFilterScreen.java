@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.core.ModSounds;
 import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
@@ -60,16 +61,15 @@ public class RegexFilterScreen extends AbstractFilterScreen {
         addRenderableWidget(regexTextField);
 
         if (locator.filterSlot() >= 0) {
-            addRenderableWidget(new BackButton(xPos - 12, yPos, p -> closeGUI()));
+            addRenderableWidget(new BackButton(xPos - 12, yPos, _ -> closeGUI()));
         }
 
-        addRenderableWidget(new Buttons.AddButton(xPos + 155, yPos + 23, button -> addRegex()));
+        addRenderableWidget(new Buttons.AddButton(xPos + 155, yPos + 23, _ -> addRegex()));
 
         deleteButtons.clear();
         for (int i = 0; i < RegexFilter.MAX_SIZE; i++) {
-            DeleteButton b = new DeleteButton(xPos + 8, yPos + 52 + i * 19, i, button -> {
-                sendRegexToServer(button.removeFromList(new ArrayList<>(regexList)));
-            });
+            DeleteButton b = new DeleteButton(xPos + 8, yPos + 52 + i * 19, i,
+                    button -> sendRegexToServer(button.removeFromList(new ArrayList<>(regexList))));
             addRenderableWidget(b);
             deleteButtons.add(b);
         }
@@ -124,7 +124,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
                 errorMsg = Component.empty();
             }
         } catch (PatternSyntaxException e) {
-            minecraft.player.playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
+            ClientUtil.getClientPlayer().playSound(ModSounds.ERROR.get(), 1.0f, 1.0f);
             errorMsg = xlate("modularrouters.guiText.label.regexError");
             errorTimer = 60;
         }

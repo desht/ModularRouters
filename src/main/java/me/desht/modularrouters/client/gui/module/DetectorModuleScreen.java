@@ -38,7 +38,7 @@ public class DetectorModuleScreen extends ModuleScreen {
 
         intField = new IntegerTextField(font, leftPos + 152, topPos + 19, 20, 12, Range.of(0, 15));
         intField.setValue(cdm.getSignalLevel());
-        intField.setResponder((str) -> sendModuleSettingsDelayed(5));
+        intField.setResponder(_ -> sendModuleSettingsDelayed(5));
         intField.setIncr(1, 4);
         intField.useGuiTextBackground();
         addRenderableWidget(intField);
@@ -48,7 +48,7 @@ public class DetectorModuleScreen extends ModuleScreen {
         addRenderableWidget(new ExtendedButton(leftPos + 138, topPos + 33, 40, 20, label, button -> {
             isStrong = !isStrong;
             button.setMessage(xlate("modularrouters.itemText.misc.strongSignal." + isStrong));
-            DetectorModuleScreen.this.sendToServer();
+            sendToServer();
         }));
 
         addRenderableWidget(new TooltipButton(leftPos + 132, topPos + 15, 16, 16, redstoneStack));
@@ -76,7 +76,7 @@ public class DetectorModuleScreen extends ModuleScreen {
 
     private static class TooltipButton extends ItemStackButton {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
-            super(x, y, width, height, renderStack, true, p -> {});
+            super(x, y, width, height, renderStack, true, _ -> {});
             ClientUtil.setMultilineTooltip(this,
                     xlate("modularrouters.guiText.tooltip.detectorTooltip").withStyle(ChatFormatting.AQUA),
                     xlate("modularrouters.guiText.tooltip.numberFieldTooltip")

@@ -97,7 +97,7 @@ public class DistributorModuleScreen extends ModuleScreen {
         private static final XYPoint TEXTURE_XY = new XYPoint(176, 16);
 
         TooltipButton(int x, int y, ItemStack stack) {
-            super(x, y, 16, 16, stack, true, p -> {});
+            super(x, y, 16, 16, stack, true, _ -> {});
             setTooltip(Tooltip.create(xlate("modularrouters.guiText.tooltip.distributor.strategy")));
         }
 

@@ -11,8 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.Objects;
-
 /**
  * Received on: SERVER
  * <p>
@@ -63,7 +61,7 @@ public record OpenGuiMessage(OpenGuiOp op, MFLocator locator) implements CustomP
             case ROUTER ->
                 // item router GUI
                     locator.getRouter(player.level())
-                            .ifPresent(router -> player.openMenu(router, Objects.requireNonNull(locator.routerPos())));
+                            .ifPresent(router -> player.openMenu(router, router.getBlockPos()));
             case MODULE_HELD ->
                 // module held in player's hand
                     player.openMenu(new ModuleItem.ModuleMenuProvider(player, locator), locator::toNetwork);

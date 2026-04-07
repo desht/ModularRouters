@@ -37,10 +37,11 @@ public class BulkItemFilterMenu extends AbstractSmartFilterMenu {
         this(windowId, invPlayer, MFLocator.fromNetwork(extraData));
     }
 
-    public BulkItemFilterMenu(int windowId, Inventory invPlayer, MFLocator loc) {
-        super(ModMenuTypes.BULK_FILTER_MENU.get(), windowId, invPlayer, loc);
+    public BulkItemFilterMenu(int windowId, Inventory invPlayer, MFLocator locator) {
+        super(ModMenuTypes.BULK_FILTER_MENU.get(), windowId, invPlayer, locator);
 
-        this.handler = new BulkFilterHandler(filterStack, router, loc.getModuleStack(invPlayer.player), loc.routerSlot(), loc.filterSlot(), !invPlayer.player.level().isClientSide());
+        int moduleSlot = locator.routerAndSlot().map(MFLocator.RouterSlot::slot).orElse(-1);
+        this.handler = new BulkFilterHandler(filterStack, router, locator.getModuleStack(invPlayer.player), moduleSlot, locator.filterSlot(), !invPlayer.player.level().isClientSide());
         this.currentSlot = invPlayer.getSelectedSlot() + HOTBAR_START;
 
         // slots for the (ghost) filter items

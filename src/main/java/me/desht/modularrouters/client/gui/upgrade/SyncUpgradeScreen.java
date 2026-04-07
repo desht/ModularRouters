@@ -71,7 +71,7 @@ public class SyncUpgradeScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
+        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0xFF404040, false);
     }
 
     @Override

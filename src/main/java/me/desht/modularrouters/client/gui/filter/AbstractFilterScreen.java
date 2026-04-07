@@ -36,18 +36,19 @@ public abstract class AbstractFilterScreen extends Screen implements IResyncable
     }
 
     boolean closeGUI() {
-        if (locator.routerPos() != null) {
-            // need to re-open module GUI for module in router slot <moduleSlotIndex>
-            ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
-            return true;
-        } else if (locator.hand() != null) {
-            ItemStack stack = getMinecraft().player.getItemInHand(locator.hand());
-            if (stack.getItem() instanceof ModuleItem) {
-                // need to re-open module GUI for module in player's hand
-                ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInHand(locator));
-                return true;
-            }
-        }
-        return false;
+        return locator.either().map(
+                hand -> {
+                    if (ClientUtil.getClientPlayer().getItemInHand(hand).getItem() instanceof ModuleItem) {
+                        // need to re-open module GUI for module in player's hand
+                        ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInHand(locator));
+                        return true;
+                    }
+                    return false;
+                },
+                _ -> {
+                    ClientPacketDistributor.sendToServer(OpenGuiMessage.openModuleInRouter(locator));
+                    return true;
+                }
+        );
     }
 }

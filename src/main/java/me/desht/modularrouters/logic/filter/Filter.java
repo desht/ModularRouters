@@ -117,7 +117,7 @@ public class Filter implements Predicate<ItemStack> {
 
     public boolean testFluid(Fluid fluid) {
         for (IItemMatcher matcher : matchers) {
-            if (matcher.matchFluid(fluid, flags)) {
+            if (matcher.matchFluid(fluid, flags, registryAccess)) {
                 return flags.whiteList();
             }
         }

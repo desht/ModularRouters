@@ -57,7 +57,7 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         yPos = (height - GUI_HEIGHT) / 2;
 
         if (locator.filterSlot() >= 0) {
-            addRenderableWidget(new BackButton(xPos - 12, yPos, button -> closeGUI()));
+            addRenderableWidget(new BackButton(xPos - 12, yPos, _ -> closeGUI()));
         }
 
         addRenderableWidget(new ExtendedButton(xPos + 8, yPos + 22, 90, 20, xlate(currentSubject.getTranslationKey()), button -> {
@@ -70,9 +70,9 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
             button.setMessage(xlate(currentOp.getTranslationKey()));
         }));
 
-        addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
+        addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, _ -> addEntry()));
 
-        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), button -> {
+        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), _ -> {
             ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.setMatchAll(!comparisonList.matchAll())));
             ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
         });

@@ -129,7 +129,7 @@ public class FluidModuleScreen extends ModuleScreen {
             List<Component> tooltip = new ArrayList<>();
             tooltip.add(xlate("modularrouters.guiText.tooltip.fluidTransferTooltip"));
             tooltip.add(Component.empty());
-            getItemRouter().ifPresent(router -> {
+            getRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();
                 int tickRate = router.getTickRate();
                 tooltip.add(xlate("modularrouters.guiText.tooltip.maxFluidPerOp", ftRate * tickRate, tickRate, ftRate));

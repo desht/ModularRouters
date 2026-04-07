@@ -41,20 +41,20 @@ public class FlingerModuleScreen extends ModuleScreen {
                 FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED);
         speedField.setPrecision(2);
         speedField.setValue(cfm.getSpeed());
-        speedField.setResponder(str -> sendModuleSettingsDelayed(5));
+        speedField.setResponder(_ -> sendModuleSettingsDelayed(5));
         speedField.setIncr(0.1f, 0.5f, 10.0f);
         speedField.useGuiTextBackground();
 
         pitchField = new FloatTextField(font, leftPos + 152, topPos + 37, 35, 12,
                 FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH);
         pitchField.setValue(cfm.getPitch());
-        pitchField.setResponder(str -> sendModuleSettingsDelayed(5));
+        pitchField.setResponder(_ -> sendModuleSettingsDelayed(5));
         pitchField.useGuiTextBackground();
 
         yawField = new FloatTextField(font, leftPos + 152, topPos + 55, 35, 12,
                 FlingerModule.MIN_YAW, FlingerModule.MAX_YAW);
         yawField.setValue(cfm.getYaw());
-        yawField.setResponder(str -> sendModuleSettingsDelayed(5));
+        yawField.setResponder(_ -> sendModuleSettingsDelayed(5));
         yawField.useGuiTextBackground();
 
         addRenderableWidget(speedField);
@@ -87,7 +87,7 @@ public class FlingerModuleScreen extends ModuleScreen {
         private final int buttonId;
 
         TooltipButton(int buttonId, int x, int y, String key, float min, float max) {
-            super(x, y, 16, 16, p -> {});
+            super(x, y, 16, 16, _ -> {});
             this.buttonId = buttonId;
             ClientUtil.setMultilineTooltip(this,
                     xlate("modularrouters.guiText.tooltip.flinger." + key, min, max).withStyle(ChatFormatting.AQUA),

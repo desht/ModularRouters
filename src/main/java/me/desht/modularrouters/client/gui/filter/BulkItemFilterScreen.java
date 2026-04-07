@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.button.TexturedButton;
 import me.desht.modularrouters.client.util.XYPoint;
@@ -50,10 +49,9 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
             addRenderableWidget(new BackButton(leftPos + 2, topPos + 2, _ -> closeGUI()));
         }
 
-        if (locator.routerSlot() >= 0 && locator.routerPos() != null) {
+        locator.getRouter(getClientLevel()).ifPresent(router -> {
             // in a module in a router; add buttons to merge/load the module's target inventory
             ItemStack moduleStack = locator.getModuleStack(getClientPlayer());
-            ModularRouterBlockEntity router = menu.getRouter();
             CompiledModule cm = ((ModuleItem) moduleStack.getItem()).compile(router, moduleStack);
             cm.getEffectiveTarget(router).ifPresent(target -> {
                 if (target.hasItemHandler(getClientLevel())) {
@@ -64,7 +62,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
                             ClientPacketDistributor.sendToServer(BulkFilterUpdateMessage.targeted(FilterOp.LOAD, menu.getLocator(), target))));
                 }
             });
-        }
+        });
     }
 
     @Override
@@ -74,6 +72,8 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_LOCATION, leftPos, topPos, 0, 0, GUI_WIDTH, GUI_HEIGHT, 256, 256);
     }
 
