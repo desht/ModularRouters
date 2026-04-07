@@ -4,7 +4,7 @@ name: "Build applicable branches on push"
 # events for the branches listed
 on:
   push:
-    branches: [ "MC1.*" ]
+    branches: [ "MC[0-9]+.*" ]
 
 jobs:
   build:
