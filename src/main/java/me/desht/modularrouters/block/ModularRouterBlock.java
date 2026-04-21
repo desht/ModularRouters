@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -94,72 +95,18 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
                 .orElse(0);
     }
 
-//    @Override
-//    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
-//        HolderLookup.Provider lookupProvider = context.registries();
-//        if (lookupProvider != null && stack.has(DataComponents.BLOCK_ENTITY_DATA)) {
-//            CompoundTag compound = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
-//            tooltipAdder.accept(xlate("modularrouters.itemText.misc.routerConfigured")
-//                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-//            if (compound.contains(NBT_MODULES)) {
-//                List<Component> moduleText = new ArrayList<>();
-//                ItemStackHandler modulesHandler = new ItemStackHandler(9);
-//                compound.getCompound(NBT_MODULES).ifPresent(tag -> modulesHandler.deserializeNBT(lookupProvider, tag));
-//                for (int i = 0; i < modulesHandler.getSlots(); i++) {
-//                    ItemStack moduleStack = modulesHandler.getStackInSlot(i);
-//                    if (!moduleStack.isEmpty()) {
-//                        moduleText.add(Component.literal("• ")
-//                                .append(moduleStack.getHoverName())
-//                                .withStyle(ChatFormatting.AQUA)
-//                        );
-//                    }
-//                }
-//                if (!moduleText.isEmpty()) {
-//                    tooltipAdder.accept(xlate("modularrouters.guiText.label.modules").withStyle(ChatFormatting.YELLOW));
-//                    moduleText.forEach(tooltipAdder);
-//                }
-//            }
-//            if (compound.contains(NBT_UPGRADES)) {
-//                ItemStackHandler upgradesHandler = new ItemStackHandler();
-//                compound.getCompound(NBT_UPGRADES).ifPresent(tag -> upgradesHandler.deserializeNBT(lookupProvider, tag));
-//                List<Component> upgradeText = new ArrayList<>();
-//                for (int i = 0; i < upgradesHandler.getSlots(); i++) {
-//                    ItemStack upgradeStack = upgradesHandler.getStackInSlot(i);
-//                    if (!upgradeStack.isEmpty()) {
-//                        upgradeText.add(Component.literal("• " + upgradeStack.getCount() + " x ")
-//                                .append(upgradeStack.getHoverName())
-//                                .withStyle(ChatFormatting.AQUA)
-//                        );
-//                    }
-//                }
-//                if (!upgradeText.isEmpty()) {
-//                    tooltipAdder.accept(xlate("modularrouters.itemText.misc.upgrades").withStyle(ChatFormatting.YELLOW));
-//                    upgradeText.forEach(tooltipAdder);
-//                }
-//            }
-//            if (compound.contains(NBT_REDSTONE_MODE)) {
-//                try {
-//                    RedstoneBehaviour rrb = RedstoneBehaviour.valueOf(compound.getString(NBT_REDSTONE_MODE));
-//                    tooltipAdder.accept(xlate("modularrouters.guiText.tooltip.redstone.label")
-//                            .append(": ")
-//                            .withStyle(ChatFormatting.YELLOW)
-//                            .append(xlate("modularrouters.guiText.tooltip.redstone." + rrb)
-//                                    .withStyle(ChatFormatting.RED))
-//                    );
-//                } catch (IllegalArgumentException ignored) {
-//                }
-//            }
-//        }
-//    }
+    @Override
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return state.hasProperty(ModularRouterBlock.ACTIVE) && state.getValue(ModularRouterBlock.ACTIVE) ?
+                MapColor.COLOR_RED : MapColor.COLOR_GRAY;
+    }
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockRayTraceResult) {
         if (!player.isShiftKeyDown()) {
             if (world.getBlockEntity(pos) instanceof ModularRouterBlockEntity router) {
                 if (player instanceof ServerPlayer sp && router.isPermitted(player)) {
-                    // TODO combine into one packet?
                     PacketDistributor.sendToPlayer(sp, RouterSettingsMessage.forRouter(router));
-//                    PacketDistributor.sendToPlayer(sp, RouterUpgradesSyncMessage.forRouter(router));
                     sp.openMenu(router, pos);
                 } else if (!router.isPermitted(player) && world.isClientSide()) {
                     player.sendSystemMessage(xlate("modularrouters.chatText.security.accessDenied").withStyle(ChatFormatting.RED));
