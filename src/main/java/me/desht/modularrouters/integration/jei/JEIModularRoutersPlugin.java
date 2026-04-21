@@ -60,12 +60,15 @@ public class JEIModularRoutersPlugin implements IModPlugin {
     @Override
     public void registerIngredientAliases(IIngredientAliasRegistration registration) {
         for (var item : BuiltInRegistries.ITEM) {
-            if (item instanceof ModuleItem) {
-                registration.addAlias(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), "Modular Router Module");
-            } else if (item instanceof UpgradeItem) {
-                registration.addAlias(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), "Modular Router Upgrade");
-            } else if (item instanceof AugmentItem) {
-                registration.addAlias(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), "Modular Router Module Augment");
+            switch (item) {
+                case ModuleItem _ ->
+                        registration.addAlias(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), "Modular Router Module");
+                case UpgradeItem _ ->
+                        registration.addAlias(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), "Modular Router Upgrade");
+                case AugmentItem _ ->
+                        registration.addAlias(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), "Modular Router Module Augment");
+                default -> {
+                }
             }
         }
     }
