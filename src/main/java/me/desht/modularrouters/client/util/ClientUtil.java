@@ -63,7 +63,7 @@ public class ClientUtil {
     @Nullable
     public static Slot getHoveredSlot() {
         if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> cs) {
-            return cs.getSlotUnderMouse();
+            return cs.getHoveredSlot();
         }
         return null;
     }

@@ -136,7 +136,7 @@ public class ModularRouterScreen extends AbstractContainerScreen<RouterMenu> imp
     }
 
     private boolean handleModuleConfig() {
-        Slot slot = getSlotUnderMouse();
+        Slot slot = getHoveredSlot();
         if (slot == null || !(slot.getItem().getItem() instanceof ModuleItem) || slot.index < MODULE_START || slot.index > MODULE_END) {
             return false;
         }

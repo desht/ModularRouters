@@ -11,7 +11,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 record GhostTarget<I>(IIngredientType<I> type, AbstractContainerScreen<?> gui, Slot slot) implements IGhostIngredientHandler.Target<I> {
     @Override
     public Rect2i getArea() {
-        return new Rect2i(slot.x + gui.getGuiLeft(), slot.y + gui.getGuiTop(), 16, 16);
+        return new Rect2i(slot.x + gui.getLeftPos(), slot.y + gui.getTopPos(), 16, 16);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class MouseOverHelp {
     }
 
     public void addHelpRegion(int x1, int y1, int x2, int y2, Component key, Predicate<AbstractContainerScreen<?>> showPredicate) {
-        List<FormattedCharSequence> l = ComponentRenderUtils.wrapComponents(key, screen.getXSize(), screen.getMinecraft().font);
+        List<FormattedCharSequence> l = ComponentRenderUtils.wrapComponents(key, screen.getImageWidth(), screen.getMinecraft().font);
         helpRegions.add(HelpRegion.create(x1, y1, x2, y2, l, showPredicate));
     }
 
@@ -76,7 +76,7 @@ public class MouseOverHelp {
                 boxWidth = Math.max(boxWidth, fontRenderer.width(s));
             }
             // enlarge box width & height for a text margin
-            int xOff = rect.getX() - screen.getGuiLeft() < screen.getXSize() / 2 ? rect.getWidth() + 10 : -(boxWidth + TEXT_MARGIN + 10);
+            int xOff = rect.getX() - screen.getLeftPos() < screen.getImageWidth() / 2 ? rect.getWidth() + 10 : -(boxWidth + TEXT_MARGIN + 10);
             int yOff = (rect.getHeight() - boxHeight - TEXT_MARGIN) / 2;
             return new Rect2i(rect.getX() + xOff, rect.getY() + yOff, boxWidth + TEXT_MARGIN, boxHeight + TEXT_MARGIN);
         } else {
@@ -87,8 +87,8 @@ public class MouseOverHelp {
     private static void showPopupBox(GuiGraphicsExtractor graphics, AbstractContainerScreen<?> screen, Font fontRenderer, Rect2i rect, int borderColor, int bgColor, int textColor, List<FormattedCharSequence> helpText) {
         Rect2i actualRect = calcBounds(screen, fontRenderer, rect, helpText);
 
-        int x1 = actualRect.getX() - screen.getGuiLeft();
-        int y1 = actualRect.getY() - screen.getGuiTop();
+        int x1 = actualRect.getX() - screen.getLeftPos();
+        int y1 = actualRect.getY() - screen.getTopPos();
         int x2 = x1 + actualRect.getWidth();
         int y2 = y1 + actualRect.getHeight();
 

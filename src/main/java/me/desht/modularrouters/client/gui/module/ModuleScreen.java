@@ -299,7 +299,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     }
 
     private boolean handleFilterConfig() {
-        Slot slot = getSlotUnderMouse();
+        Slot slot = getHoveredSlot();
         if (slot == null || !(slot.getItem().getItem() instanceof SmartFilterItem filter) || slot.index < 0 || slot.index >= Filter.FILTER_SIZE) {
             return false;
         }
