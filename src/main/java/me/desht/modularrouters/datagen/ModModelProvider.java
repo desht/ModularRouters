@@ -107,9 +107,9 @@ public class ModModelProvider extends ModelProvider {
                         moduleItem(itemModels, registryObject);
                     }
                 }
-                case UpgradeItem ignored -> upgradeItem(itemModels, registryObject);
-                case AugmentItem ignored -> augmentItem(itemModels, registryObject, name);
-                case SmartFilterItem ignored -> filterItem(itemModels, registryObject, name);
+                case UpgradeItem _ -> upgradeItem(itemModels, registryObject);
+                case AugmentItem _ -> augmentItem(itemModels, registryObject, name);
+                case SmartFilterItem _ -> filterItem(itemModels, registryObject, name);
                 default -> {}
             }
         }
@@ -175,9 +175,9 @@ public class ModModelProvider extends ModelProvider {
         String name = holder.getId().getPath();
         String loc = "item/" + what + "/" + name + suffix;
         var modelLoc = ModelTemplates.THREE_LAYERED_ITEM.create(modLocation(loc), TextureMapping.layered(
-                new Material( modLocation(String.format("item/%s/%s_layer0", what, what))),
+                new Material(modLocation(String.format("item/%s/%s_layer0", what, what))),
                 new Material(modLocation(String.format("item/%s/%s_layer1", what, what))),
-                new Material( modLocation(loc))
+                new Material(modLocation(loc))
         ), gen.modelOutput);
         return ItemModelUtils.tintedModel(modelLoc, BLANK_LAYER, ModuleTintSource.INSTANCE, BLANK_LAYER);
     }
