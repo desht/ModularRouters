@@ -16,18 +16,6 @@ public class GhostItemHandler extends ItemStacksResourceHandler {
     }
 
     @Override
-    public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
-        // Ghost handlers don't accept normal insertion - use set() directly
-        return 0;
-    }
-
-    @Override
-    public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
-        // Ghost handlers don't allow normal extraction - use set() directly
-        return 0;
-    }
-
-    @Override
     protected int getCapacity(int index, ItemResource resource) {
         return 1;
     }
