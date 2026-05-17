@@ -4,6 +4,12 @@ This is an overview of significant new features and fixes by release.  See https
 
 Changes are in reverse chronological order; newest changes at the top.
 
+# Minecraft 26.1.2
+
+## [26.1.2.1]
+* Initial release for Minecraft 26.1.2
+  * Equivalent in functionality to latest 1.21.1 release
+
 # Minecraft 1.21.8
 
 ## [13.5.1]
