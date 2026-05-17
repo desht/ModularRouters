@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.desht.modularrouters.ModularRouters;
+import me.desht.modularrouters.ModularRoutersTags;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.IPlayerOwned;
@@ -63,9 +64,13 @@ public class CompiledPlayerModule extends CompiledModule {
             return false;
         }
 
+        ItemStack bufferStack = router.getBufferItemStack();
+        if (isItemBlacklisted(bufferStack)) {
+            return false;
+        }
+
         IItemHandler itemHandler = getHandler(player);
 
-        ItemStack bufferStack = router.getBufferItemStack();
         switch (getTransferDirection()) {
             case TO_ROUTER -> {
                 if (bufferStack.getCount() < bufferStack.getMaxStackSize()) {
@@ -96,6 +101,11 @@ public class CompiledPlayerModule extends CompiledModule {
             }
         }
         return false;
+    }
+
+    @Override
+    protected boolean isItemBlacklisted(ItemStack stack) {
+        return stack.is(ModularRoutersTags.Items.PLAYER_MODULE_BLACKLIST);
     }
 
     private boolean isDimensionBlacklisted(ModularRouterBlockEntity router, Player player) {

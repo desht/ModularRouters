@@ -43,6 +43,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
             }
         }
         tag(ModularRoutersTags.Items.ACTIVATOR_BLACKLIST).addOptional(ResourceLocation.parse("notenoughwands:acceleration_wand"));
+        tag(ModularRoutersTags.Items.PLAYER_MODULE_BLACKLIST);
     }
 
     @SafeVarargs

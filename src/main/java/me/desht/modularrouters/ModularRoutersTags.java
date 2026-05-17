@@ -14,6 +14,7 @@ public class ModularRoutersTags {
         public static final TagKey<Item> AUGMENTS = modTag("augments");
         public static final TagKey<Item> FILTERS = modTag("filters");
         public static final TagKey<Item> ACTIVATOR_BLACKLIST = modTag("activator_blacklist");
+        public static final TagKey<Item> PLAYER_MODULE_BLACKLIST = modTag("player_module_blacklist");
 
         private static TagKey<Item> modTag(String name) {
             return TagKey.create(Registries.ITEM, MiscUtil.RL(name));
