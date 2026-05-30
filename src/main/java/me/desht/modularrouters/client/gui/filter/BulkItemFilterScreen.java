@@ -67,7 +67,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        graphics.text(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0x404040, false);
+        graphics.text(font, title, this.imageWidth / 2 - font.width(title) / 2, 8, 0xFF404040, false);
     }
 
     @Override

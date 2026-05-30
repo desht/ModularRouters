@@ -58,6 +58,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
 
         regexTextField = new RegexTextField(this, font, xPos + 10, yPos + 27, 144, 18);
         regexTextField.useGuiTextBackground();
+
         addRenderableWidget(regexTextField);
 
         if (locator.filterSlot() >= 0) {
@@ -86,14 +87,14 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
+        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0xFF404040, false);
 
         for (int i = 0; i < regexList.size(); i++) {
             String regex = regexList.get(i);
-            graphics.text(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0x404080, false);
+            graphics.text(font, "/" + regex + "/", xPos + 28, yPos + 55 + i * 19, 0xFF404080, false);
         }
 
-        graphics.text(font, errorMsg, xPos + 8, yPos + 170, 0x804040, false);
+        graphics.text(font, errorMsg, xPos + 8, yPos + 170, 0xFF804040, false);
     }
 
     @Override

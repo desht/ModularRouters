@@ -125,11 +125,11 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
-        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0x404040, false);
+        graphics.text(font, title, xPos + GUI_WIDTH / 2 - font.width(title) / 2, yPos + 6, 0xFF404040, false);
 
         for (int i = 0; i < comparisonList.items().size(); i++) {
             InspectionMatcher.Comparison comparison = comparisonList.items().get(i);
-            graphics.text(font, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0x404080, false);
+            graphics.text(font, comparison.asLocalizedText(), xPos + 28, yPos + 55 + i * 19, 0xFF404080, false);
         }
     }
 

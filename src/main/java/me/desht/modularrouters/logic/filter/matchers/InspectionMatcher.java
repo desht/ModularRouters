@@ -214,25 +214,27 @@ public class InspectionMatcher implements IItemMatcher {
     }
 
     public enum InspectionOp implements TranslatableEnum, StringRepresentable, BiPredicate<Long,Long> {
-        NONE((val, target) -> false),
-        GT((val, target) -> val > target),
-        LT((val, target) -> val < target),
-        LE((val, target) -> val <= target),
-        GE((val, target) -> val >= target),
-        EQ(Objects::equals),
-        NE((val, target) -> !Objects.equals(val, target));
+        NONE("none", (val, target) -> false),
+        GT("gt", (val, target) -> val > target),
+        LT("lt", (val, target) -> val < target),
+        LE("le", (val, target) -> val <= target),
+        GE("ge", (val, target) -> val >= target),
+        EQ("eq", Objects::equals),
+        NE("ne", (val, target) -> !Objects.equals(val, target));
 
         public static final Codec<InspectionOp> CODEC = StringRepresentable.fromEnum(InspectionOp::values);
 
+        private final String id;
         private final BiPredicate<Long,Long> predicate;
 
-        InspectionOp(BiPredicate<Long,Long> predicate) {
+        InspectionOp(String id, BiPredicate<Long,Long> predicate) {
+            this.id = id;
             this.predicate = predicate;
         }
 
         @Override
         public String getTranslationKey() {
-            return "modularrouters.guiText.label.inspectionOp." + this;
+            return "modularrouters.guiText.label.inspectionOp." + id;
         }
 
         @Override

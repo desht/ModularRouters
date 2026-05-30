@@ -57,12 +57,12 @@ public class ActivatorModuleScreen extends ModuleScreen {
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         super.extractLabels(graphics, mouseX, mouseY);
 
-        graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0x404040, false);
-        graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0x404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.action"), 132, 23, 0xFF404040, false);
+        graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.sneak"), 132, 43, 0xFF404040, false);
         if (actionTypeButton.getState().isEntityTarget()) {
-            graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0x404040, false);
+            graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.entityMode"), 132, 63, 0xFF404040, false);
         } else {
-            graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0x404040, false);
+            graphics.text(font, xlate("modularrouters.guiText.tooltip.activator.lookDirection"), 132, 63, 0xFF404040, false);
         }
     }
 

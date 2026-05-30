@@ -97,7 +97,7 @@ public class FluidModuleScreen extends ModuleScreen {
 
         if (forceEmptyButton.visible) {
             MutableComponent c = xlate("modularrouters.guiText.label.fluidForceEmpty");
-            graphics.text(font, c, 165 - font.width(c), 73, 0x202040, false);
+            graphics.text(font, c, 165 - font.width(c), 73, 0xFF202040, false);
         }
     }
 

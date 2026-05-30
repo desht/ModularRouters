@@ -114,21 +114,21 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
         Component txt = filterStack.getHoverName().copy().append(" ").append(
                 menu.getRouter() != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
         );
-        graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0x404040, false);
+        graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0xFF404040, false);
 
         if (selectedTag != null) {
             int maxW = selectButton.visible ? 190 : 205;
-            graphics.text(font, ClientUtil.ellipsize(font, selectedTag.location().toString(), maxW), 29, 23, 0x404040, false);
+            graphics.text(font, ClientUtil.ellipsize(font, selectedTag.location().toString(), maxW), 29, 23, 0xFF404040, false);
         } else if (candidateTags.size() > 1) {
-            graphics.text(font, ClientUtil.xlate("modularrouters.guiText.label.selectTag").withStyle(ChatFormatting.ITALIC), 29, 23, 0x808080, false);
+            graphics.text(font, ClientUtil.xlate("modularrouters.guiText.label.selectTag").withStyle(ChatFormatting.ITALIC), 29, 23, 0xFF808080, false);
         } else if (candidateTags.isEmpty()) {
-            graphics.text(font, ClientUtil.xlate("modularrouters.guiText.label.noTags").withStyle(ChatFormatting.ITALIC), 29, 23, 0x808080, false);
+            graphics.text(font, ClientUtil.xlate("modularrouters.guiText.label.noTags").withStyle(ChatFormatting.ITALIC), 29, 23, 0xFF808080, false);
         }
 
         if (!tagSelectorShowing) {
             for (int i = 0; i < addedTags.size(); i++) {
                 String tag = addedTags.get(i).location().toString();
-                graphics.text(font, ClientUtil.ellipsize(font, tag, 220), 28, 47 + i * 19, 0x404080, false);
+                graphics.text(font, ClientUtil.ellipsize(font, tag, 220), 28, 47 + i * 19, 0xFF404080, false);
             }
         }
     }

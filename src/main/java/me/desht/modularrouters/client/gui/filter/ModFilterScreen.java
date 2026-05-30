@@ -82,15 +82,15 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
         Component txt = filterStack.getHoverName().copy().append(" ").append(
                 menu.getRouter() != null ? xlate("modularrouters.guiText.label.installed") : Component.empty()
         );
-        graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0x404040, false);
+        graphics.text(font, txt, this.imageWidth / 2 - font.width(txt) / 2, 8, 0xFF404040, false);
 
         if (!modName.isEmpty()) {
-            graphics.text(font, modName, 29, 23, 0x404040, false);
+            graphics.text(font, modName, 29, 23, 0xFF404040, false);
         }
 
         for (int i = 0; i < mods.size(); i++) {
             String mod = ModNameCache.getModName(mods.get(i));
-            graphics.text(font, mod, 28, 47 + i * 19, 0x404080, false);
+            graphics.text(font, mod, 28, 47 + i * 19, 0xFF404080, false);
         }
     }
 
