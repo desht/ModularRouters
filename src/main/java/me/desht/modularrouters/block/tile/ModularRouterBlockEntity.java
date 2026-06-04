@@ -189,13 +189,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
             if (nEnergy > 0) {
                 tag.putInt(NBT_ENERGY_UPGRADES, nEnergy);
             }
-
-            getAllUpgrades().keySet().forEach(item -> {
-                final var updateTag = item.createUpdateTag(this);
-                if (updateTag != null) {
-                    tag.put(BuiltInRegistries.ITEM.getKey(item).toString(), updateTag);
-                }
-            });
         });
     }
 
@@ -213,8 +206,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
-        super.onDataPacket(net, pkt, provider);
-
         processClientSync(pkt.getTag(), provider);
     }
 
@@ -226,18 +217,13 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private void processClientSync(CompoundTag compound, HolderLookup.Provider provider) {
         // called client-side on receipt of NBT
         HolderGetter<Block> holderGetter = provider.lookup(Registries.BLOCK).orElse(BuiltInRegistries.BLOCK.asLookup());
-        if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
+            if (compound.contains(CamouflageUpgrade.NBT_STATE_NAME)) {
             setCamouflage(NbtUtils.readBlockState(holderGetter, compound.getCompound(CamouflageUpgrade.NBT_STATE_NAME)));
         } else {
             setCamouflage(null);
         }
 
         energyStorage.updateForEnergyUpgrades(compound.getInt(NBT_ENERGY_UPGRADES));
-
-        getAllUpgrades().keySet().forEach(item -> {
-            final var updateTag = compound.get(BuiltInRegistries.ITEM.getKey(item).toString());
-            item.processClientSync(this, (CompoundTag) updateTag);
-        });
     }
 
     @Override
