@@ -158,8 +158,11 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         return target.getItemHandler().map(h -> {
             for (int i = 0; i < h.getSlots(); i++) {
                 int slot = getLastMatchPos(target.gPos.pos(), i, h.getSlots());
-                ItemStack s1 = h.getStackInSlot(slot);
-                if (getFilter().test(s1) && (stackInRouter.isEmpty() || ItemStack.isSameItemSameComponents(s1, stackInRouter)) && stackInRouter.getCount() + s1.getCount() <= s1.getMaxStackSize()) {
+                ItemStack toExtract = h.getStackInSlot(slot);
+                if (getFilter().test(toExtract)
+                        && (stackInRouter.isEmpty() || ItemStack.isSameItemSameComponents(toExtract, stackInRouter))
+                        && stackInRouter.getCount() <= toExtract.getMaxStackSize())
+                {
                     setLastMatchPos(target.gPos.pos(), slot);
                     return true;
                 }
