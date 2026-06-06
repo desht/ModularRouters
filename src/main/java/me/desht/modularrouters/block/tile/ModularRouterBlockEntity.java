@@ -519,20 +519,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         Level level = nonNullLevel();
         if (!level.isClientSide) {
-            if (anyPlayerHasThisOpen()) {
-                blockUpdateNeeded = true;
-            } else {
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-            }
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         } else if (renderUpdate) {
             requestModelDataUpdate();
             level.setBlocksDirty(worldPosition, Blocks.AIR.defaultBlockState(), getBlockState());
         }
-    }
-
-    private boolean anyPlayerHasThisOpen() {
-        return nonNullLevel().players().stream()
-                .anyMatch(p -> p.containerMenu instanceof RouterMenu menu && menu.getRouter() == this);
     }
 
     @Nonnull
@@ -984,13 +975,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     @Nullable
     public <T> T getBufferCapability(ItemCapability<T, Void> cap) {
         return bufferHandler.getCapability(cap);
-    }
-
-    public void sendBlockUpdateIfNeeded() {
-        if (!nonNullLevel().isClientSide && blockUpdateNeeded && !anyPlayerHasThisOpen()) {
-            nonNullLevel().sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-            blockUpdateNeeded = false;
-        }
     }
 
     public enum EnergyDirection implements TranslatableEnum {

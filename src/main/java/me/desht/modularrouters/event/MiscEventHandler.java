@@ -2,7 +2,6 @@ package me.desht.modularrouters.event;
 
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.TemplateFrameBlock;
-import me.desht.modularrouters.container.RouterMenu;
 import me.desht.modularrouters.container.handler.AugmentHandler;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.item.IPlayerOwned;
@@ -13,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
@@ -80,13 +78,6 @@ public class MiscEventHandler {
                     ItemHandlerHelper.giveItemToPlayer(event.getEntity(), h.getStackInSlot(i));
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onRouterMenuClose(PlayerContainerEvent.Close event) {
-        if (event.getContainer() instanceof RouterMenu menu) {
-            menu.getRouter().sendBlockUpdateIfNeeded();
         }
     }
 }
