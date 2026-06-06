@@ -192,12 +192,18 @@ public class CompiledFluidModule extends CompiledModule {
             }
         }
         int amount = Math.min(getMaxTransfer(), router.getCurrentFluidTransferAllowance(direction));
-        FluidStack newStack = FluidUtil.tryFluidTransfer(dest, src, amount, false);
-        if (!newStack.isEmpty() && getFilter().testFluid(newStack.getFluid())) {
-            newStack = FluidUtil.tryFluidTransfer(dest, src, newStack.getAmount(), true);
-            if (!newStack.isEmpty()) {
-                router.transferredFluid(newStack.getAmount(), direction);
-                return true;
+
+        for (int i = 0; i < src.getTanks(); i++) {
+            if (getFilter().testFluid(src.getFluidInTank(i).getFluid())) {
+                FluidStack toDrain = src.drain(src.getFluidInTank(i).copyWithAmount(amount), IFluidHandler.FluidAction.SIMULATE);
+                if (!toDrain.isEmpty()) {
+                    int transferred = dest.fill(toDrain, IFluidHandler.FluidAction.EXECUTE);
+                    if (transferred > 0) {
+                        src.drain(src.getFluidInTank(i).copyWithAmount(transferred), IFluidHandler.FluidAction.EXECUTE);
+                        router.transferredFluid(transferred, direction);
+                        return true;
+                    }
+                }
             }
         }
         return false;
