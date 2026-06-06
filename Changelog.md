@@ -8,6 +8,8 @@ Changes are in reverse chronological order; newest changes at the top.
 
 ## [13.2.5]
 * Fixed bug causing router GUI to be cleared if the router blockstate changed (e.g. active -> inactive) while GUI open
+* Fixed Distributor Module in pull mode not pulling from inventories with oversized itemstacks
+  * E.g. Functional Storage drawers where the stored itemstacks can be way over 64 items
 * Added `modularrouters:player_module_blacklist` item tag to prevent certain items being handled by the Player Module
   * Contains no items by default 
 
