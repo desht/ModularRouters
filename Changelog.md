@@ -7,9 +7,10 @@ Changes are in reverse chronological order; newest changes at the top.
 # Minecraft 1.21.1
 
 ## [13.2.5]
-* Fixed bug causing router GUI to be cleared if the router blockstate changed (e.g. active -> inactive) while GUI open
+* Fixed Router GUI going blank if the router blockstate changed (e.g. active -> inactive) while GUI open
 * Fixed Distributor Module in pull mode not pulling from inventories with oversized itemstacks
   * E.g. Functional Storage drawers where the stored itemstacks can be way over 64 items
+* Fixed Fluid Module not correctly transferring from fluid handlers with multiple tanks when a filter is being used
 * Added `modularrouters:player_module_blacklist` item tag to prevent certain items being handled by the Player Module
   * Contains no items by default 
 
