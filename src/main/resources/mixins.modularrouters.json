@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "me.desht.modularrouters.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "ServerLevelMixin"
+  ],
+  "client": [
+  ],
+  "minVersion": "0.8"
+}
