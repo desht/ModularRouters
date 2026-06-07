@@ -40,7 +40,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     @Override
     public boolean execute(ModularRouterBlockEntity router) {
-        return isPulling() ? executePull(router) : super.execute(router);
+        return isPulling() ? (router.getBufferItemStack().isEmpty() || getFilter().test(router.getBufferItemStack())) && executePull(router) : super.execute(router);
     }
 
     protected boolean executePull(ModularRouterBlockEntity router) {
@@ -107,14 +107,14 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
         if (nTargets == 1) return Optional.of(getTargets().getFirst()); // degenerate case
 
         ModuleTarget res = null;
-        ItemStack stack = router.peekBuffer(getItemsPerTick(router));
+        ItemStack stackInRouter = router.peekBuffer(getItemsPerTick(router));
         switch (getDistributionStrategy()) {
             case ROUND_ROBIN:
                 for (int i = 1; i <= nTargets; i++) {
                     nextTarget++;
                     if (nextTarget >= nTargets) nextTarget -= nTargets;
                     ModuleTarget tgt = getTargets().get(nextTarget);
-                    if (okToInsert(tgt, stack)) {
+                    if (isPulling() ? okToExtract(tgt, stackInRouter) : okToInsert(tgt, stackInRouter)) {
                         res = tgt;
                         break;
                     }
@@ -126,7 +126,7 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
             case NEAREST_FIRST:
                 for (ModuleTarget tgt : getTargets()) {
-                    if (okToInsert(tgt, stack)) {
+                    if (isPulling() ? okToExtract(tgt, stackInRouter) : okToInsert(tgt, stackInRouter)) {
                         res = tgt;
                         break;
                     }
@@ -134,7 +134,8 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
                 break;
             case FURTHEST_FIRST:
                 for (int i = getTargets().size() - 1; i >= 0; i--) {
-                    if (okToInsert(getTargets().get(i), stack)) {
+                    ModuleTarget tgt = getTargets().get(i);
+                    if (isPulling() ? okToExtract(tgt, stackInRouter) : okToInsert(tgt, stackInRouter)) {
                         res = getTargets().get(i);
                         break;
                     }
@@ -147,6 +148,23 @@ public class CompiledDistributorModule extends CompiledSenderModule2 {
 
     private boolean okToInsert(ModuleTarget target, ItemStack stack) {
         return target.getItemHandler().map(h -> ItemUtil.insertItemReturnRemaining(h, stack, true, null).isEmpty()).orElse(false);
+    }
+
+    private boolean okToExtract(ModuleTarget target, ItemStack stackInRouter) {
+        return target.getItemHandler().map(h -> {
+            for (int i = 0; i < h.size(); i++) {
+                int slot = getLastMatchPos(target.gPos.pos(), i, h.size());
+                ItemStack toExtract = ItemUtil.getStack(h, slot);
+                if (getFilter().test(toExtract)
+                        && (stackInRouter.isEmpty() || ItemStack.isSameItemSameComponents(toExtract, stackInRouter))
+                        && stackInRouter.getCount() <= toExtract.getMaxStackSize())
+                {
+                    setLastMatchPos(target.gPos.pos(), slot);
+                    return true;
+                }
+            }
+            return false;
+        }).orElse(false);
     }
 
     public enum DistributionStrategy implements TranslatableEnum, StringRepresentable {

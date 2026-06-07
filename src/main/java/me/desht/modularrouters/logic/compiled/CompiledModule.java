@@ -210,7 +210,7 @@ public abstract class CompiledModule {
      * @param size size of the inventory being searched
      * @return the last position including offset, and wrapped to start of inventory if necessary
      */
-    private int getLastMatchPos(@Nullable BlockPos key, int offset, int size) {
+    protected int getLastMatchPos(@Nullable BlockPos key, int offset, int size) {
         int pos = (key == null ? lastMatchPos : lastMatchPosMap.getOrDefault(key, 0)) + offset;
         while (pos >= size) pos -= size;
         return pos;
@@ -221,7 +221,7 @@ public abstract class CompiledModule {
      *
      * @param lastMatchPos last matched position
      */
-    private void setLastMatchPos(@Nullable BlockPos key, int lastMatchPos) {
+    protected void setLastMatchPos(@Nullable BlockPos key, int lastMatchPos) {
         if (key == null)
             this.lastMatchPos = lastMatchPos;
         else
