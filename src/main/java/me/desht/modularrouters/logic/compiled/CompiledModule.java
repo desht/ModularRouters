@@ -319,13 +319,17 @@ public abstract class CompiledModule {
             for (int i = 0; i < handler.size(); i++) {
                 int pos = getLastMatchPos(key, i, handler.size());
                 ItemStack stack = ItemUtil.getStack(handler, pos);
-                if (getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
+                if (!isItemBlacklisted(stack) && getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
                     setLastMatchPos(key, pos);
                     return stack.copyWithCount(nToTake);
                 }
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    protected boolean isItemBlacklisted(ItemStack stack) {
+        return false;
     }
 
     /**

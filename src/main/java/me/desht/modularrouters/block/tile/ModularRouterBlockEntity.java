@@ -215,8 +215,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     @Override
     public void onDataPacket(Connection net, ValueInput valueInput) {
-        super.onDataPacket(net, valueInput);
-
         processClientSync(valueInput);
     }
 
@@ -227,11 +225,10 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
     private void processClientSync(ValueInput input) {
         // called client-side on receipt of NBT
-        input.read(CamouflageUpgrade.NBT_STATE_NAME, CompoundTag.CODEC).ifPresentOrElse(
-                tag -> setCamouflage(NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag)),
+        input.read(CamouflageUpgrade.NBT_STATE_NAME, BlockState.CODEC).ifPresentOrElse(
+                this::setCamouflage,
                 () -> setCamouflage(null)
         );
-
         input.getInt(NBT_ENERGY_UPGRADES).ifPresent(energyStorage::updateForEnergyUpgrades);
     }
 
@@ -490,7 +487,7 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return camouflage;
     }
 
-    public void setCamouflage(@org.jspecify.annotations.Nullable BlockState newCamouflage) {
+    public void setCamouflage(@Nullable BlockState newCamouflage) {
         if (newCamouflage != camouflage) {
             this.camouflage = newCamouflage;
             handleSync(true);
