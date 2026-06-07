@@ -82,11 +82,4 @@ public class MiscEventHandler {
             }
         }
     }
-
-    @SubscribeEvent
-    public static void onRouterMenuClose(PlayerContainerEvent.Close event) {
-        if (event.getContainer() instanceof RouterMenu menu) {
-            menu.getRouter().sendBlockUpdateIfNeeded();
-        }
-    }
 }

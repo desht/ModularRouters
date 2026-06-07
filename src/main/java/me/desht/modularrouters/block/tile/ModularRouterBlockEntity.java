@@ -37,7 +37,6 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.Connection;
@@ -153,7 +152,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
     private int tunedSyncValue = -1; // for synchronisation tuning, set by Sync Upgrade
     private boolean executing;       // are we currently executing modules?
     private boolean careAboutItemAttributes;  // whether to bother transferring item attributes to fake player
-    private boolean blockUpdateNeeded;  // for deferred block update sending
     private CompoundTag extData = new CompoundTag();  // extra (persisted) data which various modules can set & read
 
     public final List<BeamData> beams = new ArrayList<>(); // client-side: beams being rendered
@@ -499,21 +497,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         // if on server, sync TE data to client; if on client, possibly mark the TE for re-render
         Level level = nonNullLevel();
         if (!level.isClientSide()) {
-            if (anyPlayerHasThisOpen()) {
-                // don't sync immediately; this can mess up the GUI for players who have it open now
-                blockUpdateNeeded = true;
-            } else {
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-            }
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         } else if (renderUpdate) {
             requestModelDataUpdate();
             level.setBlocksDirty(worldPosition, Blocks.AIR.defaultBlockState(), getBlockState());
         }
-    }
-
-    private boolean anyPlayerHasThisOpen() {
-        return nonNullLevel().players().stream()
-                .anyMatch(p -> p.containerMenu instanceof RouterMenu menu && menu.getRouter() == this);
     }
 
     @Override
@@ -961,13 +949,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         return bufferHandler.getFluidHandler();
     }
 
-    public void sendBlockUpdateIfNeeded() {
-        if (!level.isClientSide() && blockUpdateNeeded && !anyPlayerHasThisOpen()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-            blockUpdateNeeded = false;
-        }
-    }
-
     public AABB getRenderBoundingBox() {
         return cachedRenderAABB.get();
     }
@@ -983,14 +964,6 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
 
         EnergyDirection(String name) {
             this.name = name;
-        }
-
-        public static EnergyDirection forValue(String string) {
-            try {
-                return EnergyDirection.valueOf(string);
-            } catch (IllegalArgumentException e) {
-                return FROM_ROUTER;
-            }
         }
 
         @Override
@@ -1023,6 +996,11 @@ public class ModularRouterBlockEntity extends BlockEntity implements ICamouflage
         protected void onContentsChanged(int index, ItemStack previousContents) {
             setChanged();
             recompileNeeded(flag);
+        }
+
+        @Override
+        protected int getCapacity(int index, ItemResource resource) {
+            return 1;
         }
 
         public ItemContainerContents asContainerContents() {
