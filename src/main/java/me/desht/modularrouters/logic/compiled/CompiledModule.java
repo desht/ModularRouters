@@ -275,9 +275,6 @@ public abstract class CompiledModule {
         for (int i = 0; i < handler.getSlots(); i++) {
             int slot = getLastMatchPos(key, i, handler.getSlots());
             ItemStack toPull = handler.extractItem(slot, wanted.getCount(), true);
-            if (isItemBlacklisted(toPull)) {
-                return ItemStack.EMPTY;
-            }
             if (toPull.isEmpty()) {
                 // we'd found an item to pull, but it looks like this handler doesn't allow us to extract it
                 // give up, but advance the last match pos, so we don't get stuck trying this slot forever
@@ -315,7 +312,7 @@ public abstract class CompiledModule {
             for (int i = 0; i < handler.getSlots(); i++) {
                 int pos = getLastMatchPos(key, i, handler.getSlots());
                 ItemStack stack = handler.getStackInSlot(pos);
-                if (getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
+                if (!isItemBlacklisted(stack) && getFilter().test(stack) && (count == null || count.getInt(stack) - nToTake >= getRegulationAmount())) {
                     setLastMatchPos(key, pos);
                     return stack.copyWithCount(nToTake);
                 }
