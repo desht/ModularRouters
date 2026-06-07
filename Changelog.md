@@ -6,6 +6,14 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 26.1.2
 
+## [26.1.2.2]
+* Fixed Distributor Module not pulling correctly
+* Fixed Muffler Upgrades not suppressing block-break particles for the Breaker Module
+* Added `modularrouters:player_module_blacklist` item tag to prevent certain items being handled by the Player Module
+  * Contains no items by default
+* Fixed some missing GUI text (text was drawn with a 0 alpha level)
+* Fixed a few translations
+
 ## [26.1.2.1]
 * Initial release for Minecraft 26.1.2
   * Equivalent in functionality to latest 1.21.1 release
