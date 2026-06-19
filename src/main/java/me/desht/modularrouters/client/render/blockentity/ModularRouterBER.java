@@ -7,6 +7,7 @@ import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.render.ModRenderTypes;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterRenderState.RenderedBeamData;
+import me.desht.modularrouters.client.util.BoxVertices;
 import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.util.BeamData;
@@ -28,21 +29,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
+import static me.desht.modularrouters.client.util.BoxVertices.BOX_START;
+import static me.desht.modularrouters.client.util.BoxVertices.SHAPE;
+
 public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockEntity, ModularRouterRenderState> {
     private static final Vector3f ROTATION = new Vector3f(0.15f, 1.0f, 0f);
-    private static final float CAMO_HIGHLIGHT_SIZE = 0.75f;
-
-    private static final VoxelShape CAMO_HIGHLIGHT_SHAPE = Shapes.box(
-            0, 0, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE
-    );
-
-    private static final float[] COLS = new float[] { 0.5f, 0.5f, 1.0f, 0.25f };
 
     private final ItemModelResolver itemModelResolver;
 
@@ -94,62 +90,31 @@ public class ModularRouterBER implements BlockEntityRenderer<ModularRouterBlockE
         if (ConfigHolder.client.misc.heldRouterShowsCamoRouters.get()
                 && renderState.camouflage != null
                 && playerHoldingMRItem(player)
-                && Vec3.atCenterOf(renderState.blockPos).distanceToSqr(player.position()) < 256) {
-            renderCamoHighlight(poseStack, submitNodeCollector);
+                && Vec3.atCenterOf(renderState.blockPos).distanceToSqr(player.position()) < 256)
+        {
+            poseStack.pushPose();
+            submitNodeCollector.submitCustomGeometry(poseStack, ModRenderTypes.BLOCK_HILIGHT_FACE, this::drawFaces);
+            submitNodeCollector.submitCustomGeometry(poseStack, ModRenderTypes.BLOCK_HILIGHT_LINE, this::drawLines);
+            poseStack.popPose();
         }
     }
 
-    private void renderCamoHighlight(PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
-        poseStack.pushPose();
-        double start = (1 - CAMO_HIGHLIGHT_SIZE) / 2.0;
-        poseStack.translate(start, start, start);
-
-        submitNodeCollector.submitCustomGeometry(poseStack, ModRenderTypes.BLOCK_HILIGHT_FACE, (pose, buffer) -> {
-            addVertices(buffer, pose.pose());
+    private void drawFaces(PoseStack.Pose pose, VertexConsumer vc) {
+        pose.translate(BOX_START, BOX_START, BOX_START);
+        BoxVertices.FACE_VERTICES.forEach((dir, vertices) -> {
+            for (float[] vertex : vertices) {
+                vc.addVertex(pose, vertex[0], vertex[1], vertex[2]).setColor(0x60808080).setNormal(pose, dir.getUnitVec3f());
+            }
         });
-
-        submitNodeCollector.submitCustomGeometry(poseStack, ModRenderTypes.BLOCK_HILIGHT_LINE, (pose, buffer) -> {
-            int color = 0xFF8080FF;
-            CAMO_HIGHLIGHT_SHAPE.forAllEdges((x1, y1, z1, x2, y2, z2) -> {
-                Vector3f normal = new Vector3f((float)(x2 - x1), (float)(y2 - y1), (float)(z2 - z1)).normalize();
-                buffer.addVertex(pose, (float) x1, (float) y1, (float) z1).setColor(color).setNormal(pose, normal).setLineWidth(3f);
-                buffer.addVertex(pose, (float) x2, (float) y2, (float) z2).setColor(color).setNormal(pose, normal).setLineWidth(3f);
-            });
-        });
-
-        poseStack.popPose();
     }
 
-    private void addVertices(VertexConsumer wr, Matrix4f posMat) {
-        wr.addVertex(posMat, 0, 0, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, -1);
-        wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, -1);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, -1);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, -1);
-
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, 1);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, 1);
-        wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, 1);
-        wr.addVertex(posMat, 0, 0, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 0, 1);
-
-        wr.addVertex(posMat, 0, 0, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(-1, 0, 0);
-        wr.addVertex(posMat, 0, 0, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(-1, 0, 0);
-        wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(-1, 0, 0);
-        wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(-1, 0, 0);
-
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(1, 0, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(1, 0, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(1, 0, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(1, 0, 0);
-
-        wr.addVertex(posMat, 0, 0, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, -1, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, -1, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, 0, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, -1, 0);
-        wr.addVertex(posMat, 0, 0, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, -1, 0);
-
-        wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 1, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 1, 0);
-        wr.addVertex(posMat, CAMO_HIGHLIGHT_SIZE, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 1, 0);
-        wr.addVertex(posMat, 0, CAMO_HIGHLIGHT_SIZE, 0).setColor(COLS[0], COLS[1], COLS[2], COLS[3]).setNormal(0, 1, 0);
+    private void drawLines(PoseStack.Pose pose, VertexConsumer vc) {
+        float lineWidth = Minecraft.getInstance().gameRenderer.gameRenderState().windowRenderState.appropriateLineWidth * 3f;
+        SHAPE.forAllEdges((x1, y1, z1, x2, y2, z2) -> {
+            Vector3f normal = new Vector3f((float)(x2 - x1), (float)(y2 - y1), (float)(z2 - z1)).normalize();
+            vc.addVertex(pose, (float) x1, (float) y1, (float) z1).setColor(0xFF600000).setNormal(pose, normal).setLineWidth(lineWidth);
+            vc.addVertex(pose, (float) x2, (float) y2, (float) z2).setColor(0xFF600000).setNormal(pose, normal).setLineWidth(lineWidth);
+        });
     }
 
     private static boolean playerHoldingMRItem(@Nullable Player player) {
