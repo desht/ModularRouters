@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     "modularrouters:fluid_module",
     "minecraft:prismarine_shard"

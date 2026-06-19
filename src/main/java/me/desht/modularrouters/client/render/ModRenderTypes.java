@@ -15,7 +15,6 @@ public class ModRenderTypes {
             RenderSetup.builder(RenderPipelines.LINES)
                     .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
                     .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
-                    .bufferSize(1536)
                     .createRenderSetup()
     );
 
@@ -24,7 +23,6 @@ public class ModRenderTypes {
             RenderSetup.builder(ModRenderPipelines.DEBUG_QUADS_NO_DEPTH)
                     .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
                     .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
-                    .bufferSize(256)
                     .createRenderSetup()
             );
 
@@ -33,7 +31,6 @@ public class ModRenderTypes {
             RenderSetup.builder(ModRenderPipelines.LINES_NO_DEPTH)
                     .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
                     .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
-                    .bufferSize(256)
                     .createRenderSetup()
     );
 }

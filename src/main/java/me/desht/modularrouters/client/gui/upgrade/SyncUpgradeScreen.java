@@ -46,7 +46,7 @@ public class SyncUpgradeScreen extends Screen {
     }
 
     public static void openSyncGui(ItemStack stack, InteractionHand hand) {
-        Minecraft.getInstance().setScreen(new SyncUpgradeScreen(stack, hand));
+        Minecraft.getInstance().gui.setScreen(new SyncUpgradeScreen(stack, hand));
     }
 
     @Override

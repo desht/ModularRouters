@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "M": "modularrouters:augment_core",
     "Q": "#c:gems/quartz",

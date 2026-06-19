@@ -31,7 +31,7 @@ public class FilterScreenFactory {
                 && !smartFilterItem.hasMenu()
                 && REGISTRY.containsKey(filterStack.getItem()))
         {
-            Minecraft.getInstance().setScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));
+            Minecraft.getInstance().gui.setScreen(REGISTRY.get(filterStack.getItem()).apply(filterStack, locator));
         }
     }
 }

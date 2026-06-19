@@ -1,4 +1,4 @@
-package me.desht.modularrouters.client.render.area;
+package me.desht.modularrouters.client.render;
 
 import me.desht.modularrouters.item.module.ITargetedModule;
 import me.desht.modularrouters.logic.ModuleTarget;

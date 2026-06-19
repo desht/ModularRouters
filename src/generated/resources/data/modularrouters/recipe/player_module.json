@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "C": "minecraft:diamond_chestplate",
     "H": "minecraft:diamond_helmet",

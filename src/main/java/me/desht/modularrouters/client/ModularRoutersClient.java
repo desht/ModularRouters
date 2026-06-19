@@ -11,7 +11,7 @@ import me.desht.modularrouters.client.item.DistributorModeProperty;
 import me.desht.modularrouters.client.item.ModuleTintSource;
 import me.desht.modularrouters.client.model.ModelBakeEventHandler;
 import me.desht.modularrouters.client.render.ModRenderPipelines;
-import me.desht.modularrouters.client.render.area.ModuleTargetRenderer;
+import me.desht.modularrouters.client.render.ModuleTargetRenderer;
 import me.desht.modularrouters.client.render.blockentity.ModularRouterBER;
 import me.desht.modularrouters.core.ModBlockEntities;
 import me.desht.modularrouters.core.ModBlocks;
@@ -51,8 +51,8 @@ public class ModularRoutersClient {
         modBus.addListener(this::registerClientExtensions);
         modBus.addListener(KeyBindings::registerKeyBindings);
         modBus.addListener(ModelBakeEventHandler::onModelBake);
+        ModuleTargetRenderer.addEventListeners();
 
-        NeoForge.EVENT_BUS.register(ModuleTargetRenderer.class);
         NeoForge.EVENT_BUS.register(MouseOverHelp.class);
 
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);

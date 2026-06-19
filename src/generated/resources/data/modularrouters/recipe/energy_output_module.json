@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "B": "modularrouters:blank_module",
     "G": "#c:ingots/gold",

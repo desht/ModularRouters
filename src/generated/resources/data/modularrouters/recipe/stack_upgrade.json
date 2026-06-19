@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     "modularrouters:blank_upgrade",
     "#minecraft:stone_bricks",

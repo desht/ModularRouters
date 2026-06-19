@@ -31,7 +31,7 @@ import java.util.Optional;
 
 public class ClientUtil {
     public static Optional<ModularRouterBlockEntity> getOpenItemRouter() {
-        if (Minecraft.getInstance().screen instanceof ModularRouterScreen mrs) {
+        if (Minecraft.getInstance().gui.screen() instanceof ModularRouterScreen mrs) {
             return Optional.of(mrs.getMenu().getRouter());
         } else {
             return Optional.empty();
@@ -39,7 +39,7 @@ public class ClientUtil {
     }
 
     public static void resyncGui(ItemStack stack) {
-        if (Minecraft.getInstance().screen instanceof IResyncableGui syncable) {
+        if (Minecraft.getInstance().gui.screen() instanceof IResyncableGui syncable) {
             syncable.resync(stack);
         }
     }
@@ -62,7 +62,7 @@ public class ClientUtil {
 
     @Nullable
     public static Slot getHoveredSlot() {
-        if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> cs) {
+        if (Minecraft.getInstance().gui.screen() instanceof AbstractContainerScreen<?> cs) {
             return cs.getHoveredSlot();
         }
         return null;

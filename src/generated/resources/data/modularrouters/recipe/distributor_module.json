@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "M": "modularrouters:blank_module",
     "S": "modularrouters:sender_module_2"

@@ -9,16 +9,15 @@ import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.item.upgrade.UpgradeItem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ItemTagsProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class ModItemTagsProvider extends ItemTagsProvider {
     public ModItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider) {
@@ -27,15 +26,15 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        for (DeferredHolder<Item, ? extends Item> ro : ModItems.ITEMS.getEntries()) {
-            if (ro.get() instanceof ModuleItem) {
-                addItemsToTag(ModularRoutersTags.Items.MODULES, ro);
-            } else if (ro.get() instanceof UpgradeItem) {
-                addItemsToTag(ModularRoutersTags.Items.UPGRADES, ro);
-            } else if (ro.get() instanceof AugmentItem) {
-                addItemsToTag(ModularRoutersTags.Items.AUGMENTS, ro);
-            } else if (ro.get() instanceof SmartFilterItem) {
-                addItemsToTag(ModularRoutersTags.Items.FILTERS, ro);
+        for (DeferredHolder<Item, ? extends Item> holder : ModItems.ITEMS.getEntries()) {
+            if (holder.get() instanceof ModuleItem) {
+                addItemsToTag(ModularRoutersTags.Items.MODULES, holder);
+            } else if (holder.get() instanceof UpgradeItem) {
+                addItemsToTag(ModularRoutersTags.Items.UPGRADES, holder);
+            } else if (holder.get() instanceof AugmentItem) {
+                addItemsToTag(ModularRoutersTags.Items.AUGMENTS, holder);
+            } else if (holder.get() instanceof SmartFilterItem) {
+                addItemsToTag(ModularRoutersTags.Items.FILTERS, holder);
             }
         }
 
@@ -44,8 +43,10 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     }
 
     @SafeVarargs
-    private void addItemsToTag(TagKey<Item> tagKey, Supplier<? extends ItemLike>... items) {
-        tag(tagKey).add(Arrays.stream(items).map(Supplier::get).map(ItemLike::asItem).toArray(Item[]::new));
+    private void addItemsToTag(TagKey<Item> tagKey, DeferredHolder<Item, ? extends Item>... items) {
+        @SuppressWarnings("unchecked")
+        ResourceKey<Item>[] keys = Arrays.stream(items).map(DeferredHolder::getKey).toArray(ResourceKey[]::new);
+        tag(tagKey).add(keys);
     }
 
     @Override
