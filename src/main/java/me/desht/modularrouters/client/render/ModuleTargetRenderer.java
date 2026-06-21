@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.util.BoxVertices;
+import me.desht.modularrouters.client.util.ClientUtil;
 import me.desht.modularrouters.logic.ModuleTarget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -17,86 +18,62 @@ import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import net.neoforged.neoforge.client.submit.RenderPhaseKeys;
 import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Vector3f;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public class ModuleTargetRenderer {
     private static final ContextKey<ExtractedPositions> KEY = new ContextKey<>(ModularRouters.id("target_renderer"));
 
-    private static ItemStack prevStack = ItemStack.EMPTY;
-    @Nullable
-    private static ExtractedPositions cachedExtractedPositions = null;
-
     public static void addEventListeners() {
-        NeoForge.EVENT_BUS.addListener(ModuleTargetRenderer::onClientTick);
         NeoForge.EVENT_BUS.addListener(ModuleTargetRenderer::extractRenderState);
         NeoForge.EVENT_BUS.addListener(ModuleTargetRenderer::submitGeometry);
     }
 
-    private static void onClientTick(ClientTickEvent.Pre ignoredEvent) {
-        Player player = Minecraft.getInstance().player;
-        if (player != null && player.tickCount % 5 == 0) {
-            ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof IPositionProvider posProvider) {
-                if (!ItemStack.matches(heldItem, prevStack)) {
-                    prevStack = heldItem.copy();
-                    cachedExtractedPositions = ExtractedPositions.extract(player, heldItem, posProvider);
-                }
-            } else {
-                prevStack = ItemStack.EMPTY;
-                cachedExtractedPositions = null;
-            }
-        }
-    }
-
     private static void extractRenderState(ExtractLevelRenderStateEvent event) {
-        if (cachedExtractedPositions != null) {
-            event.getRenderState().setRenderData(KEY, cachedExtractedPositions);
+        Player player = ClientUtil.getClientPlayer();
+        ItemStack heldItem = player.getMainHandItem();
+        if (heldItem.getItem() instanceof IPositionProvider posProvider) {
+            event.getRenderState().setRenderData(KEY, ExtractedPositions.extract(player, heldItem, posProvider));
         }
     }
 
     private static void submitGeometry(SubmitCustomGeometryEvent event) {
         var extracted = event.getLevelRenderState().getRenderData(KEY);
 
-        var level = Minecraft.getInstance().level;
-        if (extracted != null && level != null) {
+        if (extracted != null) {
             Vec3 viewPos = event.getLevelRenderState().cameraRenderState.pos;
             float lineWidth = Minecraft.getInstance().gameRenderer.gameRenderState().windowRenderState.appropriateLineWidth;
             var poseStack = event.getPoseStack();
 
-            extracted.positions().forEach((pos, faceAndColour) -> {
-                if (level.isLoaded(pos)) {
-                    poseStack.pushPose();
-                    poseStack.translate(pos.getX() - viewPos.x, pos.getY() - viewPos.y, pos.getZ() - viewPos.z);
+            extracted.positions().forEach((pos, facesAndColour) -> {
+                poseStack.pushPose();
+                poseStack.translate(pos.getX() - viewPos.x, pos.getY() - viewPos.y, pos.getZ() - viewPos.z);
 
-                    event.getSubmitNodeCollector().submitSpecial(RenderPhaseKeys.OUTLINE, new CustomFeatureRenderer.Submit(
-                            poseStack.last().copy(), ModRenderTypes.BLOCK_HILIGHT_FACE, new FaceRenderer(faceAndColour))
-                    );
+                event.getSubmitNodeCollector().submitSpecial(RenderPhaseKeys.OUTLINE, new CustomFeatureRenderer.Submit(
+                        poseStack.last().copy(), ModRenderTypes.BLOCK_HILIGHT_FACE, new FaceRenderer(facesAndColour))
+                );
 
-                    event.getSubmitNodeCollector().submitSpecial(RenderPhaseKeys.OUTLINE, new CustomFeatureRenderer.Submit(
-                            poseStack.last().copy(), ModRenderTypes.BLOCK_HILIGHT_LINE, new LineRenderer(lineWidth, faceAndColour.color()))
-                    );
+                event.getSubmitNodeCollector().submitSpecial(RenderPhaseKeys.OUTLINE, new CustomFeatureRenderer.Submit(
+                        poseStack.last().copy(), ModRenderTypes.BLOCK_HILIGHT_LINE, new LineRenderer(lineWidth, facesAndColour.color()))
+                );
 
-                    poseStack.popPose();
-                }
+                poseStack.popPose();
             });
         }
     }
 
-    private record FaceRenderer(FaceAndColour faceAndColour) implements SubmitNodeCollector.CustomGeometryRenderer {
+    private record FaceRenderer(FacesAndColour facesAndColour) implements SubmitNodeCollector.CustomGeometryRenderer {
         @Override
         public void render(PoseStack.Pose pose, VertexConsumer vc) {
             pose.translate(BoxVertices.BOX_START, BoxVertices.BOX_START, BoxVertices.BOX_START);
 
             BoxVertices.FACE_VERTICES.forEach((dir, vertices) -> {
-                int col = faceAndColour.effectiveColor(dir);
+                int col = facesAndColour.effectiveColor(dir);
                 for (float[] vertex : vertices) {
                     vc.addVertex(pose, vertex[0], vertex[1], vertex[2]).setColor(col).setNormal(pose, dir.getUnitVec3f());
                 }
@@ -115,40 +92,41 @@ public class ModuleTargetRenderer {
         }
     }
 
-    private record ExtractedPositions(Map<BlockPos, FaceAndColour> positions) {
+    private record ExtractedPositions(Map<BlockPos, FacesAndColour> positions) {
         static ExtractedPositions extract(Player player, ItemStack stack, IPositionProvider provider) {
-            Map<BlockPos, FaceAndColour> newMap = new HashMap<>();
+            Map<BlockPos, FacesAndColour> newMap = new HashMap<>();
 
             List<ModuleTarget> targets = provider.getStoredPositions(stack);
             for (int i = 0; i < targets.size(); i++) {
                 ModuleTarget target = targets.get(i);
-                if (target.isSameWorld(player.level())) {
-                    BlockPos pos = target.gPos.pos();
-                    if (newMap.containsKey(pos)) {
-                        newMap.get(pos).addFace(target.face);
+                BlockPos pos = target.gPos.pos();
+                if (target.isSameWorld(player.level()) && player.level().isLoaded(pos)) {
+                    var fc = newMap.get(pos);
+                    if (fc != null) {
+                        fc.addFace(target.face) ;
                     } else {
-                        newMap.put(pos, FaceAndColour.create(target.face, provider.getRenderColor(i)));
+                        newMap.put(pos, FacesAndColour.create(target.face, provider.getRenderColor(i)));
                     }
                 }
             }
 
-            ImmutableMap.Builder<BlockPos, FaceAndColour> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<BlockPos, FacesAndColour> builder = ImmutableMap.builder();
             newMap.forEach((pos, fc) -> builder.put(pos, fc.toImmutable()));
             return new ExtractedPositions(builder.build());
         }
     }
 
-    private record FaceAndColour(Set<Direction> faces, int color, int fadeColor) {
-        static FaceAndColour create(Direction dir, int color) {
-            return new FaceAndColour(EnumSet.of(dir), color, ARGB.multiplyAlpha(color, 0.2f));
+    private record FacesAndColour(Set<Direction> faces, int color, int fadeColor) {
+        static FacesAndColour create(Direction dir, int color) {
+            return new FacesAndColour(EnumSet.of(dir), color, ARGB.multiplyAlpha(color, 0.2f));
         }
 
         void addFace(Direction dir) {
             faces.add(dir);
         }
 
-        public FaceAndColour toImmutable() {
-            return new FaceAndColour(Sets.immutableEnumSet(faces), color, fadeColor);
+        public FacesAndColour toImmutable() {
+            return new FacesAndColour(Sets.immutableEnumSet(faces), color, fadeColor);
         }
 
         public int effectiveColor(Direction dir) {
