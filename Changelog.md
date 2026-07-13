@@ -6,6 +6,15 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.6]
+* Router GUIs now work correctly when the router is in a Sable sublevel (Create Aeronautics contraption)
+  * All modules appear to be functioning correctly, with the following known issues/conditions:
+  * Clientside item beam and flying item effects don't render quite right
+  * Puller & Sender Mk1/2 modules do not work when the router is on a contraption and the target inventory is not, or vice versa, due to distance restrictions
+  * Sender Mk3 module works correctly
+  * Breaker Module does not break blocks that are not part of the contraption the router is on
+  * Placer Module works, and placed blocks become part of the contraption the router is on
+
 ## [13.2.5]
 * Fixed Router GUI going blank if the router blockstate changed (e.g. active -> inactive) while GUI open
 * Fixed Distributor Module in pull mode not pulling from inventories with oversized itemstacks
