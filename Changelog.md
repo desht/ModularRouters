@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.7]
+* Fixed an item duping issue when routers containing items are assembled/disassembled to/from a Sable sublevel
+
 ## [13.2.6]
 * Router GUIs now work correctly when the router is in a Sable sublevel (Create Aeronautics contraption)
   * All modules appear to be functioning correctly, with the following known issues/conditions:
