@@ -92,7 +92,9 @@ public class ModularRouterBlock extends CamouflageableBlock implements EntityBlo
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             world.getBlockEntity(pos, ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
-                InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
+                if (!isMoving) {
+                    InventoryUtils.dropInventoryItems(world, pos, router.getBuffer());
+                }
                 world.updateNeighbourForOutputSignal(pos, this);
                 super.onRemove(state, world, pos, newState, isMoving);
             });
