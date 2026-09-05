@@ -1,6 +1,7 @@
 package me.desht.modularrouters.item.module;
 
 import me.desht.modularrouters.api.matching.IItemMatcher;
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.util.TintColor;
 import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
@@ -9,16 +10,20 @@ import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModMenuTypes;
 import me.desht.modularrouters.item.smartfilter.SmartFilterItem;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
+import me.desht.modularrouters.logic.compiled.CompiledModule;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule.FluidModuleSettings;
 import me.desht.modularrouters.logic.filter.matchers.FluidMatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static me.desht.modularrouters.client.util.ClientUtil.colorText;
 import static me.desht.modularrouters.client.util.ClientUtil.xlate;
@@ -27,7 +32,31 @@ public class FluidModule1 extends ModuleItem {
     private static final TintColor TINT_COLOR = new TintColor(79, 191, 255);
 
     public FluidModule1() {
-        super(ModItems.defaultProps(), CompiledFluidModule::new);
+        this(CompiledFluidModule::new);
+    }
+
+    protected FluidModule1(BiFunction<ModularRouterBlockEntity, ItemStack, ? extends CompiledModule> compiler) {
+        super(ModItems.defaultProps(), compiler);
+    }
+
+    public boolean supportsWorldInteraction() {
+        return true;
+    }
+
+    public String getTransferHelpPrefix() {
+        return "modularrouters.guiText.popup.fluid.";
+    }
+
+    public String getTransferTooltipKey() {
+        return "modularrouters.guiText.tooltip.fluidTransferTooltip";
+    }
+
+    protected String getTransferRateKey() {
+        return "modularrouters.itemText.fluid.maxTransfer";
+    }
+
+    public ItemStack getTransferTargetIcon() {
+        return new ItemStack(Items.WATER_BUCKET);
     }
 
     @Override
@@ -53,8 +82,8 @@ public class FluidModule1 extends ModuleItem {
         FluidModuleSettings settings = stack.getOrDefault(ModDataComponents.FLUID_SETTINGS.get(), FluidModuleSettings.DEFAULT);
         list.add(xlate("modularrouters.itemText.transfer_direction",
                 xlate(settings.direction().getTranslationKey()).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
-        list.add(xlate("modularrouters.itemText.fluid.maxTransfer",
-                colorText(settings.maxTransfer(), ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
+        list.add(xlate(getTransferRateKey(),
+                colorText(settings.maxTransfer() == 0 ? FluidType.BUCKET_VOLUME : settings.maxTransfer(), ChatFormatting.AQUA)).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override

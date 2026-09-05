@@ -21,6 +21,7 @@ repositories {
         url "https://modmaven.dev/"
         content {
             includeGroup "mcjty.theoneprobe"
+            includeGroup "mekanism"
         }
     }
     maven {
@@ -48,6 +49,9 @@ repositories {
 
 sourceSets {
     test {
+        if (providers.gradleProperty('withMekanism').map { it.toBoolean() }.getOrElse(false)) {
+            java.srcDir 'src/mekanismTest/java'
+        }
         runs {
             modIdentifier 'modularrouterstest'
         }
@@ -125,6 +129,13 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     localRuntime(testImplementation("net.neoforged:testframework:${neo_version}"))
+
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    testCompileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    if (providers.gradleProperty('withMekanism').map { it.toBoolean() }.getOrElse(false)) {
+        testCompileOnly "mekanism:Mekanism:${mekanism_version}"
+        runtimeOnly "mekanism:Mekanism:${mekanism_version}"
+    }
 
     implementation("mcjty.theoneprobe:theoneprobe:${top_version}") {
         transitive = false

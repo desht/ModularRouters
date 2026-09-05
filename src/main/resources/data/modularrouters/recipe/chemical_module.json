@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "modularrouters:fluid_module"
+    },
+    {
+      "item": "mekanism:basic_control_circuit"
+    }
+  ],
+  "result": {
+    "id": "modularrouters:chemical_module",
+    "count": 1
+  }
+}

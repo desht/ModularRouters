@@ -1,0 +1,24 @@
+{
+  "name": "Chemical Module Mk2",
+  "category": "modularrouters:modules",
+  "icon": "modularrouters:chemical_module_2",
+  "flag": "mod:mekanism",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Transfers Mekanism chemicals, including gases, between a single chemical container in the router buffer and a configured nearby block. Sneak-right-click the target face to select it.$(p)Use the direction button to pull into the buffer or push out. The target machine must allow chemical input/output on the selected face."
+    },
+    {
+      "type": "text",
+      "text": "Chemical Modules share the router transfer allowance and Fluid Transfer Upgrades with Fluid Modules. Speed Upgrades make operations more frequent, without increasing total throughput. Mk2 uses the Fluid Module Mk2 range and range augments.$(p)Place filled chemical containers in the filter to match their chemicals. Whitelist, blacklist, chemical tags, match-all and round-robin are supported. Item smart filters are not supported."
+    },
+    {
+      "type": "text",
+      "text": "A Regulator Augment limits the total amount in the target tanks, in mB or percent: pulling leaves at least that amount, and pushing fills up to it.$(p)Chemical pipes can also access the container in the router buffer, without a Chemical Module. Container restrictions still apply; this does not make radioactive chemicals storable in ordinary tanks."
+    },
+    {
+      "type": "crafting",
+      "recipe": "modularrouters:chemical_module_2"
+    }
+  ]
+}

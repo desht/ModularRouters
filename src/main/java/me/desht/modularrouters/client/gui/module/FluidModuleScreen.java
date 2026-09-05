@@ -10,6 +10,7 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.container.ModuleMenu;
 import me.desht.modularrouters.core.ModBlocks;
 import me.desht.modularrouters.core.ModDataComponents;
+import me.desht.modularrouters.item.module.FluidModule1;
 import me.desht.modularrouters.logic.compiled.CompiledFluidModule;
 import me.desht.modularrouters.logic.settings.TransferDirection;
 import net.minecraft.Util;
@@ -33,7 +34,6 @@ import static me.desht.modularrouters.client.util.ClientUtil.xlate;
 public class FluidModuleScreen extends ModuleScreen {
     private static final ItemStack bucketStack = new ItemStack(Items.BUCKET);
     private static final ItemStack routerStack = new ItemStack(ModBlocks.MODULAR_ROUTER.get());
-    private static final ItemStack waterStack = new ItemStack(Items.WATER_BUCKET);
 
     private ForceEmptyButton forceEmptyButton;
     private RegulateAbsoluteButton regulationTypeButton;
@@ -64,9 +64,13 @@ public class FluidModuleScreen extends ModuleScreen {
         addRenderableWidget(forceEmptyButton = new ForceEmptyButton(leftPos + 168, topPos + 69, cfm.isForceEmpty()));
         addRenderableWidget(regulationTypeButton = new RegulateAbsoluteButton(regulatorTextField.getX() + regulatorTextField.getWidth() + 2, regulatorTextField.getY() - 1, 18, 14, b -> toggleRegulationType(), cfm.isRegulateAbsolute()));
 
-        getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 17, leftPos + 183, topPos + 35, "modularrouters.guiText.popup.fluid.maxTransfer");
-        getMouseOverHelp().addHelpRegion(leftPos + 126, topPos + 42, leftPos + 185, topPos + 61, "modularrouters.guiText.popup.fluid.direction");
-        getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 67, leftPos + 185, topPos + 86, "modularrouters.guiText.popup.fluid.forceEmpty");
+        FluidModule1 module = (FluidModule1) moduleItemStack.getItem();
+        forceEmptyButton.visible = module.supportsWorldInteraction() && cfm.getFluidDirection() == TransferDirection.FROM_ROUTER;
+        getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 17, leftPos + 183, topPos + 35, module.getTransferHelpPrefix() + "maxTransfer");
+        getMouseOverHelp().addHelpRegion(leftPos + 126, topPos + 42, leftPos + 185, topPos + 61, module.getTransferHelpPrefix() + "direction");
+        if (module.supportsWorldInteraction()) {
+            getMouseOverHelp().addHelpRegion(leftPos + 128, topPos + 67, leftPos + 185, topPos + 86, "modularrouters.guiText.popup.fluid.forceEmpty");
+        }
     }
 
     @Override
@@ -88,7 +92,7 @@ public class FluidModuleScreen extends ModuleScreen {
         graphics.blit(GUI_TEXTURE, leftPos + 146, topPos + 20, LARGE_TEXTFIELD_XY.x(), LARGE_TEXTFIELD_XY.y(), 35, 14);
 
         graphics.renderItem(routerStack, leftPos + 128, topPos + 44);
-        graphics.renderItem(waterStack, leftPos + 168, topPos + 44);
+        graphics.renderItem(((FluidModule1) moduleItemStack.getItem()).getTransferTargetIcon(), leftPos + 168, topPos + 44);
     }
 
     @Override
@@ -108,7 +112,8 @@ public class FluidModuleScreen extends ModuleScreen {
         regulationTypeButton.visible = regulatorTextField.visible;
         regulationTypeButton.setText();
         regulatorTextField.setRange(Range.of(0, regulationTypeButton.regulateAbsolute ? Integer.MAX_VALUE : 100));
-        forceEmptyButton.visible = fluidDirButton.getState() == TransferDirection.FROM_ROUTER;
+        forceEmptyButton.visible = ((FluidModule1) moduleItemStack.getItem()).supportsWorldInteraction()
+                && fluidDirButton.getState() == TransferDirection.FROM_ROUTER;
     }
 
     @Override
@@ -127,7 +132,7 @@ public class FluidModuleScreen extends ModuleScreen {
         TooltipButton(int x, int y, int width, int height, ItemStack renderStack) {
             super(x, y, width, height, renderStack, true, p -> {});
             List<Component> tooltip = new ArrayList<>();
-            tooltip.add(xlate("modularrouters.guiText.tooltip.fluidTransferTooltip"));
+            tooltip.add(xlate(((FluidModule1) moduleItemStack.getItem()).getTransferTooltipKey()));
             tooltip.add(Component.empty());
             getItemRouter().ifPresent(router -> {
                 int ftRate = router.getFluidTransferRate();

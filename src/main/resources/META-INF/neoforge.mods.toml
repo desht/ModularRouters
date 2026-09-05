@@ -28,3 +28,10 @@ description="${mod_description}"
 
 [[mixins]]
 config = "mixins.modularrouters.json"
+
+[[dependencies.modularrouters]]
+    modId="mekanism"
+    type="optional"
+    versionRange="[10.7.19,10.8)"
+    ordering="AFTER"
+    side="BOTH"
