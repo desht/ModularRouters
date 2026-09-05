@@ -1,6 +1,7 @@
 package me.desht.modularrouters.integration;
 
 import me.desht.modularrouters.integration.ffs.FFSSetup;
+import me.desht.modularrouters.integration.mekanism.MekanismIntegration;
 import me.desht.modularrouters.integration.top.TOPCompatibility;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -8,6 +9,9 @@ import net.neoforged.fml.ModList;
 public class IntegrationHandler {
     public static void onModConstruction(IEventBus modBus) {
         registerFFS(modBus);
+        if (ModList.get().isLoaded("mekanism")) {
+            MekanismIntegration.register(modBus);
+        }
     }
 
     public static void onCommonSetup() {

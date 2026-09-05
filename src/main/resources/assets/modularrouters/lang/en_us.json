@@ -1,4 +1,13 @@
 {
+   "item.modularrouters.chemical_module" : "Chemical Module Mk1",
+   "item.modularrouters.chemical_module_2" : "Chemical Module Mk2",
+   "modularrouters.itemText.usage.item.chemical_module" : "Transfers Mekanism chemicals to/from an adjacent block.\n• Put a single chemical container in the router buffer.\n• Respects the target face and container restrictions.",
+   "modularrouters.itemText.usage.item.chemical_module_2" : "Transfers Mekanism chemicals to/from a selected nearby block.\n• Put a single chemical container in the router buffer.\n• Respects the target face and container restrictions.",
+   "modularrouters.itemText.chemical.maxTransfer" : "Chemical Rate: Up to %s mB / operation",
+   "modularrouters.guiText.popup.chemical.maxTransfer" : "§a§nMax Chemical Transfer§r\n\nMaximum chemical amount per operation. The router shares its transfer allowance and Fluid Transfer Upgrades between fluid and chemical modules. Container transfer limits also apply.",
+   "modularrouters.guiText.popup.chemical.direction" : "§a§nChemical Transfer Direction§r\n\nPull chemicals from the selected block into the container in the router buffer, or push them out. The selected face must permit the operation. Chemicals cannot be placed in the world.",
+   "modularrouters.guiText.tooltip.chemicalTransferTooltip" : "§bMax Chemical Transfer\nMaximum amount (mB) per operation.\nShares the router transfer allowance and Fluid Transfer Upgrades with fluid modules.",
+
    "block.modularrouters.modular_router" : "Modular Router",
    "block.modularrouters.template_frame" : "Template Frame",
    "config.jade.plugin_modularrouters.router": "Modular Router",

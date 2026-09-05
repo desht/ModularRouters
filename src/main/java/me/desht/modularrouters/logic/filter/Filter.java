@@ -92,15 +92,20 @@ public class Filter implements Predicate<ItemStack> {
             return false;
         }
 
+        return testCustom(matcher -> matcher.matchItem(stack, flags, registryAccess));
+    }
+
+    public boolean testCustom(Predicate<IItemMatcher> matches) {
+
         if (roundRobin && !matchers.isEmpty()) {
             // just match against a single item in the filter
-            return matchers.get(rrCounter).matchItem(stack, flags, registryAccess) == flags.whiteList();
+            return matches.test(matchers.get(rrCounter)) == flags.whiteList();
         } else {
             // match against everything in the filter (either match any or match all)
             boolean matchAll = flags.matchAllItems();
 
             for (IItemMatcher matcher : matchers) {
-                boolean matchedOne = matcher.matchItem(stack, flags, registryAccess);
+                boolean matchedOne = matches.test(matcher);
                 if (!matchAll && matchedOne || matchAll && !matchedOne) {
                     return matchAll != flags.whiteList();
                 }
