@@ -38,12 +38,12 @@ public class SyncUpgrade extends UpgradeItem {
 
     public static int getTunedValue(ItemStack stack) {
         if (!(stack.getItem() instanceof SyncUpgrade)) return 0;
-        return stack.getOrDefault(ModDataComponents.SYNC_TUNING.get(), 0);
+        return stack.getOrDefault(ModDataComponents.SYNC_TUNING.get(), 0) % ConfigHolder.common.router.baseTickRate.get();
     }
 
     public static void setTunedValue(ItemStack stack, int newValue) {
         if (stack.getItem() instanceof SyncUpgrade) {
-            stack.set(ModDataComponents.SYNC_TUNING.get(), newValue);
+            stack.set(ModDataComponents.SYNC_TUNING.get(), newValue % ConfigHolder.common.router.baseTickRate.get());
         }
     }
 
