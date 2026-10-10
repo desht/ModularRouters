@@ -6,7 +6,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.140'
-    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
 ext.releaseTag = providers.environmentVariable("TAG").orElse("").toString()
@@ -244,6 +244,8 @@ publishMods {
         minecraftVersions.add(minecraft_version)
         projectSlug = "modular-routers"
         announcementTitle = "Download from Curseforge"
+        client = true
+        server = true
 //        optional {
 //            slug = "patchouli"
 //        }
