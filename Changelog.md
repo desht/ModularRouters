@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 26.1.2
 
+## [26.1.2.3]
+* Fixed crash when Sync Upgrade has an invalid tuning value
+
 ## [26.1.2.2]
 * Fixed Distributor Module not pulling correctly
 * Fixed Muffler Upgrades not suppressing block-break particles for the Breaker Module
