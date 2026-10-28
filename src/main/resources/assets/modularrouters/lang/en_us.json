@@ -354,7 +354,7 @@
    "modularrouters.itemText.usage.item.redstone_augment" : "Allows a module to define its own specific redstone behaviour, overriding the router's redstone behaviour.",
    "modularrouters.itemText.usage.item.regex_filter" : "Filter items by matching their registry names (viewable with F3+H) against one or more regular expressions. Place in a router module's filter like any other item.\n• Right-click: view/configure.",
    "modularrouters.itemText.usage.item.regulator_augment" : "Allow precise control over how many items are kept in an inventory.",
-   "modularrouters.itemText.usage.item.security_upgrade" : "Protects router; only listed players can access the router.\nAlso protects owner from attack by Activator Module, and makes several modules work as the owning player; very useful when chunks are claim-protected.\n• Right-click a player to add them to this upgrade\n• Sneak + Right-click player to remove them",
+   "modularrouters.itemText.usage.item.security_upgrade" : "Protects router; only listed players can access the router.\nAlso protects owner from attack by Activator Module.\n• Right-click a player to add them to this upgrade\n• Sneak + Right-click player to remove them",
    "modularrouters.itemText.usage.item.sender_module_1" : "Sends items from the router's buffer to any inventory directly along an X/Y/Z axis.\nClear line of sight required; opaque blocks will prevent sending.",
    "modularrouters.itemText.usage.item.sender_module_2" : "Sends items from the router's buffer to any nearby inventory.\nClear line of sight NOT required.",
    "modularrouters.itemText.usage.item.sender_module_3" : "Sends items from the router's buffer to any inventory in any dimension.",
