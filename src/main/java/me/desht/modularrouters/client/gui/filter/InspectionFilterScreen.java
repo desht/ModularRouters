@@ -1,9 +1,9 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
+import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
@@ -12,10 +12,10 @@ import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.Inspectio
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
@@ -71,10 +71,9 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
 
         addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, button -> addEntry()));
 
-        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), button -> {
-            ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.setMatchAll(!comparisonList.matchAll())));
-            PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
-        });
+        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), button ->
+                PacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeComparisonListPatch(comparisonList.setMatchAll(!comparisonList.matchAll()))))
+        );
         addRenderableWidget(matchButton);
 
         deleteButtons.clear();
@@ -100,6 +99,10 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         addRenderableWidget(valueTextField);
     }
 
+    private DataComponentPatch makeComparisonListPatch(ComparisonList list) {
+        return DataComponentPatch.builder().set(ModDataComponents.COMPARISON_LIST.get(), list).build();
+    }
+
     private void updateDeleteButtonVisibility() {
         for (int i = 0; i < deleteButtons.size(); i++) {
             deleteButtons.get(i).visible = i < comparisonList.items().size();
@@ -109,15 +112,13 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
     private void addEntry() {
         if (currentOp != InspectionOp.NONE && currentSubject != InspectionSubject.NONE) {
             InspectionMatcher.Comparison newEntry = new InspectionMatcher.Comparison(currentSubject, currentOp, valueTextField.getIntValue());
-            ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.addComparison(newEntry)));
-            PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+            PacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeComparisonListPatch(comparisonList.addComparison(newEntry))));
             valueTextField.setValue("");
         }
     }
 
     private void removeEntry(int pos) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.removeAt(pos)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+        PacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeComparisonListPatch(comparisonList.removeAt(pos))));
     }
 
     @Override

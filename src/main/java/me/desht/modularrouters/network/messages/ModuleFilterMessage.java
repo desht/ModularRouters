@@ -8,6 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -32,14 +33,14 @@ public record ModuleFilterMessage(int slot, ItemStack stack) implements CustomPa
     }
 
     public static void handleData(ModuleFilterMessage message, IPayloadContext context) {
-        AbstractContainerMenu c = context.player().containerMenu;
+        AbstractContainerMenu menu = context.player().containerMenu;
         int slot = message.slot();
-        if (isValidContainer(c) && slot >= 0 && slot < c.slots.size() && c.getSlot(slot) instanceof FilterSlot) {
-            c.getSlot(slot).set(message.stack());
+        if (isValidContainer(context.player(), menu) && slot >= 0 && slot < menu.slots.size() && menu.getSlot(slot) instanceof FilterSlot) {
+            menu.getSlot(slot).set(message.stack());
         }
     }
 
-    private static boolean isValidContainer(AbstractContainerMenu c) {
-        return c instanceof ModuleMenu || c instanceof BulkItemFilterMenu;
+    private static boolean isValidContainer(Player player, AbstractContainerMenu c) {
+        return (c instanceof ModuleMenu || c instanceof BulkItemFilterMenu) && c.stillValid(player);
     }
 }

@@ -47,9 +47,11 @@ public record RouterSettingsMessage(boolean ecoMode, RedstoneBehaviour redstoneB
         Level level = context.player().level();
         if (level.isLoaded(message.pos())) {
             level.getBlockEntity(message.pos(), ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
-                router.setRedstoneBehaviour(message.redstoneBehaviour());
-                router.setEcoMode(message.ecoMode());
-                router.setEnergyDirection(message.energyDirection());
+                if (context.player().canInteractWithBlock(router.getBlockPos(), 4.0)) {
+                    router.setRedstoneBehaviour(message.redstoneBehaviour());
+                    router.setEcoMode(message.ecoMode());
+                    router.setEnergyDirection(message.energyDirection());
+                }
             });
         }
     }

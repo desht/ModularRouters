@@ -1,5 +1,8 @@
 package me.desht.modularrouters.container;
 
+import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -111,5 +114,9 @@ public abstract class AbstractMRContainerMenu extends AbstractContainerMenu {
         }
 
         return flag;
+    }
+
+    public static boolean validateRouter(Player player, @Nullable ModularRouterBlockEntity router) {
+        return router == null || !router.isRemoved() && Container.stillValidBlockEntity(router, player);
     }
 }

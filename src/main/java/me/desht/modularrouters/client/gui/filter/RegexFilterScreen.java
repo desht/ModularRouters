@@ -1,17 +1,14 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
 import me.desht.modularrouters.core.ModSounds;
-import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.item.smartfilter.RegexFilter;
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
-import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -76,8 +73,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     }
 
     private void sendRegexToServer(Collection<String> newFilters) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> ModFilter.setModList(s, List.copyOf(newFilters)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+        PacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeFilterStringsPatch(List.copyOf(newFilters))));
     }
 
     @Override
@@ -116,8 +112,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
                 Pattern.compile(regex);  // just to validate syntax
                 List<String> updatedList = new ArrayList<>(regexList);
                 updatedList.add(regex);
-                ItemStack newStack = Util.make(filterStack.copy(), s -> RegexFilter.setRegexList(s, updatedList));
-                PacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+                PacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeFilterStringsPatch(updatedList)));
                 regexTextField.setValue("");
                 errorMsg = Component.empty();
             }

@@ -13,7 +13,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -96,13 +95,13 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
             if (hand != null) {
                 return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
             } else if (routerPos != null && routerSlot >= 0) {
-                return getInstalledModule(player.level());
+                return getInstalledModule(player);
             }
         } else if (itemType == ItemType.FILTER) {
             if (hand != null) {
                 return getFilterForStack(player.getItemInHand(hand));
             } else if (routerPos != null && routerSlot >= 0) {
-                return getFilterForStack(getInstalledModule(player.level()));
+                return getFilterForStack(getInstalledModule(player));
             }
         }
         return ItemStack.EMPTY;
@@ -113,7 +112,7 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
         if (hand != null) {
             return player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY;
         } else if (routerPos != null) {
-            return getInstalledModule(player.level());
+            return getInstalledModule(player);
         } else {
             return ItemStack.EMPTY;
         }
@@ -124,13 +123,16 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
             if (hand != null) {
                 player.setItemInHand(hand, newStack);
             } else if (routerPos != null) {
-                setInstalledModule(player.level(), newStack);
+                setInstalledModule(player, newStack);
             }
         }
     }
 
-    public Optional<ModularRouterBlockEntity> getRouter(Level level) {
-        return routerPos == null ? Optional.empty() : level.getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get());
+    public Optional<ModularRouterBlockEntity> getRouter(Player player) {
+        if (routerPos == null || !player.level().isLoaded(routerPos) || !player.canInteractWithBlock(routerPos, 4.0)) {
+            return Optional.empty();
+        }
+        return player.level().getBlockEntity(routerPos, ModBlockEntities.MODULAR_ROUTER.get());
     }
 
     public void setFilterStack(Player player, ItemStack newFilterStack) {
@@ -145,7 +147,7 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
                     setFilterInModule(heldStack, newFilterStack);
                 }
             } else {
-                getRouter(player.level()).ifPresent(router -> {
+                getRouter(player).ifPresent(router -> {
                     // update filter in module installed in router
                     ItemStack moduleStack = router.getModules().getStackInSlot(routerSlot);
                     setFilterInModule(moduleStack, newFilterStack);
@@ -156,12 +158,12 @@ public record MFLocator(InteractionHand hand, BlockPos routerPos, int routerSlot
     }
 
     @Nonnull
-    private ItemStack getInstalledModule(Level level) {
-        return getRouter(level).map(router -> router.getModules().getStackInSlot(routerSlot)).orElse(ItemStack.EMPTY);
+    private ItemStack getInstalledModule(Player player) {
+        return getRouter(player).map(router -> router.getModules().getStackInSlot(routerSlot)).orElse(ItemStack.EMPTY);
     }
 
-    private void setInstalledModule(Level level, ItemStack newStack) {
-        getRouter(level).ifPresent(router -> {
+    private void setInstalledModule(Player player, ItemStack newStack) {
+        getRouter(player).ifPresent(router -> {
             router.getModules().setStackInSlot(routerSlot, newStack);
             router.recompileNeeded(RecompileFlag.MODULES);
             router.setChanged();

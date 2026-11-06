@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -93,7 +92,7 @@ public class RouterMenu extends AbstractMRContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return !router.isRemoved() && player.distanceToSqr(Vec3.atCenterOf(router.getBlockPos())) < 64.0;
+        return validateRouter(player, router);
     }
 
     @Override

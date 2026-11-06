@@ -2,14 +2,18 @@ package me.desht.modularrouters.client.gui.filter;
 
 import me.desht.modularrouters.client.gui.IResyncableGui;
 import me.desht.modularrouters.client.util.ClientUtil;
+import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.network.messages.OpenGuiMessage;
 import me.desht.modularrouters.util.MFLocator;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public abstract class AbstractFilterScreen extends Screen implements IResyncableGui {
     protected final Component title;
@@ -48,5 +52,9 @@ public abstract class AbstractFilterScreen extends Screen implements IResyncable
             }
         }
         return false;
+    }
+
+    static DataComponentPatch makeFilterStringsPatch(List<String> strings) {
+        return DataComponentPatch.builder().set(ModDataComponents.FILTER_STRINGS.get(), strings).build();
     }
 }

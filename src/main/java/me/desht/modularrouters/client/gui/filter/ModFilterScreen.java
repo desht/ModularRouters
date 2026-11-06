@@ -1,7 +1,6 @@
 package me.desht.modularrouters.client.gui.filter;
 
 import com.google.common.collect.Lists;
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
@@ -9,7 +8,6 @@ import me.desht.modularrouters.item.smartfilter.ModFilter;
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import me.desht.modularrouters.util.ModNameCache;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -71,8 +69,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     }
 
     private void sendModsToServer(Collection<String> newMods) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> ModFilter.setModList(s, List.copyOf(newMods)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
+        PacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), AbstractFilterScreen.makeFilterStringsPatch(List.copyOf(newMods))));
     }
 
     private void updateDeleteButtonVisibility() {

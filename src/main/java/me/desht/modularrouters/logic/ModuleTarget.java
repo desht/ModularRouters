@@ -126,7 +126,7 @@ public class ModuleTarget {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> Optional<T> getCapability(BlockCapability<T, ?> cap) {
         ServerLevel level = MiscUtil.getWorldForGlobalPos(gPos);
-        if (level == null) {
+        if (level == null || !level.isLoaded(gPos.pos())) {
             return Optional.empty();
         }
 

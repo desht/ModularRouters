@@ -10,7 +10,6 @@ import me.desht.modularrouters.item.smartfilter.TagFilter;
 import me.desht.modularrouters.network.messages.FilterUpdateMessage;
 import me.desht.modularrouters.util.MiscUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -85,8 +84,8 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     }
 
     private void sendTagsToServer(Collection<TagKey<Item>> newTags) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> TagFilter.setTagList(s, List.copyOf(newTags)));
-        PacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
+        List<String> strings = newTags.stream().map(t -> t.location().toString()).toList();
+        PacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), AbstractFilterScreen.makeFilterStringsPatch(strings)));
     }
 
     private void updateButtonVisibility() {

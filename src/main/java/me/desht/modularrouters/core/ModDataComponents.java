@@ -17,10 +17,12 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class ModDataComponents {
@@ -165,4 +167,16 @@ public class ModDataComponents {
             .persistent(ItemContainerContents.CODEC)
             .networkSynchronized(ItemContainerContents.STREAM_CODEC)
     );
+
+    public static final Lazy<Set<DataComponentType<?>>> SETTINGS_COMPONENTS = Lazy.of(() -> Set.of(
+            COMMON_MODULE_SETTINGS.get(),
+            ACTIVATOR_SETTINGS.get(),
+            BREAKER_SETTINGS.get(),
+            DETECTOR_SETTINGS.get(),
+            DISTRIBUTOR_SETTINGS.get(),
+            FLUID_SETTINGS.get(),
+            FLINGER_SETTINGS.get(),
+            PLAYER_SETTINGS.get(),
+            VACUUM_SETTINGS.get()
+    ));
 }
