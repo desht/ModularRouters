@@ -6,6 +6,9 @@ Changes are in reverse chronological order; newest changes at the top.
 
 # Minecraft 1.21.1
 
+## [13.2.8]
+* Made some client->server packet handlers a lot more robust in terms of validating client data
+
 ## [13.2.7]
 * Fixed an item duping issue when routers containing items are assembled/disassembled to/from a Sable sublevel
 
