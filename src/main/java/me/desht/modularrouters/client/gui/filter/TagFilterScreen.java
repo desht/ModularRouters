@@ -32,8 +32,8 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     private static final int GUI_WIDTH = 256;
     private static final int GUI_HEIGHT = 252;
 
-    private final List<TagKey<Item>> addedTags = Lists.newArrayList();
-    private final List<DeleteButton> deleteButtons = Lists.newArrayList();
+    private final List<TagKey<Item>> addedTags = new ArrayList<>();
+    private final List<DeleteButton> deleteButtons = new ArrayList<>();
 
     private ItemStack prevInSlot = ItemStack.EMPTY;
     private final List<TagKey<Item>> candidateTags = new ArrayList<>();

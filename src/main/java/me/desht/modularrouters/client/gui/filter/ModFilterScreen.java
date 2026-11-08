@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.container.AbstractSmartFilterMenu;
@@ -28,8 +27,8 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     private static final int GUI_WIDTH = 176;
     private static final int GUI_HEIGHT = 252;
 
-    private final List<String> mods = Lists.newArrayList();
-    private final List<DeleteButton> deleteButtons = Lists.newArrayList();
+    private final List<String> mods = new ArrayList<>();
+    private final List<DeleteButton> deleteButtons = new ArrayList<>();
 
     private ItemStack prevInSlot = ItemStack.EMPTY;
     private String modId = "";

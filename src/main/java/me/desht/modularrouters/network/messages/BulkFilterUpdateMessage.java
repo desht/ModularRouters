@@ -1,6 +1,8 @@
 package me.desht.modularrouters.network.messages;
 
 import me.desht.modularrouters.container.BulkItemFilterMenu;
+import me.desht.modularrouters.core.ModDataComponents;
+import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.item.smartfilter.BulkItemFilter;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.settings.ModuleFlags;
@@ -11,7 +13,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -57,13 +59,20 @@ public record BulkFilterUpdateMessage(FilterOp op, MFLocator locator, Optional<M
         MFLocator locator = message.locator();
 
         if (locator.getTargetItem(player).getItem() instanceof BulkItemFilter && player.containerMenu instanceof BulkItemFilterMenu filterMenu) {
-            ModuleFlags flags = ModuleFlags.forItem(locator.getModuleStack(player));
-            switch (message.op()) {
-                case CLEAR_ALL -> filterMenu.clearSlots();
-                case MERGE -> message.getTargetInventory()
-                        .ifPresent(h -> filterMenu.mergeInventory(h, flags, false));
-                case LOAD -> message.getTargetInventory()
-                        .ifPresent(h -> filterMenu.mergeInventory(h, flags, true));
+            ItemStack moduleStack = locator.getModuleStack(player);
+            if (moduleStack.getItem() instanceof ModuleItem) {
+                var targetList = moduleStack.get(ModDataComponents.MODULE_TARGET_LIST);
+                if (targetList != null && !targetList.targets().isEmpty()) {
+                    var targets = targetList.targets();
+                    ModuleFlags flags = ModuleFlags.forItem(moduleStack);
+                    switch (message.op()) {
+                        case CLEAR_ALL -> filterMenu.clearSlots();
+                        case MERGE -> targets.forEach(target -> target.getItemHandler()
+                                .ifPresent(h -> filterMenu.mergeInventory(h, flags, false)));
+                        case LOAD -> targets.forEach(target -> target.getItemHandler()
+                                .ifPresent(h -> filterMenu.mergeInventory(h, flags, true)));
+                    }
+                }
             }
         }
     }

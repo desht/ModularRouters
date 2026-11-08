@@ -1,6 +1,5 @@
 package me.desht.modularrouters.client.gui.filter;
 
-import com.google.common.collect.Lists;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.TextFieldWidgetMR;
@@ -42,13 +41,13 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     private Component errorMsg = Component.empty();
     private int errorTimer = 60;  // 3 seconds
 
-    private final List<String> regexList;
-    private final List<DeleteButton> deleteButtons = Lists.newArrayList();
+    private final List<String> regexList = new ArrayList<>();
+    private final List<DeleteButton> deleteButtons = new ArrayList<>();
 
     public RegexFilterScreen(ItemStack filterStack, MFLocator locator) {
         super(filterStack, locator);
 
-        regexList = RegexFilter.getRegexList(filterStack);
+        regexList.addAll(RegexFilter.getRegexList(filterStack));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class CompiledDetectorModule extends CompiledModule {
     public CompiledDetectorModule(@Nullable ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        settings = stack.getOrDefault(ModDataComponents.DETECTOR_SETTINGS, DetectorSettings.DEFAULT);
+        settings = stack.getOrDefault(ModDataComponents.DETECTOR_SETTINGS, DetectorSettings.DEFAULT).validate();
     }
 
     @Override
@@ -72,5 +72,12 @@ public class CompiledDetectorModule extends CompiledModule {
                 ByteBufCodecs.BOOL, DetectorSettings::strongSignal,
                 DetectorSettings::new
         );
+
+        public DetectorSettings validate() {
+            if (signalLevel >= 0 && signalLevel <= 15) {
+                return this;
+            }
+            return DEFAULT;
+        }
     }
 }
