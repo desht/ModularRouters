@@ -119,10 +119,17 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         );
 
         private FlingerSettings validate() {
-            if (speed > FlingerModule.MAX_SPEED || Float.isNaN(speed) || Float.isInfinite(speed)) {
-                return DEFAULT;
+            if (validateSetting(speed, FlingerModule.MIN_SPEED, FlingerModule.MAX_SPEED)
+                    && validateSetting(pitch, FlingerModule.MIN_PITCH, FlingerModule.MAX_PITCH)
+                    && validateSetting(yaw, FlingerModule.MIN_YAW, FlingerModule.MAX_YAW))
+            {
+                return this;
             }
-            return this;
+            return DEFAULT;
+        }
+
+        private boolean validateSetting(float val, float min, float max) {
+            return val >= min && val <= max && !Float.isInfinite(val);
         }
     }
 }
