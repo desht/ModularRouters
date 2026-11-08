@@ -7,6 +7,7 @@ import me.desht.modularrouters.config.ConfigHolder;
 import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.core.ModItems;
 import me.desht.modularrouters.core.ModSounds;
+import me.desht.modularrouters.item.module.FlingerModule;
 import me.desht.modularrouters.logic.ModuleTarget;
 import me.desht.modularrouters.logic.settings.RelativeDirection;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ public class CompiledFlingerModule extends CompiledDropperModule {
     public CompiledFlingerModule(ModularRouterBlockEntity router, ItemStack stack) {
         super(router, stack);
 
-        settings = stack.getOrDefault(ModDataComponents.FLINGER_SETTINGS, FlingerSettings.DEFAULT);
+        settings = stack.getOrDefault(ModDataComponents.FLINGER_SETTINGS, FlingerSettings.DEFAULT).validate();
     }
 
     @Override
@@ -103,16 +104,23 @@ public class CompiledFlingerModule extends CompiledDropperModule {
         public static final FlingerSettings DEFAULT = new FlingerSettings(0f, 0f, 0f);
 
         public static final Codec<FlingerSettings> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            Codec.FLOAT.fieldOf("speed").forGetter(FlingerSettings::speed),
-            Codec.FLOAT.fieldOf("pitch").forGetter(FlingerSettings::pitch),
-            Codec.FLOAT.optionalFieldOf("yaw", 0f).forGetter(FlingerSettings::yaw)
+                Codec.FLOAT.fieldOf("speed").forGetter(FlingerSettings::speed),
+                Codec.FLOAT.fieldOf("pitch").forGetter(FlingerSettings::pitch),
+                Codec.FLOAT.optionalFieldOf("yaw", 0f).forGetter(FlingerSettings::yaw)
         ).apply(builder, FlingerSettings::new));
 
-        public static StreamCodec<FriendlyByteBuf,FlingerSettings> STREAM_CODEC = StreamCodec.composite(
+        public static StreamCodec<FriendlyByteBuf, FlingerSettings> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.FLOAT, FlingerSettings::speed,
                 ByteBufCodecs.FLOAT, FlingerSettings::pitch,
                 ByteBufCodecs.FLOAT, FlingerSettings::yaw,
                 FlingerSettings::new
         );
+
+        private FlingerSettings validate() {
+            if (speed > FlingerModule.MAX_SPEED || Float.isNaN(speed) || Float.isInfinite(speed)) {
+                return DEFAULT;
+            }
+            return this;
+        }
     }
 }

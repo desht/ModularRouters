@@ -36,7 +36,7 @@ public record ModuleFilterMessage(int slot, ItemStack stack) implements CustomPa
         AbstractContainerMenu menu = context.player().containerMenu;
         int slot = message.slot();
         if (isValidContainer(context.player(), menu) && slot >= 0 && slot < menu.slots.size() && menu.getSlot(slot) instanceof FilterSlot) {
-            menu.getSlot(slot).set(message.stack());
+            menu.getSlot(slot).set(message.stack().copyWithCount(1));
         }
     }
 
