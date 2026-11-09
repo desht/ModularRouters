@@ -26,10 +26,6 @@ public class ModFilter extends SmartFilterItem {
         return filterStack.getOrDefault(ModDataComponents.FILTER_STRINGS, List.of());
     }
 
-    public static void setModList(ItemStack filterStack, List<String> mods) {
-        filterStack.set(ModDataComponents.FILTER_STRINGS, mods);
-    }
-
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {
         return new ModMatcher(getModList(filterStack));

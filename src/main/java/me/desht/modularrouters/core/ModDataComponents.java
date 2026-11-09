@@ -87,7 +87,7 @@ public class ModDataComponents {
     public static final Supplier<DataComponentType<List<String>>> FILTER_STRINGS
             = COMPONENTS.registerComponentType("filter_strings", builder -> builder
             .persistent(Codec.STRING.listOf(0, ModFilter.MAX_SIZE))
-            .networkSynchronized(ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(ModFilter.MAX_SIZE)))
+            .networkSynchronized(ByteBufCodecs.stringUtf8(256).apply(ByteBufCodecs.list(ModFilter.MAX_SIZE)))
     );
     // a list of comparison objects on an inspection filter
     public static final Supplier<DataComponentType<ComparisonList>> COMPARISON_LIST

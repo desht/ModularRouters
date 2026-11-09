@@ -26,10 +26,6 @@ public class RegexFilter extends SmartFilterItem {
         return filterStack.getOrDefault(ModDataComponents.FILTER_STRINGS, List.of());
     }
 
-    public static void setRegexList(ItemStack filterStack, List<String> regexList) {
-        filterStack.set(ModDataComponents.FILTER_STRINGS, regexList);
-    }
-
     @Override
     public void addExtraInformation(ItemStack itemstack, Consumer<Component> tooltipAdder) {
         super.addExtraInformation(itemstack, tooltipAdder);
