@@ -27,10 +27,6 @@ public class TagFilter extends SmartFilterItem {
                 .toList();
     }
 
-    public static void setTagList(ItemStack filterStack, List<TagKey<Item>> tags) {
-        filterStack.set(ModDataComponents.FILTER_STRINGS, tags.stream().map(t -> t.location().toString()).toList());
-    }
-
     @NotNull
     @Override
     public IItemMatcher compile(ItemStack filterStack, ItemStack moduleStack) {

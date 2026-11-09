@@ -20,16 +20,11 @@ public class ModFilter extends SmartFilterItem {
     public static final int MAX_SIZE = 6;
 
     public ModFilter() {
-        super(ModItems.defaultProps()
-                .component(ModDataComponents.FILTER_STRINGS, List.of()));
+        super(ModItems.defaultProps().component(ModDataComponents.FILTER_STRINGS, List.of()));
     }
 
     public static List<String> getModList(ItemStack filterStack) {
         return filterStack.getOrDefault(ModDataComponents.FILTER_STRINGS, List.of());
-    }
-
-    public static void setModList(ItemStack filterStack, List<String> mods) {
-        filterStack.set(ModDataComponents.FILTER_STRINGS, mods);
     }
 
     @Override
