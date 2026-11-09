@@ -49,7 +49,7 @@ public class BulkItemFilterScreen extends AbstractFilterContainerScreen {
             addRenderableWidget(new BackButton(leftPos + 2, topPos + 2, _ -> closeGUI()));
         }
 
-        locator.getRouter(getClientLevel()).ifPresent(router -> {
+        locator.getRouter(getClientPlayer()).ifPresent(router -> {
             // in a module in a router; add buttons to merge/load the module's target inventory
             ItemStack moduleStack = locator.getModuleStack(getClientPlayer());
             CompiledModule cm = ((ModuleItem) moduleStack.getItem()).compile(router, moduleStack);

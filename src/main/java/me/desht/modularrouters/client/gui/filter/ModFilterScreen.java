@@ -67,8 +67,7 @@ public class ModFilterScreen extends AbstractFilterContainerScreen {
     }
 
     private void sendModsToServer(Collection<String> newMods) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> ModFilter.setModList(s, List.copyOf(newMods)));
-        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), AbstractFilterScreen.makeFilterStringsPatch(List.copyOf(newMods))));
     }
 
     private void updateDeleteButtonVisibility() {

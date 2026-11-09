@@ -50,8 +50,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.EnumMap;
 import java.util.Optional;
 
-import static me.desht.modularrouters.client.util.ClientUtil.getClientLevel;
-import static me.desht.modularrouters.client.util.ClientUtil.xlate;
+import static me.desht.modularrouters.client.util.ClientUtil.*;
 
 public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements ContainerListener, IMouseOverHelpProvider, ISendToServer {
     protected static final Identifier GUI_TEXTURE = MiscUtil.RL("textures/gui/module.png");
@@ -334,7 +333,7 @@ public class ModuleScreen extends AbstractContainerScreen<ModuleMenu> implements
     }
 
     protected Optional<ModularRouterBlockEntity> getRouter() {
-        return menu.getLocator().getRouter(getClientLevel());
+        return menu.getLocator().getRouter(getClientPlayer());
     }
 
     @Override

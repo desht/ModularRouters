@@ -79,8 +79,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
     }
 
     private void sendRegexToServer(Collection<String> newFilters) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> ModFilter.setModList(s, List.copyOf(newFilters)));
-        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeFilterStringsPatch(List.copyOf(newFilters))));
     }
 
     @Override
@@ -119,8 +118,7 @@ public class RegexFilterScreen extends AbstractFilterScreen {
                 Pattern.compile(regex);  // just to validate syntax
                 List<String> updatedList = new ArrayList<>(regexList);
                 updatedList.add(regex);
-                ItemStack newStack = Util.make(filterStack.copy(), s -> RegexFilter.setRegexList(s, updatedList));
-                ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+                ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeFilterStringsPatch(updatedList)));
                 regexTextField.setValue("");
                 errorMsg = Component.empty();
             }

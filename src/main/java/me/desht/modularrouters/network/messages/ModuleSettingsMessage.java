@@ -1,8 +1,8 @@
 package me.desht.modularrouters.network.messages;
 
-import me.desht.modularrouters.ModularRouters;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.ModuleMenu;
+import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.util.MFLocator;
 import me.desht.modularrouters.util.MiscUtil;
@@ -36,8 +36,7 @@ public record ModuleSettingsMessage(MFLocator locator, DataComponentPatch patch)
 
     public static void handleData(ModuleSettingsMessage message, IPayloadContext context) {
         Player player = context.player();
-        if (!(player.containerMenu instanceof ModuleMenu)) {
-            ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - player does not have a module GUI open", player.getGameProfile().name());
+        if (!(player.containerMenu instanceof ModuleMenu menu) || !menu.getLocator().equals(message.locator) || !validateComponents(message.patch)) {
             return;
         }
 
@@ -47,9 +46,12 @@ public record ModuleSettingsMessage(MFLocator locator, DataComponentPatch patch)
         if (moduleStack.getItem() instanceof ModuleItem && moduleStack.getComponents() instanceof PatchedDataComponentMap pdcm) {
             pdcm.applyPatch(message.patch);
             locator.setModuleStack(player, moduleStack);
-            locator.getRouter(player.level()).ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES));
-        } else {
-            ModularRouters.LOGGER.warn("ignoring ModuleSettingsMessage for {} - expected module not found @ {}", player.getGameProfile().name(), locator);
+            locator.getRouter(player).ifPresent(router -> router.recompileNeeded(ModularRouterBlockEntity.RecompileFlag.MODULES));
         }
+    }
+
+    private static boolean validateComponents(DataComponentPatch patch) {
+        return patch.entrySet().stream()
+                .allMatch(c -> ModDataComponents.SETTINGS_COMPONENTS.get().contains(c.getKey()));
     }
 }

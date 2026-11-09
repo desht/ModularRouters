@@ -19,12 +19,12 @@ public abstract class AbstractSmartFilterMenu extends AbstractMRContainerMenu {
 
         this.locator = locator;
         this.filterStack = locator.getTargetItem(inv.player);
-        this.router = locator.getRouter(inv.player.level()).orElse(null);
+        this.router = locator.getRouter(inv.player).orElse(null);
     }
 
     @Override
     public boolean stillValid(Player playerIn) {
-        return router == null || !router.isRemoved();
+        return validateRouter(playerIn, router);
     }
 
     public MFLocator getLocator() {

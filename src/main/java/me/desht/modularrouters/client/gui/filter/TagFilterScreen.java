@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -84,8 +83,8 @@ public class TagFilterScreen extends AbstractFilterContainerScreen {
     }
 
     private void sendTagsToServer(Collection<TagKey<Item>> newTags) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> TagFilter.setTagList(s, List.copyOf(newTags)));
-        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), newStack));
+        List<String> strings = newTags.stream().map(t -> t.location().toString()).toList();
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(menu.getLocator(), AbstractFilterScreen.makeFilterStringsPatch(strings)));
     }
 
     private void updateButtonVisibility() {

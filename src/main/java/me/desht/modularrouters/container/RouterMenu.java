@@ -93,7 +93,7 @@ public class RouterMenu extends AbstractMRContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return !router.isRemoved() && player.distanceToSqr(Vec3.atCenterOf(router.getBlockPos())) < 64.0;
+        return validateRouter(player, router);
     }
 
     @Override

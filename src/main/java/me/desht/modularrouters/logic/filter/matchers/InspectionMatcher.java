@@ -82,6 +82,10 @@ public class InspectionMatcher implements IItemMatcher {
             return new ComparisonList(items(), matchAll);
         }
 
+        public ComparisonList toggleMatchAll() {
+            return new ComparisonList(items(), !matchAll());
+        }
+
         public ComparisonList addComparison(Comparison toAdd) {
             List<Comparison> l = new ArrayList<>(items);
             l.add(toAdd);

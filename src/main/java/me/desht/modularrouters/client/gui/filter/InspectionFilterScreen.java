@@ -3,6 +3,7 @@ package me.desht.modularrouters.client.gui.filter;
 import me.desht.modularrouters.client.gui.filter.Buttons.DeleteButton;
 import me.desht.modularrouters.client.gui.widgets.button.BackButton;
 import me.desht.modularrouters.client.gui.widgets.textfield.IntegerTextField;
+import me.desht.modularrouters.core.ModDataComponents;
 import me.desht.modularrouters.item.smartfilter.InspectionFilter;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher;
 import me.desht.modularrouters.logic.filter.matchers.InspectionMatcher.ComparisonList;
@@ -16,6 +17,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
@@ -49,6 +51,10 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
         comparisonList = InspectionFilter.getComparisonList(filterStack);
     }
 
+    private DataComponentPatch makeComparisonListPatch(ComparisonList list) {
+        return DataComponentPatch.builder().set(ModDataComponents.COMPARISON_LIST.get(), list).build();
+    }
+
     @Override
     public void init() {
         super.init();
@@ -72,10 +78,9 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
 
         addRenderableWidget(new Buttons.AddButton(xPos + 152, yPos + 23, _ -> addEntry()));
 
-        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), _ -> {
-            ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.setMatchAll(!comparisonList.matchAll())));
-            ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
-        });
+        matchButton = new ExtendedButton(xPos + 8, yPos + 167, 60, 20, xlate("modularrouters.guiText.label.matchAll." + comparisonList.matchAll()), _ ->
+                ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeComparisonListPatch(comparisonList.toggleMatchAll())))
+        );
         addRenderableWidget(matchButton);
 
         deleteButtons.clear();
@@ -110,15 +115,13 @@ public class InspectionFilterScreen extends AbstractFilterScreen {
     private void addEntry() {
         if (currentOp != InspectionOp.NONE && currentSubject != InspectionSubject.NONE) {
             InspectionMatcher.Comparison newEntry = new InspectionMatcher.Comparison(currentSubject, currentOp, valueTextField.getIntValue());
-            ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.addComparison(newEntry)));
-            ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+            ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeComparisonListPatch(comparisonList.addComparison(newEntry))));
             valueTextField.setValue("");
         }
     }
 
     private void removeEntry(int pos) {
-        ItemStack newStack = Util.make(filterStack.copy(), s -> InspectionFilter.setComparisonList(s, comparisonList.removeAt(pos)));
-        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, newStack));
+        ClientPacketDistributor.sendToServer(new FilterUpdateMessage(locator, makeComparisonListPatch(comparisonList.removeAt(pos))));
     }
 
     @Override

@@ -71,12 +71,12 @@ public record MFLocator(Either<InteractionHand, RouterSlot> either, int filterSl
         if (itemType == ItemType.MODULE) {
             return either.map(
                     hand -> player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY,
-                    routerSlot -> getInstalledModule(player.level(), routerSlot)
+                    routerSlot -> getInstalledModule(player, routerSlot)
             );
         } else if (itemType == ItemType.FILTER) {
             return either.map(
                     hand -> getFilterForStack(player.getItemInHand(hand)),
-                    routerSlot -> getFilterForStack(getInstalledModule(player.level(), routerSlot))
+                    routerSlot -> getFilterForStack(getInstalledModule(player, routerSlot))
             );
         }
         return ItemStack.EMPTY;
@@ -85,19 +85,19 @@ public record MFLocator(Either<InteractionHand, RouterSlot> either, int filterSl
     public ItemStack getModuleStack(Player player) {
         return either.map(
                 hand -> player.getItemInHand(hand).getItem() instanceof ModuleItem ? player.getItemInHand(hand) : ItemStack.EMPTY,
-                routerSlot -> getInstalledModule(player.level(), routerSlot)
+                routerSlot -> getInstalledModule(player, routerSlot)
         );
     }
 
     public void setModuleStack(Player player, ItemStack newStack) {
         if (newStack.getItem() instanceof ModuleItem) {
             either.ifLeft(hand -> player.setItemInHand(hand, newStack))
-                    .ifRight(routerSlot -> setInstalledModule(player.level(), newStack, routerSlot));
+                    .ifRight(routerSlot -> setInstalledModule(player, newStack, routerSlot));
         }
     }
 
-    public Optional<ModularRouterBlockEntity> getRouter(Level level) {
-        return either.right().flatMap(routerSlot -> level.getBlockEntity(routerSlot.pos, ModBlockEntities.MODULAR_ROUTER.get()));
+    public Optional<ModularRouterBlockEntity> getRouter(Player player) {
+        return either.right().flatMap(routerSlot -> player.level().getBlockEntity(routerSlot.pos, ModBlockEntities.MODULAR_ROUTER.get()));
     }
 
     public Optional<InteractionHand> hand() {
@@ -121,7 +121,7 @@ public record MFLocator(Either<InteractionHand, RouterSlot> either, int filterSl
                         }
                     })
                     .ifRight(routerSlot -> {
-                        getRouter(player.level()).ifPresent(router -> {
+                        getRouter(player).ifPresent(router -> {
                             // update filter in module installed in router
                             ResourceHandler<ItemResource> modules = router.getModules();
                             ItemStack moduleStack = ItemUtil.getStack(modules, routerSlot.slot);
@@ -132,14 +132,14 @@ public record MFLocator(Either<InteractionHand, RouterSlot> either, int filterSl
         }
     }
 
-    private ItemStack getInstalledModule(Level level, RouterSlot routerSlot) {
-        return getRouter(level)
+    private ItemStack getInstalledModule(Player player, RouterSlot routerSlot) {
+        return getRouter(player)
                 .map(router -> ItemUtil.getStack(router.getModules(), routerSlot.slot))
                 .orElse(ItemStack.EMPTY);
     }
 
-    private void setInstalledModule(Level level, ItemStack newStack, RouterSlot routerSlot) {
-        getRouter(level).ifPresent(router -> {
+    private void setInstalledModule(Player player, ItemStack newStack, RouterSlot routerSlot) {
+        getRouter(player).ifPresent(router -> {
             ItemStacksResourceHandler modules = router.getModules();
             modules.set(routerSlot.slot, ItemResource.of(newStack), newStack.getCount());
             router.recompileNeeded(RecompileFlag.MODULES);

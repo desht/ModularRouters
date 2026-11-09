@@ -46,7 +46,14 @@ public record RouterSettingsMessage(boolean ecoMode, RedstoneBehaviour redstoneB
     public static void handleData(RouterSettingsMessage message, IPayloadContext context) {
         Level level = context.player().level();
         if (level.isLoaded(message.pos())) {
+
             level.getBlockEntity(message.pos(), ModBlockEntities.MODULAR_ROUTER.get()).ifPresent(router -> {
+                if (context.player().isWithinBlockInteractionRange(router.getBlockPos(), 4.0)) {
+                    router.setRedstoneBehaviour(message.redstoneBehaviour());
+                    router.setEcoMode(message.ecoMode());
+                    router.setEnergyDirection(message.energyDirection());
+                }
+
                 router.setRedstoneBehaviour(message.redstoneBehaviour());
                 router.setEcoMode(message.ecoMode());
                 router.setEnergyDirection(message.energyDirection());
